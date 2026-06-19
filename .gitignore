@@ -13,6 +13,7 @@
 .claude/
 .codex/
 codex-scripts/outputs/
+pals-scripts/outputs/
 outputs/
 *.log
 *.dump
