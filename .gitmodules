@@ -1,0 +1,21 @@
+[submodule "pals-api"]
+	path = pals-api
+	url = git@github.com:AtsushiHosaka/pals-api.git
+[submodule "pals-webfront"]
+	path = pals-webfront
+	url = git@github.com:AtsushiHosaka/pals-webfront.git
+[submodule "pals-infra"]
+	path = pals-infra
+	url = git@github.com:AtsushiHosaka/pals-infra.git
+[submodule "pals-lean-verifier"]
+	path = pals-lean-verifier
+	url = git@github.com:AtsushiHosaka/pals-lean-verifier.git
+[submodule "pals-datasets"]
+	path = pals-datasets
+	url = git@github.com:AtsushiHosaka/pals-datasets.git
+[submodule "pals-observability"]
+	path = pals-observability
+	url = git@github.com:AtsushiHosaka/pals-observability.git
+[submodule "pals-agent"]
+	path = pals-agent
+	url = git@github.com:AtsushiHosaka/pals-agent.git
