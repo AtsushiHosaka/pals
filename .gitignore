@@ -1,0 +1,40 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p8
+*.p12
+*.crt
+*.kubeconfig
+
+# Codex/local outputs
+.claude/
+.codex/
+codex-scripts/outputs/
+outputs/
+*.log
+*.dump
+*.sql
+
+# OS/editor
+.DS_Store
+**/.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Dependencies and build outputs
+node_modules/
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+coverage/
+.terraform/
+.terraform.lock.hcl
