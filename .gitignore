@@ -15,6 +15,7 @@
 codex-scripts/outputs/
 pals-scripts/outputs/
 outputs/
+pals-lean-verifier/
 *.log
 *.dump
 *.sql

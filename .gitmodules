@@ -7,9 +7,6 @@
 [submodule "pals-infra"]
 	path = pals-infra
 	url = git@github.com:AtsushiHosaka/pals-infra.git
-[submodule "pals-lean-verifier"]
-	path = pals-lean-verifier
-	url = git@github.com:AtsushiHosaka/pals-lean-verifier.git
 [submodule "pals-datasets"]
 	path = pals-datasets
 	url = git@github.com:AtsushiHosaka/pals-datasets.git
