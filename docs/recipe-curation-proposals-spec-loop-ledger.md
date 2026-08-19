@@ -1,0 +1,20 @@
+# Recipe Curation Proposals — Specification Loop Ledger
+
+## Iteration record
+
+| Iteration | Spec revision | Code revision | Trigger | Expected verdict-changing delta | New evidence | Findings opened/closed | Routes invoked | Result |
+|---|---|---|---|---|---|---|---|---|
+| 1 | Parent `8bd6dd7` (dirty) | API `d9c18af` (dirty) | User approved the dialogue → curation proposal → independent Recipe admission direction | Define an internal proposal queue without automatic promotion or stored conversation content | Read-only review identified origin derivation, curator contract, lifecycle, and privacy gaps | Opened RCP-001–006; corrected origin preimages, identity, lifecycle, and access scope | `sdd-update-spec` → `sdd-review-spec` | Re-review required |
+| 2 | Same working baseline; RCP revised | Same | Targeted review found v1 provenance claim and list contract incomplete | Label v1 origin as provenance-unknown and close list pagination grammar | Existing v1 candidates lack source kind; current API needs bounded list semantics | Corrected both P1 findings; final terminology sweep corrected stale `legacy_model_v1` wording | `sdd-run-loop` → `sdd-update-spec` → `sdd-review-spec` | Ready for implementation review |
+
+## Delegation record
+
+| Delegation ID | Agent/skill | Owned slice | Mode | Input revision | Result |
+|---|---|---|---|---|---|
+| RCP-DL-001 | `spec_audit` / `sdd-review-spec` | RCP requirements, design, tasks; LRC/RPCS consistency | Read-only | Parent `8bd6dd7` dirty | First review found derivation, auth, lifecycle, privacy, and test-scope gaps; targeted re-review found two P1s; iteration 2 re-review pending. |
+
+## Requirement evidence
+
+| Requirement | Design | Task | Code/test evidence | Status | Next action |
+|---|---|---|---|---|---|
+| RCP-001–RCP-006 | `specs/recipe-curation-proposals/` | RCP-T001–T004 | Not implemented | Review corrections applied | Implement API + PostgreSQL vertical slice |
