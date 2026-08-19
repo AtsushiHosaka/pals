@@ -9,7 +9,9 @@
 Lean Recipe Catalog を定義する
 [lean-recipe-catalog/requirements.md](lean-recipe-catalog/requirements.md)、および
 verified proof を再利用候補として安全に審査へ渡す
-[recipe-curation-proposals/requirements.md](recipe-curation-proposals/requirements.md) です。
+[recipe-curation-proposals/requirements.md](recipe-curation-proposals/requirements.md)、および個人向けの
+無料枠・月額 Pro・課金安全境界を定義する
+[individual-billing/requirements.md](individual-billing/requirements.md) です。
 コード、テスト、既存の技術文書、または `history/` の内容は、新しいプロダクト要件の根拠に
 なりません。
 
