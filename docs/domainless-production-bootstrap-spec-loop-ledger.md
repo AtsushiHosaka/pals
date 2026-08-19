@@ -19,9 +19,20 @@
 
 | Requirement | Current design/task coverage | Code/runtime evidence | Status | Next action |
 |---|---|---|---|---|
-| DPB-001–007 | `specs/domainless-production-bootstrap/{requirements,design,tasks}.md` | No implementation yet | Specification convergence pending | Targeted independent spec re-review, then `sdd-implement-spec` |
+| DPB-001–007 | `specs/domainless-production-bootstrap/{requirements,design,tasks}.md` | Terraform foundation implemented in `pals-infra` `1e9c162`; full release orchestration blocked on admission authority | Partial implementation evidence | Define signed admission input, then implement deployment script and DB release completion |
 
 ## Deferred evidence
 
 - No real AWS, Terraform apply, or secret operation has been run.
 - ACM/DNS/frontend public enablement remains intentionally deferred until a domain and certificate exist.
+
+## Implementation discovery
+
+- `pals-infra` commit `1e9c162` implements and tests the closed Terraform modes, secret
+  containers, private release task definition, and public-mode gate. It does not create
+  AWS resources.
+- The existing PJR foundation installer rejects an empty database without a previously
+  committed signed release admission. The release task cannot manufacture that admission
+  from database URLs alone without bypassing the release-authority boundary. The remaining
+  orchestration/release slice therefore needs an operator-supplied signed, prevalidated
+  admission artifact and a decision on its signing authority.
