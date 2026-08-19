@@ -76,6 +76,12 @@ values equal the request. A conflicting proposal ID/origin or a terminal proposa
 conflict reason. Unknown, absent, duplicate, or noncanonical members are invalid. Failed validation,
 authorization, lifecycle, or insert work rolls back the entire transaction.
 
+Successful propose and decision responses are exactly
+`{schema_version:"pals.recipe-curation-proposal-response.v1",proposal_id,origin_binding_sha256,
+state,current_event_sequence,proposal_reason_code,proposing_curator_principal}`. This summary is a
+projection of immutable proposal/event data only; it contains neither Origin-binding bytes nor proof,
+chat, account, explanation, or clarification data.
+
 The list request permits only the optional query members `after_proposal_id` and `limit`; duplicate,
 empty, unknown, or out-of-range members are `invalid_request`. Results sort by proposal ID's UTF-8
 bytes ascending. `after_proposal_id` is exclusive; `limit` defaults to 100 and is at most 100. Its
