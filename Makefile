@@ -1,17 +1,24 @@
 COMPOSE_ENV_FILE ?= $(if $(wildcard .env.local),.env.local,.env.example)
 COMPOSE := docker compose --env-file $(COMPOSE_ENV_FILE)
+PALS_LOCAL_ENV_FILE ?= .env.local
+PALS_LOCAL_COGNITO_COMPOSE := docker compose --project-name pals-local --env-file "$(PALS_LOCAL_ENV_FILE)" -f pals-infra/docker-compose.localstack.yml
 API_PYTHON ?= .venv/bin/python
 AGENT_PYTHON ?= .venv/bin/python
 OBSERVABILITY_PYTHON ?= .venv/bin/python
 LOAD_ENV = set -a; . ./$(COMPOSE_ENV_FILE); set +a;
 
-.PHONY: pals-up pals-qa dev-up dev-down dev-logs dev-ps api-deps api-test web-deps web-test web-build web-lint draft-admin-deps draft-admin-test agent-deps agent-test agent-lean-deps agent-evaluation-history agent-evaluation-smoke agent-evaluation-full agent-evaluation-compare observability-deps observability-test pals-scripts-test repository-gates infra-test test openapi
+.PHONY: pals-up pals-qa local-cognito-bootstrap dev-up dev-down dev-logs dev-ps api-deps api-test web-deps web-test web-build web-lint draft-admin-deps draft-admin-test agent-deps agent-test agent-lean-deps agent-evaluation-history agent-evaluation-smoke agent-evaluation-full agent-evaluation-compare observability-deps observability-test pals-scripts-test repository-gates infra-test test openapi
 
 pals-up:
 	./tests/e2e/run-local.sh --up-only
 
 pals-qa:
 	./tests/e2e/run-local.sh
+
+local-cognito-bootstrap:
+	@test -f "$(PALS_LOCAL_ENV_FILE)" || { printf '%s\n' 'Create .env.local before bootstrapping local Cognito.' >&2; exit 2; }
+	$(PALS_LOCAL_COGNITO_COMPOSE) up -d --wait cognito-local
+	python3 pals-scripts/bootstrap-local-cognito.py --env-file "$(PALS_LOCAL_ENV_FILE)"
 
 dev-up:
 	$(COMPOSE) up -d --wait postgres

@@ -41,8 +41,15 @@ To start the complete browser-testable PALS stack (web, API, worker, verifier,
 reconciler, Cognito Local, LocalStack, and PostgreSQL), use the canonical runner:
 
 ```bash
+make agent-deps
+make local-cognito-bootstrap
 make pals-up
 ```
+
+The first-time Cognito bootstrap creates or reuses the local User Pool and App
+Client, provisions the reviewer account from `.env.local`, verifies its login,
+and writes the generated local IDs back to that ignored file. If the reviewer
+password is absent, the helper generates one without printing it.
 
 Run the complete public-API university-math QA with `make pals-qa`. Both commands
 rebuild the checked-out application sources and use the layered E2E Compose files.

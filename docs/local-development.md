@@ -8,11 +8,16 @@ The full-stack QA workflow is explicit and separate.
 For browser QA or an end-to-end local session, start every required service with:
 
 ```bash
+make agent-deps
+make local-cognito-bootstrap
 make pals-up
 ```
 
 This is the canonical full-stack entry point. It rebuilds the checked-out API,
 web, worker, and verifier sources and starts the layered E2E Compose project.
+The Cognito bootstrap creates or reuses the loopback-only User Pool and App
+Client, provisions the reviewer account configured in `.env.local`, and verifies
+that password authentication succeeds before the web image is built.
 Run `make pals-qa` to start the same stack and execute the public-API QA fixture.
 
 ## Database
