@@ -1,0 +1,6 @@
+/.github/CODEOWNERS @AtsushiHosaka
+/.github/workflows/** @AtsushiHosaka
+/Makefile @AtsushiHosaka
+/docker-compose.yml @AtsushiHosaka
+/pals-scripts/** @AtsushiHosaka
+/.gitmodules @AtsushiHosaka

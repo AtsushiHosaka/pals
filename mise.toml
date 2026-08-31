@@ -1,0 +1,52 @@
+[tools]
+python = "3.12.13"
+node = "22.22.3"
+go = "1.26.2"
+terraform = "1.15.4"
+supabase = "2.101.0"
+"npm:firebase-tools" = "15.18.0"
+
+[tasks."oprover:venv"]
+description = "Create the local OProver tooling venv and install HF/MLX dependencies"
+run = """
+python -m venv .venv-oprover
+.venv-oprover/bin/python -m pip install -U pip huggingface_hub mlx-lm
+"""
+
+[tasks."oprover:download"]
+description = "Download OProver-32B safetensors from Hugging Face"
+depends = ["oprover:venv"]
+run = """
+BASE_DIR="${PALS_OPROVER_BASE_DIR:-$HOME/Models/PALS}"
+MODEL_ID="${PALS_OPROVER_HF_MODEL:-m-a-p/OProver-32B}"
+TARGET_DIR="${PALS_OPROVER_HF_DIR:-$BASE_DIR/OProver-32B}"
+mkdir -p "$TARGET_DIR"
+.venv-oprover/bin/hf download "$MODEL_ID" --local-dir "$TARGET_DIR" --exclude 'assets/*' --max-workers "${PALS_OPROVER_DOWNLOAD_WORKERS:-4}"
+"""
+
+[tasks."oprover:convert-mlx"]
+description = "Convert downloaded OProver-32B safetensors to local MLX 4bit format"
+depends = ["oprover:venv"]
+run = """
+BASE_DIR="${PALS_OPROVER_BASE_DIR:-$HOME/Models/PALS}"
+HF_DIR="${PALS_OPROVER_HF_DIR:-$BASE_DIR/OProver-32B}"
+MLX_DIR="${PALS_OPROVER_MLX_DIR:-$BASE_DIR/OProver-32B-MLX-4bit}"
+.venv-oprover/bin/mlx_lm.convert --hf-path "$HF_DIR" --mlx-path "$MLX_DIR" --quantize --q-bits "${PALS_OPROVER_Q_BITS:-4}" --q-group-size "${PALS_OPROVER_Q_GROUP_SIZE:-64}"
+"""
+
+[tasks."oprover:smoke"]
+description = "Run a short MLX generation smoke test with OProver-32B"
+depends = ["oprover:venv"]
+run = """
+BASE_DIR="${PALS_OPROVER_BASE_DIR:-$HOME/Models/PALS}"
+MLX_DIR="${PALS_OPROVER_MLX_DIR:-$BASE_DIR/OProver-32B-MLX-4bit}"
+.venv-oprover/bin/mlx_lm.generate --model "$MLX_DIR" --system-prompt 'You are a Lean 4 theorem prover. Return exactly one fenced Lean code block and no prose.' --prompt 'Prove this Lean theorem:\n```lean\nimport Mathlib\n\ntheorem test : True := by\n  trivial\n```\nReturn the complete Lean file.' --max-tokens 128 --temp 0 --verbose False
+"""
+
+[tasks."oprover:status"]
+description = "Show local OProver HF and MLX model sizes"
+run = """
+BASE_DIR="${PALS_OPROVER_BASE_DIR:-$HOME/Models/PALS}"
+du -sh "${PALS_OPROVER_HF_DIR:-$BASE_DIR/OProver-32B}" 2>/dev/null || true
+du -sh "${PALS_OPROVER_MLX_DIR:-$BASE_DIR/OProver-32B-MLX-4bit}" 2>/dev/null || true
+"""

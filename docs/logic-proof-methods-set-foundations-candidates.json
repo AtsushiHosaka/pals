@@ -1,0 +1,641 @@
+{
+  "schema_version": "pals.logic-proof-methods-set-foundations-candidates.v1",
+  "source": "PALS first-party authored, generic-OpenMath and Lean-verified candidate set",
+  "current_profile_card_count": 34,
+  "validation_contract": {
+    "generic_openmath": "Every card is validated by statement-semantics validation plus retrieval C14N validation while the manifest is generated.",
+    "lean": "Run with --verify-lean to compile the full witness batch in pals-agent/lean-workspace.",
+    "local_db": "Run with --verify-db --expected-db-count 253 to read-check local Draft ID and canonical-OpenMath collisions; no database write is performed."
+  },
+  "scope_note": "Bare proposition variables are not representable in the generic profile, so logic cards use concrete equality, order, membership, and subset atoms. Set variables remain untyped generic terms; cards avoid mixing carriers and make no typed-set claim beyond the ordinary single-carrier Lean witness.",
+  "induction_boundary": [
+    {
+      "excluded": "The general mathematical-induction schema: from P(0) and forall n, P(n) implies P(n+1), infer forall n, P(n).",
+      "why_current_profile_cannot_represent_it": "The generic profile has neither a Prop sort nor a binder for a predicate P : Nat -> Prop, and it has no induction or natural-recursion operator. Encoding P as a bare OMV would fail proposition validation."
+    },
+    {
+      "included": "A concrete theorem whose Lean witness uses induction, such as n + 1 <= 2^n.",
+      "why_safe": "Its statement is an ordinary quantified natural-number proposition using current quant1, setname1:N, arith1, relation1, and logic1 symbols; induction is retained as proof strategy rather than inserted into the theorem proposition."
+    }
+  ],
+  "cards": [
+    {
+      "id": "logic_eq_symmetry_real",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "equality_reasoning",
+      "difficulty": "introductory",
+      "canonical_statement": "For all real x and y, if x = y then y = x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use symmetry of equality as a direct proof.",
+      "sketch_steps": [
+        "setup: Introduce the variables together with the stated atomic hypotheses.",
+        "translate: Read the hypotheses as the corresponding logical assertions.",
+        "derive: Apply the indicated logical rule or its order/equality instance.",
+        "conclude: State the required proposition with its original quantifiers."
+      ],
+      "lean_witness": "example (x y : ℝ) : x = y → y = x := by intro h; exact h.symm"
+    },
+    {
+      "id": "logic_eq_transitivity_real",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "equality_reasoning",
+      "difficulty": "introductory",
+      "canonical_statement": "For all real x, y, and z, if x = y and y = z then x = z.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"z\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Chain the two equality hypotheses by transitivity.",
+      "sketch_steps": [
+        "setup: Introduce the variables together with the stated atomic hypotheses.",
+        "translate: Read the hypotheses as the corresponding logical assertions.",
+        "derive: Apply the indicated logical rule or its order/equality instance.",
+        "conclude: State the required proposition with its original quantifiers."
+      ],
+      "lean_witness": "example (x y z : ℝ) : x = y ∧ y = z → x = z := by rintro ⟨hxy, hyz⟩; exact hxy.trans hyz"
+    },
+    {
+      "id": "logic_eq_add_congruence_real",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "equality_substitution",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x, y, and z, if x = y then x + z = y + z.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"z\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Substitute equals for equals inside addition.",
+      "sketch_steps": [
+        "setup: Introduce the variables together with the stated atomic hypotheses.",
+        "translate: Read the hypotheses as the corresponding logical assertions.",
+        "derive: Apply the indicated logical rule or its order/equality instance.",
+        "conclude: State the required proposition with its original quantifiers."
+      ],
+      "lean_witness": "example (x y z : ℝ) : x = y → x + z = y + z := by intro h; rw [h]"
+    },
+    {
+      "id": "logic_lt_implies_not_ge_real",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "proof_by_contradiction",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if x < y then it is not the case that y ≤ x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"logic1\" name=\"not\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"y\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Assume the opposite weak inequality and contradict strict order.",
+      "sketch_steps": [
+        "setup: Introduce the variables together with the stated atomic hypotheses.",
+        "translate: Read the hypotheses as the corresponding logical assertions.",
+        "derive: Apply the indicated logical rule or its order/equality instance.",
+        "conclude: State the required proposition with its original quantifiers."
+      ],
+      "lean_witness": "example (x y : ℝ) : x < y → ¬ y ≤ x := by intro hlt hle; exact (not_le_of_gt hlt) hle"
+    },
+    {
+      "id": "logic_lt_implies_neq_real",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "proof_by_contradiction",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if x < y then x is not equal to y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Assume equality and rewrite the strict inequality into an irreflexive one.",
+      "sketch_steps": [
+        "setup: Introduce the variables together with the stated atomic hypotheses.",
+        "translate: Read the hypotheses as the corresponding logical assertions.",
+        "derive: Apply the indicated logical rule or its order/equality instance.",
+        "conclude: State the required proposition with its original quantifiers."
+      ],
+      "lean_witness": "example (x y : ℝ) : x < y → x ≠ y := by intro hlt heq; subst y; exact (lt_irrefl x) hlt"
+    },
+    {
+      "id": "logic_not_lt_self_real",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "proof_by_contradiction",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, it is not the case that x < x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"not\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Assume x < x and use irreflexivity of strict order.",
+      "sketch_steps": [
+        "setup: Introduce the variables together with the stated atomic hypotheses.",
+        "translate: Read the hypotheses as the corresponding logical assertions.",
+        "derive: Apply the indicated logical rule or its order/equality instance.",
+        "conclude: State the required proposition with its original quantifiers."
+      ],
+      "lean_witness": "example (x : ℝ) : ¬ x < x := lt_irrefl x"
+    },
+    {
+      "id": "logic_eq_or_neq_real",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "excluded_middle_instance",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, either x = y or x is not equal to y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply decidability of equality to this concrete equality proposition.",
+      "sketch_steps": [
+        "setup: Introduce the variables together with the stated atomic hypotheses.",
+        "translate: Read the hypotheses as the corresponding logical assertions.",
+        "derive: Apply the indicated logical rule or its order/equality instance.",
+        "conclude: State the required proposition with its original quantifiers."
+      ],
+      "lean_witness": "example (x y : ℝ) : x = y ∨ x ≠ y := eq_or_ne x y"
+    },
+    {
+      "id": "logic_not_neq_iff_eq_real",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "double_negation_instance",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, not (x ≠ y) if and only if x = y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"logic1\" name=\"not\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Prove each direction using equality reflexivity and a contradiction argument.",
+      "sketch_steps": [
+        "setup: Introduce the variables together with the stated atomic hypotheses.",
+        "translate: Read the hypotheses as the corresponding logical assertions.",
+        "derive: Apply the indicated logical rule or its order/equality instance.",
+        "conclude: State the required proposition with its original quantifiers."
+      ],
+      "lean_witness": "example (x y : ℝ) : (¬ x ≠ y) ↔ x = y := by\n  constructor\n  · intro h\n    exact by_contra fun hxy => h hxy\n  · intro h hxy\n    exact hxy h"
+    },
+    {
+      "id": "logic_not_lt_and_le_real",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "proof_by_contradiction",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, it is not the case that x < y and y ≤ x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"not\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"y\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Assume both order statements and derive the contradiction x < x.",
+      "sketch_steps": [
+        "setup: Introduce the variables together with the stated atomic hypotheses.",
+        "translate: Read the hypotheses as the corresponding logical assertions.",
+        "derive: Apply the indicated logical rule or its order/equality instance.",
+        "conclude: State the required proposition with its original quantifiers."
+      ],
+      "lean_witness": "example (x y : ℝ) : ¬ (x < y ∧ y ≤ x) := by rintro ⟨hlt, hle⟩; exact (not_le_of_gt hlt) hle"
+    },
+    {
+      "id": "logic_add_neq_contrapositive_real",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "contrapositive",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x, y, and z, if x + z ≠ y + z then x ≠ y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"z\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the contrapositive: equal inputs yield equal sums after adding z.",
+      "sketch_steps": [
+        "setup: Introduce the variables together with the stated atomic hypotheses.",
+        "translate: Read the hypotheses as the corresponding logical assertions.",
+        "derive: Apply the indicated logical rule or its order/equality instance.",
+        "conclude: State the required proposition with its original quantifiers."
+      ],
+      "lean_witness": "example (x y z : ℝ) : x + z ≠ y + z → x ≠ y := by intro hsum hxy; apply hsum; rw [hxy]"
+    },
+    {
+      "id": "logic_set_membership_union_iff",
+      "profile": "current_openmath_profile",
+      "domain": "set_foundations",
+      "level": "high_school_and_early_university",
+      "topic": "membership_characterization",
+      "difficulty": "introductory",
+      "canonical_statement": "For every element x and sets A, B, x belongs to A ∪ B if and only if x belongs to A or x belongs to B.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMV name=\"A\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMV name=\"B\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Unfold union membership into a disjunction.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary element and the displayed sets.",
+        "unfold: Translate the set operation into its membership condition.",
+        "logic: Apply the required conjunction, disjunction, or negation rule.",
+        "conclude: Reassemble the target membership proposition."
+      ],
+      "lean_witness": "example {α : Type} (x : α) (A B : Set α) : x ∈ A ∪ B ↔ x ∈ A ∨ x ∈ B := by simp"
+    },
+    {
+      "id": "logic_set_membership_intersection_iff",
+      "profile": "current_openmath_profile",
+      "domain": "set_foundations",
+      "level": "high_school_and_early_university",
+      "topic": "membership_characterization",
+      "difficulty": "introductory",
+      "canonical_statement": "For every element x and sets A, B, x belongs to A ∩ B if and only if x belongs to A and x belongs to B.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMV name=\"A\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMV name=\"B\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Unfold intersection membership into a conjunction.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary element and the displayed sets.",
+        "unfold: Translate the set operation into its membership condition.",
+        "logic: Apply the required conjunction, disjunction, or negation rule.",
+        "conclude: Reassemble the target membership proposition."
+      ],
+      "lean_witness": "example {α : Type} (x : α) (A B : Set α) : x ∈ A ∩ B ↔ x ∈ A ∧ x ∈ B := by simp"
+    },
+    {
+      "id": "logic_set_membership_difference_iff",
+      "profile": "current_openmath_profile",
+      "domain": "set_foundations",
+      "level": "high_school_and_early_university",
+      "topic": "membership_characterization",
+      "difficulty": "standard",
+      "canonical_statement": "For every element x and sets A, B, x belongs to A \\ B if and only if x belongs to A and x does not belong to B.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMV name=\"A\"/></OMA><OMA><OMS cd=\"logic1\" name=\"not\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMV name=\"B\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Unfold set difference membership into membership and nonmembership.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary element and the displayed sets.",
+        "unfold: Translate the set operation into its membership condition.",
+        "logic: Apply the required conjunction, disjunction, or negation rule.",
+        "conclude: Reassemble the target membership proposition."
+      ],
+      "lean_witness": "example {α : Type} (x : α) (A B : Set α) : x ∈ A \\ B ↔ x ∈ A ∧ x ∉ B := by simp"
+    },
+    {
+      "id": "logic_set_not_member_empty",
+      "profile": "current_openmath_profile",
+      "domain": "set_foundations",
+      "level": "high_school_and_early_university",
+      "topic": "empty_set",
+      "difficulty": "introductory",
+      "canonical_statement": "For every element x, x does not belong to the empty set.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"set1\" name=\"notin\"/><OMV name=\"x\"/><OMS cd=\"set1\" name=\"emptyset\"/></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Assume membership in the empty set and eliminate the impossible hypothesis.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary element and the displayed sets.",
+        "unfold: Translate the set operation into its membership condition.",
+        "logic: Apply the required conjunction, disjunction, or negation rule.",
+        "conclude: Reassemble the target membership proposition."
+      ],
+      "lean_witness": "example {α : Type} (x : α) : x ∉ (∅ : Set α) := by simp"
+    },
+    {
+      "id": "logic_set_subset_member_elim",
+      "profile": "current_openmath_profile",
+      "domain": "set_foundations",
+      "level": "high_school_and_early_university",
+      "topic": "subset_reasoning",
+      "difficulty": "introductory",
+      "canonical_statement": "For every element x and sets A, B, if A is a subset of B and x belongs to A, then x belongs to B.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMV name=\"A\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMV name=\"B\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the subset hypothesis to the displayed membership proof.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary candidate element of the source set.",
+        "unpack: Use the given subset or membership hypotheses.",
+        "derive: Apply the relevant inclusion rule to the element.",
+        "conclude: Since the element was arbitrary, establish the target subset or equality."
+      ],
+      "lean_witness": "example {α : Type} (x : α) (A B : Set α) : A ⊆ B → x ∈ A → x ∈ B := by intro h hx; exact h hx"
+    },
+    {
+      "id": "logic_set_subset_transitive",
+      "profile": "current_openmath_profile",
+      "domain": "set_foundations",
+      "level": "high_school_and_early_university",
+      "topic": "subset_reasoning",
+      "difficulty": "standard",
+      "canonical_statement": "For all sets A, B, C, if A ⊆ B and B ⊆ C then A ⊆ C.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"A\"/><OMV name=\"C\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the two inclusion maps successively to an arbitrary element.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary candidate element of the source set.",
+        "unpack: Use the given subset or membership hypotheses.",
+        "derive: Apply the relevant inclusion rule to the element.",
+        "conclude: Since the element was arbitrary, establish the target subset or equality."
+      ],
+      "lean_witness": "example {α : Type} (A B C : Set α) : A ⊆ B → B ⊆ C → A ⊆ C := by intro hAB hBC x hx; exact hBC (hAB hx)"
+    },
+    {
+      "id": "logic_set_union_subset_elim",
+      "profile": "current_openmath_profile",
+      "domain": "set_foundations",
+      "level": "high_school_and_early_university",
+      "topic": "subset_reasoning",
+      "difficulty": "standard",
+      "canonical_statement": "For all sets A, B, C, if A ⊆ C and B ⊆ C then A ∪ B ⊆ C.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"A\"/><OMV name=\"C\"/></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMV name=\"C\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Split membership in the union and use the corresponding inclusion hypothesis.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary candidate element of the source set.",
+        "unpack: Use the given subset or membership hypotheses.",
+        "derive: Apply the relevant inclusion rule to the element.",
+        "conclude: Since the element was arbitrary, establish the target subset or equality."
+      ],
+      "lean_witness": "example {α : Type} (A B C : Set α) : A ⊆ C → B ⊆ C → A ∪ B ⊆ C := by\n  intro hAC hBC x hx\n  rcases hx with hx | hx\n  · exact hAC hx\n  · exact hBC hx"
+    },
+    {
+      "id": "logic_set_subset_intersection_intro",
+      "profile": "current_openmath_profile",
+      "domain": "set_foundations",
+      "level": "high_school_and_early_university",
+      "topic": "subset_reasoning",
+      "difficulty": "standard",
+      "canonical_statement": "For all sets A, B, C, if C ⊆ A and C ⊆ B then C ⊆ A ∩ B.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"C\"/><OMV name=\"A\"/></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"C\"/><OMV name=\"B\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"C\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use both inclusion hypotheses to build intersection membership.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary candidate element of the source set.",
+        "unpack: Use the given subset or membership hypotheses.",
+        "derive: Apply the relevant inclusion rule to the element.",
+        "conclude: Since the element was arbitrary, establish the target subset or equality."
+      ],
+      "lean_witness": "example {α : Type} (A B C : Set α) : C ⊆ A → C ⊆ B → C ⊆ A ∩ B := by intro hCA hCB x hx; exact ⟨hCA hx, hCB hx⟩"
+    },
+    {
+      "id": "logic_set_difference_subset_left",
+      "profile": "current_openmath_profile",
+      "domain": "set_foundations",
+      "level": "high_school_and_early_university",
+      "topic": "subset_reasoning",
+      "difficulty": "introductory",
+      "canonical_statement": "For all sets A and B, A \\ B is a subset of A.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"set1\" name=\"subset\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMV name=\"A\"/></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Unpack difference membership and retain its A-membership component.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary candidate element of the source set.",
+        "unpack: Use the given subset or membership hypotheses.",
+        "derive: Apply the relevant inclusion rule to the element.",
+        "conclude: Since the element was arbitrary, establish the target subset or equality."
+      ],
+      "lean_witness": "example {α : Type} (A B : Set α) : A \\ B ⊆ A := by intro x hx; exact hx.1"
+    },
+    {
+      "id": "logic_set_union_absorption",
+      "profile": "current_openmath_profile",
+      "domain": "set_foundations",
+      "level": "high_school_and_early_university",
+      "topic": "set_algebra",
+      "difficulty": "standard",
+      "canonical_statement": "For all sets A and B, A ∪ (A ∩ B) = A.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA></OMA><OMV name=\"A\"/></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use extensionality; the extra intersection branch already implies membership in A.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary candidate element of the source set.",
+        "unpack: Use the given subset or membership hypotheses.",
+        "derive: Apply the relevant inclusion rule to the element.",
+        "conclude: Since the element was arbitrary, establish the target subset or equality."
+      ],
+      "lean_witness": "example {α : Type} (A B : Set α) : A ∪ (A ∩ B) = A := by\n  ext x\n  constructor\n  · intro hx\n    exact hx.elim (fun hA => hA) (fun hAB => hAB.1)\n  · intro hx\n    exact Or.inl hx"
+    },
+    {
+      "id": "logic_set_intersection_absorption",
+      "profile": "current_openmath_profile",
+      "domain": "set_foundations",
+      "level": "high_school_and_early_university",
+      "topic": "set_algebra",
+      "difficulty": "standard",
+      "canonical_statement": "For all sets A and B, A ∩ (A ∪ B) = A.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA></OMA><OMV name=\"A\"/></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use extensionality; membership in A supplies the required union branch.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary candidate element of the source set.",
+        "unpack: Use the given subset or membership hypotheses.",
+        "derive: Apply the relevant inclusion rule to the element.",
+        "conclude: Since the element was arbitrary, establish the target subset or equality."
+      ],
+      "lean_witness": "example {α : Type} (A B : Set α) : A ∩ (A ∪ B) = A := by\n  ext x\n  constructor\n  · intro hx\n    exact hx.1\n  · intro hx\n    exact ⟨hx, Or.inl hx⟩"
+    },
+    {
+      "id": "logic_set_difference_intersection_demorgan",
+      "profile": "current_openmath_profile",
+      "domain": "set_foundations",
+      "level": "high_school_and_early_university",
+      "topic": "set_algebra",
+      "difficulty": "advanced",
+      "canonical_statement": "For all sets A, B, C, A \\ (B ∩ C) = (A \\ B) ∪ (A \\ C).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"union\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMV name=\"C\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply extensionality and distribute a negated conjunction under the shared A-membership condition.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary candidate element of the source set.",
+        "unpack: Use the given subset or membership hypotheses.",
+        "derive: Apply the relevant inclusion rule to the element.",
+        "conclude: Since the element was arbitrary, establish the target subset or equality."
+      ],
+      "lean_witness": "example {α : Type} (A B C : Set α) : A \\ (B ∩ C) = (A \\ B) ∪ (A \\ C) := by\n  classical\n  ext x\n  constructor\n  · rintro ⟨hA, hnot⟩\n    by_cases hB : x ∈ B\n    · right\n      exact ⟨hA, fun hC => hnot ⟨hB, hC⟩⟩\n    · left\n      exact ⟨hA, hB⟩\n  · intro hx\n    rcases hx with hx | hx\n    · exact ⟨hx.1, fun hBC => hx.2 hBC.1⟩\n    · exact ⟨hx.1, fun hBC => hx.2 hBC.2⟩"
+    },
+    {
+      "id": "logic_set_extensionality_subset_antisymm",
+      "profile": "current_openmath_profile",
+      "domain": "set_foundations",
+      "level": "high_school_and_early_university",
+      "topic": "set_extensionality",
+      "difficulty": "standard",
+      "canonical_statement": "For all sets A and B, if A ⊆ B and B ⊆ A then A = B.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"B\"/><OMV name=\"A\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use antisymmetry of subset inclusion.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary candidate element of the source set.",
+        "unpack: Use the given subset or membership hypotheses.",
+        "derive: Apply the relevant inclusion rule to the element.",
+        "conclude: Since the element was arbitrary, establish the target subset or equality."
+      ],
+      "lean_witness": "example {α : Type} (A B : Set α) : A ⊆ B → B ⊆ A → A = B := by intro hAB hBA; exact Set.Subset.antisymm hAB hBA"
+    },
+    {
+      "id": "logic_set_subset_union_left",
+      "profile": "current_openmath_profile",
+      "domain": "set_foundations",
+      "level": "high_school_and_early_university",
+      "topic": "subset_reasoning",
+      "difficulty": "introductory",
+      "canonical_statement": "For all sets A and B, A is a subset of A ∪ B.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"A\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Map an arbitrary A-member into the left branch of the union.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary candidate element of the source set.",
+        "unpack: Use the given subset or membership hypotheses.",
+        "derive: Apply the relevant inclusion rule to the element.",
+        "conclude: Since the element was arbitrary, establish the target subset or equality."
+      ],
+      "lean_witness": "example {α : Type} (A B : Set α) : A ⊆ A ∪ B := by intro x hx; exact Or.inl hx"
+    },
+    {
+      "id": "logic_set_subset_union_right",
+      "profile": "current_openmath_profile",
+      "domain": "set_foundations",
+      "level": "high_school_and_early_university",
+      "topic": "subset_reasoning",
+      "difficulty": "introductory",
+      "canonical_statement": "For all sets A and B, B is a subset of A ∪ B.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"B\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Map an arbitrary B-member into the right branch of the union.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary candidate element of the source set.",
+        "unpack: Use the given subset or membership hypotheses.",
+        "derive: Apply the relevant inclusion rule to the element.",
+        "conclude: Since the element was arbitrary, establish the target subset or equality."
+      ],
+      "lean_witness": "example {α : Type} (A B : Set α) : B ⊆ A ∪ B := by intro x hx; exact Or.inr hx"
+    },
+    {
+      "id": "logic_forall_real_exists_add_inverse",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "quantifiers_and_witnesses",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, there exists real y such that x + y = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMBIND><OMS cd=\"quant1\" name=\"exists\"/><OMBVAR><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Construct the additive inverse as the existential witness.",
+      "sketch_steps": [
+        "setup: Introduce the universally quantified variable and its domain premise.",
+        "choose: Construct the required witness explicitly.",
+        "domain: Verify that the witness lies in the requested domain.",
+        "verify: Substitute the witness into the target relation.",
+        "conclude: Package the witness under the existential quantifier."
+      ],
+      "lean_witness": "example (x : ℝ) : ∃ y : ℝ, x + y = 0 := by refine ⟨-x, by ring⟩"
+    },
+    {
+      "id": "logic_forall_real_nonzero_exists_inverse",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "quantifiers_and_witnesses",
+      "difficulty": "standard",
+      "canonical_statement": "For every nonzero real x, there exists real y such that x*y = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMBIND><OMS cd=\"quant1\" name=\"exists\"/><OMBVAR><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the reciprocal x⁻¹ as the witness after checking x is nonzero.",
+      "sketch_steps": [
+        "setup: Introduce the universally quantified variable and its domain premise.",
+        "choose: Construct the required witness explicitly.",
+        "domain: Verify that the witness lies in the requested domain.",
+        "verify: Substitute the witness into the target relation.",
+        "conclude: Package the witness under the existential quantifier."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : x ≠ 0) : ∃ y : ℝ, x*y = 1 := by exact ⟨x⁻¹, mul_inv_cancel₀ hx⟩"
+    },
+    {
+      "id": "logic_forall_natural_exists_larger",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "quantifiers_and_witnesses",
+      "difficulty": "introductory",
+      "canonical_statement": "For every natural number n, there exists natural number m with n < m.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMBIND><OMS cd=\"quant1\" name=\"exists\"/><OMBVAR><OMV name=\"m\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"m\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"n\"/><OMV name=\"m\"/></OMA></OMA></OMBIND></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Choose the successor n + 1 and use the strict successor inequality.",
+      "sketch_steps": [
+        "setup: Introduce the universally quantified variable and its domain premise.",
+        "choose: Construct the required witness explicitly.",
+        "domain: Verify that the witness lies in the requested domain.",
+        "verify: Substitute the witness into the target relation.",
+        "conclude: Package the witness under the existential quantifier."
+      ],
+      "lean_witness": "example (n : ℕ) : ∃ m : ℕ, n < m := ⟨n + 1, Nat.lt_succ_self n⟩"
+    },
+    {
+      "id": "logic_no_negative_natural",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "quantified_negation",
+      "difficulty": "introductory",
+      "canonical_statement": "No natural number n satisfies n < 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"logic1\" name=\"not\"/><OMBIND><OMS cd=\"quant1\" name=\"exists\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"n\"/><OMI>0</OMI></OMA></OMA></OMBIND></OMA></OMOBJ>",
+      "proof_strategy": "Assume an existential witness and contradict nonnegativity of natural numbers.",
+      "sketch_steps": [
+        "setup: Introduce the variables together with the stated atomic hypotheses.",
+        "translate: Read the hypotheses as the corresponding logical assertions.",
+        "derive: Apply the indicated logical rule or its order/equality instance.",
+        "conclude: State the required proposition with its original quantifiers."
+      ],
+      "lean_witness": "example : ¬ ∃ n : ℕ, n < 0 := by rintro ⟨n, hn⟩; exact (Nat.not_lt_zero n) hn"
+    },
+    {
+      "id": "logic_natural_nonzero_positive",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "quantified_implication",
+      "difficulty": "standard",
+      "canonical_statement": "Every nonzero natural number n is positive.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"n\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMI>0</OMI><OMV name=\"n\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the natural-number dichotomy between zero and positive values.",
+      "sketch_steps": [
+        "setup: Introduce the variables together with the stated atomic hypotheses.",
+        "translate: Read the hypotheses as the corresponding logical assertions.",
+        "derive: Apply the indicated logical rule or its order/equality instance.",
+        "conclude: State the required proposition with its original quantifiers."
+      ],
+      "lean_witness": "example (n : ℕ) : n ≠ 0 → 0 < n := by intro hn; exact Nat.pos_of_ne_zero hn"
+    },
+    {
+      "id": "logic_natural_le_zero_eq_zero",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "quantified_implication",
+      "difficulty": "standard",
+      "canonical_statement": "Every natural number n at most zero equals zero.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"n\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"n\"/><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the least-element property of zero in the natural-number order.",
+      "sketch_steps": [
+        "setup: Introduce the variables together with the stated atomic hypotheses.",
+        "translate: Read the hypotheses as the corresponding logical assertions.",
+        "derive: Apply the indicated logical rule or its order/equality instance.",
+        "conclude: State the required proposition with its original quantifiers."
+      ],
+      "lean_witness": "example (n : ℕ) : n ≤ 0 → n = 0 := by intro hn; exact Nat.eq_zero_of_le_zero hn"
+    },
+    {
+      "id": "induction_nat_add_zero",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "mathematical_induction_instance",
+      "difficulty": "introductory",
+      "canonical_statement": "For every natural number n, n + 0 = n.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"n\"/><OMI>0</OMI></OMA><OMV name=\"n\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Prove the concrete natural-number identity by induction on n.",
+      "sketch_steps": [
+        "setup: State the proposition for an arbitrary natural number n.",
+        "base_case: Verify the claim at n = 0.",
+        "inductive_step: Assume the claim for n and rewrite the n + 1 case.",
+        "close_step: Apply the induction hypothesis and normalize the natural-number arithmetic.",
+        "conclude: Invoke induction to obtain the result for every natural number."
+      ],
+      "lean_witness": "example (n : ℕ) : n + 0 = n := by induction n with | zero => norm_num | succ n ih => omega"
+    },
+    {
+      "id": "induction_nat_mul_one",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "mathematical_induction_instance",
+      "difficulty": "introductory",
+      "canonical_statement": "For every natural number n, n*1 = n.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"n\"/><OMI>1</OMI></OMA><OMV name=\"n\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Prove the concrete multiplicative identity by induction on n.",
+      "sketch_steps": [
+        "setup: State the proposition for an arbitrary natural number n.",
+        "base_case: Verify the claim at n = 0.",
+        "inductive_step: Assume the claim for n and rewrite the n + 1 case.",
+        "close_step: Apply the induction hypothesis and normalize the natural-number arithmetic.",
+        "conclude: Invoke induction to obtain the result for every natural number."
+      ],
+      "lean_witness": "example (n : ℕ) : n * 1 = n := by induction n with | zero => norm_num | succ n ih => omega"
+    },
+    {
+      "id": "induction_nat_power_two_bound",
+      "profile": "current_openmath_profile",
+      "domain": "logic_and_proof_methods",
+      "level": "high_school_and_early_university",
+      "topic": "mathematical_induction_instance",
+      "difficulty": "advanced",
+      "canonical_statement": "For every natural number n, n + 1 ≤ 2^n.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"n\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMI>2</OMI><OMV name=\"n\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use induction and double the induction bound in the successor step.",
+      "sketch_steps": [
+        "setup: State the proposition for an arbitrary natural number n.",
+        "base_case: Verify the claim at n = 0.",
+        "inductive_step: Assume the claim for n and rewrite the n + 1 case.",
+        "close_step: Apply the induction hypothesis and normalize the natural-number arithmetic.",
+        "conclude: Invoke induction to obtain the result for every natural number."
+      ],
+      "lean_witness": "example (n : ℕ) : n + 1 ≤ 2^n := by induction n with | zero => norm_num | succ n ih => rw [pow_succ]; omega"
+    }
+  ]
+}

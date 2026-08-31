@@ -1,0 +1,603 @@
+{
+  "schema_version": "pals.high-school-trigonometry-expansion-candidates.v1",
+  "source": "PALS first-party authored, generic-OpenMath and Lean-verified candidate set",
+  "current_profile_card_count": 30,
+  "topic_counts": {
+    "addition_and_subtraction": 4,
+    "multiple_angle": 2,
+    "parity_and_zero_values": 6,
+    "product_to_sum": 4,
+    "sine_cosine_algebra": 11,
+    "tangent_with_nonzero_denominator": 3
+  },
+  "scope_note": "All cards are closed real-valued identities or inequalities using only current generic transc1:sin/cos/tan, arithmetic, relations, logic, and real-membership premises. Tangent cancellation cards explicitly require cos(x) != 0.",
+  "validation_contract": {
+    "generic_openmath": "Every card runs statement-semantics validation, generic retrieval C14N, and exact-C14N validation while generated.",
+    "lean": "Pass --verify-lean to compile one temporary Lean file containing all 30 witnesses in pals-agent/lean-workspace.",
+    "local_db": "Pass --verify-db --expected-db-count 335 to read-check local Draft IDs and strict/legacy C14N collisions. This command does not write the database."
+  },
+  "excluded_backlog": [
+    {
+      "item": "General-angle solution sets such as sin(x)=a",
+      "reason": "They need pi and inverse-trigonometric values or a periodic solution-set object; neither is typed by the current generic profile."
+    },
+    {
+      "item": "Inverse trigonometric functions and branch-sensitive identities",
+      "reason": "The current profile has no asin/acos/atan symbols, interval/branch typing, or principal-value contract."
+    },
+    {
+      "item": "Complex trigonometric identities",
+      "reason": "They require a complex carrier and typed coercions; use the separate typed complex profile proposal instead."
+    },
+    {
+      "item": "Unqualified tangent cancellation at cosine zeros",
+      "reason": "Generic division is totalized, whereas the high-school tangent function is partial at those angles. Included cancellation claims state cos(x) != 0 explicitly."
+    }
+  ],
+  "cards": [
+    {
+      "id": "trig_expand_sin_neg",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "parity_and_zero_values",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, sin(-x) = -sin(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use that sine is odd.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real angle x.",
+        "substitute: Replace the angle by its additive inverse.",
+        "symmetry: Apply the parity theorem for the named trigonometric function.",
+        "conclude: Normalize the resulting sign or unchanged value."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.sin (-x) = -Real.sin x := Real.sin_neg x"
+    },
+    {
+      "id": "trig_expand_cos_neg",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "parity_and_zero_values",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, cos(-x) = cos(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use that cosine is even.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real angle x.",
+        "substitute: Replace the angle by its additive inverse.",
+        "symmetry: Apply the parity theorem for the named trigonometric function.",
+        "conclude: Normalize the resulting sign or unchanged value."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.cos (-x) = Real.cos x := Real.cos_neg x"
+    },
+    {
+      "id": "trig_expand_tan_neg",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "parity_and_zero_values",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, tan(-x) = -tan(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"tan\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMA><OMS cd=\"transc1\" name=\"tan\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use that tangent is odd.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real angle x.",
+        "substitute: Replace the angle by its additive inverse.",
+        "symmetry: Apply the parity theorem for the named trigonometric function.",
+        "conclude: Normalize the resulting sign or unchanged value."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.tan (-x) = -Real.tan x := Real.tan_neg x"
+    },
+    {
+      "id": "trig_expand_sin_zero",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "parity_and_zero_values",
+      "difficulty": "introductory",
+      "canonical_statement": "sin(0) = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMI>0</OMI></OMA><OMI>0</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Evaluate sine at zero.",
+      "sketch_steps": [
+        "setup: Evaluate the named trigonometric function at the real angle 0.",
+        "definition: Use the zero-angle value theorem.",
+        "normalize: Simplify the resulting real constant.",
+        "conclude: State the exact zero-angle equality."
+      ],
+      "lean_witness": "example : Real.sin 0 = 0 := Real.sin_zero"
+    },
+    {
+      "id": "trig_expand_cos_zero",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "parity_and_zero_values",
+      "difficulty": "introductory",
+      "canonical_statement": "cos(0) = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMI>0</OMI></OMA><OMI>1</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Evaluate cosine at zero.",
+      "sketch_steps": [
+        "setup: Evaluate the named trigonometric function at the real angle 0.",
+        "definition: Use the zero-angle value theorem.",
+        "normalize: Simplify the resulting real constant.",
+        "conclude: State the exact zero-angle equality."
+      ],
+      "lean_witness": "example : Real.cos 0 = 1 := Real.cos_zero"
+    },
+    {
+      "id": "trig_expand_tan_zero",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "parity_and_zero_values",
+      "difficulty": "introductory",
+      "canonical_statement": "tan(0) = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"tan\"/><OMI>0</OMI></OMA><OMI>0</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Evaluate tangent at zero.",
+      "sketch_steps": [
+        "setup: Evaluate the named trigonometric function at the real angle 0.",
+        "definition: Use the zero-angle value theorem.",
+        "normalize: Simplify the resulting real constant.",
+        "conclude: State the exact zero-angle equality."
+      ],
+      "lean_witness": "example : Real.tan 0 = 0 := Real.tan_zero"
+    },
+    {
+      "id": "trig_expand_sin_add",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "addition_and_subtraction",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, sin(x + y) = sin(x)*cos(y) + cos(x)*sin(y).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the sine addition formula.",
+      "sketch_steps": [
+        "setup: Introduce arbitrary real angles x and y.",
+        "decompose: Identify the displayed angle as a sum or difference.",
+        "formula: Apply the corresponding addition or subtraction formula.",
+        "normalize: Preserve the displayed order of the real products.",
+        "conclude: Obtain the requested trigonometric identity."
+      ],
+      "lean_witness": "example (x y : ℝ) : Real.sin (x + y) = Real.sin x * Real.cos y + Real.cos x * Real.sin y := Real.sin_add x y"
+    },
+    {
+      "id": "trig_expand_cos_add",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "addition_and_subtraction",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, cos(x + y) = cos(x)*cos(y) - sin(x)*sin(y).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the cosine addition formula.",
+      "sketch_steps": [
+        "setup: Introduce arbitrary real angles x and y.",
+        "decompose: Identify the displayed angle as a sum or difference.",
+        "formula: Apply the corresponding addition or subtraction formula.",
+        "normalize: Preserve the displayed order of the real products.",
+        "conclude: Obtain the requested trigonometric identity."
+      ],
+      "lean_witness": "example (x y : ℝ) : Real.cos (x + y) = Real.cos x * Real.cos y - Real.sin x * Real.sin y := Real.cos_add x y"
+    },
+    {
+      "id": "trig_expand_sin_sub",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "addition_and_subtraction",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, sin(x - y) = sin(x)*cos(y) - cos(x)*sin(y).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the sine subtraction formula.",
+      "sketch_steps": [
+        "setup: Introduce arbitrary real angles x and y.",
+        "decompose: Identify the displayed angle as a sum or difference.",
+        "formula: Apply the corresponding addition or subtraction formula.",
+        "normalize: Preserve the displayed order of the real products.",
+        "conclude: Obtain the requested trigonometric identity."
+      ],
+      "lean_witness": "example (x y : ℝ) : Real.sin (x - y) = Real.sin x * Real.cos y - Real.cos x * Real.sin y := Real.sin_sub x y"
+    },
+    {
+      "id": "trig_expand_cos_sub",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "addition_and_subtraction",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, cos(x - y) = cos(x)*cos(y) + sin(x)*sin(y).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the cosine subtraction formula.",
+      "sketch_steps": [
+        "setup: Introduce arbitrary real angles x and y.",
+        "decompose: Identify the displayed angle as a sum or difference.",
+        "formula: Apply the corresponding addition or subtraction formula.",
+        "normalize: Preserve the displayed order of the real products.",
+        "conclude: Obtain the requested trigonometric identity."
+      ],
+      "lean_witness": "example (x y : ℝ) : Real.cos (x - y) = Real.cos x * Real.cos y + Real.sin x * Real.sin y := Real.cos_sub x y"
+    },
+    {
+      "id": "trig_expand_sin_sum_product",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "product_to_sum",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, sin(x + y) + sin(x - y) = 2*sin(x)*cos(y).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Add the sine addition and subtraction formulas.",
+      "sketch_steps": [
+        "setup: Write the relevant addition and subtraction formulas at x and y.",
+        "expand: Replace each trigonometric term by its sine or cosine expansion.",
+        "cancel: Add or subtract the expansions to cancel the opposite terms.",
+        "factor: Factor the common real product and the coefficient 2.",
+        "conclude: State the product-to-sum identity."
+      ],
+      "lean_witness": "example (x y : ℝ) : Real.sin (x + y) + Real.sin (x - y) = 2 * Real.sin x * Real.cos y := by rw [Real.sin_add, Real.sin_sub]; ring"
+    },
+    {
+      "id": "trig_expand_sin_difference_product",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "product_to_sum",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, sin(x + y) - sin(x - y) = 2*cos(x)*sin(y).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Subtract the sine subtraction formula from the sine addition formula.",
+      "sketch_steps": [
+        "setup: Write the relevant addition and subtraction formulas at x and y.",
+        "expand: Replace each trigonometric term by its sine or cosine expansion.",
+        "cancel: Add or subtract the expansions to cancel the opposite terms.",
+        "factor: Factor the common real product and the coefficient 2.",
+        "conclude: State the product-to-sum identity."
+      ],
+      "lean_witness": "example (x y : ℝ) : Real.sin (x + y) - Real.sin (x - y) = 2 * Real.cos x * Real.sin y := by rw [Real.sin_add, Real.sin_sub]; ring"
+    },
+    {
+      "id": "trig_expand_cos_sum_product",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "product_to_sum",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, cos(x + y) + cos(x - y) = 2*cos(x)*cos(y).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Add the cosine addition and subtraction formulas.",
+      "sketch_steps": [
+        "setup: Write the relevant addition and subtraction formulas at x and y.",
+        "expand: Replace each trigonometric term by its sine or cosine expansion.",
+        "cancel: Add or subtract the expansions to cancel the opposite terms.",
+        "factor: Factor the common real product and the coefficient 2.",
+        "conclude: State the product-to-sum identity."
+      ],
+      "lean_witness": "example (x y : ℝ) : Real.cos (x + y) + Real.cos (x - y) = 2 * Real.cos x * Real.cos y := by rw [Real.cos_add, Real.cos_sub]; ring"
+    },
+    {
+      "id": "trig_expand_cos_difference_product",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "product_to_sum",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, cos(x - y) - cos(x + y) = 2*sin(x)*sin(y).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Subtract the cosine addition formula from the cosine subtraction formula.",
+      "sketch_steps": [
+        "setup: Write the relevant addition and subtraction formulas at x and y.",
+        "expand: Replace each trigonometric term by its sine or cosine expansion.",
+        "cancel: Add or subtract the expansions to cancel the opposite terms.",
+        "factor: Factor the common real product and the coefficient 2.",
+        "conclude: State the product-to-sum identity."
+      ],
+      "lean_witness": "example (x y : ℝ) : Real.cos (x - y) - Real.cos (x + y) = 2 * Real.sin x * Real.sin y := by rw [Real.cos_add, Real.cos_sub]; ring"
+    },
+    {
+      "id": "trig_expand_sin_triple_angle",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "multiple_angle",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real x, sin(3*x) = 3*sin(x) - 4*sin(x)^3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>4</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMI>3</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand sin(2x + x), then use the double-angle and Pythagorean identities.",
+      "sketch_steps": [
+        "setup: Introduce arbitrary real angles x and y.",
+        "decompose: Identify the displayed angle as a sum or difference.",
+        "formula: Apply the corresponding addition or subtraction formula.",
+        "normalize: Preserve the displayed order of the real products.",
+        "conclude: Obtain the requested trigonometric identity."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.sin (3*x) = 3 * Real.sin x - 4 * Real.sin x ^ 3 := by\n  calc\n    Real.sin (3*x) = Real.sin (2*x + x) := by congr 1 <;> ring\n    _ = 3 * Real.sin x - 4 * Real.sin x ^ 3 := by\n      rw [Real.sin_add, Real.sin_two_mul, Real.cos_two_mul]\n      have h := Real.sin_sq_add_cos_sq x\n      linear_combination 4 * Real.sin x * h"
+    },
+    {
+      "id": "trig_expand_cos_triple_angle",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "multiple_angle",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real x, cos(3*x) = 4*cos(x)^3 - 3*cos(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>4</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand cos(2x + x), then use the double-angle and Pythagorean identities.",
+      "sketch_steps": [
+        "setup: Introduce arbitrary real angles x and y.",
+        "decompose: Identify the displayed angle as a sum or difference.",
+        "formula: Apply the corresponding addition or subtraction formula.",
+        "normalize: Preserve the displayed order of the real products.",
+        "conclude: Obtain the requested trigonometric identity."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.cos (3*x) = 4 * Real.cos x ^ 3 - 3 * Real.cos x := by\n  calc\n    Real.cos (3*x) = Real.cos (2*x + x) := by congr 1 <;> ring\n    _ = 4 * Real.cos x ^ 3 - 3 * Real.cos x := by\n      rw [Real.cos_add, Real.cos_two_mul, Real.sin_two_mul]\n      have h := Real.sin_sq_add_cos_sq x\n      linear_combination -2 * Real.cos x * h"
+    },
+    {
+      "id": "trig_expand_sum_square_identity",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "sine_cosine_algebra",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, (sin(x) + cos(x))^2 = 1 + 2*sin(x)*cos(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand the square and substitute the Pythagorean identity.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real angle x.",
+        "identity: Record sin(x)^2 + cos(x)^2 = 1.",
+        "square: Use nonnegativity of the displayed square or product of squares.",
+        "rearrange: Expand and isolate the requested trigonometric expression.",
+        "conclude: Read off the claimed real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : (Real.sin x + Real.cos x)^2 = 1 + 2 * Real.sin x * Real.cos x := by nlinarith [Real.sin_sq_add_cos_sq x]"
+    },
+    {
+      "id": "trig_expand_difference_square_identity",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "sine_cosine_algebra",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, (sin(x) - cos(x))^2 = 1 - 2*sin(x)*cos(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand the square and substitute the Pythagorean identity.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real angle x.",
+        "identity: Record sin(x)^2 + cos(x)^2 = 1.",
+        "square: Use nonnegativity of the displayed square or product of squares.",
+        "rearrange: Expand and isolate the requested trigonometric expression.",
+        "conclude: Read off the claimed real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : (Real.sin x - Real.cos x)^2 = 1 - 2 * Real.sin x * Real.cos x := by nlinarith [Real.sin_sq_add_cos_sq x]"
+    },
+    {
+      "id": "trig_expand_sin_square_le_one",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "sine_cosine_algebra",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, sin(x)^2 ≤ 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the standard squared-sine bound.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real angle x.",
+        "identity: Record sin(x)^2 + cos(x)^2 = 1.",
+        "square: Use nonnegativity of the displayed square or product of squares.",
+        "rearrange: Expand and isolate the requested trigonometric expression.",
+        "conclude: Read off the claimed real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.sin x ^ 2 ≤ 1 := Real.sin_sq_le_one x"
+    },
+    {
+      "id": "trig_expand_cos_square_le_one",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "sine_cosine_algebra",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, cos(x)^2 ≤ 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the standard squared-cosine bound.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real angle x.",
+        "identity: Record sin(x)^2 + cos(x)^2 = 1.",
+        "square: Use nonnegativity of the displayed square or product of squares.",
+        "rearrange: Expand and isolate the requested trigonometric expression.",
+        "conclude: Read off the claimed real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.cos x ^ 2 ≤ 1 := Real.cos_sq_le_one x"
+    },
+    {
+      "id": "trig_expand_square_product_le_quarter",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "sine_cosine_algebra",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real x, sin(x)^2*cos(x)^2 ≤ 1/4.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMI>4</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply nonnegativity of (sin(x)^2 - cos(x)^2)^2 together with the Pythagorean identity.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real angle x.",
+        "identity: Record sin(x)^2 + cos(x)^2 = 1.",
+        "square: Use nonnegativity of the displayed square or product of squares.",
+        "rearrange: Expand and isolate the requested trigonometric expression.",
+        "conclude: Read off the claimed real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.sin x ^ 2 * Real.cos x ^ 2 ≤ 1 / 4 := by nlinarith [Real.sin_sq_add_cos_sq x, sq_nonneg (Real.sin x ^ 2 - Real.cos x ^ 2)]"
+    },
+    {
+      "id": "trig_expand_fourth_power_upper_bound",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "sine_cosine_algebra",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real x, sin(x)^4 + cos(x)^4 ≤ 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMI>4</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>4</OMI></OMA></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand the square of sin(x)^2 + cos(x)^2 and discard the nonnegative cross term.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real angle x.",
+        "identity: Record sin(x)^2 + cos(x)^2 = 1.",
+        "square: Use nonnegativity of the displayed square or product of squares.",
+        "rearrange: Expand and isolate the requested trigonometric expression.",
+        "conclude: Read off the claimed real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.sin x ^ 4 + Real.cos x ^ 4 ≤ 1 := by nlinarith [sq_nonneg (Real.sin x), sq_nonneg (Real.cos x), mul_nonneg (sq_nonneg (Real.sin x)) (sq_nonneg (Real.cos x)), Real.sin_sq_add_cos_sq x]"
+    },
+    {
+      "id": "trig_expand_fourth_power_product_identity",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "sine_cosine_algebra",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real x, sin(x)^4 + cos(x)^4 = 1 - 2*sin(x)^2*cos(x)^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMI>4</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>4</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Square the Pythagorean identity and rearrange its cross term.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real angle x.",
+        "identity: Record sin(x)^2 + cos(x)^2 = 1.",
+        "square: Use nonnegativity of the displayed square or product of squares.",
+        "rearrange: Expand and isolate the requested trigonometric expression.",
+        "conclude: Read off the claimed real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.sin x ^ 4 + Real.cos x ^ 4 = 1 - 2 * Real.sin x ^ 2 * Real.cos x ^ 2 := by have h := Real.sin_sq_add_cos_sq x; nlinarith [show (Real.sin x ^ 2 + Real.cos x ^ 2)^2 = 1 from by rw [h]; norm_num]"
+    },
+    {
+      "id": "trig_expand_square_difference_product_identity",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "sine_cosine_algebra",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real x, (sin(x)^2 - cos(x)^2)^2 = 1 - 4*sin(x)^2*cos(x)^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>4</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand the square difference and square the Pythagorean identity.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real angle x.",
+        "identity: Record sin(x)^2 + cos(x)^2 = 1.",
+        "square: Use nonnegativity of the displayed square or product of squares.",
+        "rearrange: Expand and isolate the requested trigonometric expression.",
+        "conclude: Read off the claimed real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : (Real.sin x ^ 2 - Real.cos x ^ 2)^2 = 1 - 4 * Real.sin x ^ 2 * Real.cos x ^ 2 := by have h := Real.sin_sq_add_cos_sq x; nlinarith [show (Real.sin x ^ 2 + Real.cos x ^ 2)^2 = 1 from by rw [h]; norm_num]"
+    },
+    {
+      "id": "trig_expand_sum_square_le_two",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "sine_cosine_algebra",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, (sin(x) + cos(x))^2 ≤ 2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA></OMA><OMI>2</OMI></OMA><OMI>2</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use nonnegativity of (sin(x) - cos(x))^2 with the Pythagorean identity.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real angle x.",
+        "identity: Record sin(x)^2 + cos(x)^2 = 1.",
+        "square: Use nonnegativity of the displayed square or product of squares.",
+        "rearrange: Expand and isolate the requested trigonometric expression.",
+        "conclude: Read off the claimed real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : (Real.sin x + Real.cos x)^2 ≤ 2 := by nlinarith [Real.sin_sq_add_cos_sq x, sq_nonneg (Real.sin x - Real.cos x)]"
+    },
+    {
+      "id": "trig_expand_difference_square_le_two",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "sine_cosine_algebra",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, (sin(x) - cos(x))^2 ≤ 2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA></OMA><OMI>2</OMI></OMA><OMI>2</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use nonnegativity of (sin(x) + cos(x))^2 with the Pythagorean identity.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real angle x.",
+        "identity: Record sin(x)^2 + cos(x)^2 = 1.",
+        "square: Use nonnegativity of the displayed square or product of squares.",
+        "rearrange: Expand and isolate the requested trigonometric expression.",
+        "conclude: Read off the claimed real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : (Real.sin x - Real.cos x)^2 ≤ 2 := by nlinarith [Real.sin_sq_add_cos_sq x, sq_nonneg (Real.sin x + Real.cos x)]"
+    },
+    {
+      "id": "trig_expand_square_product_nonnegative",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "sine_cosine_algebra",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, 0 ≤ sin(x)^2*cos(x)^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "A product of two squares is nonnegative.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real angle x.",
+        "identity: Record sin(x)^2 + cos(x)^2 = 1.",
+        "square: Use nonnegativity of the displayed square or product of squares.",
+        "rearrange: Expand and isolate the requested trigonometric expression.",
+        "conclude: Read off the claimed real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : 0 ≤ Real.sin x ^ 2 * Real.cos x ^ 2 := mul_nonneg (sq_nonneg _) (sq_nonneg _)"
+    },
+    {
+      "id": "trig_expand_tan_times_cos",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "tangent_with_nonzero_denominator",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if cos(x) is not equal to 0, then tan(x)*cos(x) = sin(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"transc1\" name=\"tan\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the quotient definition of tangent and cancel the certified nonzero cosine.",
+      "sketch_steps": [
+        "setup: Introduce a real angle x and assume cos(x) is nonzero.",
+        "definition: Replace tan(x) by sin(x)/cos(x).",
+        "clear_denominator: Multiply only by the certified nonzero cosine factor.",
+        "identity: Use sin(x)^2 + cos(x)^2 = 1 when needed.",
+        "conclude: Simplify to the requested tangent equality."
+      ],
+      "lean_witness": "example (x : ℝ) (h : Real.cos x ≠ 0) : Real.tan x * Real.cos x = Real.sin x := by rw [Real.tan_eq_sin_div_cos]; field_simp"
+    },
+    {
+      "id": "trig_expand_tan_square_plus_one",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "tangent_with_nonzero_denominator",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real x, if cos(x) is not equal to 0, then tan(x)^2 + 1 = 1/cos(x)^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"tan\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Replace tangent by a quotient, clear the nonzero denominator, and use the Pythagorean identity.",
+      "sketch_steps": [
+        "setup: Introduce a real angle x and assume cos(x) is nonzero.",
+        "definition: Replace tan(x) by sin(x)/cos(x).",
+        "clear_denominator: Multiply only by the certified nonzero cosine factor.",
+        "identity: Use sin(x)^2 + cos(x)^2 = 1 when needed.",
+        "conclude: Simplify to the requested tangent equality."
+      ],
+      "lean_witness": "example (x : ℝ) (h : Real.cos x ≠ 0) : Real.tan x ^ 2 + 1 = 1 / Real.cos x ^ 2 := by rw [Real.tan_eq_sin_div_cos, div_pow]; field_simp; nlinarith [Real.sin_sq_add_cos_sq x]"
+    },
+    {
+      "id": "trig_expand_tan_square_times_cos_square",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_trigonometry",
+      "level": "high_school",
+      "topic": "tangent_with_nonzero_denominator",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real x, if cos(x) is not equal to 0, then tan(x)^2*cos(x)^2 = sin(x)^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"tan\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Replace tangent by sin(x)/cos(x), then cancel the nonzero squared cosine.",
+      "sketch_steps": [
+        "setup: Introduce a real angle x and assume cos(x) is nonzero.",
+        "definition: Replace tan(x) by sin(x)/cos(x).",
+        "clear_denominator: Multiply only by the certified nonzero cosine factor.",
+        "identity: Use sin(x)^2 + cos(x)^2 = 1 when needed.",
+        "conclude: Simplify to the requested tangent equality."
+      ],
+      "lean_witness": "example (x : ℝ) (h : Real.cos x ≠ 0) : Real.tan x ^ 2 * Real.cos x ^ 2 = Real.sin x ^ 2 := by rw [Real.tan_eq_sin_div_cos, div_pow]; field_simp"
+    }
+  ]
+}

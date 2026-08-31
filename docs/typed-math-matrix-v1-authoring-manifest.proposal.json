@@ -1,0 +1,281 @@
+{
+  "schema_version": "pals.typed-math-matrix-v1-authoring-manifest.proposal.v1",
+  "proposal_status": "not_admitted_requires_independent_project_review",
+  "profile": {
+    "id": "typed-math-matrix-v1",
+    "validator": "pals_agent.typed_matrix_profile.validate_canonical_typed_matrix_openmath_xml",
+    "validator_status": "implemented_local_evidence_not_independently_reviewed",
+    "canonicalizer": "openmath-cdbase-alpha-c14n-v4",
+    "canonicalization_scope": "typed-math-matrix-v1 semantic validation followed by core XML/C14N",
+    "admission_openmath_field": "canonical_openmath_xml",
+    "signature_contract": {
+      "source": "docs/matrix-typed-profile-v1-design.md#minimal-matrix1-signatures",
+      "status": "implemented_local_evidence_not_independently_reviewed",
+      "sorts": {
+        "Field": "algebra1:Field",
+        "Elem(K)": "typed1:Elem(K)",
+        "Matrix(K,m,n)": "matrix1:Matrix(K,m,n), with literal 1 <= m,n <= 8",
+        "ColumnVector(K,n)": "matrix1:ColumnVector(K,n), with literal 1 <= n <= 8",
+        "Nat": "typed1:Nat"
+      },
+      "symbols": {
+        "matrix1:field_nat_cast": "(K : Field, OMI n where n >= 0) -> Elem(K)",
+        "matrix1:literal": "(K,m,n, exactly m*n entries : Elem(K)) -> Matrix(K,m,n)",
+        "matrix1:column_literal": "(K,n, exactly n entries : Elem(K)) -> ColumnVector(K,n)",
+        "matrix1:zero": "(K,m,n) -> Matrix(K,m,n)",
+        "matrix1:neg": "Matrix(K,m,n) -> Matrix(K,m,n)",
+        "matrix1:add": "Matrix(K,m,n) x Matrix(K,m,n) -> Matrix(K,m,n)",
+        "matrix1:scale": "Elem(K) x Matrix(K,m,n) -> Matrix(K,m,n)",
+        "matrix1:mul": "Matrix(K,m,n) x Matrix(K,n,p) -> Matrix(K,m,p)",
+        "matrix1:transpose": "Matrix(K,m,n) -> Matrix(K,n,m)",
+        "matrix1:determinant": "Matrix(K,n,n) -> Elem(K)",
+        "matrix1:is_inverse": "Matrix(K,n,n) x Matrix(K,n,n) -> Prop",
+        "matrix1:rank": "Matrix(K,m,n) -> Nat",
+        "matrix1:identity": "(K,n) -> Matrix(K,n,n)",
+        "matrix1:mul_vec": "Matrix(K,m,n) x ColumnVector(K,n) -> ColumnVector(K,m)"
+      },
+      "intentional_absences": [
+        "No Elem(K) negation, addition, multiplication, or subtraction operator is in v1.",
+        "No total matrix_inverse or solve operator is in v1; is_inverse and mul_vec are the available predicates/terms.",
+        "No Field-to-CommRing coercion may be assumed for algebra1:ring_neg."
+      ]
+    },
+    "signature_contract_sha256": "sha256:89f502c8567751faf4b9791e76b78727bc7b9a05896de5b9238e08f968b23f79",
+    "content_dictionary_bundle": {
+      "relative_path": "pals-agent/pals_agent/content_dictionaries/typed-math-matrix-v1-registry.json",
+      "sha256": "sha256:5de8f895afbd44548aa86734789b67ee6d4f5fa2f9a9620b711b1e744b6135eb",
+      "digest_input": "exact UTF-8 bytes of the named registry/CD bundle"
+    },
+    "lean_toolchain": {
+      "path": "pals-agent/lean-workspace/lean-toolchain",
+      "value": "leanprover/lean4:v4.32.0-rc1",
+      "sha256": "sha256:2c290dc3675a4faf0bc03545ff71a417d2f9a7c2e60e8be80ed643fcbcc73e2d",
+      "digest_input": "exact UTF-8 bytes of the named lean-toolchain file"
+    }
+  },
+  "lean_witness_bundle": {
+    "path": "docs/matrix-typed-profile-v1-authoring-witnesses.proposal.lean",
+    "sha256": "sha256:c6252c49efb2eddc1bfaf36bf6df98fece99e9bb4f3f009604ffec7e8fd72c11",
+    "digest_input": "exact UTF-8 bytes of the named Lean file, including import and final newline",
+    "verification_command": "cd pals-agent/lean-workspace && lake env lean ../../docs/matrix-typed-profile-v1-authoring-witnesses.proposal.lean",
+    "verification_status": "verified_local_pinned_workspace",
+    "scope": "all eight original Lean witnesses; six are profile-faithful candidates and two are recorded exclusions"
+  },
+  "admitted_candidate_cards": [
+    {
+      "id": "typed_matrix_v1_literal_add_2x2",
+      "domain": "linear_algebra_matrices",
+      "difficulty": "introductory",
+      "authoring_status": "complete_xml_profile_semantics_verified_locally_not_admitted",
+      "canonical_statement": "For every field K, the 2 by 2 matrices [[1, 2], [3, 4]] and [[2, 0], [1, 2]] over K sum to [[3, 2], [4, 6]].",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"algebra1\" name=\"Field\"/></OMATP><OMV name=\"K\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"add\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"literal\"/><OMV name=\"K\"/><OMI>2</OMI><OMI>2</OMI><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>1</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>2</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>3</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>4</OMI></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"literal\"/><OMV name=\"K\"/><OMI>2</OMI><OMI>2</OMI><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>2</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>0</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>1</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>2</OMI></OMA></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"literal\"/><OMV name=\"K\"/><OMI>2</OMI><OMI>2</OMI><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>3</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>2</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>4</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>6</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"algebra1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Field\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"add\"></n1:OMS><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"literal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI><n1:OMI>2</n1:OMI><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>3</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>4</n1:OMI></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"literal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI><n1:OMI>2</n1:OMI><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>0</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"literal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI><n1:OMI>2</n1:OMI><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>3</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>4</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>6</n1:OMI></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:0e98218f8ae7bf0534914b59958a609185bca83b1ce253a8108fcbc6e7c236b8",
+      "proof_strategy": "Add corresponding entries and normalize the field-natural casts.",
+      "sketch_steps": [
+        "setup: Fix the field K and the two literal 2 by 2 matrices.",
+        "entrywise: Expand matrix1:add at each of the four row-column positions.",
+        "calculate: Add the corresponding field elements.",
+        "normalize: Rewrite the sums of field_nat_cast values as the displayed entries.",
+        "conclude: Extensionality gives the stated matrix equality."
+      ],
+      "lean": {
+        "target": "∀ {K : Type*} [Field K], A (K := K) + B (K := K) = (!![3, 2; 4, 6] : Mat2 K)",
+        "target_sha256": "sha256:b434456ae4cfd3a4c1686c33aac7215d001a227f99994edb9906073dae2de6c9",
+        "witness": "example : ∀ {K : Type*} [Field K], A (K := K) + B (K := K) = (!![3, 2; 4, 6] : Mat2 K) := by\n  intro K _\n  ext i j\n  fin_cases i <;> fin_cases j <;> simp [A, B] <;> ring\n",
+        "witness_sha256": "sha256:3b8d696c55dd333b3ff8026db6d10510105e433d5870ea4cff6de95b9d743f54"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "exact: both concrete matrices, their common field K, and the result use matrix1:literal and matrix1:add with shape Matrix(K,2,2).",
+        "openmath_to_lean": "exact under the signature contract: field_nat_cast lowers to field numerals and Matrix(Fin 2, Fin 2, K) addition is entrywise addition.",
+        "admission_gate": "The isolated typed-math-matrix-v1 validator accepted this exact XML locally; obtain independent project review before any catalog/DB admission."
+      }
+    },
+    {
+      "id": "typed_matrix_v1_literal_mul_2x2",
+      "domain": "linear_algebra_matrices",
+      "difficulty": "standard",
+      "authoring_status": "complete_xml_profile_semantics_verified_locally_not_admitted",
+      "canonical_statement": "For every field K, [[1, 2], [3, 4]] times [[2, 0], [1, 2]] equals [[4, 4], [10, 8]].",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"algebra1\" name=\"Field\"/></OMATP><OMV name=\"K\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"mul\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"literal\"/><OMV name=\"K\"/><OMI>2</OMI><OMI>2</OMI><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>1</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>2</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>3</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>4</OMI></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"literal\"/><OMV name=\"K\"/><OMI>2</OMI><OMI>2</OMI><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>2</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>0</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>1</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>2</OMI></OMA></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"literal\"/><OMV name=\"K\"/><OMI>2</OMI><OMI>2</OMI><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>4</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>4</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>10</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>8</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"algebra1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Field\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"mul\"></n1:OMS><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"literal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI><n1:OMI>2</n1:OMI><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>3</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>4</n1:OMI></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"literal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI><n1:OMI>2</n1:OMI><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>0</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"literal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI><n1:OMI>2</n1:OMI><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>4</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>4</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>10</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>8</n1:OMI></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:e49865b53548ddb268db4996ab2c68001c3ddbeea67e79b552e9c4d1f736045b",
+      "proof_strategy": "Compute the four dot products in the common inner dimension two.",
+      "sketch_steps": [
+        "setup: Fix K and identify both factors as Matrix(K,2,2).",
+        "shape: Use matrix1:mul with matching inner dimension 2.",
+        "dot-products: Expand each of the four row-column dot products.",
+        "normalize: Simplify the field-natural casts and products.",
+        "conclude: Use matrix extensionality to obtain the literal result."
+      ],
+      "lean": {
+        "target": "∀ {K : Type*} [Field K], A (K := K) * B (K := K) = (!![4, 4; 10, 8] : Mat2 K)",
+        "target_sha256": "sha256:b873665ed6390133cf53b6c3c7a8c46f9b8630ad21df0baa6757b2117946bcd9",
+        "witness": "example : ∀ {K : Type*} [Field K], A (K := K) * B (K := K) = (!![4, 4; 10, 8] : Mat2 K) := by\n  intro K _\n  ext i j\n  fin_cases i <;> fin_cases j <;> simp [A, B, Matrix.mul_apply, Fin.sum_univ_succ] <;> ring\n",
+        "witness_sha256": "sha256:f2379065f93989ddec3413227c390ae1dd77884f3bbf2eb6cfc418625350a34a"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "exact: the XML has two Matrix(K,2,2) operands, so the product and its Matrix(K,2,2) result have the same dimensions as the statement.",
+        "openmath_to_lean": "exact under the signature contract: matrix1:mul lowers to Lean matrix multiplication over Fin 2 and the explicit literals lower to the displayed field-valued matrices.",
+        "admission_gate": "The isolated typed-math-matrix-v1 validator accepted this exact XML locally; obtain independent project review before any catalog/DB admission."
+      }
+    },
+    {
+      "id": "typed_matrix_v1_literal_scale_2x2",
+      "domain": "linear_algebra_matrices",
+      "difficulty": "introductory",
+      "authoring_status": "complete_xml_profile_semantics_verified_locally_not_admitted",
+      "canonical_statement": "For every field K, scaling [[1, 2], [3, 4]] by the field element 3 gives [[3, 6], [9, 12]].",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"algebra1\" name=\"Field\"/></OMATP><OMV name=\"K\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"scale\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>3</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"literal\"/><OMV name=\"K\"/><OMI>2</OMI><OMI>2</OMI><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>1</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>2</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>3</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>4</OMI></OMA></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"literal\"/><OMV name=\"K\"/><OMI>2</OMI><OMI>2</OMI><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>3</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>6</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>9</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>12</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"algebra1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Field\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"scale\"></n1:OMS><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>3</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"literal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI><n1:OMI>2</n1:OMI><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>3</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>4</n1:OMI></n1:OMA></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"literal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI><n1:OMI>2</n1:OMI><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>3</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>6</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>9</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>12</n1:OMI></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:07d7f88bd7bdeab9dcd18e00c5bcb183d2a1be59258a6ae5d1ca719bdc82faab",
+      "proof_strategy": "Multiply each matrix entry by the explicitly cast scalar 3.",
+      "sketch_steps": [
+        "setup: Fix K and form field_nat_cast(K,3).",
+        "shape: Confirm the scalar and matrix have the shared field parameter K.",
+        "entrywise: Expand matrix1:scale at each of the four entries.",
+        "normalize: Evaluate the four field products.",
+        "conclude: Apply matrix extensionality."
+      ],
+      "lean": {
+        "target": "∀ {K : Type*} [Field K], (3 : K) • A (K := K) = (!![3, 6; 9, 12] : Mat2 K)",
+        "target_sha256": "sha256:a9256a396a6a159bac330fd277eba568fec6cfe13e4d035d47f4f691951e6851",
+        "witness": "example : ∀ {K : Type*} [Field K], (3 : K) • A (K := K) = (!![3, 6; 9, 12] : Mat2 K) := by\n  intro K _\n  ext i j\n  fin_cases i <;> fin_cases j <;> simp [A] <;> ring\n",
+        "witness_sha256": "sha256:1a35af2af0719315d03cd6f3ae7200aeae2feebc7f7c12ad05f8c5496b8f22c9"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "exact: 3 is not a bare OMI in a field position; it is matrix1:field_nat_cast(K,3), and all matrices have shape Matrix(K,2,2).",
+        "openmath_to_lean": "exact under the signature contract: matrix1:scale lowers to Lean scalar multiplication by `(3 : K)`.",
+        "admission_gate": "The isolated typed-math-matrix-v1 validator accepted this exact XML locally; obtain independent project review before any catalog/DB admission."
+      }
+    },
+    {
+      "id": "typed_matrix_v1_literal_transpose_2x2",
+      "domain": "linear_algebra_matrices",
+      "difficulty": "introductory",
+      "authoring_status": "complete_xml_profile_semantics_verified_locally_not_admitted",
+      "canonical_statement": "For every field K, the transpose of [[1, 2], [3, 4]] is [[1, 3], [2, 4]].",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"algebra1\" name=\"Field\"/></OMATP><OMV name=\"K\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"transpose\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"literal\"/><OMV name=\"K\"/><OMI>2</OMI><OMI>2</OMI><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>1</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>2</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>3</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>4</OMI></OMA></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"literal\"/><OMV name=\"K\"/><OMI>2</OMI><OMI>2</OMI><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>1</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>3</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>2</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>4</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"algebra1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Field\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"transpose\"></n1:OMS><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"literal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI><n1:OMI>2</n1:OMI><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>3</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>4</n1:OMI></n1:OMA></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"literal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI><n1:OMI>2</n1:OMI><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>3</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>4</n1:OMI></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:23db70a5a02567aaed9e8e28cf9a1869548565e8c5e38bad472d330fab793fbb",
+      "proof_strategy": "Swap row and column indices in the literal matrix.",
+      "sketch_steps": [
+        "setup: Fix K and the literal Matrix(K,2,2).",
+        "transpose: Apply matrix1:transpose, which reverses its two dimensions.",
+        "index: Compare each result entry with the original entry at swapped indices.",
+        "assemble: Read off the four entries of the transposed literal.",
+        "conclude: Use matrix extensionality."
+      ],
+      "lean": {
+        "target": "∀ {K : Type*} [Field K], Matrix.transpose (A (K := K)) = (!![1, 3; 2, 4] : Mat2 K)",
+        "target_sha256": "sha256:9dfe441ec0d5f1cdc7d4d9aff2f1f4106e03b689fd1e443994495c50d3fc07dd",
+        "witness": "example : ∀ {K : Type*} [Field K], Matrix.transpose (A (K := K)) = (!![1, 3; 2, 4] : Mat2 K) := by\n  intro K _\n  ext i j\n  fin_cases i <;> fin_cases j <;> simp [A]\n",
+        "witness_sha256": "sha256:852717c9ef3dbe39f50f9ea78c86a9b9ce4a2a5d2a8ca194f0aca14ac3e671db"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "exact: the input and output are explicitly Matrix(K,2,2), and matrix1:transpose has precisely that square-shape result here.",
+        "openmath_to_lean": "exact under the signature contract: matrix1:transpose lowers to Matrix.transpose and the literal entries retain their field casts.",
+        "admission_gate": "The isolated typed-math-matrix-v1 validator accepted this exact XML locally; obtain independent project review before any catalog/DB admission."
+      }
+    },
+    {
+      "id": "typed_matrix_v1_exchange_self_inverse",
+      "domain": "linear_algebra_matrices",
+      "difficulty": "standard",
+      "authoring_status": "complete_xml_profile_semantics_verified_locally_not_admitted",
+      "canonical_statement": "For every field K, the exchange matrix [[0, 1], [1, 0]] is a two-sided inverse of itself.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"algebra1\" name=\"Field\"/></OMATP><OMV name=\"K\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"is_inverse\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"literal\"/><OMV name=\"K\"/><OMI>2</OMI><OMI>2</OMI><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>0</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>1</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>1</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"literal\"/><OMV name=\"K\"/><OMI>2</OMI><OMI>2</OMI><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>0</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>1</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>1</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"field_nat_cast\"/><OMV name=\"K\"/><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"algebra1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Field\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"is_inverse\"></n1:OMS><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"literal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI><n1:OMI>2</n1:OMI><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>0</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>0</n1:OMI></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"literal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI><n1:OMI>2</n1:OMI><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>0</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"field_nat_cast\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>0</n1:OMI></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:a18978e7299665946cf31ef9a79d2613e9449440a6ce06e2960860d841894153",
+      "proof_strategy": "Multiply the exchange matrix by itself in both orders and obtain the identity.",
+      "sketch_steps": [
+        "setup: Fix K and let P be the displayed Matrix(K,2,2).",
+        "predicate: Expand matrix1:is_inverse into its two identity-product requirements.",
+        "left-product: Compute P times P entrywise.",
+        "right-product: The same calculation supplies the reverse product.",
+        "conclude: Both products are identity(K,2), so is_inverse(P,P) holds."
+      ],
+      "lean": {
+        "target": "∀ {K : Type*} [Field K], IsMatrixInverse (P (K := K)) (P (K := K))",
+        "target_sha256": "sha256:c7409e7edba8b17bbda81362e3f5b6e3330dda1bcaf593b3b14980ab9387e294",
+        "witness": "example : ∀ {K : Type*} [Field K], IsMatrixInverse (P (K := K)) (P (K := K)) := by\n  intro K _\n  dsimp [IsMatrixInverse]\n  constructor <;> ext i j <;> fin_cases i <;> fin_cases j <;>\n    simp [P, Matrix.mul_apply, Fin.sum_univ_succ]\n",
+        "witness_sha256": "sha256:e0fa72c5ae69338cba68dee1eaf1f750263928b0b6eec3598e200bea84a1b735"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "exact: the English two-sided-inverse assertion is represented by the profile's primitive is_inverse(P,P), not by an undefined total inverse operator.",
+        "openmath_to_lean": "exact under the stated lowering: matrix1:is_inverse(M,N) is the conjunction `M * N = 1 ∧ N * M = 1` in Matrix(Fin 2, Fin 2, K).",
+        "admission_gate": "The isolated typed-math-matrix-v1 validator accepted this exact XML locally; obtain independent project review before any catalog/DB admission."
+      }
+    },
+    {
+      "id": "typed_matrix_v1_rank_identity_2",
+      "domain": "linear_algebra_matrices",
+      "difficulty": "standard",
+      "authoring_status": "complete_xml_profile_semantics_verified_locally_not_admitted",
+      "canonical_statement": "For every field K, the rank of the 2 by 2 identity matrix over K is the natural number 2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"algebra1\" name=\"Field\"/></OMATP><OMV name=\"K\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"rank\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"matrix1\" name=\"identity\"/><OMV name=\"K\"/><OMI>2</OMI></OMA></OMA><OMI>2</OMI></OMA></OMBIND></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"algebra1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Field\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"rank\"></n1:OMS><n1:OMA><n1:OMS cd=\"matrix1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"identity\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA></n1:OMA><n1:OMI>2</n1:OMI></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:085b67bb741db2b1b634eebc5b3e57726ffdaa3f33de93e0022a90badddf9e02",
+      "proof_strategy": "Use that the identity map on a two-dimensional vector space has full rank.",
+      "sketch_steps": [
+        "setup: Fix K and form identity(K,2).",
+        "typing: Apply matrix1:rank, whose codomain is Nat rather than Elem(K).",
+        "linear-map: Identify the matrix with the identity linear map on a two-dimensional space.",
+        "rank: Its image is the full two-dimensional space.",
+        "conclude: The natural rank is OMI 2."
+      ],
+      "lean": {
+        "target": "∀ {K : Type*} [Field K], (1 : Mat2 K).rank = 2",
+        "target_sha256": "sha256:f956f974e57f28947d090a6df71b804a3236d3c612c27bd0c02febdf115b12c4",
+        "witness": "example : ∀ {K : Type*} [Field K], (1 : Mat2 K).rank = 2 := by\n  intro K _\n  simp\n",
+        "witness_sha256": "sha256:9df87fd816add8a120f1e1841bede81ae0b7b61163c76fe7e29a3e9ff6a11a0c"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "exact: the statement explicitly calls the result a natural number; XML compares matrix1:rank(identity(K,2)) with the Nat literal 2, never a field cast.",
+        "openmath_to_lean": "exact under the signature contract: matrix1:rank lowers to Matrix.rank and the RHS is Lean's natural number 2.",
+        "admission_gate": "The isolated typed-math-matrix-v1 validator accepted this exact XML locally; obtain independent project review before any catalog/DB admission."
+      }
+    }
+  ],
+  "excluded_witnesses": [
+    {
+      "id": "typed_matrix_v1_determinant_literal_2x2",
+      "canonical_statement": "For every field K, the determinant of [[1, 2], [3, 4]] is the field element -2.",
+      "lean": {
+        "target": "∀ {K : Type*} [Field K], (A (K := K)).det = (-2 : K)",
+        "target_sha256": "sha256:09b51e46a481215e042e6de805c1c6fb196183c8280d52da8605912e1444e9cf",
+        "witness": "example : ∀ {K : Type*} [Field K], (A (K := K)).det = (-2 : K) := by\n  intro K _\n  simp [A, Matrix.det_fin_two]\n  ring\n",
+        "witness_sha256": "sha256:677d4cd446e008345a50a09ac058796c775798543c2822b4c9e1117a3648a3f3"
+      },
+      "status": "excluded_no_profile_faithful_xml",
+      "reason": "matrix1:determinant returns Elem(K), but the v1 signature contract has field_nat_cast only for nonnegative literals and no Elem(K) negation. matrix1:neg is matrix-valued, while algebra1:ring_neg cannot consume K : Field without a forbidden Field-to-CommRing coercion. Therefore `-2 : Elem(K)` has no well-typed XML term.",
+      "required_profile_change": "Add an explicit `field_neg : Elem(K) -> Elem(K)` (or an equally explicit field scalar-expression module), define its Lean lowering, add hard negatives, and independently review the resulting XML.",
+      "alignment_verdict": "The generic Lean theorem is valid, but it is not admission evidence for the current OpenMath signature. No fictitious complete XML is emitted."
+    },
+    {
+      "id": "typed_matrix_v1_mul_vec_solution_2x2",
+      "canonical_statement": "For every field K, x = [2, -1] satisfies [[1, 2], [3, 4]] x = [0, 2].",
+      "lean": {
+        "target": "∀ {K : Type*} [Field K], Matrix.mulVec (A (K := K)) (x (K := K)) = b (K := K)",
+        "target_sha256": "sha256:10d87c0e81494c9fb82a402dffedc086a822580009ac9c8f762b90b7eba9f5ab",
+        "witness": "example : ∀ {K : Type*} [Field K], Matrix.mulVec (A (K := K)) (x (K := K)) = b (K := K) := by\n  intro K _\n  funext i\n  fin_cases i <;> simp [A, x, b, Matrix.mulVec, dotProduct, Fin.sum_univ_succ]\n  all_goals ring\n",
+        "witness_sha256": "sha256:9fadb38348a7e801859df83ac0b22de47a811c4cf681d2f430d595fb12c330c6"
+      },
+      "status": "excluded_no_profile_faithful_xml",
+      "reason": "The only profile term for a field coefficient literal is field_nat_cast(K,n) with n >= 0. The witness vector contains -1, and no Elem(K) negation exists. Also v1 exposes mul_vec but no `solve` operator or uniqueness predicate; this card is aligned only as a verification that a named vector satisfies Ax=b, never as a claim that a solver returns it.",
+      "required_profile_change": "Add explicit field negation for the vector entry. If future wording says `solve`, separately add a solution/uniqueness signature and a reviewed lowering; do not equate it with mul_vec by implication.",
+      "alignment_verdict": "The Lean calculation compiles, but it cannot justify an XML card under the current signature. No fictitious complete XML is emitted."
+    }
+  ],
+  "manifest_digest": {
+    "algorithm": "sha256",
+    "input": "RFC 8785 canonical JSON serialization of this object with manifest_digest omitted",
+    "sha256": "sha256:81b66af79e6006313e7f033315edbaa3eb12bad0c68a2a3afa6c48d9d17b7697"
+  }
+}

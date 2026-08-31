@@ -1,0 +1,513 @@
+{
+  "schema_version": "pals.typed-probability-v1.sealed-manifest.v1",
+  "status": "sealed_local_authoring_revision_not_admitted",
+  "seal": {
+    "scope": "local typed-probability authoring evidence only",
+    "admission": "not admitted to the generic DB, seed, embedding index, or PFI package",
+    "revision": "typed-probability-v1-local-r1"
+  },
+  "immutability_contract": {
+    "digest_algorithm": "sha256 over exact UTF-8 field bytes",
+    "structural_openmath_c14n": "Canonical XML is produced only after typed-probability-v1 validation and profile C14N; raw authoring XML is separately hashed.",
+    "mutation_rule": "Any change to statement, strategy, sketch, XML, signature trace, Lean evidence, design, registry, or excluded disposition creates a new sealed revision and manifest digest.",
+    "profile_separation": "No card may enter generic-v1, typed-math-v1, the six-column Draft loader, or a shared embedding namespace."
+  },
+  "profile": {
+    "id": "typed-probability-v1",
+    "typed_cdbase": "urn:pals:openmath:typed-math:v1",
+    "design_path": "docs/probability-typed-profile-v1-design.md",
+    "design_sha256": "sha256:53f188f5f5835cf042f6375a84ee2ff5d87e1e7729dc376c98ec9b00082c49ec",
+    "registry_path": "pals_agent/content_dictionaries/typed-probability-v1-registry.json",
+    "probability1_cd_bundle_sha256": "sha256:af498d2d3f839c88d9d0da957185f9485a748ad5fe513dc51a461f9b65f772ed",
+    "validator": "pals_agent.typed_probability_profile.validate_canonical_typed_probability_openmath_xml",
+    "validator_version": "typed-probability-v1-local-r1",
+    "canonicalizer_version": "openmath-v4-profile-c14n"
+  },
+  "lean_receipt": {
+    "witness_path": "docs/typed-probability-v1-authoring-witnesses.lean",
+    "witness_file_sha256": "sha256:d22cf6acae7a10a7acb086ed7cc32c922e2b34658f6345aa97db7f75826544ad",
+    "toolchain": "leanprover/lean4:v4.32.0-rc1",
+    "verification_status": "compiled when generator is run with --verify-lean; sealed evidence only, not an OpenMath-to-Lean translation receipt"
+  },
+  "admitted_card_count": 10,
+  "excluded_card_count": 7,
+  "cards": [
+    {
+      "id": "prob_choose_zero",
+      "canonical_statement": "For every natural number n, choose(n, 0) = 1.",
+      "proof_strategy": "Use the empty-selection boundary case for the total natural binomial coefficient.",
+      "sketch_steps": [
+        "Fix the natural-number variables in the displayed statement.",
+        "Use the applicable boundary case or Pascal recurrence for Nat.choose.",
+        "Keep every arithmetic operation in the natural numbers.",
+        "Apply the reviewed Lean identity and close the universal statement."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Nat\"/></OMATP><OMV name=\"n\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"choose\"/><OMV name=\"n\"/><OMI>0</OMI></OMA><OMI>1</OMI></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Nat",
+        "probability1:choose",
+        "relation1:eq"
+      ],
+      "lean_target": "example (n : ℕ) : Nat.choose n 0 = 1",
+      "lean_witness": "by exact Nat.choose_zero_right n",
+      "alignment": "The typed Nat binder, OMI boundary literal, and Lean Nat.choose target use the same total natural-number convention.",
+      "conventions": {
+        "scalar_convention": "All operators and literals are Nat; no Real or Probability coercion is present.",
+        "boundary_convention": "Nat.choose and Nat division/subtraction use the total/truncated Lean Nat convention.",
+        "probability_scope": "No sample-space, event, measure, or probability scalar is used."
+      },
+      "source_candidate_id": "prob_choose_zero",
+      "openmath_profile": "typed-probability-v1",
+      "openmath_xml_sha256": "sha256:6c7626619e29ac02d12ab0a586e88f9900a580b9386c4a66c030ca13aed921ba",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>0</n1:OMI></n1:OMA><n1:OMI>1</n1:OMI></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:1b29bc22247af7863963fc6ebdbf980e01f6efd8c9a19c358b9070cf6aaefe86",
+      "canonical_statement_sha256": "sha256:a504dadc486937392adb1d9c192f7a3880ddc9ba681a69a5f659792acf229467",
+      "lean_target_sha256": "sha256:f8e6f1830f6b474d389b6f76ebbac8059aba0fa15d19fb8de64e53ab63491a8a",
+      "lean_witness_sha256": "sha256:c28776e2482db8c432ebd003e7035c0b754377262e0a97d28eb7bc8e9d71cf28",
+      "compiler_receipt_status": "verified",
+      "profile_validation_status": "validated_local_typed_probability_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt",
+      "embedding_namespace_preimage": "typed-probability-v1||<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>0</n1:OMI></n1:OMA><n1:OMI>1</n1:OMI></n1:OMA></n1:OMBIND></n1:OMOBJ>"
+    },
+    {
+      "id": "prob_choose_self",
+      "canonical_statement": "For every natural number n, choose(n, n) = 1.",
+      "proof_strategy": "Use the all-elements selection boundary case.",
+      "sketch_steps": [
+        "Fix the natural-number variables in the displayed statement.",
+        "Use the applicable boundary case or Pascal recurrence for Nat.choose.",
+        "Keep every arithmetic operation in the natural numbers.",
+        "Apply the reviewed Lean identity and close the universal statement."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Nat\"/></OMATP><OMV name=\"n\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"choose\"/><OMV name=\"n\"/><OMV name=\"n\"/></OMA><OMI>1</OMI></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Nat",
+        "probability1:choose",
+        "relation1:eq"
+      ],
+      "lean_target": "example (n : ℕ) : Nat.choose n n = 1",
+      "lean_witness": "by exact Nat.choose_self n",
+      "alignment": "Both occurrences of n have the same typed Nat binder and lower directly to Nat.choose n n.",
+      "conventions": {
+        "scalar_convention": "All operators and literals are Nat; no Real or Probability coercion is present.",
+        "boundary_convention": "Nat.choose and Nat division/subtraction use the total/truncated Lean Nat convention.",
+        "probability_scope": "No sample-space, event, measure, or probability scalar is used."
+      },
+      "source_candidate_id": "prob_choose_self",
+      "openmath_profile": "typed-probability-v1",
+      "openmath_xml_sha256": "sha256:271d2a701bb6341000f348c3047b1cc2d8ad468ccc9c1e4ba2e74facc1536bd4",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMI>1</n1:OMI></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:dd27aa930412d5fc31110a5c3a6f2e695995f3a1836e0e9b09c5becd224edb5f",
+      "canonical_statement_sha256": "sha256:ef060c5590bb7ff85760c81a8b44b6a8402db8316096e0b866b19bc8c86f01c5",
+      "lean_target_sha256": "sha256:45b0e1bcbb49d775d7d99c0a67c45acbce5e77b66fdd2e527f7bb200c53a3b43",
+      "lean_witness_sha256": "sha256:ecb0d1bbb1e940a0bf3fea9a7b1991c13397ba97ae25da4354d2421bcb3f8b73",
+      "compiler_receipt_status": "verified",
+      "profile_validation_status": "validated_local_typed_probability_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt",
+      "embedding_namespace_preimage": "typed-probability-v1||<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMI>1</n1:OMI></n1:OMA></n1:OMBIND></n1:OMOBJ>"
+    },
+    {
+      "id": "prob_choose_one",
+      "canonical_statement": "For every natural number n, choose(n, 1) = n.",
+      "proof_strategy": "Count singleton selections by the selected element, including the n=0 boundary case.",
+      "sketch_steps": [
+        "Fix the natural-number variables in the displayed statement.",
+        "Use the applicable boundary case or Pascal recurrence for Nat.choose.",
+        "Keep every arithmetic operation in the natural numbers.",
+        "Apply the reviewed Lean identity and close the universal statement."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Nat\"/></OMATP><OMV name=\"n\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"choose\"/><OMV name=\"n\"/><OMI>1</OMI></OMA><OMV name=\"n\"/></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Nat",
+        "probability1:choose",
+        "relation1:eq"
+      ],
+      "lean_target": "example (n : ℕ) : Nat.choose n 1 = n",
+      "lean_witness": "by simp",
+      "alignment": "The XML and Lean target both use the total Nat.choose convention at n=0.",
+      "conventions": {
+        "scalar_convention": "All operators and literals are Nat; no Real or Probability coercion is present.",
+        "boundary_convention": "Nat.choose and Nat division/subtraction use the total/truncated Lean Nat convention.",
+        "probability_scope": "No sample-space, event, measure, or probability scalar is used."
+      },
+      "source_candidate_id": "prob_choose_one",
+      "openmath_profile": "typed-probability-v1",
+      "openmath_xml_sha256": "sha256:8a0a0b0af4310c0352cd915e1d931d41b09c9e7cf170b6c030dc79f958a99f44",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:81449950dc10c03d6f8c19b1449dbf839def4b732f55febe1efa56728712261a",
+      "canonical_statement_sha256": "sha256:caa5a3360121bcbd0e9013874bf6f8d39b47d46008293d8ad80685b718c3f171",
+      "lean_target_sha256": "sha256:c6372d4f0236a64a5d13dbb707b4a57a89de1b5c6c833af7c04c29a115972ecd",
+      "lean_witness_sha256": "sha256:f58917a5f3c1e6fe03b501d3d46fdfa775becf01ec6425de00e5680dea686551",
+      "compiler_receipt_status": "verified",
+      "profile_validation_status": "validated_local_typed_probability_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt",
+      "embedding_namespace_preimage": "typed-probability-v1||<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>"
+    },
+    {
+      "id": "prob_choose_pascal",
+      "canonical_statement": "For natural n and k, choose(n + 1, k + 1) = choose(n, k) + choose(n, k + 1).",
+      "proof_strategy": "Partition selections according to whether a distinguished element is selected.",
+      "sketch_steps": [
+        "Fix arbitrary natural n and k.",
+        "Partition (k+1)-element selections from n+1 elements by one distinguished element.",
+        "Identify the two classes with choose(n,k) and choose(n,k+1).",
+        "Use natural addition to combine the disjoint counts.",
+        "Apply the reviewed Pascal Lean theorem."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Nat\"/></OMATP><OMV name=\"n\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Nat\"/></OMATP><OMV name=\"k\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"choose\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"nat_add\"/><OMV name=\"n\"/><OMI>1</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"nat_add\"/><OMV name=\"k\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"nat_add\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"choose\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"choose\"/><OMV name=\"n\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"nat_add\"/><OMV name=\"k\"/><OMI>1</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Nat",
+        "probability1:nat_add",
+        "probability1:choose",
+        "relation1:eq"
+      ],
+      "lean_target": "example (n k : ℕ) : Nat.choose (n + 1) (k + 1) = Nat.choose n k + Nat.choose n (k + 1)",
+      "lean_witness": "by exact Nat.choose_succ_succ' n k",
+      "alignment": "Every plus is probability1:nat_add and the Lean target is the same Nat.choose_succ_succ' identity.",
+      "conventions": {
+        "scalar_convention": "All operators and literals are Nat; no Real or Probability coercion is present.",
+        "boundary_convention": "Nat.choose and Nat division/subtraction use the total/truncated Lean Nat convention.",
+        "probability_scope": "No sample-space, event, measure, or probability scalar is used."
+      },
+      "source_candidate_id": "prob_choose_pascal",
+      "openmath_profile": "typed-probability-v1",
+      "openmath_xml_sha256": "sha256:6a932113ad8e6e34eafa4c750d4d2f7e32ffb00b49555d228d0e2c1f37a814c5",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_add\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_add\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_add\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_add\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:1f0d818b820dca32a1310205645c473feec12b9cd3e3b8b5e85d4585b9aa3970",
+      "canonical_statement_sha256": "sha256:b1ee9f9e3c2fe580f1e65fefb9fa526b9aee50eb24fb1bb59e1cc3fdbbc23161",
+      "lean_target_sha256": "sha256:eb379ad61a48747d1477e03356c4bebb936cf2af1552befdf90c9d852c849681",
+      "lean_witness_sha256": "sha256:ddf398e4a9360ca21b57b7f808603b0dc9c5c338950bb899ea59e5d76098ee7e",
+      "compiler_receipt_status": "verified",
+      "profile_validation_status": "validated_local_typed_probability_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt",
+      "embedding_namespace_preimage": "typed-probability-v1||<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_add\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_add\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_add\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_add\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>"
+    },
+    {
+      "id": "prob_choose_symmetry",
+      "canonical_statement": "For natural n and k with k ≤ n, choose(n, n - k) = choose(n, k).",
+      "proof_strategy": "Map a chosen subset to its complement while retaining the k≤n hypothesis.",
+      "sketch_steps": [
+        "Fix natural n and k and assume k≤n.",
+        "Take the complement of each k-element subset of an n-element set.",
+        "The complement has natural size n-k under the stated hypothesis.",
+        "This mapping is a bijection between the two selection families.",
+        "Apply the reviewed Nat.choose_symm Lean theorem."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Nat\"/></OMATP><OMV name=\"n\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Nat\"/></OMATP><OMV name=\"k\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"leq\"/><OMV name=\"k\"/><OMV name=\"n\"/></OMA><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"choose\"/><OMV name=\"n\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"nat_sub\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"choose\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Nat",
+        "probability1:nat_sub",
+        "probability1:choose",
+        "relation1:leq",
+        "logic1:implies"
+      ],
+      "lean_target": "example {n k : ℕ} (hk : k ≤ n) : Nat.choose n (n - k) = Nat.choose n k",
+      "lean_witness": "by exact Nat.choose_symm hk",
+      "alignment": "The XML retains the explicit k≤n premise and truncated Nat subtraction used by the reviewed Lean theorem.",
+      "conventions": {
+        "scalar_convention": "All operators and literals are Nat; no Real or Probability coercion is present.",
+        "boundary_convention": "Nat.choose and Nat division/subtraction use the total/truncated Lean Nat convention.",
+        "probability_scope": "No sample-space, event, measure, or probability scalar is used."
+      },
+      "source_candidate_id": "prob_choose_symmetry",
+      "openmath_profile": "typed-probability-v1",
+      "openmath_xml_sha256": "sha256:a4c55f3774ac63bc5d5e725e8ab2ee6df7fb0960f6d08d9ae58a4e7bcf703df7",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"leq\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_sub\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:31624337760524680629afdade254c3c776f3b3294e26c932fe693a2d2e7e7a0",
+      "canonical_statement_sha256": "sha256:a04d2fa8e94d009016b352e995806f2ba29724797c64ee5038e7ba9a44697a3a",
+      "lean_target_sha256": "sha256:811e38ec178a4fb283dad5e5bfe1892742a4a4fcce487aef184820d3fb013d51",
+      "lean_witness_sha256": "sha256:b4359cf0c86f0b9bc8a5a74ec45baa5c7e1c0c72701f5982977472d4ae2486ff",
+      "compiler_receipt_status": "verified",
+      "profile_validation_status": "validated_local_typed_probability_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt",
+      "embedding_namespace_preimage": "typed-probability-v1||<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"leq\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_sub\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>"
+    },
+    {
+      "id": "prob_choose_two",
+      "canonical_statement": "For every natural number n, choose(n, 2) = n*(n - 1)/2.",
+      "proof_strategy": "Count ordered pairs of distinct elements, then quotient by their two possible orders.",
+      "sketch_steps": [
+        "Fix a natural number n.",
+        "Count ordered choices of two distinct elements as n·(n-1).",
+        "Each unordered two-element choice has exactly two orders.",
+        "Use natural truncated division by two in the stated formula.",
+        "Apply the reviewed Nat.choose_two_right Lean theorem."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Nat\"/></OMATP><OMV name=\"n\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"choose\"/><OMV name=\"n\"/><OMI>2</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"nat_div\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"nat_mul\"/><OMV name=\"n\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"nat_sub\"/><OMV name=\"n\"/><OMI>1</OMI></OMA></OMA><OMI>2</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Nat",
+        "probability1:choose",
+        "probability1:nat_mul",
+        "probability1:nat_sub",
+        "probability1:nat_div",
+        "relation1:eq"
+      ],
+      "lean_target": "example (n : ℕ) : Nat.choose n 2 = n * (n - 1) / 2",
+      "lean_witness": "by exact Nat.choose_two_right n",
+      "alignment": "The denominator is probability1:nat_div, never real division; the Lean target is the same Nat formula.",
+      "conventions": {
+        "scalar_convention": "All operators and literals are Nat; no Real or Probability coercion is present.",
+        "boundary_convention": "Nat.choose and Nat division/subtraction use the total/truncated Lean Nat convention.",
+        "probability_scope": "No sample-space, event, measure, or probability scalar is used."
+      },
+      "source_candidate_id": "prob_choose_two",
+      "openmath_profile": "typed-probability-v1",
+      "openmath_xml_sha256": "sha256:6178f1ee97216dfb9c8f932fe6d28c58f549a170db870391e71140d95188f86a",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_div\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_mul\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_sub\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA><n1:OMI>2</n1:OMI></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:e5cd15c7b3ae89fbf9dd7ee25f9b58c11cdf171233425d723cb9d0186d6bb148",
+      "canonical_statement_sha256": "sha256:58ce5c21d0628f3cec2816fd99b1e3dad79a3e231531c4a0414422383b09bf1a",
+      "lean_target_sha256": "sha256:12594d0dfab99aaa7ef696ec68c01ff51af15381656a2e4856119bb4265f134f",
+      "lean_witness_sha256": "sha256:6cf06fbd3ed630dfc2eba2863e6918762a3236e13a95ab73d8384a28866a8517",
+      "compiler_receipt_status": "verified",
+      "profile_validation_status": "validated_local_typed_probability_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt",
+      "embedding_namespace_preimage": "typed-probability-v1||<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_div\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_mul\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_sub\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA><n1:OMI>2</n1:OMI></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>"
+    },
+    {
+      "id": "prob_expectation_constant",
+      "canonical_statement": "For a sample space Ω, a probability measure μ on Ω, and a real c, expectation(constant_rv(Ω,c), μ) = c.",
+      "proof_strategy": "Use normalization of a probability measure to evaluate the integral of a constant function.",
+      "sketch_steps": [
+        "Fix the sample space, its probability measure, and a real constant c.",
+        "Recognize constant_rv(Ω,c) as the constant real random variable.",
+        "Derive integrability from constancy and the probability-measure normalization.",
+        "Evaluate the Bochner integral of the constant function.",
+        "Conclude that the expectation is c."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"SampleSpace\"/></OMATP><OMV name=\"Omega\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"ProbabilityMeasure\"/><OMV name=\"Omega\"/></OMA></OMATP><OMV name=\"mu\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"c\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"expectation\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"constant_rv\"/><OMV name=\"Omega\"/><OMV name=\"c\"/></OMA><OMV name=\"mu\"/></OMA><OMV name=\"c\"/></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "probability1:SampleSpace",
+        "probability1:ProbabilityMeasure",
+        "typed1:Real",
+        "probability1:constant_rv",
+        "probability1:expectation",
+        "relation1:eq"
+      ],
+      "lean_target": "example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] (c : ℝ) : ∫ _ : Ω, c ∂μ = c",
+      "lean_witness": "by simp",
+      "alignment": "The typed SampleSpace and ProbabilityMeasure(Ω) bind the same carrier. expectation is accepted only for constant_rv, whose integrability is the documented profile derivation; the Lean target is the probability-measure constant integral.",
+      "conventions": {
+        "probability_codomain": "No Probability scalar is silently lowered in this card; expectation has Real codomain.",
+        "integrability_source": "The profile admits only expectation(constant_rv(Ω,c),μ), deriving integrability from constancy under ProbabilityMeasure(Ω).",
+        "sample_space_dependency": "μ is declared as ProbabilityMeasure(Ω), exactly the carrier used by constant_rv(Ω,c)."
+      },
+      "source_candidate_id": "prob_expectation_constant",
+      "openmath_profile": "typed-probability-v1",
+      "openmath_xml_sha256": "sha256:3bccdcb8a77904fec7d95b0552c5fb69ef5df27f22f0edf036fc56792cd3694f",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"SampleSpace\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"ProbabilityMeasure\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"expectation\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"constant_rv\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:56f4e4fbc8aba1f497445443313a89dd77d2fe7520127976efce60cf7637bece",
+      "canonical_statement_sha256": "sha256:a2a4a7f31a3950268ce7b5bd3033128097fc4f857933391be6d41f24c06ee1dd",
+      "lean_target_sha256": "sha256:bc7551506dbf8cc314e1c91bb5fcb9ea894ba33dea23e58c02e35592af96149b",
+      "lean_witness_sha256": "sha256:f58917a5f3c1e6fe03b501d3d46fdfa775becf01ec6425de00e5680dea686551",
+      "compiler_receipt_status": "verified",
+      "profile_validation_status": "validated_local_typed_probability_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt",
+      "embedding_namespace_preimage": "typed-probability-v1||<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"SampleSpace\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"ProbabilityMeasure\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"expectation\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"constant_rv\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>"
+    },
+    {
+      "id": "prob_binomial_pmf",
+      "canonical_statement": "For natural n and k and probability p, the explicitly Real-lowered BinomialPMF(n,p,k) equals choose(n,k)·p^k·(1-p)^(n-k).",
+      "proof_strategy": "Apply the real-valued singleton PMF theorem after explicit Probability and Nat lowerings.",
+      "sketch_steps": [
+        "Fix natural n, natural k, and p : Probability.",
+        "Form the Binomial distribution with the bounded Probability parameter p.",
+        "Lower its PMF and p explicitly to Real.",
+        "Lower choose(n,k) explicitly from Nat to Real.",
+        "Apply the reviewed real singleton-PMF identity."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Nat\"/></OMATP><OMV name=\"n\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Nat\"/></OMATP><OMV name=\"k\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"Probability\"/></OMATP><OMV name=\"p\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"prob_to_real\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"pmf\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"binomial_distribution\"/><OMV name=\"n\"/><OMV name=\"p\"/></OMA><OMV name=\"k\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"real_mul\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"real_mul\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"nat_to_real\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"choose\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"real_pow_nat\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"prob_to_real\"/><OMV name=\"p\"/></OMA><OMV name=\"k\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"real_pow_nat\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"real_sub\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"real_of_int\"/><OMI>1</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"prob_to_real\"/><OMV name=\"p\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"nat_sub\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Nat",
+        "probability1:Probability",
+        "probability1:binomial_distribution",
+        "probability1:pmf",
+        "probability1:prob_to_real",
+        "probability1:nat_to_real",
+        "probability1:real_pow_nat",
+        "relation1:eq"
+      ],
+      "lean_target": "example (n k : ℕ) (p : I) : (Bin(n, p)).real {k} = (n.choose k) * p^k * (1 - p)^(n - k)",
+      "lean_witness": "by exact binomial_real_singleton n k p",
+      "alignment": "The XML binds p at the bounded Probability sort, lowers each probability-valued PMF/p operand explicitly to Real, and lowers Nat.choose explicitly before Real multiplication. The Lean target uses p : I and Bin(...).real {k}, the reviewed matching lowering.",
+      "conventions": {
+        "probability_codomain": "p has sort Probability, whose v1 meaning is a value in [0,1]; no Real-to-Probability constructor exists.",
+        "real_lowering": "PMF and p enter Real arithmetic only through probability1:prob_to_real; choose enters only through probability1:nat_to_real.",
+        "edge_convention": "Nat.choose is total, so the PMF formula retains its reviewed k>n boundary behavior."
+      },
+      "source_candidate_id": "prob_binomial_pmf",
+      "openmath_profile": "typed-probability-v1",
+      "openmath_xml_sha256": "sha256:011e12c1ccdd5b8291e95127a2cfd4c2dc6d1df5ab76ee6a959b7df7e8ef4aa0",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Probability\"></n1:OMS></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"prob_to_real\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"pmf\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"binomial_distribution\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_mul\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_mul\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_to_real\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_pow_nat\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"prob_to_real\"></n1:OMS><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_pow_nat\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_sub\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"prob_to_real\"></n1:OMS><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_sub\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:d3eef518254bd6be8f9a714336f5d9824b8cf5f496f7ac89c134ed930c3cc5f5",
+      "canonical_statement_sha256": "sha256:b19f4c52edd649e9ef6fc5d1ae45dfa34a9d5d4c15806a5d4fdfd3c2a8a23550",
+      "lean_target_sha256": "sha256:bb35fe347fbef5e11d830a3fbf32ed0a0d75b3a92740549c61040768aa435200",
+      "lean_witness_sha256": "sha256:0e10d5e28b4c105836a72bbb3ac23457d0b43fa6d02956e53de0d208bc28b7a3",
+      "compiler_receipt_status": "verified",
+      "profile_validation_status": "validated_local_typed_probability_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt",
+      "embedding_namespace_preimage": "typed-probability-v1||<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Probability\"></n1:OMS></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"prob_to_real\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"pmf\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"binomial_distribution\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_mul\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_mul\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_to_real\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"choose\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_pow_nat\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"prob_to_real\"></n1:OMS><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_pow_nat\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_sub\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"prob_to_real\"></n1:OMS><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"nat_sub\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>"
+    },
+    {
+      "id": "prob_binomial_zero_success",
+      "canonical_statement": "For natural n and probability p, the explicitly Real-lowered BinomialPMF(n,p,0) equals (1-p)^n.",
+      "proof_strategy": "Specialize the reviewed Binomial PMF identity to the zero-success outcome.",
+      "sketch_steps": [
+        "Fix natural n and p : Probability.",
+        "Use outcome 0 as a Nat literal in the Binomial PMF.",
+        "Lower the PMF and p explicitly to Real.",
+        "Simplify the choose(n,0) and p^0 factors.",
+        "Conclude with the reviewed Lean simplification."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Nat\"/></OMATP><OMV name=\"n\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"Probability\"/></OMATP><OMV name=\"p\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"prob_to_real\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"pmf\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"binomial_distribution\"/><OMV name=\"n\"/><OMV name=\"p\"/></OMA><OMI>0</OMI></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"real_pow_nat\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"real_sub\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"real_of_int\"/><OMI>1</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"prob_to_real\"/><OMV name=\"p\"/></OMA></OMA><OMV name=\"n\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Nat",
+        "probability1:Probability",
+        "probability1:binomial_distribution",
+        "probability1:pmf",
+        "probability1:prob_to_real",
+        "probability1:nat_to_real",
+        "probability1:real_pow_nat",
+        "relation1:eq"
+      ],
+      "lean_target": "example (n : ℕ) (p : I) : (Bin(n, p)).real {0} = (1 - p)^n",
+      "lean_witness": "by simp",
+      "alignment": "The XML binds p at the bounded Probability sort, lowers each probability-valued PMF/p operand explicitly to Real, and lowers Nat.choose explicitly before Real multiplication. The Lean target uses p : I and Bin(...).real {k}, the reviewed matching lowering.",
+      "conventions": {
+        "probability_codomain": "p has sort Probability, whose v1 meaning is a value in [0,1]; no Real-to-Probability constructor exists.",
+        "real_lowering": "PMF and p enter Real arithmetic only through probability1:prob_to_real; choose enters only through probability1:nat_to_real.",
+        "edge_convention": "Nat.choose is total, so the PMF formula retains its reviewed k>n boundary behavior."
+      },
+      "source_candidate_id": "prob_binomial_zero_success",
+      "openmath_profile": "typed-probability-v1",
+      "openmath_xml_sha256": "sha256:28b3a32897127dc3105d8a8829915d153896972c53f956d654c04b8ab3b812f2",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Probability\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"prob_to_real\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"pmf\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"binomial_distribution\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMI>0</n1:OMI></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_pow_nat\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_sub\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"prob_to_real\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:c4c15acc2a8db38e18ade9e862786fc0cb690ac7a28bb7df9055bae5df7be43b",
+      "canonical_statement_sha256": "sha256:0fb2649df6e587bbc87bc1561378406f992edb056250caa8329717f4c18a1ce2",
+      "lean_target_sha256": "sha256:de6f020f74df1ac5c7047dd8d672032acb15ea1aa6be2d4b1745b7bdc1210c27",
+      "lean_witness_sha256": "sha256:f58917a5f3c1e6fe03b501d3d46fdfa775becf01ec6425de00e5680dea686551",
+      "compiler_receipt_status": "verified",
+      "profile_validation_status": "validated_local_typed_probability_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt",
+      "embedding_namespace_preimage": "typed-probability-v1||<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Probability\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"prob_to_real\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"pmf\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"binomial_distribution\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMI>0</n1:OMI></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_pow_nat\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_sub\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"prob_to_real\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>"
+    },
+    {
+      "id": "prob_binomial_all_success",
+      "canonical_statement": "For natural n and probability p, the explicitly Real-lowered BinomialPMF(n,p,n) equals p^n.",
+      "proof_strategy": "Specialize the reviewed Binomial PMF identity to the all-success outcome n.",
+      "sketch_steps": [
+        "Fix natural n and p : Probability.",
+        "Use the same Nat variable n as the PMF outcome.",
+        "Lower the PMF and p explicitly to Real.",
+        "Simplify the choose(n,n) and (1-p)^0 factors.",
+        "Conclude with the reviewed Lean simplification."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Nat\"/></OMATP><OMV name=\"n\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"Probability\"/></OMATP><OMV name=\"p\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"prob_to_real\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"pmf\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"binomial_distribution\"/><OMV name=\"n\"/><OMV name=\"p\"/></OMA><OMV name=\"n\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"real_pow_nat\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"probability1\" name=\"prob_to_real\"/><OMV name=\"p\"/></OMA><OMV name=\"n\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Nat",
+        "probability1:Probability",
+        "probability1:binomial_distribution",
+        "probability1:pmf",
+        "probability1:prob_to_real",
+        "probability1:nat_to_real",
+        "probability1:real_pow_nat",
+        "relation1:eq"
+      ],
+      "lean_target": "example (n : ℕ) (p : I) : (Bin(n, p)).real {n} = p^n",
+      "lean_witness": "by simp",
+      "alignment": "The XML binds p at the bounded Probability sort, lowers each probability-valued PMF/p operand explicitly to Real, and lowers Nat.choose explicitly before Real multiplication. The Lean target uses p : I and Bin(...).real {k}, the reviewed matching lowering.",
+      "conventions": {
+        "probability_codomain": "p has sort Probability, whose v1 meaning is a value in [0,1]; no Real-to-Probability constructor exists.",
+        "real_lowering": "PMF and p enter Real arithmetic only through probability1:prob_to_real; choose enters only through probability1:nat_to_real.",
+        "edge_convention": "Nat.choose is total, so the PMF formula retains its reviewed k>n boundary behavior."
+      },
+      "source_candidate_id": "prob_binomial_all_success",
+      "openmath_profile": "typed-probability-v1",
+      "openmath_xml_sha256": "sha256:186625b7ccd32018f40b930578bc2986edc8f5292af6d911dd7e1c94e0bbdec2",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Probability\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"prob_to_real\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"pmf\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"binomial_distribution\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_pow_nat\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"prob_to_real\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:540ca0dddec3caffd227e82d2f8fecebffff392dc3c0ae7f3530d491d767536c",
+      "canonical_statement_sha256": "sha256:d8bd96badaba1627d5ab9dd8423d4f67c2b555f32f1ffb85ef19d103e2ce6d82",
+      "lean_target_sha256": "sha256:0da92c39fad44bf4945eb3cbe036a8eb0ab5d36a2faa0656ce0715e7546b9f09",
+      "lean_witness_sha256": "sha256:f58917a5f3c1e6fe03b501d3d46fdfa775becf01ec6425de00e5680dea686551",
+      "compiler_receipt_status": "verified",
+      "profile_validation_status": "validated_local_typed_probability_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt",
+      "embedding_namespace_preimage": "typed-probability-v1||<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Nat\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Probability\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"prob_to_real\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"pmf\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"binomial_distribution\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"real_pow_nat\"></n1:OMS><n1:OMA><n1:OMS cd=\"probability1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"prob_to_real\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>"
+    }
+  ],
+  "excluded_cards": [
+    {
+      "id": "prob_conditional_definition",
+      "canonical_statement": "For finite measure M and measurable events S and T, conditional_probability(M, T, S) = probability(M, S intersect T) / probability(M, S).",
+      "status": "excluded_pending_reauthoring",
+      "reason": "The canonical statement permits an arbitrary finite measure and a zero conditioning mass. v1 defines a `ProbabilityMeasure`-based, Real-valued conditional probability and requires a nonzero denominator. The legacy Lean theorem `cond_apply` is an equality in `ENNReal`; no reviewed `ENNReal.toReal` quotient bridge supplies the missing premise or preserves the source statement.",
+      "required_reauthoring": "Restrict M to `ProbabilityMeasure(Ω)`, add `prob_to_real(Pμ(S)) ≠ 0`, and prove the explicit `toReal` bridge before admission.",
+      "typed_profile_disposition": "explicitly_rejected_or_deferred",
+      "registry_gate": "conditional_probability and variance signatures are intentionally absent from typed-probability-v1."
+    },
+    {
+      "id": "prob_conditional_self",
+      "canonical_statement": "For finite measure M and measurable event S with positive finite probability, conditional_probability(M, S, S) = 1.",
+      "status": "excluded_pending_reauthoring",
+      "reason": "Although positivity is stated, the card still quantifies over `FiniteMeasure` and its existing Lean proof is `ENNReal`-valued. It has no reviewed lowering to the v1 `Probability` value and then `Real`, nor a proof that its finite-measure convention is the profile convention.",
+      "required_reauthoring": "State the card for `ProbabilityMeasure(Ω)` with positive `prob_to_real(Pμ(S))`, define the conditional-probability lowering, and compile its real-valued target.",
+      "typed_profile_disposition": "explicitly_rejected_or_deferred",
+      "registry_gate": "conditional_probability and variance signatures are intentionally absent from typed-probability-v1."
+    },
+    {
+      "id": "prob_conditional_multiplication_rule",
+      "canonical_statement": "For finite measure M and measurable events S and T, conditional_probability(M, T, S)*probability(M, S) = probability(M, S intersect T).",
+      "status": "excluded_pending_reauthoring",
+      "reason": "The legacy target `μ[t | s] * μ s = μ(s ∩ t)` compiles in `ENNReal`. Multiplying `ENNReal.toReal` values needs a separately reviewed finite-value bridge; v1 additionally represents only probability measures. Reusing that theorem would silently change both the scalar sort and measure scope.",
+      "required_reauthoring": "Use `ProbabilityMeasure(Ω)`, make each `prob_to_real` explicit, and prove the Real multiplication identity from a finite/`toReal` bridge.",
+      "typed_profile_disposition": "explicitly_rejected_or_deferred",
+      "registry_gate": "conditional_probability and variance signatures are intentionally absent from typed-probability-v1."
+    },
+    {
+      "id": "prob_bayes_formula",
+      "canonical_statement": "For finite measure M and measurable events S and T, conditional_probability(M, T, S) = conditional_probability(M, S, T)*probability(M, T)/probability(M, S).",
+      "status": "excluded_pending_reauthoring",
+      "reason": "The source omits the nonzero denominator required by the v1 partial conditional-probability convention. Its old Lean theorem uses totalized `ENNReal` inverse/division, so compiling it would validate a different zero-mass convention rather than the canonical Real formula.",
+      "required_reauthoring": "Restrict to `ProbabilityMeasure(Ω)`, add nonzero hypotheses for the quotient (and any needed reverse conditioning term), then prove the explicit Real lowering.",
+      "typed_profile_disposition": "explicitly_rejected_or_deferred",
+      "registry_gate": "conditional_probability and variance signatures are intentionally absent from typed-probability-v1."
+    },
+    {
+      "id": "prob_variance_nonnegative",
+      "canonical_statement": "For random variable X under measure M, 0 ≤ Var(X; M).",
+      "status": "excluded_pending_reauthoring",
+      "reason": "v1 requires `square_integrable(X, μ)` for `variance`. Mathlib's `variance_nonneg` concerns its totalized variance definition and does not establish that the source's unrestricted `random_variable` has the profile-required second moment. Admitting it would weaken the profile's stated convention.",
+      "required_reauthoring": "Add `μ : ProbabilityMeasure(Ω)` and `square_integrable(X, μ)`, then compile the profile-aligned variance target.",
+      "typed_profile_disposition": "explicitly_rejected_or_deferred",
+      "registry_gate": "conditional_probability and variance signatures are intentionally absent from typed-probability-v1."
+    },
+    {
+      "id": "prob_variance_scaling",
+      "canonical_statement": "For real c and random variable X, Var(c*X; M) = c^2*Var(X; M).",
+      "status": "excluded_pending_reauthoring",
+      "reason": "The current statement lacks a measure/probability-measure binding and the square-integrability premise required by the v1 variance signature. The legacy theorem is valid for Mathlib's totalized variance, which is not yet the profile's reviewed classical-variance semantics.",
+      "required_reauthoring": "Bind `μ : ProbabilityMeasure(Ω)` and add `square_integrable(X, μ)`; verify scaling preserves the chosen profile convention.",
+      "typed_profile_disposition": "explicitly_rejected_or_deferred",
+      "registry_gate": "conditional_probability and variance signatures are intentionally absent from typed-probability-v1."
+    },
+    {
+      "id": "prob_variance_translation",
+      "canonical_statement": "For probability measure M, random variable X, and real c, Var(X + c; M) = Var(X; M).",
+      "status": "excluded_pending_reauthoring",
+      "reason": "The old witness needs `AEStronglyMeasurable X μ`, while the v1 `RealRandomVariable` sort only records measurability and the profile additionally requires square integrability. Those assumptions are absent from the canonical statement, so this cannot be admitted as a faithful typed target.",
+      "required_reauthoring": "Add the profile's square-integrability condition and the Lean-level measurability evidence (or strengthen the sort definition and review its consequences).",
+      "typed_profile_disposition": "explicitly_rejected_or_deferred",
+      "registry_gate": "conditional_probability and variance signatures are intentionally absent from typed-probability-v1."
+    }
+  ],
+  "manifest_payload_sha256": "sha256:8afbcf1b3cc5327c1bb4a940022fad82823123ac7c66b5efe859cb1089abe27f"
+}

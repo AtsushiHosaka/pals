@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# agent-deps checks importability before the target recipe. Keep that prerequisite
+# inert and record only the evaluation delegation under test.
+if [ "${1:-}" = '-c' ]; then
+  exit 0
+fi
+
+log_dir="${PALS_DEO_RECORDER_LOG_DIR:?PALS_DEO_RECORDER_LOG_DIR is required}"
+mkdir -p "${log_dir}"
+
+count=0
+if [ -r "${log_dir}/count" ]; then
+  count="$(cat "${log_dir}/count")"
+fi
+printf '%s' "$((count + 1))" >"${log_dir}/count"
+pwd -P >"${log_dir}/cwd"
+printf '%s' "${PALS_DEO_TEST_SENTINEL:-}" >"${log_dir}/env-sentinel"
+printf '%s\0' "$@" >"${log_dir}/argv.bin"
+
+if [ -n "${PALS_DEO_RECORDER_SIGNAL:-}" ]; then
+  kill -s "${PALS_DEO_RECORDER_SIGNAL}" "$$"
+  exit 99
+fi
+
+exit "${PALS_DEO_RECORDER_EXIT:-0}"

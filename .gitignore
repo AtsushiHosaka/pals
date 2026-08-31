@@ -10,15 +10,24 @@
 *.kubeconfig
 
 # Codex/local outputs
-.claude/
+.local/e2e/
+.local/e2e-runs/
+.agents/
+.claude/*
+!.claude/commands/
+.claude/commands/*
+!.claude/commands/update-spec.md
 .codex/
+.playwright-cli/
 codex-scripts/outputs/
 pals-scripts/outputs/
+output/
 outputs/
 pals-lean-verifier/
 *.log
 *.dump
 *.sql
+!pals-draft-admin/db/init-readonly-role.sql
 
 # OS/editor
 .DS_Store
@@ -30,6 +39,7 @@ pals-lean-verifier/
 # Dependencies and build outputs
 node_modules/
 .venv/
+.venv-*/
 venv/
 __pycache__/
 .pytest_cache/
@@ -38,5 +48,7 @@ __pycache__/
 dist/
 build/
 coverage/
+pals-draft-admin/playwright-report/
+pals-draft-admin/test-results/
 .terraform/
 .terraform.lock.hcl

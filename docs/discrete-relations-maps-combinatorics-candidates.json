@@ -1,0 +1,470 @@
+{
+  "schema_version": "pals.discrete-relations-maps-combinatorics-candidates.v1",
+  "source": "PALS first-party authored, generic-OpenMath and Lean-verified candidate set",
+  "current_profile_card_count": 21,
+  "domain_counts": {
+    "ordered_relation_instance": 5,
+    "scalar_and_finite_set_map_instance": 7,
+    "finite_set_cardinality_instance": 7,
+    "explicit_pigeonhole_instance": 2
+  },
+  "scope_note": "Generic OpenMath has no type constructor for relations, functions, finite sets, or cardinal numbers. Relation cards are concrete integer-order instances; map cards use scalar equations or closed finite-set images; cardinality cards use only closed finite literals; pigeonhole cards are explicitly enumerated boxes rather than a general function theorem.",
+  "typed_backlog": [
+    {
+      "topic": "equivalence relations and partial orders",
+      "examples": [
+        "R is reflexive, symmetric, and transitive on X",
+        "R is a partial order on X"
+      ],
+      "minimum_symbols": [
+        "pals2:relation",
+        "pals2:relation_apply",
+        "pals2:reflexive_on",
+        "pals2:symmetric_on",
+        "pals2:transitive_on",
+        "pals2:antisymmetric_on"
+      ],
+      "why_current_profile_cannot_represent_it": "A bare generic term cannot be bound as a relation X × X → Prop, so relation properties cannot be linked to one carrier set."
+    },
+    {
+      "topic": "injective and surjective maps",
+      "examples": [
+        "f:X→Y is injective",
+        "f:X→Y is surjective"
+      ],
+      "minimum_symbols": [
+        "pals2:typed_function",
+        "pals2:function_apply",
+        "pals2:injective",
+        "pals2:surjective"
+      ],
+      "why_current_profile_cannot_represent_it": "The generic profile cannot bind a function together with coherent source and target sorts, nor state its universal mapping property."
+    },
+    {
+      "topic": "general finite cardinality and binomial coefficients",
+      "examples": [
+        "|A∪B|+|A∩B|=|A|+|B|",
+        "choose(n,k) Pascal identity"
+      ],
+      "minimum_symbols": [
+        "pals2:finite_set",
+        "pals2:cardinality",
+        "combinat1:binomial"
+      ],
+      "why_current_profile_cannot_represent_it": "set1:size has no finite-set or natural-number dependent sort in the generic profile, and no supported binomial-coefficient symbol is registered."
+    },
+    {
+      "topic": "general pigeonhole principle",
+      "examples": [
+        "Every f:{1,…,n+1}→{1,…,n} has a collision"
+      ],
+      "minimum_symbols": [
+        "pals2:finite_set",
+        "pals2:typed_function",
+        "pals2:injective",
+        "pals2:cardinality",
+        "pals2:cardinality_lt"
+      ],
+      "why_current_profile_cannot_represent_it": "It quantifies a typed function and compares linked finite cardinalities; the explicitly enumerated instances above avoid that unsupported abstraction."
+    }
+  ],
+  "validation_contract": {
+    "generic_openmath": "All cards run statement-semantics validation, current retrieval C14N, and exact C14N validation during generation.",
+    "lean": "Pass --verify-lean to compile one temporary file containing every witness in the pinned Lean workspace.",
+    "local_db": "Pass --verify-db --expected-db-count 253 to perform read-only ID and C14N collision checks against the local legacy Draft DB."
+  },
+  "cards": [
+    {
+      "id": "disc_int_le_antisymmetric",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "ordered_relation_instance",
+      "difficulty": "introductory",
+      "canonical_statement": "For all integers x and y, x ≤ y and y ≤ x imply x = y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"y\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use antisymmetry of the integer order relation.",
+      "sketch_steps": [
+        "setup: Introduce the integer variables and the displayed order hypotheses.",
+        "relation: Read the assumptions as statements about the concrete relation ≤ or <.",
+        "derive: Apply transitivity, antisymmetry, or totality of integer order.",
+        "conclude: State the requested relation among the original variables."
+      ],
+      "lean_witness": "example (x y : ℤ) : x ≤ y → y ≤ x → x = y := by omega"
+    },
+    {
+      "id": "disc_int_le_total",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "ordered_relation_instance",
+      "difficulty": "introductory",
+      "canonical_statement": "For all integers x and y, either x ≤ y or y ≤ x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"y\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use totality of the linear order on integers.",
+      "sketch_steps": [
+        "setup: Introduce the integer variables and the displayed order hypotheses.",
+        "relation: Read the assumptions as statements about the concrete relation ≤ or <.",
+        "derive: Apply transitivity, antisymmetry, or totality of integer order.",
+        "conclude: State the requested relation among the original variables."
+      ],
+      "lean_witness": "example (x y : ℤ) : x ≤ y ∨ y ≤ x := le_total x y"
+    },
+    {
+      "id": "disc_int_lt_transitive",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "ordered_relation_instance",
+      "difficulty": "standard",
+      "canonical_statement": "For all integers x, y, and z, x < y and y < z imply x < z.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMV name=\"z\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Chain the two strict inequalities by transitivity.",
+      "sketch_steps": [
+        "setup: Introduce the integer variables and the displayed order hypotheses.",
+        "relation: Read the assumptions as statements about the concrete relation ≤ or <.",
+        "derive: Apply transitivity, antisymmetry, or totality of integer order.",
+        "conclude: State the requested relation among the original variables."
+      ],
+      "lean_witness": "example (x y z : ℤ) : x < y → y < z → x < z := by omega"
+    },
+    {
+      "id": "disc_int_lt_le_transitive",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "ordered_relation_instance",
+      "difficulty": "standard",
+      "canonical_statement": "For all integers x, y, and z, x < y and y ≤ z imply x < z.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMV name=\"z\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Combine a strict relation with a following weak relation.",
+      "sketch_steps": [
+        "setup: Introduce the integer variables and the displayed order hypotheses.",
+        "relation: Read the assumptions as statements about the concrete relation ≤ or <.",
+        "derive: Apply transitivity, antisymmetry, or totality of integer order.",
+        "conclude: State the requested relation among the original variables."
+      ],
+      "lean_witness": "example (x y z : ℤ) : x < y → y ≤ z → x < z := by omega"
+    },
+    {
+      "id": "disc_int_le_lt_transitive",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "ordered_relation_instance",
+      "difficulty": "standard",
+      "canonical_statement": "For all integers x, y, and z, x ≤ y and y < z imply x < z.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMV name=\"z\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Combine a weak relation with a following strict relation.",
+      "sketch_steps": [
+        "setup: Introduce the integer variables and the displayed order hypotheses.",
+        "relation: Read the assumptions as statements about the concrete relation ≤ or <.",
+        "derive: Apply transitivity, antisymmetry, or totality of integer order.",
+        "conclude: State the requested relation among the original variables."
+      ],
+      "lean_witness": "example (x y z : ℤ) : x ≤ y → y < z → x < z := by omega"
+    },
+    {
+      "id": "disc_shift_one_equality_iff",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "scalar_map_instance",
+      "difficulty": "introductory",
+      "canonical_statement": "For all real x and y, x + 1 = y + 1 if and only if x = y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"y\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Cancel the common translation constant from both sides.",
+      "sketch_steps": [
+        "setup: Introduce source and target values in the stated scalar domain.",
+        "expand: Write the displayed formula for the concrete map.",
+        "solve: Cancel, rearrange, or choose the explicit preimage.",
+        "verify: Substitute into the map equation or equality characterization.",
+        "conclude: State the injectivity, collision, image, or preimage instance."
+      ],
+      "lean_witness": "example (x y : ℝ) : x + 1 = y + 1 ↔ x = y := by constructor <;> intro h <;> linarith"
+    },
+    {
+      "id": "disc_double_equality_iff",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "scalar_map_instance",
+      "difficulty": "introductory",
+      "canonical_statement": "For all real x and y, 2*x = 2*y if and only if x = y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Cancel the nonzero scalar factor two.",
+      "sketch_steps": [
+        "setup: Introduce source and target values in the stated scalar domain.",
+        "expand: Write the displayed formula for the concrete map.",
+        "solve: Cancel, rearrange, or choose the explicit preimage.",
+        "verify: Substitute into the map equation or equality characterization.",
+        "conclude: State the injectivity, collision, image, or preimage instance."
+      ],
+      "lean_witness": "example (x y : ℝ) : 2*x = 2*y ↔ x = y := by constructor <;> intro h <;> linarith"
+    },
+    {
+      "id": "disc_affine_equality_iff",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "scalar_map_instance",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, 2*x + 3 = 2*y + 3 if and only if x = y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMI>3</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"y\"/></OMA><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Cancel the common translation and then the nonzero scale factor.",
+      "sketch_steps": [
+        "setup: Introduce source and target values in the stated scalar domain.",
+        "expand: Write the displayed formula for the concrete map.",
+        "solve: Cancel, rearrange, or choose the explicit preimage.",
+        "verify: Substitute into the map equation or equality characterization.",
+        "conclude: State the injectivity, collision, image, or preimage instance."
+      ],
+      "lean_witness": "example (x y : ℝ) : 2*x + 3 = 2*y + 3 ↔ x = y := by constructor <;> intro h <;> linarith"
+    },
+    {
+      "id": "disc_affine_has_real_preimage",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "scalar_map_instance",
+      "difficulty": "standard",
+      "canonical_statement": "For every real y, there exists real x satisfying 2*x + 3 = y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMBIND><OMS cd=\"quant1\" name=\"exists\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMI>3</OMI></OMA><OMV name=\"y\"/></OMA></OMA></OMBIND></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Choose x = (y - 3)/2 and verify the affine equation.",
+      "sketch_steps": [
+        "setup: Introduce source and target values in the stated scalar domain.",
+        "expand: Write the displayed formula for the concrete map.",
+        "solve: Cancel, rearrange, or choose the explicit preimage.",
+        "verify: Substitute into the map equation or equality characterization.",
+        "conclude: State the injectivity, collision, image, or preimage instance."
+      ],
+      "lean_witness": "example (y : ℝ) : ∃ x : ℝ, 2*x + 3 = y := by refine ⟨(y - 3) / 2, by ring⟩"
+    },
+    {
+      "id": "disc_square_has_distinct_collision",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "scalar_map_instance",
+      "difficulty": "standard",
+      "canonical_statement": "There exist real x and y with x ≠ y and x^2 = y^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"exists\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMBIND><OMS cd=\"quant1\" name=\"exists\"/><OMBVAR><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Exhibit the distinct inputs 1 and -1, which have the same square.",
+      "sketch_steps": [
+        "setup: Introduce source and target values in the stated scalar domain.",
+        "expand: Write the displayed formula for the concrete map.",
+        "solve: Cancel, rearrange, or choose the explicit preimage.",
+        "verify: Substitute into the map equation or equality characterization.",
+        "conclude: State the injectivity, collision, image, or preimage instance."
+      ],
+      "lean_witness": "example : ∃ x y : ℝ, x ≠ y ∧ x^2 = y^2 := by refine ⟨1, -1, by norm_num, by norm_num⟩"
+    },
+    {
+      "id": "disc_fixed_shift_image",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "finite_set_image",
+      "difficulty": "standard",
+      "canonical_statement": "The image of {1,2,3} under x ↦ x + 1 equals {2,3,4}.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"map\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMBIND><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>1</OMI><OMI>2</OMI><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>2</OMI><OMI>3</OMI><OMI>4</OMI></OMA></OMA></OMOBJ>",
+      "proof_strategy": "Evaluate the map on each listed element and remove no duplicates.",
+      "sketch_steps": [
+        "setup: Write the finite sets and their distinct listed elements explicitly.",
+        "operation: Form the displayed union, intersection, difference, product, or image.",
+        "enumerate: Remove duplicate elements and list the resulting finite set.",
+        "count: Count its elements or compare the two explicit finite sets.",
+        "conclude: State the requested finite-set identity."
+      ],
+      "lean_witness": "example : ({1, 2, 3} : Finset ℤ).image (fun x => x + 1) = {2, 3, 4} := by norm_num"
+    },
+    {
+      "id": "disc_fixed_square_image",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "finite_set_image",
+      "difficulty": "standard",
+      "canonical_statement": "The image of {-1,0,1} under x ↦ x^2 equals {0,1}.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"map\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>-1</OMI><OMI>0</OMI><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>0</OMI><OMI>1</OMI></OMA></OMA></OMOBJ>",
+      "proof_strategy": "Evaluate the square map and identify the duplicate output one.",
+      "sketch_steps": [
+        "setup: Write the finite sets and their distinct listed elements explicitly.",
+        "operation: Form the displayed union, intersection, difference, product, or image.",
+        "enumerate: Remove duplicate elements and list the resulting finite set.",
+        "count: Count its elements or compare the two explicit finite sets.",
+        "conclude: State the requested finite-set identity."
+      ],
+      "lean_witness": "example : ({-1, 0, 1} : Finset ℤ).image (fun x => x^2) = {0, 1} := by norm_num"
+    },
+    {
+      "id": "disc_size_empty_closed",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "finite_set_cardinality_instance",
+      "difficulty": "introductory",
+      "canonical_statement": "The empty finite set has size 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"size\"/><OMS cd=\"set1\" name=\"emptyset\"/></OMA><OMI>0</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Evaluate the cardinality of the empty finite set.",
+      "sketch_steps": [
+        "setup: Write the finite sets and their distinct listed elements explicitly.",
+        "operation: Form the displayed union, intersection, difference, product, or image.",
+        "enumerate: Remove duplicate elements and list the resulting finite set.",
+        "count: Count its elements or compare the two explicit finite sets.",
+        "conclude: State the requested finite-set identity."
+      ],
+      "lean_witness": "example : (∅ : Finset ℤ).card = 0 := by norm_num"
+    },
+    {
+      "id": "disc_size_singleton_closed",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "finite_set_cardinality_instance",
+      "difficulty": "introductory",
+      "canonical_statement": "The finite set {7} has size 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"size\"/><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>7</OMI></OMA></OMA><OMI>1</OMI></OMA></OMOBJ>",
+      "proof_strategy": "List the unique element and count it.",
+      "sketch_steps": [
+        "setup: Write the finite sets and their distinct listed elements explicitly.",
+        "operation: Form the displayed union, intersection, difference, product, or image.",
+        "enumerate: Remove duplicate elements and list the resulting finite set.",
+        "count: Count its elements or compare the two explicit finite sets.",
+        "conclude: State the requested finite-set identity."
+      ],
+      "lean_witness": "example : ({7} : Finset ℤ).card = 1 := by norm_num"
+    },
+    {
+      "id": "disc_size_union_two_overlap",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "finite_set_cardinality_instance",
+      "difficulty": "standard",
+      "canonical_statement": "The finite set {1,2} ∪ {2,3} has size 3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"size\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>1</OMI><OMI>2</OMI></OMA><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>2</OMI><OMI>3</OMI></OMA></OMA></OMA><OMI>3</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Form the union and discard the duplicated element 2.",
+      "sketch_steps": [
+        "setup: Write the finite sets and their distinct listed elements explicitly.",
+        "operation: Form the displayed union, intersection, difference, product, or image.",
+        "enumerate: Remove duplicate elements and list the resulting finite set.",
+        "count: Count its elements or compare the two explicit finite sets.",
+        "conclude: State the requested finite-set identity."
+      ],
+      "lean_witness": "example : (({1, 2} : Finset ℤ) ∪ {2, 3}).card = 3 := by norm_num"
+    },
+    {
+      "id": "disc_size_intersection_two_overlap",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "finite_set_cardinality_instance",
+      "difficulty": "standard",
+      "canonical_statement": "The finite set {1,2} ∩ {2,3} has size 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"size\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>1</OMI><OMI>2</OMI></OMA><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>2</OMI><OMI>3</OMI></OMA></OMA></OMA><OMI>1</OMI></OMA></OMOBJ>",
+      "proof_strategy": "List the sole common element 2.",
+      "sketch_steps": [
+        "setup: Write the finite sets and their distinct listed elements explicitly.",
+        "operation: Form the displayed union, intersection, difference, product, or image.",
+        "enumerate: Remove duplicate elements and list the resulting finite set.",
+        "count: Count its elements or compare the two explicit finite sets.",
+        "conclude: State the requested finite-set identity."
+      ],
+      "lean_witness": "example : (({1, 2} : Finset ℤ) ∩ {2, 3}).card = 1 := by norm_num"
+    },
+    {
+      "id": "disc_size_difference_closed",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "finite_set_cardinality_instance",
+      "difficulty": "standard",
+      "canonical_statement": "The finite set {1,2,3} \\ {2} has size 2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"size\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>1</OMI><OMI>2</OMI><OMI>3</OMI></OMA><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>2</OMI></OMA></OMA></OMA><OMI>2</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Remove the displayed element 2 and count the two remaining elements.",
+      "sketch_steps": [
+        "setup: Write the finite sets and their distinct listed elements explicitly.",
+        "operation: Form the displayed union, intersection, difference, product, or image.",
+        "enumerate: Remove duplicate elements and list the resulting finite set.",
+        "count: Count its elements or compare the two explicit finite sets.",
+        "conclude: State the requested finite-set identity."
+      ],
+      "lean_witness": "example : (({1, 2, 3} : Finset ℤ) \\ {2}).card = 2 := by native_decide"
+    },
+    {
+      "id": "disc_size_cartesian_product_two_three",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "finite_set_cardinality_instance",
+      "difficulty": "standard",
+      "canonical_statement": "The Cartesian product {1,2} × {4,5,6} has size 6.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"size\"/><OMA><OMS cd=\"set1\" name=\"cartesian_product\"/><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>1</OMI><OMI>2</OMI></OMA><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>4</OMI><OMI>5</OMI><OMI>6</OMI></OMA></OMA></OMA><OMI>6</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Enumerate the two choices in the first coordinate and three in the second.",
+      "sketch_steps": [
+        "setup: Write the finite sets and their distinct listed elements explicitly.",
+        "operation: Form the displayed union, intersection, difference, product, or image.",
+        "enumerate: Remove duplicate elements and list the resulting finite set.",
+        "count: Count its elements or compare the two explicit finite sets.",
+        "conclude: State the requested finite-set identity."
+      ],
+      "lean_witness": "example : (({1, 2} : Finset ℤ).product {4, 5, 6}).card = 6 := by norm_num"
+    },
+    {
+      "id": "disc_closed_inclusion_exclusion",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "finite_set_cardinality_instance",
+      "difficulty": "advanced",
+      "canonical_statement": "For finite sets {1,2} and {2,3}, size of the union plus size of the intersection equals the sum of the two sizes.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"set1\" name=\"size\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>1</OMI><OMI>2</OMI></OMA><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>2</OMI><OMI>3</OMI></OMA></OMA></OMA><OMA><OMS cd=\"set1\" name=\"size\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>1</OMI><OMI>2</OMI></OMA><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>2</OMI><OMI>3</OMI></OMA></OMA></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"set1\" name=\"size\"/><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>1</OMI><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"set1\" name=\"size\"/><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>2</OMI><OMI>3</OMI></OMA></OMA></OMA></OMA></OMOBJ>",
+      "proof_strategy": "Count the union and intersection, then verify the closed inclusion-exclusion equation.",
+      "sketch_steps": [
+        "setup: Write the finite sets and their distinct listed elements explicitly.",
+        "operation: Form the displayed union, intersection, difference, product, or image.",
+        "enumerate: Remove duplicate elements and list the resulting finite set.",
+        "count: Count its elements or compare the two explicit finite sets.",
+        "conclude: State the requested finite-set identity."
+      ],
+      "lean_witness": "example : (({1, 2} : Finset ℤ) ∪ {2, 3}).card + (({1, 2} : Finset ℤ) ∩ {2, 3}).card = ({1, 2} : Finset ℤ).card + ({2, 3} : Finset ℤ).card := by norm_num"
+    },
+    {
+      "id": "disc_pigeonhole_three_into_two",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "explicit_pigeonhole_instance",
+      "difficulty": "standard",
+      "canonical_statement": "For all integers a, b, c in {0,1}, either a = b, a = c, or b = c.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/><OMV name=\"b\"/><OMV name=\"c\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"a\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"b\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"c\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"a\"/><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>0</OMI><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"b\"/><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>0</OMI><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"c\"/><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>0</OMI><OMI>1</OMI></OMA></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"a\"/><OMV name=\"b\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"a\"/><OMV name=\"c\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"b\"/><OMV name=\"c\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Exhaust the two possible boxes for each of the three integers.",
+      "sketch_steps": [
+        "setup: Record that every listed integer lies in the displayed finite box set.",
+        "cases: Split each value into the finitely many allowed box labels.",
+        "compare: In every exhaustive branch, identify two equal labels.",
+        "conclude: Assemble the resulting disjunction of pair equalities."
+      ],
+      "lean_witness": "example (a b c : ℤ) (ha : a = 0 ∨ a = 1) (hb : b = 0 ∨ b = 1) (hc : c = 0 ∨ c = 1) : a = b ∨ a = c ∨ b = c := by\n  rcases ha with ha | ha <;> rcases hb with hb | hb <;> rcases hc with hc | hc <;> omega"
+    },
+    {
+      "id": "disc_pigeonhole_four_into_three",
+      "profile": "current_openmath_profile",
+      "domain": "discrete_mathematics",
+      "level": "high_school_and_early_university",
+      "topic": "explicit_pigeonhole_instance",
+      "difficulty": "advanced",
+      "canonical_statement": "For all integers a, b, c, d in {0,1,2}, some two among a, b, c, d are equal.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/><OMV name=\"b\"/><OMV name=\"c\"/><OMV name=\"d\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"a\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"b\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"c\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"d\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"a\"/><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>0</OMI><OMI>1</OMI><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"b\"/><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>0</OMI><OMI>1</OMI><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"c\"/><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>0</OMI><OMI>1</OMI><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"d\"/><OMA><OMS cd=\"set1\" name=\"set\"/><OMI>0</OMI><OMI>1</OMI><OMI>2</OMI></OMA></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"a\"/><OMV name=\"b\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"a\"/><OMV name=\"c\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"a\"/><OMV name=\"d\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"b\"/><OMV name=\"c\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"b\"/><OMV name=\"d\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"c\"/><OMV name=\"d\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Exhaust the three possible boxes for four integers and select a repeated label.",
+      "sketch_steps": [
+        "setup: Record that every listed integer lies in the displayed finite box set.",
+        "cases: Split each value into the finitely many allowed box labels.",
+        "compare: In every exhaustive branch, identify two equal labels.",
+        "conclude: Assemble the resulting disjunction of pair equalities."
+      ],
+      "lean_witness": "example (a b c d : ℤ) (ha : a = 0 ∨ a = 1 ∨ a = 2) (hb : b = 0 ∨ b = 1 ∨ b = 2) (hc : c = 0 ∨ c = 1 ∨ c = 2) (hd : d = 0 ∨ d = 1 ∨ d = 2) : a = b ∨ a = c ∨ a = d ∨ b = c ∨ b = d ∨ c = d := by\n  rcases ha with ha | ha | ha <;> rcases hb with hb | hb | hb <;> rcases hc with hc | hc | hc <;> rcases hd with hd | hd | hd <;> omega"
+    }
+  ]
+}

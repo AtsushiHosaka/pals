@@ -1,0 +1,247 @@
+{
+  "schema_version": "pals.typed-plane-geometry-v1-sealed-manifest.v1",
+  "status": "sealed_local_authoring_revision_not_admitted",
+  "seal": {
+    "scope": "native planar-geometry typed authoring evidence only",
+    "admission": "not admitted to the generic DB, seed, embedding index, local typed catalog, or PFI package",
+    "revision": "typed-plane-geometry-v1-local-r1"
+  },
+  "profile": {
+    "id": "typed-plane-geometry-v1",
+    "validator": "pals_agent.typed_plane_geometry.validate_canonical_typed_plane_geometry_openmath_xml",
+    "canonicalizer": "openmath-cdbase-alpha-c14n-v4",
+    "validator_status": "implemented_isolated_profile",
+    "content_dictionary_bundle": {
+      "relative_path": "pals-agent/pals_agent/content_dictionaries/typed-plane-geometry-v1-registry.json",
+      "sha256": "sha256:efd76cfd217cc84d1f15e62f3f6098ab84789648e83b0194fb97fba5bb820178",
+      "digest_input": "exact UTF-8 bytes of the named registry/CD bundle"
+    },
+    "profile_design": {
+      "relative_path": "docs/typed-plane-geometry-v1-design.md",
+      "sha256": "sha256:e1186d25770a75b07568121866678b339843b9453141ac2a22efa42f6463b9a4",
+      "digest_input": "exact UTF-8 bytes of the named profile design document"
+    },
+    "lean_toolchain": {
+      "relative_path": "pals-agent/lean-workspace/lean-toolchain",
+      "value": "leanprover/lean4:v4.32.0-rc1",
+      "sha256": "sha256:2c290dc3675a4faf0bc03545ff71a417d2f9a7c2e60e8be80ed643fcbcc73e2d",
+      "digest_input": "exact UTF-8 bytes of the named lean-toolchain file"
+    }
+  },
+  "lean_witness_bundle": {
+    "relative_path": "pals-agent/testdata/typed-plane-geometry-v1/plane-geometry-witnesses.lean",
+    "sha256": "sha256:a90426410563ebfc879e95798229d689fcb28956f5edccf42ce1b3f28ba8e361",
+    "digest_input": "exact UTF-8 bytes of the named Lean file, including imports and final newline",
+    "verification_command": "cd pals-agent/lean-workspace && lake env lean ../testdata/typed-plane-geometry-v1/plane-geometry-witnesses.lean",
+    "verification_status": "verified_local_pinned_workspace"
+  },
+  "admitted_candidate_cards": [
+    {
+      "id": "typed_plane_distance_self_zero",
+      "domain": "high_school.coordinate_geometry",
+      "difficulty": "standard",
+      "canonical_statement": "For every plane point p, the squared distance from p to p is zero.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"Point2\"/></OMATP><OMV name=\"p\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"distance_sq\"/><OMV name=\"p\"/><OMV name=\"p\"/></OMA><OMI>0</OMI></OMA></OMBIND></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"Point2\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"distance_sq\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMI>0</n1:OMI></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:6dbf909a12884a8bd431688ccf76aa64e393266080e18d607be8eb7c114c7c20",
+      "signature_trace": {
+        "result_sort": "Prop",
+        "symbols": [
+          "pals_plane_geometry:forall",
+          "Point2",
+          "distance_sq",
+          "relation1:eq"
+        ]
+      },
+      "signature_trace_sha256": "sha256:c8ffa44cd6482089590f2c7a3772dda6d38a202a1b3e5e797c4d222444506dd4",
+      "proof_strategy": "Expand the squared coordinate differences; both coordinate differences vanish.",
+      "proof_strategy_sha256": "sha256:42db1152e9a7f6429f5f39addc87d228e88a0d42f742e82aec996eca53480bbc",
+      "sketch_steps": [
+        "Bind p with sort P2.",
+        "Apply distance_sq only to the two P2 occurrences of p.",
+        "Infer the result as R and compare it to scalar zero.",
+        "Expand the coordinate differences and simplify both zero squares."
+      ],
+      "sketch_steps_sha256": "sha256:2883eaa86d9d18f231e6009ffdf85f3053875719b32d5f8cd4cd53a013fd07c6",
+      "lean": {
+        "target": "∀ p : Point2, distanceSq p p = 0",
+        "target_sha256": "sha256:3197e8e07fbd3efcf9419c0586b89dc63ef8880f229ba956e091b2941b4f9f7a",
+        "witness": "example : ∀ p : Point2, distanceSq p p = 0 := by\n  intro p\n  simp [distanceSq]\n",
+        "witness_sha256": "sha256:9b5349acd54f50fbcf05869e83a4347f453b0fc793b997fb6c2c29f0db02a7e3"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "distance_sq(P2, P2) is equated only to the scalar literal 0.",
+        "openmath_to_lean": "The witness defines distanceSq on Point2 and proves the same self-distance equality.",
+        "admission_gate": "An independent project reviewer must accept this sealed record before any typed catalog or database admission."
+      }
+    },
+    {
+      "id": "typed_plane_line_through_two_points",
+      "domain": "high_school.coordinate_geometry",
+      "difficulty": "standard",
+      "canonical_statement": "There exists a plane line incident with both (0,1) and (2,5).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"exists\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"Line2\"/></OMATP><OMV name=\"line\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"incident_point_line\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"point2\"/><OMI>0</OMI><OMI>1</OMI></OMA><OMV name=\"line\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"incident_point_line\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"point2\"/><OMI>2</OMI><OMI>5</OMI></OMA><OMV name=\"line\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"exists\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"Line2\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"and\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"incident_point_line\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"point2\"></n1:OMS><n1:OMI>0</n1:OMI><n1:OMI>1</n1:OMI></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"incident_point_line\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"point2\"></n1:OMS><n1:OMI>2</n1:OMI><n1:OMI>5</n1:OMI></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:9766bbde666f0142552a5c636a3b84cb3bf6ac678ce26d193ed5b5fe61728d82",
+      "signature_trace": {
+        "result_sort": "Prop",
+        "symbols": [
+          "exists",
+          "Line2",
+          "point2",
+          "incident_point_line",
+          "logic1:and"
+        ]
+      },
+      "signature_trace_sha256": "sha256:83135ded73da2d8996ef88003e847e0576a99e9b34705abc92fd0b576b7413db",
+      "proof_strategy": "Exhibit the line -2x+y-1=0 and verify both coordinate substitutions.",
+      "proof_strategy_sha256": "sha256:6c5c092e5c8ae0df7d532eb07f461a4c5aa553f8200ba9873fa4710339016546",
+      "sketch_steps": [
+        "Bind the witness line with sort L2.",
+        "Construct both coordinates as P2 values with point2.",
+        "Type each point-line incidence atom as Prop.",
+        "Use -2x+y-1=0 to verify incidence at both points."
+      ],
+      "sketch_steps_sha256": "sha256:4f1fd44a6855f6c372fc2bbbdd0ae25cdf306bf1f36a427a33755726a3328d88",
+      "lean": {
+        "target": "∃ line : Line2,\n      incidentPointLine ⟨0, 1⟩ line ∧ incidentPointLine ⟨2, 5⟩ line",
+        "target_sha256": "sha256:96efa21c4a6d366624470dcd5131b5715d9ee2c3d710876a07d6ce2f8407145a",
+        "witness": "example :\n    ∃ line : Line2,\n      incidentPointLine ⟨0, 1⟩ line ∧ incidentPointLine ⟨2, 5⟩ line := by\n  refine ⟨⟨-2, 1, -1⟩, ?_⟩\n  norm_num [incidentPointLine]\n",
+        "witness_sha256": "sha256:e8dea514037989bdab4dd02af777c1ce8ac9dd6df071594e776692060028df5d"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "The existential binds L2 and each incident_point_line atom has exact signature P2 × L2 → Prop.",
+        "openmath_to_lean": "The witness supplies Line2(-2, 1, -1) and evaluates the same incidence equation at both points.",
+        "admission_gate": "An independent project reviewer must accept this sealed record before any typed catalog or database admission."
+      }
+    },
+    {
+      "id": "typed_plane_circle_through_three_points",
+      "domain": "high_school.coordinate_geometry",
+      "difficulty": "standard",
+      "canonical_statement": "There exists a plane circle incident with (1,0), (0,1), and (-1,0).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"exists\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"Circle2\"/></OMATP><OMV name=\"circle\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"incident_point_circle\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"point2\"/><OMI>1</OMI><OMI>0</OMI></OMA><OMV name=\"circle\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"incident_point_circle\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"point2\"/><OMI>0</OMI><OMI>1</OMI></OMA><OMV name=\"circle\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"incident_point_circle\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"point2\"/><OMI>-1</OMI><OMI>0</OMI></OMA><OMV name=\"circle\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"exists\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"Circle2\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"and\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"incident_point_circle\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"point2\"></n1:OMS><n1:OMI>1</n1:OMI><n1:OMI>0</n1:OMI></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"incident_point_circle\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"point2\"></n1:OMS><n1:OMI>0</n1:OMI><n1:OMI>1</n1:OMI></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"incident_point_circle\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"point2\"></n1:OMS><n1:OMI>-1</n1:OMI><n1:OMI>0</n1:OMI></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:534d205b8da1e6b3562a72488284e21cce91f3427fc04846eeca314bc6d9e5ec",
+      "signature_trace": {
+        "result_sort": "Prop",
+        "symbols": [
+          "exists",
+          "Circle2",
+          "point2",
+          "incident_point_circle",
+          "logic1:and"
+        ]
+      },
+      "signature_trace_sha256": "sha256:bbefb0f84986ad5a85d49cb07406094d10c34c0c17fc84ec19aab36af13994de",
+      "proof_strategy": "Exhibit the unit circle centered at the origin and evaluate each squared distance.",
+      "proof_strategy_sha256": "sha256:3a3ca25102dd2ff7672c44ff5065a3327b4cff2598c31aaf0cd2f37c7e466d63",
+      "sketch_steps": [
+        "Bind the witness circle with sort Circle2.",
+        "Construct the three specified coordinates as P2 values.",
+        "Type all point-circle incidence atoms as Prop.",
+        "Evaluate squared distance to the origin and obtain radius square one three times."
+      ],
+      "sketch_steps_sha256": "sha256:d067bca5e9969c71428694ffeb0314d7458dc9ba53d6e0b6adaa8b706dcc62e4",
+      "lean": {
+        "target": "∃ circle : Circle2,\n      incidentPointCircle ⟨1, 0⟩ circle ∧ incidentPointCircle ⟨0, 1⟩ circle ∧\n        incidentPointCircle ⟨-1, 0⟩ circle",
+        "target_sha256": "sha256:78c07687290474d9330c4db34879c040787dd9bd91b1465c96a28c708a09f211",
+        "witness": "example :\n    ∃ circle : Circle2,\n      incidentPointCircle ⟨1, 0⟩ circle ∧ incidentPointCircle ⟨0, 1⟩ circle ∧\n        incidentPointCircle ⟨-1, 0⟩ circle := by\n  refine ⟨⟨⟨0, 0⟩, 1⟩, ?_⟩\n  norm_num [incidentPointCircle, distanceSq]\n",
+        "witness_sha256": "sha256:4f61af6bc3d30c86d7af825df821434f39a5a1bae64ba0584c77b310b7c4a7e6"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "The existential binds Circle2 and all incidence atoms have exact signature P2 × Circle2 → Prop.",
+        "openmath_to_lean": "The witness supplies the origin-centered radius-one Circle2 and evaluates the same distanceSq definition.",
+        "admission_gate": "An independent project reviewer must accept this sealed record before any typed catalog or database admission."
+      }
+    },
+    {
+      "id": "typed_plane_perpendicular_symmetric",
+      "domain": "high_school.coordinate_geometry",
+      "difficulty": "standard",
+      "canonical_statement": "Perpendicularity of two plane lines is symmetric.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"Line2\"/></OMATP><OMV name=\"first\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"Line2\"/></OMATP><OMV name=\"second\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"perpendicular\"/><OMV name=\"first\"/><OMV name=\"second\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"perpendicular\"/><OMV name=\"second\"/><OMV name=\"first\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"Line2\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"Line2\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"perpendicular\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"perpendicular\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:e7813f4bb97d483bbc3c864ba348da3da380fda30f65221863fe2b87a3b65a78",
+      "signature_trace": {
+        "result_sort": "Prop",
+        "symbols": [
+          "forall",
+          "Line2",
+          "perpendicular",
+          "logic1:implies"
+        ]
+      },
+      "signature_trace_sha256": "sha256:7136915a734a07b4318fe8f0be0c16fec55f3e9093bb641e7debb8ff98e6b4a2",
+      "proof_strategy": "Use commutativity of the normal-vector scalar product defining perpendicularity.",
+      "proof_strategy_sha256": "sha256:c010ffe63c0dd00f2402500bbb54216fa0df40d6097346132cf0ef5f1d0b73a4",
+      "sketch_steps": [
+        "Bind first and second as L2 values.",
+        "Infer perpendicular(first, second) as Prop.",
+        "Swap the two L2 operands in the conclusion.",
+        "Use commutativity of multiplication and addition in the scalar equation."
+      ],
+      "sketch_steps_sha256": "sha256:e33dd7052c16c8f009bbb70d6e01502186a857554d6733282b8b416697eff5b2",
+      "lean": {
+        "target": "∀ first second : Line2, perpendicular first second → perpendicular second first",
+        "target_sha256": "sha256:17042dce9d1bdc1ba5854526aec1ee29c5d59050b629a9fdc8f407cf2aac49a7",
+        "witness": "example : ∀ first second : Line2, perpendicular first second → perpendicular second first := by\n  intro first second h\n  simpa [perpendicular, add_comm, mul_comm] using h\n",
+        "witness_sha256": "sha256:a058d0540b59b22ff60e9e2a140860bd8f3dc60f5988c4b4e7a96f12ceeefa93"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "perpendicular accepts only L2 × L2 and yields Prop on both sides of implication.",
+        "openmath_to_lean": "The witness uses the symmetric zero dot-product equation for the two Line2 normals.",
+        "admission_gate": "An independent project reviewer must accept this sealed record before any typed catalog or database admission."
+      }
+    },
+    {
+      "id": "typed_plane_parallel_symmetric",
+      "domain": "high_school.coordinate_geometry",
+      "difficulty": "standard",
+      "canonical_statement": "Parallelism of two plane lines is symmetric.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"Line2\"/></OMATP><OMV name=\"first\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"Line2\"/></OMATP><OMV name=\"second\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"parallel\"/><OMV name=\"first\"/><OMV name=\"second\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" cd=\"pals_plane_geometry\" name=\"parallel\"/><OMV name=\"second\"/><OMV name=\"first\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"Line2\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"Line2\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"parallel\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"pals_plane_geometry\" cdbase=\"urn:pals:openmath:typed-plane-geometry:v1\" name=\"parallel\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:1b7bc0a6ab494fae33232f2451bee3dbc0cc838eaf7983e1308da1a786de3fc8",
+      "signature_trace": {
+        "result_sort": "Prop",
+        "symbols": [
+          "forall",
+          "Line2",
+          "parallel",
+          "logic1:implies"
+        ]
+      },
+      "signature_trace_sha256": "sha256:b5177712a216c81f7b3c25c675b95c4d2f119e183a7bfac2b0d4a316e6789f68",
+      "proof_strategy": "Reverse the proportional normal-coefficient equation defining parallel lines.",
+      "proof_strategy_sha256": "sha256:664993ea03372108152c283422d565ef8938589d1d989c3284c0a4f771157647",
+      "sketch_steps": [
+        "Bind first and second as L2 values.",
+        "Infer parallel(first, second) as Prop.",
+        "Swap the two L2 operands in the conclusion.",
+        "Reverse and commute the scalar coefficient equality."
+      ],
+      "sketch_steps_sha256": "sha256:94c4d9948da6c709cffd12b0e2c4ab263f92dce6cfdd1f7f5e247e1333c3d34a",
+      "lean": {
+        "target": "∀ first second : Line2, parallel first second → parallel second first",
+        "target_sha256": "sha256:3584bcbfebf78bcefbc0f6d945daa296e8bb696eb1d8c131c853eb4d4c8e468e",
+        "witness": "example : ∀ first second : Line2, parallel first second → parallel second first := by\n  intro first second h\n  simpa [parallel, mul_comm] using h.symm\n",
+        "witness_sha256": "sha256:26c6d45ca902d957a588fa54f7cb7a79db56f7ad5409a253bae92286fba55261"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "parallel accepts only L2 × L2 and yields Prop on both sides of implication.",
+        "openmath_to_lean": "The witness reverses the proportional-coefficient equality for the two Line2 normals.",
+        "admission_gate": "An independent project reviewer must accept this sealed record before any typed catalog or database admission."
+      }
+    }
+  ],
+  "manifest_digest": {
+    "algorithm": "sha256",
+    "input": "RFC 8785 canonical JSON serialization of this object with manifest_digest omitted",
+    "sha256": "sha256:ff9569c78f07bfe04bb200b0f30a5a037c51d3c804c3447c8ac22d354ce10638"
+  }
+}

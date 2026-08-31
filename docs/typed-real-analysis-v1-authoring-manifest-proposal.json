@@ -1,0 +1,271 @@
+{
+  "schema_version": "pals.typed-real-analysis-v1-sealed-manifest.v1",
+  "status": "sealed_local_authoring_revision_not_admitted",
+  "seal": {
+    "scope": "local typed-real-analysis authoring evidence only",
+    "admission": "not admitted to the generic DB, seed, embedding index, or PFI package",
+    "revision": "typed-real-analysis-v1-local-r1"
+  },
+  "immutability_contract": {
+    "digest_algorithm": "sha256 over exact UTF-8 field bytes",
+    "structural_openmath_c14n": "canonical_openmath_xml is produced only after typed-real-analysis-v1 validation and profile C14N; raw authoring XML remains separately hashed.",
+    "profile_c14n": "Every card is revalidated from raw openmath_xml and compared with its profile-separated canonical bytes before this manifest digest is written.",
+    "mutation_rule": "Any change to statement, proof strategy, sketch, XML, signature trace, Lean target, Lean proof, design digest, or profile registry creates a new sealed revision and manifest digest."
+  },
+  "profile": {
+    "id": "typed-real-analysis-v1",
+    "typed_cdbase": "urn:pals:openmath:typed-math:v1",
+    "profile_design_path": "docs/typed-real-analysis-v1-design.md",
+    "profile_design_sha256": "sha256:4059b6c62527694edee8baa110166b3e00c9999a48b0277dbe8ad7871266a509",
+    "registry_path": "pals_agent/content_dictionaries/typed-real-analysis-v1-registry.json",
+    "registry_digest": "sha256:4883e72556db23da39aa2def8bc6669cb8007a4b5f2f851f9c3e2e7a06fa05df",
+    "registry_status": "implemented isolated validator and registry; sealed local evidence only, no DB admission is implied"
+  },
+  "lean_receipt": {
+    "witness_path": "docs/typed-real-analysis-v1-authoring-witnesses.lean",
+    "witness_file_sha256": "sha256:74b5568c8c9b07a8a32970013aa2ab9cc1ef528dc8f3857d9861e83fddb48129",
+    "verification_status": "compiled when generator is run with --verify-lean; sealed evidence only, not an OpenMath-to-Lean translation receipt"
+  },
+  "adopted_card_count": 4,
+  "excluded_witness_count": 4,
+  "witness_audit_count": 8,
+  "cards": [
+    {
+      "id": "real_analysis_eps_delta_identity",
+      "canonical_statement": "For every real a and every positive real ε, there is a positive real δ such that |x-a|<δ implies |x-a|<ε for every real x.",
+      "proof_strategy": "Fix ε>0 and choose δ=ε; the two distance inequalities are identical.",
+      "sketch_steps": [
+        "Fix arbitrary real a and positive real ε.",
+        "Choose δ=ε.",
+        "The choice is positive because ε>0.",
+        "Assume an arbitrary real x satisfies |x-a|<δ.",
+        "Substitute δ=ε to obtain |x-a|<ε and close the quantifiers."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR></OMBVAR><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"eps\"/></OMATTR></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>0</OMI></OMA><OMV name=\"eps\"/></OMA><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"exists\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"delta\"/></OMATTR></OMBVAR><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>0</OMI></OMA><OMV name=\"delta\"/></OMA><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"a\"/></OMA></OMA><OMV name=\"delta\"/></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"a\"/></OMA></OMA><OMV name=\"eps\"/></OMA></OMA></OMBIND></OMA></OMBIND></OMA></OMBIND></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:exists",
+        "typed1:Real",
+        "realanalysis1:of_int",
+        "arith1:minus",
+        "arith1:abs",
+        "relation1:lt",
+        "logic1:and",
+        "logic1:implies"
+      ],
+      "lean_target": "∀ (a ε : ℝ), 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ, |x - a| < δ → |x - a| < ε",
+      "lean_witness": "example (a ε : ℝ) (hε : 0 < ε) :\n    ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ, |x - a| < δ → |x - a| < ε := by\n  exact ⟨ε, hε, fun _ hx => hx⟩",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_01_epsilon_delta_identity"
+      ],
+      "alignment": "The XML is the raw ε–δ formula for the identity function. Every scalar binder has sort Real; the Lean target has the same binder order, inequalities, and δ=ε witness.",
+      "openmath_xml_sha256": "sha256:aea1c962dd59663cf13e96bc46f26b4a6229c4d5be53543b2d5988a5cbfa867b",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"relation1\" name=\"lt\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>0</n1:OMI></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"exists\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" name=\"and\"></n1:OMS><n1:OMA><n1:OMS cd=\"relation1\" name=\"lt\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>0</n1:OMI></n1:OMA><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"relation1\" name=\"lt\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"abs\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"minus\"></n1:OMS><n1:OMV name=\"v4\"></n1:OMV><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"relation1\" name=\"lt\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"abs\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"minus\"></n1:OMS><n1:OMV name=\"v4\"></n1:OMV><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMA></n1:OMBIND></n1:OMA></n1:OMBIND></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:938958b44ab4737b2d735540f0e830728632a5ac3b148c8684517141d2349a1c",
+      "canonical_statement_sha256": "sha256:035437c3bf6761947c7e468ad6a8b9a34e65ef845600d2485acb5333d9197758",
+      "lean_target_sha256": "sha256:0683b4b203a63a8086a4dd5ce90698a9c9b866bdbb1c37c3c32bf877021e3743",
+      "lean_witness_sha256": "sha256:eca1dccb74e4b3be8916dc1f0d81ad40bfd451fb94c31b1071c10f7a1d8bf9ca",
+      "source_witness_sha256": "sha256:eca1dccb74e4b3be8916dc1f0d81ad40bfd451fb94c31b1071c10f7a1d8bf9ca",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_has_deriv_square",
+      "canonical_statement": "For every real a, the derivative of x^2 at a is 2a.",
+      "proof_strategy": "Use the power rule for x² and normalize the resulting slope at a.",
+      "sketch_steps": [
+        "Fix an arbitrary real a.",
+        "View x² as a polynomial real function.",
+        "Apply the derivative rule for the second power at a.",
+        "Simplify the coefficient to 2·a.",
+        "Record the result as HasDerivAt at the original point a."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"has_deriv_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND><OMV name=\"a\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>2</OMI></OMA><OMV name=\"a\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Real",
+        "realanalysis1:lambda",
+        "realanalysis1:of_int",
+        "realanalysis1:has_deriv_at",
+        "arith1:power",
+        "arith1:times"
+      ],
+      "lean_target": "∀ a : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) (2 * a) a",
+      "lean_witness": "example (a : ℝ) : HasDerivAt (fun x : ℝ => x ^ 2) (2 * a) a := by\n  simpa [pow_two] using hasDerivAt_pow 2 a",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_02_has_deriv_square"
+      ],
+      "alignment": "realanalysis1:has_deriv_at(f,a,m) lowers directly to HasDerivAt f m a. The XML lambda is a Real→Real function and 2 is explicitly realanalysis1:of_int(2).",
+      "openmath_xml_sha256": "sha256:ed4bd7eb0022ae83722c066b410a71cbeac121e85fceff7bda18b06571f19ab7",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"has_deriv_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>2</n1:OMI></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:a00b15916342e52f1c06a156c83bec5166913d0abd92cbc53d0ff80106bd4b04",
+      "canonical_statement_sha256": "sha256:8ad88dacb999e0b10623b359f33e3b24febcb32c2e5e328b5e373aeb296aa486",
+      "lean_target_sha256": "sha256:2a3ddcd9ca05885c1274cfd2cd2def96421a7fed98c52681a5765d8a8dbe6e0b",
+      "lean_witness_sha256": "sha256:39a5fd7c42cd8358d78e03e79c24ba00d0be99b189966f8bffa9933d4fe61d17",
+      "source_witness_sha256": "sha256:39a5fd7c42cd8358d78e03e79c24ba00d0be99b189966f8bffa9933d4fe61d17",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_differentiable_cubic_minus_linear",
+      "canonical_statement": "For every real a, x^3 - 2x is differentiable at a.",
+      "proof_strategy": "Use differentiability closure for polynomial powers, scalar multiplication, and subtraction.",
+      "sketch_steps": [
+        "Fix an arbitrary real a.",
+        "The map x↦x³ is differentiable at a.",
+        "The map x↦2x is differentiable at a.",
+        "Apply closure of differentiability under subtraction.",
+        "Conclude that x³-2x is differentiable at a."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"differentiable_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>2</OMI></OMA><OMV name=\"x\"/></OMA></OMA></OMBIND><OMV name=\"a\"/></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Real",
+        "realanalysis1:lambda",
+        "realanalysis1:of_int",
+        "realanalysis1:differentiable_at",
+        "arith1:power",
+        "arith1:times",
+        "arith1:minus"
+      ],
+      "lean_target": "∀ a : ℝ, DifferentiableAt ℝ (fun x : ℝ => x ^ 3 - 2 * x) a",
+      "lean_witness": "example (a : ℝ) : DifferentiableAt ℝ (fun x : ℝ => x ^ 3 - 2 * x) a := by\n  fun_prop",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_03_differentiable_cubic_minus_linear"
+      ],
+      "alignment": "realanalysis1:differentiable_at(f,a) lowers directly to DifferentiableAt ℝ f a. The cubic and linear function body is identical after explicit integer-to-real lowering.",
+      "openmath_xml_sha256": "sha256:6309754983df42cc382ba83c335e7dfec993b1a4e184d529733c725ee2ccdefe",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"differentiable_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"minus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMI>3</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>2</n1:OMI></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:ea821b84f4fdbc97d09bf6403627c30dc4b83932b74186b6142d6e05304505a7",
+      "canonical_statement_sha256": "sha256:eec63b117b05c850b1f6003e4d3b286bebee13b0c331a27279dc36c8976dbc42",
+      "lean_target_sha256": "sha256:74d44f6877350446c1478faa2c0eb0ed7e2d9ec98abeb3652216f40ff9456bd7",
+      "lean_witness_sha256": "sha256:4bfdf8f38d793287babfb295d451550d4d95db63f4839106cc2efc9653fff6a9",
+      "source_witness_sha256": "sha256:4bfdf8f38d793287babfb295d451550d4d95db63f4839106cc2efc9653fff6a9",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_interval_integrable_square_zero_one",
+      "canonical_statement": "The real function x ↦ x^2 is interval-integrable from 0 to 1.",
+      "proof_strategy": "Establish global continuity of x², then use continuity to obtain interval integrability.",
+      "sketch_steps": [
+        "Recognize x↦x² as a polynomial real function.",
+        "Establish that this function is continuous on ℝ.",
+        "Restrict the continuity statement to the interval from 0 to 1.",
+        "Apply the continuity-implies-interval-integrable theorem for volume.",
+        "Conclude interval integrability on the oriented interval 0..1."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"interval_integrable\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>0</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>1</OMI></OMA></OMA></OMOBJ>",
+      "signature_trace": [
+        "realanalysis1:lambda",
+        "realanalysis1:of_int",
+        "realanalysis1:interval_integrable",
+        "arith1:power"
+      ],
+      "lean_target": "IntervalIntegrable (fun x : ℝ => x ^ 2) (MeasureTheory.volume : MeasureTheory.Measure ℝ) 0 1",
+      "lean_witness": "example : IntervalIntegrable (fun x : ℝ => x ^ 2)\n    (MeasureTheory.volume : MeasureTheory.Measure ℝ) 0 1 := by\n  have hcont : Continuous (fun x : ℝ => x ^ 2) := by fun_prop\n  exact hcont.intervalIntegrable (μ := (MeasureTheory.volume : MeasureTheory.Measure ℝ)) 0 1",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_07_interval_integrable_square"
+      ],
+      "alignment": "realanalysis1:interval_integrable(f,a,b) lowers to IntervalIntegrable f volume a b. This admits the exact integration side condition, not an unsupported bare integral-value claim.",
+      "openmath_xml_sha256": "sha256:c25c99971f93fd707bcc42c4bffa3799ed785ed1769771e4ccc7afcc96f915bf",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"interval_integrable\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA></n1:OMBIND><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>0</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:2164e063b83917e0ed7d683184991130cd8194ac13d5e1c09cb069fc996f8ee2",
+      "canonical_statement_sha256": "sha256:db08e5430a2ccf9df83f4b2a19894f27c83d4f362d8187d6a4a7e50844e84e5d",
+      "lean_target_sha256": "sha256:cc0b89f04c05f9c1c571f1af7f4a88a73dee763e6b230925e3336023bd4b32fc",
+      "lean_witness_sha256": "sha256:fd1862511324782c3e94c0d0b4edbd42fb482b54cfa163f93914bdb4cfc7a648",
+      "source_witness_sha256": "sha256:fd1862511324782c3e94c0d0b4edbd42fb482b54cfa163f93914bdb4cfc7a648",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    }
+  ],
+  "witness_audit": [
+    {
+      "witness_id": "typed_real_analysis_witness_01_epsilon_delta_identity",
+      "source_sha256": "sha256:eca1dccb74e4b3be8916dc1f0d81ad40bfd451fb94c31b1071c10f7a1d8bf9ca",
+      "disposition": "adopted",
+      "card_id": "real_analysis_eps_delta_identity",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_02_has_deriv_square",
+      "source_sha256": "sha256:39a5fd7c42cd8358d78e03e79c24ba00d0be99b189966f8bffa9933d4fe61d17",
+      "disposition": "adopted",
+      "card_id": "real_analysis_has_deriv_square",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_03_differentiable_cubic_minus_linear",
+      "source_sha256": "sha256:4bfdf8f38d793287babfb295d451550d4d95db63f4839106cc2efc9653fff6a9",
+      "disposition": "adopted",
+      "card_id": "real_analysis_differentiable_cubic_minus_linear",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_07_interval_integrable_square",
+      "source_sha256": "sha256:fd1862511324782c3e94c0d0b4edbd42fb482b54cfa163f93914bdb4cfc7a648",
+      "disposition": "adopted",
+      "card_id": "real_analysis_interval_integrable_square_zero_one",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_04_mvt_deriv_slope",
+      "source_sha256": "sha256:184b78d7e4bc1f39eba50b9f4a7f3b13de7242c973e11010749ffacb299507d3",
+      "disposition": "excluded",
+      "card_id": null,
+      "three_way_alignment": "absent; see excluded_witnesses reason"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_05_taylor2_exact_quadratic",
+      "source_sha256": "sha256:365b8404ef0859fc94ff579fc604ac7d72cd6bcb019f190f164a1437a23389ed",
+      "disposition": "excluded",
+      "card_id": null,
+      "three_way_alignment": "absent; see excluded_witnesses reason"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_06_interval_integral_square_value",
+      "source_sha256": "sha256:e8819d318c7c198677428b3582ee404e0fc516c288c3bd2c8f71ef4af6a42b42",
+      "disposition": "excluded",
+      "card_id": null,
+      "three_way_alignment": "absent; see excluded_witnesses reason"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_08_improper_exp",
+      "source_sha256": "sha256:e40a24a4d8961426cd70d6add5d16723fdbfffb1cccb2518d629fc8d5371fa32",
+      "disposition": "excluded",
+      "card_id": null,
+      "three_way_alignment": "absent; see excluded_witnesses reason"
+    }
+  ],
+  "excluded_witnesses": [
+    {
+      "witness_id": "typed_real_analysis_witness_04_mvt_deriv_slope",
+      "source_sha256": "sha256:184b78d7e4bc1f39eba50b9f4a7f3b13de7242c973e11010749ffacb299507d3",
+      "disposition": "excluded",
+      "reason": "The Lean conclusion is phrased with total `deriv f c`. The v1 profile intentionally has no `deriv`; its MVT form requires `has_deriv_at(f,c,m)` plus the scalar secant equation. This source witness is semantically adjacent but not a three-way exact alignment.",
+      "next_receipt_requirement": "Create and compile a new exact HasDerivAt-based MVT witness before authoring a card."
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_05_taylor2_exact_quadratic",
+      "source_sha256": "sha256:365b8404ef0859fc94ff579fc604ac7d72cd6bcb019f190f164a1437a23389ed",
+      "disposition": "excluded",
+      "reason": "The local Lean definition taylor2 has no v1 OpenMath denotation. General Taylor data needs degree, iterated derivative, factorial cast, smoothness, and remainder-point signatures reserved for typed-real-analysis-taylor-v1.",
+      "next_receipt_requirement": "Wait for the separate Taylor profile and its registry digest."
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_06_interval_integral_square_value",
+      "source_sha256": "sha256:e8819d318c7c198677428b3582ee404e0fc516c288c3bd2c8f71ef4af6a42b42",
+      "disposition": "excluded",
+      "reason": "Although interval_integral has a Real result sort, a v1 integral-value card must carry interval_integrable or a recognized continuity-to-integrability premise. This witness proves only the value; it cannot by itself meet the profile's admission template.",
+      "next_receipt_requirement": "Fuse this value proof with witness_07 into one exact conjunctive Lean target and one XML card."
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_08_improper_exp",
+      "source_sha256": "sha256:e40a24a4d8961426cd70d6add5d16723fdbfffb1cccb2518d629fc8d5371fa32",
+      "disposition": "excluded",
+      "reason": "v1 has no improper-integral predicate. The Lean statement is a measure integral over Ioi 0, whereas the proposed future profile uses a finite-real limit predicate has_improper_integral_to_pos_inf.",
+      "next_receipt_requirement": "Wait for typed-improper-integral-v1 and a limit-based exact witness."
+    }
+  ],
+  "manifest_payload_sha256": "sha256:eb7e2e6715678fd45efa30a01e583f4274969e90fca8b2164ad83154a25cb6a8"
+}

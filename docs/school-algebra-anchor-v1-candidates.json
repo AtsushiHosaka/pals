@@ -1,0 +1,300 @@
+{
+  "cards": [
+    {
+      "canonical_statement": "Six equal boxes containing eight pencils each contain forty-eight pencils in total.",
+      "id": "school_alg_e4_quantity_compute",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>6</OMI><OMI>8</OMI></OMA><OMI>48</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Represent equal groups by multiplication and evaluate the product.",
+      "sketch_steps": [
+        "model: Treat the six boxes as six equal groups of eight.",
+        "compute: Multiply 6 by 8.",
+        "conclude: The total is 48 pencils."
+      ]
+    },
+    {
+      "canonical_statement": "For all real a and b, four groups of a plus four groups of b equal four groups of a+b.",
+      "id": "school_alg_e4_quantity_justify",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/><OMV name=\"b\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>4</OMI><OMV name=\"a\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>4</OMI><OMV name=\"b\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>4</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"a\"/><OMV name=\"b\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the distributive law to justify combining two same-sized collections of groups.",
+      "sketch_steps": [
+        "setup: Regard a and b as the amounts in two parts of each group.",
+        "apply_rule: Factor the common multiplier 4.",
+        "conclude: 4a+4b=4(a+b)."
+      ]
+    },
+    {
+      "canonical_statement": "If four equally priced notebooks cost 600 yen in total, then one notebook costs 150 yen.",
+      "id": "school_alg_e4_quantity_model",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"p\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>4</OMI><OMV name=\"p\"/></OMA><OMI>600</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"p\"/><OMI>150</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Translate total cost as item count times unit price, then divide by four.",
+      "sketch_steps": [
+        "model: Let p be the price of one notebook and write 4p=600.",
+        "solve: Divide both sides by 4.",
+        "interpret: One notebook costs 150 yen."
+      ]
+    },
+    {
+      "canonical_statement": "Three fourths divided by two fifths equals fifteen eighths.",
+      "id": "school_alg_e6_symbolic_compute",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>3</OMI><OMI>4</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>2</OMI><OMI>5</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>15</OMI><OMI>8</OMI></OMA></OMA></OMOBJ>",
+      "proof_strategy": "Multiply by the reciprocal and reduce the resulting fraction.",
+      "sketch_steps": [
+        "rewrite: Replace division by 2/5 with multiplication by 5/2.",
+        "compute: Multiply numerators and denominators.",
+        "conclude: The value is 15/8."
+      ]
+    },
+    {
+      "canonical_statement": "For every real x, three fifths of x equals three times x divided by five.",
+      "id": "school_alg_e6_symbolic_justify",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>3</OMI><OMI>5</OMI></OMA><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMV name=\"x\"/></OMA><OMI>5</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Regroup multiplication and division to justify the equivalent symbolic forms.",
+      "sketch_steps": [
+        "rewrite: Express 3/5 as 3 divided by 5.",
+        "reassociate: Move x into the numerator product.",
+        "conclude: (3/5)x=(3x)/5."
+      ]
+    },
+    {
+      "canonical_statement": "If three fourths of a real number x is 18, then x is 24.",
+      "id": "school_alg_e6_symbolic_model",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>3</OMI><OMI>4</OMI></OMA><OMV name=\"x\"/></OMA><OMI>18</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>24</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Represent the stated fraction of the unknown, then multiply by the reciprocal.",
+      "sketch_steps": [
+        "model: Translate three fourths of x as (3/4)x.",
+        "solve: Multiply both sides of (3/4)x=18 by 4/3.",
+        "conclude: x=24."
+      ]
+    },
+    {
+      "canonical_statement": "For every real x, if 3x+5=20, then x=5.",
+      "id": "school_alg_g7_linear_compute",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMV name=\"x\"/></OMA><OMI>5</OMI></OMA><OMI>20</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>5</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Subtract five and divide by the nonzero coefficient three.",
+      "sketch_steps": [
+        "subtract: Obtain 3x=15.",
+        "divide: Divide both sides by 3.",
+        "conclude: x=5."
+      ]
+    },
+    {
+      "canonical_statement": "For every real x, 2x-6=10 if and only if x=8.",
+      "id": "school_alg_g7_linear_justify",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMI>6</OMI></OMA><OMI>10</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>8</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use reversible addition and division steps in both directions.",
+      "sketch_steps": [
+        "forward: Add 6 and divide by 2 to obtain x=8.",
+        "reverse: Substitute x=8 into 2x-6.",
+        "conclude: The equation and solution are equivalent."
+      ]
+    },
+    {
+      "canonical_statement": "The fare with base charge 120 yen and rate 80 yen per kilometre totals 440 yen only when distance d is 4 kilometres.",
+      "id": "school_alg_g7_linear_model",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"d\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMI>120</OMI><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>80</OMI><OMV name=\"d\"/></OMA></OMA><OMI>440</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"d\"/><OMI>4</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Translate base charge plus rate times distance into a linear equation and solve it.",
+      "sketch_steps": [
+        "model: Write 120+80d=440.",
+        "solve: Subtract 120 and divide by 80.",
+        "interpret: The distance d is 4 kilometres."
+      ]
+    },
+    {
+      "canonical_statement": "For all real x and y, if x+y=7 and x-y=1, then x=4 and y=3.",
+      "id": "school_alg_g8_system_compute",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMI>7</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>4</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>3</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Add the equations to eliminate y, then substitute the resulting x-value.",
+      "sketch_steps": [
+        "eliminate: Add the two equations to obtain 2x=8.",
+        "substitute: Use x=4 in x+y=7.",
+        "conclude: x=4 and y=3."
+      ]
+    },
+    {
+      "canonical_statement": "For all real x, y, a, and b, if x+y=a and x-y=b, then 2x=a+b.",
+      "id": "school_alg_g8_system_justify",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"a\"/><OMV name=\"b\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMV name=\"a\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMV name=\"b\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"a\"/><OMV name=\"b\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Add the two equalities and justify cancellation of the opposite y-terms.",
+      "sketch_steps": [
+        "add: Add corresponding sides of both equations.",
+        "cancel: Simplify y-y to zero.",
+        "conclude: The remaining equality is 2x=a+b."
+      ]
+    },
+    {
+      "canonical_statement": "If 10 tickets consist of 500-yen adult tickets and 300-yen child tickets and cost 3800 yen, then there are 4 adult and 6 child tickets.",
+      "id": "school_alg_g8_system_model",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/><OMV name=\"b\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"a\"/><OMV name=\"b\"/></OMA><OMI>10</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>500</OMI><OMV name=\"a\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>300</OMI><OMV name=\"b\"/></OMA></OMA><OMI>3800</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"a\"/><OMI>4</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"b\"/><OMI>6</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Model ticket count and total cost as a simultaneous linear system and eliminate one variable.",
+      "sketch_steps": [
+        "model: Write a+b=10 and 500a+300b=3800.",
+        "eliminate: Subtract 300 times the count equation from the cost equation.",
+        "interpret: a=4 adult tickets and b=6 child tickets."
+      ]
+    },
+    {
+      "canonical_statement": "For every real x, if x^2-5x+6=0, then x=2 or x=3.",
+      "id": "school_alg_g9_quadratic_compute",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>5</OMI><OMV name=\"x\"/></OMA></OMA><OMI>6</OMI></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor the quadratic as (x-2)(x-3) and apply the zero-product property.",
+      "sketch_steps": [
+        "factor: Rewrite x^2-5x+6 as (x-2)(x-3).",
+        "split: A zero product has at least one zero factor.",
+        "conclude: x=2 or x=3."
+      ]
+    },
+    {
+      "canonical_statement": "For every real x, x^2=9 if and only if x=3 or x=-3.",
+      "id": "school_alg_g9_quadratic_justify",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>9</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMI>3</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the difference-of-squares factorization and verify both roots for the reverse direction.",
+      "sketch_steps": [
+        "factor: Rewrite x^2-9 as (x-3)(x+3).",
+        "forward: Apply the zero-product property.",
+        "reverse: Square 3 and -3 to recover 9."
+      ]
+    },
+    {
+      "canonical_statement": "If positive rectangle width x and length x+2 have area 48, then the width is 6.",
+      "id": "school_alg_g9_quadratic_model",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMI>0</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMI>48</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>6</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Translate the area condition into a quadratic, solve both algebraic roots, and keep the positive length.",
+      "sketch_steps": [
+        "model: Write x(x+2)=48 with x>0.",
+        "solve: Factor x^2+2x-48 as (x-6)(x+8).",
+        "filter: Reject x=-8 because a width is positive; conclude x=6."
+      ]
+    },
+    {
+      "canonical_statement": "For every real x, 3x-7≤5 if and only if x≤4.",
+      "id": "school_alg_h1_inequality_compute",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMV name=\"x\"/></OMA><OMI>7</OMI></OMA><OMI>5</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMI>4</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Add seven and divide by the positive coefficient three, preserving the inequality direction.",
+      "sketch_steps": [
+        "add: Obtain 3x≤12.",
+        "divide: Divide by positive 3 without reversing the inequality.",
+        "conclude: x≤4, with reversible steps."
+      ]
+    },
+    {
+      "canonical_statement": "For all real x and y, x≤y if and only if -y≤-x.",
+      "id": "school_alg_h1_inequality_justify",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Multiply both sides by -1 and justify reversal of the order relation in both directions.",
+      "sketch_steps": [
+        "forward: Multiply x≤y by -1 and reverse the inequality.",
+        "reverse: Apply the same operation to -y≤-x.",
+        "conclude: The two inequalities are equivalent."
+      ]
+    },
+    {
+      "canonical_statement": "If real ride count n is nonnegative and the 1200-yen pass plus 350 yen per ride costs at most 4000 yen, then n≤8.",
+      "id": "school_alg_h1_inequality_model",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"n\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMI>1200</OMI><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>350</OMI><OMV name=\"n\"/></OMA></OMA><OMI>4000</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"n\"/><OMI>8</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Translate the budget cap into a linear inequality, isolate the ride count, and interpret the bound.",
+      "sketch_steps": [
+        "model: Write 1200+350n≤4000 with n≥0.",
+        "solve: Subtract 1200 and divide by positive 350 to obtain n≤8.",
+        "interpret: The budget permits at most eight rides."
+      ]
+    }
+  ],
+  "hard_negatives": [
+    {
+      "query": "Six equal boxes containing eight pencils each contain fourteen pencils in total.",
+      "reason": "Confuses multiplication of equal groups with addition of the two visible numbers.",
+      "target_draft_id": "school_alg_e4_quantity_compute"
+    },
+    {
+      "query": "For all real a and b, 4a+4b=8(a+b).",
+      "reason": "Incorrectly adds the common coefficient while factoring it.",
+      "target_draft_id": "school_alg_e4_quantity_justify"
+    },
+    {
+      "query": "If four equally priced notebooks cost 600 yen, one notebook costs 2400 yen.",
+      "reason": "Multiplies the total by the item count instead of dividing it.",
+      "target_draft_id": "school_alg_e4_quantity_model"
+    },
+    {
+      "query": "Three fourths divided by two fifths equals six twentieths.",
+      "reason": "Multiplies the fractions without taking the reciprocal of the divisor.",
+      "target_draft_id": "school_alg_e6_symbolic_compute"
+    },
+    {
+      "query": "For every real x, (3/5)x=(3+x)/5.",
+      "reason": "Replaces multiplication in the numerator with addition.",
+      "target_draft_id": "school_alg_e6_symbolic_justify"
+    },
+    {
+      "query": "If three fourths of x is 18, then x is 27/2.",
+      "reason": "Multiplies 18 by 3/4 instead of by the reciprocal 4/3.",
+      "target_draft_id": "school_alg_e6_symbolic_model"
+    },
+    {
+      "query": "For every real x, if 3x+5=20, then x=25/3.",
+      "reason": "Adds five instead of subtracting five before division.",
+      "target_draft_id": "school_alg_g7_linear_compute"
+    },
+    {
+      "query": "For every real x, 2x-6=10 if and only if x=2.",
+      "reason": "Moves the constant with the wrong sign before dividing.",
+      "target_draft_id": "school_alg_g7_linear_justify"
+    },
+    {
+      "query": "A fare with base charge 120 yen and rate 80 yen per kilometre is modeled by 120d+80=440.",
+      "reason": "Swaps the fixed base charge and the per-kilometre coefficient.",
+      "target_draft_id": "school_alg_g7_linear_model"
+    },
+    {
+      "query": "The system x+y=7 and x-y=1 has solution x=3, y=4.",
+      "reason": "The proposed pair satisfies the sum but violates the difference equation.",
+      "target_draft_id": "school_alg_g8_system_compute"
+    },
+    {
+      "query": "From x+y=a and x-y=b, conclude 2x=a-b.",
+      "reason": "Uses subtraction on the right after adding the two equations.",
+      "target_draft_id": "school_alg_g8_system_justify"
+    },
+    {
+      "query": "Ten 500-yen adult and 300-yen child tickets costing 3800 yen consist of 6 adults and 4 children.",
+      "reason": "Swaps the counts; the resulting total is 4200 yen.",
+      "target_draft_id": "school_alg_g8_system_model"
+    },
+    {
+      "query": "If x^2-5x+6=0, then x=-2 or x=-3.",
+      "reason": "Reads the signs of the roots directly from the factors.",
+      "target_draft_id": "school_alg_g9_quadratic_compute"
+    },
+    {
+      "query": "For every real x, x^2=9 if and only if x=3.",
+      "reason": "Drops the negative square root and therefore fails the characterization.",
+      "target_draft_id": "school_alg_g9_quadratic_justify"
+    },
+    {
+      "query": "A positive rectangle width x with x(x+2)=48 may have width -8.",
+      "reason": "Keeps an algebraic root that violates the positive-width premise.",
+      "target_draft_id": "school_alg_g9_quadratic_model"
+    },
+    {
+      "query": "For every real x, 3x-7≤5 if and only if x≤-2/3.",
+      "reason": "Moves -7 in the wrong direction before dividing.",
+      "target_draft_id": "school_alg_h1_inequality_compute"
+    },
+    {
+      "query": "For all real x and y, x≤y if and only if -x≤-y.",
+      "reason": "Negates both sides without reversing the order relation.",
+      "target_draft_id": "school_alg_h1_inequality_justify"
+    },
+    {
+      "query": "Under 1200+350n≤4000 with n≥0, the budget permits strictly fewer than eight rides.",
+      "reason": "Changes the inclusive bound and incorrectly excludes the feasible endpoint n=8.",
+      "target_draft_id": "school_alg_h1_inequality_model"
+    }
+  ],
+  "schema_version": "pals.school-algebra-anchor-v1-candidates.v1",
+  "source": {
+    "coverage_matrix": "specs/draft-catalog-expansion/coverage-matrix.v1.json",
+    "kind": "independent_original_authoring",
+    "task": "DCE-T008"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pals:spec:draft-catalog-expansion:inventory-sources:v1",
+  "title": "PALS Draft catalog repository inventory sources v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sources", "profile_limits"],
+  "properties": {
+    "schema_version": {"const": "pals.draft-catalog-inventory-sources.v1"},
+    "sources": {"type": "array", "items": {"$ref": "#/$defs/source"}},
+    "profile_limits": {"type": "array", "items": {"$ref": "#/$defs/profileLimit"}}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9._-]{0,127}$"},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "kind", "schema_version", "card_keys", "profile_id", "status_ceiling", "loader_supported"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "path": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["packaged_seed", "generic_authoring", "typed_authoring"]},
+        "schema_version": {"type": ["string", "null"]},
+        "card_keys": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "profile_id": {"type": "string", "minLength": 1},
+        "status_ceiling": {"enum": ["build_input", "authored", "profile_valid"]},
+        "loader_supported": {"type": "boolean"}
+      }
+    },
+    "profileLimit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_id", "configured_population_limit", "available_population_limit", "source"],
+      "properties": {
+        "profile_id": {"type": "string", "minLength": 1},
+        "configured_population_limit": {"type": ["integer", "null"], "minimum": 1},
+        "available_population_limit": {"type": ["integer", "null"], "minimum": 1},
+        "source": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

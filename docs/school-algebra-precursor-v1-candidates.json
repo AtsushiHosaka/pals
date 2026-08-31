@@ -1,0 +1,108 @@
+{
+  "cards": [
+    {
+      "canonical_statement": "Starting at -3 degrees and falling 5 degrees gives -8 degrees.",
+      "id": "school_alg_g7_signed_model",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMI>3</OMI></OMA><OMI>5</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMI>8</OMI></OMA></OMA></OMOBJ>",
+      "proof_strategy": "Represent the starting temperature and the decrease as signed numbers, then subtract.",
+      "sketch_steps": [
+        "model: Represent three degrees below zero by -3.",
+        "change: Subtract 5 for the temperature fall.",
+        "conclude: -3-5=-8 degrees."
+      ]
+    },
+    {
+      "canonical_statement": "For nonnegative real x, the rectangle with side lengths x and 3 has perimeter 2x+6.",
+      "id": "school_alg_g7_symbolic_model",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMI>6</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Translate perimeter as twice the sum of adjacent sides and distribute the factor two.",
+      "sketch_steps": [
+        "model: Write the perimeter as 2(x+3).",
+        "expand: Apply the distributive law.",
+        "conclude: The perimeter is 2x+6."
+      ]
+    },
+    {
+      "canonical_statement": "For real A, l, and nonzero w, if A=lw then l=A/w.",
+      "id": "school_alg_g8_expression_model",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"l\"/><OMV name=\"w\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"A\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"l\"/><OMV name=\"w\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"w\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"l\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMV name=\"A\"/><OMV name=\"w\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Treat A=lw as an area formula and divide by the nonzero width to isolate the length.",
+      "sketch_steps": [
+        "premise: Use A=lw and record w≠0.",
+        "transform: Divide both sides by w.",
+        "conclude: l=A/w."
+      ]
+    },
+    {
+      "canonical_statement": "For every nonnegative real x, if x squared is 144 then x is 12.",
+      "id": "school_alg_g9_square_root_compute",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>144</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>12</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the nonnegative square-root convention and verify that 12 squared is 144.",
+      "sketch_steps": [
+        "factor: Rewrite x²-144 as (x-12)(x+12).",
+        "solve: The algebraic roots are 12 and -12.",
+        "filter: Nonnegativity leaves x=12."
+      ]
+    },
+    {
+      "canonical_statement": "The nonnegative diagonal d whose square equals 3 squared plus 4 squared has length 5.",
+      "id": "school_alg_g9_square_root_model",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"d\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"d\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"d\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMI>3</OMI><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMI>4</OMI><OMI>2</OMI></OMA></OMA></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"d\"/><OMI>5</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Model a right-triangle diagonal with the Pythagorean relation and take the nonnegative root.",
+      "sketch_steps": [
+        "model: Write d²=3²+4² with d≥0.",
+        "compute: Simplify the right side to 25.",
+        "interpret: The nonnegative solution is d=5."
+      ]
+    },
+    {
+      "canonical_statement": "For nonnegative real x, the rectangle with sides x+2 and x+3 has area x squared plus 5x plus 6.",
+      "id": "school_alg_g9_polynomial_model",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>5</OMI><OMV name=\"x\"/></OMA><OMI>6</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Translate rectangle area as a product of side expressions and expand the product.",
+      "sketch_steps": [
+        "model: Write the area as (x+2)(x+3).",
+        "expand: Multiply each term and combine the two linear terms.",
+        "conclude: The area is x²+5x+6."
+      ]
+    }
+  ],
+  "hard_negatives": [
+    {
+      "query": "A temperature of -3 degrees that falls by 5 degrees becomes 2 degrees.",
+      "reason": "Subtracts magnitudes without preserving the signed direction.",
+      "target_draft_id": "school_alg_g7_signed_model"
+    },
+    {
+      "query": "A rectangle with sides x and 3 has perimeter 2x+3.",
+      "reason": "Distributes the perimeter factor to only one side length.",
+      "target_draft_id": "school_alg_g7_symbolic_model"
+    },
+    {
+      "query": "From A=lw conclude l=A-w.",
+      "reason": "Uses subtraction instead of division when rearranging the formula.",
+      "target_draft_id": "school_alg_g8_expression_model"
+    },
+    {
+      "query": "If x²=144 then the only real solution is x=12.",
+      "reason": "Drops the negative root without the nonnegative premise.",
+      "target_draft_id": "school_alg_g9_square_root_compute"
+    },
+    {
+      "query": "A right triangle with legs 3 and 4 has diagonal 7.",
+      "reason": "Adds the leg lengths instead of applying the Pythagorean relation.",
+      "target_draft_id": "school_alg_g9_square_root_model"
+    },
+    {
+      "query": "(x+2)(x+3)=x²+6.",
+      "reason": "Omits both cross terms in the polynomial expansion.",
+      "target_draft_id": "school_alg_g9_polynomial_model"
+    }
+  ],
+  "schema_version": "pals.school-algebra-precursor-v1-candidates.v1",
+  "source": {
+    "coverage_matrix": "specs/draft-catalog-expansion/coverage-matrix.v1.json",
+    "followup_to": "DCE-T008",
+    "kind": "independent_original_authoring"
+  }
+}

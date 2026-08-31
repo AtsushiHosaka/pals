@@ -1,0 +1,248 @@
+{
+  "schema_version": "pals.typed-multivariable-calculus-v1-sealed-manifest.v1",
+  "status": "sealed_local_authoring_revision_not_admitted",
+  "seal": {
+    "scope": "local typed multivariable-calculus authoring evidence only",
+    "admission": "not admitted to the generic DB, seed, embedding index, or PFI package",
+    "revision": "typed-multivariable-calculus-v1-local-r1"
+  },
+  "profile": {
+    "id": "typed-multivariable-calculus-v1",
+    "validator": "pals_agent.typed_multivariable_calculus.validate_canonical_typed_multivariable_calculus_openmath_xml",
+    "canonicalizer": "openmath-cdbase-alpha-c14n-v4",
+    "profile_design_path": "docs/typed-multivariable-calculus-v1-design.md",
+    "profile_design_sha256": "sha256:ea484135c4122dd9e47b1ca1788a622f7a4f815ed6c0a8d9dfd09ea68b347618",
+    "registry_path": "pals_agent/content_dictionaries/typed-multivariable-calculus-v1-registry.json",
+    "registry_digest": "sha256:a9003e353a4e483595887a3ae679f78bfc1e70749a7504dda776837318157342",
+    "lean_toolchain": {
+      "path": "pals-agent/lean-workspace/lean-toolchain",
+      "value": "leanprover/lean4:v4.32.0-rc1",
+      "sha256": "sha256:2c290dc3675a4faf0bc03545ff71a417d2f9a7c2e60e8be80ed643fcbcc73e2d",
+      "digest_input": "exact UTF-8 bytes of the named lean-toolchain file"
+    }
+  },
+  "lean_receipt": {
+    "witness_path": "docs/typed-multivariable-calculus-v1-authoring-witnesses.lean",
+    "witness_file_sha256": "sha256:ead6f754bff01cbb20539ad8f45d0a5f60bbf41b8a6e21f5027efa599260df47",
+    "verification_command": "cd pals-agent/lean-workspace && lake env lean ../../docs/typed-multivariable-calculus-v1-authoring-witnesses.lean",
+    "verification_status": "verified_local_pinned_workspace",
+    "scope": "manual statement-to-OpenMath-to-Lean alignment; no automatic translator claim"
+  },
+  "hard_rejects": [
+    "gradient",
+    "hessian",
+    "local_extremum",
+    "partial_xy_at",
+    "double_integral",
+    "iterated_integral",
+    "fubini",
+    "change_of_variables"
+  ],
+  "cards": [
+    {
+      "id": "multivar_partial_x_quadratic",
+      "canonical_statement": "For f(x,y)=x²+y², the first coordinate partial derivative at (a,b) is 2a.",
+      "proof_strategy": "Freeze the second coordinate and apply the one-variable square rule.",
+      "sketch_steps": [
+        "setup: Fix the point (a,b).",
+        "restrict: Hold y=b and view f(x,b) as x²+b².",
+        "differentiate: Apply the square rule to x².",
+        "constant: The b² term has derivative zero.",
+        "conclude: The x-partial slope is 2a."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"b\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"partial_x_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"lambda2\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"Real2\"/></OMATP><OMV name=\"p\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"fst\"/><OMV name=\"p\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"snd\"/><OMV name=\"p\"/></OMA><OMI>2</OMI></OMA></OMA></OMBIND><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"pair\"/><OMV name=\"a\"/><OMV name=\"b\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"of_int\"/><OMI>2</OMI></OMA><OMV name=\"a\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "Real2Function",
+        "partial_x_at: Real2Function × Real2 × Real → Prop"
+      ],
+      "lean_target": "∀ a b : ℝ, HasPartialXAt (fun p : ℝ × ℝ => p.1 ^ 2 + p.2 ^ 2) (2 * a) (a, b)",
+      "lean_witness": "example (a b : ℝ) :\n    HasPartialXAt (fun p : ℝ × ℝ => p.1 ^ 2 + p.2 ^ 2) (2 * a) (a, b) := by\n  simpa [HasPartialXAt, pow_two] using (hasDerivAt_pow 2 a).add_const (b ^ 2)",
+      "alignment": "partial_x_at lowers to HasDerivAt (fun x => f (x,b)) at a; the XML lambda is exactly x²+y².",
+      "openmath_xml_sha256": "sha256:f245007ddc3cb42953db7f2fa33ca14b0ab3400892aa830a5b4ea23b8bb42f4d",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"partial_x_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"lambda2\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"Real2\"></n1:OMS></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"plus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"fst\"></n1:OMS><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"snd\"></n1:OMS><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMI>2</n1:OMI></n1:OMA></n1:OMA></n1:OMBIND><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"pair\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"of_int\"></n1:OMS><n1:OMI>2</n1:OMI></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:d44ad3b524a2783521fc80b05e67e56687174abf3362899e79aa2cfcc2ccea5c",
+      "canonical_statement_sha256": "sha256:b5aca7b53ce185920fca4a1381cae9098c65ae3be77f2d6a803cb948e9621ced",
+      "lean_target_sha256": "sha256:a18deaf51e4d34c0a470c751e21a8fca237b14cf500db9976bad10f5eb9fb5e0",
+      "lean_witness_sha256": "sha256:85683cdfe071d533e7305fb871d5dea49706bfb3b4e1ef291f75b831f2f0b6b6",
+      "source_witness_sha256": "sha256:85683cdfe071d533e7305fb871d5dea49706bfb3b4e1ef291f75b831f2f0b6b6",
+      "profile_validation_status": "validated_local_typed_multivariable_calculus_v1_sealed",
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "The natural-language statement is represented only by the listed profile-local typed signature.",
+        "openmath_to_lean": "partial_x_at lowers to HasDerivAt (fun x => f (x,b)) at a; the XML lambda is exactly x²+y².",
+        "admission_gate": "Canonical XML, direct Lean witness, and manifest digest are required; this remains non-published."
+      }
+    },
+    {
+      "id": "multivar_partial_y_quadratic",
+      "canonical_statement": "For f(x,y)=x²+y², the second coordinate partial derivative at (a,b) is 2b.",
+      "proof_strategy": "Freeze the first coordinate and apply the one-variable square rule.",
+      "sketch_steps": [
+        "setup: Fix the point (a,b).",
+        "restrict: Hold x=a and view f(a,y) as a²+y².",
+        "differentiate: Apply the square rule to y².",
+        "constant: The a² term has derivative zero.",
+        "conclude: The y-partial slope is 2b."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"b\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"partial_y_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"lambda2\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"Real2\"/></OMATP><OMV name=\"p\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"fst\"/><OMV name=\"p\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"snd\"/><OMV name=\"p\"/></OMA><OMI>2</OMI></OMA></OMA></OMBIND><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"pair\"/><OMV name=\"a\"/><OMV name=\"b\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"of_int\"/><OMI>2</OMI></OMA><OMV name=\"b\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "Real2Function",
+        "partial_y_at: Real2Function × Real2 × Real → Prop"
+      ],
+      "lean_target": "∀ a b : ℝ, HasPartialYAt (fun p : ℝ × ℝ => p.1 ^ 2 + p.2 ^ 2) (2 * b) (a, b)",
+      "lean_witness": "example (a b : ℝ) :\n    HasPartialYAt (fun p : ℝ × ℝ => p.1 ^ 2 + p.2 ^ 2) (2 * b) (a, b) := by\n  simpa [HasPartialYAt, pow_two] using (hasDerivAt_pow 2 b).const_add (a ^ 2)",
+      "alignment": "partial_y_at lowers to HasDerivAt (fun y => f (a,y)) at b; the XML lambda is exactly x²+y².",
+      "openmath_xml_sha256": "sha256:e04ce6c228835d4db3880704fbfadffcab1b189f105b92952ecfa82ee07409a5",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"partial_y_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"lambda2\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"Real2\"></n1:OMS></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"plus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"fst\"></n1:OMS><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"snd\"></n1:OMS><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMI>2</n1:OMI></n1:OMA></n1:OMA></n1:OMBIND><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"pair\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"of_int\"></n1:OMS><n1:OMI>2</n1:OMI></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:8d9f28e4297d2c5a0c9a057eb86bd70d43c13bc079def21a72fa4cca7b4fb976",
+      "canonical_statement_sha256": "sha256:05d20a87dd5158bd8f00d96211b22083d87b3fd17583e5ca5c41a197b7676f1d",
+      "lean_target_sha256": "sha256:9757cb158b81ddb5984dbb1414b4b57cb3f6b38f8b903f06d596be3637dc822f",
+      "lean_witness_sha256": "sha256:b0fd9590607781128496bf43af37ce143d2d07e152897eb491e331e2dcccaefe",
+      "source_witness_sha256": "sha256:b0fd9590607781128496bf43af37ce143d2d07e152897eb491e331e2dcccaefe",
+      "profile_validation_status": "validated_local_typed_multivariable_calculus_v1_sealed",
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "The natural-language statement is represented only by the listed profile-local typed signature.",
+        "openmath_to_lean": "partial_y_at lowers to HasDerivAt (fun y => f (a,y)) at b; the XML lambda is exactly x²+y².",
+        "admission_gate": "Canonical XML, direct Lean witness, and manifest digest are required; this remains non-published."
+      }
+    },
+    {
+      "id": "multivar_partial_x_product",
+      "canonical_statement": "For f(x,y)=xy, the first coordinate partial derivative at (a,b) is b.",
+      "proof_strategy": "Freeze y=b and differentiate the linear function x ↦ xb.",
+      "sketch_steps": [
+        "setup: Fix the point (a,b).",
+        "restrict: Hold y=b to obtain x ↦ xb.",
+        "linear: Use the derivative of the identity function.",
+        "scale: Multiply its slope by the constant b.",
+        "conclude: The x-partial slope is b."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"b\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"partial_x_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"lambda2\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"Real2\"/></OMATP><OMV name=\"p\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"fst\"/><OMV name=\"p\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"snd\"/><OMV name=\"p\"/></OMA></OMA></OMBIND><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"pair\"/><OMV name=\"a\"/><OMV name=\"b\"/></OMA><OMV name=\"b\"/></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "Real2Function",
+        "partial_x_at: Real2Function × Real2 × Real → Prop"
+      ],
+      "lean_target": "∀ a b : ℝ, HasPartialXAt (fun p : ℝ × ℝ => p.1 * p.2) b (a, b)",
+      "lean_witness": "example (a b : ℝ) :\n    HasPartialXAt (fun p : ℝ × ℝ => p.1 * p.2) b (a, b) := by\n  simpa [HasPartialXAt] using (hasDerivAt_id a).mul_const b",
+      "alignment": "The coordinate restriction preserves the product order x*b, and Lean witnesses its slope b.",
+      "openmath_xml_sha256": "sha256:d37f2399546654a6752f6f9552cb0c58dc5cd266c754fd1dd13e33efe6e03b1c",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"partial_x_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"lambda2\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"Real2\"></n1:OMS></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"fst\"></n1:OMS><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"snd\"></n1:OMS><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"pair\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:799bbeccd479f146817969513fec5cf61615925c827b955b06d5f8040675278e",
+      "canonical_statement_sha256": "sha256:bd14370075e6863c2fdcebad8d2c8a2d5b64ba5fb878577e1f794764feb0e54a",
+      "lean_target_sha256": "sha256:33a6e34e3bdf014468048262d84828e84532f119d0ec9c4a54ec51565baca488",
+      "lean_witness_sha256": "sha256:e8e9f2b2f7c01b76926354716125fb3cd4c7f47d1c457cf8c4b0e57c8a572ef5",
+      "source_witness_sha256": "sha256:e8e9f2b2f7c01b76926354716125fb3cd4c7f47d1c457cf8c4b0e57c8a572ef5",
+      "profile_validation_status": "validated_local_typed_multivariable_calculus_v1_sealed",
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "The natural-language statement is represented only by the listed profile-local typed signature.",
+        "openmath_to_lean": "The coordinate restriction preserves the product order x*b, and Lean witnesses its slope b.",
+        "admission_gate": "Canonical XML, direct Lean witness, and manifest digest are required; this remains non-published."
+      }
+    },
+    {
+      "id": "multivar_partial_y_product",
+      "canonical_statement": "For f(x,y)=xy, the second coordinate partial derivative at (a,b) is a.",
+      "proof_strategy": "Freeze x=a and differentiate the linear function y ↦ ay.",
+      "sketch_steps": [
+        "setup: Fix the point (a,b).",
+        "restrict: Hold x=a to obtain y ↦ ay.",
+        "linear: Use the derivative of the identity function.",
+        "scale: Multiply its slope by the constant a.",
+        "conclude: The y-partial slope is a."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"b\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"partial_y_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"lambda2\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"Real2\"/></OMATP><OMV name=\"p\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"fst\"/><OMV name=\"p\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"snd\"/><OMV name=\"p\"/></OMA></OMA></OMBIND><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"pair\"/><OMV name=\"a\"/><OMV name=\"b\"/></OMA><OMV name=\"a\"/></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "Real2Function",
+        "partial_y_at: Real2Function × Real2 × Real → Prop"
+      ],
+      "lean_target": "∀ a b : ℝ, HasPartialYAt (fun p : ℝ × ℝ => p.1 * p.2) a (a, b)",
+      "lean_witness": "example (a b : ℝ) :\n    HasPartialYAt (fun p : ℝ × ℝ => p.1 * p.2) a (a, b) := by\n  simpa [HasPartialYAt] using (hasDerivAt_id b).const_mul a",
+      "alignment": "The coordinate restriction is y ↦ a*y, represented by Lean's constant-left multiplication derivative rule.",
+      "openmath_xml_sha256": "sha256:4b7067b539cc68423d521c0211f3858c47318024c2c4dc5e4664d3d3f808638b",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"partial_y_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"lambda2\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"Real2\"></n1:OMS></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"fst\"></n1:OMS><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"snd\"></n1:OMS><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"pair\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:a307c9eb2b556845679c139245c68f665fafa59f5b931420386e53a5c64667a9",
+      "canonical_statement_sha256": "sha256:427884bd0f60c3f32e5e1bbcadbc251895804a19f8e1e58f73f4ea3c6e27baf7",
+      "lean_target_sha256": "sha256:37b80c2db60f6b38e050343741ffb475ff86a9a91a5c73a755c2ac90f1d78e3a",
+      "lean_witness_sha256": "sha256:476a25374e9185550209020e35de30f0587b40ee402d9207b0c173dfac5abfe3",
+      "source_witness_sha256": "sha256:476a25374e9185550209020e35de30f0587b40ee402d9207b0c173dfac5abfe3",
+      "profile_validation_status": "validated_local_typed_multivariable_calculus_v1_sealed",
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "The natural-language statement is represented only by the listed profile-local typed signature.",
+        "openmath_to_lean": "The coordinate restriction is y ↦ a*y, represented by Lean's constant-left multiplication derivative rule.",
+        "admission_gate": "Canonical XML, direct Lean witness, and manifest digest are required; this remains non-published."
+      }
+    },
+    {
+      "id": "multivar_differentiable_quadratic",
+      "canonical_statement": "The bivariate quadratic (x,y) ↦ x²+y² is differentiable at every point of ℝ².",
+      "proof_strategy": "Use closure of differentiable functions under coordinate projections, powers, and addition.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary point p in ℝ².",
+        "coordinates: Both coordinate projections are differentiable.",
+        "powers: Square each projection.",
+        "sum: Add the two differentiable terms.",
+        "conclude: The quadratic is differentiable at p."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"Real2\"/></OMATP><OMV name=\"point\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"differentiable_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"lambda2\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"Real2\"/></OMATP><OMV name=\"p\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"fst\"/><OMV name=\"p\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"snd\"/><OMV name=\"p\"/></OMA><OMI>2</OMI></OMA></OMA></OMBIND><OMV name=\"point\"/></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "Real2Function",
+        "differentiable_at: Real2Function × Real2 → Prop"
+      ],
+      "lean_target": "∀ p : ℝ × ℝ, DifferentiableAt ℝ (fun q : ℝ × ℝ => q.1 ^ 2 + q.2 ^ 2) p",
+      "lean_witness": "example (p : ℝ × ℝ) : DifferentiableAt ℝ (fun q : ℝ × ℝ => q.1 ^ 2 + q.2 ^ 2) p := by\n  fun_prop",
+      "alignment": "differentiable_at lowers directly to Mathlib DifferentiableAt over ℝ for the same product-space lambda.",
+      "openmath_xml_sha256": "sha256:e4ca62be9819f687bb6853cf07e774a541c910ebc260d98d0d7c4d11dfdd06c4",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"Real2\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"differentiable_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"lambda2\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"Real2\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"plus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"fst\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"snd\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMI>2</n1:OMI></n1:OMA></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:9906396625c9bc682cdd176101b0aac82599c7b26a892c0f750541b2cded4270",
+      "canonical_statement_sha256": "sha256:ec2dc21dca9304ee769dfc1d719d6d54253e1d86ac21c26e890604368b22f15d",
+      "lean_target_sha256": "sha256:d6a0c6d3b6cabb246439a9a7bebb87f4cdf7e6f1f16e8ea6da381f49bbfdf0f9",
+      "lean_witness_sha256": "sha256:eb069ba026466a656dc5c20b1351e5df5a626e48c48a82fbda7b15b3b5b59b25",
+      "source_witness_sha256": "sha256:eb069ba026466a656dc5c20b1351e5df5a626e48c48a82fbda7b15b3b5b59b25",
+      "profile_validation_status": "validated_local_typed_multivariable_calculus_v1_sealed",
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "The natural-language statement is represented only by the listed profile-local typed signature.",
+        "openmath_to_lean": "differentiable_at lowers directly to Mathlib DifferentiableAt over ℝ for the same product-space lambda.",
+        "admission_gate": "Canonical XML, direct Lean witness, and manifest digest are required; this remains non-published."
+      }
+    },
+    {
+      "id": "multivar_differentiable_product",
+      "canonical_statement": "The bivariate product (x,y) ↦ xy is differentiable at every point of ℝ².",
+      "proof_strategy": "Use closure of differentiable functions under coordinate projections and multiplication.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary point p in ℝ².",
+        "coordinates: Both coordinate projections are differentiable.",
+        "product: Multiply the two differentiable scalar functions.",
+        "locality: The construction applies at the chosen p.",
+        "conclude: The product is differentiable at p."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"Real2\"/></OMATP><OMV name=\"point\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"differentiable_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"lambda2\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"Real2\"/></OMATP><OMV name=\"p\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"fst\"/><OMV name=\"p\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" cd=\"multicalc1\" name=\"snd\"/><OMV name=\"p\"/></OMA></OMA></OMBIND><OMV name=\"point\"/></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "Real2Function",
+        "differentiable_at: Real2Function × Real2 → Prop"
+      ],
+      "lean_target": "∀ p : ℝ × ℝ, DifferentiableAt ℝ (fun q : ℝ × ℝ => q.1 * q.2) p",
+      "lean_witness": "example (p : ℝ × ℝ) : DifferentiableAt ℝ (fun q : ℝ × ℝ => q.1 * q.2) p := by\n  fun_prop",
+      "alignment": "differentiable_at lowers directly to Mathlib DifferentiableAt over ℝ for the same product-space lambda.",
+      "openmath_xml_sha256": "sha256:ee45aef1be99ff9430d1cd52f935424eabddde83ed4e915b93dae159f5951bf5",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"Real2\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"differentiable_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"lambda2\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"Real2\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"fst\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"multicalc1\" cdbase=\"urn:pals:openmath:typed-multivariable-calculus:v1\" name=\"snd\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:702b01465d3573ec9474667521345dd779364fc983a8c118eb8c52be7f962acd",
+      "canonical_statement_sha256": "sha256:1a588b206e26e0e4f5a3136e870c5ff6f320e9a93b7d21f39ea0939dfc068a50",
+      "lean_target_sha256": "sha256:b3c8c8529e00dcf219ebce069da0cc0a183c6f5b30cd288fada263691993d7fb",
+      "lean_witness_sha256": "sha256:72e5cdd6156cf0dc1862437f5f633612084ec6c08894416aba2e5ffcf321ae79",
+      "source_witness_sha256": "sha256:72e5cdd6156cf0dc1862437f5f633612084ec6c08894416aba2e5ffcf321ae79",
+      "profile_validation_status": "validated_local_typed_multivariable_calculus_v1_sealed",
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "The natural-language statement is represented only by the listed profile-local typed signature.",
+        "openmath_to_lean": "differentiable_at lowers directly to Mathlib DifferentiableAt over ℝ for the same product-space lambda.",
+        "admission_gate": "Canonical XML, direct Lean witness, and manifest digest are required; this remains non-published."
+      }
+    }
+  ],
+  "manifest_payload_sha256": "sha256:767441a31055dfb992210d682d1956ac6d0e2ade0ee45af97316e1f3a79c16bd"
+}

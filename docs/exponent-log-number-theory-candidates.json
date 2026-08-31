@@ -1,0 +1,518 @@
+{
+  "schema_version": "pals.exponent-log-and-elementary-number-theory-candidates.v1",
+  "source": "PALS first-party authored, Lean-verified candidate set",
+  "current_profile_card_count": 26,
+  "domain_counts": {
+    "exponentials_and_logarithms": 14,
+    "elementary_number_theory": 12
+  },
+  "cards": [
+    {
+      "id": "exlog_exp_zero",
+      "domain": "exponentials_and_logarithms",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "The real exponential satisfies exp(0) = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMI>0</OMI></OMA><OMI>1</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Evaluate the exponential at its additive identity.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record the required positivity hypotheses for every logarithm argument.",
+        "domain: Verify that each logarithm is evaluated at a strictly positive real number.",
+        "rule: Apply the matching exponential or logarithm identity.",
+        "simplify: Normalize products, quotients, powers, or inverse expressions.",
+        "conclude: State the resulting real equality or implication."
+      ],
+      "lean_witness": "example : Real.exp 0 = 1 := Real.exp_zero"
+    },
+    {
+      "id": "exlog_exp_add",
+      "domain": "exponentials_and_logarithms",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all real x and y, exp(x + y) = exp(x) * exp(y).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the exponential addition formula.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record the required positivity hypotheses for every logarithm argument.",
+        "domain: Verify that each logarithm is evaluated at a strictly positive real number.",
+        "rule: Apply the matching exponential or logarithm identity.",
+        "simplify: Normalize products, quotients, powers, or inverse expressions.",
+        "conclude: State the resulting real equality or implication."
+      ],
+      "lean_witness": "example (x y : ℝ) : Real.exp (x + y) = Real.exp x * Real.exp y := Real.exp_add x y"
+    },
+    {
+      "id": "exlog_exp_neg",
+      "domain": "exponentials_and_logarithms",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For every real x, exp(-x) = 1/exp(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the exponential inverse identity and rewrite the inverse as one divided by exp(x).",
+      "sketch_steps": [
+        "setup: Bind the real variables and record the required positivity hypotheses for every logarithm argument.",
+        "domain: Verify that each logarithm is evaluated at a strictly positive real number.",
+        "rule: Apply the matching exponential or logarithm identity.",
+        "simplify: Normalize products, quotients, powers, or inverse expressions.",
+        "conclude: State the resulting real equality or implication."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.exp (-x) = 1 / Real.exp x := by simpa [one_div] using Real.exp_neg x"
+    },
+    {
+      "id": "exlog_exp_strictly_positive",
+      "domain": "exponentials_and_logarithms",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For every real x, exp(x) > 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use positivity of the real exponential function.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record the required positivity hypotheses for every logarithm argument.",
+        "domain: Verify that each logarithm is evaluated at a strictly positive real number.",
+        "rule: Apply the matching exponential or logarithm identity.",
+        "simplify: Normalize products, quotients, powers, or inverse expressions.",
+        "conclude: State the resulting real equality or implication."
+      ],
+      "lean_witness": "example (x : ℝ) : 0 < Real.exp x := Real.exp_pos x"
+    },
+    {
+      "id": "exlog_log_one",
+      "domain": "exponentials_and_logarithms",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "The real logarithm satisfies ln(1) = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMI>1</OMI></OMA><OMI>0</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Evaluate the logarithm at the positive multiplicative identity.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record the required positivity hypotheses for every logarithm argument.",
+        "domain: Verify that each logarithm is evaluated at a strictly positive real number.",
+        "rule: Apply the matching exponential or logarithm identity.",
+        "simplify: Normalize products, quotients, powers, or inverse expressions.",
+        "conclude: State the resulting real equality or implication."
+      ],
+      "lean_witness": "example : Real.log 1 = 0 := Real.log_one"
+    },
+    {
+      "id": "exlog_log_exp",
+      "domain": "exponentials_and_logarithms",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For every real x, ln(exp(x)) = x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA></OMA><OMV name=\"x\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "The exponential is always positive, so logarithm and exponential cancel.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record the required positivity hypotheses for every logarithm argument.",
+        "domain: Verify that each logarithm is evaluated at a strictly positive real number.",
+        "rule: Apply the matching exponential or logarithm identity.",
+        "simplify: Normalize products, quotients, powers, or inverse expressions.",
+        "conclude: State the resulting real equality or implication."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.log (Real.exp x) = x := Real.log_exp x"
+    },
+    {
+      "id": "exlog_exp_log_positive",
+      "domain": "exponentials_and_logarithms",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For every real x, if x > 0 then exp(ln(x)) = x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA></OMA><OMV name=\"x\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the inverse identity on the explicit positive-domain hypothesis.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record the required positivity hypotheses for every logarithm argument.",
+        "domain: Verify that each logarithm is evaluated at a strictly positive real number.",
+        "rule: Apply the matching exponential or logarithm identity.",
+        "simplify: Normalize products, quotients, powers, or inverse expressions.",
+        "conclude: State the resulting real equality or implication."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : 0 < x) : Real.exp (Real.log x) = x := Real.exp_log hx"
+    },
+    {
+      "id": "exlog_log_mul_positive",
+      "domain": "exponentials_and_logarithms",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all real x and y, if x > 0 and y > 0 then ln(x*y) = ln(x) + ln(y).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the product rule after deriving nonzeroness from positivity.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record the required positivity hypotheses for every logarithm argument.",
+        "domain: Verify that each logarithm is evaluated at a strictly positive real number.",
+        "rule: Apply the matching exponential or logarithm identity.",
+        "simplify: Normalize products, quotients, powers, or inverse expressions.",
+        "conclude: State the resulting real equality or implication."
+      ],
+      "lean_witness": "example (x y : ℝ) (hx : 0 < x) (hy : 0 < y) : Real.log (x*y) = Real.log x + Real.log y := Real.log_mul (ne_of_gt hx) (ne_of_gt hy)"
+    },
+    {
+      "id": "exlog_log_div_positive",
+      "domain": "exponentials_and_logarithms",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all real x and y, if x > 0 and y > 0 then ln(x/y) = ln(x) - ln(y).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the quotient rule after deriving that both arguments are nonzero.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record the required positivity hypotheses for every logarithm argument.",
+        "domain: Verify that each logarithm is evaluated at a strictly positive real number.",
+        "rule: Apply the matching exponential or logarithm identity.",
+        "simplify: Normalize products, quotients, powers, or inverse expressions.",
+        "conclude: State the resulting real equality or implication."
+      ],
+      "lean_witness": "example (x y : ℝ) (hx : 0 < x) (hy : 0 < y) : Real.log (x/y) = Real.log x - Real.log y := Real.log_div (ne_of_gt hx) (ne_of_gt hy)"
+    },
+    {
+      "id": "exlog_log_inv_positive",
+      "domain": "exponentials_and_logarithms",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For every real x, if x > 0 then ln(1/x) = -ln(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the inverse rule for logarithms; positivity makes the reciprocal a valid positive argument.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record the required positivity hypotheses for every logarithm argument.",
+        "domain: Verify that each logarithm is evaluated at a strictly positive real number.",
+        "rule: Apply the matching exponential or logarithm identity.",
+        "simplify: Normalize products, quotients, powers, or inverse expressions.",
+        "conclude: State the resulting real equality or implication."
+      ],
+      "lean_witness": "example (x : ℝ) (_hx : 0 < x) : Real.log (1/x) = -Real.log x := by simpa [one_div] using Real.log_inv x"
+    },
+    {
+      "id": "exlog_log_square_positive",
+      "domain": "exponentials_and_logarithms",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For every real x, if x > 0 then ln(x^2) = 2ln(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the logarithm power rule on the positive-domain hypothesis.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record the required positivity hypotheses for every logarithm argument.",
+        "domain: Verify that each logarithm is evaluated at a strictly positive real number.",
+        "rule: Apply the matching exponential or logarithm identity.",
+        "simplify: Normalize products, quotients, powers, or inverse expressions.",
+        "conclude: State the resulting real equality or implication."
+      ],
+      "lean_witness": "example (x : ℝ) (_hx : 0 < x) : Real.log (x^2) = 2 * Real.log x := by simpa using Real.log_pow x 2"
+    },
+    {
+      "id": "exlog_exp_eq_one_solution",
+      "domain": "exponentials_and_logarithms",
+      "level": "high_school_and_early_university",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For every real x, if exp(x) = 1 then x = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use injectivity of the exponential at the value one.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record the required positivity hypotheses for every logarithm argument.",
+        "domain: Verify that each logarithm is evaluated at a strictly positive real number.",
+        "rule: Apply the matching exponential or logarithm identity.",
+        "simplify: Normalize products, quotients, powers, or inverse expressions.",
+        "conclude: State the resulting real equality or implication."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.exp x = 1 → x = 0 := by intro h; exact (Real.exp_eq_one_iff x).mp h"
+    },
+    {
+      "id": "exlog_exp_injective",
+      "domain": "exponentials_and_logarithms",
+      "level": "high_school_and_early_university",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all real x and y, if exp(x) = exp(y) then x = y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply injectivity of the real exponential function.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record the required positivity hypotheses for every logarithm argument.",
+        "domain: Verify that each logarithm is evaluated at a strictly positive real number.",
+        "rule: Apply the matching exponential or logarithm identity.",
+        "simplify: Normalize products, quotients, powers, or inverse expressions.",
+        "conclude: State the resulting real equality or implication."
+      ],
+      "lean_witness": "example (x y : ℝ) : Real.exp x = Real.exp y → x = y := by intro h; exact Real.exp_injective h"
+    },
+    {
+      "id": "exlog_log_injective_positive",
+      "domain": "exponentials_and_logarithms",
+      "level": "high_school_and_early_university",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all real x and y, if x > 0, y > 0, and ln(x) = ln(y), then x = y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"y\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"y\"/></OMA></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Restrict logarithm to positive reals, where it is strictly monotone and hence injective.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record the required positivity hypotheses for every logarithm argument.",
+        "domain: Verify that each logarithm is evaluated at a strictly positive real number.",
+        "rule: Apply the matching exponential or logarithm identity.",
+        "simplify: Normalize products, quotients, powers, or inverse expressions.",
+        "conclude: State the resulting real equality or implication."
+      ],
+      "lean_witness": "example (x y : ℝ) (hx : 0 < x) (hy : 0 < y) : Real.log x = Real.log y → x = y := by intro h; exact Real.strictMonoOn_log.injOn hx hy h"
+    },
+    {
+      "id": "nt_gcd_lcm_product_identity",
+      "domain": "elementary_number_theory",
+      "level": "high_school_and_early_university",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all natural m and n, gcd(m,n) * lcm(m,n) = m*n.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"m\"/><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"m\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMV name=\"m\"/><OMV name=\"n\"/></OMA><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMV name=\"m\"/><OMV name=\"n\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"m\"/><OMV name=\"n\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the standard gcd-lcm product identity.",
+      "sketch_steps": [
+        "setup: Bind the natural or integer variables and write the arithmetic expression explicitly.",
+        "structure: Apply the gcd/lcm identity or choose the integer coefficients required by the claim.",
+        "calculate: Evaluate or simplify the two sides in the appropriate number system.",
+        "verify: Check the stated equality or Bézout combination directly.",
+        "conclude: State the number-theoretic result."
+      ],
+      "lean_witness": "example (m n : ℕ) : Nat.gcd m n * Nat.lcm m n = m*n := Nat.gcd_mul_lcm m n"
+    },
+    {
+      "id": "nt_gcd_common_factor_left",
+      "domain": "elementary_number_theory",
+      "level": "high_school_and_early_university",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all natural m, n, and k, gcd(m*n,m*k) = m*gcd(n,k).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"m\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"m\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"k\"/><OMS cd=\"setname1\" name=\"N\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"m\"/><OMV name=\"n\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"m\"/><OMV name=\"k\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"m\"/><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor the common left multiplier from both gcd arguments.",
+      "sketch_steps": [
+        "setup: Bind the natural or integer variables and write the arithmetic expression explicitly.",
+        "structure: Apply the gcd/lcm identity or choose the integer coefficients required by the claim.",
+        "calculate: Evaluate or simplify the two sides in the appropriate number system.",
+        "verify: Check the stated equality or Bézout combination directly.",
+        "conclude: State the number-theoretic result."
+      ],
+      "lean_witness": "example (m n k : ℕ) : Nat.gcd (m*n) (m*k) = m * Nat.gcd n k := Nat.gcd_mul_left m n k"
+    },
+    {
+      "id": "nt_lcm_common_factor_left",
+      "domain": "elementary_number_theory",
+      "level": "high_school_and_early_university",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all natural m, n, and k, lcm(m*n,m*k) = m*lcm(n,k).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"m\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"m\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"k\"/><OMS cd=\"setname1\" name=\"N\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"m\"/><OMV name=\"n\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"m\"/><OMV name=\"k\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"m\"/><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor the common left multiplier from both lcm arguments.",
+      "sketch_steps": [
+        "setup: Bind the natural or integer variables and write the arithmetic expression explicitly.",
+        "structure: Apply the gcd/lcm identity or choose the integer coefficients required by the claim.",
+        "calculate: Evaluate or simplify the two sides in the appropriate number system.",
+        "verify: Check the stated equality or Bézout combination directly.",
+        "conclude: State the number-theoretic result."
+      ],
+      "lean_witness": "example (m n k : ℕ) : Nat.lcm (m*n) (m*k) = m * Nat.lcm n k := Nat.lcm_mul_left m n k"
+    },
+    {
+      "id": "nt_gcd_common_factor_right",
+      "domain": "elementary_number_theory",
+      "level": "high_school_and_early_university",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all natural m, n, and k, gcd(m*n,k*n) = gcd(m,k)*n.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"m\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"m\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"k\"/><OMS cd=\"setname1\" name=\"N\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"m\"/><OMV name=\"n\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"k\"/><OMV name=\"n\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMV name=\"m\"/><OMV name=\"k\"/></OMA><OMV name=\"n\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor the common right multiplier from both gcd arguments.",
+      "sketch_steps": [
+        "setup: Bind the natural or integer variables and write the arithmetic expression explicitly.",
+        "structure: Apply the gcd/lcm identity or choose the integer coefficients required by the claim.",
+        "calculate: Evaluate or simplify the two sides in the appropriate number system.",
+        "verify: Check the stated equality or Bézout combination directly.",
+        "conclude: State the number-theoretic result."
+      ],
+      "lean_witness": "example (m n k : ℕ) : Nat.gcd (m*n) (k*n) = Nat.gcd m k * n := Nat.gcd_mul_right m n k"
+    },
+    {
+      "id": "nt_lcm_common_factor_right",
+      "domain": "elementary_number_theory",
+      "level": "high_school_and_early_university",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all natural m, n, and k, lcm(m*n,k*n) = lcm(m,k)*n.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"m\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"m\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"k\"/><OMS cd=\"setname1\" name=\"N\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"m\"/><OMV name=\"n\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"k\"/><OMV name=\"n\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMV name=\"m\"/><OMV name=\"k\"/></OMA><OMV name=\"n\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor the common right multiplier from both lcm arguments.",
+      "sketch_steps": [
+        "setup: Bind the natural or integer variables and write the arithmetic expression explicitly.",
+        "structure: Apply the gcd/lcm identity or choose the integer coefficients required by the claim.",
+        "calculate: Evaluate or simplify the two sides in the appropriate number system.",
+        "verify: Check the stated equality or Bézout combination directly.",
+        "conclude: State the number-theoretic result."
+      ],
+      "lean_witness": "example (m n k : ℕ) : Nat.lcm (m*n) (k*n) = Nat.lcm m k * n := Nat.lcm_mul_right m n k"
+    },
+    {
+      "id": "nt_bezout_21_15",
+      "domain": "elementary_number_theory",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "There exist integers a and b such that 21a + 15b = 3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"exists\"/><OMBVAR><OMV name=\"a\"/><OMV name=\"b\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"a\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"b\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>21</OMI><OMV name=\"a\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>15</OMI><OMV name=\"b\"/></OMA></OMA><OMI>3</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Provide explicit integer coefficients and verify their linear combination.",
+      "sketch_steps": [
+        "setup: Bind the natural or integer variables and write the arithmetic expression explicitly.",
+        "structure: Apply the gcd/lcm identity or choose the integer coefficients required by the claim.",
+        "calculate: Evaluate or simplify the two sides in the appropriate number system.",
+        "verify: Check the stated equality or Bézout combination directly.",
+        "conclude: State the number-theoretic result."
+      ],
+      "lean_witness": "example : ∃ a b : ℤ, 21*a + 15*b = 3 := by\n  refine ⟨-2, 3, by norm_num⟩"
+    },
+    {
+      "id": "nt_bezout_35_12",
+      "domain": "elementary_number_theory",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "There exist integers a and b such that 35a + 12b = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"exists\"/><OMBVAR><OMV name=\"a\"/><OMV name=\"b\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"a\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"b\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>35</OMI><OMV name=\"a\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>12</OMI><OMV name=\"b\"/></OMA></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Provide explicit integer coefficients and verify their linear combination.",
+      "sketch_steps": [
+        "setup: Bind the natural or integer variables and write the arithmetic expression explicitly.",
+        "structure: Apply the gcd/lcm identity or choose the integer coefficients required by the claim.",
+        "calculate: Evaluate or simplify the two sides in the appropriate number system.",
+        "verify: Check the stated equality or Bézout combination directly.",
+        "conclude: State the number-theoretic result."
+      ],
+      "lean_witness": "example : ∃ a b : ℤ, 35*a + 12*b = 1 := by\n  refine ⟨-1, 3, by norm_num⟩"
+    },
+    {
+      "id": "nt_bezout_30_18",
+      "domain": "elementary_number_theory",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "There exist integers a and b such that 30a + 18b = 6.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"exists\"/><OMBVAR><OMV name=\"a\"/><OMV name=\"b\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"a\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"b\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>30</OMI><OMV name=\"a\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>18</OMI><OMV name=\"b\"/></OMA></OMA><OMI>6</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Provide explicit integer coefficients and verify their linear combination.",
+      "sketch_steps": [
+        "setup: Bind the natural or integer variables and write the arithmetic expression explicitly.",
+        "structure: Apply the gcd/lcm identity or choose the integer coefficients required by the claim.",
+        "calculate: Evaluate or simplify the two sides in the appropriate number system.",
+        "verify: Check the stated equality or Bézout combination directly.",
+        "conclude: State the number-theoretic result."
+      ],
+      "lean_witness": "example : ∃ a b : ℤ, 30*a + 18*b = 6 := by\n  refine ⟨-1, 2, by norm_num⟩"
+    },
+    {
+      "id": "nt_bezout_14_21",
+      "domain": "elementary_number_theory",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "There exist integers a and b such that 14a + 21b = 7.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"exists\"/><OMBVAR><OMV name=\"a\"/><OMV name=\"b\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"a\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"b\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>14</OMI><OMV name=\"a\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>21</OMI><OMV name=\"b\"/></OMA></OMA><OMI>7</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Provide explicit integer coefficients and verify their linear combination.",
+      "sketch_steps": [
+        "setup: Bind the natural or integer variables and write the arithmetic expression explicitly.",
+        "structure: Apply the gcd/lcm identity or choose the integer coefficients required by the claim.",
+        "calculate: Evaluate or simplify the two sides in the appropriate number system.",
+        "verify: Check the stated equality or Bézout combination directly.",
+        "conclude: State the number-theoretic result."
+      ],
+      "lean_witness": "example : ∃ a b : ℤ, 14*a + 21*b = 7 := by\n  refine ⟨-1, 1, by norm_num⟩"
+    },
+    {
+      "id": "nt_bezout_101_37",
+      "domain": "elementary_number_theory",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "There exist integers a and b such that 101a + 37b = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"exists\"/><OMBVAR><OMV name=\"a\"/><OMV name=\"b\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"a\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"b\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>101</OMI><OMV name=\"a\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>37</OMI><OMV name=\"b\"/></OMA></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Provide explicit integer coefficients and verify their linear combination.",
+      "sketch_steps": [
+        "setup: Bind the natural or integer variables and write the arithmetic expression explicitly.",
+        "structure: Apply the gcd/lcm identity or choose the integer coefficients required by the claim.",
+        "calculate: Evaluate or simplify the two sides in the appropriate number system.",
+        "verify: Check the stated equality or Bézout combination directly.",
+        "conclude: State the number-theoretic result."
+      ],
+      "lean_witness": "example : ∃ a b : ℤ, 101*a + 37*b = 1 := by\n  refine ⟨11, -30, by norm_num⟩"
+    },
+    {
+      "id": "nt_gcd_84_30",
+      "domain": "elementary_number_theory",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "The greatest common divisor gcd(84,30) equals 6.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMI>84</OMI><OMI>30</OMI></OMA><OMI>6</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Evaluate the Euclidean algorithm on the fixed pair 84 and 30.",
+      "sketch_steps": [
+        "setup: Bind the natural or integer variables and write the arithmetic expression explicitly.",
+        "structure: Apply the gcd/lcm identity or choose the integer coefficients required by the claim.",
+        "calculate: Evaluate or simplify the two sides in the appropriate number system.",
+        "verify: Check the stated equality or Bézout combination directly.",
+        "conclude: State the number-theoretic result."
+      ],
+      "lean_witness": "example : Nat.gcd 84 30 = 6 := by norm_num [Nat.gcd]"
+    },
+    {
+      "id": "nt_lcm_15_20",
+      "domain": "elementary_number_theory",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "The least common multiple lcm(15,20) equals 60.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMI>15</OMI><OMI>20</OMI></OMA><OMI>60</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Evaluate the least common multiple of the two fixed natural numbers.",
+      "sketch_steps": [
+        "setup: Bind the natural or integer variables and write the arithmetic expression explicitly.",
+        "structure: Apply the gcd/lcm identity or choose the integer coefficients required by the claim.",
+        "calculate: Evaluate or simplify the two sides in the appropriate number system.",
+        "verify: Check the stated equality or Bézout combination directly.",
+        "conclude: State the number-theoretic result."
+      ],
+      "lean_witness": "example : Nat.lcm 15 20 = 60 := by norm_num [Nat.lcm]"
+    }
+  ],
+  "backlog": [
+    {
+      "topic": "divisibility",
+      "examples": [
+        "if d divides m and n then d divides gcd(m,n)",
+        "Euclidean division"
+      ],
+      "minimum_symbols": [
+        "relation1:divides or number_theory1:divides",
+        "number_theory1:quotient",
+        "number_theory1:remainder"
+      ],
+      "why_current_profile_cannot_represent_it": "No supported predicate specifies divisibility or a quotient-remainder relation."
+    },
+    {
+      "topic": "modular arithmetic",
+      "examples": [
+        "a congruent to b modulo n",
+        "linear congruence",
+        "Fermat's little theorem"
+      ],
+      "minimum_symbols": [
+        "number_theory1:congruent_mod"
+      ],
+      "why_current_profile_cannot_represent_it": "The current profile has no congruence predicate, so equality of residues cannot be distinguished from ordinary equality."
+    },
+    {
+      "topic": "primality and factorization",
+      "examples": [
+        "a prime has no positive divisors other than one and itself",
+        "unique prime factorization"
+      ],
+      "minimum_symbols": [
+        "number_theory1:prime",
+        "number_theory1:factorization"
+      ],
+      "why_current_profile_cannot_represent_it": "The profile has neither primality nor factorization predicates/functions."
+    }
+  ]
+}

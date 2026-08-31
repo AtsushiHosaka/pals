@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pals:spec:draft-catalog-expansion:coverage-matrix:v1",
+  "title": "PALS Draft catalog coverage matrix v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "stages", "courses", "domains", "modes", "difficulties", "profile_requirements", "scopes"],
+  "properties": {
+    "schema_version": {"const": "pals.draft-catalog-coverage-matrix.v1"},
+    "stages": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/stage"}},
+    "courses": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/registryItem"}},
+    "domains": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/registryItem"}},
+    "modes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/registryItem"}},
+    "difficulties": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/registryItem"}},
+    "profile_requirements": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/profileRequirement"}},
+    "scopes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"oneOf": [{"$ref": "#/$defs/coverageScope"}, {"$ref": "#/$defs/targetScope"}]}
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9._-]{0,127}$"},
+    "nonblank": {"type": "string", "minLength": 1, "maxLength": 2000},
+    "registryItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description"],
+      "properties": {"id": {"$ref": "#/$defs/id"}, "description": {"$ref": "#/$defs/nonblank"}}
+    },
+    "stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description", "course_id", "domain_ids"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "description": {"$ref": "#/$defs/nonblank"},
+        "course_id": {"$ref": "#/$defs/id"},
+        "domain_ids": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/id"}}
+      }
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "title", "url", "revision"],
+      "properties": {
+        "kind": {"enum": ["official_curriculum", "reference_coverage_map"]},
+        "title": {"$ref": "#/$defs/nonblank"},
+        "url": {"type": "string", "format": "uri"},
+        "revision": {"$ref": "#/$defs/nonblank"}
+      }
+    },
+    "stageReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "url", "section"],
+      "properties": {
+        "stage": {"$ref": "#/$defs/id"},
+        "url": {"type": "string", "format": "uri"},
+        "section": {"$ref": "#/$defs/nonblank"}
+      }
+    },
+    "axisTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "minimum_distinct_patterns"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "minimum_distinct_patterns": {"type": "integer", "minimum": 1, "maximum": 64}
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_modes", "required_difficulties"],
+      "properties": {
+        "required_modes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/axisTarget"}},
+        "required_difficulties": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/axisTarget"}}
+      }
+    },
+    "profileRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "profile_ids", "notes"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "status": {"enum": ["generic_exact", "generic_extension", "typed_existing", "typed_new", "hybrid"]},
+        "profile_ids": {"type": "array", "items": {"$ref": "#/$defs/id"}},
+        "notes": {"$ref": "#/$defs/nonblank"}
+      }
+    },
+    "family": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "stage", "prerequisites", "profile_requirement"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "title": {"$ref": "#/$defs/nonblank"},
+        "stage": {"$ref": "#/$defs/id"},
+        "prerequisites": {"type": "array", "items": {"$ref": "#/$defs/id"}},
+        "profile_requirement": {"$ref": "#/$defs/id"},
+        "draft_bindings": {"type": "array", "items": {"$ref": "#/$defs/draftBinding"}},
+        "required_modes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/axisTarget"}},
+        "required_difficulties": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/axisTarget"}}
+      }
+    },
+    "coverageScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "reference", "defaults", "families", "can_report_comprehensive"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "kind": {"enum": ["school", "undergraduate_core"]},
+        "reference": {"$ref": "#/$defs/reference"},
+        "stage_references": {"type": "array", "items": {"$ref": "#/$defs/stageReference"}},
+        "defaults": {"$ref": "#/$defs/defaults"},
+        "families": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/family"}},
+        "can_report_comprehensive": {"const": true}
+      }
+    },
+    "draftBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["draft_id", "primary_mode", "difficulty", "authoring_manifest", "admission_manifest"],
+      "properties": {
+        "draft_id": {"$ref": "#/$defs/id"},
+        "primary_mode": {"$ref": "#/$defs/id"},
+        "difficulty": {"$ref": "#/$defs/id"},
+        "authoring_manifest": {"$ref": "#/$defs/nonblank"},
+        "admission_manifest": {
+          "oneOf": [
+            {"$ref": "#/$defs/nonblank"},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "targetGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "target_distinct_patterns", "prerequisites", "profile_requirement"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "title": {"$ref": "#/$defs/nonblank"},
+        "target_distinct_patterns": {"type": "integer", "minimum": 1, "maximum": 1000},
+        "prerequisites": {"type": "array", "items": {"$ref": "#/$defs/id"}},
+        "profile_requirement": {"$ref": "#/$defs/id"}
+      }
+    },
+    "targetScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "reference", "target_groups", "can_report_comprehensive", "refinement_required"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "kind": {"const": "advanced_target"},
+        "reference": {"$ref": "#/$defs/reference"},
+        "target_groups": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/targetGroup"}},
+        "can_report_comprehensive": {"const": false},
+        "refinement_required": {"$ref": "#/$defs/nonblank"}
+      }
+    }
+  }
+}

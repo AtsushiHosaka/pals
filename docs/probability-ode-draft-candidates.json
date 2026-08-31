@@ -1,0 +1,573 @@
+{
+  "schema_version": "pals.probability-ode-draft-candidates.v1",
+  "current_openmath_cards": [
+    {
+      "id": "ode_separable_exponential_growth",
+      "profile": "current_openmath_profile",
+      "domain": "ordinary_differential_equations",
+      "level": "undergraduate_year_2",
+      "topic": "separable_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For all real C, k, and x, the derivative at x of C*exp(k*x) equals k times C*exp(k*x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"C\"/><OMV name=\"k\"/><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"C\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"k\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"t\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"C\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"k\"/><OMV name=\"t\"/></OMA></OMA></OMA></OMBIND></OMA><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"k\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"C\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"k\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Verify the separated exponential family directly with the chain rule.",
+      "sketch_steps": [
+        "setup: Define the proposed solution as a function of the independent variable.",
+        "differentiate: Apply the chain rule to the exponential factor.",
+        "substitute: Replace the derivative in the differential equation.",
+        "simplify: Factor the common exponential term.",
+        "conclude: Verify that the equation holds for every real point."
+      ],
+      "lean_witness": "example (x C k : ℝ) : deriv (fun t : ℝ => C * Real.exp (k * t)) x = k * (C * Real.exp (k * x)) := by\n  have hd := ((Real.hasDerivAt_exp (k * x)).comp x (hasDerivAt_const_mul k)).const_mul C\n  calc\n    deriv (fun t : ℝ => C * Real.exp (k * t)) x = C * (Real.exp (k * x) * k) := by simpa [Function.comp_apply] using hd.deriv\n    _ = k * (C * Real.exp (k * x)) := by ring"
+    },
+    {
+      "id": "ode_separable_exponential_decay",
+      "profile": "current_openmath_profile",
+      "domain": "ordinary_differential_equations",
+      "level": "undergraduate_year_2",
+      "topic": "separable_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For all real C, k, and x, the derivative at x of C*exp(-k*x) equals -k times C*exp(-k*x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"C\"/><OMV name=\"k\"/><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"C\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"k\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"t\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"C\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"k\"/></OMA><OMV name=\"t\"/></OMA></OMA></OMA></OMBIND></OMA><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"k\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"C\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"k\"/></OMA><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Verify a decaying separated solution using the exponential chain rule.",
+      "sketch_steps": [
+        "setup: Define the proposed solution as a function of the independent variable.",
+        "differentiate: Apply the chain rule to the exponential factor.",
+        "substitute: Replace the derivative in the differential equation.",
+        "simplify: Factor the common exponential term.",
+        "conclude: Verify that the equation holds for every real point."
+      ],
+      "lean_witness": "example (x C k : ℝ) : deriv (fun t : ℝ => C * Real.exp (-k * t)) x = -k * (C * Real.exp (-k * x)) := by\n  have hd := ((Real.hasDerivAt_exp (-k * x)).comp x (hasDerivAt_const_mul (-k))).const_mul C\n  calc\n    deriv (fun t : ℝ => C * Real.exp (-k * t)) x = C * (Real.exp (-k * x) * (-k)) := by simpa [Function.comp_apply] using hd.deriv\n    _ = -k * (C * Real.exp (-k * x)) := by ring"
+    },
+    {
+      "id": "ode_separable_zero_solution",
+      "profile": "current_openmath_profile",
+      "domain": "ordinary_differential_equations",
+      "level": "undergraduate_year_2",
+      "topic": "separable_equations",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, the derivative at x of the zero function equals its square.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"t\"/></OMBVAR><OMI>0</OMI></OMBIND></OMA><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMI>0</OMI><OMI>2</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Check the equilibrium solution of the nonlinear separable equation.",
+      "sketch_steps": [
+        "setup: Write the proposed function and its first derivative.",
+        "differentiate: Use the derivative rule for the relevant elementary function.",
+        "substitute: Insert both expressions into the first-order linear equation.",
+        "cancel: Combine the homogeneous terms.",
+        "conclude: Recover the stated forcing term."
+      ],
+      "lean_witness": "example (x : ℝ) : deriv (fun _ : ℝ => (0 : ℝ)) x = (0 : ℝ)^2 := by simp"
+    },
+    {
+      "id": "ode_first_linear_homogeneous_unit",
+      "profile": "current_openmath_profile",
+      "domain": "ordinary_differential_equations",
+      "level": "undergraduate_year_2",
+      "topic": "first_order_linear",
+      "difficulty": "standard",
+      "canonical_statement": "For all real C and x, the derivative at x of C*exp(-x), plus C*exp(-x), equals 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"C\"/><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"C\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"t\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"C\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"t\"/></OMA></OMA></OMA></OMBIND></OMA><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"C\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Substitute the exponential homogeneous solution into the linear equation.",
+      "sketch_steps": [
+        "setup: Write the proposed function and its first derivative.",
+        "differentiate: Use the derivative rule for the relevant elementary function.",
+        "substitute: Insert both expressions into the first-order linear equation.",
+        "cancel: Combine the homogeneous terms.",
+        "conclude: Recover the stated forcing term."
+      ],
+      "lean_witness": "example (x C : ℝ) : deriv (fun t : ℝ => C * Real.exp (-t)) x + C * Real.exp (-x) = 0 := by\n  have hd := ((Real.hasDerivAt_exp (-x)).comp x (hasDerivAt_neg x)).const_mul C\n  rw [show deriv (fun t : ℝ => C * Real.exp (-t)) x = C * (Real.exp (-x) * (-1)) by simpa [Function.comp_apply] using hd.deriv]\n  ring"
+    },
+    {
+      "id": "ode_first_linear_affine_particular",
+      "profile": "current_openmath_profile",
+      "domain": "ordinary_differential_equations",
+      "level": "undergraduate_year_2",
+      "topic": "first_order_linear",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, the derivative at x of x - 1, plus x - 1, equals x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"t\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"t\"/><OMI>1</OMI></OMA></OMBIND></OMA><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMV name=\"x\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Differentiate the affine particular solution and simplify the linear operator.",
+      "sketch_steps": [
+        "setup: Write the proposed function and its first derivative.",
+        "differentiate: Use the derivative rule for the relevant elementary function.",
+        "substitute: Insert both expressions into the first-order linear equation.",
+        "cancel: Combine the homogeneous terms.",
+        "conclude: Recover the stated forcing term."
+      ],
+      "lean_witness": "example (x : ℝ) : deriv (fun t : ℝ => t - 1) x + (x - 1) = x := by\n  have hd : HasDerivAt (fun t : ℝ => t - 1) 1 x := (hasDerivAt_id x).sub_const 1\n  rw [hd.deriv]\n  ring"
+    },
+    {
+      "id": "ode_first_linear_polynomial_forcing",
+      "profile": "current_openmath_profile",
+      "domain": "ordinary_differential_equations",
+      "level": "undergraduate_year_2",
+      "topic": "first_order_linear",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, the derivative at x of 2*x, plus 2*x, equals 2*x + 2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"t\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"t\"/></OMA></OMBIND></OMA><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the first-order linear operator to a polynomial particular solution.",
+      "sketch_steps": [
+        "setup: Write the proposed function and its first derivative.",
+        "differentiate: Use the derivative rule for the relevant elementary function.",
+        "substitute: Insert both expressions into the first-order linear equation.",
+        "cancel: Combine the homogeneous terms.",
+        "conclude: Recover the stated forcing term."
+      ],
+      "lean_witness": "example (x : ℝ) : deriv (fun t : ℝ => 2 * t) x + 2 * x = 2 * x + 2 := by\n  have hd : HasDerivAt (fun t : ℝ => 2 * t) 2 x := by simpa using (hasDerivAt_id x).const_mul 2\n  rw [hd.deriv]\n  ring"
+    },
+    {
+      "id": "ode_second_harmonic_sine",
+      "profile": "current_openmath_profile",
+      "domain": "ordinary_differential_equations",
+      "level": "undergraduate_year_2",
+      "topic": "second_order_constant_coefficient",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, the second derivative at x of sin(x), plus sin(x), equals 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"t\"/></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"s\"/></OMBVAR><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"s\"/></OMA></OMBIND></OMA><OMV name=\"t\"/></OMA></OMBIND></OMA><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Differentiate sine twice and use the harmonic-oscillator relation.",
+      "sketch_steps": [
+        "setup: Differentiate the proposed solution once.",
+        "differentiate_again: Differentiate the first derivative.",
+        "substitute: Insert the function and second derivative into the ODE.",
+        "simplify: Cancel terms using the derivative identities.",
+        "conclude: The constant-coefficient equation is satisfied."
+      ],
+      "lean_witness": "example (x : ℝ) : deriv (fun t : ℝ => deriv Real.sin t) x + Real.sin x = 0 := by\n  rw [show (fun t : ℝ => deriv Real.sin t) = Real.cos by ext t; exact (Real.hasDerivAt_sin t).deriv]\n  rw [(Real.hasDerivAt_cos x).deriv]\n  ring"
+    },
+    {
+      "id": "ode_second_harmonic_cosine",
+      "profile": "current_openmath_profile",
+      "domain": "ordinary_differential_equations",
+      "level": "undergraduate_year_2",
+      "topic": "second_order_constant_coefficient",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, the second derivative at x of cos(x), plus cos(x), equals 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"t\"/></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"s\"/></OMBVAR><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"s\"/></OMA></OMBIND></OMA><OMV name=\"t\"/></OMA></OMBIND></OMA><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Differentiate cosine twice and use the harmonic-oscillator relation.",
+      "sketch_steps": [
+        "setup: Differentiate the proposed solution once.",
+        "differentiate_again: Differentiate the first derivative.",
+        "substitute: Insert the function and second derivative into the ODE.",
+        "simplify: Cancel terms using the derivative identities.",
+        "conclude: The constant-coefficient equation is satisfied."
+      ],
+      "lean_witness": "example (x : ℝ) : deriv (fun t : ℝ => deriv Real.cos t) x + Real.cos x = 0 := by\n  rw [show (fun t : ℝ => deriv Real.cos t) = fun t : ℝ => -Real.sin t by ext t; exact (Real.hasDerivAt_cos t).deriv]\n  rw [show deriv (fun t : ℝ => -Real.sin t) x = -Real.cos x by\n    rw [show (fun t : ℝ => -Real.sin t) = fun t : ℝ => (-1 : ℝ) * Real.sin t by ext t; ring]\n    rw [deriv_const_mul]\n    · rw [(Real.hasDerivAt_sin x).deriv]\n      ring\n    · fun_prop]\n  ring"
+    },
+    {
+      "id": "ode_second_exponential_positive_root",
+      "profile": "current_openmath_profile",
+      "domain": "ordinary_differential_equations",
+      "level": "undergraduate_year_2",
+      "topic": "second_order_constant_coefficient",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, the second derivative at x of exp(x), minus exp(x), equals 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"t\"/></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"s\"/></OMBVAR><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"s\"/></OMA></OMBIND></OMA><OMV name=\"t\"/></OMA></OMBIND></OMA><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use that the exponential is unchanged by either differentiation.",
+      "sketch_steps": [
+        "setup: Differentiate the proposed solution once.",
+        "differentiate_again: Differentiate the first derivative.",
+        "substitute: Insert the function and second derivative into the ODE.",
+        "simplify: Cancel terms using the derivative identities.",
+        "conclude: The constant-coefficient equation is satisfied."
+      ],
+      "lean_witness": "example (x : ℝ) : deriv (fun t : ℝ => deriv Real.exp t) x - Real.exp x = 0 := by\n  rw [show (fun t : ℝ => deriv Real.exp t) = Real.exp by ext t; exact (Real.hasDerivAt_exp t).deriv]\n  rw [(Real.hasDerivAt_exp x).deriv]\n  ring"
+    },
+    {
+      "id": "ode_second_zero_characteristic_identity",
+      "profile": "current_openmath_profile",
+      "domain": "ordinary_differential_equations",
+      "level": "undergraduate_year_2",
+      "topic": "second_order_constant_coefficient",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, the second derivative at x of the identity function equals 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"t\"/></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"s\"/></OMBVAR><OMV name=\"s\"/></OMBIND></OMA><OMV name=\"t\"/></OMA></OMBIND></OMA><OMV name=\"x\"/></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Differentiate the identity twice to obtain the zero characteristic-root solution.",
+      "sketch_steps": [
+        "setup: Differentiate the proposed solution once.",
+        "differentiate_again: Differentiate the first derivative.",
+        "substitute: Insert the function and second derivative into the ODE.",
+        "simplify: Cancel terms using the derivative identities.",
+        "conclude: The constant-coefficient equation is satisfied."
+      ],
+      "lean_witness": "example (x : ℝ) : deriv (fun t : ℝ => deriv (fun s : ℝ => s) t) x = 0 := by\n  rw [show (fun t : ℝ => deriv (fun s : ℝ => s) t) = fun _ : ℝ => 1 by ext t; exact (hasDerivAt_id t).deriv]\n  simp"
+    }
+  ],
+  "requires_probability_profile_cards": [
+    {
+      "id": "prob_choose_zero",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "combinatorics",
+      "difficulty": "introductory",
+      "canonical_statement": "For every natural number n, choose(n, 0) = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"choose\"/><OMV name=\"n\"/><OMI>0</OMI></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the empty-selection boundary case.",
+      "sketch_steps": [
+        "setup: Interpret the binomial coefficient as a selection count.",
+        "recurrence: Apply the relevant counting identity or boundary rule.",
+        "simplify: Reduce the resulting natural-number expression.",
+        "conclude: Obtain the claimed combinatorial count."
+      ],
+      "lean_witness": "example (n : ℕ) : Nat.choose n 0 = 1 := Nat.choose_zero_right n"
+    },
+    {
+      "id": "prob_choose_self",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "combinatorics",
+      "difficulty": "introductory",
+      "canonical_statement": "For every natural number n, choose(n, n) = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"choose\"/><OMV name=\"n\"/><OMV name=\"n\"/></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the all-elements selection boundary case.",
+      "sketch_steps": [
+        "setup: Interpret the binomial coefficient as a selection count.",
+        "recurrence: Apply the relevant counting identity or boundary rule.",
+        "simplify: Reduce the resulting natural-number expression.",
+        "conclude: Obtain the claimed combinatorial count."
+      ],
+      "lean_witness": "example (n : ℕ) : Nat.choose n n = 1 := Nat.choose_self n"
+    },
+    {
+      "id": "prob_choose_one",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "combinatorics",
+      "difficulty": "introductory",
+      "canonical_statement": "For every natural number n, choose(n, 1) = n.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"choose\"/><OMV name=\"n\"/><OMI>1</OMI></OMA><OMV name=\"n\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Choose one item by specifying which of the n items is selected.",
+      "sketch_steps": [
+        "setup: Interpret the binomial coefficient as a selection count.",
+        "recurrence: Apply the relevant counting identity or boundary rule.",
+        "simplify: Reduce the resulting natural-number expression.",
+        "conclude: Obtain the claimed combinatorial count."
+      ],
+      "lean_witness": "example (n : ℕ) : Nat.choose n 1 = n := by simp"
+    },
+    {
+      "id": "prob_choose_pascal",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "combinatorics",
+      "difficulty": "standard",
+      "canonical_statement": "For natural n and k, choose(n + 1, k + 1) = choose(n, k) + choose(n, k + 1).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/><OMV name=\"k\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"k\"/><OMS cd=\"setname1\" name=\"N\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"choose\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"n\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"k\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"choose\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"choose\"/><OMV name=\"n\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"k\"/><OMI>1</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Partition selections by whether a distinguished element is chosen.",
+      "sketch_steps": [
+        "setup: Interpret the binomial coefficient as a selection count.",
+        "recurrence: Apply the relevant counting identity or boundary rule.",
+        "simplify: Reduce the resulting natural-number expression.",
+        "conclude: Obtain the claimed combinatorial count."
+      ],
+      "lean_witness": "example (n k : ℕ) : Nat.choose (n + 1) (k + 1) = Nat.choose n k + Nat.choose n (k + 1) := Nat.choose_succ_succ' n k"
+    },
+    {
+      "id": "prob_choose_symmetry",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "combinatorics",
+      "difficulty": "standard",
+      "canonical_statement": "For natural n and k with k ≤ n, choose(n, n - k) = choose(n, k).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/><OMV name=\"k\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"k\"/><OMS cd=\"setname1\" name=\"N\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"k\"/><OMV name=\"n\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"choose\"/><OMV name=\"n\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"choose\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Map each chosen subset to its complement.",
+      "sketch_steps": [
+        "setup: Interpret the binomial coefficient as a selection count.",
+        "recurrence: Apply the relevant counting identity or boundary rule.",
+        "simplify: Reduce the resulting natural-number expression.",
+        "conclude: Obtain the claimed combinatorial count."
+      ],
+      "lean_witness": "example {n k : ℕ} (hk : k ≤ n) : Nat.choose n (n - k) = Nat.choose n k := Nat.choose_symm hk"
+    },
+    {
+      "id": "prob_choose_two",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "combinatorics",
+      "difficulty": "standard",
+      "canonical_statement": "For every natural number n, choose(n, 2) = n*(n - 1)/2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"choose\"/><OMV name=\"n\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"n\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"n\"/><OMI>1</OMI></OMA></OMA><OMI>2</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Count ordered pairs of distinct elements, then divide by the two orders.",
+      "sketch_steps": [
+        "setup: Interpret the binomial coefficient as a selection count.",
+        "recurrence: Apply the relevant counting identity or boundary rule.",
+        "simplify: Reduce the resulting natural-number expression.",
+        "conclude: Obtain the claimed combinatorial count."
+      ],
+      "lean_witness": "example (n : ℕ) : Nat.choose n 2 = n * (n - 1) / 2 := Nat.choose_two_right n"
+    },
+    {
+      "id": "prob_conditional_definition",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "conditional_probability",
+      "difficulty": "standard",
+      "canonical_statement": "For finite measure M and measurable events S and T, conditional_probability(M, T, S) = probability(M, S intersect T) / probability(M, S).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"M\"/><OMV name=\"S\"/><OMV name=\"T\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"finite_measure\"/><OMV name=\"M\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"measurable_event\"/><OMV name=\"S\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"measurable_event\"/><OMV name=\"T\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"conditional_probability\"/><OMV name=\"M\"/><OMV name=\"T\"/><OMV name=\"S\"/></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"probability\"/><OMV name=\"M\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"S\"/><OMV name=\"T\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"probability\"/><OMV name=\"M\"/><OMV name=\"S\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand the normalized restricted measure defining conditional probability.",
+      "sketch_steps": [
+        "setup: Record the measure and the measurable conditioning event.",
+        "definition: Expand conditional probability through restriction and normalization.",
+        "rewrite: Express the relevant intersection event.",
+        "algebra: Rearrange the measure factors safely.",
+        "conclude: Obtain the conditional-probability relation."
+      ],
+      "lean_witness": "example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) (s t : Set Ω) (hs : MeasurableSet s) : μ[t | s] = μ (s ∩ t) / μ s := by\n  rw [cond_apply hs μ t, ENNReal.div_eq_inv_mul]"
+    },
+    {
+      "id": "prob_conditional_self",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "conditional_probability",
+      "difficulty": "standard",
+      "canonical_statement": "For finite measure M and measurable event S with positive finite probability, conditional_probability(M, S, S) = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"M\"/><OMV name=\"S\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"finite_measure\"/><OMV name=\"M\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"measurable_event\"/><OMV name=\"S\"/></OMA><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"probability\"/><OMV name=\"M\"/><OMV name=\"S\"/></OMA><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"conditional_probability\"/><OMV name=\"M\"/><OMV name=\"S\"/><OMV name=\"S\"/></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the conditional-probability definition to the same event and cancel its nonzero mass.",
+      "sketch_steps": [
+        "setup: Record the measure and the measurable conditioning event.",
+        "definition: Expand conditional probability through restriction and normalization.",
+        "rewrite: Express the relevant intersection event.",
+        "algebra: Rearrange the measure factors safely.",
+        "conclude: Obtain the conditional-probability relation."
+      ],
+      "lean_witness": "example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) (s : Set Ω) (hs0 : μ s ≠ 0) (hs : μ s ≠ ∞) : μ[s | s] = 1 := cond_apply_self hs0 hs"
+    },
+    {
+      "id": "prob_conditional_multiplication_rule",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "conditional_probability",
+      "difficulty": "standard",
+      "canonical_statement": "For finite measure M and measurable events S and T, conditional_probability(M, T, S)*probability(M, S) = probability(M, S intersect T).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"M\"/><OMV name=\"S\"/><OMV name=\"T\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"finite_measure\"/><OMV name=\"M\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"measurable_event\"/><OMV name=\"S\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"measurable_event\"/><OMV name=\"T\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"conditional_probability\"/><OMV name=\"M\"/><OMV name=\"T\"/><OMV name=\"S\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"probability\"/><OMV name=\"M\"/><OMV name=\"S\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"probability\"/><OMV name=\"M\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"S\"/><OMV name=\"T\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Multiply the conditional formula by the conditioning probability.",
+      "sketch_steps": [
+        "setup: Record the measure and the measurable conditioning event.",
+        "definition: Expand conditional probability through restriction and normalization.",
+        "rewrite: Express the relevant intersection event.",
+        "algebra: Rearrange the measure factors safely.",
+        "conclude: Obtain the conditional-probability relation."
+      ],
+      "lean_witness": "example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsFiniteMeasure μ] (s t : Set Ω) (hs : MeasurableSet s) : μ[t | s] * μ s = μ (s ∩ t) := cond_mul_eq_inter hs t μ"
+    },
+    {
+      "id": "prob_bayes_formula",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "conditional_probability",
+      "difficulty": "advanced",
+      "canonical_statement": "For finite measure M and measurable events S and T, conditional_probability(M, T, S) = conditional_probability(M, S, T)*probability(M, T)/probability(M, S).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"M\"/><OMV name=\"S\"/><OMV name=\"T\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"finite_measure\"/><OMV name=\"M\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"measurable_event\"/><OMV name=\"S\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"measurable_event\"/><OMV name=\"T\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"conditional_probability\"/><OMV name=\"M\"/><OMV name=\"T\"/><OMV name=\"S\"/></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"conditional_probability\"/><OMV name=\"M\"/><OMV name=\"S\"/><OMV name=\"T\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"probability\"/><OMV name=\"M\"/><OMV name=\"T\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"probability\"/><OMV name=\"M\"/><OMV name=\"S\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Equate the two intersection probabilities and solve for the requested conditional probability.",
+      "sketch_steps": [
+        "setup: Record the measure and the measurable conditioning event.",
+        "definition: Expand conditional probability through restriction and normalization.",
+        "rewrite: Express the relevant intersection event.",
+        "algebra: Rearrange the measure factors safely.",
+        "conclude: Obtain the conditional-probability relation."
+      ],
+      "lean_witness": "example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsFiniteMeasure μ] (s t : Set Ω) (hs : MeasurableSet s) (ht : MeasurableSet t) : μ[t | s] = (μ s)⁻¹ * μ[s | t] * μ t := cond_eq_inv_mul_cond_mul hs ht μ"
+    },
+    {
+      "id": "prob_variance_nonnegative",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "variance",
+      "difficulty": "introductory",
+      "canonical_statement": "For random variable X under measure M, 0 ≤ Var(X; M).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"M\"/><OMV name=\"X\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"finite_measure\"/><OMV name=\"M\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"random_variable\"/><OMV name=\"X\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"variance\"/><OMV name=\"X\"/><OMV name=\"M\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the squared-deviation definition of variance.",
+      "sketch_steps": [
+        "setup: State the random variable and probability measure assumptions.",
+        "definition: Expand the expectation or variance expression.",
+        "transform: Apply the corresponding linearity or scaling theorem.",
+        "simplify: Normalize the real scalar expression.",
+        "conclude: Obtain the stated moment identity or bound."
+      ],
+      "lean_witness": "example {Ω : Type*} [MeasurableSpace Ω] (X : Ω → ℝ) (μ : Measure Ω) : 0 ≤ variance X μ := variance_nonneg X μ"
+    },
+    {
+      "id": "prob_variance_scaling",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "variance",
+      "difficulty": "standard",
+      "canonical_statement": "For real c and random variable X, Var(c*X; M) = c^2*Var(X; M).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"M\"/><OMV name=\"X\"/><OMV name=\"c\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"finite_measure\"/><OMV name=\"M\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"random_variable\"/><OMV name=\"X\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"variance\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"scalar_multiply_random_variable\"/><OMV name=\"c\"/><OMV name=\"X\"/></OMA><OMV name=\"M\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"c\"/><OMI>2</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"variance\"/><OMV name=\"X\"/><OMV name=\"M\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor the scalar out of the centered random variable and square it.",
+      "sketch_steps": [
+        "setup: State the random variable and probability measure assumptions.",
+        "definition: Expand the expectation or variance expression.",
+        "transform: Apply the corresponding linearity or scaling theorem.",
+        "simplify: Normalize the real scalar expression.",
+        "conclude: Obtain the stated moment identity or bound."
+      ],
+      "lean_witness": "example {Ω : Type*} [MeasurableSpace Ω] (c : ℝ) (X : Ω → ℝ) (μ : Measure Ω) : variance (fun ω => c * X ω) μ = c ^ 2 * variance X μ := variance_const_mul c X μ"
+    },
+    {
+      "id": "prob_variance_translation",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "variance",
+      "difficulty": "standard",
+      "canonical_statement": "For probability measure M, random variable X, and real c, Var(X + c; M) = Var(X; M).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"M\"/><OMV name=\"X\"/><OMV name=\"c\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"probability_measure\"/><OMV name=\"M\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"random_variable\"/><OMV name=\"X\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"variance\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"add_constant_random_variable\"/><OMV name=\"X\"/><OMV name=\"c\"/></OMA><OMV name=\"M\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"variance\"/><OMV name=\"X\"/><OMV name=\"M\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Centering removes an additive constant before squaring deviations.",
+      "sketch_steps": [
+        "setup: State the random variable and probability measure assumptions.",
+        "definition: Expand the expectation or variance expression.",
+        "transform: Apply the corresponding linearity or scaling theorem.",
+        "simplify: Normalize the real scalar expression.",
+        "conclude: Obtain the stated moment identity or bound."
+      ],
+      "lean_witness": "example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] (X : Ω → ℝ) (hX : AEStronglyMeasurable X μ) (c : ℝ) : variance (fun ω => X ω + c) μ = variance X μ := variance_add_const hX c"
+    },
+    {
+      "id": "prob_expectation_constant",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "expectation",
+      "difficulty": "introductory",
+      "canonical_statement": "For probability measure M and real c, expectation(constant(c), M) = c.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"M\"/><OMV name=\"c\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"probability_measure\"/><OMV name=\"M\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"expectation\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"constant_random_variable\"/><OMV name=\"c\"/></OMA><OMV name=\"M\"/></OMA><OMV name=\"c\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Integrate a constant against a probability measure of total mass one.",
+      "sketch_steps": [
+        "setup: State the random variable and probability measure assumptions.",
+        "definition: Expand the expectation or variance expression.",
+        "transform: Apply the corresponding linearity or scaling theorem.",
+        "simplify: Normalize the real scalar expression.",
+        "conclude: Obtain the stated moment identity or bound."
+      ],
+      "lean_witness": "example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] (c : ℝ) : ∫ _ : Ω, c ∂μ = c := by simp"
+    },
+    {
+      "id": "prob_binomial_pmf",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "binomial_distribution",
+      "difficulty": "advanced",
+      "canonical_statement": "For natural n and k and real p with 0 ≤ p ≤ 1, BinomialPMF(n, p, k) = choose(n, k)*p^k*(1 - p)^(n - k).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/><OMV name=\"k\"/><OMV name=\"p\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"k\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"p\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"p\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"p\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"binomial_pmf\"/><OMV name=\"n\"/><OMV name=\"p\"/><OMV name=\"k\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"choose\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"p\"/><OMV name=\"k\"/></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>1</OMI><OMV name=\"p\"/></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the binomial mass formula with the typed trial, outcome, and probability parameters.",
+      "sketch_steps": [
+        "setup: Fix the trial count, success probability, and outcome count.",
+        "model: Use the binomial probability-mass function.",
+        "count: Insert the selection coefficient and success/failure powers.",
+        "simplify: Evaluate the boundary or general mass expression.",
+        "conclude: State the requested binomial probability."
+      ],
+      "lean_witness": "example (n k : ℕ) (p : I) : (Bin(n, p)).real {k} = (n.choose k) * p ^ k * (1 - p) ^ (n - k) := binomial_real_singleton n k p"
+    },
+    {
+      "id": "prob_binomial_zero_success",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "binomial_distribution",
+      "difficulty": "standard",
+      "canonical_statement": "For natural n and real p with 0 ≤ p ≤ 1, BinomialPMF(n, p, 0) = (1 - p)^n.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/><OMV name=\"p\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"p\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"p\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"p\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"binomial_pmf\"/><OMV name=\"n\"/><OMV name=\"p\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>1</OMI><OMV name=\"p\"/></OMA><OMV name=\"n\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Specialize the binomial mass formula to zero successes.",
+      "sketch_steps": [
+        "setup: Fix the trial count, success probability, and outcome count.",
+        "model: Use the binomial probability-mass function.",
+        "count: Insert the selection coefficient and success/failure powers.",
+        "simplify: Evaluate the boundary or general mass expression.",
+        "conclude: State the requested binomial probability."
+      ],
+      "lean_witness": "example (n : ℕ) (p : I) : (Bin(n, p)).real {0} = (1 - p) ^ n := by simp"
+    },
+    {
+      "id": "prob_binomial_all_success",
+      "profile": "requires_pals_probability_profile_v1",
+      "domain": "probability_and_statistics",
+      "level": "undergraduate_year_2",
+      "topic": "binomial_distribution",
+      "difficulty": "standard",
+      "canonical_statement": "For natural n and real p with 0 ≤ p ≤ 1, BinomialPMF(n, p, n) = p^n.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/><OMV name=\"p\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"p\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"p\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"p\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"binomial_pmf\"/><OMV name=\"n\"/><OMV name=\"p\"/><OMV name=\"n\"/></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"p\"/><OMV name=\"n\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Specialize the binomial mass formula to all successes.",
+      "sketch_steps": [
+        "setup: Fix the trial count, success probability, and outcome count.",
+        "model: Use the binomial probability-mass function.",
+        "count: Insert the selection coefficient and success/failure powers.",
+        "simplify: Evaluate the boundary or general mass expression.",
+        "conclude: State the requested binomial probability."
+      ],
+      "lean_witness": "example (n : ℕ) (p : I) : (Bin(n, p)).real {n} = p ^ n := by simp"
+    }
+  ],
+  "proposed_pals_probability_profile_v1": {
+    "terms": {
+      "choose": [
+        "Nat",
+        "Nat"
+      ],
+      "probability": [
+        "Measure",
+        "Event"
+      ],
+      "conditional_probability": [
+        "Measure",
+        "Event",
+        "Event"
+      ],
+      "expectation": [
+        "RandomVariable",
+        "Measure"
+      ],
+      "variance": [
+        "RandomVariable",
+        "Measure"
+      ],
+      "binomial_pmf": [
+        "Nat",
+        "Probability",
+        "Nat"
+      ],
+      "constant_random_variable": [
+        "Real"
+      ],
+      "scalar_multiply_random_variable": [
+        "Real",
+        "RandomVariable"
+      ],
+      "add_constant_random_variable": [
+        "RandomVariable",
+        "Real"
+      ]
+    },
+    "predicates": {
+      "finite_measure": [
+        "Measure"
+      ],
+      "probability_measure": [
+        "Measure"
+      ],
+      "measurable_event": [
+        "Event"
+      ],
+      "event": [
+        "Event"
+      ],
+      "random_variable": [
+        "RandomVariable"
+      ]
+    },
+    "note": "The current generic OpenMath profile does not contain these probability/data types. This profile is a minimal PALS extension proposal, not enabled production vocabulary."
+  }
+}

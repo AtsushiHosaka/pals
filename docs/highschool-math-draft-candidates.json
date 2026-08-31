@@ -1,0 +1,546 @@
+{
+  "schema_version": "pals.high-school-draft-candidates.v1",
+  "equation_and_inequality_cards": [
+    {
+      "id": "hs_linear_equation_2x_plus_3_solution",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "linear_equations",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, 2*x + 3 = 11 if and only if x = 4.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMI>3</OMI></OMA><OMI>11</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>4</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Isolate x by subtracting 3 and dividing by the nonzero coefficient 2.",
+      "sketch_steps": [
+        "setup: Introduce the real unknown x.",
+        "forward: Assume 2*x + 3 = 11.",
+        "solve: Subtract 3 and divide by 2.",
+        "reverse: Substitute x = 4 into the original equation."
+      ],
+      "lean_witness": "example (x : ℝ) : 2*x + 3 = 11 ↔ x = 4 := by constructor <;> intro h <;> nlinarith"
+    },
+    {
+      "id": "hs_linear_inequality_2x_plus_3_solution",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "linear_inequalities",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, 2*x + 3 ≤ 11 if and only if x ≤ 4.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMI>3</OMI></OMA><OMI>11</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMI>4</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use order-preserving subtraction and division by the positive coefficient 2.",
+      "sketch_steps": [
+        "setup: Introduce real x.",
+        "forward: Subtract 3 from both sides.",
+        "solve: Divide by the positive number 2.",
+        "reverse: Multiply x ≤ 4 by 2 and add 3."
+      ],
+      "lean_witness": "example (x : ℝ) : 2*x + 3 ≤ 11 ↔ x ≤ 4 := by constructor <;> intro h <;> nlinarith"
+    },
+    {
+      "id": "hs_reverse_linear_inequality_solution",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "linear_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, -2*x + 5 < 1 if and only if 2 < x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMI>2</OMI></OMA><OMV name=\"x\"/></OMA><OMI>5</OMI></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMI>2</OMI><OMV name=\"x\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "After isolating the negative multiple of x, divide by -2 and reverse the inequality.",
+      "sketch_steps": [
+        "setup: Introduce real x.",
+        "forward: Subtract 5 to isolate -2*x.",
+        "order: Divide by -2 and reverse the strict inequality.",
+        "reverse: Apply the same reversible transformations backward."
+      ],
+      "lean_witness": "example (x : ℝ) : -2*x + 5 < 1 ↔ 2 < x := by constructor <;> intro h <;> nlinarith"
+    },
+    {
+      "id": "hs_linear_system_sum_difference_unique",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "simultaneous_linear_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if x + y = 7 and x - y = 1, then x = 4 and y = 3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMI>7</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>4</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>3</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Add the two equations to find x, then substitute back to find y.",
+      "sketch_steps": [
+        "setup: Record x + y = 7 and x - y = 1.",
+        "eliminate: Add the equations to obtain 2*x = 8.",
+        "solve_x: Conclude x = 4.",
+        "solve_y: Substitute x = 4 into x + y = 7.",
+        "conclude: Obtain y = 3."
+      ],
+      "lean_witness": "example (x y : ℝ) (h1 : x + y = 7) (h2 : x - y = 1) : x = 4 ∧ y = 3 := by constructor <;> linarith"
+    },
+    {
+      "id": "hs_quadratic_factor_roots",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "quadratic_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, (x - 2)*(x + 1) = 0 if and only if x = 2 or x = -1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMI>1</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor the quadratic and use the zero-product property.",
+      "sketch_steps": [
+        "setup: View the left side as a product of two linear factors.",
+        "forward: Apply the zero-product property.",
+        "case_1: Solve x - 2 = 0.",
+        "case_2: Solve x + 1 = 0.",
+        "reverse: Substitute either root into one factor."
+      ],
+      "lean_witness": "example (x : ℝ) : (x - 2)*(x + 1) = 0 ↔ x = 2 ∨ x = -1 := by\n  constructor\n  · intro h\n    rcases mul_eq_zero.mp h with h | h\n    · left; linarith\n    · right; linarith\n  · rintro (h | h)\n    · nlinarith\n    · nlinarith"
+    },
+    {
+      "id": "hs_square_eq_four_roots",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "quadratic_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, x^2 = 4 if and only if x = 2 or x = -2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>4</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Rewrite x^2 - 4 as (x - 2)(x + 2), then apply the zero-product property.",
+      "sketch_steps": [
+        "setup: Move 4 to the left side.",
+        "factor: Factor x^2 - 4 as (x - 2)(x + 2).",
+        "forward: Apply the zero-product property.",
+        "cases: Solve the two linear factor equations.",
+        "reverse: Check each proposed root."
+      ],
+      "lean_witness": "example (x : ℝ) : x^2 = 4 ↔ x = 2 ∨ x = -2 := by\n  constructor\n  · intro h\n    have hp : (x - 2) * (x + 2) = 0 := by nlinarith\n    rcases mul_eq_zero.mp hp with hp | hp\n    · left; linarith\n    · right; linarith\n  · rintro (h | h)\n    · nlinarith\n    · nlinarith"
+    },
+    {
+      "id": "hs_shifted_square_zero_characterization",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "quadratic_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, (x - 3)^2 = 0 if and only if x = 3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMI>2</OMI></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "A square is zero precisely when its base is zero.",
+      "sketch_steps": [
+        "setup: Recognize a squared linear expression.",
+        "forward: Use that a zero square has zero base.",
+        "solve: Rearrange x - 3 = 0.",
+        "reverse: Substitute x = 3 and evaluate the square."
+      ],
+      "lean_witness": "example (x : ℝ) : (x - 3)^2 = 0 ↔ x = 3 := by\n  constructor\n  · intro h\n    have hz : x - 3 = 0 := sq_eq_zero_iff.mp h\n    linarith\n  · intro h\n    subst x\n    norm_num"
+    },
+    {
+      "id": "hs_shifted_quadratic_has_no_real_root",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "quadratic_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, x^2 - 6*x + 10 is not equal to 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"not\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>6</OMI><OMV name=\"x\"/></OMA></OMA><OMI>10</OMI></OMA><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Complete the square: x^2 - 6*x + 10 = (x - 3)^2 + 1, which is positive.",
+      "sketch_steps": [
+        "setup: Assume the quadratic equals zero for contradiction.",
+        "rewrite: Complete the square around x = 3.",
+        "bound: Use (x - 3)^2 ≥ 0.",
+        "contradict: Deduce the expression is at least 1.",
+        "conclude: No real root exists."
+      ],
+      "lean_witness": "example (x : ℝ) : ¬ (x^2 - 6*x + 10 = 0) := by intro h; nlinarith [sq_nonneg (x - 3)]"
+    },
+    {
+      "id": "hs_sum_of_squares_zero_characterization",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "quadratic_equations",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, x^2 + y^2 = 0 if and only if x = 0 and y = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Both squares are nonnegative; a sum of two nonnegative values can be zero only when each is zero.",
+      "sketch_steps": [
+        "setup: Assume x^2 + y^2 = 0.",
+        "bound: Record x^2 ≥ 0 and y^2 ≥ 0.",
+        "separate: Deduce each square equals zero.",
+        "solve: Infer x = 0 and y = 0.",
+        "reverse: Substitute the zero pair."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^2 + y^2 = 0 ↔ x = 0 ∧ y = 0 := by\n  constructor\n  · intro h\n    have hx2 : x^2 = 0 := by nlinarith [sq_nonneg x, sq_nonneg y]\n    have hy2 : y^2 = 0 := by nlinarith [sq_nonneg x, sq_nonneg y]\n    constructor\n    · exact sq_eq_zero_iff.mp hx2\n    · exact sq_eq_zero_iff.mp hy2\n  · rintro ⟨hx, hy⟩\n    simp [hx, hy]"
+    },
+    {
+      "id": "hs_square_plus_one_strictly_positive",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "quadratic_inequalities",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, 0 < x^2 + 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMI>0</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use nonnegativity of x^2 and add the positive constant 1.",
+      "sketch_steps": [
+        "setup: Introduce real x.",
+        "bound: Establish x^2 ≥ 0.",
+        "add: Add 1 to the lower bound.",
+        "conclude: The resulting value is strictly positive."
+      ],
+      "lean_witness": "example (x : ℝ) : 0 < x^2 + 1 := by nlinarith [sq_nonneg x]"
+    },
+    {
+      "id": "hs_quadratic_tangent_lower_bound",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "quadratic_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, 2*x - 1 ≤ x^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Rearrange to x^2 - 2*x + 1 = (x - 1)^2 and use square nonnegativity.",
+      "sketch_steps": [
+        "setup: Move the linear expression to the right-hand side.",
+        "rewrite: Identify x^2 - 2*x + 1 as (x - 1)^2.",
+        "bound: Use (x - 1)^2 ≥ 0.",
+        "conclude: Rearrange to the claimed inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : 2*x - 1 ≤ x^2 := by nlinarith [sq_nonneg (x - 1)]"
+    },
+    {
+      "id": "hs_two_variable_quadratic_inequality",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "quadratic_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, 2*x*y ≤ x^2 + y^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Rearrange the difference as the nonnegative square (x - y)^2.",
+      "sketch_steps": [
+        "setup: Compare x^2 + y^2 with 2*x*y.",
+        "rewrite: Form x^2 - 2*x*y + y^2.",
+        "identify: Recognize (x - y)^2.",
+        "bound: Use square nonnegativity.",
+        "conclude: Rearrange the inequality."
+      ],
+      "lean_witness": "example (x y : ℝ) : 2*x*y ≤ x^2 + y^2 := by nlinarith [sq_nonneg (x - y)]"
+    },
+    {
+      "id": "hs_amgm_two_nonnegative",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "quadratic_inequalities",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, if 0 ≤ x and 0 ≤ y, then x*y ≤ ((x + y)/2)^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMI>2</OMI></OMA><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand the gap between the square of the arithmetic mean and the product as (x - y)^2 / 4.",
+      "sketch_steps": [
+        "setup: Assume x and y are nonnegative.",
+        "target: Move x*y to the right-hand side.",
+        "rewrite: Expand the mean square and multiply by 4.",
+        "bound: Use (x - y)^2 ≥ 0.",
+        "conclude: Divide the nonnegative gap by 4."
+      ],
+      "lean_witness": "example (x y : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) : x*y ≤ ((x + y)/2)^2 := by nlinarith [sq_nonneg (x - y)]"
+    },
+    {
+      "id": "hs_cauchy_schwarz_two_dimensions",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "quadratic_inequalities",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x, y, z, and w, (x*y + z*w)^2 ≤ (x^2 + z^2)*(y^2 + w^2).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/><OMV name=\"w\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"w\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"z\"/><OMV name=\"w\"/></OMA></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"z\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"w\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Subtract the dot-product square and recognize the remaining expression as (x*w - y*z)^2.",
+      "sketch_steps": [
+        "setup: Expand both sides of the desired inequality.",
+        "rearrange: Move the left side to the right.",
+        "factor: Recognize (x*w - y*z)^2.",
+        "bound: Use nonnegativity of that square.",
+        "conclude: Restore the original inequality."
+      ],
+      "lean_witness": "example (x y z w : ℝ) : (x*y + z*w)^2 ≤ (x^2 + z^2)*(y^2 + w^2) := by nlinarith [sq_nonneg (x*w - y*z)]"
+    },
+    {
+      "id": "hs_abs_shifted_closed_interval",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "absolute_value_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, |x - 3| ≤ 2 if and only if 1 ≤ x and x ≤ 5.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>1</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMI>5</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the characterization |u| ≤ a iff -a ≤ u and u ≤ a, then shift the interval by 3.",
+      "sketch_steps": [
+        "setup: Set u = x - 3.",
+        "forward: Expand |u| ≤ 2 into two linear bounds.",
+        "shift: Add 3 to both bounds.",
+        "reverse: Start from 1 ≤ x ≤ 5.",
+        "conclude: Shift back and apply the absolute-value characterization."
+      ],
+      "lean_witness": "example (x : ℝ) : |x - 3| ≤ 2 ↔ 1 ≤ x ∧ x ≤ 5 := by\n  constructor\n  · intro h\n    rcases (abs_le.mp h) with ⟨h1, h2⟩\n    constructor <;> linarith\n  · rintro ⟨h1, h2⟩\n    apply abs_le.mpr\n    constructor <;> linarith"
+    },
+    {
+      "id": "hs_abs_open_interval",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "absolute_value_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, |x| < 3 if and only if -3 < x and x < 3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMV name=\"x\"/></OMA><OMI>3</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMI>3</OMI></OMA><OMV name=\"x\"/></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the strict absolute-value interval characterization directly.",
+      "sketch_steps": [
+        "setup: Introduce real x.",
+        "forward: Expand |x| < 3 into lower and upper bounds.",
+        "identify: Read the two inequalities as -3 < x < 3.",
+        "reverse: Combine the two interval bounds.",
+        "conclude: Apply the strict absolute-value characterization."
+      ],
+      "lean_witness": "example (x : ℝ) : |x| < 3 ↔ -3 < x ∧ x < 3 := by\n  constructor\n  · intro h\n    exact abs_lt.mp h\n  · intro h\n    exact abs_lt.mpr h"
+    },
+    {
+      "id": "hs_rational_half_equation_solution",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "rational_equations",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real x, if x is not equal to -1 and x/(x + 1) = 1/2, then x = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMI>2</OMI></OMA></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Check the denominator, clear it safely, and solve the resulting linear equation.",
+      "sketch_steps": [
+        "setup: Assume x ≠ -1 so x + 1 is nonzero.",
+        "clear_denominator: Multiply x/(x + 1) = 1/2 by x + 1.",
+        "simplify: Normalize the constant fraction 1/2.",
+        "solve: Rearrange the resulting linear equation.",
+        "conclude: Obtain x = 1."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : x ≠ -1) (h : x / (x + 1) = 1 / 2) : x = 1 := by\n  have hden : x + 1 ≠ 0 := by\n    intro hz\n    apply hx\n    linarith\n  rw [div_eq_iff hden] at h\n  norm_num at h\n  linarith"
+    },
+    {
+      "id": "hs_square_root_existence_nonnegative",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "quadratic_equations",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real y, if 0 ≤ y, then there exists real x such that x^2 = y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"y\"/></OMA><OMBIND><OMS cd=\"quant1\" name=\"exists\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMV name=\"y\"/></OMA></OMA></OMBIND></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Choose the nonnegative square root of y and use the square-root theorem.",
+      "sketch_steps": [
+        "setup: Assume the parameter y is nonnegative.",
+        "construct: Choose x = sqrt(y).",
+        "domain: The chosen square root is real.",
+        "verify: Use (sqrt(y))^2 = y for y ≥ 0.",
+        "conclude: Package the witness and equation."
+      ],
+      "lean_witness": "example (y : ℝ) (hy : 0 ≤ y) : ∃ x : ℝ, x^2 = y := ⟨Real.sqrt y, Real.sq_sqrt hy⟩"
+    },
+    {
+      "id": "hs_product_nonnegative_from_nonnegative",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "inequality_reasoning",
+      "difficulty": "introductory",
+      "canonical_statement": "For all real x and y, if 0 ≤ x and 0 ≤ y, then 0 ≤ x*y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the product rule for two nonnegative real factors.",
+      "sketch_steps": [
+        "setup: Assume x ≥ 0 and y ≥ 0.",
+        "sign: Identify both factors as nonnegative.",
+        "apply_theorem: Apply nonnegativity of a product.",
+        "conclude: Obtain 0 ≤ x*y."
+      ],
+      "lean_witness": "example (x y : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) : 0 ≤ x*y := mul_nonneg hx hy"
+    },
+    {
+      "id": "hs_square_sub_one_nonnegative_right",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "quadratic_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if 1 ≤ x, then 0 ≤ x^2 - 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>1</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>1</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor x^2 - 1 as (x - 1)(x + 1); both factors are nonnegative when x ≥ 1.",
+      "sketch_steps": [
+        "setup: Assume x ≥ 1.",
+        "factor: Rewrite x^2 - 1 as (x - 1)(x + 1).",
+        "sign_1: Deduce x - 1 ≥ 0.",
+        "sign_2: Deduce x + 1 ≥ 0.",
+        "conclude: The product of these factors is nonnegative."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : 1 ≤ x) : 0 ≤ x^2 - 1 := by have hp : 0 ≤ (x - 1) * (x + 1) := mul_nonneg (by linarith) (by linarith); nlinarith"
+    }
+  ],
+  "trigonometry_cards": [
+    {
+      "id": "trig_sin_range_closed",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "trigonometric_inequalities",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, -1 ≤ sin(x) and sin(x) ≤ 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the global lower and upper bounds of the sine function.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real angle x.",
+        "lower_bound: Apply the lower bound for sine.",
+        "upper_bound: Apply the upper bound for sine.",
+        "conclude: Combine the two inequalities into the range interval."
+      ],
+      "lean_witness": "example (x : ℝ) : -1 ≤ Real.sin x ∧ Real.sin x ≤ 1 := ⟨Real.neg_one_le_sin x, Real.sin_le_one x⟩"
+    },
+    {
+      "id": "trig_cos_range_closed",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "trigonometric_inequalities",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, -1 ≤ cos(x) and cos(x) ≤ 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the global lower and upper bounds of the cosine function.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real angle x.",
+        "lower_bound: Apply the lower bound for cosine.",
+        "upper_bound: Apply the upper bound for cosine.",
+        "conclude: Combine the two inequalities into the range interval."
+      ],
+      "lean_witness": "example (x : ℝ) : -1 ≤ Real.cos x ∧ Real.cos x ≤ 1 := ⟨Real.neg_one_le_cos x, Real.cos_le_one x⟩"
+    },
+    {
+      "id": "trig_pythagorean_identity",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "trigonometric_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, sin(x)^2 + cos(x)^2 = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the Pythagorean identity for sine and cosine.",
+      "sketch_steps": [
+        "setup: Introduce the real angle x.",
+        "theorem: Invoke the sine-cosine Pythagorean identity.",
+        "normalize: Match the standard squared-expression form.",
+        "conclude: The sum of squares is one."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.sin x ^ 2 + Real.cos x ^ 2 = 1 := Real.sin_sq_add_cos_sq x"
+    },
+    {
+      "id": "trig_sin_cos_product_upper_half",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "trigonometric_inequalities",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real x, sin(x)*cos(x) ≤ 1/2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMI>2</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Combine sin^2(x) + cos^2(x) = 1 with nonnegativity of (sin(x) - cos(x))^2.",
+      "sketch_steps": [
+        "setup: Introduce the real angle x.",
+        "identity: Record sin(x)^2 + cos(x)^2 = 1.",
+        "square: Use (sin(x) - cos(x))^2 ≥ 0.",
+        "expand: Convert the square bound into 2*sin(x)*cos(x) ≤ 1.",
+        "conclude: Divide by 2."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.sin x * Real.cos x ≤ 1 / 2 := by nlinarith [Real.sin_sq_add_cos_sq x, sq_nonneg (Real.sin x - Real.cos x)]"
+    },
+    {
+      "id": "trig_sin_cos_product_lower_half",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "trigonometric_inequalities",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real x, -1/2 ≤ sin(x)*cos(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Combine sin^2(x) + cos^2(x) = 1 with nonnegativity of (sin(x) + cos(x))^2.",
+      "sketch_steps": [
+        "setup: Introduce the real angle x.",
+        "identity: Record sin(x)^2 + cos(x)^2 = 1.",
+        "square: Use (sin(x) + cos(x))^2 ≥ 0.",
+        "expand: Convert the square bound into 1 + 2*sin(x)*cos(x) ≥ 0.",
+        "conclude: Rearrange to the lower bound."
+      ],
+      "lean_witness": "example (x : ℝ) : -(1 / 2 : ℝ) ≤ Real.sin x * Real.cos x := by nlinarith [Real.sin_sq_add_cos_sq x, sq_nonneg (Real.sin x + Real.cos x)]"
+    },
+    {
+      "id": "trig_sin_double_angle",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "trigonometric_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, sin(2*x) = 2*sin(x)*cos(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the double-angle formula for sine.",
+      "sketch_steps": [
+        "setup: Introduce the real angle x.",
+        "recognize: Identify 2*x as the doubled angle.",
+        "theorem: Apply the sine double-angle formula.",
+        "conclude: Rewrite the right side as 2*sin(x)*cos(x)."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.sin (2*x) = 2 * Real.sin x * Real.cos x := Real.sin_two_mul x"
+    },
+    {
+      "id": "trig_cos_double_angle",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "trigonometric_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, cos(2*x) = 2*cos(x)^2 - 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA></OMA><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the cosine double-angle formula in the 2*cos^2(x) - 1 form.",
+      "sketch_steps": [
+        "setup: Introduce the real angle x.",
+        "recognize: Identify 2*x as the doubled angle.",
+        "theorem: Apply the cosine double-angle formula.",
+        "normalize: Use the form 2*cos(x)^2 - 1.",
+        "conclude: Obtain the desired equality."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.cos (2*x) = 2 * Real.cos x ^ 2 - 1 := Real.cos_two_mul x"
+    },
+    {
+      "id": "trig_fourth_power_lower_bound",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "trigonometric_inequalities",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real x, 1/2 ≤ sin(x)^4 + cos(x)^4.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMI>4</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA><OMI>4</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the Pythagorean identity and nonnegativity of (sin^2(x) - cos^2(x))^2.",
+      "sketch_steps": [
+        "setup: Introduce the real angle x.",
+        "identity: Record sin(x)^2 + cos(x)^2 = 1.",
+        "square: Use (sin(x)^2 - cos(x)^2)^2 ≥ 0.",
+        "expand: Derive sin(x)^4 + cos(x)^4 ≥ 1/2.",
+        "conclude: State the fourth-power lower bound."
+      ],
+      "lean_witness": "example (x : ℝ) : (1 / 2 : ℝ) ≤ Real.sin x ^ 4 + Real.cos x ^ 4 := by nlinarith [Real.sin_sq_add_cos_sq x, sq_nonneg (Real.sin x ^ 2 - Real.cos x ^ 2)]"
+    },
+    {
+      "id": "trig_tan_as_sine_over_cosine",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_mathematics",
+      "level": "high_school",
+      "topic": "trigonometric_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, tan(x) = sin(x)/cos(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"tan\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"transc1\" name=\"sin\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"cos\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Unfold tangent through its standard quotient definition.",
+      "sketch_steps": [
+        "setup: Introduce the real angle x.",
+        "definition: Expand tangent as sine divided by cosine.",
+        "normalize: Keep the quotient in the same argument order.",
+        "conclude: The two expressions are equal."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.tan x = Real.sin x / Real.cos x := Real.tan_eq_sin_div_cos x"
+    }
+  ]
+}

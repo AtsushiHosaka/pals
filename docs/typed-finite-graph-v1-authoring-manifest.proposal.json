@@ -1,0 +1,352 @@
+{
+  "schema_version": "pals.typed-finite-graph-v1-sealed-manifest.v1",
+  "status": "sealed_local_authoring_revision_not_admitted",
+  "seal": {
+    "scope": "local typed-finite-graph authoring evidence only",
+    "admission": "not admitted to the generic DB, seed, embedding index, or PFI package",
+    "revision": "typed-finite-graph-v1-local-r1"
+  },
+  "immutability_contract": {
+    "digest_algorithm": "sha256 over exact UTF-8 bytes of the named field or artifact",
+    "canonical_json": "RFC 8785 canonical JSON serialization of this object with manifest_digest omitted",
+    "profile_c14n": "Every card is validated by typed-finite-graph-v1 before exact canonical bytes are sealed.",
+    "mutation_rule": "Changing a statement, strategy, sketch, XML, signature trace, Lean target/witness, design, or registry requires a new sealed revision and manifest digest."
+  },
+  "profile": {
+    "id": "typed-finite-graph-v1",
+    "typed_cdbase": "urn:pals:openmath:typed-finite-graph:v1",
+    "validator": "pals_agent.typed_finite_graph.validate_canonical_typed_finite_graph_openmath_xml",
+    "validator_status": "implemented_isolated_profile",
+    "registry_status": "implemented_isolated_profile",
+    "canonicalization_scope": "typed-finite-graph-v1 validation followed by profile-separated XML C14N",
+    "content_dictionary_bundle": {
+      "relative_path": "pals-agent/pals_agent/content_dictionaries/typed-finite-graph-v1-registry.json",
+      "sha256": "sha256:3f14c725f215a6589d0854b48d733b67c1d065a838ae8b16f9b75c3d06038418",
+      "digest_input": "exact UTF-8 bytes of the named registry/CD bundle"
+    },
+    "profile_design": {
+      "path": "docs/typed-finite-graph-profile-v1-design.md",
+      "sha256": "sha256:dc5b8cf13e51650192ca0b38e91c6d60258988a22aceaffd922105cce208dcf7"
+    },
+    "signature_contract": {
+      "source": "docs/typed-finite-graph-profile-v1-design.md#exact-typed-signature",
+      "status": "implemented_isolated_profile_not_admitted",
+      "sorts": {
+        "FinSimpleGraph": "finite, undirected, loopless, simple graph value",
+        "Vertex(G)": "vertex carrier indexed by the exact graph binder G",
+        "VertexClass(G)": "opaque vertex subset indexed by G",
+        "Trail(G)": "opaque finite trail witness indexed by G",
+        "Nat": "nonnegative OMI only"
+      },
+      "symbols_used_by_admitted_candidates": {
+        "pals_typed_graph:forall": "typed binder; every OMBVAR has exactly one type annotation",
+        "pals_typed_graph:type": "OMATTR key permitted only in OMBVAR declarations",
+        "pals_typed_graph:FinSimpleGraph": "sort constant",
+        "pals_typed_graph:Trail": "(G : FinSimpleGraph) -> Sort",
+        "pals_typed_graph:degree_sum": "FinSimpleGraph -> Nat",
+        "pals_typed_graph:edge_count": "FinSimpleGraph -> Nat",
+        "pals_typed_graph:vertex_count": "FinSimpleGraph -> Nat",
+        "pals_typed_graph:odd_degree_count": "FinSimpleGraph -> Nat",
+        "pals_typed_graph:nat_add": "Nat x Nat -> Nat",
+        "pals_typed_graph:nat_mul": "Nat x Nat -> Nat",
+        "pals_typed_graph:tree": "FinSimpleGraph -> Prop",
+        "pals_typed_graph:connected": "FinSimpleGraph -> Prop",
+        "pals_typed_graph:bipartite": "FinSimpleGraph -> Prop",
+        "pals_typed_graph:is_euler_trail": "(G, Trail(G)) -> Prop",
+        "logic1:implies": "Prop x Prop -> Prop",
+        "logic1:or": "Prop x Prop -> Prop",
+        "relation1:eq": "equal inferred sorts -> Prop"
+      },
+      "intentional_absences": [
+        "No public graph1/graph2/graph3 constructor or inherited cdbase is accepted.",
+        "No Euler existence converse is admitted without a pinned constructive bridge witness.",
+        "No proper_bipartition iff bipartite card is admitted until the full-vertex-coverage bridge is proved."
+      ]
+    },
+    "signature_contract_sha256": "sha256:b7a9eba0c1507fa14d5f828197805ca83cd8f6315165024f01c8c76a87e8f13a",
+    "lean_bridge": {
+      "FinSimpleGraph": "a Lean `SimpleGraph V` with finite vertex carrier and required decidability instances",
+      "Vertex(G)": "the same Lean carrier `V` associated with G",
+      "Trail(G)": "an endpoint-indexed `SimpleGraph.Walk G u v`, packaged behind the profile's opaque trail sort",
+      "is_euler_trail(G,t)": "`SimpleGraph.Walk.IsEulerian` after unpacking the endpoint-indexed trail"
+    }
+  },
+  "lean_witness_bundle": {
+    "path": "docs/typed-finite-graph-v1-authoring-witnesses.proposal.lean",
+    "sha256": "sha256:d69b128221038a5e5f8438378788d52c6750fa953b7a440150a2f544eebecb4e",
+    "digest_input": "exact UTF-8 bytes of the named Lean file, including import and final newline",
+    "verification_command": "cd pals-agent/lean-workspace && lake env lean ../../docs/typed-finite-graph-v1-authoring-witnesses.proposal.lean",
+    "verification_status": "compiled when generator is run with --verify-lean; sealed evidence only, not an OpenMath-to-Lean translation receipt",
+    "scope": "the five profile-faithful candidates only; blocked theorem families are recorded as exclusions"
+  },
+  "admitted_candidate_cards": [
+    {
+      "id": "typed_finite_graph_v1_handshaking",
+      "domain": "discrete_mathematics_finite_graphs",
+      "difficulty": "standard",
+      "authoring_status": "sealed_local_profile_validated_not_admitted",
+      "canonical_statement": "For every finite simple undirected graph G, the sum of all vertex degrees equals twice the number of edges of G.",
+      "canonical_statement_sha256": "sha256:0bb2045a39fa53c87a6096c8b923aab7e88795da0317ccd2054850b89fbb7ada",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"FinSimpleGraph\"/></OMATP><OMV name=\"G\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"degree_sum\"/><OMV name=\"G\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"nat_mul\"/><OMI>2</OMI><OMA><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"edge_count\"/><OMV name=\"G\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:87368ec7c8e271153735a1453806e1ee644ce0646dbd0dce71ecf4c7b88c66b4",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"FinSimpleGraph\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"degree_sum\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"nat_mul\"></n1:OMS><n1:OMI>2</n1:OMI><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"edge_count\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:4f5b99bf328cda2110fe3253b7e60e4a9307083880bebc2fd3908a4f66c88216",
+      "profile_c14n": {
+        "algorithm": "openmath-cdbase-alpha-c14n-v4",
+        "scope": "typed-finite-graph-v1 validation followed by profile-separated canonicalization",
+        "xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"FinSimpleGraph\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"degree_sum\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"nat_mul\"></n1:OMS><n1:OMI>2</n1:OMI><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"edge_count\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+        "sha256": "sha256:4f5b99bf328cda2110fe3253b7e60e4a9307083880bebc2fd3908a4f66c88216"
+      },
+      "signature_trace": [
+        "pals_typed_graph:forall",
+        "pals_typed_graph:FinSimpleGraph",
+        "pals_typed_graph:degree_sum",
+        "pals_typed_graph:nat_mul",
+        "pals_typed_graph:edge_count",
+        "relation1:eq"
+      ],
+      "signature_trace_sha256": "sha256:0acd60c525b2794cfcd709c8fd04bab566262f63ce2a62bbd3f5b18bb14f2210",
+      "proof_strategy": "Count incident edge-ends: every edge contributes exactly two ends in a loopless undirected simple graph.",
+      "proof_strategy_sha256": "sha256:716cd5c7f6db09154e9fe65d45ad24c1a1bb4f1dd50cd8315a68a38df2d4286a",
+      "sketch_steps": [
+        "setup: Fix a finite simple undirected graph G.",
+        "incidence: Count all incidences by summing degree(G,v) over vertices.",
+        "edge-view: Each edge supplies exactly two incidences because G is loopless and undirected.",
+        "equate: The two finite counts are equal.",
+        "conclude: degree_sum(G) = nat_mul(2, edge_count(G))."
+      ],
+      "sketch_steps_sha256": "sha256:795c6d9d9b50c6900e9e071ce77231e1834b5bea88a60db83d6c9171c1a55e65",
+      "lean": {
+        "target": "∀ {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj],\n    (∑ v, G.degree v) = 2 * G.edgeFinset.card",
+        "target_sha256": "sha256:ac18de78d5a26fd87755b2ce076fa5bbc66c4a903ab78b749e4a7691f5de8377",
+        "witness": "example : ∀ {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj],\n    (∑ v, G.degree v) = 2 * G.edgeFinset.card := by\n  intro V _ G _\n  exact G.sum_degrees_eq_twice_card_edges\n",
+        "witness_sha256": "sha256:b9e27fcefec7b3ab89912624fe018759fceb1596f0939e0b3d868efd234e0bfd"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "exact: degree_sum, edge_count, natural multiplication, and the single graph binder G are all explicit; no graph representation is inferred from generic graph1 syntax.",
+        "openmath_to_lean": "exact under the declared bridge: FinSimpleGraph lowers to SimpleGraph V with finite vertex and decidable adjacency instances; degree_sum and edge_count lower to `∑ v, G.degree v` and `G.edgeFinset.card`.",
+        "admission_gate": "Obtain independent project review before any catalog or DB admission."
+      }
+    },
+    {
+      "id": "typed_finite_graph_v1_tree_edge_count",
+      "domain": "discrete_mathematics_finite_graphs",
+      "difficulty": "standard",
+      "authoring_status": "sealed_local_profile_validated_not_admitted",
+      "canonical_statement": "For every finite simple undirected graph G, if G is a tree, then its number of edges plus one equals its number of vertices.",
+      "canonical_statement_sha256": "sha256:a275d3b678c2c79dab679aee5cd156988e70d112f164e4b37c5872363a5887d3",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"FinSimpleGraph\"/></OMATP><OMV name=\"G\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"tree\"/><OMV name=\"G\"/></OMA><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"nat_add\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"edge_count\"/><OMV name=\"G\"/></OMA><OMI>1</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"vertex_count\"/><OMV name=\"G\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:c9fd544a99e7d6437f64e5db09fdf276ae8df5b11594ce2ae0137ed0b1e11ec4",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"FinSimpleGraph\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"tree\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"nat_add\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"edge_count\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"vertex_count\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:be5166457d10a950384a82fa8f1192774c3aef1934ceae81bea1cb3189b13ce9",
+      "profile_c14n": {
+        "algorithm": "openmath-cdbase-alpha-c14n-v4",
+        "scope": "typed-finite-graph-v1 validation followed by profile-separated canonicalization",
+        "xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"FinSimpleGraph\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"tree\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"nat_add\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"edge_count\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"vertex_count\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+        "sha256": "sha256:be5166457d10a950384a82fa8f1192774c3aef1934ceae81bea1cb3189b13ce9"
+      },
+      "signature_trace": [
+        "pals_typed_graph:forall",
+        "pals_typed_graph:FinSimpleGraph",
+        "pals_typed_graph:tree",
+        "pals_typed_graph:edge_count",
+        "pals_typed_graph:nat_add",
+        "pals_typed_graph:vertex_count",
+        "logic1:implies",
+        "relation1:eq"
+      ],
+      "signature_trace_sha256": "sha256:f840eb73285a3e69ac387ea7c008c86a4562d05ae2d4feec9bb61fbb3f3e9111",
+      "proof_strategy": "Use the finite-tree cardinality theorem after fixing the profile convention that tree means connected and acyclic.",
+      "proof_strategy_sha256": "sha256:154f1b3b52ffe412870092a65df97a765dfc7e90ac71e9c7fb6e268d5ad9a235",
+      "sketch_steps": [
+        "setup: Fix G and assume tree(G).",
+        "model: Unpack tree as connected and acyclic in the finite simple graph model.",
+        "finite-count: Apply the finite-tree edge-cardinality theorem.",
+        "normalize: Identify edge_count(G) and vertex_count(G) with the two finite cardinalities.",
+        "conclude: nat_add(edge_count(G),1) = vertex_count(G)."
+      ],
+      "sketch_steps_sha256": "sha256:cb98a58aede4dcc2281fc7943d978e535e1e59c9ca252484a5489a04d08469a1",
+      "lean": {
+        "target": "∀ {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj],\n    G.IsTree → G.edgeFinset.card + 1 = Fintype.card V",
+        "target_sha256": "sha256:e690cd2c2448eda422653a09f1689b27def1f6a6c9f168b4e45c2768406bb601",
+        "witness": "example : ∀ {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj],\n    G.IsTree → G.edgeFinset.card + 1 = Fintype.card V := by\n  intro V _ _ G _ hG\n  exact hG.card_edgeFinset\n",
+        "witness_sha256": "sha256:311eb599f63527472b380e9d6ea390056258cfa13b745c61717d51750f455de9"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "exact: the antecedent is tree(G), and both sides remain Nat terms; the formula does not encode tree by a hidden cardinality convention.",
+        "openmath_to_lean": "exact under the bridge: `tree(G)` lowers to `G.IsTree`, `edge_count` to `G.edgeFinset.card`, and `vertex_count` to `Fintype.card V`; the witness is `SimpleGraph.IsTree.card_edgeFinset`.",
+        "admission_gate": "Obtain independent project review before any catalog or DB admission."
+      }
+    },
+    {
+      "id": "typed_finite_graph_v1_tree_connected",
+      "domain": "discrete_mathematics_finite_graphs",
+      "difficulty": "introductory",
+      "authoring_status": "sealed_local_profile_validated_not_admitted",
+      "canonical_statement": "For every finite simple undirected graph G, if G is a tree, then G is connected.",
+      "canonical_statement_sha256": "sha256:3a2a4a754f2427a437c9a6fb5763d5aa3fd3f181606311ac353d8b6ff82fa907",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"FinSimpleGraph\"/></OMATP><OMV name=\"G\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"tree\"/><OMV name=\"G\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"connected\"/><OMV name=\"G\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:460379411825b26a0f9308f1f5800d546d8176a5c201f45fb343576cb284abed",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"FinSimpleGraph\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"tree\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"connected\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:363f27bce96655788eda5f2ada90e04948fa997fd23a72ac3a7f5420a5e8c16c",
+      "profile_c14n": {
+        "algorithm": "openmath-cdbase-alpha-c14n-v4",
+        "scope": "typed-finite-graph-v1 validation followed by profile-separated canonicalization",
+        "xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"FinSimpleGraph\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"tree\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"connected\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+        "sha256": "sha256:363f27bce96655788eda5f2ada90e04948fa997fd23a72ac3a7f5420a5e8c16c"
+      },
+      "signature_trace": [
+        "pals_typed_graph:forall",
+        "pals_typed_graph:FinSimpleGraph",
+        "pals_typed_graph:tree",
+        "pals_typed_graph:connected",
+        "logic1:implies"
+      ],
+      "signature_trace_sha256": "sha256:b029a30bfab863e6d087b2e92c6b612d35aeef456ff9eebe66ec479823a98425",
+      "proof_strategy": "Unfold the profile definition of tree, whose first component is connectedness.",
+      "proof_strategy_sha256": "sha256:0435cb19ea6e3b91b363b34d5e278c2cf943c7666959b1d0256bce04f1dbaa4b",
+      "sketch_steps": [
+        "setup: Fix G and assume tree(G).",
+        "definition: A profile tree is connected and acyclic.",
+        "project: Take the connected component of the tree witness.",
+        "conclude: connected(G)."
+      ],
+      "sketch_steps_sha256": "sha256:4f601401c66d5858a6ab058939c10b03572b5747b18d09e1e97fc6f6ff759322",
+      "lean": {
+        "target": "∀ {V : Type*} (G : SimpleGraph V), G.IsTree → G.Connected",
+        "target_sha256": "sha256:963e252b3c4536b784771853a3848b945cd0acf2295afb6c72009788e050a980",
+        "witness": "example : ∀ {V : Type*} (G : SimpleGraph V), G.IsTree → G.Connected := by\n  intro V G hG\n  exact hG.connected\n",
+        "witness_sha256": "sha256:18b3bb1cf3a441ebf2230bf336a5204f5d3e20cf7f177c913dec51575a961a80"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "exact: the XML uses the profile predicates tree and connected on the same graph binder G.",
+        "openmath_to_lean": "exact under the bridge: `tree(G)` and `connected(G)` lower to `G.IsTree` and `G.Connected`, and the Lean witness projects `IsTree.connected`.",
+        "admission_gate": "Obtain independent project review before any catalog or DB admission."
+      }
+    },
+    {
+      "id": "typed_finite_graph_v1_tree_bipartite",
+      "domain": "discrete_mathematics_finite_graphs",
+      "difficulty": "standard",
+      "authoring_status": "sealed_local_profile_validated_not_admitted",
+      "canonical_statement": "For every finite simple undirected graph G, if G is a tree, then G is bipartite.",
+      "canonical_statement_sha256": "sha256:eab02a681a995e6e7c619a2402cf09c048866dd73b7b87addb34404fa613cafa",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"FinSimpleGraph\"/></OMATP><OMV name=\"G\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"tree\"/><OMV name=\"G\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"bipartite\"/><OMV name=\"G\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:c68ee2b0ce4bef034dabf1d746008524d271c9c2b63e7c6c8c37a706e582c0d2",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"FinSimpleGraph\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"tree\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"bipartite\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:588e390b06ded7363110255e733d532656efd1fbfadbfb358b64d59f611d004a",
+      "profile_c14n": {
+        "algorithm": "openmath-cdbase-alpha-c14n-v4",
+        "scope": "typed-finite-graph-v1 validation followed by profile-separated canonicalization",
+        "xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"FinSimpleGraph\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"tree\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"bipartite\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+        "sha256": "sha256:588e390b06ded7363110255e733d532656efd1fbfadbfb358b64d59f611d004a"
+      },
+      "signature_trace": [
+        "pals_typed_graph:forall",
+        "pals_typed_graph:FinSimpleGraph",
+        "pals_typed_graph:tree",
+        "pals_typed_graph:bipartite",
+        "logic1:implies"
+      ],
+      "signature_trace_sha256": "sha256:da807f9474a6fd5d72aff9c2ad66dbf16f8cf333afb4dea91e12627f7aa43ffd",
+      "proof_strategy": "Two-color vertices by parity of distance from a fixed root; acyclicity ensures adjacent vertices receive opposite colors.",
+      "proof_strategy_sha256": "sha256:96742d0fafea563c36ba3ca2ed999a5f1b2867e0277886d6486cd445422aced9",
+      "sketch_steps": [
+        "setup: Fix G and assume tree(G).",
+        "root: Choose a root using connectedness.",
+        "color: Color each vertex by the parity of its graph distance from the root.",
+        "separate: Adjacent vertices have distances differing by one in a tree.",
+        "conclude: The parity coloring witnesses bipartite(G)."
+      ],
+      "sketch_steps_sha256": "sha256:a461676473be232a5b10f10c3aa2d23d0fcfafe514031c2acc5658fdd4012ca3",
+      "lean": {
+        "target": "∀ {V : Type*} (G : SimpleGraph V), G.IsTree → G.IsBipartite",
+        "target_sha256": "sha256:d9e2e4462c81799a58fa6e525f70ff0d9feb6d5b9f345a6aadb12f7c9996d652",
+        "witness": "example : ∀ {V : Type*} (G : SimpleGraph V), G.IsTree → G.IsBipartite := by\n  intro V G hG\n  exact hG.isBipartite\n",
+        "witness_sha256": "sha256:ccea803921ca229a3478561e97a01b2c0c5c614ba2fd75c32dc6b55d8f38377e"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "exact: this is only the one-way tree-to-bipartite theorem; it does not assert an unsupported full-coverage bipartition equivalence.",
+        "openmath_to_lean": "exact under the bridge: `tree(G)` and `bipartite(G)` lower to `G.IsTree` and `G.IsBipartite`; mathlib's `IsTree.isBipartite` supplies the witness.",
+        "admission_gate": "Obtain independent project review before any catalog or DB admission."
+      }
+    },
+    {
+      "id": "typed_finite_graph_v1_euler_trail_odd_degree_necessity",
+      "domain": "discrete_mathematics_finite_graphs",
+      "difficulty": "advanced",
+      "authoring_status": "sealed_local_profile_validated_not_admitted",
+      "canonical_statement": "For every finite simple undirected graph G and trail t in G, if t uses every edge of G exactly once, then G has either zero or two odd-degree vertices.",
+      "canonical_statement_sha256": "sha256:e7d87016993d8f37aeeaca8a9564edcea5b7566c440def317fa7679d610a242e",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"FinSimpleGraph\"/></OMATP><OMV name=\"G\"/></OMATTR></OMBVAR><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"Trail\"/><OMV name=\"G\"/></OMA></OMATP><OMV name=\"t\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"is_euler_trail\"/><OMV name=\"G\"/><OMV name=\"t\"/></OMA><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"or\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"odd_degree_count\"/><OMV name=\"G\"/></OMA><OMI>0</OMI></OMA><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" cd=\"pals_typed_graph\" name=\"odd_degree_count\"/><OMV name=\"G\"/></OMA><OMI>2</OMI></OMA></OMA></OMA></OMBIND></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:d13371a6fc504e56f5c44baa5d91cff6a74d3c931d5ccd6973350236a19f34c7",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"FinSimpleGraph\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMBIND><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"Trail\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"is_euler_trail\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"or\"></n1:OMS><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"odd_degree_count\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMI>0</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"odd_degree_count\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMI>2</n1:OMI></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:7e8b85f0e66a7cf57bf5d9730497b48626a4d4da72c723404e82e1ace320778e",
+      "profile_c14n": {
+        "algorithm": "openmath-cdbase-alpha-c14n-v4",
+        "scope": "typed-finite-graph-v1 validation followed by profile-separated canonicalization",
+        "xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"FinSimpleGraph\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMBIND><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"Trail\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"is_euler_trail\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"or\"></n1:OMS><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"odd_degree_count\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMI>0</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals_typed_graph\" cdbase=\"urn:pals:openmath:typed-finite-graph:v1\" name=\"odd_degree_count\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMI>2</n1:OMI></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMBIND></n1:OMOBJ>",
+        "sha256": "sha256:7e8b85f0e66a7cf57bf5d9730497b48626a4d4da72c723404e82e1ace320778e"
+      },
+      "signature_trace": [
+        "pals_typed_graph:forall",
+        "pals_typed_graph:FinSimpleGraph",
+        "pals_typed_graph:Trail",
+        "pals_typed_graph:is_euler_trail",
+        "pals_typed_graph:odd_degree_count",
+        "logic1:implies",
+        "logic1:or",
+        "relation1:eq"
+      ],
+      "signature_trace_sha256": "sha256:5bfe1f53f24f8e6c83f416647afc35c4d3007fb5a7664fc5a4ec8adccc8cde04",
+      "proof_strategy": "Pair entrance and exit incidences along an Euler trail; only its endpoints can contribute unpaired incidences.",
+      "proof_strategy_sha256": "sha256:ca4656d855b1f0086f96a668c4ba88c90114d324c4e8bad09a193a77744c4357",
+      "sketch_steps": [
+        "setup: Fix G and a trail t with is_euler_trail(G,t).",
+        "coverage: Every edge occurs exactly once in t.",
+        "internal-pairing: Each internal visit pairs one entering and one leaving incidence.",
+        "endpoints: Only the two trail endpoints may have unpaired incidences.",
+        "parity: Therefore all degrees are even except possibly two endpoint degrees.",
+        "conclude: odd_degree_count(G) is 0 or 2."
+      ],
+      "sketch_steps_sha256": "sha256:dabd978542e2f1666f09af02a70fc672476303345f342b026ae0678cb6a77833",
+      "lean": {
+        "target": "∀ {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]\n    {u v : V} (p : G.Walk u v), p.IsEulerian →\n      Fintype.card {w | Odd (G.degree w)} = 0 ∨ Fintype.card {w | Odd (G.degree w)} = 2",
+        "target_sha256": "sha256:b5347729840a4a778ca11f693d2c8ad4e235852b91c068aa31ba059f9255a549",
+        "witness": "example : ∀ {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]\n    {u v : V} (p : G.Walk u v), p.IsEulerian →\n      Fintype.card {w | Odd (G.degree w)} = 0 ∨ Fintype.card {w | Odd (G.degree w)} = 2 := by\n  intro V _ _ G _ u v p hp\n  exact hp.card_odd_degree\n",
+        "witness_sha256": "sha256:6e56a10171c06866a45bd375798404b0dc7edfb8869cc8e6516eb9e45be9d901"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "exact under the profile's opaque Trail(G) contract: the XML quantifies one trail of the same graph G and asserts only the necessary odd-degree conclusion, not Euler-trail existence.",
+        "openmath_to_lean": "exact under the declared trail bridge: Trail(G) lowers to an endpoint-indexed `SimpleGraph.Walk G u v`, `is_euler_trail` lowers to `Walk.IsEulerian`, and `odd_degree_count` lowers to the cardinality of odd-degree vertices.",
+        "admission_gate": "Obtain independent project review before any catalog or DB admission."
+      }
+    }
+  ],
+  "excluded_witnesses": [
+    {
+      "id": "typed_finite_graph_v1_euler_trail_existence_converse",
+      "canonical_statement": "A finite graph has an Euler trail if and only if its non-isolated vertices are connected and it has zero or two odd-degree vertices.",
+      "status": "excluded_no_constructive_existence_bridge",
+      "reason": "The pinned Trails module supplies the necessary `Walk.IsEulerian.card_odd_degree` theorem but leaves the relevant existence direction as TODO. The design therefore marks GRAF-006 blocked; no proof receipt or XML card may claim the converse.",
+      "required_evidence": "Compile a constructive existence theorem against the exact nonisolated_connected convention, including the zero-edge case, then add an independently reviewed Trail(G) lowering receipt."
+    },
+    {
+      "id": "typed_finite_graph_v1_bipartite_full_partition_iff",
+      "canonical_statement": "A finite graph is bipartite if and only if it has a proper bipartition L,R covering every vertex.",
+      "status": "excluded_coverage_bridge_not_exact",
+      "reason": "`SimpleGraph.isBipartite_iff_exists_isBipartiteWith` is close, but its sets need not cover isolated vertices. The profile predicate proper_bipartition requires total coverage, so this is not a three-way exact statement yet.",
+      "required_evidence": "Prove and compile a bridge that extends a mathlib bipartition over isolated vertices while preserving the exact VertexClass(G) semantics, then obtain independent review."
+    }
+  ],
+  "manifest_digest": {
+    "algorithm": "sha256",
+    "input": "RFC 8785 canonical JSON serialization of this object with manifest_digest omitted",
+    "sha256": "sha256:a71c23c4b267ad610c10f63a57f02dba5953cbfdb175ce9a3ffd96a278ff2efd"
+  }
+}

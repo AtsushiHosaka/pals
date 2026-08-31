@@ -1,0 +1,552 @@
+{
+  "schema_version": "pals.coordinate-geometry-candidates.v1",
+  "source": "PALS first-party authored, Lean-verified candidate set",
+  "current_profile_card_count": 20,
+  "scope_note": "Current-profile cards are rigorously scalar coordinate-equation problems, not a claim of native point/vector/complex semantics.",
+  "extension_backlog_note": "Symbols in linalg1, linalg2, complex1, nums1, and transc2 are official OpenMath CDs. Every pals2:* name in this backlog is a proposed PALS semantic-profile extension, not an existing vocabulary item.",
+  "cards": [
+    {
+      "id": "coord_line_intersection_sum_difference",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all real x and y, if x + y = 5 and x - y = 1, then x = 3 and y = 2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMI>5</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Add the two line equations to solve x, then substitute into either equation to solve y.",
+      "sketch_steps": [
+        "setup: Introduce the real coordinate variables and record the displayed equations.",
+        "eliminate: Add, subtract, or substitute the equations to isolate one coordinate.",
+        "solve: Determine the remaining coordinate from either original equation.",
+        "verify: Substitute both values back into the defining equations.",
+        "conclude: State the unique coordinate conclusion."
+      ],
+      "lean_witness": "example (x y : ℝ) : x + y = 5 → x - y = 1 → x = 3 ∧ y = 2 := by\n  intro h1 h2\n  constructor <;> linarith"
+    },
+    {
+      "id": "coord_line_intersection_two_affines",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all real x and y, if x + 2y = 8 and 3x - y = 3, then x = 2 and y = 3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"y\"/></OMA></OMA><OMI>8</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMV name=\"x\"/></OMA><OMV name=\"y\"/></OMA><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>3</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Eliminate y by combining a suitable multiple of the first equation with the second.",
+      "sketch_steps": [
+        "setup: Introduce the real coordinate variables and record the displayed equations.",
+        "eliminate: Add, subtract, or substitute the equations to isolate one coordinate.",
+        "solve: Determine the remaining coordinate from either original equation.",
+        "verify: Substitute both values back into the defining equations.",
+        "conclude: State the unique coordinate conclusion."
+      ],
+      "lean_witness": "example (x y : ℝ) : x + 2*y = 8 → 3*x - y = 3 → x = 2 ∧ y = 3 := by\n  intro h1 h2\n  constructor <;> linarith"
+    },
+    {
+      "id": "coord_parallel_lines_inconsistent_system",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all real x and y, the equations x + 2y = 1 and 2x + 4y = 3 cannot both hold.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"y\"/></OMA></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>4</OMI><OMV name=\"y\"/></OMA></OMA><OMI>3</OMI></OMA></OMA><OMS cd=\"logic1\" name=\"false\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Double the first equation and compare it with the second equation to obtain a contradiction.",
+      "sketch_steps": [
+        "setup: Introduce the real coordinate variables and record the displayed equations.",
+        "eliminate: Add, subtract, or substitute the equations to isolate one coordinate.",
+        "solve: Determine the remaining coordinate from either original equation.",
+        "verify: Substitute both values back into the defining equations.",
+        "conclude: State the unique coordinate conclusion."
+      ],
+      "lean_witness": "example (x y : ℝ) : x + 2*y = 1 → 2*x + 4*y = 3 → False := by\n  intro h1 h2\n  linarith"
+    },
+    {
+      "id": "coord_parametric_line_substitution_one",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For every real t, (1 + 2t) + 2(3 - t) = 7.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"t\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"t\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"t\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>3</OMI><OMV name=\"t\"/></OMA></OMA></OMA><OMI>7</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Substitute the parametrized coordinates and cancel the t terms.",
+      "sketch_steps": [
+        "setup: Write the supplied coordinate parametrization.",
+        "substitute: Replace x and y in the target coordinate equation.",
+        "expand: Distribute scalar factors and collect the parameter terms.",
+        "cancel: Cancel opposite parameter contributions when they occur.",
+        "conclude: Obtain the required constant equation."
+      ],
+      "lean_witness": "example (t : ℝ) : (1 + 2*t) + 2*(3 - t) = 7 := by ring"
+    },
+    {
+      "id": "coord_parametric_line_substitution_two",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For every real t, 2(-1 + 3t) - 3(4 + 2t) = -14.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"t\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"t\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMI>-1</OMI><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMV name=\"t\"/></OMA></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMI>4</OMI><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"t\"/></OMA></OMA></OMA></OMA><OMI>-14</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Substitute the parametrized coordinates, expand, and cancel the t terms.",
+      "sketch_steps": [
+        "setup: Write the supplied coordinate parametrization.",
+        "substitute: Replace x and y in the target coordinate equation.",
+        "expand: Distribute scalar factors and collect the parameter terms.",
+        "cancel: Cancel opposite parameter contributions when they occur.",
+        "conclude: Obtain the required constant equation."
+      ],
+      "lean_witness": "example (t : ℝ) : 2*(-1 + 3*t) - 3*(4 + 2*t) = -14 := by ring"
+    },
+    {
+      "id": "coord_origin_distance_three_four",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "The coordinate pair (3, 4) has squared distance 25 from the origin.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>3</OMI><OMI>0</OMI></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>4</OMI><OMI>0</OMI></OMA><OMI>2</OMI></OMA></OMA><OMI>25</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Apply the squared-distance formula and evaluate 3^2 + 4^2.",
+      "sketch_steps": [
+        "setup: Form the horizontal and vertical coordinate differences.",
+        "square: Square both coordinate differences.",
+        "add: Sum the two squared contributions.",
+        "simplify: Evaluate the resulting squared distance.",
+        "conclude: State the coordinate distance-squared identity."
+      ],
+      "lean_witness": "example : (3 : ℝ)^2 + 4^2 = 25 := by norm_num"
+    },
+    {
+      "id": "coord_squared_distance_between_two_points",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "The coordinate pairs (2, -1) and (-1, 3) have squared distance 25.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>2</OMI><OMI>-1</OMI></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>-1</OMI><OMI>3</OMI></OMA><OMI>2</OMI></OMA></OMA><OMI>25</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Take the coordinate differences 3 and -4, square them, and add.",
+      "sketch_steps": [
+        "setup: Form the horizontal and vertical coordinate differences.",
+        "square: Square both coordinate differences.",
+        "add: Sum the two squared contributions.",
+        "simplify: Evaluate the resulting squared distance.",
+        "conclude: State the coordinate distance-squared identity."
+      ],
+      "lean_witness": "example : ((2 : ℝ) - (-1))^2 + ((-1) - 3)^2 = 25 := by norm_num"
+    },
+    {
+      "id": "coord_midpoint_fixed_average",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "The coordinatewise average of (1, 2) and (5, 8) is (3, 5).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMI>1</OMI><OMI>5</OMI></OMA><OMI>2</OMI></OMA><OMI>3</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMI>2</OMI><OMI>8</OMI></OMA><OMI>2</OMI></OMA><OMI>5</OMI></OMA></OMA></OMOBJ>",
+      "proof_strategy": "Average the two x-coordinates and separately average the two y-coordinates.",
+      "sketch_steps": [
+        "setup: Form the horizontal and vertical coordinate differences.",
+        "square: Square both coordinate differences.",
+        "add: Sum the two squared contributions.",
+        "simplify: Evaluate the resulting squared distance.",
+        "conclude: State the coordinate distance-squared identity."
+      ],
+      "lean_witness": "example : ((1 : ℝ) + 5) / 2 = 3 ∧ ((2 : ℝ) + 8) / 2 = 5 := by norm_num"
+    },
+    {
+      "id": "coord_internal_section_ratio_one_two",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "The point that divides (1, 2) to (7, 8) internally in the ratio 1:2 has coordinate pair (3, 4).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>1</OMI><OMI>7</OMI></OMA></OMA><OMI>3</OMI></OMA><OMI>3</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>1</OMI><OMI>8</OMI></OMA></OMA><OMI>3</OMI></OMA><OMI>4</OMI></OMA></OMA></OMOBJ>",
+      "proof_strategy": "Use the internal-section formula with weights 2 and 1, then simplify both coordinates.",
+      "sketch_steps": [
+        "setup: Form the horizontal and vertical coordinate differences.",
+        "square: Square both coordinate differences.",
+        "add: Sum the two squared contributions.",
+        "simplify: Evaluate the resulting squared distance.",
+        "conclude: State the coordinate distance-squared identity."
+      ],
+      "lean_witness": "example : ((2 : ℝ)*1 + 1*7) / 3 = 3 ∧ ((2 : ℝ)*2 + 1*8) / 3 = 4 := by norm_num"
+    },
+    {
+      "id": "coord_three_fixed_points_collinear",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "The three displayed coordinate substitutions yield the constant equations 1 = 2·0 + 1, 5 = 2·2 + 1, and 7 = 2·3 + 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMI>0</OMI></OMA><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMI>5</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMI>2</OMI></OMA><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMI>7</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMI>3</OMI></OMA><OMI>1</OMI></OMA></OMA></OMA></OMOBJ>",
+      "proof_strategy": "Verify the same line equation independently at each coordinate pair.",
+      "sketch_steps": [
+        "setup: Write the supplied coordinate parametrization.",
+        "substitute: Replace x and y in the target coordinate equation.",
+        "expand: Distribute scalar factors and collect the parameter terms.",
+        "cancel: Cancel opposite parameter contributions when they occur.",
+        "conclude: Obtain the required constant equation."
+      ],
+      "lean_witness": "example : (1 : ℝ) = 2*0 + 1 ∧ 5 = 2*2 + 1 ∧ 7 = 2*3 + 1 := by norm_num"
+    },
+    {
+      "id": "coord_line_circle_unit_intersections",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all real x and y, if x + y = 1 and x^2 + y^2 = 1, then (x, y) is either (0, 1) or (1, 0).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Substitute y = 1 - x into the circle equation and factor the resulting quadratic.",
+      "sketch_steps": [
+        "setup: Record the line and unit-circle equations.",
+        "substitute: Replace y by 1 - x using the line equation.",
+        "factor: Reduce the circle equation to x(x - 1) = 0.",
+        "cases: Split into x = 0 and x = 1.",
+        "recover: Use x + y = 1 to obtain the corresponding y-coordinate.",
+        "conclude: List the two intersection points."
+      ],
+      "lean_witness": "example (x y : ℝ) : x + y = 1 → x^2 + y^2 = 1 → (x = 0 ∧ y = 1) ∨ (x = 1 ∧ y = 0) := by\n  intro h1 h2\n  have hx : x * (x - 1) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hx with hx | hx\n  · left; constructor <;> linarith\n  · right; constructor <;> linarith"
+    },
+    {
+      "id": "coord_unit_circle_top_tangent",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all real x and y, if x^2 + y^2 = 1 and y = 1, then x = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Substitute y = 1 into the unit-circle equation and use that a square is zero only at zero.",
+      "sketch_steps": [
+        "setup: Record the unit-circle equation and y = 1.",
+        "substitute: Replace y^2 by 1.",
+        "reduce: Deduce x^2 = 0.",
+        "zero_square: Use the zero-square characterization.",
+        "conclude: Obtain x = 0."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^2 + y^2 = 1 → y = 1 → x = 0 := by\n  intro h1 h2\n  have hx : x^2 = 0 := by nlinarith\n  exact sq_eq_zero_iff.mp hx"
+    },
+    {
+      "id": "coord_sum_of_squares_origin",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all real x and y, if x^2 + y^2 = 0, then x = 0 and y = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use nonnegativity of both squares to show that each square must vanish.",
+      "sketch_steps": [
+        "setup: Record the sum-of-squares equation.",
+        "nonnegative: Establish x^2 ≥ 0 and y^2 ≥ 0.",
+        "separate: Deduce x^2 = 0 and y^2 = 0.",
+        "zero_square: Convert each zero square into a zero coordinate.",
+        "conclude: Obtain the origin coordinates."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^2 + y^2 = 0 → x = 0 ∧ y = 0 := by\n  intro h\n  constructor\n  · nlinarith [sq_nonneg y, sq_nonneg (x - 1)]\n  · nlinarith [sq_nonneg x, sq_nonneg (y - 1)]"
+    },
+    {
+      "id": "coord_quarter_turn_preserves_squared_radius",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all real x and y, the coordinate transformation (x, y) ↦ (-y, x) preserves squared radius.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>0</OMI><OMV name=\"y\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand the square of -y and use commutativity of addition.",
+      "sketch_steps": [
+        "setup: Write the supplied coordinate parametrization.",
+        "substitute: Replace x and y in the target coordinate equation.",
+        "expand: Distribute scalar factors and collect the parameter terms.",
+        "cancel: Cancel opposite parameter contributions when they occur.",
+        "conclude: Obtain the required constant equation."
+      ],
+      "lean_witness": "example (x y : ℝ) : (-y)^2 + x^2 = x^2 + y^2 := by ring"
+    },
+    {
+      "id": "coord_quarter_turn_orthogonal_components",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all real x and y, the coordinate dot expression x(-y) + yx equals 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>0</OMI><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"y\"/><OMV name=\"x\"/></OMA></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand x(-y), commute yx, and cancel the opposite terms.",
+      "sketch_steps": [
+        "setup: Write the supplied coordinate parametrization.",
+        "substitute: Replace x and y in the target coordinate equation.",
+        "expand: Distribute scalar factors and collect the parameter terms.",
+        "cancel: Cancel opposite parameter contributions when they occur.",
+        "conclude: Obtain the required constant equation."
+      ],
+      "lean_witness": "example (x y : ℝ) : x*(-y) + y*x = 0 := by ring"
+    },
+    {
+      "id": "coord_reflection_y_axis_preserves_squared_radius",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all real x and y, reflection (x, y) ↦ (-x, y) preserves squared radius.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>0</OMI><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Square the negated x-coordinate and observe that its square is unchanged.",
+      "sketch_steps": [
+        "setup: Write the supplied coordinate parametrization.",
+        "substitute: Replace x and y in the target coordinate equation.",
+        "expand: Distribute scalar factors and collect the parameter terms.",
+        "cancel: Cancel opposite parameter contributions when they occur.",
+        "conclude: Obtain the required constant equation."
+      ],
+      "lean_witness": "example (x y : ℝ) : (-x)^2 + y^2 = x^2 + y^2 := by ring"
+    },
+    {
+      "id": "coord_perpendicular_slope_solution",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For all real m1 and m2, if m1*m2 = -1 and m1 = 2, then m2 = -1/2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"m1\"/><OMV name=\"m2\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"m1\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"m2\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"m1\"/><OMV name=\"m2\"/></OMA><OMI>-1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"m1\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"m2\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>-1</OMI><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Substitute m1 = 2 into the perpendicular-slope product and solve the remaining linear equation.",
+      "sketch_steps": [
+        "setup: Introduce the real coordinate variables and record the displayed equations.",
+        "eliminate: Add, subtract, or substitute the equations to isolate one coordinate.",
+        "solve: Determine the remaining coordinate from either original equation.",
+        "verify: Substitute both values back into the defining equations.",
+        "conclude: State the unique coordinate conclusion."
+      ],
+      "lean_witness": "example (m1 m2 : ℝ) : m1*m2 = -1 → m1 = 2 → m2 = -(1:ℝ)/2 := by\n  intro h1 h2\n  nlinarith"
+    },
+    {
+      "id": "coord_circle_center_radius_substitution",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "The displayed coordinate substitution gives (1 - 1)^2 + (-2 - 1)^2 = 9.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>1</OMI><OMI>1</OMI></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>-2</OMI><OMI>1</OMI></OMA><OMI>2</OMI></OMA></OMA><OMI>9</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Substitute the two coordinates into the translated-circle equation and simplify.",
+      "sketch_steps": [
+        "setup: Form the horizontal and vertical coordinate differences.",
+        "square: Square both coordinate differences.",
+        "add: Sum the two squared contributions.",
+        "simplify: Evaluate the resulting squared distance.",
+        "conclude: State the coordinate distance-squared identity."
+      ],
+      "lean_witness": "example : ((1 : ℝ) - 1)^2 + ((-2) - 1)^2 = 9 := by norm_num"
+    },
+    {
+      "id": "coord_parabola_line_intersections",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "For every real x, if x^2 = 2x, then x = 0 or x = 2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Move all terms to one side, factor x(x - 2), and split into its two roots.",
+      "sketch_steps": [
+        "setup: Record the equality x^2 = 2x.",
+        "rearrange: Move all terms to the left side.",
+        "factor: Write the equation as x(x - 2) = 0.",
+        "cases: Apply the zero-product rule.",
+        "conclude: Obtain x = 0 or x = 2."
+      ],
+      "lean_witness": "example (x : ℝ) : x^2 = 2*x → x = 0 ∨ x = 2 := by\n  intro h\n  have hx : x * (x - 2) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hx with hx | hx\n  · exact Or.inl hx\n  · right; linarith"
+    },
+    {
+      "id": "coord_triangle_centroid_fixed",
+      "domain": "coordinate_geometry_and_equations",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "canonical_statement": "The coordinatewise average of (0, 0), (3, 0), and (0, 6) is (1, 2).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMI>0</OMI><OMI>3</OMI><OMI>0</OMI></OMA><OMI>3</OMI></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMI>0</OMI><OMI>0</OMI><OMI>6</OMI></OMA><OMI>3</OMI></OMA><OMI>2</OMI></OMA></OMA></OMOBJ>",
+      "proof_strategy": "Average the three x-coordinates and separately average the three y-coordinates.",
+      "sketch_steps": [
+        "setup: Form the horizontal and vertical coordinate differences.",
+        "square: Square both coordinate differences.",
+        "add: Sum the two squared contributions.",
+        "simplify: Evaluate the resulting squared distance.",
+        "conclude: State the coordinate distance-squared identity."
+      ],
+      "lean_witness": "example : ((0 : ℝ) + 3 + 0) / 3 = 1 ∧ ((0 : ℝ) + 0 + 6) / 3 = 2 := by norm_num"
+    }
+  ],
+  "extension_backlog": [
+    {
+      "id": "geometry_line_through_two_points",
+      "topic": "geometry",
+      "canonical_statement": "Find the line through two distinct points.",
+      "minimum_symbols": [
+        "linalg2:vector",
+        "linalg1:vector_selector",
+        "pals2:point2",
+        "pals2:line2",
+        "pals2:circle2",
+        "pals2:incident"
+      ],
+      "why_current_profile_cannot_represent_it": "It has no point or line sort, nor an incidence predicate."
+    },
+    {
+      "id": "geometry_circle_through_three_points",
+      "topic": "geometry",
+      "canonical_statement": "Determine the circle through three non-collinear points.",
+      "minimum_symbols": [
+        "linalg2:vector",
+        "linalg1:vector_selector",
+        "pals2:point2",
+        "pals2:line2",
+        "pals2:circle2",
+        "pals2:incident"
+      ],
+      "why_current_profile_cannot_represent_it": "Three points and their common circle cannot be represented as linked geometric objects."
+    },
+    {
+      "id": "geometry_perpendicular_bisector_locus",
+      "topic": "geometry",
+      "canonical_statement": "Prove that points equidistant from two fixed points lie on their perpendicular bisector.",
+      "minimum_symbols": [
+        "linalg2:vector",
+        "linalg1:vector_selector",
+        "pals2:point2",
+        "pals2:line2",
+        "pals2:circle2",
+        "pals2:incident",
+        "pals2:distance_sq",
+        "pals2:perpendicular",
+        "pals2:midpoint"
+      ],
+      "why_current_profile_cannot_represent_it": "The scalar profile lacks distance, midpoint, and perpendicular-line relations."
+    },
+    {
+      "id": "geometry_reflection_in_line",
+      "topic": "geometry",
+      "canonical_statement": "Reflect a point in a non-axis-aligned line and verify distance preservation.",
+      "minimum_symbols": [
+        "linalg2:vector",
+        "linalg1:vector_selector",
+        "pals2:point2",
+        "pals2:line2",
+        "pals2:circle2",
+        "pals2:incident",
+        "pals2:reflect",
+        "pals2:distance_sq"
+      ],
+      "why_current_profile_cannot_represent_it": "A general reflection is not a scalar algebraic operation without a bound line and point objects."
+    },
+    {
+      "id": "vector_component_addition",
+      "topic": "vectors",
+      "canonical_statement": "Add two planar vectors from their components.",
+      "minimum_symbols": [
+        "linalg2:vector",
+        "linalg1:vector_selector",
+        "linalg1:scalarproduct",
+        "linalg1:determinant",
+        "pals2:vector_add",
+        "pals2:vector_scale"
+      ],
+      "why_current_profile_cannot_represent_it": "Independent scalar equalities do not preserve that two coordinates denote a single vector."
+    },
+    {
+      "id": "vector_scalar_multiple",
+      "topic": "vectors",
+      "canonical_statement": "Compute a scalar multiple of a planar vector and its endpoint.",
+      "minimum_symbols": [
+        "linalg2:vector",
+        "linalg1:vector_selector",
+        "linalg1:scalarproduct",
+        "linalg1:determinant",
+        "pals2:vector_add",
+        "pals2:vector_scale"
+      ],
+      "why_current_profile_cannot_represent_it": "The profile has no typed vector constructor or scalar-action operation."
+    },
+    {
+      "id": "vector_dot_product_orthogonality",
+      "topic": "vectors",
+      "canonical_statement": "Show that two planar vectors are perpendicular exactly when their dot product is zero.",
+      "minimum_symbols": [
+        "linalg2:vector",
+        "linalg1:vector_selector",
+        "linalg1:scalarproduct",
+        "linalg1:determinant",
+        "pals2:vector_add",
+        "pals2:vector_scale"
+      ],
+      "why_current_profile_cannot_represent_it": "The dot product and vector-valued quantification are absent."
+    },
+    {
+      "id": "vector_triangle_area_determinant",
+      "topic": "vectors",
+      "canonical_statement": "Compute a triangle area from the determinant of two side vectors.",
+      "minimum_symbols": [
+        "linalg2:vector",
+        "linalg1:vector_selector",
+        "linalg1:scalarproduct",
+        "linalg1:determinant",
+        "pals2:vector_add",
+        "pals2:vector_scale",
+        "arith1:abs",
+        "arith1:divide"
+      ],
+      "why_current_profile_cannot_represent_it": "A determinant must operate on typed vectors, not unrelated scalar coordinates."
+    },
+    {
+      "id": "complex_cartesian_multiplication",
+      "topic": "complex_plane",
+      "canonical_statement": "Multiply two complex numbers given in Cartesian form.",
+      "minimum_symbols": [
+        "complex1:complex_cartesian",
+        "complex1:conjugate",
+        "complex1:real",
+        "complex1:imaginary",
+        "complex1:argument",
+        "nums1:i",
+        "pals2:complex_modulus"
+      ],
+      "why_current_profile_cannot_represent_it": "There is no complex constructor, real/imaginary projection, or complex sort."
+    },
+    {
+      "id": "complex_conjugate_modulus_square",
+      "topic": "complex_plane",
+      "canonical_statement": "Show that z times its conjugate equals the squared modulus of z.",
+      "minimum_symbols": [
+        "complex1:complex_cartesian",
+        "complex1:conjugate",
+        "complex1:real",
+        "complex1:imaginary",
+        "complex1:argument",
+        "nums1:i",
+        "pals2:complex_modulus"
+      ],
+      "why_current_profile_cannot_represent_it": "Conjugation and modulus have no current semantic representation."
+    },
+    {
+      "id": "complex_multiply_i_quarter_turn",
+      "topic": "complex_plane",
+      "canonical_statement": "Show that multiplication by i is a quarter-turn rotation in the complex plane.",
+      "minimum_symbols": [
+        "complex1:complex_cartesian",
+        "complex1:conjugate",
+        "complex1:real",
+        "complex1:imaginary",
+        "complex1:argument",
+        "nums1:i",
+        "pals2:complex_modulus"
+      ],
+      "why_current_profile_cannot_represent_it": "The imaginary unit, complex multiplication, and complex-plane interpretation are all absent."
+    },
+    {
+      "id": "complex_argument_quadrant",
+      "topic": "complex_plane",
+      "canonical_statement": "Determine the argument of a nonzero Cartesian complex number in a specified quadrant.",
+      "minimum_symbols": [
+        "complex1:complex_cartesian",
+        "complex1:conjugate",
+        "complex1:real",
+        "complex1:imaginary",
+        "complex1:argument",
+        "nums1:i",
+        "pals2:complex_modulus",
+        "transc2:arctan"
+      ],
+      "why_current_profile_cannot_represent_it": "The profile lacks complex argument and the two-argument arctangent needed to retain quadrant information."
+    }
+  ]
+}
