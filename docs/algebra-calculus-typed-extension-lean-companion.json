@@ -1,0 +1,632 @@
+{
+  "schema_version": "pals.typed-extension-lean-companion.v1",
+  "source_proposal": "docs/algebra-calculus-typed-extension-draft-proposal.json",
+  "verification_scope": "local pinned Mathlib workspace only; no OpenMath profile or DB publication claim",
+  "verified_cards": [
+    {
+      "id": "ext_group_inverse_product",
+      "domain": "abstract_algebra_groups",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For elements a and b of a group G, (a*b)⁻¹ = b⁻¹*a⁻¹.",
+      "required_symbols": [
+        "pals-algebra1:group",
+        "pals-algebra1:carrier",
+        "pals-algebra1:mul",
+        "pals-algebra1:inv",
+        "pals-algebra1:one"
+      ],
+      "type_requirements": [
+        "G : Group",
+        "a,b : carrier(G)",
+        "mul(G) is closed and associative",
+        "inv(G) and one(G) satisfy group inverse laws"
+      ],
+      "proof_strategy": "Verify that b⁻¹a⁻¹ is a two-sided inverse of ab and invoke uniqueness of inverses.",
+      "sketch_steps": [
+        "setup: Fix a,b in the carrier of G.",
+        "candidate: Propose b⁻¹a⁻¹ as the inverse of ab.",
+        "calculation: Use associativity to simplify (ab)(b⁻¹a⁻¹).",
+        "calculation: Cancel bb⁻¹ and aa⁻¹ to obtain the identity.",
+        "conclude: Use uniqueness of inverses."
+      ],
+      "lean_target": "∀ {G : Type*} [Group G] (a b : G), (a * b)⁻¹ = b⁻¹ * a⁻¹",
+      "lean_witness": "example : ∀ {G : Type*} [Group G] (a b : G), (a * b)⁻¹ = b⁻¹ * a⁻¹ := by\n  intro G _ a b\n  exact mul_inv_rev a b",
+      "lean_formalization_note": "The carrier-indexed abstract group is represented directly by Lean's `Group G`.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    },
+    {
+      "id": "ext_group_left_cancellation",
+      "domain": "abstract_algebra_groups",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For a,b,c in a group G, a*b = a*c implies b = c.",
+      "required_symbols": [
+        "pals-algebra1:group",
+        "pals-algebra1:carrier",
+        "pals-algebra1:mul",
+        "pals-algebra1:inv",
+        "pals-algebra1:one"
+      ],
+      "type_requirements": [
+        "G : Group",
+        "a,b,c : carrier(G)",
+        "equality is equality in carrier(G)"
+      ],
+      "proof_strategy": "Multiply the equality on the left by a⁻¹ and simplify with associativity.",
+      "sketch_steps": [
+        "setup: Assume ab=ac in G.",
+        "transform: Multiply both sides on the left by a⁻¹.",
+        "reassociate: Rewrite a⁻¹(ab) and a⁻¹(ac).",
+        "simplify: Use a⁻¹a=1 and the identity law.",
+        "conclude: Deduce b=c."
+      ],
+      "lean_target": "∀ {G : Type*} [Group G] (a b c : G), a * b = a * c → b = c",
+      "lean_witness": "example : ∀ {G : Type*} [Group G] (a b c : G), a * b = a * c → b = c := by\n  intro G _ a b c h\n  exact mul_left_cancel_iff.mp h",
+      "lean_formalization_note": "Lean's equality is homogeneous in the group carrier.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    },
+    {
+      "id": "ext_group_left_equation_solution",
+      "domain": "abstract_algebra_groups",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For a,b in a group G, the equation a*x=b has the unique solution x=a⁻¹*b.",
+      "required_symbols": [
+        "pals-algebra1:group",
+        "pals-algebra1:carrier",
+        "pals-algebra1:mul",
+        "pals-algebra1:inv",
+        "pals-algebra1:one",
+        "pals-algebra1:exists_unique"
+      ],
+      "type_requirements": [
+        "G : Group",
+        "a,b,x : carrier(G)",
+        "exists_unique quantifies only over carrier(G)"
+      ],
+      "proof_strategy": "Construct a⁻¹b, verify it solves the equation, then use left cancellation for uniqueness.",
+      "sketch_steps": [
+        "setup: Fix a,b in G.",
+        "construct: Define x=a⁻¹b.",
+        "verify: Simplify a(a⁻¹b) to b.",
+        "uniqueness: Let y be any solution ay=b.",
+        "cancel: Apply left cancellation to ax=ay.",
+        "conclude: x is the unique solution."
+      ],
+      "lean_target": "∀ {G : Type*} [Group G] (a b : G), ∃! x : G, a * x = b",
+      "lean_witness": "example : ∀ {G : Type*} [Group G] (a b : G), ∃! x : G, a * x = b := by\n  intro G _ a b\n  refine ⟨a⁻¹ * b, ?_, ?_⟩\n  · simp\n  · intro y hy\n    calc\n      y = a⁻¹ * (a * y) := by group\n      _ = a⁻¹ * b := by rw [hy]",
+      "lean_formalization_note": "`∃! x : G` gives the required carrier-restricted quantifier.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    },
+    {
+      "id": "ext_group_conjugation_automorphism",
+      "domain": "abstract_algebra_groups",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For g in a group G, conjugation c_g(x)=g*x*g⁻¹ is a group automorphism of G.",
+      "required_symbols": [
+        "pals-algebra1:group",
+        "pals-algebra1:carrier",
+        "pals-algebra1:mul",
+        "pals-algebra1:inv",
+        "pals-algebra1:one",
+        "pals-algebra1:group_hom",
+        "pals-algebra1:bijective"
+      ],
+      "type_requirements": [
+        "G : Group",
+        "g,x,y : carrier(G)",
+        "c_g : carrier(G) → carrier(G)",
+        "group_hom and bijective are typed predicates on maps"
+      ],
+      "proof_strategy": "Show conjugation preserves multiplication and has inverse conjugation by g⁻¹.",
+      "sketch_steps": [
+        "setup: Fix g and define c_g(x)=gxg⁻¹.",
+        "homomorphism: Expand c_g(xy) and insert g⁻¹g.",
+        "reassociate: Obtain c_g(x)c_g(y) using associativity.",
+        "inverse_map: Define c_{g⁻¹} as the candidate inverse.",
+        "verify: Simplify both composites to the identity map.",
+        "conclude: c_g is a bijective group homomorphism."
+      ],
+      "lean_target": "∀ {G : Type*} [Group G] (g : G), Function.Bijective (fun x : G => g * x * g⁻¹) ∧ ∀ x y : G, g * (x * y) * g⁻¹ = (g * x * g⁻¹) * (g * y * g⁻¹)",
+      "lean_witness": "example : ∀ {G : Type*} [Group G] (g : G), Function.Bijective (fun x : G => g * x * g⁻¹) ∧ ∀ x y : G, g * (x * y) * g⁻¹ = (g * x * g⁻¹) * (g * y * g⁻¹) := by\n  intro G _ g\n  constructor\n  · constructor\n    · intro x y h\n      change g * x * g⁻¹ = g * y * g⁻¹ at h\n      calc\n        x = g⁻¹ * (g * x * g⁻¹) * g := by group\n        _ = g⁻¹ * (g * y * g⁻¹) * g := by rw [h]\n        _ = y := by group\n    · intro y\n      refine ⟨g⁻¹ * y * g, ?_⟩\n      group\n  · intro x y\n    group",
+      "lean_formalization_note": "The conjunction expands the `GroupAut` claim into the two properties needed by the Draft.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    },
+    {
+      "id": "ext_group_hom_kernel_normal",
+      "domain": "abstract_algebra_groups",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For a group homomorphism φ:G→H, ker(φ) is a normal subgroup of G.",
+      "required_symbols": [
+        "pals-algebra1:group",
+        "pals-algebra1:carrier",
+        "pals-algebra1:mul",
+        "pals-algebra1:inv",
+        "pals-algebra1:one",
+        "pals-algebra1:group_hom",
+        "pals-algebra1:kernel",
+        "pals-algebra1:normal_subgroup"
+      ],
+      "type_requirements": [
+        "G,H : Group",
+        "φ : GroupHom(G,H)",
+        "kernel(φ) : Subgroup(G)",
+        "normal_subgroup is a predicate on Subgroup(G)"
+      ],
+      "proof_strategy": "Prove closure under products and inverses, then show closure under conjugation using homomorphism preservation.",
+      "sketch_steps": [
+        "setup: Define ker(φ)={x∈G | φ(x)=1_H}.",
+        "subgroup: Show the identity maps to 1_H.",
+        "subgroup: Use φ(xy)=φ(x)φ(y) for product closure.",
+        "subgroup: Use φ(x⁻¹)=φ(x)⁻¹ for inverse closure.",
+        "normality: For g∈G and k∈ker(φ), evaluate φ(gkg⁻¹).",
+        "conclude: The result is 1_H, so the kernel is normal."
+      ],
+      "lean_target": "∀ {G H : Type*} [Group G] [Group H] (f : G →* H), f.ker.Normal",
+      "lean_witness": "example : ∀ {G H : Type*} [Group G] [Group H] (f : G →* H), f.ker.Normal := by\n  intro G H _ _ f\n  exact MonoidHom.normal_ker f",
+      "lean_formalization_note": "`G →* H` carries the homomorphism's domain and codomain; `ker` is therefore typed.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    },
+    {
+      "id": "ext_commutative_ring_binomial_square",
+      "domain": "abstract_algebra_rings",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For a,b in a commutative ring R, (a+b)^2=a^2+2ab+b^2.",
+      "required_symbols": [
+        "pals-algebra1:commutative_ring",
+        "pals-algebra1:ring_add",
+        "pals-algebra1:ring_mul",
+        "pals-algebra1:ring_neg",
+        "pals-algebra1:ring_zero",
+        "pals-algebra1:ring_one"
+      ],
+      "type_requirements": [
+        "R : CommutativeRing",
+        "a,b : carrier(R)",
+        "natural numeral 2 is coerced through the characteristic-aware ring map"
+      ],
+      "proof_strategy": "Expand the square by distributivity, commute ba to ab, and collect the two cross terms.",
+      "sketch_steps": [
+        "setup: Fix a,b in R.",
+        "expand: Distribute (a+b)(a+b).",
+        "rewrite: Replace ba by ab using commutativity.",
+        "collect: Combine ab+ab as 2ab.",
+        "conclude: Reassemble the binomial square identity."
+      ],
+      "lean_target": "∀ {R : Type*} [CommRing R] (a b : R), (a + b)^2 = a^2 + 2 * a * b + b^2",
+      "lean_witness": "example : ∀ {R : Type*} [CommRing R] (a b : R), (a + b)^2 = a^2 + 2 * a * b + b^2 := by\n  intro R _ a b\n  ring",
+      "lean_formalization_note": "Numeral coercion and commutative-ring operations are resolved by `CommRing R`.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    },
+    {
+      "id": "ext_commutative_ring_difference_squares",
+      "domain": "abstract_algebra_rings",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For a,b in a commutative ring R, (a-b)(a+b)=a^2-b^2.",
+      "required_symbols": [
+        "pals-algebra1:commutative_ring",
+        "pals-algebra1:ring_add",
+        "pals-algebra1:ring_mul",
+        "pals-algebra1:ring_neg",
+        "pals-algebra1:ring_zero",
+        "pals-algebra1:ring_one"
+      ],
+      "type_requirements": [
+        "R : CommutativeRing",
+        "a,b : carrier(R)",
+        "subtraction is ring addition with additive inverse"
+      ],
+      "proof_strategy": "Expand the product and cancel the equal mixed terms using commutativity.",
+      "sketch_steps": [
+        "setup: Fix a,b in R.",
+        "expand: Distribute both factors.",
+        "rewrite: Identify ab and ba using commutativity.",
+        "cancel: Remove ab-ba.",
+        "conclude: The remaining terms are a²-b²."
+      ],
+      "lean_target": "∀ {R : Type*} [CommRing R] (a b : R), (a - b) * (a + b) = a^2 - b^2",
+      "lean_witness": "example : ∀ {R : Type*} [CommRing R] (a b : R), (a - b) * (a + b) = a^2 - b^2 := by\n  intro R _ a b\n  ring",
+      "lean_formalization_note": "Subtraction is the additive-group operation supplied by `CommRing R`.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    },
+    {
+      "id": "ext_integral_domain_cancellation",
+      "domain": "abstract_algebra_rings",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "In an integral domain R, if a≠0 and a*b=a*c, then b=c.",
+      "required_symbols": [
+        "pals-algebra1:commutative_ring",
+        "pals-algebra1:ring_add",
+        "pals-algebra1:ring_mul",
+        "pals-algebra1:ring_neg",
+        "pals-algebra1:ring_zero",
+        "pals-algebra1:ring_one",
+        "pals-algebra1:integral_domain",
+        "pals-algebra1:neq"
+      ],
+      "type_requirements": [
+        "R : IntegralDomain",
+        "a,b,c : carrier(R)",
+        "zero-divisor axiom is available for R"
+      ],
+      "proof_strategy": "Subtract the two sides, factor a(b-c), and use the no-zero-divisors property.",
+      "sketch_steps": [
+        "setup: Assume a≠0 and ab=ac.",
+        "subtract: Derive ab-ac=0.",
+        "factor: Rewrite the left side as a(b-c).",
+        "apply_theorem: Use the integral-domain zero-product property.",
+        "exclude: The a=0 branch contradicts the hypothesis.",
+        "conclude: b-c=0 and hence b=c."
+      ],
+      "lean_target": "∀ {R : Type*} [CommRing R] [IsDomain R] (a b c : R), a ≠ 0 → a * b = a * c → b = c",
+      "lean_witness": "example : ∀ {R : Type*} [CommRing R] [IsDomain R] (a b c : R), a ≠ 0 → a * b = a * c → b = c := by\n  intro R _ _ a b c ha h\n  have hzero : a * (b - c) = 0 := by rw [mul_sub, h, sub_self]\n  have hsub : b - c = 0 := (mul_eq_zero.mp hzero).resolve_left ha\n  exact sub_eq_zero.mp hsub",
+      "lean_formalization_note": "`IsDomain R` is the no-zero-divisors assumption needed for cancellation.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    },
+    {
+      "id": "ext_polynomial_factor_theorem",
+      "domain": "abstract_algebra_polynomials",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For a polynomial p over a field K and a in K, p(a)=0 if and only if X-a divides p.",
+      "required_symbols": [
+        "pals-algebra1:polynomial",
+        "pals-algebra1:poly_eval",
+        "pals-algebra1:poly_divides",
+        "pals-algebra1:poly_degree",
+        "pals-algebra1:field",
+        "pals-algebra1:poly_sub",
+        "pals-algebra1:poly_X",
+        "pals-algebra1:iff"
+      ],
+      "type_requirements": [
+        "K : Field",
+        "p : Polynomial(K)",
+        "a : carrier(K)",
+        "X-a : Polynomial(K)",
+        "poly_divides is indexed by coefficient ring"
+      ],
+      "proof_strategy": "Apply polynomial division by X-a and identify the constant remainder with p(a).",
+      "sketch_steps": [
+        "setup: Divide p by X-a.",
+        "division: Obtain p=(X-a)q+r with degree(r)<1.",
+        "identify: Therefore r is a constant polynomial.",
+        "evaluate: Substitute a to show r(a)=p(a).",
+        "forward: If p(a)=0, the remainder is zero and X-a divides p.",
+        "reverse: A multiple of X-a evaluates to zero at a."
+      ],
+      "lean_target": "∀ {K : Type*} [Field K] (p : Polynomial K) (a : K), p.eval a = 0 ↔ Polynomial.X - Polynomial.C a ∣ p",
+      "lean_witness": "example : ∀ {K : Type*} [Field K] (p : Polynomial K) (a : K), p.eval a = 0 ↔ Polynomial.X - Polynomial.C a ∣ p := by\n  intro K _ p a\n  simpa [Polynomial.IsRoot] using (Polynomial.dvd_iff_isRoot (p := p) (a := a)).symm",
+      "lean_formalization_note": "The coefficient field and polynomial sort are `K` and `Polynomial K`; `eval` is type-indexed by K.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    },
+    {
+      "id": "ext_polynomial_division_algorithm",
+      "domain": "abstract_algebra_polynomials",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For p,q in K[X] with q≠0 over a field K, there are unique s,r with p=q*s+r and r=0 or degree(r)<degree(q).",
+      "required_symbols": [
+        "pals-algebra1:polynomial",
+        "pals-algebra1:poly_eval",
+        "pals-algebra1:poly_divides",
+        "pals-algebra1:poly_degree",
+        "pals-algebra1:field",
+        "pals-algebra1:poly_zero",
+        "pals-algebra1:exists_unique",
+        "pals-algebra1:poly_degree",
+        "pals-algebra1:or"
+      ],
+      "type_requirements": [
+        "K : Field",
+        "p,q,s,r : Polynomial(K)",
+        "degree uses the distinguished degree-zero convention",
+        "unique pair quantification is typed over Polynomial(K)×Polynomial(K)"
+      ],
+      "proof_strategy": "Perform leading-term cancellation inductively and prove uniqueness by comparing two remainders.",
+      "sketch_steps": [
+        "setup: Assume q is nonzero.",
+        "induction: Reduce the degree of the current dividend by canceling a leading term.",
+        "terminate: Stop when the remainder is zero or has smaller degree than q.",
+        "existence: Accumulate the canceled leading terms into s.",
+        "uniqueness: Subtract two decompositions p=qs+r=q s'+r'.",
+        "conclude: Degree bounds force r=r' and then s=s'."
+      ],
+      "lean_target": "∀ {K : Type*} [Field K] (p q : Polynomial K), q ≠ 0 → ∃ s r : Polynomial K, p = q * s + r ∧ r.degree < q.degree",
+      "lean_witness": "example : ∀ {K : Type*} [Field K] (p q : Polynomial K), q ≠ 0 → ∃ s r : Polynomial K, p = q * s + r ∧ r.degree < q.degree := by\n  intro K _ p q hq\n  refine ⟨p / q, p % q, ?_, Polynomial.degree_mod_lt p hq⟩\n  exact (EuclideanDomain.div_add_mod p q).symm",
+      "lean_formalization_note": "This is the existence-and-degree-bound component of division; the full uniqueness formulation remains in the extension proposal but is not claimed by this witness.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    },
+    {
+      "id": "ext_polynomial_root_bound",
+      "domain": "abstract_algebra_polynomials",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "A nonzero polynomial p over a field K has at most degree(p) distinct roots in K.",
+      "required_symbols": [
+        "pals-algebra1:polynomial",
+        "pals-algebra1:poly_eval",
+        "pals-algebra1:poly_divides",
+        "pals-algebra1:poly_degree",
+        "pals-algebra1:field",
+        "pals-algebra1:root_set",
+        "pals-algebra1:set_cardinality",
+        "pals-algebra1:distinct"
+      ],
+      "type_requirements": [
+        "K : Field",
+        "p : Polynomial(K)",
+        "p≠0",
+        "root_set(p) is a finite set of carrier(K)",
+        "set_cardinality is defined only on certified finite sets"
+      ],
+      "proof_strategy": "Induct on degree, factoring out a linear factor at each chosen root.",
+      "sketch_steps": [
+        "setup: Induct on degree(p), with p nonzero.",
+        "base: A nonzero constant has no roots.",
+        "step: Choose a root a when one exists.",
+        "factor: Use the factor theorem to write p=(X-a)q.",
+        "degree: Show degree(q)=degree(p)-1.",
+        "count: Apply induction to q and add the one distinguished root."
+      ],
+      "lean_target": "∀ {K : Type*} [Field K] (p : Polynomial K), p.roots.card ≤ p.natDegree",
+      "lean_witness": "example : ∀ {K : Type*} [Field K] (p : Polynomial K), p.roots.card ≤ p.natDegree := by\n  intro K _ p\n  exact Polynomial.card_roots' p",
+      "lean_formalization_note": "Mathlib counts roots with multiplicity, which is stronger than the proposed distinct-root upper bound.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    },
+    {
+      "id": "ext_polynomial_degree_product",
+      "domain": "abstract_algebra_polynomials",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For nonzero polynomials p,q over an integral domain R, degree(p*q)=degree(p)+degree(q).",
+      "required_symbols": [
+        "pals-algebra1:polynomial",
+        "pals-algebra1:poly_eval",
+        "pals-algebra1:poly_divides",
+        "pals-algebra1:poly_degree",
+        "pals-algebra1:integral_domain",
+        "pals-algebra1:poly_mul",
+        "pals-algebra1:poly_degree"
+      ],
+      "type_requirements": [
+        "R : IntegralDomain",
+        "p,q : Polynomial(R)",
+        "p≠0 and q≠0",
+        "leading coefficient multiplication is type-indexed by R"
+      ],
+      "proof_strategy": "Show the leading coefficient of pq is the nonzero product of leading coefficients.",
+      "sketch_steps": [
+        "setup: Assume p and q are nonzero.",
+        "leading_term: Identify the candidate highest term of pq.",
+        "coefficient: Its coefficient is leadCoeff(p)*leadCoeff(q).",
+        "nonzero: Use the integral-domain property to show this coefficient is nonzero.",
+        "degree: No higher degree term can occur in the product.",
+        "conclude: The degree is degree(p)+degree(q)."
+      ],
+      "lean_target": "∀ {R : Type*} [CommRing R] [IsDomain R] (p q : Polynomial R), p ≠ 0 → q ≠ 0 → (p * q).natDegree = p.natDegree + q.natDegree",
+      "lean_witness": "example : ∀ {R : Type*} [CommRing R] [IsDomain R] (p q : Polynomial R), p ≠ 0 → q ≠ 0 → (p * q).natDegree = p.natDegree + q.natDegree := by\n  intro R _ _ p q hp hq\n  exact Polynomial.natDegree_mul hp hq",
+      "lean_formalization_note": "The nonzero premises avoid the designated natural degree of the zero polynomial.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    },
+    {
+      "id": "ext_polynomial_formal_derivative_product_rule",
+      "domain": "abstract_algebra_polynomials",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For polynomials p and q over a commutative ring R, formalDerivative(p*q)=formalDerivative(p)*q+p*formalDerivative(q).",
+      "required_symbols": [
+        "pals-algebra1:polynomial",
+        "pals-algebra1:poly_eval",
+        "pals-algebra1:poly_divides",
+        "pals-algebra1:poly_degree",
+        "pals-algebra1:commutative_ring",
+        "pals-algebra1:formal_derivative",
+        "pals-algebra1:poly_mul",
+        "pals-algebra1:poly_add"
+      ],
+      "type_requirements": [
+        "R : CommutativeRing",
+        "p,q : Polynomial(R)",
+        "formal_derivative maps Polynomial(R) to Polynomial(R)",
+        "natural coefficients are coerced through R"
+      ],
+      "proof_strategy": "Prove the identity coefficientwise, reducing to monomials and the ordinary power rule.",
+      "sketch_steps": [
+        "setup: Use linearity to reduce to monomial products.",
+        "monomial: Multiply X^m and X^n to obtain X^(m+n).",
+        "differentiate: Take the formal derivative of X^(m+n).",
+        "split: Rewrite (m+n)X^(m+n-1) as the two product-rule terms.",
+        "extend: Reassemble the coefficientwise identity by linearity.",
+        "conclude: The formal derivative satisfies the product rule."
+      ],
+      "lean_target": "∀ {R : Type*} [CommRing R] (p q : Polynomial R), Polynomial.derivative (p * q) = Polynomial.derivative p * q + p * Polynomial.derivative q",
+      "lean_witness": "example : ∀ {R : Type*} [CommRing R] (p q : Polynomial R), Polynomial.derivative (p * q) = Polynomial.derivative p * q + p * Polynomial.derivative q := by\n  intro R _ p q\n  exact Polynomial.derivative_mul",
+      "lean_formalization_note": "`Polynomial.derivative` is the formal derivative, not an analytic derivative.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    },
+    {
+      "id": "ext_multivar_chain_rule",
+      "domain": "multivariable_calculus",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For differentiable f:ℝ^n→ℝ^m at x and g:ℝ^m→ℝ^k at f(x), D(g∘f)(x)=Dg(f(x))∘Df(x).",
+      "required_symbols": [
+        "pals-calculus1:euclidean_space",
+        "pals-calculus1:typed_function",
+        "pals-calculus1:differentiable_at",
+        "pals-calculus1:frechet_derivative_at",
+        "pals-calculus1:continuous_linear_map",
+        "pals-calculus1:function_compose",
+        "pals-calculus1:linear_compose"
+      ],
+      "type_requirements": [
+        "n,m,k : ℕ",
+        "f : ℝ^n→ℝ^m",
+        "g : ℝ^m→ℝ^k",
+        "x : ℝ^n",
+        "composition checks the codomain of f against the domain of g"
+      ],
+      "proof_strategy": "Compose the two differentiability expansions and bound the combined remainder.",
+      "sketch_steps": [
+        "setup: Write first-order expansions for f at x and g at f(x).",
+        "substitute: Insert the f expansion into the expansion for g.",
+        "linear_part: Collect Dg(f(x))∘Df(x) as the first-order term.",
+        "remainder: Bound the remaining terms by o(‖h‖).",
+        "conclude: The composite is differentiable with the stated derivative."
+      ],
+      "lean_target": "∀ {E F G : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [NormedAddCommGroup F] [NormedSpace ℝ F] [NormedAddCommGroup G] [NormedSpace ℝ G] (f : E → F) (g : F → G) (x : E) (fprime : E →L[ℝ] F) (gprime : F →L[ℝ] G), HasFDerivAt f fprime x → HasFDerivAt g gprime (f x) → HasFDerivAt (g ∘ f) (gprime ∘SL fprime) x",
+      "lean_witness": "example : ∀ {E F G : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [NormedAddCommGroup F] [NormedSpace ℝ F] [NormedAddCommGroup G] [NormedSpace ℝ G] (f : E → F) (g : F → G) (x : E) (fprime : E →L[ℝ] F) (gprime : F →L[ℝ] G), HasFDerivAt f fprime x → HasFDerivAt g gprime (f x) → HasFDerivAt (g ∘ f) (gprime ∘SL fprime) x := by\n  intro E F G _ _ _ _ _ _ f g x fprime gprime hf hg\n  exact hg.comp x hf",
+      "lean_formalization_note": "This is a dimension-independent Frechet-derivative form of the proposed Euclidean chain rule.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    },
+    {
+      "id": "ext_multivar_scalar_product_rule",
+      "domain": "multivariable_calculus",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For differentiable scalar functions f,g:ℝ^n→ℝ, D(fg)(x)[v]=f(x)Dg(x)[v]+g(x)Df(x)[v].",
+      "required_symbols": [
+        "pals-calculus1:euclidean_space",
+        "pals-calculus1:typed_function",
+        "pals-calculus1:differentiable_at",
+        "pals-calculus1:frechet_derivative_at",
+        "pals-calculus1:continuous_linear_map",
+        "pals-calculus1:scalar_mul_function",
+        "pals-calculus1:apply_linear_map"
+      ],
+      "type_requirements": [
+        "n : ℕ",
+        "f,g : ℝ^n→ℝ",
+        "x,v : ℝ^n",
+        "pointwise product has codomain ℝ"
+      ],
+      "proof_strategy": "Expand the product increment and isolate the linear terms, with the product of increments as the remainder.",
+      "sketch_steps": [
+        "setup: Expand f(x+h)g(x+h)-f(x)g(x).",
+        "split: Add and subtract f(x)g(x+h).",
+        "linear_part: Substitute the derivative expansions of f and g.",
+        "remainder: Show the product of increment errors is higher order.",
+        "conclude: Read off the directional product rule."
+      ],
+      "lean_target": "∀ {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] (f g : E → ℝ) (x : E) (fprime gprime : E →L[ℝ] ℝ), HasFDerivAt f fprime x → HasFDerivAt g gprime x → HasFDerivAt (f * g) (f x • gprime + g x • fprime) x",
+      "lean_witness": "example : ∀ {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] (f g : E → ℝ) (x : E) (fprime gprime : E →L[ℝ] ℝ), HasFDerivAt f fprime x → HasFDerivAt g gprime x → HasFDerivAt (f * g) (f x • gprime + g x • fprime) x := by\n  intro E _ _ f g x fprime gprime hf hg\n  exact hf.mul hg",
+      "lean_formalization_note": "Pointwise multiplication of scalar-valued functions is the multivariable product rule in Frechet form.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    },
+    {
+      "id": "ext_multivar_interior_extremum_gradient_zero",
+      "domain": "multivariable_calculus",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "If differentiable f:U⊆ℝ^n→ℝ has a local extremum at an interior point x of U, then gradient(f,x)=0.",
+      "required_symbols": [
+        "pals-calculus1:euclidean_space",
+        "pals-calculus1:typed_function",
+        "pals-calculus1:differentiable_at",
+        "pals-calculus1:frechet_derivative_at",
+        "pals-calculus1:continuous_linear_map",
+        "interval1:ordered_interval",
+        "pals-calculus1:interior",
+        "pals-calculus1:open_ball",
+        "pals-calculus1:local_extremum",
+        "pals-calculus1:zero_vector"
+      ],
+      "type_requirements": [
+        "U : Set(ℝ^n)",
+        "x∈interior(U)",
+        "f : U→ℝ",
+        "local_extremum is relative to the ambient Euclidean topology"
+      ],
+      "proof_strategy": "Restrict f to every line through x and apply the one-variable Fermat theorem.",
+      "sketch_steps": [
+        "setup: Let v be an arbitrary direction and use interiority to keep x+tv in U locally.",
+        "restrict: Form the one-variable function t↦f(x+tv).",
+        "apply_theorem: The restriction has a local extremum at t=0.",
+        "derive: Its derivative at zero is Df(x)[v]=0.",
+        "conclude: Since this holds for every v, the gradient is zero."
+      ],
+      "lean_target": "∀ {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] (f : E → ℝ) (x : E), IsLocalExtr f x → fderiv ℝ f x = 0",
+      "lean_witness": "example : ∀ {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] (f : E → ℝ) (x : E), IsLocalExtr f x → fderiv ℝ f x = 0 := by\n  intro E _ _ f x h\n  exact h.fderiv_eq_zero",
+      "lean_formalization_note": "For Euclidean finite-dimensional E, `fderiv ℝ f x = 0` is the type-correct Lean representation of zero gradient. The original differentiability premise is stronger than needed by this theorem.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    },
+    {
+      "id": "ext_multivar_fubini_rectangle",
+      "domain": "multivariable_calculus",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For continuous f on [a,b]×[c,d], the double integral equals either iterated integral of f.",
+      "required_symbols": [
+        "interval1:ordered_interval",
+        "pals-calculus1:interior",
+        "pals-calculus1:open_ball",
+        "pals-calculus1:continuous_on",
+        "pals-calculus1:double_integral",
+        "pals-calculus1:definite_integral"
+      ],
+      "type_requirements": [
+        "a≤b and c≤d",
+        "f : ℝ²→ℝ",
+        "[a,b]×[c,d] is a typed product of closed intervals",
+        "integrals use an explicitly declared measure/integration convention"
+      ],
+      "proof_strategy": "Use continuity on a compact rectangle to establish integrability and invoke Fubini's theorem.",
+      "sketch_steps": [
+        "setup: Form the closed rectangle [a,b]×[c,d].",
+        "integrability: Continuous functions on compact rectangles are integrable.",
+        "apply_theorem: Invoke Fubini for the product measure.",
+        "interpret: Identify the two iterated integral functions.",
+        "conclude: Both iterated integrals equal the double integral."
+      ],
+      "lean_target": "∀ {α β E : Type*} [MeasurableSpace α] [MeasurableSpace β] {μ : MeasureTheory.Measure α} {ν : MeasureTheory.Measure β} [MeasureTheory.SFinite μ] [MeasureTheory.SFinite ν] [NormedAddCommGroup E] [NormedSpace ℝ E] (f : α × β → E), MeasureTheory.Integrable f (μ.prod ν) → (∫ z : α × β, f z ∂(μ.prod ν)) = ∫ x : α, ∫ y : β, f (x, y) ∂ν ∂μ",
+      "lean_witness": "example : ∀ {α β E : Type*} [MeasurableSpace α] [MeasurableSpace β] {μ : MeasureTheory.Measure α} {ν : MeasureTheory.Measure β} [MeasureTheory.SFinite μ] [MeasureTheory.SFinite ν] [NormedAddCommGroup E] [NormedSpace ℝ E] (f : α × β → E), MeasureTheory.Integrable f (μ.prod ν) → (∫ z : α × β, f z ∂(μ.prod ν)) = ∫ x : α, ∫ y : β, f (x, y) ∂ν ∂μ := by\n  intro α β E _ _ μ ν _ _ _ _ f hf\n  exact MeasureTheory.integral_prod f hf",
+      "lean_formalization_note": "This is the measure-theoretic Fubini core. A typed extension must additionally establish integrability from continuity on a declared rectangle.",
+      "lean_verification_status": "verified_local_pinned_workspace"
+    }
+  ],
+  "excluded_cards": [
+    {
+      "id": "ext_multivar_gradient_directional_derivative",
+      "reason": "The pinned Mathlib workspace does not expose a canonical general `gradient` operator matching the proposed Euclidean typed signature; a witness using only `fderiv` would change the Draft target."
+    },
+    {
+      "id": "ext_multivar_mixed_partials_schwarz",
+      "reason": "A direct, checked C²-on-open-set mixed-partial theorem needs a dedicated multivariable smoothness formulation and was not found without weakening the statement."
+    },
+    {
+      "id": "ext_multivar_positive_hessian_strict_minimum",
+      "reason": "The exact positive-definite Hessian to strict-local-minimum theorem needs a compatible Hessian and second-order Taylor API; no direct witness was established in the pinned workspace."
+    },
+    {
+      "id": "ext_multivar_lagrange_multiplier",
+      "reason": "The proposed regular-level-set Lagrange multiplier statement requires a manifold/tangent-space formalization beyond a direct local Mathlib witness."
+    },
+    {
+      "id": "ext_multivar_change_of_variables",
+      "reason": "The exact C¹-diffeomorphism change-of-variables statement requires a measure/Jacobian theorem with the proposed typed-domain contract; it was not directly compiled."
+    },
+    {
+      "id": "ext_ode_linear_first_order_ivp",
+      "reason": "The integrating-factor formula requires an oriented-interval integral and ODE-solution API not present as one directly matching Mathlib statement."
+    },
+    {
+      "id": "ext_ode_logistic_ivp",
+      "reason": "A direct witness would require a separately formalized solution-domain invariant (0<y<K), logarithm branch conditions, and ODE solution predicate."
+    },
+    {
+      "id": "ext_ode_picard_lindelof_local_existence_uniqueness",
+      "reason": "The exact local-existence/uniqueness theorem requires a typed ODE RHS and locally-Lipschitz API; no direct pinned-workspace theorem was established."
+    },
+    {
+      "id": "ext_ode_harmonic_oscillator_ivp",
+      "reason": "The exact second-order IVP and uniqueness formulation requires a typed second-derivative/ODE solution interface; an explicit derivative calculation alone would not witness the stated uniqueness claim."
+    }
+  ]
+}

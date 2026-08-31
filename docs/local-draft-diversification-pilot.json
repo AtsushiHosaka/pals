@@ -1,0 +1,162 @@
+{
+  "schema_version": "pals.local-draft-diversification-pilot.v1",
+  "source": "PALS first-party authored pilot",
+  "cards": [
+    {
+      "id": "algebra_add_zero_integer",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for every integer a, a + 0 = a.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"a\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"a\"/><OMI>0</OMI></OMA><OMV name=\"a\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Instantiate the additive identity law for integers. The zero term is the neutral element of addition, so the left side simplifies directly to a.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary integer a.",
+        "apply_theorem: Use the additive identity law a + 0 = a.",
+        "conclude: The normalized left-hand side is exactly a."
+      ],
+      "lean_witness": "example (a : ℤ) : a + 0 = a := by simp"
+    },
+    {
+      "id": "algebra_binomial_square_real",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for all real x and y, (x + y)^2 = x^2 + 2*x*y + y^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand the square, distribute multiplication over addition, and collect the two mixed terms using commutativity and associativity.",
+      "sketch_steps": [
+        "setup: Introduce real variables x and y.",
+        "calculation: Expand (x + y)^2 as (x + y) * (x + y).",
+        "conclude: Distribute and collect the two x*y terms."
+      ],
+      "lean_witness": "example (x y : ℝ) : (x + y)^2 = x^2 + 2*x*y + y^2 := by ring"
+    },
+    {
+      "id": "algebra_difference_of_squares_real",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for all real x and y, x^2 - y^2 = (x - y) * (x + y).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand the product on the right and cancel the opposite mixed terms. The remaining terms are x^2 and -y^2.",
+      "sketch_steps": [
+        "setup: Introduce real variables x and y.",
+        "calculation: Distribute (x - y) * (x + y).",
+        "conclude: Cancel the mixed terms to obtain x^2 - y^2."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^2 - y^2 = (x - y) * (x + y) := by ring"
+    },
+    {
+      "id": "order_square_nonnegative_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for every real x, 0 ≤ x^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "A square is a product of a real number with itself. Split on the sign of x, or apply the standard square-nonnegativity lemma.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real x.",
+        "apply_theorem: Use nonnegativity of x squared.",
+        "conclude: The lower bound is zero."
+      ],
+      "lean_witness": "example (x : ℝ) : 0 ≤ x^2 := sq_nonneg x"
+    },
+    {
+      "id": "order_abs_nonnegative_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for every real x, 0 ≤ |x|.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Absolute value is defined as a nonnegative magnitude. Apply the standard nonnegativity property of absolute value.",
+      "sketch_steps": [
+        "setup: Introduce an arbitrary real x.",
+        "apply_theorem: Use nonnegativity of absolute value.",
+        "conclude: This gives 0 ≤ |x| directly."
+      ],
+      "lean_witness": "example (x : ℝ) : 0 ≤ |x| := abs_nonneg x"
+    },
+    {
+      "id": "order_add_nonnegative_right_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for all real x, y, and z, if x ≤ y and 0 ≤ z, then x ≤ y + z.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"z\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "First use 0 ≤ z to obtain y ≤ y + z. Then compose this inequality with x ≤ y by transitivity.",
+      "sketch_steps": [
+        "setup: Introduce x, y, z and the two inequalities.",
+        "derive: Add y to 0 ≤ z to prove y ≤ y + z.",
+        "conclude: Apply transitivity to x ≤ y ≤ y + z."
+      ],
+      "lean_witness": "example (x y z : ℝ) (hxy : x ≤ y) (hz : 0 ≤ z) : x ≤ y + z := by linarith"
+    },
+    {
+      "id": "nat_gcd_commutative",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for all natural numbers m and n, gcd(m, n) = gcd(n, m).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"m\"/><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"m\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMV name=\"m\"/><OMV name=\"n\"/></OMA><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMV name=\"n\"/><OMV name=\"m\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use symmetry of the greatest common divisor: the common divisors of m and n are unchanged when their order is swapped.",
+      "sketch_steps": [
+        "setup: Introduce natural numbers m and n.",
+        "apply_theorem: Use commutativity of gcd.",
+        "conclude: Swap the two arguments."
+      ],
+      "lean_witness": "example (m n : ℕ) : Nat.gcd m n = Nat.gcd n m := Nat.gcd_comm m n"
+    },
+    {
+      "id": "nat_lcm_commutative",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for all natural numbers m and n, lcm(m, n) = lcm(n, m).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"m\"/><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"m\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMV name=\"m\"/><OMV name=\"n\"/></OMA><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMV name=\"n\"/><OMV name=\"m\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use symmetry of least common multiples: the multiples shared by m and n do not depend on argument order.",
+      "sketch_steps": [
+        "setup: Introduce natural numbers m and n.",
+        "apply_theorem: Use commutativity of lcm.",
+        "conclude: Swap the two arguments."
+      ],
+      "lean_witness": "example (m n : ℕ) : Nat.lcm m n = Nat.lcm n m := Nat.lcm_comm m n"
+    },
+    {
+      "id": "nat_gcd_zero_right",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for every natural number n, gcd(n, 0) = n.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMV name=\"n\"/><OMI>0</OMI></OMA><OMV name=\"n\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Every natural number divides zero, so the greatest common divisor of n and zero is n itself.",
+      "sketch_steps": [
+        "setup: Introduce a natural number n.",
+        "apply_theorem: Use the gcd identity with zero as the right argument.",
+        "conclude: Simplify gcd(n, 0) to n."
+      ],
+      "lean_witness": "example (n : ℕ) : Nat.gcd n 0 = n := Nat.gcd_zero_right n"
+    },
+    {
+      "id": "set_intersection_subset_left",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that for all sets A and B, A ∩ B is a subset of A.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"set1\" name=\"subset\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMV name=\"A\"/></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Unpack membership in an intersection. Membership provides both A-membership and B-membership, so retain the first component.",
+      "sketch_steps": [
+        "setup: Fix sets A and B and an arbitrary element in A ∩ B.",
+        "derive: Unpack intersection membership into membership in A and in B.",
+        "conclude: Keep the membership proof for A."
+      ],
+      "lean_witness": "example {α : Type} (A B : Set α) : A ∩ B ⊆ A := Set.inter_subset_left"
+    },
+    {
+      "id": "set_intersection_union_distributive",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that for all sets A, B, and C, A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"union\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMV name=\"C\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Prove extensional equality. For each element, distribute conjunction over the disjunction obtained from membership in B ∪ C.",
+      "sketch_steps": [
+        "setup: Apply set extensionality and fix an arbitrary element.",
+        "derive: Rewrite intersection and union membership as conjunction and disjunction.",
+        "conclude: Distribute conjunction over disjunction."
+      ],
+      "lean_witness": "example {α : Type} (A B C : Set α) : A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C) := by ext x; simp [and_or_left]"
+    },
+    {
+      "id": "set_difference_union",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that for all sets A, B, and C, A \\ (B ∪ C) = (A \\ B) ∩ (A \\ C).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMV name=\"C\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Prove extensional equality. Convert set difference to membership plus negation, apply De Morgan's law to the union, and regroup conjunctions.",
+      "sketch_steps": [
+        "setup: Apply set extensionality and fix an arbitrary element.",
+        "derive: Rewrite difference and union membership into propositional form.",
+        "conclude: Apply De Morgan's law and reassociate conjunctions."
+      ],
+      "lean_witness": "example {α : Type} (A B C : Set α) : A \\ (B ∪ C) = (A \\ B) ∩ (A \\ C) := by ext x; simp; tauto"
+    }
+  ]
+}

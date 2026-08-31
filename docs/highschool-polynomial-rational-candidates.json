@@ -1,0 +1,828 @@
+{
+  "schema_version": "pals.high-school-polynomial-rational-candidates.v1",
+  "source": "PALS first-party authored, generic-OpenMath and Lean-verified candidate set",
+  "current_profile_card_count": 42,
+  "topic_counts": {
+    "polynomial_equations": 8,
+    "polynomial_identities": 7,
+    "polynomial_inequalities": 9,
+    "rational_equations": 6,
+    "rational_expression_identities": 8,
+    "rational_inequalities": 4
+  },
+  "scope_note": "Every included card is an explicitly real scalar polynomial or rational-expression theorem. A rational card retains every denominator exclusion in its OpenMath premise; no native polynomial, rational-function, ordered-field, or solution-set object is bound by the generic profile.",
+  "validation_contract": {
+    "generic_openmath": "Every card runs statement-semantics validation, generic retrieval C14N, and exact-C14N validation while generated.",
+    "lean": "Pass --verify-lean to compile one temporary Lean file containing all 42 witnesses in pals-agent/lean-workspace.",
+    "local_db": "Pass --verify-db --expected-db-count 335 to read-check local Draft ID and strict/legacy C14N collisions. This command does not write the DB."
+  },
+  "excluded_unsupported_abstractions": {
+    "examples": [
+      "quantified polynomial coefficients as a typed polynomial object",
+      "a rational function as a bound function object",
+      "a general solution set expressed as a typed subset of R",
+      "division without a nonzero denominator premise"
+    ],
+    "why": "Current generic OpenMath provides only coarse term/proposition/function sorts. The included cards stay in explicitly quantified real scalar arithmetic and preserve denominator hypotheses rather than pretending these richer objects are typed."
+  },
+  "cards": [
+    {
+      "id": "poly_square_binomial_expansion",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_identities",
+      "difficulty": "introductory",
+      "canonical_statement": "For all real x and y, (x + y)^2 = x^2 + 2xy + y^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand the square of a binomial and collect the cross term.",
+      "sketch_steps": [
+        "setup: Bind the real scalar variables and write both polynomial expressions without suppressing factors.",
+        "expand: Expand the displayed powers and products in the real polynomial ring.",
+        "collect: Collect like terms with the same monomial part.",
+        "compare: Match the normalized left and right polynomial expressions.",
+        "conclude: State the resulting real polynomial identity."
+      ],
+      "lean_witness": "example (x y : ℝ) : (x + y)^2 = x^2 + 2*x*y + y^2 := by ring"
+    },
+    {
+      "id": "poly_square_binomial_difference_expansion",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_identities",
+      "difficulty": "introductory",
+      "canonical_statement": "For all real x and y, (x - y)^2 = x^2 - 2xy + y^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand the square of a difference and collect the cross term.",
+      "sketch_steps": [
+        "setup: Bind the real scalar variables and write both polynomial expressions without suppressing factors.",
+        "expand: Expand the displayed powers and products in the real polynomial ring.",
+        "collect: Collect like terms with the same monomial part.",
+        "compare: Match the normalized left and right polynomial expressions.",
+        "conclude: State the resulting real polynomial identity."
+      ],
+      "lean_witness": "example (x y : ℝ) : (x - y)^2 = x^2 - 2*x*y + y^2 := by ring"
+    },
+    {
+      "id": "poly_difference_of_squares_factorization",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_identities",
+      "difficulty": "introductory",
+      "canonical_statement": "For all real x and y, x^2 - y^2 = (x - y)(x + y).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor the difference of the two real squares.",
+      "sketch_steps": [
+        "setup: Bind the real scalar variables and write both polynomial expressions without suppressing factors.",
+        "expand: Expand the displayed powers and products in the real polynomial ring.",
+        "collect: Collect like terms with the same monomial part.",
+        "compare: Match the normalized left and right polynomial expressions.",
+        "conclude: State the resulting real polynomial identity."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^2 - y^2 = (x - y) * (x + y) := by ring"
+    },
+    {
+      "id": "poly_difference_of_cubes_factorization",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_identities",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, x^3 - y^3 = (x - y)(x^2 + xy + y^2).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the standard difference-of-cubes factorization.",
+      "sketch_steps": [
+        "setup: Bind the real scalar variables and write both polynomial expressions without suppressing factors.",
+        "expand: Expand the displayed powers and products in the real polynomial ring.",
+        "collect: Collect like terms with the same monomial part.",
+        "compare: Match the normalized left and right polynomial expressions.",
+        "conclude: State the resulting real polynomial identity."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^3 - y^3 = (x - y) * (x^2 + x*y + y^2) := by ring"
+    },
+    {
+      "id": "poly_sum_of_cubes_factorization",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_identities",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, x^3 + y^3 = (x + y)(x^2 - xy + y^2).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the standard sum-of-cubes factorization.",
+      "sketch_steps": [
+        "setup: Bind the real scalar variables and write both polynomial expressions without suppressing factors.",
+        "expand: Expand the displayed powers and products in the real polynomial ring.",
+        "collect: Collect like terms with the same monomial part.",
+        "compare: Match the normalized left and right polynomial expressions.",
+        "conclude: State the resulting real polynomial identity."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^3 + y^3 = (x + y) * (x^2 - x*y + y^2) := by ring"
+    },
+    {
+      "id": "poly_monic_quadratic_vieta_factorization",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_identities",
+      "difficulty": "standard",
+      "canonical_statement": "For all real a, b, and x, x^2 - (a+b)x + ab = (x-a)(x-b).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/><OMV name=\"b\"/><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"a\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"b\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"a\"/><OMV name=\"b\"/></OMA><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"a\"/><OMV name=\"b\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"a\"/></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"b\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand the root-form product to recover the monic quadratic coefficients.",
+      "sketch_steps": [
+        "setup: Bind the real scalar variables and write both polynomial expressions without suppressing factors.",
+        "expand: Expand the displayed powers and products in the real polynomial ring.",
+        "collect: Collect like terms with the same monomial part.",
+        "compare: Match the normalized left and right polynomial expressions.",
+        "conclude: State the resulting real polynomial identity."
+      ],
+      "lean_witness": "example (a b x : ℝ) : x^2 - (a+b)*x + a*b = (x-a)*(x-b) := by ring"
+    },
+    {
+      "id": "poly_complete_square_x2_minus_6x",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_identities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, x^2 - 6x + 9 = (x - 3)^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>6</OMI><OMV name=\"x\"/></OMA></OMA><OMI>9</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMI>2</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Complete the square by adding and subtracting the square of half the linear coefficient.",
+      "sketch_steps": [
+        "setup: Bind the real scalar variables and write both polynomial expressions without suppressing factors.",
+        "expand: Expand the displayed powers and products in the real polynomial ring.",
+        "collect: Collect like terms with the same monomial part.",
+        "compare: Match the normalized left and right polynomial expressions.",
+        "conclude: State the resulting real polynomial identity."
+      ],
+      "lean_witness": "example (x : ℝ) : x^2 - 6*x + 9 = (x - 3)^2 := by ring"
+    },
+    {
+      "id": "poly_square_equals_nine_roots",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_equations",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, if x^2 = 9 then x = 3 or x = -3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>9</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>-3</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor x^2 - 9 and use the zero-product rule.",
+      "sketch_steps": [
+        "setup: Bind the real unknown and move the equation to a zero-polynomial form.",
+        "factor: Factor the polynomial, or complete the square, using the displayed coefficients.",
+        "zero_product: Apply the zero-product rule or the zero-square rule over the reals.",
+        "solve: Solve each resulting linear real equation.",
+        "conclude: List exactly the permitted real root alternatives."
+      ],
+      "lean_witness": "example (x : ℝ) : x^2 = 9 → x = 3 ∨ x = -3 := by\n  intro h\n  have hfac : (x - 3) * (x + 3) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hfac with hleft | hright\n  · left; linarith\n  · right; linarith"
+    },
+    {
+      "id": "poly_square_equals_sixteen_roots",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_equations",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, if x^2 = 16 then x = 4 or x = -4.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>16</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>4</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>-4</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor x^2 - 16 and use the zero-product rule.",
+      "sketch_steps": [
+        "setup: Bind the real unknown and move the equation to a zero-polynomial form.",
+        "factor: Factor the polynomial, or complete the square, using the displayed coefficients.",
+        "zero_product: Apply the zero-product rule or the zero-square rule over the reals.",
+        "solve: Solve each resulting linear real equation.",
+        "conclude: List exactly the permitted real root alternatives."
+      ],
+      "lean_witness": "example (x : ℝ) : x^2 = 16 → x = 4 ∨ x = -4 := by\n  intro h\n  have hfac : (x - 4) * (x + 4) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hfac with hleft | hright\n  · left; linarith\n  · right; linarith"
+    },
+    {
+      "id": "poly_factored_linear_roots",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_equations",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, if (x-1)(x+2) = 0 then x = 1 or x = -2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>-2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the zero-product rule directly to the displayed factors.",
+      "sketch_steps": [
+        "setup: Bind the real unknown and move the equation to a zero-polynomial form.",
+        "factor: Factor the polynomial, or complete the square, using the displayed coefficients.",
+        "zero_product: Apply the zero-product rule or the zero-square rule over the reals.",
+        "solve: Solve each resulting linear real equation.",
+        "conclude: List exactly the permitted real root alternatives."
+      ],
+      "lean_witness": "example (x : ℝ) : (x - 1) * (x + 2) = 0 → x = 1 ∨ x = -2 := by\n  intro h\n  rcases mul_eq_zero.mp h with hleft | hright\n  · left; linarith\n  · right; linarith"
+    },
+    {
+      "id": "poly_quadratic_six_roots",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if x^2 - 5x + 6 = 0 then x = 2 or x = 3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>5</OMI><OMV name=\"x\"/></OMA></OMA><OMI>6</OMI></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor x^2 - 5x + 6 as (x-2)(x-3).",
+      "sketch_steps": [
+        "setup: Bind the real unknown and move the equation to a zero-polynomial form.",
+        "factor: Factor the polynomial, or complete the square, using the displayed coefficients.",
+        "zero_product: Apply the zero-product rule or the zero-square rule over the reals.",
+        "solve: Solve each resulting linear real equation.",
+        "conclude: List exactly the permitted real root alternatives."
+      ],
+      "lean_witness": "example (x : ℝ) : x^2 - 5*x + 6 = 0 → x = 2 ∨ x = 3 := by\n  intro h\n  have hfac : (x - 2) * (x - 3) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hfac with hleft | hright\n  · left; linarith\n  · right; linarith"
+    },
+    {
+      "id": "poly_quadratic_repeated_root",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if x^2 - 4x + 4 = 0 then x = 2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>4</OMI><OMV name=\"x\"/></OMA></OMA><OMI>4</OMI></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Complete the square to (x-2)^2 = 0.",
+      "sketch_steps": [
+        "setup: Bind the real unknown and move the equation to a zero-polynomial form.",
+        "factor: Factor the polynomial, or complete the square, using the displayed coefficients.",
+        "zero_product: Apply the zero-product rule or the zero-square rule over the reals.",
+        "solve: Solve each resulting linear real equation.",
+        "conclude: List exactly the permitted real root alternatives."
+      ],
+      "lean_witness": "example (x : ℝ) : x^2 - 4*x + 4 = 0 → x = 2 := by\n  intro h\n  have hs : (x - 2)^2 = 0 := by nlinarith\n  exact sub_eq_zero.mp (sq_eq_zero_iff.mp hs)"
+    },
+    {
+      "id": "poly_monic_quadratic_given_roots",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_equations",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real a, b, and x, if x^2 - (a+b)x + ab = 0 then x = a or x = b.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/><OMV name=\"b\"/><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"a\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"b\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"a\"/><OMV name=\"b\"/></OMA><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"a\"/><OMV name=\"b\"/></OMA></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"a\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"b\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Rewrite the equation in factored root form and apply the zero-product rule.",
+      "sketch_steps": [
+        "setup: Bind the real unknown and move the equation to a zero-polynomial form.",
+        "factor: Factor the polynomial, or complete the square, using the displayed coefficients.",
+        "zero_product: Apply the zero-product rule or the zero-square rule over the reals.",
+        "solve: Solve each resulting linear real equation.",
+        "conclude: List exactly the permitted real root alternatives."
+      ],
+      "lean_witness": "example (a b x : ℝ) : x^2 - (a+b)*x + a*b = 0 → x = a ∨ x = b := by\n  intro h\n  have hfac : (x - a) * (x - b) = 0 := by\n    calc\n      (x - a) * (x - b) = x^2 - (a+b)*x + a*b := by ring\n      _ = 0 := h\n  rcases mul_eq_zero.mp hfac with hleft | hright\n  · left; linarith\n  · right; linarith"
+    },
+    {
+      "id": "poly_cubic_equals_eight_root",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if x^3 = 8 then x = 2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMI>8</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor x^3 - 8 and show its quadratic cofactor is strictly positive.",
+      "sketch_steps": [
+        "setup: Bind the real unknown and move the equation to a zero-polynomial form.",
+        "factor: Factor the polynomial, or complete the square, using the displayed coefficients.",
+        "zero_product: Apply the zero-product rule or the zero-square rule over the reals.",
+        "solve: Solve each resulting linear real equation.",
+        "conclude: List exactly the permitted real root alternatives."
+      ],
+      "lean_witness": "example (x : ℝ) : x^3 = 8 → x = 2 := by\n  intro h\n  have hfac : (x - 2) * (x^2 + 2*x + 4) = 0 := by\n    calc\n      (x - 2) * (x^2 + 2*x + 4) = x^3 - 8 := by ring\n      _ = 0 := by nlinarith\n  rcases mul_eq_zero.mp hfac with hleft | hright\n  · linarith\n  · have hpos : 0 < x^2 + 2*x + 4 := by nlinarith [sq_nonneg (x + 1)]\n    linarith"
+    },
+    {
+      "id": "poly_biquadratic_four_roots",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_equations",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real x, if x^4 - 5x^2 + 4 = 0 then x = -2, x = -1, x = 1, or x = 2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>4</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>5</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA></OMA><OMI>4</OMI></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>-2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>-1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Regard the equation as quadratic in x^2, factor, and then solve the two square equations.",
+      "sketch_steps": [
+        "setup: Bind the real unknown and move the equation to a zero-polynomial form.",
+        "factor: Factor the polynomial, or complete the square, using the displayed coefficients.",
+        "zero_product: Apply the zero-product rule or the zero-square rule over the reals.",
+        "solve: Solve each resulting linear real equation.",
+        "conclude: List exactly the permitted real root alternatives."
+      ],
+      "lean_witness": "example (x : ℝ) : x^4 - 5*x^2 + 4 = 0 → x = -2 ∨ x = -1 ∨ x = 1 ∨ x = 2 := by\n  intro h\n  have hfac : (x^2 - 1) * (x^2 - 4) = 0 := by\n    calc\n      (x^2 - 1) * (x^2 - 4) = x^4 - 5*x^2 + 4 := by ring\n      _ = 0 := h\n  rcases mul_eq_zero.mp hfac with hfirst | hsecond\n  · have hsq : (x - 1) * (x + 1) = 0 := by nlinarith\n    rcases mul_eq_zero.mp hsq with hleft | hright\n    · exact Or.inr (Or.inr (Or.inl (by linarith)))\n    · exact Or.inr (Or.inl (by linarith))\n  · have hsq : (x - 2) * (x + 2) = 0 := by nlinarith\n    rcases mul_eq_zero.mp hsq with hleft | hright\n    · exact Or.inr (Or.inr (Or.inr (by linarith)))\n    · exact Or.inl (by linarith)"
+    },
+    {
+      "id": "poly_square_nonnegative",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_inequalities",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, x^2 is nonnegative.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"geq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use nonnegativity of a real square.",
+      "sketch_steps": [
+        "setup: Bind the real variable and record the stated interval or sign hypotheses.",
+        "rewrite: Rewrite the expression as a square or a product of explicit real factors.",
+        "sign: Determine the sign of every factor from the hypotheses.",
+        "combine: Use square nonnegativity or the product sign rule.",
+        "conclude: State the requested ordered-real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : 0 ≤ x^2 := sq_nonneg x"
+    },
+    {
+      "id": "poly_square_linear_bound",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, 2x is at most x^2 + 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Rewrite x^2 - 2x + 1 as the nonnegative square (x-1)^2.",
+      "sketch_steps": [
+        "setup: Bind the real variable and record the stated interval or sign hypotheses.",
+        "rewrite: Rewrite the expression as a square or a product of explicit real factors.",
+        "sign: Determine the sign of every factor from the hypotheses.",
+        "combine: Use square nonnegativity or the product sign rule.",
+        "conclude: State the requested ordered-real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : 2*x ≤ x^2 + 1 := by nlinarith [sq_nonneg (x - 1)]"
+    },
+    {
+      "id": "poly_shifted_square_minimum",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, (x-2)^2 + 3 is at least 3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"geq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>2</OMI></OMA><OMI>3</OMI></OMA><OMI>3</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use nonnegativity of the translated square.",
+      "sketch_steps": [
+        "setup: Bind the real variable and record the stated interval or sign hypotheses.",
+        "rewrite: Rewrite the expression as a square or a product of explicit real factors.",
+        "sign: Determine the sign of every factor from the hypotheses.",
+        "combine: Use square nonnegativity or the product sign rule.",
+        "conclude: State the requested ordered-real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : 3 ≤ (x - 2)^2 + 3 := by nlinarith [sq_nonneg (x - 2)]"
+    },
+    {
+      "id": "poly_square_upper_bound_interval",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if x^2 is at most 4 then -2 ≤ x and x ≤ 2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>4</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>-2</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use contradiction with the square lower bounds outside [-2,2].",
+      "sketch_steps": [
+        "setup: Bind the real variable and record the stated interval or sign hypotheses.",
+        "rewrite: Rewrite the expression as a square or a product of explicit real factors.",
+        "sign: Determine the sign of every factor from the hypotheses.",
+        "combine: Use square nonnegativity or the product sign rule.",
+        "conclude: State the requested ordered-real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : x^2 ≤ 4 → -2 ≤ x ∧ x ≤ 2 := by\n  intro h\n  constructor <;> nlinarith [sq_nonneg (x + 2), sq_nonneg (x - 2)]"
+    },
+    {
+      "id": "poly_product_nonpositive_inside_interval",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if -3 ≤ x and x ≤ 1 then (x-1)(x+3) ≤ 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>-3</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "The first factor is nonpositive and the second is nonnegative on the interval.",
+      "sketch_steps": [
+        "setup: Bind the real variable and record the stated interval or sign hypotheses.",
+        "rewrite: Rewrite the expression as a square or a product of explicit real factors.",
+        "sign: Determine the sign of every factor from the hypotheses.",
+        "combine: Use square nonnegativity or the product sign rule.",
+        "conclude: State the requested ordered-real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : -3 ≤ x → x ≤ 1 → (x - 1) * (x + 3) ≤ 0 := by\n  intro hleft hright\n  exact mul_nonpos_of_nonpos_of_nonneg (by linarith) (by linarith)"
+    },
+    {
+      "id": "poly_product_nonnegative_right_of_root",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if x ≥ 1 then (x-1)(x+3) is nonnegative.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"geq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"geq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Both factors are nonnegative to the right of the larger root.",
+      "sketch_steps": [
+        "setup: Bind the real variable and record the stated interval or sign hypotheses.",
+        "rewrite: Rewrite the expression as a square or a product of explicit real factors.",
+        "sign: Determine the sign of every factor from the hypotheses.",
+        "combine: Use square nonnegativity or the product sign rule.",
+        "conclude: State the requested ordered-real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : 1 ≤ x → 0 ≤ (x - 1) * (x + 3) := by\n  intro h\n  exact mul_nonneg (by linarith) (by linarith)"
+    },
+    {
+      "id": "poly_product_nonnegative_left_of_root",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if x ≤ -3 then (x-1)(x+3) is nonnegative.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMI>-3</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"geq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Both factors are nonpositive to the left of the smaller root.",
+      "sketch_steps": [
+        "setup: Bind the real variable and record the stated interval or sign hypotheses.",
+        "rewrite: Rewrite the expression as a square or a product of explicit real factors.",
+        "sign: Determine the sign of every factor from the hypotheses.",
+        "combine: Use square nonnegativity or the product sign rule.",
+        "conclude: State the requested ordered-real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : x ≤ -3 → 0 ≤ (x - 1) * (x + 3) := by\n  intro h\n  exact mul_nonneg_of_nonpos_of_nonpos (by linarith) (by linarith)"
+    },
+    {
+      "id": "poly_product_strictly_negative_between_roots",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if -3 < x and x < 1 then (x-1)(x+3) is negative.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMI>-3</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Between the roots the first factor is negative and the second is positive.",
+      "sketch_steps": [
+        "setup: Bind the real variable and record the stated interval or sign hypotheses.",
+        "rewrite: Rewrite the expression as a square or a product of explicit real factors.",
+        "sign: Determine the sign of every factor from the hypotheses.",
+        "combine: Use square nonnegativity or the product sign rule.",
+        "conclude: State the requested ordered-real inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : -3 < x → x < 1 → (x - 1) * (x + 3) < 0 := by\n  intro hleft hright\n  exact mul_neg_of_neg_of_pos (by linarith) (by linarith)"
+    },
+    {
+      "id": "poly_cubic_strictly_increasing",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "polynomial_inequalities",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, if x < y then x^3 < y^3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>3</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor y^3-x^3; its linear factor and quadratic cofactor are positive when x<y.",
+      "sketch_steps": [
+        "setup: Bind the real variable and record the stated interval or sign hypotheses.",
+        "rewrite: Rewrite the expression as a square or a product of explicit real factors.",
+        "sign: Determine the sign of every factor from the hypotheses.",
+        "combine: Use square nonnegativity or the product sign rule.",
+        "conclude: State the requested ordered-real inequality."
+      ],
+      "lean_witness": "example (x y : ℝ) : x < y → x^3 < y^3 := by\n  intro h\n  have hcofactor : 0 < y^2 + x*y + x^2 := by\n    nlinarith [sq_nonneg (x + y), sq_nonneg (x - y)]\n  have hprod : 0 < (y - x) * (y^2 + x*y + x^2) := mul_pos (by linarith) hcofactor\n  nlinarith"
+    },
+    {
+      "id": "rat_difference_squares_cancellation",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_expression_identities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x with x ≠ 1, (x^2-1)/(x-1) = x+1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor the numerator as (x-1)(x+1) and cancel the certified nonzero factor.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record every displayed nonzero denominator premise.",
+        "factor: Factor the numerator or place both sides over the common denominator.",
+        "cancel: Cancel only factors certified nonzero by the premise.",
+        "simplify: Normalize the resulting real rational expression.",
+        "conclude: State the equality with its denominator domain retained."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : x ≠ 1) : (x^2 - 1) / (x - 1) = x + 1 := by\n  field_simp\n  ring"
+    },
+    {
+      "id": "rat_difference_squares_cancellation_shifted",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_expression_identities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x with x ≠ 2, (x^2-4)/(x-2) = x+2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>4</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor the numerator as (x-2)(x+2) and retain the denominator exclusion.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record every displayed nonzero denominator premise.",
+        "factor: Factor the numerator or place both sides over the common denominator.",
+        "cancel: Cancel only factors certified nonzero by the premise.",
+        "simplify: Normalize the resulting real rational expression.",
+        "conclude: State the equality with its denominator domain retained."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : x ≠ 2) : (x^2 - 4) / (x - 2) = x + 2 := by\n  field_simp\n  ring"
+    },
+    {
+      "id": "rat_difference_squares_cancellation_negative_shift",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_expression_identities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x with x ≠ -3, (x^2-9)/(x+3) = x-3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMI>-3</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>9</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor the numerator as (x-3)(x+3) and retain the denominator exclusion.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record every displayed nonzero denominator premise.",
+        "factor: Factor the numerator or place both sides over the common denominator.",
+        "cancel: Cancel only factors certified nonzero by the premise.",
+        "simplify: Normalize the resulting real rational expression.",
+        "conclude: State the equality with its denominator domain retained."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : x ≠ -3) : (x^2 - 9) / (x + 3) = x - 3 := by\n  have hden : x + 3 ≠ 0 := by\n    intro hzero\n    apply hx\n    linarith\n  field_simp [hden] <;> ring"
+    },
+    {
+      "id": "rat_sum_two_reciprocals",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_expression_identities",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y with x ≠ 0 and y ≠ 0, 1/x + 1/y = (x+y)/(xy).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the common denominator xy after recording both nonzero factors.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record every displayed nonzero denominator premise.",
+        "factor: Factor the numerator or place both sides over the common denominator.",
+        "cancel: Cancel only factors certified nonzero by the premise.",
+        "simplify: Normalize the resulting real rational expression.",
+        "conclude: State the equality with its denominator domain retained."
+      ],
+      "lean_witness": "example (x y : ℝ) (hx : x ≠ 0) (hy : y ≠ 0) : 1/x + 1/y = (x+y)/(x*y) := by\n  field_simp\n  ring"
+    },
+    {
+      "id": "rat_difference_two_reciprocals",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_expression_identities",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y with x ≠ 0 and y ≠ 0, 1/x - 1/y = (y-x)/(xy).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"y\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the common denominator xy and subtract the numerators in order.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record every displayed nonzero denominator premise.",
+        "factor: Factor the numerator or place both sides over the common denominator.",
+        "cancel: Cancel only factors certified nonzero by the premise.",
+        "simplify: Normalize the resulting real rational expression.",
+        "conclude: State the equality with its denominator domain retained."
+      ],
+      "lean_witness": "example (x y : ℝ) (hx : x ≠ 0) (hy : y ≠ 0) : 1/x - 1/y = (y-x)/(x*y) := by\n  field_simp [hx, hy] <;> ring"
+    },
+    {
+      "id": "rat_adjacent_partial_fractions",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_expression_identities",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real x with x ≠ -1 and x ≠ -2, (2x+3)/((x+1)(x+2)) = 1/(x+1) + 1/(x+2).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMI>-1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMI>-2</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMI>3</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Decompose the numerator using the two adjacent linear denominator factors.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record every displayed nonzero denominator premise.",
+        "factor: Factor the numerator or place both sides over the common denominator.",
+        "cancel: Cancel only factors certified nonzero by the premise.",
+        "simplify: Normalize the resulting real rational expression.",
+        "conclude: State the equality with its denominator domain retained."
+      ],
+      "lean_witness": "example (x : ℝ) (h1 : x ≠ -1) (h2 : x ≠ -2) : (2*x + 3) / ((x+1)*(x+2)) = 1/(x+1) + 1/(x+2) := by\n  have hden1 : x + 1 ≠ 0 := by\n    intro hzero\n    apply h1\n    linarith\n  have hden2 : x + 2 ≠ 0 := by\n    intro hzero\n    apply h2\n    linarith\n  field_simp [hden1, hden2] <;> ring"
+    },
+    {
+      "id": "rat_linear_fraction_minus_one",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_expression_identities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x with x ≠ 1, (x+1)/(x-1) - 1 = 2/(x-1).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>2</OMI><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Put the constant one over x-1 and subtract numerators.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record every displayed nonzero denominator premise.",
+        "factor: Factor the numerator or place both sides over the common denominator.",
+        "cancel: Cancel only factors certified nonzero by the premise.",
+        "simplify: Normalize the resulting real rational expression.",
+        "conclude: State the equality with its denominator domain retained."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : x ≠ 1) : (x+1)/(x-1) - 1 = 2/(x-1) := by\n  field_simp\n  ring"
+    },
+    {
+      "id": "rat_square_over_square_plus_one_bound",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_expression_identities",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real x, x^2/(x^2+1) is at most 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>1</OMI></OMA></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "The denominator x^2+1 is positive; compare the numerator to it before division.",
+      "sketch_steps": [
+        "setup: Bind the real variable and translate the interval hypothesis into signs of numerator and denominator.",
+        "numerator: Determine the strict sign of the numerator factor.",
+        "denominator: Determine the strict sign of the denominator factor.",
+        "quotient_sign: Apply the ordered-field quotient sign rule.",
+        "conclude: State the resulting strict rational inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : x^2 / (x^2 + 1) ≤ 1 := by\n  have hpos : 0 < x^2 + 1 := by nlinarith [sq_nonneg x]\n  apply (div_le_iff₀ hpos).mpr\n  nlinarith"
+    },
+    {
+      "id": "rat_fraction_equals_two_solution",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x with x ≠ 2, if (x+1)/(x-2) = 2 then x = 5.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>5</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Clear the nonzero denominator x-2 and solve the resulting linear equation.",
+      "sketch_steps": [
+        "setup: Bind the real unknown and preserve the stated denominator exclusion.",
+        "clear_denominators: Multiply by the explicitly nonzero denominator.",
+        "solve: Reduce the equation to a linear polynomial equation and solve it.",
+        "check_domain: Verify that the displayed solution is not an excluded denominator value.",
+        "conclude: State the real solution implication."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : x ≠ 2) : (x+1)/(x-2) = 2 → x = 5 := by\n  intro h\n  have hden : x - 2 ≠ 0 := by\n    intro hzero\n    apply hx\n    linarith\n  field_simp [hden] at h\n  linarith"
+    },
+    {
+      "id": "rat_fraction_equals_half_solution",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x with x ≠ -1, if x/(x+1) = 1/2 then x = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMI>-1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMI>2</OMI></OMA></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Clear the nonzero denominator x+1 and solve the resulting linear equation.",
+      "sketch_steps": [
+        "setup: Bind the real unknown and preserve the stated denominator exclusion.",
+        "clear_denominators: Multiply by the explicitly nonzero denominator.",
+        "solve: Reduce the equation to a linear polynomial equation and solve it.",
+        "check_domain: Verify that the displayed solution is not an excluded denominator value.",
+        "conclude: State the real solution implication."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : x ≠ -1) : x/(x+1) = 1/2 → x = 1 := by\n  intro h\n  have hden : x + 1 ≠ 0 := by\n    intro hzero\n    apply hx\n    linarith\n  field_simp [hden] at h\n  linarith"
+    },
+    {
+      "id": "rat_reciprocal_equals_two_solution",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x with x ≠ 1, if 1/(x-1) = 2 then x = 3/2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>3</OMI><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Clear the nonzero denominator x-1 and solve the resulting linear equation.",
+      "sketch_steps": [
+        "setup: Bind the real unknown and preserve the stated denominator exclusion.",
+        "clear_denominators: Multiply by the explicitly nonzero denominator.",
+        "solve: Reduce the equation to a linear polynomial equation and solve it.",
+        "check_domain: Verify that the displayed solution is not an excluded denominator value.",
+        "conclude: State the real solution implication."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : x ≠ 1) : 1/(x-1) = 2 → x = 3/2 := by\n  intro h\n  have hden : x - 1 ≠ 0 := by\n    intro hzero\n    apply hx\n    linarith\n  field_simp [hden] at h\n  linarith"
+    },
+    {
+      "id": "rat_three_over_shift_equals_one_solution",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x with x ≠ -2, if 3/(x+2) = 1 then x = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMI>-2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>3</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Clear the nonzero denominator x+2 and solve the resulting linear equation.",
+      "sketch_steps": [
+        "setup: Bind the real unknown and preserve the stated denominator exclusion.",
+        "clear_denominators: Multiply by the explicitly nonzero denominator.",
+        "solve: Reduce the equation to a linear polynomial equation and solve it.",
+        "check_domain: Verify that the displayed solution is not an excluded denominator value.",
+        "conclude: State the real solution implication."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : x ≠ -2) : 3/(x+2) = 1 → x = 1 := by\n  intro h\n  have hden : x + 2 ≠ 0 := by\n    intro hzero\n    apply hx\n    linarith\n  field_simp [hden] at h\n  linarith"
+    },
+    {
+      "id": "rat_product_fraction_equals_one_solution",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_equations",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real x with x ≠ -1, if (x-2)/(x+1) = 1 then x = 3/2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMI>-1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>3</OMI><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Clear x+1, solve x-2=x+1, and retain the sole denominator exclusion.",
+      "sketch_steps": [
+        "setup: Bind the real unknown and preserve the stated denominator exclusion.",
+        "clear_denominators: Multiply by the explicitly nonzero denominator.",
+        "solve: Reduce the equation to a linear polynomial equation and solve it.",
+        "check_domain: Verify that the displayed solution is not an excluded denominator value.",
+        "conclude: State the real solution implication."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : x ≠ -1) : (x-2)/(x+1) = 1 → x = 3/2 := by\n  intro h\n  have hden : x + 1 ≠ 0 := by\n    intro hzero\n    apply hx\n    linarith\n  field_simp [hden] at h\n  linarith"
+    },
+    {
+      "id": "rat_two_over_shift_equals_four_solution",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x with x ≠ -1, if 2/(x+1) = 4 then x = -1/2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"x\"/><OMI>-1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>2</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMI>4</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>-1</OMI><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Clear the nonzero denominator x+1 and solve the resulting linear equation.",
+      "sketch_steps": [
+        "setup: Bind the real unknown and preserve the stated denominator exclusion.",
+        "clear_denominators: Multiply by the explicitly nonzero denominator.",
+        "solve: Reduce the equation to a linear polynomial equation and solve it.",
+        "check_domain: Verify that the displayed solution is not an excluded denominator value.",
+        "conclude: State the real solution implication."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : x ≠ -1) : 2/(x+1) = 4 → x = -1/2 := by\n  intro h\n  have hden : x + 1 ≠ 0 := by\n    intro hzero\n    apply hx\n    linarith\n  field_simp [hden] at h\n  linarith"
+    },
+    {
+      "id": "rat_positive_right_of_two",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if x > 2 then (x-2)/(x+1) is positive.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Both numerator and denominator are positive when x>2.",
+      "sketch_steps": [
+        "setup: Bind the real variable and translate the interval hypothesis into signs of numerator and denominator.",
+        "numerator: Determine the strict sign of the numerator factor.",
+        "denominator: Determine the strict sign of the denominator factor.",
+        "quotient_sign: Apply the ordered-field quotient sign rule.",
+        "conclude: State the resulting strict rational inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : x > 2 → 0 < (x-2)/(x+1) := by\n  intro h\n  exact div_pos (by linarith) (by linarith)"
+    },
+    {
+      "id": "rat_positive_left_of_negative_one",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if x < -1 then (x-2)/(x+1) is positive.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMI>-1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Both numerator and denominator are negative when x<-1.",
+      "sketch_steps": [
+        "setup: Bind the real variable and translate the interval hypothesis into signs of numerator and denominator.",
+        "numerator: Determine the strict sign of the numerator factor.",
+        "denominator: Determine the strict sign of the denominator factor.",
+        "quotient_sign: Apply the ordered-field quotient sign rule.",
+        "conclude: State the resulting strict rational inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : x < -1 → 0 < (x-2)/(x+1) := by\n  intro h\n  exact div_pos_of_neg_of_neg (by linarith) (by linarith)"
+    },
+    {
+      "id": "rat_negative_between_negative_one_and_two",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if -1 < x and x < 2 then (x-2)/(x+1) is negative.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMI>-1</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "The numerator is negative and the denominator is positive between the excluded value and the root.",
+      "sketch_steps": [
+        "setup: Bind the real variable and translate the interval hypothesis into signs of numerator and denominator.",
+        "numerator: Determine the strict sign of the numerator factor.",
+        "denominator: Determine the strict sign of the denominator factor.",
+        "quotient_sign: Apply the ordered-field quotient sign rule.",
+        "conclude: State the resulting strict rational inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : -1 < x → x < 2 → (x-2)/(x+1) < 0 := by\n  intro hleft hright\n  exact div_neg_of_neg_of_pos (by linarith) (by linarith)"
+    },
+    {
+      "id": "rat_reciprocal_positive_right_of_negative_one",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_polynomials_rational_expressions_equations_inequalities",
+      "level": "high_school",
+      "topic": "rational_inequalities",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, if x > -1 then 1/(x+1) is positive.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>-1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "The denominator x+1 is positive, so its positive reciprocal is positive.",
+      "sketch_steps": [
+        "setup: Bind the real variable and translate the interval hypothesis into signs of numerator and denominator.",
+        "numerator: Determine the strict sign of the numerator factor.",
+        "denominator: Determine the strict sign of the denominator factor.",
+        "quotient_sign: Apply the ordered-field quotient sign rule.",
+        "conclude: State the resulting strict rational inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : x > -1 → 0 < 1/(x+1) := by\n  intro h\n  exact one_div_pos.mpr (by linarith)"
+    }
+  ]
+}

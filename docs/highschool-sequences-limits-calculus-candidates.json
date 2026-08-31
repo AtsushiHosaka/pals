@@ -1,0 +1,632 @@
+{
+  "schema_version": "pals.high-school-sequences-limits-and-calculus-candidates.v1",
+  "source": "PALS first-party authored, Lean-verified candidate set",
+  "current_profile_card_count": 22,
+  "proposed_calculus_extension_card_count": 9,
+  "notes": {
+    "current_profile": "Validated by the current generic OpenMath statement validator.",
+    "proposed_calculus_extension": "Requires explicit registration of calculus1:diff, calculus1:defint, and interval1:oriented_interval before it can enter the generic validator."
+  },
+  "cards": [
+    {
+      "id": "hs_seq_reciprocal_n_plus_one_to_zero",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that the real sequence 1/(n + 1) converges to 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"sequence_lambda\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"index_to_real\"/><OMV name=\"n\"/></OMA><OMI>1</OMI></OMA></OMA></OMBIND><OMI>0</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Apply the reciprocal-sequence limit after shifting the natural index by one.",
+      "sketch_steps": [
+        "setup: State the sequence as a real-valued function of the natural index n.",
+        "normalize: Rewrite its leading terms using the real embedding of n.",
+        "bound_or_ratio: Compare numerator and denominator growth, or use a standard limit theorem.",
+        "limit: Evaluate the resulting constant or vanishing factor.",
+        "conclude: Translate the calculation back to convergence of the original sequence."
+      ],
+      "lean_witness": "example : Filter.Tendsto (fun n : ℕ => (1 : ℝ) / (n + 1)) Filter.atTop (nhds 0) := by\n  simpa using (tendsto_one_div_add_atTop_nhds_zero_nat : Filter.Tendsto (fun n : ℕ => (1 : ℝ) / ((n : ℝ) + 1)) Filter.atTop (nhds 0))"
+    },
+    {
+      "id": "hs_seq_ratio_n_over_n_plus_one_to_one",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that the real sequence n/(n + 1) converges to 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"sequence_lambda\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"index_to_real\"/><OMV name=\"n\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"index_to_real\"/><OMV name=\"n\"/></OMA><OMI>1</OMI></OMA></OMA></OMBIND><OMI>1</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Divide numerator and denominator by the leading power of n, or invoke the standard affine-ratio limit.",
+      "sketch_steps": [
+        "setup: State the sequence as a real-valued function of the natural index n.",
+        "normalize: Rewrite its leading terms using the real embedding of n.",
+        "bound_or_ratio: Compare numerator and denominator growth, or use a standard limit theorem.",
+        "limit: Evaluate the resulting constant or vanishing factor.",
+        "conclude: Translate the calculation back to convergence of the original sequence."
+      ],
+      "lean_witness": "example : Filter.Tendsto (fun n : ℕ => (n : ℝ) / (n + 1)) Filter.atTop (nhds 1) := by\n  simpa using (tendsto_natCast_div_add_atTop (1 : ℝ))"
+    },
+    {
+      "id": "hs_seq_affine_ratio_two_n_plus_three_to_two",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that the real sequence (2n + 3)/(n + 1) converges to 2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"sequence_lambda\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMI>3</OMI><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"index_to_real\"/><OMV name=\"n\"/></OMA></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMI>1</OMI><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"index_to_real\"/><OMV name=\"n\"/></OMA></OMA></OMA></OMBIND><OMI>2</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Use the quotient of affine functions: the limit is the ratio of their leading coefficients.",
+      "sketch_steps": [
+        "setup: State the sequence as a real-valued function of the natural index n.",
+        "normalize: Rewrite its leading terms using the real embedding of n.",
+        "bound_or_ratio: Compare numerator and denominator growth, or use a standard limit theorem.",
+        "limit: Evaluate the resulting constant or vanishing factor.",
+        "conclude: Translate the calculation back to convergence of the original sequence."
+      ],
+      "lean_witness": "example : Filter.Tendsto (fun n : ℕ => (3 + 2 * (n : ℝ)) / (1 + (n : ℝ))) Filter.atTop (nhds 2) := by\n  simpa using (tendsto_add_mul_div_add_mul_atTop_nhds (3 : ℝ) 1 2 (by norm_num : (1 : ℝ) ≠ 0))"
+    },
+    {
+      "id": "hs_seq_affine_ratio_three_n_plus_one_to_three_halves",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that the real sequence (3n + 1)/(2n + 4) converges to 3/2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"sequence_lambda\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"index_to_real\"/><OMV name=\"n\"/></OMA></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMI>4</OMI><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"index_to_real\"/><OMV name=\"n\"/></OMA></OMA></OMA></OMA></OMBIND><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>3</OMI><OMI>2</OMI></OMA></OMA></OMOBJ>",
+      "proof_strategy": "Use the quotient of affine functions and retain the leading coefficients 3 and 2.",
+      "sketch_steps": [
+        "setup: State the sequence as a real-valued function of the natural index n.",
+        "normalize: Rewrite its leading terms using the real embedding of n.",
+        "bound_or_ratio: Compare numerator and denominator growth, or use a standard limit theorem.",
+        "limit: Evaluate the resulting constant or vanishing factor.",
+        "conclude: Translate the calculation back to convergence of the original sequence."
+      ],
+      "lean_witness": "example : Filter.Tendsto (fun n : ℕ => (1 + 3 * (n : ℝ)) / (4 + 2 * (n : ℝ))) Filter.atTop (nhds ((3 : ℝ) / 2)) := by\n  simpa [add_comm, add_left_comm, add_assoc] using (tendsto_add_mul_div_add_mul_atTop_nhds (1 : ℝ) 4 3 (by norm_num : (2 : ℝ) ≠ 0))"
+    },
+    {
+      "id": "hs_seq_linear_over_quadratic_to_zero",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that the real sequence n/n^2 converges to 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"sequence_lambda\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"index_to_real\"/><OMV name=\"n\"/></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"index_to_real\"/><OMV name=\"n\"/></OMA><OMI>2</OMI></OMA></OMA></OMBIND><OMI>0</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Compare the numerator degree one with the denominator degree two.",
+      "sketch_steps": [
+        "setup: State the sequence as a real-valued function of the natural index n.",
+        "normalize: Rewrite its leading terms using the real embedding of n.",
+        "bound_or_ratio: Compare numerator and denominator growth, or use a standard limit theorem.",
+        "limit: Evaluate the resulting constant or vanishing factor.",
+        "conclude: Translate the calculation back to convergence of the original sequence."
+      ],
+      "lean_witness": "example : Filter.Tendsto (fun n : ℕ => ((n : ℝ)^1) / ((n : ℝ)^2)) Filter.atTop (nhds 0) := by\n  exact (tendsto_pow_div_pow_atTop_zero (by norm_num)).comp tendsto_natCast_atTop_atTop"
+    },
+    {
+      "id": "hs_seq_quadratic_over_cubic_to_zero",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that the real sequence n^2/n^3 converges to 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"sequence_lambda\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"index_to_real\"/><OMV name=\"n\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"index_to_real\"/><OMV name=\"n\"/></OMA><OMI>3</OMI></OMA></OMA></OMBIND><OMI>0</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Compare the numerator degree two with the denominator degree three.",
+      "sketch_steps": [
+        "setup: State the sequence as a real-valued function of the natural index n.",
+        "normalize: Rewrite its leading terms using the real embedding of n.",
+        "bound_or_ratio: Compare numerator and denominator growth, or use a standard limit theorem.",
+        "limit: Evaluate the resulting constant or vanishing factor.",
+        "conclude: Translate the calculation back to convergence of the original sequence."
+      ],
+      "lean_witness": "example : Filter.Tendsto (fun n : ℕ => ((n : ℝ)^2) / ((n : ℝ)^3)) Filter.atTop (nhds 0) := by\n  exact (tendsto_pow_div_pow_atTop_zero (by norm_num)).comp tendsto_natCast_atTop_atTop"
+    },
+    {
+      "id": "hs_seq_four_over_n_to_zero",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that the real sequence 4/n converges to 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"sequence_lambda\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>4</OMI><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"index_to_real\"/><OMV name=\"n\"/></OMA></OMA></OMBIND><OMI>0</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Use the fact that a fixed constant divided by an unbounded natural index tends to zero.",
+      "sketch_steps": [
+        "setup: State the sequence as a real-valued function of the natural index n.",
+        "normalize: Rewrite its leading terms using the real embedding of n.",
+        "bound_or_ratio: Compare numerator and denominator growth, or use a standard limit theorem.",
+        "limit: Evaluate the resulting constant or vanishing factor.",
+        "conclude: Translate the calculation back to convergence of the original sequence."
+      ],
+      "lean_witness": "example : Filter.Tendsto (fun n : ℕ => (4 : ℝ) / n) Filter.atTop (nhds 0) := by\n  simpa using (tendsto_const_div_atTop_nhds_zero_nat (4 : ℝ))"
+    },
+    {
+      "id": "hs_seq_sum_limit_law",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that if real sequences u and v converge to L and M, then their termwise sum converges to L + M.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"forall_real_sequence\"/><OMBVAR><OMV name=\"u\"/><OMV name=\"v\"/></OMBVAR><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"L\"/><OMV name=\"M\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMV name=\"u\"/><OMV name=\"L\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMV name=\"v\"/><OMV name=\"M\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"sequence_add\"/><OMV name=\"u\"/><OMV name=\"v\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"L\"/><OMV name=\"M\"/></OMA></OMA></OMA></OMBIND></OMBIND></OMOBJ>",
+      "proof_strategy": "Use continuity of addition at the pair of sequence limits.",
+      "sketch_steps": [
+        "setup: Bind the two convergent sequences and their proposed limits.",
+        "hypotheses: Record the convergence hypotheses and any nonzero limit condition.",
+        "closure: Apply continuity of the displayed arithmetic operation on real limits.",
+        "target: Compute the operation on L and M.",
+        "conclude: State convergence of the transformed sequence."
+      ],
+      "lean_witness": "example : ∀ (u v : ℕ → ℝ) (L M : ℝ), Filter.Tendsto u Filter.atTop (nhds L) → Filter.Tendsto v Filter.atTop (nhds M) → Filter.Tendsto (fun n => u n + v n) Filter.atTop (nhds (L + M)) := by\n  intro u v L M hu hv\n  exact hu.add hv"
+    },
+    {
+      "id": "hs_seq_difference_limit_law",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that if real sequences u and v converge to L and M, then their termwise difference converges to L - M.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"forall_real_sequence\"/><OMBVAR><OMV name=\"u\"/><OMV name=\"v\"/></OMBVAR><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"L\"/><OMV name=\"M\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMV name=\"u\"/><OMV name=\"L\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMV name=\"v\"/><OMV name=\"M\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"sequence_sub\"/><OMV name=\"u\"/><OMV name=\"v\"/></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"L\"/><OMV name=\"M\"/></OMA></OMA></OMA></OMBIND></OMBIND></OMOBJ>",
+      "proof_strategy": "Use continuity of subtraction at the pair of sequence limits.",
+      "sketch_steps": [
+        "setup: Bind the two convergent sequences and their proposed limits.",
+        "hypotheses: Record the convergence hypotheses and any nonzero limit condition.",
+        "closure: Apply continuity of the displayed arithmetic operation on real limits.",
+        "target: Compute the operation on L and M.",
+        "conclude: State convergence of the transformed sequence."
+      ],
+      "lean_witness": "example : ∀ (u v : ℕ → ℝ) (L M : ℝ), Filter.Tendsto u Filter.atTop (nhds L) → Filter.Tendsto v Filter.atTop (nhds M) → Filter.Tendsto (fun n => u n - v n) Filter.atTop (nhds (L - M)) := by\n  intro u v L M hu hv\n  exact hu.sub hv"
+    },
+    {
+      "id": "hs_seq_product_limit_law",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that if real sequences u and v converge to L and M, then their termwise product converges to L*M.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"forall_real_sequence\"/><OMBVAR><OMV name=\"u\"/><OMV name=\"v\"/></OMBVAR><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"L\"/><OMV name=\"M\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMV name=\"u\"/><OMV name=\"L\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMV name=\"v\"/><OMV name=\"M\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"sequence_mul\"/><OMV name=\"u\"/><OMV name=\"v\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"L\"/><OMV name=\"M\"/></OMA></OMA></OMA></OMBIND></OMBIND></OMOBJ>",
+      "proof_strategy": "Use continuity of multiplication at the pair of sequence limits.",
+      "sketch_steps": [
+        "setup: Bind the two convergent sequences and their proposed limits.",
+        "hypotheses: Record the convergence hypotheses and any nonzero limit condition.",
+        "closure: Apply continuity of the displayed arithmetic operation on real limits.",
+        "target: Compute the operation on L and M.",
+        "conclude: State convergence of the transformed sequence."
+      ],
+      "lean_witness": "example : ∀ (u v : ℕ → ℝ) (L M : ℝ), Filter.Tendsto u Filter.atTop (nhds L) → Filter.Tendsto v Filter.atTop (nhds M) → Filter.Tendsto (fun n => u n * v n) Filter.atTop (nhds (L * M)) := by\n  intro u v L M hu hv\n  exact hu.mul hv"
+    },
+    {
+      "id": "hs_seq_quotient_limit_law",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that if real sequences u and v converge to L and nonzero M, then their termwise quotient converges to L/M.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"forall_real_sequence\"/><OMBVAR><OMV name=\"u\"/><OMV name=\"v\"/></OMBVAR><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"L\"/><OMV name=\"M\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMV name=\"u\"/><OMV name=\"L\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMV name=\"v\"/><OMV name=\"M\"/></OMA><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"M\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"sequence_div\"/><OMV name=\"u\"/><OMV name=\"v\"/></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMV name=\"L\"/><OMV name=\"M\"/></OMA></OMA></OMA></OMBIND></OMBIND></OMOBJ>",
+      "proof_strategy": "Use continuity of division away from a zero denominator limit.",
+      "sketch_steps": [
+        "setup: Bind the two convergent sequences and their proposed limits.",
+        "hypotheses: Record the convergence hypotheses and any nonzero limit condition.",
+        "closure: Apply continuity of the displayed arithmetic operation on real limits.",
+        "target: Compute the operation on L and M.",
+        "conclude: State convergence of the transformed sequence."
+      ],
+      "lean_witness": "example : ∀ (u v : ℕ → ℝ) (L M : ℝ), Filter.Tendsto u Filter.atTop (nhds L) → Filter.Tendsto v Filter.atTop (nhds M) → M ≠ 0 → Filter.Tendsto (fun n => u n / v n) Filter.atTop (nhds (L / M)) := by\n  intro u v L M hu hv hM\n  exact hu.div hv hM"
+    },
+    {
+      "id": "hs_seq_scalar_limit_law",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that if sequence u converges to L, then termwise scaling by real c converges to c*L.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"forall_real_sequence\"/><OMBVAR><OMV name=\"u\"/></OMBVAR><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"L\"/><OMV name=\"c\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMV name=\"u\"/><OMV name=\"L\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"sequence_scale\"/><OMV name=\"c\"/><OMV name=\"u\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"c\"/><OMV name=\"L\"/></OMA></OMA></OMA></OMBIND></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply continuity of scalar multiplication by the fixed real c.",
+      "sketch_steps": [
+        "setup: Bind the two convergent sequences and their proposed limits.",
+        "hypotheses: Record the convergence hypotheses and any nonzero limit condition.",
+        "closure: Apply continuity of the displayed arithmetic operation on real limits.",
+        "target: Compute the operation on L and M.",
+        "conclude: State convergence of the transformed sequence."
+      ],
+      "lean_witness": "example : ∀ (u : ℕ → ℝ) (L c : ℝ), Filter.Tendsto u Filter.atTop (nhds L) → Filter.Tendsto (fun n => c * u n) Filter.atTop (nhds (c * L)) := by\n  intro u L c hu\n  exact hu.const_mul c"
+    },
+    {
+      "id": "hs_seq_negative_limit_law",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that if sequence u converges to L, then termwise negation converges to -L.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"forall_real_sequence\"/><OMBVAR><OMV name=\"u\"/></OMBVAR><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"L\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMV name=\"u\"/><OMV name=\"L\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"sequence_neg\"/><OMV name=\"u\"/></OMA><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"L\"/></OMA></OMA></OMA></OMBIND></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply continuity of negation at the sequence limit.",
+      "sketch_steps": [
+        "setup: Bind the two convergent sequences and their proposed limits.",
+        "hypotheses: Record the convergence hypotheses and any nonzero limit condition.",
+        "closure: Apply continuity of the displayed arithmetic operation on real limits.",
+        "target: Compute the operation on L and M.",
+        "conclude: State convergence of the transformed sequence."
+      ],
+      "lean_witness": "example : ∀ (u : ℕ → ℝ) (L : ℝ), Filter.Tendsto u Filter.atTop (nhds L) → Filter.Tendsto (fun n => -u n) Filter.atTop (nhds (-L)) := by\n  intro u L hu\n  exact hu.neg"
+    },
+    {
+      "id": "hs_limit_square_at_a",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that for every real a, lim_{x→a} x^2 = a^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"has_limit_at\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND><OMV name=\"a\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"a\"/><OMI>2</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use continuity of the square function and restrict its neighborhood to the punctured neighborhood.",
+      "sketch_steps": [
+        "setup: Fix the approach point a and write the displayed function as a real lambda term.",
+        "continuity: Establish continuity of each polynomial, absolute-value, or rational component at a.",
+        "denominator: For rational expressions, prove that the denominator at a is nonzero.",
+        "transport: Restrict the neighborhood to the punctured neighborhood of a.",
+        "evaluate: Evaluate the continuous expression at a.",
+        "conclude: State the punctured-point limit."
+      ],
+      "lean_witness": "example (a : ℝ) : Filter.Tendsto (fun x : ℝ => x^2) (nhdsWithin a {a}ᶜ) (nhds (a^2)) := by\n  exact ((continuousAt_id.pow 2).tendsto).mono_left inf_le_left"
+    },
+    {
+      "id": "hs_limit_cube_at_a",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that for every real a, lim_{x→a} x^3 = a^3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"has_limit_at\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMBIND><OMV name=\"a\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"a\"/><OMI>3</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use continuity of the cubic polynomial.",
+      "sketch_steps": [
+        "setup: Fix the approach point a and write the displayed function as a real lambda term.",
+        "continuity: Establish continuity of each polynomial, absolute-value, or rational component at a.",
+        "denominator: For rational expressions, prove that the denominator at a is nonzero.",
+        "transport: Restrict the neighborhood to the punctured neighborhood of a.",
+        "evaluate: Evaluate the continuous expression at a.",
+        "conclude: State the punctured-point limit."
+      ],
+      "lean_witness": "example (a : ℝ) : Filter.Tendsto (fun x : ℝ => x^3) (nhdsWithin a {a}ᶜ) (nhds (a^3)) := by\n  exact ((continuousAt_id.pow 3).tendsto).mono_left inf_le_left"
+    },
+    {
+      "id": "hs_limit_quadratic_polynomial_at_a",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that for every real a, lim_{x→a} (2x^2 - 3x + 1) = 2a^2 - 3a + 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"has_limit_at\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMV name=\"x\"/></OMA></OMA><OMI>1</OMI></OMA></OMBIND><OMV name=\"a\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"a\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMV name=\"a\"/></OMA></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Build the polynomial from continuous addition, multiplication, and powers.",
+      "sketch_steps": [
+        "setup: Fix the approach point a and write the displayed function as a real lambda term.",
+        "continuity: Establish continuity of each polynomial, absolute-value, or rational component at a.",
+        "denominator: For rational expressions, prove that the denominator at a is nonzero.",
+        "transport: Restrict the neighborhood to the punctured neighborhood of a.",
+        "evaluate: Evaluate the continuous expression at a.",
+        "conclude: State the punctured-point limit."
+      ],
+      "lean_witness": "example (a : ℝ) : Filter.Tendsto (fun x : ℝ => 2*x^2 - 3*x + 1) (nhdsWithin a {a}ᶜ) (nhds (2*a^2 - 3*a + 1)) := by\n  exact ((by fun_prop : ContinuousAt (fun x : ℝ => 2*x^2 - 3*x + 1) a).tendsto).mono_left inf_le_left"
+    },
+    {
+      "id": "hs_limit_abs_at_a",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that for every real a, lim_{x→a} |x| = |a|.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"has_limit_at\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMV name=\"x\"/></OMA></OMBIND><OMV name=\"a\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMV name=\"a\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use continuity of absolute value.",
+      "sketch_steps": [
+        "setup: Fix the approach point a and write the displayed function as a real lambda term.",
+        "continuity: Establish continuity of each polynomial, absolute-value, or rational component at a.",
+        "denominator: For rational expressions, prove that the denominator at a is nonzero.",
+        "transport: Restrict the neighborhood to the punctured neighborhood of a.",
+        "evaluate: Evaluate the continuous expression at a.",
+        "conclude: State the punctured-point limit."
+      ],
+      "lean_witness": "example (a : ℝ) : Filter.Tendsto (fun x : ℝ => |x|) (nhdsWithin a {a}ᶜ) (nhds |a|) := by\n  exact (continuousAt_id.abs.tendsto).mono_left inf_le_left"
+    },
+    {
+      "id": "hs_limit_rational_square_minus_one_at_a",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that for every real a, lim_{x→a} (x^2 - 1)/(x^2 + 1) = (a^2 - 1)/(a^2 + 1).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"has_limit_at\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>1</OMI></OMA></OMA></OMBIND><OMV name=\"a\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"a\"/><OMI>2</OMI></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"a\"/><OMI>2</OMI></OMA><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Show x^2 + 1 is positive, then apply the quotient limit rule.",
+      "sketch_steps": [
+        "setup: Fix the approach point a and write the displayed function as a real lambda term.",
+        "continuity: Establish continuity of each polynomial, absolute-value, or rational component at a.",
+        "denominator: For rational expressions, prove that the denominator at a is nonzero.",
+        "transport: Restrict the neighborhood to the punctured neighborhood of a.",
+        "evaluate: Evaluate the continuous expression at a.",
+        "conclude: State the punctured-point limit."
+      ],
+      "lean_witness": "example (a : ℝ) : Filter.Tendsto (fun x : ℝ => (x^2 - 1) / (x^2 + 1)) (nhdsWithin a {a}ᶜ) (nhds ((a^2 - 1) / (a^2 + 1))) := by\n  have h_ne : a^2 + 1 ≠ 0 := by nlinarith [sq_nonneg a]\n  exact (((((continuousAt_id.pow 2).sub continuousAt_const).div ((continuousAt_id.pow 2).add continuousAt_const) h_ne).tendsto).mono_left inf_le_left)"
+    },
+    {
+      "id": "hs_limit_one_over_square_plus_one_at_a",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that for every real a, lim_{x→a} 1/(x^2 + 1) = 1/(a^2 + 1).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"has_limit_at\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>1</OMI></OMA></OMA></OMBIND><OMV name=\"a\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"a\"/><OMI>2</OMI></OMA><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use positivity of x^2 + 1 to justify the reciprocal limit rule.",
+      "sketch_steps": [
+        "setup: Fix the approach point a and write the displayed function as a real lambda term.",
+        "continuity: Establish continuity of each polynomial, absolute-value, or rational component at a.",
+        "denominator: For rational expressions, prove that the denominator at a is nonzero.",
+        "transport: Restrict the neighborhood to the punctured neighborhood of a.",
+        "evaluate: Evaluate the continuous expression at a.",
+        "conclude: State the punctured-point limit."
+      ],
+      "lean_witness": "example (a : ℝ) : Filter.Tendsto (fun x : ℝ => 1 / (x^2 + 1)) (nhdsWithin a {a}ᶜ) (nhds (1 / (a^2 + 1))) := by\n  have h_ne : a^2 + 1 ≠ 0 := by nlinarith [sq_nonneg a]\n  exact (((continuousAt_const.div ((continuousAt_id.pow 2).add continuousAt_const) h_ne).tendsto).mono_left inf_le_left)"
+    },
+    {
+      "id": "hs_limit_affine_over_square_plus_one_at_a",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "advanced",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that for every real a, lim_{x→a} (2x + 1)/(x^2 + 1) = (2a + 1)/(a^2 + 1).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"has_limit_at\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>1</OMI></OMA></OMA></OMBIND><OMV name=\"a\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"a\"/></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"a\"/><OMI>2</OMI></OMA><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Combine an affine numerator with a strictly positive quadratic denominator.",
+      "sketch_steps": [
+        "setup: Fix the approach point a and write the displayed function as a real lambda term.",
+        "continuity: Establish continuity of each polynomial, absolute-value, or rational component at a.",
+        "denominator: For rational expressions, prove that the denominator at a is nonzero.",
+        "transport: Restrict the neighborhood to the punctured neighborhood of a.",
+        "evaluate: Evaluate the continuous expression at a.",
+        "conclude: State the punctured-point limit."
+      ],
+      "lean_witness": "example (a : ℝ) : Filter.Tendsto (fun x : ℝ => (2*x + 1) / (x^2 + 1)) (nhdsWithin a {a}ᶜ) (nhds ((2*a + 1) / (a^2 + 1))) := by\n  have h_ne : a^2 + 1 ≠ 0 := by nlinarith [sq_nonneg a]\n  exact (((((continuousAt_const.mul continuousAt_id).add continuousAt_const).div ((continuousAt_id.pow 2).add continuousAt_const) h_ne).tendsto).mono_left inf_le_left)"
+    },
+    {
+      "id": "hs_limit_neighbor_product_at_a",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that for every real a, lim_{x→a} x(x + 1) = a(a + 1).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"has_limit_at\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA></OMBIND><OMV name=\"a\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"a\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"a\"/><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the product law to the identity and shifted identity functions.",
+      "sketch_steps": [
+        "setup: Fix the approach point a and write the displayed function as a real lambda term.",
+        "continuity: Establish continuity of each polynomial, absolute-value, or rational component at a.",
+        "denominator: For rational expressions, prove that the denominator at a is nonzero.",
+        "transport: Restrict the neighborhood to the punctured neighborhood of a.",
+        "evaluate: Evaluate the continuous expression at a.",
+        "conclude: State the punctured-point limit."
+      ],
+      "lean_witness": "example (a : ℝ) : Filter.Tendsto (fun x : ℝ => x * (x + 1)) (nhdsWithin a {a}ᶜ) (nhds (a * (a + 1))) := by\n  exact ((continuousAt_id.mul (continuousAt_id.add continuousAt_const)).tendsto).mono_left inf_le_left"
+    },
+    {
+      "id": "hs_limit_fourth_plus_square_at_a",
+      "domain": "high_school_sequences_and_limits",
+      "level": "high_school",
+      "difficulty": "standard",
+      "profile": "current_openmath_profile",
+      "required_symbols": [],
+      "canonical_statement": "Show that for every real a, lim_{x→a} (x^4 + x^2) = a^4 + a^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"has_limit_at\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>4</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA></OMBIND><OMV name=\"a\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"a\"/><OMI>4</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"a\"/><OMI>2</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the sum law for continuous polynomial functions.",
+      "sketch_steps": [
+        "setup: Fix the approach point a and write the displayed function as a real lambda term.",
+        "continuity: Establish continuity of each polynomial, absolute-value, or rational component at a.",
+        "denominator: For rational expressions, prove that the denominator at a is nonzero.",
+        "transport: Restrict the neighborhood to the punctured neighborhood of a.",
+        "evaluate: Evaluate the continuous expression at a.",
+        "conclude: State the punctured-point limit."
+      ],
+      "lean_witness": "example (a : ℝ) : Filter.Tendsto (fun x : ℝ => x^4 + x^2) (nhdsWithin a {a}ᶜ) (nhds (a^4 + a^2)) := by\n  exact (((continuousAt_id.pow 4).add (continuousAt_id.pow 2)).tendsto).mono_left inf_le_left"
+    },
+    {
+      "id": "calc_derivative_square",
+      "domain": "calculus",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "proposed_calculus_extension",
+      "required_symbols": [
+        "calculus1:diff"
+      ],
+      "canonical_statement": "Show that for every real a, the derivative of x^2 at a is 2a.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND></OMA><OMV name=\"a\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"a\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the power rule with exponent two.",
+      "sketch_steps": [
+        "setup: Fix the evaluation point a and write the function as a real lambda term.",
+        "decompose: Identify the elementary polynomial, product, shift, or quotient components.",
+        "differentiate: Apply the corresponding derivative rule.",
+        "simplify: Substitute x = a and collect the algebraic terms.",
+        "conclude: State the derivative value at a."
+      ],
+      "lean_witness": "example (a : ℝ) : deriv (fun x : ℝ => x^2) a = 2*a := by\n  simpa [mul_comm] using (hasDerivAt_pow 2 a).deriv"
+    },
+    {
+      "id": "calc_derivative_cubic_minus_linear",
+      "domain": "calculus",
+      "level": "high_school_and_early_university",
+      "difficulty": "advanced",
+      "profile": "proposed_calculus_extension",
+      "required_symbols": [
+        "calculus1:diff"
+      ],
+      "canonical_statement": "Show that for every real a, the derivative of x^3 - 2x at a is 3a^2 - 2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA></OMA></OMBIND></OMA><OMV name=\"a\"/></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"a\"/><OMI>2</OMI></OMA></OMA><OMI>2</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Combine the power rule with linearity of differentiation.",
+      "sketch_steps": [
+        "setup: Fix the evaluation point a and write the function as a real lambda term.",
+        "decompose: Identify the elementary polynomial, product, shift, or quotient components.",
+        "differentiate: Apply the corresponding derivative rule.",
+        "simplify: Substitute x = a and collect the algebraic terms.",
+        "conclude: State the derivative value at a."
+      ],
+      "lean_witness": "example (a : ℝ) : deriv (fun x : ℝ => x^3 - 2*x) a = 3*a^2 - 2 := by\n  have h1 : HasDerivAt (fun x : ℝ => x^3) (3*a^2) a := by\n    simpa using (hasDerivAt_pow 3 a)\n  have h2 : HasDerivAt (fun x : ℝ => 2*x) 2 a := by\n    simpa [id] using (hasDerivAt_id a).const_mul (2 : ℝ)\n  exact (h1.sub h2).deriv"
+    },
+    {
+      "id": "calc_derivative_neighbor_product",
+      "domain": "calculus",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "proposed_calculus_extension",
+      "required_symbols": [
+        "calculus1:diff"
+      ],
+      "canonical_statement": "Show that for every real a, the derivative of x(x + 1) at a is 2a + 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA></OMBIND></OMA><OMV name=\"a\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"a\"/></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the product rule for x and x + 1.",
+      "sketch_steps": [
+        "setup: Fix the evaluation point a and write the function as a real lambda term.",
+        "decompose: Identify the elementary polynomial, product, shift, or quotient components.",
+        "differentiate: Apply the corresponding derivative rule.",
+        "simplify: Substitute x = a and collect the algebraic terms.",
+        "conclude: State the derivative value at a."
+      ],
+      "lean_witness": "example (a : ℝ) : deriv (fun x : ℝ => x * (x + 1)) a = 2*a + 1 := by\n  have h1 := hasDerivAt_id a\n  have h2 := h1.add_const (1 : ℝ)\n  convert (h1.mul h2).deriv using 1 <;> simp <;> ring"
+    },
+    {
+      "id": "calc_derivative_shifted_square",
+      "domain": "calculus",
+      "level": "high_school_and_early_university",
+      "difficulty": "advanced",
+      "profile": "proposed_calculus_extension",
+      "required_symbols": [
+        "calculus1:diff"
+      ],
+      "canonical_statement": "Show that for every real a, the derivative of (x + 1)^2 at a is 2(a + 1).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMI>2</OMI></OMA></OMBIND></OMA><OMV name=\"a\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"a\"/><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the chain rule to the shifted linear function.",
+      "sketch_steps": [
+        "setup: Fix the evaluation point a and write the function as a real lambda term.",
+        "decompose: Identify the elementary polynomial, product, shift, or quotient components.",
+        "differentiate: Apply the corresponding derivative rule.",
+        "simplify: Substitute x = a and collect the algebraic terms.",
+        "conclude: State the derivative value at a."
+      ],
+      "lean_witness": "example (a : ℝ) : deriv (fun x : ℝ => (x + 1)^2) a = 2*(a + 1) := by\n  have h : HasDerivAt (fun x : ℝ => x + 1) 1 a := (hasDerivAt_id a).add_const 1\n  convert (h.pow 2).deriv using 1 <;> simp [id] <;> ring"
+    },
+    {
+      "id": "calc_derivative_reciprocal",
+      "domain": "calculus",
+      "level": "high_school_and_early_university",
+      "difficulty": "advanced",
+      "profile": "proposed_calculus_extension",
+      "required_symbols": [
+        "calculus1:diff"
+      ],
+      "canonical_statement": "Show that for every nonzero real a, the derivative of 1/x at a is -1/a^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"a\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"apply\"/><OMA><OMS cd=\"calculus1\" name=\"diff\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMV name=\"x\"/></OMA></OMBIND></OMA><OMV name=\"a\"/></OMA><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"a\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the quotient rule and the nonzero-denominator hypothesis.",
+      "sketch_steps": [
+        "setup: Fix the evaluation point a and write the function as a real lambda term.",
+        "decompose: Identify the elementary polynomial, product, shift, or quotient components.",
+        "differentiate: Apply the corresponding derivative rule.",
+        "simplify: Substitute x = a and collect the algebraic terms.",
+        "conclude: State the derivative value at a."
+      ],
+      "lean_witness": "example (a : ℝ) (ha : a ≠ 0) : deriv (fun x : ℝ => 1 / x) a = -(1 / a^2) := by\n  have h : HasDerivAt (fun x : ℝ => 1 / x) ((0 * a - 1 * 1) / a^2) a := (hasDerivAt_const a 1).div (hasDerivAt_id a) ha\n  convert h.deriv using 1 <;> simp [id] <;> ring"
+    },
+    {
+      "id": "calc_integral_x_zero_one",
+      "domain": "calculus",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "proposed_calculus_extension",
+      "required_symbols": [
+        "calculus1:defint",
+        "interval1:oriented_interval"
+      ],
+      "canonical_statement": "Show that the definite integral of x from 0 to 1 is 1/2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"calculus1\" name=\"defint\"/><OMA><OMS cd=\"interval1\" name=\"oriented_interval\"/><OMI>0</OMI><OMI>1</OMI></OMA><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMV name=\"x\"/></OMBIND></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMI>2</OMI></OMA></OMA></OMOBJ>",
+      "proof_strategy": "Use the antiderivative x^2/2.",
+      "sketch_steps": [
+        "setup: Record the oriented integration interval and the real integrand.",
+        "antiderivative: Select a polynomial antiderivative or standard integral formula.",
+        "endpoints: Evaluate the antiderivative at the upper and lower endpoints.",
+        "subtract: Take the oriented upper-minus-lower difference.",
+        "conclude: Simplify to the stated definite-integral value."
+      ],
+      "lean_witness": "example : (∫ x : ℝ in 0..1, x) = 1/2 := by\n  norm_num [integral_id]"
+    },
+    {
+      "id": "calc_integral_square_zero_one",
+      "domain": "calculus",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "proposed_calculus_extension",
+      "required_symbols": [
+        "calculus1:defint",
+        "interval1:oriented_interval"
+      ],
+      "canonical_statement": "Show that the definite integral of x^2 from 0 to 1 is 1/3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"calculus1\" name=\"defint\"/><OMA><OMS cd=\"interval1\" name=\"oriented_interval\"/><OMI>0</OMI><OMI>1</OMI></OMA><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMI>3</OMI></OMA></OMA></OMOBJ>",
+      "proof_strategy": "Use the power-rule antiderivative x^3/3.",
+      "sketch_steps": [
+        "setup: Record the oriented integration interval and the real integrand.",
+        "antiderivative: Select a polynomial antiderivative or standard integral formula.",
+        "endpoints: Evaluate the antiderivative at the upper and lower endpoints.",
+        "subtract: Take the oriented upper-minus-lower difference.",
+        "conclude: Simplify to the stated definite-integral value."
+      ],
+      "lean_witness": "example : (∫ x : ℝ in 0..1, x^2) = 1/3 := by\n  norm_num [integral_pow]"
+    },
+    {
+      "id": "calc_integral_cubic_zero_two",
+      "domain": "calculus",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "proposed_calculus_extension",
+      "required_symbols": [
+        "calculus1:defint",
+        "interval1:oriented_interval"
+      ],
+      "canonical_statement": "Show that the definite integral of x^3 from 0 to 2 is 4.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"calculus1\" name=\"defint\"/><OMA><OMS cd=\"interval1\" name=\"oriented_interval\"/><OMI>0</OMI><OMI>2</OMI></OMA><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMBIND></OMA><OMI>4</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Use the power-rule antiderivative x^4/4.",
+      "sketch_steps": [
+        "setup: Record the oriented integration interval and the real integrand.",
+        "antiderivative: Select a polynomial antiderivative or standard integral formula.",
+        "endpoints: Evaluate the antiderivative at the upper and lower endpoints.",
+        "subtract: Take the oriented upper-minus-lower difference.",
+        "conclude: Simplify to the stated definite-integral value."
+      ],
+      "lean_witness": "example : (∫ x : ℝ in 0..2, x^3) = 4 := by\n  norm_num [integral_pow]"
+    },
+    {
+      "id": "calc_integral_constant_two_five",
+      "domain": "calculus",
+      "level": "high_school_and_early_university",
+      "difficulty": "standard",
+      "profile": "proposed_calculus_extension",
+      "required_symbols": [
+        "calculus1:defint",
+        "interval1:oriented_interval"
+      ],
+      "canonical_statement": "Show that the definite integral of 1 from 2 to 5 is 3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"calculus1\" name=\"defint\"/><OMA><OMS cd=\"interval1\" name=\"oriented_interval\"/><OMI>2</OMI><OMI>5</OMI></OMA><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMI>1</OMI></OMBIND></OMA><OMI>3</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Interpret the integral of one as the oriented interval length.",
+      "sketch_steps": [
+        "setup: Record the oriented integration interval and the real integrand.",
+        "antiderivative: Select a polynomial antiderivative or standard integral formula.",
+        "endpoints: Evaluate the antiderivative at the upper and lower endpoints.",
+        "subtract: Take the oriented upper-minus-lower difference.",
+        "conclude: Simplify to the stated definite-integral value."
+      ],
+      "lean_witness": "example : (∫ x : ℝ in 2..5, (1 : ℝ)) = 3 := by\n  norm_num [integral_one]"
+    }
+  ]
+}

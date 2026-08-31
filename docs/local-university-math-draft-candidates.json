@@ -1,0 +1,428 @@
+{
+  "schema_version": "pals.local-university-math-draft-candidates.v1",
+  "source": "PALS first-party authored candidate set; not yet published",
+  "cards": [
+    {
+      "id": "univ_linear_rank_le_domain_dimension",
+      "domain": "university_linear_algebra",
+      "difficulty": "intermediate",
+      "canonical_statement": "If A is a linear map and domain of A is finite-dimensional, rank(A) is at most dimension(domain(A)).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"linear_map\"/><OMV name=\"A\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"finite_dimensional\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"domain\"/><OMV name=\"A\"/></OMA></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"rank\"/><OMV name=\"A\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"dimension\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"domain\"/><OMV name=\"A\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the finite-dimensional range bound for a linear map.",
+      "sketch_steps": [
+        "setup: Fix a field and finite-dimensional domain V for the linear map A.",
+        "translate: Read rank(A) as the dimension of range(A).",
+        "apply_theorem: Apply the range-dimension bound for linear maps.",
+        "conclude: The rank cannot exceed dimension(V)."
+      ],
+      "lean_witness": "example {K V W : Type*} [Field K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [AddCommGroup W] [Module K W] (A : V →ₗ[K] W) : Module.finrank K (LinearMap.range A) ≤ Module.finrank K V := LinearMap.finrank_range_le A"
+    },
+    {
+      "id": "univ_linear_nullity_le_domain_dimension",
+      "domain": "university_linear_algebra",
+      "difficulty": "intermediate",
+      "canonical_statement": "If A is a linear map and domain of A is finite-dimensional, nullity(A) is at most dimension(domain(A)).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"linear_map\"/><OMV name=\"A\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"finite_dimensional\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"domain\"/><OMV name=\"A\"/></OMA></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"nullity\"/><OMV name=\"A\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"dimension\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"domain\"/><OMV name=\"A\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Combine rank-nullity with nonnegativity of the rank.",
+      "sketch_steps": [
+        "setup: Fix A with finite-dimensional domain V.",
+        "apply_theorem: Write rank(A) + nullity(A) = dimension(V).",
+        "derive: Use nonnegativity of rank(A).",
+        "conclude: Nullity(A) is bounded by dimension(V)."
+      ],
+      "lean_witness": "example {K V W : Type*} [Field K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [AddCommGroup W] [Module K W] (A : V →ₗ[K] W) : Module.finrank K (LinearMap.ker A) ≤ Module.finrank K V := by\n  have h := LinearMap.finrank_range_add_finrank_ker A\n  omega"
+    },
+    {
+      "id": "univ_linear_rank_deficit_positive_nullity",
+      "domain": "university_linear_algebra",
+      "difficulty": "advanced",
+      "canonical_statement": "For a linear map A with finite-dimensional domain, rank(A) < dimension(domain(A)) entails 0 < nullity(A).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"linear_map\"/><OMV name=\"A\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"finite_dimensional\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"domain\"/><OMV name=\"A\"/></OMA></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"rank\"/><OMV name=\"A\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"dimension\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"domain\"/><OMV name=\"A\"/></OMA></OMA></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMI>0</OMI><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"nullity\"/><OMV name=\"A\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use rank-nullity to turn a strict rank deficit into a positive kernel dimension.",
+      "sketch_steps": [
+        "setup: Fix A and assume its rank is strictly below the domain dimension.",
+        "apply_theorem: Expand dimension(V) using rank-nullity.",
+        "derive: Rewrite the strict inequality as a positive natural-number remainder.",
+        "interpret: Identify that remainder with nullity(A).",
+        "conclude: The kernel has positive dimension."
+      ],
+      "lean_witness": "example {K V W : Type*} [Field K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [AddCommGroup W] [Module K W] (A : V →ₗ[K] W) (hdeficit : Module.finrank K (LinearMap.range A) < Module.finrank K V) : 0 < Module.finrank K (LinearMap.ker A) := by\n  have h := LinearMap.finrank_range_add_finrank_ker A\n  omega"
+    },
+    {
+      "id": "univ_linear_full_rank_zero_nullity",
+      "domain": "university_linear_algebra",
+      "difficulty": "advanced",
+      "canonical_statement": "For a linear map A with finite-dimensional domain, rank(A) = dimension(domain(A)) entails nullity(A) = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"linear_map\"/><OMV name=\"A\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"finite_dimensional\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"domain\"/><OMV name=\"A\"/></OMA></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"rank\"/><OMV name=\"A\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"dimension\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"domain\"/><OMV name=\"A\"/></OMA></OMA></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"nullity\"/><OMV name=\"A\"/></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Substitute the full-rank hypothesis into rank-nullity and cancel the common term.",
+      "sketch_steps": [
+        "setup: Fix A and assume that its rank equals the domain dimension.",
+        "apply_theorem: Write rank(A) + nullity(A) = dimension(V).",
+        "substitute: Replace rank(A) by dimension(V).",
+        "derive: Cancel the equal dimension terms in the natural-number equality.",
+        "conclude: Nullity(A) is zero."
+      ],
+      "lean_witness": "example {K V W : Type*} [Field K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [AddCommGroup W] [Module K W] (A : V →ₗ[K] W) (hfull : Module.finrank K (LinearMap.range A) = Module.finrank K V) : Module.finrank K (LinearMap.ker A) = 0 := by\n  have h := LinearMap.finrank_range_add_finrank_ker A\n  omega"
+    },
+    {
+      "id": "univ_linear_full_nullity_zero_rank",
+      "domain": "university_linear_algebra",
+      "difficulty": "advanced",
+      "canonical_statement": "For a linear map A with finite-dimensional domain, nullity(A) = dimension(domain(A)) entails rank(A) = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"linear_map\"/><OMV name=\"A\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"finite_dimensional\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"domain\"/><OMV name=\"A\"/></OMA></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"nullity\"/><OMV name=\"A\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"dimension\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"domain\"/><OMV name=\"A\"/></OMA></OMA></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"rank\"/><OMV name=\"A\"/></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use rank-nullity with the maximal-nullity hypothesis.",
+      "sketch_steps": [
+        "setup: Fix A and assume its nullity equals the domain dimension.",
+        "apply_theorem: Expand dimension(V) by rank-nullity.",
+        "substitute: Replace nullity(A) by dimension(V).",
+        "derive: The remaining rank term must vanish.",
+        "conclude: A has rank zero."
+      ],
+      "lean_witness": "example {K V W : Type*} [Field K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [AddCommGroup W] [Module K W] (A : V →ₗ[K] W) (hfull : Module.finrank K (LinearMap.ker A) = Module.finrank K V) : Module.finrank K (LinearMap.range A) = 0 := by\n  have h := LinearMap.finrank_range_add_finrank_ker A\n  omega"
+    },
+    {
+      "id": "univ_analysis_parameterized_rational_continuity",
+      "domain": "university_real_analysis",
+      "difficulty": "advanced",
+      "canonical_statement": "If a is real, then the function x ↦ (x-a)/(x^2-(2*a*x)+a^2+1) is continuous on the real line.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"a\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"continuous_on\"/><OMS cd=\"setname1\" name=\"R\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"a\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"a\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"a\"/><OMI>2</OMI></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Prove the quadratic denominator is strictly positive, then apply quotient continuity.",
+      "sketch_steps": [
+        "setup: Fix a real parameter a and set q(x)=x²-2ax+a²+1.",
+        "rewrite: Complete the square to obtain q(x)=(x-a)²+1.",
+        "derive: Use square nonnegativity to prove q(x)>0 for every real x.",
+        "apply_theorem: The numerator and denominator are polynomial functions, hence continuous.",
+        "conclude: Apply the quotient-continuity theorem using q(x)≠0."
+      ],
+      "lean_witness": "example (a : ℝ) : Continuous (fun x : ℝ => (x - a) / (x^2 - 2*a*x + a^2 + 1)) := by\n  apply Continuous.div\n  · fun_prop\n  · fun_prop\n  · intro x\n    nlinarith [sq_nonneg (x - a)]"
+    },
+    {
+      "id": "univ_analysis_abs_rational_continuity",
+      "domain": "university_real_analysis",
+      "difficulty": "intermediate",
+      "canonical_statement": "The function x ↦ |x|/(x^2+1) is continuous on the real line.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"continuous_on\"/><OMS cd=\"setname1\" name=\"R\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMA></OMOBJ>",
+      "proof_strategy": "Combine continuity of absolute value with a positive quadratic denominator.",
+      "sketch_steps": [
+        "setup: Let q(x)=x²+1.",
+        "derive: Since x²≥0, q(x)>0 for all real x.",
+        "apply_theorem: Absolute value and q are continuous functions.",
+        "apply_theorem: Use quotient continuity with the nonvanishing denominator.",
+        "conclude: The displayed rational absolute-value function is continuous everywhere."
+      ],
+      "lean_witness": "example : Continuous (fun x : ℝ => |x| / (x^2 + 1)) := by\n  apply Continuous.div\n  · fun_prop\n  · fun_prop\n  · intro x\n    nlinarith [sq_nonneg x]"
+    },
+    {
+      "id": "univ_analysis_polynomial_limit_at_parameter",
+      "domain": "university_real_analysis",
+      "difficulty": "intermediate",
+      "canonical_statement": "If a is real, then the limit of x ↦ x^2+3*x-1 at a is a^2+3*a-1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"a\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"has_limit_at\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMV name=\"x\"/></OMA></OMA><OMI>1</OMI></OMA></OMBIND><OMV name=\"a\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"a\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMV name=\"a\"/></OMA></OMA><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use continuity of a polynomial to obtain its punctured-neighborhood limit.",
+      "sketch_steps": [
+        "setup: Fix a real point a.",
+        "identify: The displayed expression is a polynomial in x.",
+        "apply_theorem: Polynomials are continuous at a.",
+        "derive: Continuity gives convergence on ordinary neighborhoods.",
+        "restrict: Pass to the punctured neighborhood at a.",
+        "conclude: Evaluate the polynomial at a to obtain the claimed limit."
+      ],
+      "lean_witness": "example (a : ℝ) : Filter.Tendsto (fun x : ℝ => x^2 + 3*x - 1) (nhdsWithin a ({a} : Set ℝ)ᶜ) (nhds (a^2 + 3*a - 1)) := by\n  have h : ContinuousAt (fun x : ℝ => x^2 + 3*x - 1) a := by fun_prop\n  exact h.tendsto.mono_left nhdsWithin_le_nhds"
+    },
+    {
+      "id": "univ_analysis_removable_singularity_limit",
+      "domain": "university_real_analysis",
+      "difficulty": "advanced",
+      "canonical_statement": "The limit of x ↦ (x^2-4)/(x-2) at 2 is 4.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"has_limit_at\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>4</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA></OMBIND><OMI>2</OMI><OMI>4</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Factor the numerator away from the excluded point, then take the limit of the simplified affine function.",
+      "sketch_steps": [
+        "setup: Work in the punctured neighborhood of 2, where x-2 is nonzero.",
+        "factor: Rewrite x²-4 as (x-2)(x+2).",
+        "simplify: Cancel x-2 on the punctured neighborhood to get x+2.",
+        "apply_theorem: The affine function x↦x+2 is continuous at 2.",
+        "evaluate: Its value at 2 is 4.",
+        "conclude: Transfer the limit through the eventual equality."
+      ],
+      "lean_witness": "example : Filter.Tendsto (fun x : ℝ => (x^2 - 4) / (x - 2)) (nhdsWithin (2 : ℝ) ({(2 : ℝ)} : Set ℝ)ᶜ) (nhds 4) := by\n  have hEq : (fun x : ℝ => (x^2 - 4) / (x - 2)) =ᶠ[nhdsWithin (2 : ℝ) ({(2 : ℝ)} : Set ℝ)ᶜ] fun x => x + 2 := by\n    filter_upwards [self_mem_nhdsWithin] with x hx\n    simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hx\n    have hx0 : x - 2 ≠ 0 := by\n      intro hzero\n      apply hx\n      linarith\n    field_simp [hx0]\n    ring\n  have h : Filter.Tendsto (fun x : ℝ => x + 2) (nhdsWithin (2 : ℝ) ({(2 : ℝ)} : Set ℝ)ᶜ) (nhds 4) := by\n    have hcont : ContinuousAt (fun x : ℝ => x + 2) (2 : ℝ) := by fun_prop\n    have hfilter : nhdsWithin (2 : ℝ) ({(2 : ℝ)} : Set ℝ)ᶜ ≤ nhds (2 : ℝ) := nhdsWithin_le_nhds\n    convert hcont.tendsto.mono_left hfilter using 1 <;> norm_num\n  exact h.congr' hEq.symm"
+    },
+    {
+      "id": "univ_analysis_inverse_successor_sequence",
+      "domain": "university_real_analysis",
+      "difficulty": "intermediate",
+      "canonical_statement": "The real sequence n ↦ 1/(n+1) converges to 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"sequence_lambda\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>1</OMI><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"index_to_real\"/><OMV name=\"n\"/></OMA><OMI>1</OMI></OMA></OMA></OMBIND><OMI>0</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Apply the standard reciprocal-of-a-diverging-natural-number limit theorem.",
+      "sketch_steps": [
+        "setup: View n↦n+1 as an unbounded positive real sequence.",
+        "derive: Its reciprocal is defined for every natural index.",
+        "apply_theorem: Use convergence of 1/(n+1) to zero.",
+        "conclude: The specified real sequence converges to 0."
+      ],
+      "lean_witness": "example : Filter.Tendsto (fun n : ℕ => (1 : ℝ) / (n + 1)) Filter.atTop (𝓝 0) := by\n  simpa using (tendsto_one_div_add_atTop_nhds_zero_nat : Filter.Tendsto (fun n : ℕ => (1 : ℝ) / (↑n + 1)) Filter.atTop (𝓝 0))"
+    },
+    {
+      "id": "univ_analysis_linear_ratio_sequence",
+      "domain": "university_real_analysis",
+      "difficulty": "intermediate",
+      "canonical_statement": "The real sequence n ↦ n/(n+2) converges to 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"converges_to\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"sequence_lambda\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"index_to_real\"/><OMV name=\"n\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"index_to_real\"/><OMV name=\"n\"/></OMA><OMI>2</OMI></OMA></OMA></OMBIND><OMI>1</OMI></OMA></OMOBJ>",
+      "proof_strategy": "Normalize numerator and denominator by their common leading growth rate.",
+      "sketch_steps": [
+        "setup: Consider the ratio n/(n+2) as n tends to infinity.",
+        "normalize: Both numerator and denominator have leading coefficient 1.",
+        "apply_theorem: Use the natural-cast ratio limit for n/(n+c).",
+        "evaluate: The leading-coefficient ratio is 1/1.",
+        "conclude: The sequence converges to 1."
+      ],
+      "lean_witness": "example : Filter.Tendsto (fun n : ℕ => (n : ℝ) / (n + 2)) Filter.atTop (nhds 1) := by\n  simpa using (tendsto_natCast_div_add_atTop (2 : ℝ))"
+    },
+    {
+      "id": "univ_discrete_product_union_left",
+      "domain": "university_discrete_mathematics",
+      "difficulty": "intermediate",
+      "canonical_statement": "For sets A, B, C, (A ∪ B) × C = (A × C) ∪ (B × C).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"cartesian_product\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMV name=\"C\"/></OMA><OMA><OMS cd=\"set1\" name=\"union\"/><OMA><OMS cd=\"set1\" name=\"cartesian_product\"/><OMV name=\"A\"/><OMV name=\"C\"/></OMA><OMA><OMS cd=\"set1\" name=\"cartesian_product\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand membership of an ordered pair and distribute the left disjunction.",
+      "sketch_steps": [
+        "setup: Take an arbitrary ordered pair (x,y).",
+        "expand: Interpret membership in (A∪B)×C componentwise.",
+        "split: Separate the cases x∈A and x∈B.",
+        "reassemble: Recognize membership in (A×C)∪(B×C).",
+        "conclude: Extensionality proves the set equality."
+      ],
+      "lean_witness": "example {α β : Type*} (A B : Set α) (C : Set β) : (A ∪ B) ×ˢ C = (A ×ˢ C) ∪ (B ×ˢ C) := by\n  ext p\n  simp [and_or_left]"
+    },
+    {
+      "id": "univ_discrete_product_union_right",
+      "domain": "university_discrete_mathematics",
+      "difficulty": "intermediate",
+      "canonical_statement": "For sets A, B, C, A × (B ∪ C) = (A × B) ∪ (A × C).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"cartesian_product\"/><OMV name=\"A\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"union\"/><OMA><OMS cd=\"set1\" name=\"cartesian_product\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMA><OMS cd=\"set1\" name=\"cartesian_product\"/><OMV name=\"A\"/><OMV name=\"C\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use componentwise product membership and distribute the right disjunction.",
+      "sketch_steps": [
+        "setup: Take an arbitrary ordered pair (x,y).",
+        "expand: Interpret membership in A×(B∪C).",
+        "split: Separate the cases y∈B and y∈C.",
+        "reassemble: Obtain membership in (A×B)∪(A×C).",
+        "conclude: Apply extensionality."
+      ],
+      "lean_witness": "example {α β : Type*} (A : Set α) (B C : Set β) : A ×ˢ (B ∪ C) = (A ×ˢ B) ∪ (A ×ˢ C) := by\n  ext p\n  simp [and_or_right]"
+    },
+    {
+      "id": "univ_discrete_product_intersection",
+      "domain": "university_discrete_mathematics",
+      "difficulty": "intermediate",
+      "canonical_statement": "For sets A, B, C, (A ∩ B) × C = (A × C) ∩ (B × C).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"cartesian_product\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMV name=\"C\"/></OMA><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMA><OMS cd=\"set1\" name=\"cartesian_product\"/><OMV name=\"A\"/><OMV name=\"C\"/></OMA><OMA><OMS cd=\"set1\" name=\"cartesian_product\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use pair membership to move conjunctions between factors and products.",
+      "sketch_steps": [
+        "setup: Fix an ordered pair (x,y).",
+        "expand: Write membership in (A∩B)×C as x∈A, x∈B, y∈C.",
+        "rearrange: Group the conditions as membership in A×C and B×C.",
+        "reassemble: Recognize their intersection.",
+        "conclude: Use extensionality."
+      ],
+      "lean_witness": "example {α β : Type*} (A B : Set α) (C : Set β) : (A ∩ B) ×ˢ C = (A ×ˢ C) ∩ (B ×ˢ C) := by\n  ext p\n  simp [and_left_comm, and_assoc, and_comm]"
+    },
+    {
+      "id": "univ_discrete_product_set_difference",
+      "domain": "university_discrete_mathematics",
+      "difficulty": "advanced",
+      "canonical_statement": "For sets A, B, C, (A \\ B) × C = (A × C) \\ (B × C).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"cartesian_product\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMV name=\"C\"/></OMA><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMA><OMS cd=\"set1\" name=\"cartesian_product\"/><OMV name=\"A\"/><OMV name=\"C\"/></OMA><OMA><OMS cd=\"set1\" name=\"cartesian_product\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the shared second-coordinate condition to transport exclusion through the product.",
+      "sketch_steps": [
+        "setup: Fix an ordered pair (x,y).",
+        "expand: Unfold membership in the left-hand product and set difference.",
+        "derive: On both sides y∈C, so exclusion from B×C is exactly x∉B.",
+        "reassemble: Match the condition x∈A\\B and y∈C.",
+        "conclude: Apply extensionality."
+      ],
+      "lean_witness": "example {α β : Type*} (A B : Set α) (C : Set β) : (A \\ B) ×ˢ C = (A ×ˢ C) \\ (B ×ˢ C) := by\n  ext p\n  simp\n  tauto"
+    },
+    {
+      "id": "univ_discrete_difference_intersection",
+      "domain": "university_discrete_mathematics",
+      "difficulty": "intermediate",
+      "canonical_statement": "For sets A, B, C, (A ∩ B) \\ C = (A \\ C) ∩ (B \\ C).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMV name=\"C\"/></OMA><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMV name=\"C\"/></OMA><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Distribute the common exclusion from C across the conjunction A∩B.",
+      "sketch_steps": [
+        "setup: Take an arbitrary element x.",
+        "expand: Unfold x∈(A∩B)\\C.",
+        "rearrange: Separate x∈A, x∈B, and x∉C.",
+        "reassemble: Recognize x∈(A\\C)∩(B\\C).",
+        "conclude: Use extensionality."
+      ],
+      "lean_witness": "example {α : Type*} (A B C : Set α) : (A ∩ B) \\ C = (A \\ C) ∩ (B \\ C) := by\n  ext x\n  simp\n  tauto"
+    },
+    {
+      "id": "univ_discrete_difference_of_difference",
+      "domain": "university_discrete_mathematics",
+      "difficulty": "advanced",
+      "canonical_statement": "For sets A, B, C, A \\ (B \\ C) = (A \\ B) ∪ (A ∩ C).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"union\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMV name=\"C\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Convert the nested exclusion to a propositional normal form.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary element x.",
+        "expand: Unfold x∈A\\(B\\C) into x∈A and not(x∈B and x∉C).",
+        "normalize: Use De Morgan to obtain x∈A and (x∉B or x∈C).",
+        "split: Distribute x∈A over the resulting disjunction.",
+        "reassemble: Recognize (A\\B)∪(A∩C).",
+        "conclude: Apply extensionality."
+      ],
+      "lean_witness": "example {α : Type*} (A B C : Set α) : A \\ (B \\ C) = (A \\ B) ∪ (A ∩ C) := by\n  ext x\n  simp\n  tauto"
+    },
+    {
+      "id": "univ_discrete_union_membership_partition",
+      "domain": "university_discrete_mathematics",
+      "difficulty": "advanced",
+      "canonical_statement": "For sets A and B, A ∪ B = (A \\ B) ∪ (A ∩ B) ∪ (B \\ A).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMA><OMS cd=\"set1\" name=\"union\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"B\"/><OMV name=\"A\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Partition a union into the A-only, shared, and B-only regions.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary element x in A∪B.",
+        "case_split: If x∈A, split further on whether x∈B.",
+        "derive: The two A-cases give x∈A\\B or x∈A∩B.",
+        "case_split: If x∉A, membership in A∪B forces x∈B\\A.",
+        "reverse: Each of the three regions is contained in A∪B.",
+        "conclude: Extensionality gives the partition equality."
+      ],
+      "lean_witness": "example {α : Type*} (A B : Set α) : A ∪ B = (A \\ B) ∪ (A ∩ B) ∪ (B \\ A) := by\n  ext x\n  simp"
+    },
+    {
+      "id": "univ_discrete_union_intersection_distributive",
+      "domain": "university_discrete_mathematics",
+      "difficulty": "intermediate",
+      "canonical_statement": "For sets A, B, C, A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMV name=\"C\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Distribute the common membership alternative x∈A over an intersection.",
+      "sketch_steps": [
+        "setup: Fix an arbitrary element x.",
+        "expand: Translate both sides into propositions about x.",
+        "forward: From x∈A or (x∈B and x∈C), derive both union memberships.",
+        "reverse: If x∉A, the two union memberships force x∈B and x∈C.",
+        "reassemble: Obtain x∈A∪(B∩C).",
+        "conclude: Use extensionality."
+      ],
+      "lean_witness": "example {α : Type*} (A B C : Set α) : A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C) := by\n  ext x\n  simp\n  tauto"
+    },
+    {
+      "id": "univ_discrete_difference_subset_iff",
+      "domain": "university_discrete_mathematics",
+      "difficulty": "advanced",
+      "canonical_statement": "For sets A, B, C, A \\ B ⊆ C if and only if A ⊆ B ∪ C.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"set1\" name=\"subset\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMV name=\"C\"/></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"A\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Prove both directions elementwise, splitting on membership in B.",
+      "sketch_steps": [
+        "setup: Expand both subset statements at an arbitrary element x.",
+        "forward: Assume A\\B⊆C and take x∈A.",
+        "case_split: If x∈B, place x in B∪C; otherwise use the difference inclusion.",
+        "reverse: Assume A⊆B∪C and take x∈A\\B.",
+        "derive: The B alternative is impossible, so x∈C.",
+        "conclude: The two subset statements are equivalent."
+      ],
+      "lean_witness": "example {α : Type*} (A B C : Set α) : A \\ B ⊆ C ↔ A ⊆ B ∪ C := by\n  constructor\n  · intro h x hx\n    by_cases hB : x ∈ B\n    · exact Or.inl hB\n    · exact Or.inr (h ⟨hx, hB⟩)\n  · intro h x hx\n    rcases h hx.1 with hB | hC\n    · exact False.elim (hx.2 hB)\n    · exact hC"
+    },
+    {
+      "id": "univ_discrete_difference_monotone_left",
+      "domain": "university_discrete_mathematics",
+      "difficulty": "intermediate",
+      "canonical_statement": "If A ⊆ C, then A \\ B ⊆ C \\ B for sets A, B, C.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"A\"/><OMV name=\"C\"/></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"C\"/><OMV name=\"B\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Transport the positive membership through A⊆C while retaining the exclusion from B.",
+      "sketch_steps": [
+        "setup: Assume A⊆C and take x∈A\\B.",
+        "derive: The first component gives x∈A.",
+        "apply_theorem: Use A⊆C to conclude x∈C.",
+        "retain: Keep the second component x∉B unchanged.",
+        "conclude: Assemble x∈C\\B."
+      ],
+      "lean_witness": "example {α : Type*} (A B C : Set α) (h : A ⊆ C) : A \\ B ⊆ C \\ B := fun x hx => ⟨h hx.1, hx.2⟩"
+    },
+    {
+      "id": "univ_discrete_square_image_union",
+      "domain": "university_discrete_mathematics",
+      "difficulty": "intermediate",
+      "canonical_statement": "For real sets A and B, the image of A ∪ B under x ↦ x^2 equals the union of the two images.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"A\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"B\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"map\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"union\"/><OMA><OMS cd=\"set1\" name=\"map\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND><OMV name=\"A\"/></OMA><OMA><OMS cd=\"set1\" name=\"map\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND><OMV name=\"B\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the general image-of-union theorem for the concrete squaring function.",
+      "sketch_steps": [
+        "setup: Regard x↦x² as a function from ℝ to ℝ.",
+        "expand: An image witness comes from either A or B exactly when it comes from A∪B.",
+        "forward: Split the source membership into the A and B cases.",
+        "reverse: Reinsert either source witness into A∪B.",
+        "conclude: Apply extensionality to the image sets."
+      ],
+      "lean_witness": "example (A B : Set ℝ) : (fun x : ℝ => x^2) '' (A ∪ B) = (fun x : ℝ => x^2) '' A ∪ (fun x : ℝ => x^2) '' B := Set.image_union _ _ _"
+    },
+    {
+      "id": "univ_discrete_square_image_intersection_subset",
+      "domain": "university_discrete_mathematics",
+      "difficulty": "advanced",
+      "canonical_statement": "For real sets A and B, the image of A ∩ B under x ↦ x^2 is a subset of the intersection of the images.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"A\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"B\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMA><OMS cd=\"set1\" name=\"map\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMA><OMS cd=\"set1\" name=\"map\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND><OMV name=\"A\"/></OMA><OMA><OMS cd=\"set1\" name=\"map\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND><OMV name=\"B\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Track the same source witness into both images; do not claim equality because squaring is not injective.",
+      "sketch_steps": [
+        "setup: Take y in the image of A∩B under squaring.",
+        "unpack: Obtain one witness x belonging to both A and B with y=x².",
+        "derive: The same x witnesses y in the image of A.",
+        "derive: The same x witnesses y in the image of B.",
+        "conclude: y lies in the intersection of the two images.",
+        "guardrail: Only prove subset; squaring can identify x and -x."
+      ],
+      "lean_witness": "example (A B : Set ℝ) : (fun x : ℝ => x^2) '' (A ∩ B) ⊆ (fun x : ℝ => x^2) '' A ∩ (fun x : ℝ => x^2) '' B := Set.image_inter_subset _ _ _"
+    },
+    {
+      "id": "univ_discrete_square_image_monotone",
+      "domain": "university_discrete_mathematics",
+      "difficulty": "intermediate",
+      "canonical_statement": "The square-image map preserves subset inclusion for real sets A and B.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"A\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"B\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMA><OMS cd=\"set1\" name=\"map\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND><OMV name=\"A\"/></OMA><OMA><OMS cd=\"set1\" name=\"map\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND><OMV name=\"B\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Reuse a source witness and transport its membership across the subset relation.",
+      "sketch_steps": [
+        "setup: Assume A⊆B and take y in the square image of A.",
+        "unpack: Choose x∈A with y=x².",
+        "apply_theorem: Use A⊆B to obtain x∈B.",
+        "repack: The same x witnesses y in the square image of B.",
+        "conclude: The square-image operation is monotone."
+      ],
+      "lean_witness": "example (A B : Set ℝ) (h : A ⊆ B) : (fun x : ℝ => x^2) '' A ⊆ (fun x : ℝ => x^2) '' B := Set.image_mono h"
+    },
+    {
+      "id": "univ_discrete_affine_image_composition",
+      "domain": "university_discrete_mathematics",
+      "difficulty": "advanced",
+      "canonical_statement": "For every real set A, shifting the square image by 1 equals the image of A under x ↦ x^2+1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"A\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"map\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMBIND><OMA><OMS cd=\"set1\" name=\"map\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND><OMV name=\"A\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"map\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>1</OMI></OMA></OMBIND><OMV name=\"A\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Compose explicit image witnesses and simplify the composed function.",
+      "sketch_steps": [
+        "setup: Let s(x)=x² and t(y)=y+1.",
+        "expand: A member of t(s(A)) has witnesses x∈A and y=x².",
+        "substitute: Replace y by x² in the outer equation.",
+        "simplify: The composed value is x²+1.",
+        "reverse: Any witness for x²+1 supplies the two-stage image witness.",
+        "conclude: Extensionality proves the image-composition equality."
+      ],
+      "lean_witness": "example (A : Set ℝ) : (fun y : ℝ => y + 1) '' ((fun x : ℝ => x^2) '' A) = (fun x : ℝ => x^2 + 1) '' A := by\n  simpa [Function.comp_def] using (Set.image_comp (fun y : ℝ => y + 1) (fun x : ℝ => x^2) A).symm"
+    },
+    {
+      "id": "univ_discrete_translation_image_difference",
+      "domain": "university_discrete_mathematics",
+      "difficulty": "advanced",
+      "canonical_statement": "For real sets A and B, translating A \\ B by 1 equals the difference of the translated images of A and B.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"A\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"B\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"map\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMBIND><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA></OMA><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMA><OMS cd=\"set1\" name=\"map\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMBIND><OMV name=\"A\"/></OMA><OMA><OMS cd=\"set1\" name=\"map\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMBIND><OMV name=\"B\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use injectivity of translation to show that image and set difference commute in this case.",
+      "sketch_steps": [
+        "setup: Let t(x)=x+1 and take an arbitrary target value y.",
+        "forward: A witness x∈A\\B gives y=t(x) in t(A), and injectivity prevents y from being in t(B).",
+        "reverse: From y∈t(A)\\t(B), choose x∈A with y=x+1.",
+        "derive: If x were in B, then y would be in t(B), contradicting exclusion.",
+        "repack: Obtain x∈A\\B with y=t(x).",
+        "conclude: Extensionality proves equality of the two sets."
+      ],
+      "lean_witness": "example (A B : Set ℝ) : (fun x : ℝ => x + 1) '' (A \\ B) = ((fun x : ℝ => x + 1) '' A) \\ ((fun x : ℝ => x + 1) '' B) := by\n  ext y\n  constructor\n  · rintro ⟨x, hx, rfl⟩\n    constructor\n    · exact ⟨x, hx.1, rfl⟩\n    · rintro ⟨z, hz, hzy⟩\n      apply hx.2\n      have hzx : z = x := by linarith\n      simpa [hzx] using hz\n  · rintro ⟨⟨x, hx, rfl⟩, hnot⟩\n    refine ⟨x, ?_, rfl⟩\n    constructor\n    · exact hx\n    · intro hB\n      apply hnot\n      exact ⟨x, hB, rfl⟩"
+    }
+  ]
+}

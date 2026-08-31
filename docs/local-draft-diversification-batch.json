@@ -1,0 +1,786 @@
+{
+  "schema_version": "pals.local-draft-diversification-batch.v1",
+  "source": "PALS first-party authored batch",
+  "cards": [
+    {
+      "id": "algebra_add_commutative_integer",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for all integers a and b, a + b = b + a.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/><OMV name=\"b\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"a\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"b\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"a\"/><OMV name=\"b\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"b\"/><OMV name=\"a\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use commutativity of integer addition to exchange the two summands.",
+      "sketch_steps": [
+        "setup: Introduce integers a and b.",
+        "apply_theorem: Commute the addition.",
+        "conclude: The two sides agree."
+      ],
+      "lean_witness": "example (a b : ℤ) : a + b = b + a := by ring"
+    },
+    {
+      "id": "algebra_mul_commutative_integer",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for all integers a and b, a * b = b * a.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"a\"/><OMV name=\"b\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"a\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"b\"/><OMS cd=\"setname1\" name=\"Z\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"a\"/><OMV name=\"b\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"b\"/><OMV name=\"a\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use commutativity of integer multiplication to exchange the factors.",
+      "sketch_steps": [
+        "setup: Introduce integers a and b.",
+        "apply_theorem: Commute the multiplication.",
+        "conclude: The products agree."
+      ],
+      "lean_witness": "example (a b : ℤ) : a * b = b * a := by ring"
+    },
+    {
+      "id": "algebra_add_associative_real",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for all real x, y, and z, (x + y) + z = x + (y + z).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMV name=\"z\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Reassociate the sum without changing the order of the three terms.",
+      "sketch_steps": [
+        "setup: Introduce real x, y, z.",
+        "calculation: Reassociate the sum.",
+        "conclude: Both groupings have the same value."
+      ],
+      "lean_witness": "example (x y z : ℝ) : (x + y) + z = x + (y + z) := by ring"
+    },
+    {
+      "id": "algebra_mul_associative_real",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for all real x, y, and z, (x * y) * z = x * (y * z).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMV name=\"z\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Reassociate the product without changing the order of the three factors.",
+      "sketch_steps": [
+        "setup: Introduce real x, y, z.",
+        "calculation: Reassociate the product.",
+        "conclude: Both groupings have the same value."
+      ],
+      "lean_witness": "example (x y z : ℝ) : (x * y) * z = x * (y * z) := by ring"
+    },
+    {
+      "id": "algebra_left_distributive_real",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for all real x, y, and z, x * (y + z) = x*y + x*z.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"z\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Distribute the common left factor x across the sum y + z.",
+      "sketch_steps": [
+        "setup: Introduce real x, y, z.",
+        "calculation: Distribute x across the sum.",
+        "conclude: Collect the two resulting products."
+      ],
+      "lean_witness": "example (x y z : ℝ) : x * (y + z) = x*y + x*z := by ring"
+    },
+    {
+      "id": "algebra_right_distributive_real",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for all real x, y, and z, (x + y) * z = x*z + y*z.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMV name=\"z\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"z\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Distribute the common right factor z across the sum x + y.",
+      "sketch_steps": [
+        "setup: Introduce real x, y, z.",
+        "calculation: Distribute z across the sum.",
+        "conclude: Collect the two resulting products."
+      ],
+      "lean_witness": "example (x y z : ℝ) : (x + y) * z = x*z + y*z := by ring"
+    },
+    {
+      "id": "algebra_sub_self_real",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for every real x, x - x = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"x\"/></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Subtracting a real number from itself leaves the additive identity.",
+      "sketch_steps": [
+        "setup: Introduce a real x.",
+        "calculation: Cancel x with its additive inverse.",
+        "conclude: The result is zero."
+      ],
+      "lean_witness": "example (x : ℝ) : x - x = 0 := by ring"
+    },
+    {
+      "id": "algebra_add_neg_cancel_real",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for every real x, x + (-x) = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"x\"/></OMA></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Pair x with its additive inverse to obtain zero.",
+      "sketch_steps": [
+        "setup: Introduce a real x.",
+        "apply_theorem: Use additive inverse cancellation.",
+        "conclude: The sum is zero."
+      ],
+      "lean_witness": "example (x : ℝ) : x + (-x) = 0 := by ring"
+    },
+    {
+      "id": "algebra_sub_add_cancel_real",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for all real x and y, x - y + y = x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMV name=\"y\"/></OMA><OMV name=\"x\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Rewrite subtraction as addition of an inverse, then cancel -y with y.",
+      "sketch_steps": [
+        "setup: Introduce real x and y.",
+        "calculation: Rewrite x - y as x + (-y).",
+        "conclude: Cancel -y + y."
+      ],
+      "lean_witness": "example (x y : ℝ) : x - y + y = x := by ring"
+    },
+    {
+      "id": "algebra_add_sub_cancel_real",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for all real x and y, x + y - y = x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMV name=\"y\"/></OMA><OMV name=\"x\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Rewrite subtraction as addition of an inverse, then cancel y with -y.",
+      "sketch_steps": [
+        "setup: Introduce real x and y.",
+        "calculation: Rewrite subtraction using -y.",
+        "conclude: Cancel y + (-y)."
+      ],
+      "lean_witness": "example (x y : ℝ) : x + y - y = x := by ring"
+    },
+    {
+      "id": "algebra_neg_neg_real",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for every real x, -(-x) = x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"x\"/></OMA></OMA><OMV name=\"x\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Taking the additive inverse twice restores the original value.",
+      "sketch_steps": [
+        "setup: Introduce a real x.",
+        "apply_theorem: Simplify the double inverse.",
+        "conclude: The result is x."
+      ],
+      "lean_witness": "example (x : ℝ) : -(-x) = x := by ring"
+    },
+    {
+      "id": "algebra_zero_mul_real",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for every real x, 0 * x = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>0</OMI><OMV name=\"x\"/></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Zero annihilates every real factor under multiplication.",
+      "sketch_steps": [
+        "setup: Introduce a real x.",
+        "apply_theorem: Use zero multiplication.",
+        "conclude: The product is zero."
+      ],
+      "lean_witness": "example (x : ℝ) : 0 * x = 0 := by ring"
+    },
+    {
+      "id": "algebra_square_difference_real",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for all real x and y, (x - y)^2 = x^2 - 2*x*y + y^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand the square of a difference and combine the two mixed negative terms.",
+      "sketch_steps": [
+        "setup: Introduce real x and y.",
+        "calculation: Expand (x - y)^2.",
+        "conclude: Collect the mixed terms."
+      ],
+      "lean_witness": "example (x y : ℝ) : (x - y)^2 = x^2 - 2*x*y + y^2 := by ring"
+    },
+    {
+      "id": "algebra_sum_cubes_factor_real",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for all real x and y, x^3 + y^3 = (x + y) * (x^2 - x*y + y^2).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand the proposed factorization and cancel the opposite cubic cross terms.",
+      "sketch_steps": [
+        "setup: Introduce real x and y.",
+        "calculation: Distribute the proposed factors.",
+        "conclude: Cancel cross terms to recover the sum of cubes."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^3 + y^3 = (x + y) * (x^2 - x*y + y^2) := by ring"
+    },
+    {
+      "id": "algebra_difference_cubes_factor_real",
+      "domain": "elementary_algebra",
+      "canonical_statement": "Show that for all real x and y, x^3 - y^3 = (x - y) * (x^2 + x*y + y^2).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand the proposed factorization and cancel the opposite cubic cross terms.",
+      "sketch_steps": [
+        "setup: Introduce real x and y.",
+        "calculation: Distribute the proposed factors.",
+        "conclude: Cancel cross terms to recover the difference of cubes."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^3 - y^3 = (x - y) * (x^2 + x*y + y^2) := by ring"
+    },
+    {
+      "id": "order_le_refl_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for every real x, x ≤ x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMV name=\"x\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Every ordered value is less than or equal to itself.",
+      "sketch_steps": [
+        "setup: Introduce x.",
+        "apply_theorem: Use reflexivity of ≤.",
+        "conclude: x ≤ x."
+      ],
+      "lean_witness": "example (x : ℝ) : x ≤ x := le_rfl"
+    },
+    {
+      "id": "order_lt_add_one_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for every real x, x < x + 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Adding the positive number one strictly increases a real number.",
+      "sketch_steps": [
+        "setup: Introduce x.",
+        "derive: Note that 0 < 1.",
+        "conclude: Add x to the strict inequality."
+      ],
+      "lean_witness": "example (x : ℝ) : x < x + 1 := by linarith"
+    },
+    {
+      "id": "order_add_le_add_right_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for all real x, y, and z, if x ≤ y then x + z ≤ y + z.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"z\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Add the same real z to both sides of the inequality.",
+      "sketch_steps": [
+        "setup: Introduce x, y, z and x ≤ y.",
+        "derive: Add z to both sides.",
+        "conclude: Preserve the inequality order."
+      ],
+      "lean_witness": "example (x y z : ℝ) (h : x ≤ y) : x + z ≤ y + z := by linarith"
+    },
+    {
+      "id": "order_add_le_add_left_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for all real x, y, and z, if y ≤ z then x + y ≤ x + z.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"z\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Add the same real x to both sides of the inequality.",
+      "sketch_steps": [
+        "setup: Introduce x, y, z and y ≤ z.",
+        "derive: Add x to both sides.",
+        "conclude: Preserve the inequality order."
+      ],
+      "lean_witness": "example (x y z : ℝ) (h : y ≤ z) : x + y ≤ x + z := by linarith"
+    },
+    {
+      "id": "order_sub_le_sub_right_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for all real x, y, and z, if x ≤ y then x - z ≤ y - z.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"z\"/></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Subtract the same real z from both sides of the inequality.",
+      "sketch_steps": [
+        "setup: Introduce x, y, z and x ≤ y.",
+        "derive: Add -z to both sides.",
+        "conclude: Rewrite the result as subtraction."
+      ],
+      "lean_witness": "example (x y z : ℝ) (h : x ≤ y) : x - z ≤ y - z := by linarith"
+    },
+    {
+      "id": "order_neg_reverses_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for all real x and y, if x ≤ y then -y ≤ -x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Multiply both sides of x ≤ y by the negative scalar -1, which reverses the order.",
+      "sketch_steps": [
+        "setup: Introduce x, y and x ≤ y.",
+        "derive: Negate both sides.",
+        "conclude: Reverse the inequality direction."
+      ],
+      "lean_witness": "example (x y : ℝ) (h : x ≤ y) : -y ≤ -x := by linarith"
+    },
+    {
+      "id": "order_neg_abs_le_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for every real x, -|x| ≤ x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMV name=\"x\"/></OMA></OMA><OMV name=\"x\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Absolute value bounds a real number below as well as above.",
+      "sketch_steps": [
+        "setup: Introduce x.",
+        "apply_theorem: Use the lower absolute-value bound.",
+        "conclude: -|x| ≤ x."
+      ],
+      "lean_witness": "example (x : ℝ) : -|x| ≤ x := neg_abs_le x"
+    },
+    {
+      "id": "order_le_abs_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for every real x, x ≤ |x|.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Absolute value is an upper bound for the underlying real number.",
+      "sketch_steps": [
+        "setup: Introduce x.",
+        "apply_theorem: Use the upper absolute-value bound.",
+        "conclude: x ≤ |x|."
+      ],
+      "lean_witness": "example (x : ℝ) : x ≤ |x| := le_abs_self x"
+    },
+    {
+      "id": "order_abs_neg_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for every real x, |-x| = |x|.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Negating a real number changes its sign but not its magnitude.",
+      "sketch_steps": [
+        "setup: Introduce x.",
+        "apply_theorem: Use invariance of absolute value under negation.",
+        "conclude: The magnitudes agree."
+      ],
+      "lean_witness": "example (x : ℝ) : |-x| = |x| := abs_neg x"
+    },
+    {
+      "id": "order_abs_mul_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for all real x and y, |x*y| = |x|*|y|.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Absolute value is multiplicative over real products.",
+      "sketch_steps": [
+        "setup: Introduce x and y.",
+        "apply_theorem: Use multiplicativity of absolute value.",
+        "conclude: Split the magnitude across the product."
+      ],
+      "lean_witness": "example (x y : ℝ) : |x * y| = |x| * |y| := abs_mul x y"
+    },
+    {
+      "id": "order_abs_sub_comm_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for all real x and y, |x - y| = |y - x|.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"y\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "The two differences are negatives of one another, and absolute value removes the sign.",
+      "sketch_steps": [
+        "setup: Introduce x and y.",
+        "derive: Observe y - x = -(x - y).",
+        "conclude: Apply absolute-value sign invariance."
+      ],
+      "lean_witness": "example (x y : ℝ) : |x - y| = |y - x| := abs_sub_comm x y"
+    },
+    {
+      "id": "order_abs_eq_zero_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for every real x, |x| = 0 if and only if x = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMV name=\"x\"/></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the zero characterization of absolute value.",
+      "sketch_steps": [
+        "setup: Introduce x.",
+        "apply_theorem: Characterize when absolute value vanishes.",
+        "conclude: The two equalities are equivalent."
+      ],
+      "lean_witness": "example (x : ℝ) : |x| = 0 ↔ x = 0 := abs_eq_zero"
+    },
+    {
+      "id": "order_abs_square_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for every real x, |x^2| = x^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "First prove x^2 is nonnegative, then remove absolute value using that bound.",
+      "sketch_steps": [
+        "setup: Introduce x.",
+        "derive: Establish 0 ≤ x^2.",
+        "conclude: Simplify the absolute value of a nonnegative term."
+      ],
+      "lean_witness": "example (x : ℝ) : |x^2| = x^2 := abs_of_nonneg (sq_nonneg x)"
+    },
+    {
+      "id": "order_add_nonnegative_left_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for all real x and y, if 0 ≤ x then y ≤ x + y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"x\"/></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"y\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "A nonnegative summand cannot decrease a real number.",
+      "sketch_steps": [
+        "setup: Introduce x, y and 0 ≤ x.",
+        "derive: Add y to both sides of 0 ≤ x.",
+        "conclude: Reorder the sum as y ≤ x + y."
+      ],
+      "lean_witness": "example (x y : ℝ) (hx : 0 ≤ x) : y ≤ x + y := by linarith"
+    },
+    {
+      "id": "order_abs_triangle_real",
+      "domain": "order_and_absolute_value",
+      "canonical_statement": "Show that for all real x and y, |x + y| ≤ |x| + |y|.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the triangle inequality for absolute value.",
+      "sketch_steps": [
+        "setup: Introduce real x and y.",
+        "apply_theorem: Use the absolute-value triangle inequality.",
+        "conclude: Bound the sum by the sum of magnitudes."
+      ],
+      "lean_witness": "example (x y : ℝ) : |x + y| ≤ |x| + |y| := abs_add_le x y"
+    },
+    {
+      "id": "nat_gcd_zero_left",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for every natural number n, gcd(0, n) = n.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMI>0</OMI><OMV name=\"n\"/></OMA><OMV name=\"n\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the zero identity for gcd on the left argument.",
+      "sketch_steps": [
+        "setup: Introduce n.",
+        "apply_theorem: Simplify gcd with zero on the left.",
+        "conclude: The result is n."
+      ],
+      "lean_witness": "example (n : ℕ) : Nat.gcd 0 n = n := by simp"
+    },
+    {
+      "id": "nat_gcd_self",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for every natural number n, gcd(n, n) = n.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMV name=\"n\"/><OMV name=\"n\"/></OMA><OMV name=\"n\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "A number is the greatest common divisor of itself and itself.",
+      "sketch_steps": [
+        "setup: Introduce n.",
+        "apply_theorem: Use the self identity of gcd.",
+        "conclude: gcd(n, n) is n."
+      ],
+      "lean_witness": "example (n : ℕ) : Nat.gcd n n = n := Nat.gcd_self n"
+    },
+    {
+      "id": "nat_gcd_one_right",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for every natural number n, gcd(n, 1) = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMV name=\"n\"/><OMI>1</OMI></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "One is the only positive common divisor forced by a unit argument.",
+      "sketch_steps": [
+        "setup: Introduce n.",
+        "apply_theorem: Use the gcd identity with one.",
+        "conclude: The gcd is one."
+      ],
+      "lean_witness": "example (n : ℕ) : Nat.gcd n 1 = 1 := Nat.gcd_one_right n"
+    },
+    {
+      "id": "nat_gcd_one_left",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for every natural number n, gcd(1, n) = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMI>1</OMI><OMV name=\"n\"/></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Swap the unit to the left argument of the gcd identity.",
+      "sketch_steps": [
+        "setup: Introduce n.",
+        "apply_theorem: Use the gcd identity with one.",
+        "conclude: The gcd is one."
+      ],
+      "lean_witness": "example (n : ℕ) : Nat.gcd 1 n = 1 := Nat.gcd_one_left n"
+    },
+    {
+      "id": "nat_gcd_associative",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for all natural numbers m, n, and k, gcd(gcd(m, n), k) = gcd(m, gcd(n, k)).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"m\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"m\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"k\"/><OMS cd=\"setname1\" name=\"N\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMV name=\"m\"/><OMV name=\"n\"/></OMA><OMV name=\"k\"/></OMA><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMV name=\"m\"/><OMA><OMS cd=\"arith1\" name=\"gcd\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Greatest common divisor is associative, so regroup the three arguments.",
+      "sketch_steps": [
+        "setup: Introduce m, n, k.",
+        "apply_theorem: Reassociate gcd.",
+        "conclude: The two groupings agree."
+      ],
+      "lean_witness": "example (m n k : ℕ) : Nat.gcd (Nat.gcd m n) k = Nat.gcd m (Nat.gcd n k) := Nat.gcd_assoc m n k"
+    },
+    {
+      "id": "nat_lcm_zero_right",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for every natural number n, lcm(n, 0) = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMV name=\"n\"/><OMI>0</OMI></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Zero is a common multiple of every natural number, and it is the least one in this convention.",
+      "sketch_steps": [
+        "setup: Introduce n.",
+        "apply_theorem: Simplify lcm with zero on the right.",
+        "conclude: The lcm is zero."
+      ],
+      "lean_witness": "example (n : ℕ) : Nat.lcm n 0 = 0 := Nat.lcm_zero_right n"
+    },
+    {
+      "id": "nat_lcm_zero_left",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for every natural number n, lcm(0, n) = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMI>0</OMI><OMV name=\"n\"/></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the symmetric zero identity for lcm.",
+      "sketch_steps": [
+        "setup: Introduce n.",
+        "apply_theorem: Simplify lcm with zero on the left.",
+        "conclude: The lcm is zero."
+      ],
+      "lean_witness": "example (n : ℕ) : Nat.lcm 0 n = 0 := Nat.lcm_zero_left n"
+    },
+    {
+      "id": "nat_lcm_self",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for every natural number n, lcm(n, n) = n.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMV name=\"n\"/><OMV name=\"n\"/></OMA><OMV name=\"n\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "A number is the least common multiple of itself and itself.",
+      "sketch_steps": [
+        "setup: Introduce n.",
+        "apply_theorem: Use the self identity of lcm.",
+        "conclude: lcm(n, n) is n."
+      ],
+      "lean_witness": "example (n : ℕ) : Nat.lcm n n = n := Nat.lcm_self n"
+    },
+    {
+      "id": "nat_lcm_one_right",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for every natural number n, lcm(n, 1) = n.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMV name=\"n\"/><OMI>1</OMI></OMA><OMV name=\"n\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Every number is already a multiple of one.",
+      "sketch_steps": [
+        "setup: Introduce n.",
+        "apply_theorem: Use the lcm identity with one.",
+        "conclude: The lcm is n."
+      ],
+      "lean_witness": "example (n : ℕ) : Nat.lcm n 1 = n := Nat.lcm_one_right n"
+    },
+    {
+      "id": "nat_lcm_one_left",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for every natural number n, lcm(1, n) = n.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMI>1</OMI><OMV name=\"n\"/></OMA><OMV name=\"n\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Swap the unit to the left argument of the lcm identity.",
+      "sketch_steps": [
+        "setup: Introduce n.",
+        "apply_theorem: Use the lcm identity with one.",
+        "conclude: The lcm is n."
+      ],
+      "lean_witness": "example (n : ℕ) : Nat.lcm 1 n = n := Nat.lcm_one_left n"
+    },
+    {
+      "id": "nat_lcm_associative",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for all natural numbers m, n, and k, lcm(lcm(m, n), k) = lcm(m, lcm(n, k)).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"m\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"m\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"k\"/><OMS cd=\"setname1\" name=\"N\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMV name=\"m\"/><OMV name=\"n\"/></OMA><OMV name=\"k\"/></OMA><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMV name=\"m\"/><OMA><OMS cd=\"arith1\" name=\"lcm\"/><OMV name=\"n\"/><OMV name=\"k\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Least common multiple is associative, so regroup the three arguments.",
+      "sketch_steps": [
+        "setup: Introduce m, n, k.",
+        "apply_theorem: Reassociate lcm.",
+        "conclude: The two groupings agree."
+      ],
+      "lean_witness": "example (m n k : ℕ) : Nat.lcm (Nat.lcm m n) k = Nat.lcm m (Nat.lcm n k) := Nat.lcm_assoc m n k"
+    },
+    {
+      "id": "nat_power_zero",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for every natural number n, n^0 = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"n\"/><OMI>0</OMI></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "The zeroth power is the multiplicative identity.",
+      "sketch_steps": [
+        "setup: Introduce n.",
+        "apply_theorem: Use the zeroth-power identity.",
+        "conclude: The result is one."
+      ],
+      "lean_witness": "example (n : ℕ) : n^0 = 1 := by simp"
+    },
+    {
+      "id": "nat_one_power",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for every natural number n, 1^n = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMI>1</OMI><OMV name=\"n\"/></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "The multiplicative identity remains one under natural powers.",
+      "sketch_steps": [
+        "setup: Introduce n.",
+        "apply_theorem: Use the one-power identity.",
+        "conclude: The result is one."
+      ],
+      "lean_witness": "example (n : ℕ) : 1^n = 1 := by simp"
+    },
+    {
+      "id": "nat_power_one",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for every natural number n, n^1 = n.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"n\"/><OMI>1</OMI></OMA><OMV name=\"n\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "The first power leaves the base unchanged.",
+      "sketch_steps": [
+        "setup: Introduce n.",
+        "apply_theorem: Use the first-power identity.",
+        "conclude: The result is n."
+      ],
+      "lean_witness": "example (n : ℕ) : n^1 = n := by simp"
+    },
+    {
+      "id": "nat_zero_power_positive",
+      "domain": "elementary_number_theory",
+      "canonical_statement": "Show that for every natural number n, if 0 < n then 0^n = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"n\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"n\"/><OMS cd=\"setname1\" name=\"N\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMI>0</OMI><OMV name=\"n\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMI>0</OMI><OMV name=\"n\"/></OMA><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "A positive natural exponent leaves zero equal to zero.",
+      "sketch_steps": [
+        "setup: Introduce n and 0 < n.",
+        "apply_theorem: Use the positive-exponent zero-power law.",
+        "conclude: The power is zero."
+      ],
+      "lean_witness": "example (n : ℕ) (hn : 0 < n) : 0^n = 0 := zero_pow (Nat.ne_of_gt hn)"
+    },
+    {
+      "id": "set_union_commutative",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that for all sets A and B, A ∪ B = B ∪ A.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"B\"/><OMV name=\"A\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Prove extensional equality and commute the membership disjunction.",
+      "sketch_steps": [
+        "setup: Apply set extensionality.",
+        "derive: Rewrite union membership as a disjunction.",
+        "conclude: Commute the disjunction."
+      ],
+      "lean_witness": "example {α : Type} (A B : Set α) : A ∪ B = B ∪ A := by ext x; simp [or_comm]"
+    },
+    {
+      "id": "set_intersection_commutative",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that for all sets A and B, A ∩ B = B ∩ A.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"B\"/><OMV name=\"A\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Prove extensional equality and commute the membership conjunction.",
+      "sketch_steps": [
+        "setup: Apply set extensionality.",
+        "derive: Rewrite intersection membership as a conjunction.",
+        "conclude: Commute the conjunction."
+      ],
+      "lean_witness": "example {α : Type} (A B : Set α) : A ∩ B = B ∩ A := by ext x; simp [and_comm]"
+    },
+    {
+      "id": "set_union_associative",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that for all sets A, B, and C, (A ∪ B) ∪ C = A ∪ (B ∪ C).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMV name=\"C\"/></OMA><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Prove extensional equality and reassociate the membership disjunction.",
+      "sketch_steps": [
+        "setup: Apply set extensionality.",
+        "derive: Rewrite both unions as disjunctions.",
+        "conclude: Reassociate the disjunction."
+      ],
+      "lean_witness": "example {α : Type} (A B C : Set α) : (A ∪ B) ∪ C = A ∪ (B ∪ C) := by ext x; simp [or_assoc]"
+    },
+    {
+      "id": "set_intersection_associative",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that for all sets A, B, and C, (A ∩ B) ∩ C = A ∩ (B ∩ C).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMV name=\"C\"/></OMA><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Prove extensional equality and reassociate the membership conjunction.",
+      "sketch_steps": [
+        "setup: Apply set extensionality.",
+        "derive: Rewrite both intersections as conjunctions.",
+        "conclude: Reassociate the conjunction."
+      ],
+      "lean_witness": "example {α : Type} (A B C : Set α) : (A ∩ B) ∩ C = A ∩ (B ∩ C) := by ext x; simp [and_assoc]"
+    },
+    {
+      "id": "set_union_idempotent",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that for every set A, A ∪ A = A.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMV name=\"A\"/></OMA><OMV name=\"A\"/></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Prove extensional equality and simplify the duplicated membership disjunction.",
+      "sketch_steps": [
+        "setup: Apply set extensionality.",
+        "derive: Rewrite membership in A ∪ A.",
+        "conclude: Simplify P ∨ P to P."
+      ],
+      "lean_witness": "example {α : Type} (A : Set α) : A ∪ A = A := by ext x; simp"
+    },
+    {
+      "id": "set_intersection_idempotent",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that for every set A, A ∩ A = A.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMV name=\"A\"/></OMA><OMV name=\"A\"/></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Prove extensional equality and simplify the duplicated membership conjunction.",
+      "sketch_steps": [
+        "setup: Apply set extensionality.",
+        "derive: Rewrite membership in A ∩ A.",
+        "conclude: Simplify P ∧ P to P."
+      ],
+      "lean_witness": "example {α : Type} (A : Set α) : A ∩ A = A := by ext x; simp"
+    },
+    {
+      "id": "set_union_empty_right",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that for every set A, A ∪ ∅ = A.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMS cd=\"set1\" name=\"emptyset\"/></OMA><OMV name=\"A\"/></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "The empty set contributes no possible member to a union.",
+      "sketch_steps": [
+        "setup: Apply set extensionality.",
+        "derive: Rewrite membership in the union with ∅.",
+        "conclude: The false branch disappears."
+      ],
+      "lean_witness": "example {α : Type} (A : Set α) : A ∪ ∅ = A := by ext x; simp"
+    },
+    {
+      "id": "set_union_empty_left",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that for every set A, ∅ ∪ A = A.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMS cd=\"set1\" name=\"emptyset\"/><OMV name=\"A\"/></OMA><OMV name=\"A\"/></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "The empty set contributes no possible member to a union.",
+      "sketch_steps": [
+        "setup: Apply set extensionality.",
+        "derive: Rewrite membership in the union with ∅.",
+        "conclude: The false branch disappears."
+      ],
+      "lean_witness": "example {α : Type} (A : Set α) : ∅ ∪ A = A := by ext x; simp"
+    },
+    {
+      "id": "set_intersection_empty",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that for every set A, A ∩ ∅ = ∅.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMS cd=\"set1\" name=\"emptyset\"/></OMA><OMS cd=\"set1\" name=\"emptyset\"/></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "No element can belong to the empty set, so no element belongs to the intersection.",
+      "sketch_steps": [
+        "setup: Apply set extensionality.",
+        "derive: Rewrite intersection membership with ∅.",
+        "conclude: The membership condition is false."
+      ],
+      "lean_witness": "example {α : Type} (A : Set α) : A ∩ ∅ = ∅ := by ext x; simp"
+    },
+    {
+      "id": "set_difference_empty",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that for every set A, A \\ ∅ = A.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMS cd=\"set1\" name=\"emptyset\"/></OMA><OMV name=\"A\"/></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Subtracting no elements leaves a set unchanged.",
+      "sketch_steps": [
+        "setup: Apply set extensionality.",
+        "derive: Rewrite difference membership with ∅.",
+        "conclude: The nonmembership condition is automatic."
+      ],
+      "lean_witness": "example {α : Type} (A : Set α) : A \\ ∅ = A := by ext x; simp"
+    },
+    {
+      "id": "set_empty_difference",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that for every set A, ∅ \\ A = ∅.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMS cd=\"set1\" name=\"emptyset\"/><OMV name=\"A\"/></OMA><OMS cd=\"set1\" name=\"emptyset\"/></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "There are no elements in the left set to retain after subtraction.",
+      "sketch_steps": [
+        "setup: Apply set extensionality.",
+        "derive: Rewrite difference membership from ∅.",
+        "conclude: The membership condition is false."
+      ],
+      "lean_witness": "example {α : Type} (A : Set α) : ∅ \\ A = ∅ := by ext x; simp"
+    },
+    {
+      "id": "set_difference_self",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that for every set A, A \\ A = ∅.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/></OMBVAR><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"set1\" name=\"setdiff\"/><OMV name=\"A\"/><OMV name=\"A\"/></OMA><OMS cd=\"set1\" name=\"emptyset\"/></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "No element can be both a member of A and not a member of A.",
+      "sketch_steps": [
+        "setup: Apply set extensionality.",
+        "derive: Rewrite A \\ A membership.",
+        "conclude: The resulting contradiction yields false."
+      ],
+      "lean_witness": "example {α : Type} (A : Set α) : A \\ A = ∅ := by ext x; simp"
+    },
+    {
+      "id": "set_subset_refl",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that every set A is a subset of itself.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/></OMBVAR><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"A\"/><OMV name=\"A\"/></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Subset inclusion is reflexive: retain the same membership proof.",
+      "sketch_steps": [
+        "setup: Fix a set A and an element of A.",
+        "derive: Keep the membership proof unchanged.",
+        "conclude: A is a subset of itself."
+      ],
+      "lean_witness": "example {α : Type} (A : Set α) : A ⊆ A := fun _ hx => hx"
+    },
+    {
+      "id": "set_intersection_subset_right",
+      "domain": "basic_set_theory",
+      "canonical_statement": "Show that for all sets A and B, A ∩ B is a subset of B.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/></OMBVAR><OMA><OMS cd=\"set1\" name=\"subset\"/><OMA><OMS cd=\"set1\" name=\"intersect\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMV name=\"B\"/></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Unpack membership in an intersection and retain the B-membership component.",
+      "sketch_steps": [
+        "setup: Fix A, B and an element in A ∩ B.",
+        "derive: Unpack intersection membership.",
+        "conclude: Keep the B-membership proof."
+      ],
+      "lean_witness": "example {α : Type} (A B : Set α) : A ∩ B ⊆ B := Set.inter_subset_right"
+    },
+    {
+      "id": "set_union_subset_iff",
+      "domain": "basic_set_theory",
+      "canonical_statement": "For all sets A, B, C: A ∪ B ⊆ C iff A ⊆ C and B ⊆ C.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"A\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"set1\" name=\"subset\"/><OMA><OMS cd=\"set1\" name=\"union\"/><OMV name=\"A\"/><OMV name=\"B\"/></OMA><OMV name=\"C\"/></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"A\"/><OMV name=\"C\"/></OMA><OMA><OMS cd=\"set1\" name=\"subset\"/><OMV name=\"B\"/><OMV name=\"C\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Reduce subset statements to arbitrary memberships; then split and combine the union cases.",
+      "sketch_steps": [
+        "setup: Expand both subset statements elementwise.",
+        "derive: Split union membership into the A and B cases.",
+        "conclude: Reassemble the two subset proofs."
+      ],
+      "lean_witness": "example {α : Type} (A B C : Set α) : A ∪ B ⊆ C ↔ A ⊆ C ∧ B ⊆ C := by simp"
+    }
+  ]
+}

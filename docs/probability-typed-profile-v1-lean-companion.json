@@ -1,0 +1,172 @@
+{
+  "schema_version": "pals.typed-probability-v1.lean-companion.v1",
+  "status": "admission evidence for the typed-probability-v1 design; not a DB manifest",
+  "source_manifest": "docs/probability-ode-draft-candidates.json",
+  "source_profile": "requires_pals_probability_profile_v1",
+  "lean_prelude": [
+    "import Mathlib",
+    "open MeasureTheory Set",
+    "open ProbabilityTheory",
+    "open scoped ProbabilityTheory unitInterval ENNReal"
+  ],
+  "audit_rule": "Admit a card only when its existing canonical statement can be lowered to the typed-probability-v1 convention and a Lean target with that same convention compiles. A theorem using Mathlib totalized ENNReal operations is not evidence for a Real-valued typed card unless the conversion and all required premises are explicit.",
+  "lowering_contract": {
+    "ProbabilityMeasure(Omega)": "Lean `μ : Measure Ω` together with `[MeasurableSpace Ω] [IsProbabilityMeasure μ]`.",
+    "Event(Omega)": "A Lean `Set Ω` accompanied by the `MeasurableSet` premise required by the operator.",
+    "Probability_to_Real": "For a measure value, `prob_to_real(Pμ(A))` lowers to `(μ A).toReal`; this is never implicit.",
+    "RealRandomVariable(Omega)": "A Lean function `Ω → ℝ` plus the measurability and integrability evidence required by the particular operator.",
+    "DistributionNat": "For `binomial_distribution n p`, Lean uses `Bin(n, p)` with `p : I` (`unitInterval`). Its real PMF is `(Bin(n, p)).real {k}`, i.e. the reviewed lowering of `prob_to_real(pmf(..., k))`.",
+    "Nat_to_Real": "A typed `nat_to_real` is required in real-valued PMF formulas; Mathlib performs that coercion in the exact binomial theorem below."
+  },
+  "admitted_card_count": 10,
+  "excluded_card_count": 7,
+  "admitted_cards": [
+    {
+      "id": "prob_choose_zero",
+      "canonical_statement": "For every natural number n, choose(n, 0) = 1.",
+      "typed_lowering": "`Nat` lowers directly to Lean `ℕ`; `choose` lowers to `Nat.choose`.",
+      "lean_target": "example (n : ℕ) : Nat.choose n 0 = 1 := by exact Nat.choose_zero_right n",
+      "lean_witness": "by exact Nat.choose_zero_right n",
+      "review": ["No probability or scalar coercion is used.", "Lean's total `Nat.choose` has the same boundary-case convention as the profile."],
+      "verification": "compiled"
+    },
+    {
+      "id": "prob_choose_self",
+      "canonical_statement": "For every natural number n, choose(n, n) = 1.",
+      "typed_lowering": "`Nat` lowers directly to Lean `ℕ`; `choose` lowers to `Nat.choose`.",
+      "lean_target": "example (n : ℕ) : Nat.choose n n = 1 := by exact Nat.choose_self n",
+      "lean_witness": "by exact Nat.choose_self n",
+      "review": ["No probability or scalar coercion is used.", "The profile and Lean use natural-number equality."],
+      "verification": "compiled"
+    },
+    {
+      "id": "prob_choose_one",
+      "canonical_statement": "For every natural number n, choose(n, 1) = n.",
+      "typed_lowering": "`Nat` lowers directly to Lean `ℕ`; `choose` lowers to `Nat.choose`.",
+      "lean_target": "example (n : ℕ) : Nat.choose n 1 = n := by simp",
+      "lean_witness": "by simp",
+      "review": ["No probability or scalar coercion is used.", "The equality is over `ℕ`, including the n = 0 case."],
+      "verification": "compiled"
+    },
+    {
+      "id": "prob_choose_pascal",
+      "canonical_statement": "For natural n and k, choose(n + 1, k + 1) = choose(n, k) + choose(n, k + 1).",
+      "typed_lowering": "All operators are typed natural-number operators: `nat_add` and `choose` lower to `Nat` addition and `Nat.choose`.",
+      "lean_target": "example (n k : ℕ) : Nat.choose (n + 1) (k + 1) = Nat.choose n k + Nat.choose n (k + 1) := by exact Nat.choose_succ_succ' n k",
+      "lean_witness": "by exact Nat.choose_succ_succ' n k",
+      "review": ["No probability or scalar coercion is used.", "The total `choose` convention makes the identity valid for all k, as the canonical statement says."],
+      "verification": "compiled"
+    },
+    {
+      "id": "prob_choose_symmetry",
+      "canonical_statement": "For natural n and k with k ≤ n, choose(n, n - k) = choose(n, k).",
+      "typed_lowering": "`Nat` and its truncated subtraction lower directly to `ℕ`, `Nat.sub`, and `Nat.choose`.",
+      "lean_target": "example {n k : ℕ} (hk : k ≤ n) : Nat.choose n (n - k) = Nat.choose n k := by exact Nat.choose_symm hk",
+      "lean_witness": "by exact Nat.choose_symm hk",
+      "review": ["The explicit k ≤ n premise is retained.", "Both sides use natural truncated subtraction, exactly the v1 `nat_sub` convention."],
+      "verification": "compiled"
+    },
+    {
+      "id": "prob_choose_two",
+      "canonical_statement": "For every natural number n, choose(n, 2) = n*(n - 1)/2.",
+      "typed_lowering": "`Nat`, multiplication, subtraction, and division lower to `ℕ`, `Nat.mul`, `Nat.sub`, and truncated `Nat.div`.",
+      "lean_target": "example (n : ℕ) : Nat.choose n 2 = n * (n - 1) / 2 := by exact Nat.choose_two_right n",
+      "lean_witness": "by exact Nat.choose_two_right n",
+      "review": ["The formula is intentionally a natural-number formula, not real division.", "This agrees with the profile's explicit `nat_div` convention."],
+      "verification": "compiled"
+    },
+    {
+      "id": "prob_expectation_constant",
+      "canonical_statement": "For probability measure M and real c, expectation(constant(c), M) = c.",
+      "typed_lowering": "`M : ProbabilityMeasure(Ω)` lowers to `μ : Measure Ω` with `[IsProbabilityMeasure μ]`; `constant_rv(Ω,c)` lowers to `fun _ : Ω => c`; `expectation` lowers to the Bochner integral in `ℝ`.",
+      "lean_target": "example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] (c : ℝ) : ∫ _ : Ω, c ∂μ = c := by simp",
+      "lean_witness": "by simp",
+      "review": ["The source requires a probability measure, matching the Lean typeclass assumption.", "Constant integrability is discharged by the library simplifier, so no unrepresented side condition is hidden."],
+      "verification": "compiled"
+    },
+    {
+      "id": "prob_binomial_pmf",
+      "canonical_statement": "For natural n and k and real p with 0 ≤ p ≤ 1, BinomialPMF(n, p, k) = choose(n, k)*p^k*(1 - p)^(n - k).",
+      "typed_lowering": "The bounded real parameter lowers to `p : I`; `binomial_distribution n p` lowers to `Bin(n,p)`; `prob_to_real(pmf(...,k))` lowers to `(Bin(n,p)).real {k}`; profile `nat_to_real`/`prob_to_real` correspond to the coercions displayed by the theorem.",
+      "lean_target": "example (n k : ℕ) (p : I) : (Bin(n, p)).real {k} = (n.choose k) * p^k * (1 - p)^(n - k) := by exact binomial_real_singleton n k p",
+      "lean_witness": "by exact binomial_real_singleton n k p",
+      "review": ["`p : I` is exactly the 0 ≤ p ≤ 1 restriction in the canonical statement.", "The left side is a real-valued PMF lowering, not a raw `ENNReal` measure value.", "All real operations occur after the required probability/natural-to-real conversion."],
+      "verification": "compiled"
+    },
+    {
+      "id": "prob_binomial_zero_success",
+      "canonical_statement": "For natural n and real p with 0 ≤ p ≤ 1, BinomialPMF(n, p, 0) = (1 - p)^n.",
+      "typed_lowering": "As for `prob_binomial_pmf`, with the outcome fixed at the natural number zero and the PMF explicitly lowered to `Real`.",
+      "lean_target": "example (n : ℕ) (p : I) : (Bin(n, p)).real {0} = (1 - p)^n := by simp",
+      "lean_witness": "by simp",
+      "review": ["The probability parameter is constrained by `I`.", "The PMF is compared in `ℝ` through the named `.real` lowering."],
+      "verification": "compiled"
+    },
+    {
+      "id": "prob_binomial_all_success",
+      "canonical_statement": "For natural n and real p with 0 ≤ p ≤ 1, BinomialPMF(n, p, n) = p^n.",
+      "typed_lowering": "As for `prob_binomial_pmf`, with outcome `n` and the PMF explicitly lowered to `Real`.",
+      "lean_target": "example (n : ℕ) (p : I) : (Bin(n, p)).real {n} = p^n := by simp",
+      "lean_witness": "by simp",
+      "review": ["The probability parameter is constrained by `I`.", "The PMF is compared in `ℝ` through the named `.real` lowering."],
+      "verification": "compiled"
+    }
+  ],
+  "excluded_cards": [
+    {
+      "id": "prob_conditional_definition",
+      "canonical_statement": "For finite measure M and measurable events S and T, conditional_probability(M, T, S) = probability(M, S intersect T) / probability(M, S).",
+      "status": "excluded_pending_reauthoring",
+      "reason": "The canonical statement permits an arbitrary finite measure and a zero conditioning mass. v1 defines a `ProbabilityMeasure`-based, Real-valued conditional probability and requires a nonzero denominator. The legacy Lean theorem `cond_apply` is an equality in `ENNReal`; no reviewed `ENNReal.toReal` quotient bridge supplies the missing premise or preserves the source statement.",
+      "required_reauthoring": "Restrict M to `ProbabilityMeasure(Ω)`, add `prob_to_real(Pμ(S)) ≠ 0`, and prove the explicit `toReal` bridge before admission."
+    },
+    {
+      "id": "prob_conditional_self",
+      "canonical_statement": "For finite measure M and measurable event S with positive finite probability, conditional_probability(M, S, S) = 1.",
+      "status": "excluded_pending_reauthoring",
+      "reason": "Although positivity is stated, the card still quantifies over `FiniteMeasure` and its existing Lean proof is `ENNReal`-valued. It has no reviewed lowering to the v1 `Probability` value and then `Real`, nor a proof that its finite-measure convention is the profile convention.",
+      "required_reauthoring": "State the card for `ProbabilityMeasure(Ω)` with positive `prob_to_real(Pμ(S))`, define the conditional-probability lowering, and compile its real-valued target."
+    },
+    {
+      "id": "prob_conditional_multiplication_rule",
+      "canonical_statement": "For finite measure M and measurable events S and T, conditional_probability(M, T, S)*probability(M, S) = probability(M, S intersect T).",
+      "status": "excluded_pending_reauthoring",
+      "reason": "The legacy target `μ[t | s] * μ s = μ(s ∩ t)` compiles in `ENNReal`. Multiplying `ENNReal.toReal` values needs a separately reviewed finite-value bridge; v1 additionally represents only probability measures. Reusing that theorem would silently change both the scalar sort and measure scope.",
+      "required_reauthoring": "Use `ProbabilityMeasure(Ω)`, make each `prob_to_real` explicit, and prove the Real multiplication identity from a finite/`toReal` bridge."
+    },
+    {
+      "id": "prob_bayes_formula",
+      "canonical_statement": "For finite measure M and measurable events S and T, conditional_probability(M, T, S) = conditional_probability(M, S, T)*probability(M, T)/probability(M, S).",
+      "status": "excluded_pending_reauthoring",
+      "reason": "The source omits the nonzero denominator required by the v1 partial conditional-probability convention. Its old Lean theorem uses totalized `ENNReal` inverse/division, so compiling it would validate a different zero-mass convention rather than the canonical Real formula.",
+      "required_reauthoring": "Restrict to `ProbabilityMeasure(Ω)`, add nonzero hypotheses for the quotient (and any needed reverse conditioning term), then prove the explicit Real lowering."
+    },
+    {
+      "id": "prob_variance_nonnegative",
+      "canonical_statement": "For random variable X under measure M, 0 ≤ Var(X; M).",
+      "status": "excluded_pending_reauthoring",
+      "reason": "v1 requires `square_integrable(X, μ)` for `variance`. Mathlib's `variance_nonneg` concerns its totalized variance definition and does not establish that the source's unrestricted `random_variable` has the profile-required second moment. Admitting it would weaken the profile's stated convention.",
+      "required_reauthoring": "Add `μ : ProbabilityMeasure(Ω)` and `square_integrable(X, μ)`, then compile the profile-aligned variance target."
+    },
+    {
+      "id": "prob_variance_scaling",
+      "canonical_statement": "For real c and random variable X, Var(c*X; M) = c^2*Var(X; M).",
+      "status": "excluded_pending_reauthoring",
+      "reason": "The current statement lacks a measure/probability-measure binding and the square-integrability premise required by the v1 variance signature. The legacy theorem is valid for Mathlib's totalized variance, which is not yet the profile's reviewed classical-variance semantics.",
+      "required_reauthoring": "Bind `μ : ProbabilityMeasure(Ω)` and add `square_integrable(X, μ)`; verify scaling preserves the chosen profile convention."
+    },
+    {
+      "id": "prob_variance_translation",
+      "canonical_statement": "For probability measure M, random variable X, and real c, Var(X + c; M) = Var(X; M).",
+      "status": "excluded_pending_reauthoring",
+      "reason": "The old witness needs `AEStronglyMeasurable X μ`, while the v1 `RealRandomVariable` sort only records measurability and the profile additionally requires square integrability. Those assumptions are absent from the canonical statement, so this cannot be admitted as a faithful typed target.",
+      "required_reauthoring": "Add the profile's square-integrability condition and the Lean-level measurability evidence (or strengthen the sort definition and review its consequences)."
+    }
+  ],
+  "verification": {
+    "lean_workspace": "pals-agent/lean-workspace",
+    "command": "lake env lean /private/tmp/pals-probability-typed-v1-admitted.lean",
+    "result": "passed (Lean 4 / Mathlib pinned by the workspace)",
+    "validated_scope": "The generated Lean batch contains exactly the ten admitted cards. Excluded cards deliberately have no typed admission witness."
+  }
+}

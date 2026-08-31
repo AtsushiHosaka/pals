@@ -1,0 +1,385 @@
+{
+  "schema_version": "pals.typed-geometry-complex-v1-sealed-manifest.v1",
+  "status": "sealed_local_authoring_revision_not_admitted",
+  "seal": {
+    "scope": "phase-A vector and complex-plane typed authoring evidence only",
+    "admission": "not admitted to the generic DB, seed, embedding index, or PFI package; eligible only for local typed catalog preparation",
+    "revision": "typed-geometry-complex-v1-local-r1"
+  },
+  "profile": {
+    "id": "typed-geometry-complex-v1",
+    "validator": "pals_agent.typed_geometry_complex.validate_canonical_typed_geometry_complex_openmath_xml",
+    "canonicalizer": "openmath-cdbase-alpha-c14n-v4",
+    "validator_status": "implemented_isolated_profile",
+    "content_dictionary_bundle": {
+      "relative_path": "pals-agent/pals_agent/content_dictionaries/typed-geometry-complex-v1-registry.json",
+      "sha256": "sha256:8b157abdf4b8b26e3bde762b05e08b1086343afaa60e46d0e22eb571668dd580",
+      "digest_input": "exact UTF-8 bytes of the named registry/CD bundle"
+    },
+    "profile_design": {
+      "relative_path": "docs/vector-complex-typed-extension.md",
+      "sha256": "sha256:8518f93b5b87a8e192b9a4d498d953e3c9cd89139e7bbb732af6d1f0b4b1b489",
+      "digest_input": "exact UTF-8 bytes of the named profile design document"
+    },
+    "lean_toolchain": {
+      "relative_path": "pals-agent/lean-workspace/lean-toolchain",
+      "value": "leanprover/lean4:v4.32.0-rc1",
+      "sha256": "sha256:2c290dc3675a4faf0bc03545ff71a417d2f9a7c2e60e8be80ed643fcbcc73e2d",
+      "digest_input": "exact UTF-8 bytes of the named lean-toolchain file"
+    }
+  },
+  "lean_witness_bundle": {
+    "relative_path": "pals-agent/testdata/typed-geometry-complex-v1/vector-complex-phase-a-witnesses.lean",
+    "sha256": "sha256:3ffbf955354aa1d62dd015fba0444f7e0ca57aab875ea276ed06766266640271",
+    "digest_input": "exact UTF-8 bytes of the named Lean file, including imports and final newline",
+    "verification_command": "cd pals-agent/lean-workspace && lake env lean ../testdata/typed-geometry-complex-v1/vector-complex-phase-a-witnesses.lean",
+    "verification_status": "verified_local_pinned_workspace"
+  },
+  "admitted_candidate_cards": [
+    {
+      "id": "typed_vector2_component_addition",
+      "domain": "high_school.vector",
+      "difficulty": "standard",
+      "canonical_statement": "(1,2) + (3,-1) = (4,1) as planar vectors.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v2\" cd=\"pals2\" name=\"vector_add\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"linalg2\" name=\"vector\"/><OMI>1</OMI><OMI>2</OMI></OMA><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"linalg2\" name=\"vector\"/><OMI>3</OMI><OMI>-1</OMI></OMA></OMA><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"linalg2\" name=\"vector\"/><OMI>4</OMI><OMI>1</OMI></OMA></OMA></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals2\" cdbase=\"urn:pals:openmath:cd:v2\" name=\"vector_add\"></n1:OMS><n1:OMA><n1:OMS cd=\"linalg2\" cdbase=\"http://www.openmath.org/cd\" name=\"vector\"></n1:OMS><n1:OMI>1</n1:OMI><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"linalg2\" cdbase=\"http://www.openmath.org/cd\" name=\"vector\"></n1:OMS><n1:OMI>3</n1:OMI><n1:OMI>-1</n1:OMI></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"linalg2\" cdbase=\"http://www.openmath.org/cd\" name=\"vector\"></n1:OMS><n1:OMI>4</n1:OMI><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:5f7983f62c663faeb40fff29337952596f4442bf68b98102b2ba686bd90322a2",
+      "signature_trace": {
+        "result_sort": "Prop",
+        "symbols": [
+          "pals2:vector_add",
+          "linalg2:vector",
+          "relation1:eq"
+        ]
+      },
+      "signature_trace_sha256": "sha256:e98b41748fef4576b7775c06361ae9b96b1d04c4c4dd83ecb1b68048278f29c7",
+      "proof_strategy": "Apply componentwise addition and simplify each real coordinate.",
+      "proof_strategy_sha256": "sha256:059e52e230d0a6386a8e747915a1ef3f531761fa0aab86e7e4d16c0afaba6533",
+      "sketch_steps": [
+        "Recognize both inputs as V2, not scalar pairs.",
+        "Apply the V2 × V2 → V2 signature of vector_add.",
+        "Add the first coordinates.",
+        "Add the second coordinates and compare the resulting V2."
+      ],
+      "sketch_steps_sha256": "sha256:b6111f89c349d63b166c002527e06235cd0230ecd1a9140555196f2ba55c450f",
+      "lean": {
+        "target": "vectorAdd (Vector2.mk 1 2) (Vector2.mk 3 (-1)) = Vector2.mk 4 1",
+        "target_sha256": "sha256:58444b76579a35ee7096c2cefd7720a4e642260fbcb2aff102132bc0d8ea020b",
+        "witness": "example : vectorAdd (Vector2.mk 1 2) (Vector2.mk 3 (-1)) = Vector2.mk 4 1 := by\n  norm_num [vectorAdd]\n",
+        "witness_sha256": "sha256:85cdf4dd81264b63bc1b32a64c048cdf09c896ea54c9a8fa60f3daaa9998bd27"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "The two coordinate pairs are encoded only by linalg2:vector with exactly two real entries.",
+        "openmath_to_lean": "The private vector_add is lowered to Vector2 coordinate addition in the witness.",
+        "admission_gate": "An independent project reviewer must accept this sealed record before any typed catalog or database admission."
+      }
+    },
+    {
+      "id": "typed_vector2_scalar_multiple",
+      "domain": "high_school.vector",
+      "difficulty": "standard",
+      "canonical_statement": "3(2,-1) = (6,-3) for a planar vector.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v2\" cd=\"pals2\" name=\"vector_scale\"/><OMI>3</OMI><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"linalg2\" name=\"vector\"/><OMI>2</OMI><OMI>-1</OMI></OMA></OMA><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"linalg2\" name=\"vector\"/><OMI>6</OMI><OMI>-3</OMI></OMA></OMA></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals2\" cdbase=\"urn:pals:openmath:cd:v2\" name=\"vector_scale\"></n1:OMS><n1:OMI>3</n1:OMI><n1:OMA><n1:OMS cd=\"linalg2\" cdbase=\"http://www.openmath.org/cd\" name=\"vector\"></n1:OMS><n1:OMI>2</n1:OMI><n1:OMI>-1</n1:OMI></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"linalg2\" cdbase=\"http://www.openmath.org/cd\" name=\"vector\"></n1:OMS><n1:OMI>6</n1:OMI><n1:OMI>-3</n1:OMI></n1:OMA></n1:OMA></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:4da6cae0bbc2b19563effe9d941cd8b7665ea30f85775778cc7ba4d5c326a976",
+      "signature_trace": {
+        "result_sort": "Prop",
+        "symbols": [
+          "pals2:vector_scale",
+          "linalg2:vector",
+          "relation1:eq"
+        ]
+      },
+      "signature_trace_sha256": "sha256:af1b11737b587b0114a0f9f4e93cb775db4b9cdea6983cb57f1a7807ef9af576",
+      "proof_strategy": "Use the typed scalar action R × V2 → V2 coordinatewise.",
+      "proof_strategy_sha256": "sha256:c63f8365a804311bd8e84a36da7826159f33ef1848aefd94bb250b0422789288",
+      "sketch_steps": [
+        "Infer 3 as R and the coordinate pair as V2.",
+        "Reject any scalar-scalar or vector-vector interpretation.",
+        "Multiply each coordinate by the scalar.",
+        "Compare the resulting V2 with (6,-3)."
+      ],
+      "sketch_steps_sha256": "sha256:c540cd5be71c559c144b8bc9419229b5eebf9d0aa918d315afaffa0c5c9daf35",
+      "lean": {
+        "target": "vectorScale 3 (Vector2.mk 2 (-1)) = Vector2.mk 6 (-3)",
+        "target_sha256": "sha256:74e1c88ab60724ea95a75e143416b7611f3972707a0b8c332abe4132d0dffac7",
+        "witness": "example : vectorScale 3 (Vector2.mk 2 (-1)) = Vector2.mk 6 (-3) := by\n  norm_num [vectorScale]\n",
+        "witness_sha256": "sha256:9c6f0b8cc9ef7cb539d91b0a432d584baa8b27361e4428d4b25d18895b68eb1f"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "The first argument of vector_scale is R and its second is V2 by signature.",
+        "openmath_to_lean": "The witness uses the coordinatewise Vector2 scalar-action definition.",
+        "admission_gate": "An independent project reviewer must accept this sealed record before any typed catalog or database admission."
+      }
+    },
+    {
+      "id": "typed_vector2_dot_product_orthogonality",
+      "domain": "high_school.vector",
+      "difficulty": "standard",
+      "canonical_statement": "The planar vectors (1,2) and (2,-1) are orthogonal.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"linalg1\" name=\"scalarproduct\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"linalg2\" name=\"vector\"/><OMI>1</OMI><OMI>2</OMI></OMA><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"linalg2\" name=\"vector\"/><OMI>2</OMI><OMI>-1</OMI></OMA></OMA><OMI>0</OMI></OMA></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"linalg1\" cdbase=\"http://www.openmath.org/cd\" name=\"scalarproduct\"></n1:OMS><n1:OMA><n1:OMS cd=\"linalg2\" cdbase=\"http://www.openmath.org/cd\" name=\"vector\"></n1:OMS><n1:OMI>1</n1:OMI><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"linalg2\" cdbase=\"http://www.openmath.org/cd\" name=\"vector\"></n1:OMS><n1:OMI>2</n1:OMI><n1:OMI>-1</n1:OMI></n1:OMA></n1:OMA><n1:OMI>0</n1:OMI></n1:OMA></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:dcb918ecd8225a3e5642f62147a8ed2a8dec6265852e46d26c5d6037181f96ca",
+      "signature_trace": {
+        "result_sort": "Prop",
+        "symbols": [
+          "linalg1:scalarproduct",
+          "linalg2:vector",
+          "relation1:eq"
+        ]
+      },
+      "signature_trace_sha256": "sha256:dff4da33875fd0ffa10d7c7e7a76de842fab762cf38b3031dc8ec5eceabcc12a",
+      "proof_strategy": "Compute the typed V2 scalar product and show that its real value is zero.",
+      "proof_strategy_sha256": "sha256:b7d2a1d18982fe627bdd47c4abaeef21c674f1b75473949cae30f08350904617",
+      "sketch_steps": [
+        "Infer both operands of scalarproduct as V2.",
+        "Expand the planar dot product.",
+        "Evaluate 1·2 + 2·(-1).",
+        "Use the zero result as the orthogonality criterion."
+      ],
+      "sketch_steps_sha256": "sha256:5a9e13c65e06cc6ac828fa78ff26d34167e87f0963b24acff31e6de5ffaad870",
+      "lean": {
+        "target": "dot (Vector2.mk 1 2) (Vector2.mk 2 (-1)) = 0",
+        "target_sha256": "sha256:99906d28a1a8ca5a92105616b6994a87c571a550f896f6dee8dbe3496f0844fc",
+        "witness": "example : dot (Vector2.mk 1 2) (Vector2.mk 2 (-1)) = 0 := by\n  norm_num [dot]\n",
+        "witness_sha256": "sha256:809d12d749c23fe80bd088ccdeaeacc6044695c6119989da1807e7626f837506"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "linalg1:scalarproduct is admitted only at V2 × V2 → R in this profile.",
+        "openmath_to_lean": "The witness uses the corresponding planar coordinate dot product.",
+        "admission_gate": "An independent project reviewer must accept this sealed record before any typed catalog or database admission."
+      }
+    },
+    {
+      "id": "typed_vector2_triangle_area_determinant",
+      "domain": "high_school.vector",
+      "difficulty": "standard",
+      "canonical_statement": "The triangle spanned by (2,0) and (0,3) has area 3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"arith1\" name=\"divide\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"arith1\" name=\"abs\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v2\" cd=\"pals2\" name=\"determinant2\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"linalg2\" name=\"vector\"/><OMI>2</OMI><OMI>0</OMI></OMA><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"linalg2\" name=\"vector\"/><OMI>0</OMI><OMI>3</OMI></OMA></OMA></OMA><OMI>2</OMI></OMA><OMI>3</OMI></OMA></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" cdbase=\"http://www.openmath.org/cd\" name=\"divide\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" cdbase=\"http://www.openmath.org/cd\" name=\"abs\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals2\" cdbase=\"urn:pals:openmath:cd:v2\" name=\"determinant2\"></n1:OMS><n1:OMA><n1:OMS cd=\"linalg2\" cdbase=\"http://www.openmath.org/cd\" name=\"vector\"></n1:OMS><n1:OMI>2</n1:OMI><n1:OMI>0</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"linalg2\" cdbase=\"http://www.openmath.org/cd\" name=\"vector\"></n1:OMS><n1:OMI>0</n1:OMI><n1:OMI>3</n1:OMI></n1:OMA></n1:OMA></n1:OMA><n1:OMI>2</n1:OMI></n1:OMA><n1:OMI>3</n1:OMI></n1:OMA></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:072e64ab95a25d06ccf4b2d79ed58a37f68288c0d6b0cdd9e0f2bd676ee850ad",
+      "signature_trace": {
+        "result_sort": "Prop",
+        "symbols": [
+          "pals2:determinant2",
+          "linalg2:vector",
+          "arith1:abs",
+          "arith1:divide",
+          "relation1:eq"
+        ]
+      },
+      "signature_trace_sha256": "sha256:378f486b869c1d291aab29882cc655a44d96e251ed4bf1efe3bf5866c48dcf55",
+      "proof_strategy": "Compute the signed V2 determinant, take its real absolute value, and halve it.",
+      "proof_strategy_sha256": "sha256:8d67b0a083282840a44246f71bd2459d036b1e15fb037767b714ac2548d32ddb",
+      "sketch_steps": [
+        "Infer each side as V2.",
+        "Apply determinant2 : V2 × V2 → R.",
+        "Evaluate the signed determinant as 6.",
+        "Take its absolute value and divide the real result by 2."
+      ],
+      "sketch_steps_sha256": "sha256:52c92216d4d5d0c797ca7036f5926839947fb35c329c32c63c698228488b897a",
+      "lean": {
+        "target": "|determinant2 (Vector2.mk 2 0) (Vector2.mk 0 3)| / 2 = 3",
+        "target_sha256": "sha256:08fee95bbaacc3e204acff1cc44f2892e8d78312dc6ee8ae89f847ad0c44fd8f",
+        "witness": "example : |determinant2 (Vector2.mk 2 0) (Vector2.mk 0 3)| / 2 = 3 := by\n  norm_num [determinant2]\n",
+        "witness_sha256": "sha256:d06b0488937bda1dd9846b46c213f7502c5a4a17a33ad5169d0f5aae41ad6641"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "Only scalar arith1 operations are used after determinant2 returns R.",
+        "openmath_to_lean": "The witness lowers determinant2 to the 2×2 coordinate determinant and uses |det|/2.",
+        "admission_gate": "An independent project reviewer must accept this sealed record before any typed catalog or database admission."
+      }
+    },
+    {
+      "id": "typed_complex_cartesian_multiplication",
+      "domain": "high_school.complex_numbers",
+      "difficulty": "standard",
+      "canonical_statement": "(1+2i)(3-i)=5+5i.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v2\" cd=\"pals2\" name=\"complex_mul\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"complex1\" name=\"complex_cartesian\"/><OMI>1</OMI><OMI>2</OMI></OMA><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"complex1\" name=\"complex_cartesian\"/><OMI>3</OMI><OMI>-1</OMI></OMA></OMA><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"complex1\" name=\"complex_cartesian\"/><OMI>5</OMI><OMI>5</OMI></OMA></OMA></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals2\" cdbase=\"urn:pals:openmath:cd:v2\" name=\"complex_mul\"></n1:OMS><n1:OMA><n1:OMS cd=\"complex1\" cdbase=\"http://www.openmath.org/cd\" name=\"complex_cartesian\"></n1:OMS><n1:OMI>1</n1:OMI><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"complex1\" cdbase=\"http://www.openmath.org/cd\" name=\"complex_cartesian\"></n1:OMS><n1:OMI>3</n1:OMI><n1:OMI>-1</n1:OMI></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"complex1\" cdbase=\"http://www.openmath.org/cd\" name=\"complex_cartesian\"></n1:OMS><n1:OMI>5</n1:OMI><n1:OMI>5</n1:OMI></n1:OMA></n1:OMA></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:9c9a76a307a23d2eb25ed753aaa60e6df3f6782421b5d0013f6d4d2c49f79837",
+      "signature_trace": {
+        "result_sort": "Prop",
+        "symbols": [
+          "pals2:complex_mul",
+          "complex1:complex_cartesian",
+          "relation1:eq"
+        ]
+      },
+      "signature_trace_sha256": "sha256:9b6a55b75209fe8466717530d47bde46469e5314159757531a9e91cd69cdb7c3",
+      "proof_strategy": "Multiply in the C carrier and use i²=-1 in Cartesian coordinates.",
+      "proof_strategy_sha256": "sha256:363f97955e40d6e99b2de2edf72d4820615a96b1ce34d4bb3a9f7aee2fc2b10d",
+      "sketch_steps": [
+        "Infer every Cartesian constructor as C.",
+        "Apply complex_mul : C × C → C.",
+        "Expand the product using i²=-1.",
+        "Collect real and imaginary components as (5,5)."
+      ],
+      "sketch_steps_sha256": "sha256:e876917b9dc890c8ac69830610f43880b2d7bc5f44be2e7882069dc31f48eeca",
+      "lean": {
+        "target": "((1 : ℂ) + 2 * Complex.I) * (3 - Complex.I) = 5 + 5 * Complex.I",
+        "target_sha256": "sha256:2b18bca47e69af2ef017a219118d7693c0139bdd2b008ac3c8ff123fcd3795cc",
+        "witness": "example : ((1 : ℂ) + 2 * Complex.I) * (3 - Complex.I) = 5 + 5 * Complex.I := by\n  calc\n    ((1 : ℂ) + 2 * Complex.I) * (3 - Complex.I) =\n        3 + 5 * Complex.I - 2 * Complex.I ^ 2 := by ring\n    _ = 5 + 5 * Complex.I := by rw [Complex.I_sq]; ring\n",
+        "witness_sha256": "sha256:28a133f3b36dfbc701791d92be20733a5001a427d0ede8f9e4efdf4b2831c7ad"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "The private complex_mul prevents polymorphic arith1 multiplication from accepting non-C values.",
+        "openmath_to_lean": "The witness uses ℂ multiplication with Complex.I_sq.",
+        "admission_gate": "An independent project reviewer must accept this sealed record before any typed catalog or database admission."
+      }
+    },
+    {
+      "id": "typed_complex_conjugate_norm_square",
+      "domain": "high_school.complex_numbers",
+      "difficulty": "standard",
+      "canonical_statement": "For every complex z, z·conj(z) is the real squared norm embedded in C.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:cd:v2\" cd=\"pals2\" name=\"forall_complex\"/><OMBVAR><OMV name=\"z\"/></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v2\" cd=\"pals2\" name=\"complex_mul\"/><OMV name=\"z\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"complex1\" name=\"conjugate\"/><OMV name=\"z\"/></OMA></OMA><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"complex1\" name=\"complex_cartesian\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v2\" cd=\"pals2\" name=\"complex_norm_sq\"/><OMV name=\"z\"/></OMA><OMI>0</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"pals2\" cdbase=\"urn:pals:openmath:cd:v2\" name=\"forall_complex\"></n1:OMS><n1:OMBVAR><n1:OMV name=\"v1\"></n1:OMV></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals2\" cdbase=\"urn:pals:openmath:cd:v2\" name=\"complex_mul\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"complex1\" cdbase=\"http://www.openmath.org/cd\" name=\"conjugate\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"complex1\" cdbase=\"http://www.openmath.org/cd\" name=\"complex_cartesian\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals2\" cdbase=\"urn:pals:openmath:cd:v2\" name=\"complex_norm_sq\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMI>0</n1:OMI></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:f5441a3334677e47955547373e51b29c15a7375c3d6c46196c8f37d15d5af628",
+      "signature_trace": {
+        "result_sort": "Prop",
+        "symbols": [
+          "pals2:forall_complex",
+          "pals2:complex_mul",
+          "pals2:complex_norm_sq",
+          "complex1:conjugate",
+          "complex1:complex_cartesian",
+          "relation1:eq"
+        ]
+      },
+      "signature_trace_sha256": "sha256:02dcd26d25ba78bdc80015df7cdd37f096ab010ab102b71a2f841bad090b16a2",
+      "proof_strategy": "Use conjugation to eliminate the imaginary component and identify the squared norm.",
+      "proof_strategy_sha256": "sha256:344760bf4266b871ce400f1c3824449c85a34bfdc193190bb99684f0d7dcefaf",
+      "sketch_steps": [
+        "Bind z with the C-only quantifier.",
+        "Infer conjugate(z) as C.",
+        "Multiply two C values with complex_mul.",
+        "Embed complex_norm_sq(z):R as the Cartesian complex number (normSq,0)."
+      ],
+      "sketch_steps_sha256": "sha256:bec7724e7039b22b42911545a4ba3364ff6209b0d592d73b824529535fe97e46",
+      "lean": {
+        "target": "z * star z = (Complex.normSq z : ℂ)",
+        "target_sha256": "sha256:477461cfb165f582a5d214a924dda176c774a44ada14907844a261b655e1af58",
+        "witness": "example (z : ℂ) : z * star z = (Complex.normSq z : ℂ) := by\n  simpa only [Complex.star_def] using Complex.mul_conj z\n",
+        "witness_sha256": "sha256:eecf578fa69402aba6ddb30efd5e3a9581cce0586c5ee8aa681df1eeb3bd95ff"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "The profile distinguishes complex multiplication from the real-valued complex_norm_sq operation.",
+        "openmath_to_lean": "The Cartesian embedding (r,0) corresponds to coercing Complex.normSq z to ℂ.",
+        "admission_gate": "An independent project reviewer must accept this sealed record before any typed catalog or database admission."
+      }
+    },
+    {
+      "id": "typed_complex_multiply_i_quarter_turn",
+      "domain": "high_school.complex_numbers",
+      "difficulty": "standard",
+      "canonical_statement": "(1+2i)i=-2+i, a quarter-turn in the complex plane.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:cd:v2\" cd=\"pals2\" name=\"complex_mul\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"complex1\" name=\"complex_cartesian\"/><OMI>1</OMI><OMI>2</OMI></OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"nums1\" name=\"i\"/></OMA><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"complex1\" name=\"complex_cartesian\"/><OMI>-2</OMI><OMI>1</OMI></OMA></OMA></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"pals2\" cdbase=\"urn:pals:openmath:cd:v2\" name=\"complex_mul\"></n1:OMS><n1:OMA><n1:OMS cd=\"complex1\" cdbase=\"http://www.openmath.org/cd\" name=\"complex_cartesian\"></n1:OMS><n1:OMI>1</n1:OMI><n1:OMI>2</n1:OMI></n1:OMA><n1:OMS cd=\"nums1\" cdbase=\"http://www.openmath.org/cd\" name=\"i\"></n1:OMS></n1:OMA><n1:OMA><n1:OMS cd=\"complex1\" cdbase=\"http://www.openmath.org/cd\" name=\"complex_cartesian\"></n1:OMS><n1:OMI>-2</n1:OMI><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:87095cee69969c94b2f1708c084383690db0eea1127d5752002c003d90611489",
+      "signature_trace": {
+        "result_sort": "Prop",
+        "symbols": [
+          "pals2:complex_mul",
+          "complex1:complex_cartesian",
+          "nums1:i",
+          "relation1:eq"
+        ]
+      },
+      "signature_trace_sha256": "sha256:1f82bf03cccfd0762602fc1fc599a08d8ee5d259c6a5195fa36e04ea49e10703",
+      "proof_strategy": "Use the C-valued nums1:i constant and simplify i²=-1.",
+      "proof_strategy_sha256": "sha256:b8b8a2b1f3590e8d7c4ebb49dd3dae4396243f0cfc5ffb75c073cf70ba40648a",
+      "sketch_steps": [
+        "Infer the Cartesian input and nums1:i as C.",
+        "Apply complex_mul : C × C → C.",
+        "Distribute i across the Cartesian form.",
+        "Replace i² with -1 and collect (-2,1)."
+      ],
+      "sketch_steps_sha256": "sha256:a308385c1ef27040f72ebfcab429ce67e5fd616caa395d90ff6b48b19bda90c8",
+      "lean": {
+        "target": "((1 : ℂ) + 2 * Complex.I) * Complex.I = (-2 : ℂ) + Complex.I",
+        "target_sha256": "sha256:4f20860aa2059863d9ce9471fab65f6fc2a8723a1200100c79dae6ed860598b4",
+        "witness": "example : ((1 : ℂ) + 2 * Complex.I) * Complex.I = (-2 : ℂ) + Complex.I := by\n  calc\n    ((1 : ℂ) + 2 * Complex.I) * Complex.I =\n        (1 : ℂ) * Complex.I + (2 : ℂ) * Complex.I ^ 2 := by ring\n    _ = (-2 : ℂ) + Complex.I := by rw [Complex.I_sq]; ring\n",
+        "witness_sha256": "sha256:3bc93cfba01e05f7a9409a8e78a0d97f564a2f4cc949f189e4590584f9818e20"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "nums1:i is C in this profile and cannot be multiplied with a V2 or bare R.",
+        "openmath_to_lean": "The witness evaluates the corresponding ℂ product.",
+        "admission_gate": "An independent project reviewer must accept this sealed record before any typed catalog or database admission."
+      }
+    },
+    {
+      "id": "typed_complex_argument_quadrant_two",
+      "domain": "high_school.complex_numbers",
+      "difficulty": "standard",
+      "canonical_statement": "The principal argument of -1+i is positive (its point lies in quadrant II).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"gt\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"complex1\" name=\"argument\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"complex1\" name=\"complex_cartesian\"/><OMI>-1</OMI><OMI>1</OMI></OMA></OMA><OMI>0</OMI></OMA></OMOBJ>",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"gt\"></n1:OMS><n1:OMA><n1:OMS cd=\"complex1\" cdbase=\"http://www.openmath.org/cd\" name=\"argument\"></n1:OMS><n1:OMA><n1:OMS cd=\"complex1\" cdbase=\"http://www.openmath.org/cd\" name=\"complex_cartesian\"></n1:OMS><n1:OMI>-1</n1:OMI><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA><n1:OMI>0</n1:OMI></n1:OMA></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:146fc670b4b1502dcaf75d1618f0cc098c8fd11a2e10645e8af75cacbc9b7a8e",
+      "signature_trace": {
+        "result_sort": "Prop",
+        "symbols": [
+          "complex1:argument",
+          "complex1:complex_cartesian",
+          "relation1:gt"
+        ]
+      },
+      "signature_trace_sha256": "sha256:7be7793d62123c41c07f75981459b7b0984ac10eab8486e75fbf263ae625a8bf",
+      "proof_strategy": "Use the sign of the imaginary component together with the principal-argument convention.",
+      "proof_strategy_sha256": "sha256:40ff9c3e2e004071d7757be5ebf78a93acf1babc38da1dd3d2736dd821f48406",
+      "sketch_steps": [
+        "Construct -1+i as a C value.",
+        "Infer complex1:argument as an R value.",
+        "Use the positive imaginary part to rule out a negative argument.",
+        "Use the negative real part to rule out argument zero, yielding positivity."
+      ],
+      "sketch_steps_sha256": "sha256:45dd3b34ea301167cab458e7e92454cf03d2300155aa428e683211f53ab6132c",
+      "lean": {
+        "target": "0 < Complex.arg ((-1 : ℂ) + Complex.I)",
+        "target_sha256": "sha256:fe6141b624ce42e40bfca93eb3b55244aeb593094b4e5fa79635f82b02ca4b58",
+        "witness": "example : 0 < Complex.arg ((-1 : ℂ) + Complex.I) := by\n  by_contra h\n  have hle : Complex.arg ((-1 : ℂ) + Complex.I) ≤ 0 := le_of_not_gt h\n  have hnonneg : 0 ≤ Complex.arg ((-1 : ℂ) + Complex.I) := by\n    rw [Complex.arg_nonneg_iff]\n    norm_num\n  have hzero : Complex.arg ((-1 : ℂ) + Complex.I) = 0 := le_antisymm hle hnonneg\n  have parts := Complex.arg_eq_zero_iff.mp hzero\n  norm_num at parts\n",
+        "witness_sha256": "sha256:671da784862a532746cd6d369d6c1adf32c12386b9f1bad28234137959f88c34"
+      },
+      "statement_openmath_lean_alignment_review": {
+        "status": "reviewed_by_local_authoring_agent_not_admitted",
+        "statement_to_openmath": "complex1:argument is used only as C → R and compared by a real order relation.",
+        "openmath_to_lean": "The witness uses Mathlib's principal Complex.arg lemmas for the same Cartesian complex number.",
+        "admission_gate": "An independent project reviewer must accept this sealed record before any typed catalog or database admission."
+      }
+    }
+  ],
+  "deferred_backlog_cards": [
+    {
+      "id": "geometry_line_through_two_points",
+      "disposition": "explicitly_rejected_or_deferred",
+      "reason": "Phase B needs distinct Point2 and Line2 sorts plus incidence; V2 is not an affine point."
+    },
+    {
+      "id": "geometry_circle_through_three_points",
+      "disposition": "explicitly_rejected_or_deferred",
+      "reason": "Phase B needs Circle2 incidence and non-collinearity semantics."
+    },
+    {
+      "id": "geometry_perpendicular_bisector_locus",
+      "disposition": "explicitly_rejected_or_deferred",
+      "reason": "Phase B needs Point2 distance, midpoint, and Line2/perpendicularity sorts."
+    },
+    {
+      "id": "geometry_reflection_in_line",
+      "disposition": "explicitly_rejected_or_deferred",
+      "reason": "Phase B needs a line-typed reflection operation; points must remain distinct from vectors."
+    }
+  ],
+  "manifest_digest": {
+    "algorithm": "sha256",
+    "input": "RFC 8785 canonical JSON serialization of this object with manifest_digest omitted",
+    "sha256": "sha256:cb5f942a728d770f1398dfce5c3c40dcbbf928b1b1aa34f006a1e462c4bd5883"
+  }
+}

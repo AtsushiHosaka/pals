@@ -15,12 +15,48 @@ GitHub remotes are created.
 - `pals-datasets` - private ingestion and dataset tooling
 - `pals-observability` - private observability and tracing operations
 - `pals-agent` - public OSS LangGraph agent with Lean verifier tooling
+- `pals-draft-admin` - private, read-only Draft catalog operations UI
 
-Lean verification lives in `pals-agent` because it is a first-class agent tool.
-Production can still run the verifier as a separate sidecar process or
-container.
+Lean verification source and tooling live in `pals-agent`.
 
 ## Secret Policy
 
 Do not commit API keys, database URLs, AWS credentials, Langfuse secrets, or
-production configuration. Use local `.env.dev` and `.env.prod` files only.
+production configuration. Use local `.env.local`, `.env.dev`, and `.env.prod`
+files only.
+
+## Environment Policy
+
+- `.local` is for laptop/offline development and cheap LLM experiments. Prefer
+  Ollama with local Qwen models here.
+- `.dev` is for shared AWS development resources.
+- `.prod` is for production and must require explicit confirmation in scripts.
+
+Local LLM fine tuning assumes Apple Silicon, not NVIDIA/CUDA. Use MLX/MLX-LM
+for local LoRA experiments; see `docs/apple-silicon-local-llm.md`.
+
+## Local Development
+
+To start the complete browser-testable PALS stack (web, API, worker, verifier,
+reconciler, Cognito Local, LocalStack, and PostgreSQL), use the canonical runner:
+
+```bash
+make pals-up
+```
+
+Run the complete public-API university-math QA with `make pals-qa`. Both commands
+rebuild the checked-out application sources and use the layered E2E Compose files.
+
+For database-only component development, use the narrower target below.
+
+Docker Compose starts only PostgreSQL with pgvector. API, web, agent, Lean, and
+Ollama are run explicitly on the host, so `make dev-up` does not build the
+application containers:
+
+```bash
+cp .env.example .env.local
+make dev-up
+```
+
+Use the repository-specific native commands only for the component currently
+being developed. Run `make dev-down` when the database is no longer needed.

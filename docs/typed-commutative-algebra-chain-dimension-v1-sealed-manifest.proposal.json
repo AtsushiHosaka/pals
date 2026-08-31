@@ -1,0 +1,565 @@
+{
+  "schema_version": "pals.typed-commutative-algebra-chain-dimension-v1-sealed-manifest.v1",
+  "status": "sealed_local_authoring_revision_not_admitted",
+  "seal": {
+    "scope": "local typed commutative-algebra CA-6 authoring evidence only",
+    "admission": "not admitted to the generic DB, seed, embedding index, or PFI package",
+    "revision": "typed-commutative-algebra-chain-dimension-v1-local-r1"
+  },
+  "profile": {
+    "id": "typed-commutative-algebra-chain-dimension-v1",
+    "typed_cdbase": "urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1",
+    "design_path": "docs/typed-commutative-algebra-chain-dimension-v1-design.md",
+    "design_sha256": "sha256:426c0eb6d4346200bd1b2b67ab82aaeae51a1a1eb856e3502e59635c0e66876a",
+    "registry_path": "pals_agent/content_dictionaries/typed-commutative-algebra-chain-dimension-v1-registry.json",
+    "registry_sha256": "sha256:9e56eeaacebb1efeda47e941612f55154a2a7c9c785776a7e60c288e14561d9e",
+    "validator": "pals_agent.typed_commutative_algebra_chain_dimension.validate_canonical_typed_commutative_algebra_chain_dimension_openmath_xml",
+    "validator_path": "pals_agent/typed_commutative_algebra_chain_dimension.py",
+    "validator_sha256": "sha256:60a7aeb335491542a16b661d72b5e9606743980cc68463f9b8245f5aa37b6f42",
+    "canonicalizer_version": "openmath-cdbase-alpha-c14n-v4"
+  },
+  "lean_receipt": {
+    "witness_path": "docs/typed-commutative-algebra-chain-dimension-v1-authoring-witnesses.lean",
+    "witness_file_sha256": "sha256:fdb39549f4e05a5c9604aa6ceb9340a85e27a70e4623b4f750771d2e19f4bad4",
+    "toolchain": "leanprover/lean4:v4.32.0-rc1",
+    "verification_command": "cd pals-agent/lean-workspace && lake env lean ../../docs/typed-commutative-algebra-chain-dimension-v1-authoring-witnesses.lean",
+    "verification_status": "verified_local_pinned_workspace"
+  },
+  "admitted_card_count": 17,
+  "excluded_cards": [
+    {
+      "id": "chain_general_ascending_chain_stabilization",
+      "reason": "arbitrary ideal-chain functions require a separate dependent-chain profile"
+    },
+    {
+      "id": "chain_general_descending_chain_stabilization",
+      "reason": "arbitrary ideal-chain functions require a separate dependent-chain profile"
+    },
+    {
+      "id": "chain_polynomial_dimension_formula",
+      "reason": "general Krull dimensions and polynomial dimension formulae are outside the bounded zero-dimensional profile"
+    },
+    {
+      "id": "chain_spec_height_formula",
+      "reason": "Spec, prime chains, and height require a spectrum/chain carrier profile"
+    },
+    {
+      "id": "chain_nullstellensatz",
+      "reason": "field extensions and geometric hypotheses are not represented by this profile"
+    }
+  ],
+  "excluded_card_count": 5,
+  "cards": [
+    {
+      "id": "chain_noetherian_ideal_fg",
+      "canonical_statement": "Noetherian 可換環 R の任意のイデアル I は有限生成である。",
+      "proof_strategy": "Noetherian ring の ideal-finite-generation 特徴づけを I に適用する。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "Noetherian ring の ideal-finite-generation 特徴づけを I に適用する。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"NoetherianRing\"/><OMV name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"IdealFG\"/><OMV name=\"R\"/><OMV name=\"I\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:4840e5dd982654403d5010960243b13d3772a072ad42d3b58837e6311ba7d6da",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"NoetherianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"IdealFG\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:be8a696385b5f1999456702cf6d2cc64d842dca4f164a60b74454e8c0718738c",
+      "canonical_statement_sha256": "sha256:f4ca847a739c925d2ccdd11d275dc13f0871949f5f504ea76a8cee6704dab2c9",
+      "lean_target": "example {R : Type*} [CommRing R] [IsNoetherianRing R] (I : Ideal R) : I.FG",
+      "lean_target_sha256": "sha256:638966070e466508e43ce6dac42a65891552e065e666486c0c8c394fbdc9b1a0",
+      "lean_witness": "by\n  exact Ideal.fg_of_isNoetherianRing I",
+      "lean_witness_sha256": "sha256:ea2cee95eb5e7217f13f612abf11c3f8bcf40dfee235364e8259fcdba7a1a347",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "chain_noetherian_sum_fg",
+      "canonical_statement": "Noetherian 可換環では二つのイデアルの和は有限生成である。",
+      "proof_strategy": "和は同じ R 上のイデアルなので有限生成定理を適用する。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "和は同じ R 上のイデアルなので有限生成定理を適用する。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"NoetherianRing\"/><OMV name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"IdealFG\"/><OMV name=\"R\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"IdealSum\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:d9ac5dfbedae20b21313c5404552438a014a422df54d7d3a27f8e25951c107be",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"NoetherianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"IdealFG\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"IdealSum\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:fab7b4cf260391a1c0f8fb1b7053c2ace3f197ab027ba265f64945de95684e5e",
+      "canonical_statement_sha256": "sha256:81d886b893eb2b04a92c37c56fd1ff3ea66b2c63a2f83493e0e55ee0734fe39d",
+      "lean_target": "example {R : Type*} [CommRing R] [IsNoetherianRing R] (I J : Ideal R) : (I + J).FG",
+      "lean_target_sha256": "sha256:eedfe3e9dd33d69b5d2c6203920b0ebb08516b18373c35c7ad22a2708ce2ccca",
+      "lean_witness": "by\n  exact Ideal.fg_of_isNoetherianRing (I + J)",
+      "lean_witness_sha256": "sha256:b0cf675468e0c948a483f350a2a6554fdf74fe2386c77d78aca88e30a0c9b6b6",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "chain_noetherian_inf_fg",
+      "canonical_statement": "Noetherian 可換環では二つのイデアルの交わりは有限生成である。",
+      "proof_strategy": "交わりも R のイデアルであることを使う。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "交わりも R のイデアルであることを使う。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"NoetherianRing\"/><OMV name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"IdealFG\"/><OMV name=\"R\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"IdealInf\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:0151c606c289f4c7eb41f6a66cb286e5622daaea4d561b55a7ceb941c2a7bbfa",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"NoetherianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"IdealFG\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"IdealInf\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:06f78b41b1843e88db59e79d4174be6b4a708b546f0104af64807f96d4880f5e",
+      "canonical_statement_sha256": "sha256:20c5715364910d543deff00647cf26d30844fea5163a90ccf79b77d1bae22c8f",
+      "lean_target": "example {R : Type*} [CommRing R] [IsNoetherianRing R] (I J : Ideal R) : (I ⊓ J).FG",
+      "lean_target_sha256": "sha256:464b57c8d9d2fa79ccfc04f9ca3778651dbf38ce7a7acd42f04c48503b11c033",
+      "lean_witness": "by\n  exact Ideal.fg_of_isNoetherianRing (I ⊓ J)",
+      "lean_witness_sha256": "sha256:672d0397afebfa02428da8fd916f20fbf14ceffd01b86389c1dd8b521702c96e",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "chain_noetherian_product_fg",
+      "canonical_statement": "Noetherian 可換環では二つのイデアルの積は有限生成である。",
+      "proof_strategy": "積イデアルを R のイデアルとして有限生成定理に送る。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "積イデアルを R のイデアルとして有限生成定理に送る。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"NoetherianRing\"/><OMV name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"IdealFG\"/><OMV name=\"R\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"IdealProduct\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:50b20cb843a74d9bd1c682c11b9de160c11f51bb54add374cc638f3328110766",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"NoetherianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"IdealFG\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"IdealProduct\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:9478714d5898508ac170620a057359842ac3f10e728e9f525b6f7bc91a7e0492",
+      "canonical_statement_sha256": "sha256:f353de3fdc9599047bbb54dff6ca7b7e2302c7bb031f5749b192c5b5738540dd",
+      "lean_target": "example {R : Type*} [CommRing R] [IsNoetherianRing R] (I J : Ideal R) : (I * J).FG",
+      "lean_target_sha256": "sha256:18d2bd219adca8b26785eacc53b299ab3faff147c91f7f7ba5f356f65040ff08",
+      "lean_witness": "by\n  exact Ideal.fg_of_isNoetherianRing (I * J)",
+      "lean_witness_sha256": "sha256:4f29b28116404d991db38c9ebb8fd66ce958785860ebc533530059b693181b4b",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "chain_noetherian_radical_fg",
+      "canonical_statement": "Noetherian 可換環ではイデアルの根基は有限生成である。",
+      "proof_strategy": "根基を R のイデアルとして有限生成定理に送る。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "根基を R のイデアルとして有限生成定理に送る。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"NoetherianRing\"/><OMV name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"IdealFG\"/><OMV name=\"R\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"IdealRadical\"/><OMV name=\"R\"/><OMV name=\"I\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:122136df1a541f0aec5d3a1f59b58350d39d1f6a87e49c4d570b41eddceb8721",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"NoetherianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"IdealFG\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"IdealRadical\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:95e1bd62f2f2f8605cabefd38ecd59335b033ae5aa20ea4672bb2eb778347f38",
+      "canonical_statement_sha256": "sha256:c087d0efa6eb5d49371c7d9baeea070b14469adf38cd335134884e74de932efa",
+      "lean_target": "example {R : Type*} [CommRing R] [IsNoetherianRing R] (I : Ideal R) : I.radical.FG",
+      "lean_target_sha256": "sha256:414837fea661857b81a3e369e4e2b350d228528fe7d680d266c6792007e62d17",
+      "lean_witness": "by\n  exact Ideal.fg_of_isNoetherianRing I.radical",
+      "lean_witness_sha256": "sha256:224ce2836ecea665339e7994aa031a78e7dde60cc235f380ffa062fb024dabda",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "chain_noetherian_all_ideals_fg",
+      "canonical_statement": "可換環 R が Noetherian であるなら、全ての R-イデアルが有限生成である。",
+      "proof_strategy": "任意の束縛済み I に対して有限生成定理を一様に適用する。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "任意の束縛済み I に対して有限生成定理を一様に適用する。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"NoetherianRing\"/><OMV name=\"R\"/></OMA><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"IdealFG\"/><OMV name=\"R\"/><OMV name=\"I\"/></OMA></OMBIND></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:31692e743fef0f4e40ac0ff00283b8227b843ff3738ce9f24722bb5c12103752",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"NoetherianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"IdealFG\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:cd65e45f5d3f495ff52ae165cafa3785a6b19a1508e11dd0ff85df37ce907edf",
+      "canonical_statement_sha256": "sha256:c8aa275b5975522401faae6c8ce2caf5824b11bfbdfeda34691e7c0a241a6510",
+      "lean_target": "example {R : Type*} [CommRing R] [IsNoetherianRing R] : ∀ I : Ideal R, I.FG",
+      "lean_target_sha256": "sha256:509796ac15b29c20dc2f7a4eaafcbfd879d5a644c9563c6551df9a19f5279e35",
+      "lean_witness": "by\n  intro I\n  exact Ideal.fg_of_isNoetherianRing I",
+      "lean_witness_sha256": "sha256:f78c2b5a528bc0df0c227282f8e9f49f3957d73562bad146d037d3c35abe85d2",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "chain_hilbert_basis_one_variable",
+      "canonical_statement": "Noetherian 可換環 R に対し一変数多項式環 R[X] は Noetherian である。",
+      "proof_strategy": "Hilbert 基底定理の一変数 instance を適用する。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "Hilbert 基底定理の一変数 instance を適用する。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"NoetherianRing\"/><OMV name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"HilbertNoetherian\"/><OMV name=\"R\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:722f428cab34c3e94dbe87c24eee646f2e8211c2dafce39cd027a79ccbff051d",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"NoetherianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"HilbertNoetherian\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:627eeb571d7a6c536dad15dc398f024d3907e7a432ddb5766b8ceae5defb4361",
+      "canonical_statement_sha256": "sha256:44393a1e4ec5c9bfc721864ed4fa0b17a4494abe9a4a68ec992bdefcb094b925",
+      "lean_target": "example {R : Type*} [CommRing R] [IsNoetherianRing R] : IsNoetherianRing (Polynomial R)",
+      "lean_target_sha256": "sha256:841fe7163bd4d3debe46d08c813bac5f058963317ce129fa75018a58449a7143",
+      "lean_witness": "by\n  infer_instance",
+      "lean_witness_sha256": "sha256:b665792ad6c3756cc916b7717945cee2ce07c59421a1cdfed946c70d3e7ee9fe",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "chain_hilbert_basis_two_iterations",
+      "canonical_statement": "Noetherian 可換環 R に対し二回反復した一変数多項式環も Noetherian である。",
+      "proof_strategy": "Hilbert 基底定理を多項式環にもう一度適用する。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "Hilbert 基底定理を多項式環にもう一度適用する。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"NoetherianRing\"/><OMV name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"IteratedHilbertNoetherian\"/><OMV name=\"R\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:315d901b590b3c71504a0529645713eace854d4b0d49a2118c3df90af64ea815",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"NoetherianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"IteratedHilbertNoetherian\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:e7ea91ae53fa7e7f540709dd994fbfc85ddac575ab8c808d761c8b7699b3aa8b",
+      "canonical_statement_sha256": "sha256:47aa9eca43f91de89e30153da528b94cc3772ff98b7b3648a9075bff0f7cf5d9",
+      "lean_target": "example {R : Type*} [CommRing R] [IsNoetherianRing R] : IsNoetherianRing (Polynomial (Polynomial R))",
+      "lean_target_sha256": "sha256:761bfff4d0c9b386b81d4a541e35051cba583a85e4fced27bfd6afd428ee5de6",
+      "lean_witness": "by\n  infer_instance",
+      "lean_witness_sha256": "sha256:b665792ad6c3756cc916b7717945cee2ce07c59421a1cdfed946c70d3e7ee9fe",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "chain_artinian_implies_noetherian",
+      "canonical_statement": "Artinian 可換環は Noetherian である。",
+      "proof_strategy": "Artinian ring の Hopkins--Levitzki 型の有限性結果を使う。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "Artinian ring の Hopkins--Levitzki 型の有限性結果を使う。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"ArtinianRing\"/><OMV name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"NoetherianRing\"/><OMV name=\"R\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:57443ee515f62407c8b640b1a4d71bdf5a18323db0958996be01b08d5f1b63ef",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"ArtinianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"NoetherianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:29da6f937033effda219dd300b3b754cd747b2b487933b6776ce0a78267a3c82",
+      "canonical_statement_sha256": "sha256:c949e0e5fd3773512888427b71299433afd3dc97433b87fce051f7df32c7e14c",
+      "lean_target": "example {R : Type*} [CommRing R] [IsArtinianRing R] : IsNoetherianRing R",
+      "lean_target_sha256": "sha256:d16af458589e8c4f4fe091ab906e3095f8918134d6309832325635da752d7904",
+      "lean_witness": "by\n  infer_instance",
+      "lean_witness_sha256": "sha256:b665792ad6c3756cc916b7717945cee2ce07c59421a1cdfed946c70d3e7ee9fe",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "chain_artinian_dimension_zero",
+      "canonical_statement": "Artinian 可換環の Krull 次元は高々 0 である。",
+      "proof_strategy": "Artinian ring の素イデアル鎖が自明であることを使う。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "Artinian ring の素イデアル鎖が自明であることを使う。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"ArtinianRing\"/><OMV name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"KrullDimLEZero\"/><OMV name=\"R\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:f56db8e9e9596b0cc5e528607e2f982d2afa1becab2c3a679f313f685d87dc01",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"ArtinianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"KrullDimLEZero\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:c651bd4f4fd4d0a0460bcc4faedfe4e69960ec68e51da9fbc6b84b176ef8043a",
+      "canonical_statement_sha256": "sha256:ab9ae33b194b4130b4b0b0db5b0ae3e4a9ccfc196946f6ce1db6dadd74d220e1",
+      "lean_target": "example {R : Type*} [CommRing R] [IsArtinianRing R] : Ring.KrullDimLE 0 R",
+      "lean_target_sha256": "sha256:a1e58efcb2a0677daaf783be44b8ba7284831a1459d805c43bd57d017afff004",
+      "lean_witness": "by\n  infer_instance",
+      "lean_witness_sha256": "sha256:b665792ad6c3756cc916b7717945cee2ce07c59421a1cdfed946c70d3e7ee9fe",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "chain_noetherian_dimension_zero_artinian",
+      "canonical_statement": "Noetherian かつ Krull 次元高々0の可換環は Artinian である。",
+      "proof_strategy": "Noetherian と次元零の特徴づけから Artinian 性を導く。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "Noetherian と次元零の特徴づけから Artinian 性を導く。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"NoetherianRing\"/><OMV name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"KrullDimLEZero\"/><OMV name=\"R\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"ArtinianRing\"/><OMV name=\"R\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:cd2c001fa01b4665c1c68a3d264661b9bb87dbfc858cfd73cb40682e421e4d84",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"and\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"NoetherianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"KrullDimLEZero\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"ArtinianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:d4f14bb287d040e8df815742ec66d37059f40d7531ea9488f526abfb2dbda960",
+      "canonical_statement_sha256": "sha256:b480906cbdc88d150a1f2395862eb61d671a6af4c33e91d9c5bc4bb0e6bab45d",
+      "lean_target": "example {R : Type*} [CommRing R] [IsNoetherianRing R] (h : Ring.KrullDimLE 0 R) : IsArtinianRing R",
+      "lean_target_sha256": "sha256:c473ebc1802004b04a399374bf2fde7945ac53afb02b71f7dfd882c2134e303d",
+      "lean_witness": "by\n  exact @IsNoetherianRing.isArtinianRing_of_krullDimLE_zero R _ _ h",
+      "lean_witness_sha256": "sha256:15d781e9d1bb4de2f4ff3d485bf296e0975f87db61c89ce7704523082f9edf82",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "chain_artinian_prime_maximal",
+      "canonical_statement": "Artinian 可換環の素イデアルは極大イデアルである。",
+      "proof_strategy": "Artinian ring での素イデアルの極大性を適用する。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "Artinian ring での素イデアルの極大性を適用する。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"P\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"ArtinianRing\"/><OMV name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"PrimeIdeal\"/><OMV name=\"R\"/><OMV name=\"P\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"MaximalIdeal\"/><OMV name=\"R\"/><OMV name=\"P\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:4ed4a1ae5ae15f75bb726ae2dde465957c55bb2290603392af571b7bf6aca9c9",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"and\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"ArtinianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"PrimeIdeal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"MaximalIdeal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:8d1134240f564b8bfef55f965e8ade6a0481776a396821ebd80885494f7fbea1",
+      "canonical_statement_sha256": "sha256:d7ba14675f4389e79c3632f920e7d6ea34399d12c2943c0a9507628bc655cdc3",
+      "lean_target": "example {R : Type*} [CommRing R] [IsArtinianRing R] (P : Ideal R) (h : P.IsPrime) : P.IsMaximal",
+      "lean_target_sha256": "sha256:fda39199ae9adf6c7337e81290c3b47466137cb0c46f9ca0f1c07297f15a65e8",
+      "lean_witness": "by\n  letI : P.IsPrime := h\n  exact IsArtinianRing.isMaximal_of_isPrime P",
+      "lean_witness_sha256": "sha256:c148640d6280960f260079a11624f019d56aa3dd769937a13fd5a239cc6f6ded",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "chain_dimension_zero_prime_maximal",
+      "canonical_statement": "可換環 R の Krull 次元が高々0なら、全ての素イデアルは極大である。",
+      "proof_strategy": "KrullDimLE 0 の素スペクトル順序による特徴づけの順方向を使う。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "KrullDimLE 0 の素スペクトル順序による特徴づけの順方向を使う。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"P\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"KrullDimLEZero\"/><OMV name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"PrimeIdeal\"/><OMV name=\"R\"/><OMV name=\"P\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"MaximalIdeal\"/><OMV name=\"R\"/><OMV name=\"P\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:922f7365d5151e0518db58bcc53c17f6fb1ca237c2ff0eeff5e9dbc3136d0834",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"and\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"KrullDimLEZero\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"PrimeIdeal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"MaximalIdeal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:c2d3d5e6f93e3aba2c84ec985895c68cd4e3fb096f85f0fd6a14a82d2ea06d76",
+      "canonical_statement_sha256": "sha256:da80756203d2d09f27592917f7e93b003f7c9ab3dfb0452b03ee910c7bcb41df",
+      "lean_target": "example {R : Type*} [CommRing R] (h : Ring.KrullDimLE 0 R) (P : Ideal R) (hP : P.IsPrime) : P.IsMaximal",
+      "lean_target_sha256": "sha256:f3da4d72423c219cf55fe1935d176c61082469f4e8733e6bbda0ac008cc4e8a6",
+      "lean_witness": "by\n  exact Ring.krullDimLE_zero_iff.mp h P hP",
+      "lean_witness_sha256": "sha256:2af1a13003cf34978ecc2703cd8a8c6722dc00c608d05f50bbfb9a68e8a9a78c",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "chain_field_noetherian",
+      "canonical_statement": "体 R は Noetherian 可換環である。",
+      "proof_strategy": "体のイデアルが自明であることから Noetherian instance を得る。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "体のイデアルが自明であることから Noetherian instance を得る。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"Field\"/><OMV name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"NoetherianRing\"/><OMV name=\"R\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:7e42f8665254fb61539a5edba1c2e6a013fb9d1e36bcaf2b7c53c7c95b2f2b5a",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"Field\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"NoetherianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:2d34bc50c45a8616e80fab263e8e0aa548852c57152a68516edc5cc808c6d639",
+      "canonical_statement_sha256": "sha256:e290829d98bffa10328a3cc6f471582235248e8796a50ab2b623ea758393ec2f",
+      "lean_target": "example {K : Type*} [Field K] : IsNoetherianRing K",
+      "lean_target_sha256": "sha256:d24a710110ec88686388472ee21d6dffe2ad91c180d64e7dcb36faefe69b6163",
+      "lean_witness": "by\n  infer_instance",
+      "lean_witness_sha256": "sha256:b665792ad6c3756cc916b7717945cee2ce07c59421a1cdfed946c70d3e7ee9fe",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "chain_field_artinian",
+      "canonical_statement": "体 R は Artinian 可換環である。",
+      "proof_strategy": "体のイデアルが自明であることから Artinian instance を得る。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "体のイデアルが自明であることから Artinian instance を得る。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"Field\"/><OMV name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"ArtinianRing\"/><OMV name=\"R\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:47bc54a37804d289226969025e8ceea03462d059047d6389991481581ed74e7b",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"Field\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"ArtinianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:290c5b3d215c7a2354af9c1f5bf1124eaad088eecb62599aa641196acda6f76e",
+      "canonical_statement_sha256": "sha256:62caa585a714211a5e6d1b6df709fdb348936d910179a1187b88144f0407b37d",
+      "lean_target": "example {K : Type*} [Field K] : IsArtinianRing K",
+      "lean_target_sha256": "sha256:70857e30babf24d2ed9413e454980dc65ea19d9489ec684c734d89b756cdb305",
+      "lean_witness": "by\n  infer_instance",
+      "lean_witness_sha256": "sha256:b665792ad6c3756cc916b7717945cee2ce07c59421a1cdfed946c70d3e7ee9fe",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "chain_field_dimension_zero",
+      "canonical_statement": "体 R の Krull 次元は高々0である。",
+      "proof_strategy": "体が Artinian であることと次元零結論を合成する。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "体が Artinian であることと次元零結論を合成する。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"Field\"/><OMV name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"KrullDimLEZero\"/><OMV name=\"R\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:8fe53be78fe0442aac31353fe43a14859e569c6a78944c481b2e7d74a6f8f7be",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"Field\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"KrullDimLEZero\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:460709e7fde3d049ac0c1934f1921302bc2225c276d89a88ede7c6e3bd235bcf",
+      "canonical_statement_sha256": "sha256:7a6a9ccb34b882c5d5e3d3f186848c9c9ed78b8c99fb879481c32d3c7cab30ae",
+      "lean_target": "example {K : Type*} [Field K] : Ring.KrullDimLE 0 K",
+      "lean_target_sha256": "sha256:b7504dd37c904383946bf1c831578fafd565a53706c687be7dc19f802e285a52",
+      "lean_witness": "by\n  infer_instance",
+      "lean_witness_sha256": "sha256:b665792ad6c3756cc916b7717945cee2ce07c59421a1cdfed946c70d3e7ee9fe",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "chain_artinian_ideal_fg",
+      "canonical_statement": "Artinian 可換環 R の任意のイデアル I は有限生成である。",
+      "proof_strategy": "Artinian から Noetherian を経由して有限生成定理を使う。",
+      "sketch_steps": [
+        "束縛された可換環と、必要なイデアルの carrier を固定する。",
+        "Noetherian・Artinian・有限生成・次元零の仮定を型付き述語として読む。",
+        "Artinian から Noetherian を経由して有限生成定理を使う。",
+        "対応する直接の Mathlib 定理または instance で結論を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"ArtinianRing\"/><OMV name=\"R\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" cd=\"chain1\" name=\"IdealFG\"/><OMV name=\"R\"/><OMV name=\"I\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:1bad6905dcce378ce0f53bb6b8555fb8c4bf5fdceeb2eced10d9307935ce75ff",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"ArtinianRing\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"chain1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-chain-dimension:v1\" name=\"IdealFG\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:108af0cbd618e38bd6fe61fedda63cd2e492d3eb0913ee748c84aabbda4cf2a5",
+      "canonical_statement_sha256": "sha256:91bba6ad6e804d3882ab0b151bc1d3c93ef738f671970e09430b8c96a870f2e8",
+      "lean_target": "example {R : Type*} [CommRing R] [IsArtinianRing R] (I : Ideal R) : I.FG",
+      "lean_target_sha256": "sha256:b4c5597b69a4b581d14362280757be2bdf531515c7636caceeac28fa6cfbf76b",
+      "lean_witness": "by\n  exact Ideal.fg_of_isNoetherianRing I",
+      "lean_witness_sha256": "sha256:ea2cee95eb5e7217f13f612abf11c3f8bcf40dfee235364e8259fcdba7a1a347",
+      "openmath_profile": "typed-commutative-algebra-chain-dimension-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_chain_dimension_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with explicit CommRing and dependent Ideal(R) carriers; Lean typeclass hypotheses are the reviewed lowering of profile predicates",
+        "openmath_to_lean": "reviewed against the named direct Mathlib theorem or instance",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    }
+  ],
+  "manifest_payload_sha256": "sha256:927ccc82c42895bf94aafaed4ab7dc244f6a4f53bdaada99d0bc2e58288aceed"
+}

@@ -1,0 +1,771 @@
+{
+  "schema_version": "pals.typed-commutative-algebra-modules-v1-sealed-manifest.v1",
+  "status": "sealed_local_authoring_revision_not_admitted",
+  "seal": {
+    "scope": "local typed commutative-algebra module authoring evidence only",
+    "admission": "not admitted to the generic DB, seed, embedding index, or PFI package",
+    "revision": "typed-commutative-algebra-modules-v1-local-r1"
+  },
+  "profile": {
+    "id": "typed-commutative-algebra-modules-v1",
+    "typed_cdbase": "urn:pals:openmath:typed-commutative-algebra-modules:v1",
+    "design_path": "docs/typed-commutative-algebra-modules-v1-design.md",
+    "design_sha256": "sha256:9ffcb037293031771ef7d5ffff74dcc6765c48942f0b2bd4753ee3e1bfb0ee63",
+    "registry_path": "pals_agent/content_dictionaries/typed-commutative-algebra-modules-v1-registry.json",
+    "registry_sha256": "sha256:94342e2f4bb5fa098a999d308492d97c3611fbffd79c77a2ae13944ae6be4d59",
+    "validator": "pals_agent.typed_commutative_algebra_modules.validate_canonical_typed_commutative_algebra_modules_openmath_xml",
+    "validator_path": "pals_agent/typed_commutative_algebra_modules.py",
+    "validator_sha256": "sha256:6d19d2fc37f02c674cc450b3a42ce1f248b84fd52afd4cad2ab9191656d1419e",
+    "canonicalizer_version": "openmath-cdbase-alpha-c14n-v4"
+  },
+  "lean_receipt": {
+    "witness_path": "docs/typed-commutative-algebra-modules-v1-authoring-witnesses.lean",
+    "witness_file_sha256": "sha256:06d035adc2dd53e9a91022cb63f6fbdfd24645c810f4d37c74239c3ed6172f76",
+    "toolchain": "leanprover/lean4:v4.32.0-rc1",
+    "verification_command": "cd pals-agent/lean-workspace && lake env lean ../../docs/typed-commutative-algebra-modules-v1-authoring-witnesses.lean",
+    "verification_status": "verified_local_pinned_workspace"
+  },
+  "admitted_card_count": 24,
+  "excluded_cards": [
+    {
+      "id": "commalg_modules_tensor_product",
+      "reason": "tensor-product carrier and universal property are deferred"
+    },
+    {
+      "id": "commalg_modules_hom_module",
+      "reason": "first-class Hom-module carrier is deferred"
+    },
+    {
+      "id": "commalg_modules_quotient",
+      "reason": "quotient-module map and carrier are deferred"
+    },
+    {
+      "id": "commalg_modules_general_exact_sequence",
+      "reason": "arbitrary-length sequence typing is deferred; only exact_at is admitted"
+    }
+  ],
+  "excluded_card_count": 4,
+  "cards": [
+    {
+      "id": "commalg_modules_le_sup_left",
+      "canonical_statement": "任意の R-部分加群 I,J で I⊆I+J。",
+      "proof_strategy": "上限への左包含を使う。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "上限への左包含を使う。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_le\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"I\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_sup\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:aa27e01b2063aee8411190dba18aebf624bcc219380db8a8bdc9b08ae7d0623b",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_sup\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:c93a7f3bf9b47ca2cf1712b621ef13050e2fbe171122badcfda43548f310bd19",
+      "canonical_statement_sha256": "sha256:e6eb98c41a1fddfdeded9bba8da8398c4d4c7d5cd470ff3326501dd89c97842e",
+      "lean_target": "example {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] (I J : Submodule R M) : I ≤ I ⊔ J",
+      "lean_target_sha256": "sha256:bf58314879146f04f03b170c9bc0796873c4425cf57fadcc6c313cc46d69bd5d",
+      "lean_witness": "by\n  exact le_sup_left",
+      "lean_witness_sha256": "sha256:f1e863d7962f094f78f9631ad7dd6b7c824e4cafad096144c69e0a2985229a9f",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_le_sup_right",
+      "canonical_statement": "任意の R-部分加群 I,J で J⊆I+J。",
+      "proof_strategy": "上限への右包含を使う。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "上限への右包含を使う。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_le\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"J\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_sup\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:7ba1cb3749654dda457d0b3ba1bfcc422d2123825df63dfae38b2e3d85a154c5",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_sup\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:c39db3cd5bbd8a3e064ed3a58f5d28eceaa8622a128576a86224e919acface9b",
+      "canonical_statement_sha256": "sha256:d4b65870a5685bca6c907d414668c87dbe003b7b0f41ccd05e62520f95eb494a",
+      "lean_target": "example {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] (I J : Submodule R M) : J ≤ I ⊔ J",
+      "lean_target_sha256": "sha256:ab055944e570334959ad93c89c1fb822afa8780f4ccafab315e60dd150b97fda",
+      "lean_witness": "by\n  exact le_sup_right",
+      "lean_witness_sha256": "sha256:b1411188fadd434166eda09015db0b0d01c9f4d3c1ec03ba1aa3f90b31025e22",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_inf_le_left",
+      "canonical_statement": "任意の R-部分加群 I,J で I∩J⊆I。",
+      "proof_strategy": "下限から左因子への包含を使う。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "下限から左因子への包含を使う。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_le\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_inf\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA><OMV name=\"I\"/></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:80205166a6386c59afcbec4f0aebfa949e408bfab5b3bd55f84b06e5c0d87fd3",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_inf\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:00739bfd5d29ec1dd635d160b7f40fd45544f912812be3e85b023c04a6801df6",
+      "canonical_statement_sha256": "sha256:0af8e4c1eaadad4990916ba548985d80525c6e0b1800f07a77f6c3929f102538",
+      "lean_target": "example {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] (I J : Submodule R M) : I ⊓ J ≤ I",
+      "lean_target_sha256": "sha256:4126564ab7e6b52cfeff71cf9709dbc9a97b39cadd2364f204523ff860149dd5",
+      "lean_witness": "by\n  exact inf_le_left",
+      "lean_witness_sha256": "sha256:0a154f2a4233b0a514f8b04c5eef456660b774c78f37a4b8aafeab0c244fc9da",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_inf_le_right",
+      "canonical_statement": "任意の R-部分加群 I,J で I∩J⊆J。",
+      "proof_strategy": "下限から右因子への包含を使う。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "下限から右因子への包含を使う。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_le\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_inf\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA><OMV name=\"J\"/></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:4f38f0f8e70a1ae0589979cb5d31dc5642f613960db7c1b3677415ba295809c5",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_inf\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:ad8432cf7c344745cdaff56b142d9e5309c21302b44c653ac1335194fe66047d",
+      "canonical_statement_sha256": "sha256:8d2bb173b8e5843dbc099b5399d7e9b993ba54d7ac07af74fec8fbe9db4f826f",
+      "lean_target": "example {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] (I J : Submodule R M) : I ⊓ J ≤ J",
+      "lean_target_sha256": "sha256:60f4b5c0e4c35bfa5aa4dca9a2bc665a9948b16e3d95a738aff6bae0b8378711",
+      "lean_witness": "by\n  exact inf_le_right",
+      "lean_witness_sha256": "sha256:37955131ca599b37dec2e8e057e2daff1110d8a9ede18770d8c1885e98f399fc",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_bot_le",
+      "canonical_statement": "任意の R-部分加群 I で 0⊆I。",
+      "proof_strategy": "部分加群束の最小元性を使う。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "部分加群束の最小元性を使う。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_le\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_bot\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA><OMV name=\"I\"/></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:4e40e77d3c910c984de46cb601f67744040499fe97c4f1b40540fd2a24c0099e",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_bot\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:ad80f78fb33ecc87cb219d110c84ad9e2d88f1002a9b2f24ef31a60a54f1a517",
+      "canonical_statement_sha256": "sha256:0a9ef1d51f399165892ee82cf1f85d0455f2216b2ede0a9f0f72ce706f720f47",
+      "lean_target": "example {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] (I : Submodule R M) : ⊥ ≤ I",
+      "lean_target_sha256": "sha256:3c3e63ad4f37f9f54a79d07bfe802ff69f3ab8242c175f995b3226d356423ea3",
+      "lean_witness": "by\n  exact bot_le",
+      "lean_witness_sha256": "sha256:c8f4b72e61f85c377c81c9fd63abf0f2c91672940ea664b4502f50307535fcd6",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_le_top",
+      "canonical_statement": "任意の R-部分加群 I で I⊆M。",
+      "proof_strategy": "部分加群束の最大元性を使う。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "部分加群束の最大元性を使う。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_le\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"I\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_top\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:fce0f939da378201e2e172a94ee9a2eabc2f28f039afa373c0b66ad39ba675f1",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_top\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:28913fb9f7c9aa095083ea6d227b6a831f0082de9332f971534ade638987ea51",
+      "canonical_statement_sha256": "sha256:5f55410b94173a829e76bb048dd342d339dbdb04dffa9dce52f4e5992d07e1c5",
+      "lean_target": "example {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] (I : Submodule R M) : I ≤ ⊤",
+      "lean_target_sha256": "sha256:2d308f9bf29cb112cd46137713d225e67b39d328d97f9415990cbf673f3d243c",
+      "lean_witness": "by\n  exact le_top",
+      "lean_witness_sha256": "sha256:aa66f4a1bc49603cbaf6cf5e87afb3d9c69743664ac51a9d10931c80843abeb3",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_sup_comm",
+      "canonical_statement": "R-部分加群の和は可換である。",
+      "proof_strategy": "上限の可換性を適用する。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "上限の可換性を適用する。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_sup\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_sup\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"J\"/><OMV name=\"I\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:6e0d26ddc7b2b377dc1e6ce21e6dc70429ce0d3f2091690ec490aa46e7ba1a78",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_sup\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_sup\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:ff52a1635fe733dd4a177523ff3b1a6647f00aa82239b4bc47041b0773c1e1bf",
+      "canonical_statement_sha256": "sha256:4806c6d779421aa7c4232cde0a27994f93cf33ae81dba15caae4f1f2c0fba6b9",
+      "lean_target": "example {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] (I J : Submodule R M) : I ⊔ J = J ⊔ I",
+      "lean_target_sha256": "sha256:0e5bfd543d0e1ac605573ce9b23e7246fb2fcc81456e62723d99b2203515183e",
+      "lean_witness": "by\n  exact sup_comm I J",
+      "lean_witness_sha256": "sha256:43b4b0d5034e09ab8acc280416ba1cf7bd607f57fc8390d317aea356c13d0dfc",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_inf_comm",
+      "canonical_statement": "R-部分加群の共通部分は可換である。",
+      "proof_strategy": "下限の可換性を適用する。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "下限の可換性を適用する。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_inf\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_inf\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"J\"/><OMV name=\"I\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:9c91dbfbd975d1d0b0041a6b675b42a3e193d3294a0450362f0d80d7db2529be",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_inf\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_inf\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:cc9147b7e01e7b938518452a7b3b6d43aa3c16e6f920a56d3d62e1199a7f8c1a",
+      "canonical_statement_sha256": "sha256:4bba5bb6c40b4cb664012b6c67d393035f021d38d5a2182f7c27900a4bbc7c75",
+      "lean_target": "example {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] (I J : Submodule R M) : I ⊓ J = J ⊓ I",
+      "lean_target_sha256": "sha256:52798b0653d0d0e82e6e34bfc340463120a6b278fd75ba6ef400b11dd2fe76f7",
+      "lean_witness": "by\n  exact inf_comm I J",
+      "lean_witness_sha256": "sha256:6a28c75719041bf49355d653a90118cb6078639e9e9c71c3b3aedde212212ff5",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_inf_sup_absorb",
+      "canonical_statement": "I∩(I+J)=I（R-部分加群 I,J）。",
+      "proof_strategy": "束の吸収律を使う。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "束の吸収律を使う。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_inf\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"I\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_sup\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA></OMA><OMV name=\"I\"/></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:31866942fca4cd837a8db547e5a771f20c608b19b8775350f0234460ba4375ab",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_inf\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_sup\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMA><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:a8a5c1ed0967b4dc0a8711ec2edecfdfae083d05f1fe4cba7b8ea2c975f4a7a1",
+      "canonical_statement_sha256": "sha256:c6870e137a2c45050bff3615b856c9f860b5c61891306a90730db68088e9db82",
+      "lean_target": "example {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] (I J : Submodule R M) : I ⊓ (I ⊔ J) = I",
+      "lean_target_sha256": "sha256:86c01f7857e67a98cbb800cde9e4756e0cc8af274e44096529db4fb46299212f",
+      "lean_witness": "by\n  exact inf_sup_self",
+      "lean_witness_sha256": "sha256:9bca8691860a78a3780c2c7c819578aa869ea733959cf7f6e519a0f5f4c7c1ac",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_sup_inf_absorb",
+      "canonical_statement": "I+(I∩J)=I（R-部分加群 I,J）。",
+      "proof_strategy": "双対な吸収律を使う。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "双対な吸収律を使う。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Submodule\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_sup\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"I\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_inf\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA></OMA><OMV name=\"I\"/></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:951733a589359f77c7b7725e7f8b5faa385cd890d589b2cc4f5a051833335dfe",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Submodule\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_sup\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_inf\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMA><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:560bba90c51dcc113a05a70bba09d7ed56606debcbe75ec4daf1b11af33bbd74",
+      "canonical_statement_sha256": "sha256:43863df06ba5b684c31350410b6fd93cebd42bc1460915387e6f4667a9938312",
+      "lean_target": "example {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] (I J : Submodule R M) : I ⊔ (I ⊓ J) = I",
+      "lean_target_sha256": "sha256:dfb862fddfc781cd58e8c89467e1cabcc61fefe71121de85c7192e46415a538c",
+      "lean_witness": "by\n  exact sup_inf_self",
+      "lean_witness_sha256": "sha256:23d85923681c608c7f4769a3c1f998508ecbcd0720b7e3bfbe7bfaeec915bcdf",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_kernel_identity",
+      "canonical_statement": "恒等 R-線形写像の核は0部分加群である。",
+      "proof_strategy": "恒等写像の kernel を直接簡約する。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "恒等写像の kernel を直接簡約する。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_kernel\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"M\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_id\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_bot\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:d4cdd462495bad4d4a6cd24d6dee818c49deb5dd979804a9947b602d33b5e0cc",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_kernel\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_id\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_bot\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:76246cccda436cfa6b0ee793af85efd7821ca9def2aeeb5b50d985357db62dc0",
+      "canonical_statement_sha256": "sha256:dece7ee712c76a1681e2f5b6d05905f8559a325fb493937ae80462e9bf5a705d",
+      "lean_target": "example {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] : LinearMap.ker (LinearMap.id : M →ₗ[R] M) = ⊥",
+      "lean_target_sha256": "sha256:584d2935e95de96e6ebb238432a3300a95bf631e7ffe3dbe289c91a6bd906b09",
+      "lean_witness": "by\n  exact LinearMap.ker_id",
+      "lean_witness_sha256": "sha256:a182655ebb2ee6bbe93ca96cf271228cd4fc8dfe4c73ba7a24164262c588eb69",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_range_identity",
+      "canonical_statement": "恒等 R-線形写像の像は全体である。",
+      "proof_strategy": "恒等写像の range を直接簡約する。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "恒等写像の range を直接簡約する。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_range\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"M\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_id\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_top\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:08db5049b8eb89ed50888b59fba0be80794ced6282327647e43a0c6de2e92f45",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_range\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_id\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_top\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:7a80e3c01e8fcdbd58ebd67b0eae4a01694fa2cc54f3d4e7544a3505e01ec69e",
+      "canonical_statement_sha256": "sha256:a756005075c434905439a53f1e2f7f449098925135c597161f403ba818cc4f78",
+      "lean_target": "example {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] : LinearMap.range (LinearMap.id : M →ₗ[R] M) = ⊤",
+      "lean_target_sha256": "sha256:d845de756ec6dfad51a8b7ebd2c8bb292edabfc7e15bade16acfbd37365045d9",
+      "lean_witness": "by\n  exact LinearMap.range_id",
+      "lean_witness_sha256": "sha256:7ad30bfe51ceff8c7d8edc1553b88cb1e635e4157ffb13b71cc107e70d715e88",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_kernel_zero",
+      "canonical_statement": "零 R-線形写像 M→N の核は M 全体である。",
+      "proof_strategy": "零写像の kernel を簡約する。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "零写像の kernel を簡約する。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"N\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_kernel\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"N\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_zero\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"N\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_top\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:41c85167c79a8edcca2b70c9775da1353fcdf33a959794a93ba552c3c9dc0a96",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_kernel\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_zero\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_top\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:05e00980b06f7861c97908388aed99c29bea20187831e1d66a1fbc4297fe1437",
+      "canonical_statement_sha256": "sha256:7375ba4c5d2ee62213bfa5719de476d03d7422e0e073e337b5c7023614b6f46f",
+      "lean_target": "example {R M N : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R N] : LinearMap.ker (0 : M →ₗ[R] N) = ⊤",
+      "lean_target_sha256": "sha256:0c07f3a191a7abe2736f62181a53c3cf1f6042ec7aaa7a941eaedc239e831074",
+      "lean_witness": "by\n  exact LinearMap.ker_zero",
+      "lean_witness_sha256": "sha256:d4a3817d8d8b09bd2a8e46cc7d39aa3637cbe8fc1b2cc472bbffe71271672dc8",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_range_zero",
+      "canonical_statement": "零 R-線形写像 M→N の像は0部分加群である。",
+      "proof_strategy": "零写像の range を簡約する。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "零写像の range を簡約する。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"N\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_range\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"N\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_zero\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"N\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_bot\"/><OMV name=\"R\"/><OMV name=\"N\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:02090e4169dc11ef729ab034a88a8f6a45a084f505b3805e4caaf35defae1568",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_range\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_zero\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_bot\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:e00a083255972620ab5360c4b45e045ed42fb35d92d12356faf43f36a21947c6",
+      "canonical_statement_sha256": "sha256:05c102d9d585b740f58f594dbd3b317183e0379c34fa2fcfd9a25d67c1cbe01e",
+      "lean_target": "example {R M N : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R N] : LinearMap.range (0 : M →ₗ[R] N) = ⊥",
+      "lean_target_sha256": "sha256:4ccec7fe1c3daf45ed47dc21fc213857f4e8e3ce9228a1c69fae40421b1aa8cc",
+      "lean_witness": "by\n  exact LinearMap.range_zero",
+      "lean_witness_sha256": "sha256:a936dc0fc71e5c483702ca2a7c81cf8fbac44157e98cb4141d26352585aa0f60",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_comp_left_identity",
+      "canonical_statement": "N 上の恒等写像と f:M→N の合成は f である。",
+      "proof_strategy": "線形写像を点ごとに外延して恒等性を使う。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "線形写像を点ごとに外延して恒等性を使う。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"N\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"LinearMap\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"N\"/></OMA></OMATP><OMV name=\"f\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_comp\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"N\"/><OMV name=\"N\"/><OMV name=\"f\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_id\"/><OMV name=\"R\"/><OMV name=\"N\"/></OMA></OMA><OMV name=\"f\"/></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:2d67c0f8000bf4fd53e95ea57ff8fe8b94867b149c652e37109dc61483b0f071",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"LinearMap\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_comp\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_id\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:3d422b1d3b18e25cf2386a067b3bd618b83d13c9ad8a4d74557bcb7da82d50f9",
+      "canonical_statement_sha256": "sha256:af820ceb64d305f93a58ab3dc7da933d5baf386ae47a34a51cba57140aa718af",
+      "lean_target": "example {R M N : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R N] (f : M →ₗ[R] N) : (LinearMap.id : N →ₗ[R] N).comp f = f",
+      "lean_target_sha256": "sha256:834b2b9bffe2bfb91a70a2d44be14fbb6d5921e9ce4d38cf729f90bce5da5190",
+      "lean_witness": "by\n  ext x\n  rfl",
+      "lean_witness_sha256": "sha256:8549a8d741f0ebaccee2ffc9808490f96d3e7376c0bc47aa4c0713ad79884405",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_comp_right_identity",
+      "canonical_statement": "f:M→N と M 上の恒等写像の合成は f である。",
+      "proof_strategy": "線形写像を点ごとに外延して恒等性を使う。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "線形写像を点ごとに外延して恒等性を使う。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"N\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"LinearMap\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"N\"/></OMA></OMATP><OMV name=\"f\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_comp\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"M\"/><OMV name=\"N\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_id\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA><OMV name=\"f\"/></OMA><OMV name=\"f\"/></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:89a7aec73c65aa54eb7664682000d2a0b16a7217b72ac79a9fa51eb987eb7ba5",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"LinearMap\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_comp\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_id\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMV name=\"v4\"></n1:OMV></n1:OMA><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:8f260b36a63f1dc3a08365478262d7c4e0a32ef078eaaa7717e4a0d865d83efc",
+      "canonical_statement_sha256": "sha256:117b960bc1641e596a8bef0985989068952da411d3b95750468e949fb2c8ba70",
+      "lean_target": "example {R M N : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R N] (f : M →ₗ[R] N) : f.comp (LinearMap.id : M →ₗ[R] M) = f",
+      "lean_target_sha256": "sha256:13e7c0acabdda4d04a27ad62d3ed9cf9bad24795741dfa34b00d06e7b1d9374d",
+      "lean_witness": "by\n  ext x\n  rfl",
+      "lean_witness_sha256": "sha256:8549a8d741f0ebaccee2ffc9808490f96d3e7376c0bc47aa4c0713ad79884405",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_comp_associative",
+      "canonical_statement": "f:M→N、g:N→P、h:P→Q の合成は結合的である。",
+      "proof_strategy": "3つの線形写像を各元で評価して結合性を確認する。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "3つの線形写像を各元で評価して結合性を確認する。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"N\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"P\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"LinearMap\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"N\"/></OMA></OMATP><OMV name=\"f\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"LinearMap\"/><OMV name=\"R\"/><OMV name=\"N\"/><OMV name=\"P\"/></OMA></OMATP><OMV name=\"g\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"Q\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"LinearMap\"/><OMV name=\"R\"/><OMV name=\"P\"/><OMV name=\"Q\"/></OMA></OMATP><OMV name=\"h\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_comp\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"P\"/><OMV name=\"Q\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_comp\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"N\"/><OMV name=\"P\"/><OMV name=\"f\"/><OMV name=\"g\"/></OMA><OMV name=\"h\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_comp\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"N\"/><OMV name=\"Q\"/><OMV name=\"f\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_comp\"/><OMV name=\"R\"/><OMV name=\"N\"/><OMV name=\"P\"/><OMV name=\"Q\"/><OMV name=\"g\"/><OMV name=\"h\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:83b3dd0392455a2fa3f906b8a34a9651161d77201f670cddad992995fb34181f",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"LinearMap\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v5\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"LinearMap\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v6\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v7\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"LinearMap\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV><n1:OMV name=\"v7\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v8\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_comp\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV><n1:OMV name=\"v7\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_comp\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV><n1:OMV name=\"v5\"></n1:OMV><n1:OMV name=\"v6\"></n1:OMV></n1:OMA><n1:OMV name=\"v8\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_comp\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v7\"></n1:OMV><n1:OMV name=\"v5\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_comp\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV><n1:OMV name=\"v7\"></n1:OMV><n1:OMV name=\"v6\"></n1:OMV><n1:OMV name=\"v8\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:9ac8d4ef14735e164e10739e412e69b82b1544107dd5003fc5ba60d77116fc78",
+      "canonical_statement_sha256": "sha256:8cf0107f6e59ea9025a5af2c987d5788c120147407912790bd8ac1ed38cdab45",
+      "lean_target": "example {R M N P Q : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R N] [AddCommGroup P] [Module R P] [AddCommGroup Q] [Module R Q] (f : M →ₗ[R] N) (g : N →ₗ[R] P) (h : P →ₗ[R] Q) : (h.comp g).comp f = h.comp (g.comp f)",
+      "lean_target_sha256": "sha256:6d63407658857d14428db4ad5d9f682af6d512323439ccf20c7fa1c2ff7e5ae0",
+      "lean_witness": "by\n  rfl",
+      "lean_witness_sha256": "sha256:1f66f63cfdbcd2444e0f4e89907aec65e5445cb49f773bf2c2befba0b4b40f14",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_range_comp_le",
+      "canonical_statement": "f:M→N, g:N→P なら im(g∘f)⊆im(g)。",
+      "proof_strategy": "像の元を f の値として取り、g の像の証人にする。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "像の元を f の値として取り、g の像の証人にする。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"N\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"P\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"LinearMap\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"N\"/></OMA></OMATP><OMV name=\"f\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"LinearMap\"/><OMV name=\"R\"/><OMV name=\"N\"/><OMV name=\"P\"/></OMA></OMATP><OMV name=\"g\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"submodule_le\"/><OMV name=\"R\"/><OMV name=\"P\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_range\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"P\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_comp\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"N\"/><OMV name=\"P\"/><OMV name=\"f\"/><OMV name=\"g\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_range\"/><OMV name=\"R\"/><OMV name=\"N\"/><OMV name=\"P\"/><OMV name=\"g\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:fa4b17cebd5be07dbf54c84055682a574d533f9b6fcd553cfadaadf751ef8d36",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"LinearMap\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v5\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"LinearMap\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v6\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"submodule_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_range\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_comp\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV><n1:OMV name=\"v5\"></n1:OMV><n1:OMV name=\"v6\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_range\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV><n1:OMV name=\"v6\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:7d43185e2bc0ec2b924e79612d4b70eeebdfdfb787db65a9a006045384c9c5b1",
+      "canonical_statement_sha256": "sha256:062014cefe458fcad7c53c9e5453826afcb3b9efa9207eee639073eec495e71c",
+      "lean_target": "example {R M N P : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R N] [AddCommGroup P] [Module R P] (f : M →ₗ[R] N) (g : N →ₗ[R] P) : LinearMap.range (g.comp f) ≤ LinearMap.range g",
+      "lean_target_sha256": "sha256:c2eddb4d1d5b1f696d40709df64299783eee91cc4d6e296acafed8a6c7d56e3d",
+      "lean_witness": "by\n  rintro _ ⟨x, rfl⟩\n  exact ⟨f x, rfl⟩",
+      "lean_witness_sha256": "sha256:692d34802155846d053ea7b8df11c2bbe5d52a6f48ceb519415be663bb60e547",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_identity_injective",
+      "canonical_statement": "任意の R-加群 M で恒等線形写像は単射である。",
+      "proof_strategy": "恒等写像の値の等式をそのまま使う。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "恒等写像の値の等式をそのまま使う。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_injective\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"M\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_id\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:b6abfb1b00230348dc8632674b3bdad2ab437fc274663c65e0b576237b142b36",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_injective\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_id\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:c94a5f0a0be43b6eb27bb6d15365d0e45dbf3ef815f326c66b73b50d0c2d5605",
+      "canonical_statement_sha256": "sha256:ecd37a3b4ec5559ddf95a397e52608502715bfd9830eddcfa2df490f4ce5d3b3",
+      "lean_target": "example {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] : Function.Injective (LinearMap.id : M →ₗ[R] M)",
+      "lean_target_sha256": "sha256:32afe4e070f2f0f30bb8d26d19ee5d3f4864760fd6c2bf74c9458105c0163178",
+      "lean_witness": "by\n  intro x y h\n  exact h",
+      "lean_witness_sha256": "sha256:aa04ddc061b24d74cbc84f2a0fdcb2d9af5cee5c9a5501ba344795a9a1e71268",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_identity_surjective",
+      "canonical_statement": "任意の R-加群 M で恒等線形写像は全射である。",
+      "proof_strategy": "各元自身を原像に取る。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "各元自身を原像に取る。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_surjective\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"M\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_id\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:6b62d50ec4544b7f927214e6f38f60a4d6cbe3680cbbe935a179aaaacdede98a",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_surjective\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_id\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:80c75ed131d44ff557926a00cffe5d796a08b05906bfae8b4bd6b98b288987ca",
+      "canonical_statement_sha256": "sha256:24510d5bdb3ecee0ea673ff921145a29de703a55b4d1b31d629ccf78a4b5b931",
+      "lean_target": "example {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] : Function.Surjective (LinearMap.id : M →ₗ[R] M)",
+      "lean_target_sha256": "sha256:769adf4086c170849c5b75dd8467b8e7fca9bdad6a54d11dc50ca024b622f049",
+      "lean_witness": "by\n  intro x\n  exact ⟨x, rfl⟩",
+      "lean_witness_sha256": "sha256:4649aed5ff0caad73349fcb3ba51f26e4d16eb71066d1e546c61f5dcaab1350d",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_exact_zero_id",
+      "canonical_statement": "0:M→M と id_M は M で正確である。",
+      "proof_strategy": "range(0)=0 と ker(id)=0 を一致させる。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "range(0)=0 と ker(id)=0 を一致させる。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"exact_at\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"M\"/><OMV name=\"M\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_zero\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"M\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_id\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:62654872e6ce74f8ee3f4c4a7069e81e90ca5b4c85bb4b44bd57432140c2bffd",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"exact_at\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_zero\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_id\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:38640c723e75199e38d5212a04f945bbd70ffb7dceafed9c5aa289ad8075487a",
+      "canonical_statement_sha256": "sha256:a8665854437d3f237fff0924964c4efcde3dd99cfeec8412de1f535eb9f9e7ba",
+      "lean_target": "example {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] : LinearMap.range (0 : M →ₗ[R] M) = LinearMap.ker (LinearMap.id : M →ₗ[R] M)",
+      "lean_target_sha256": "sha256:18b00373edd5c42b4507d4e17f9386dfab421390b6021418cbd5e6df4fe59209",
+      "lean_witness": "by\n  simp",
+      "lean_witness_sha256": "sha256:96d94d4e13087d4e09c35bb3e181b76d9471505675687622eeddcfdbfa6cacf0",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_exact_id_zero",
+      "canonical_statement": "id_M と 0:M→M は M で正確である。",
+      "proof_strategy": "range(id)=M と ker(0)=M を一致させる。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "range(id)=M と ker(0)=M を一致させる。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"exact_at\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"M\"/><OMV name=\"M\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_id\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_zero\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"M\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:f0786a246183c61b2f5a2e2f0732d2a3e32862259976d67da521ba4f348bb180",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"exact_at\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_id\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_zero\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:1d1b7052cfb1973d7529cbc6d5efa51fea9121bf58dcf482393e03938b99bd5e",
+      "canonical_statement_sha256": "sha256:123f25f0e12d200309947801232417ddfc1f1ca4a22b0211fc11bd509bb3c43c",
+      "lean_target": "example {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] : LinearMap.range (LinearMap.id : M →ₗ[R] M) = LinearMap.ker (0 : M →ₗ[R] M)",
+      "lean_target_sha256": "sha256:82b2bbf65a2c7e50255c2d77d5b5af5b7562d457b393a25158150f6cd76ad77f",
+      "lean_witness": "by\n  simp",
+      "lean_witness_sha256": "sha256:96d94d4e13087d4e09c35bb3e181b76d9471505675687622eeddcfdbfa6cacf0",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_comp_zero_left",
+      "canonical_statement": "g:N→P と零写像0:M→Nの合成は零写像である。",
+      "proof_strategy": "各元で零写像を評価し、線形写像の外延性を使う。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "各元で零写像を評価し、線形写像の外延性を使う。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"N\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"P\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"LinearMap\"/><OMV name=\"R\"/><OMV name=\"N\"/><OMV name=\"P\"/></OMA></OMATP><OMV name=\"g\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_comp\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"N\"/><OMV name=\"P\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_zero\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"N\"/></OMA><OMV name=\"g\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_zero\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"P\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:a541443a029d5b92927422b9d83c16f9987eb7bb56709baac876aaf67aeedfb0",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"LinearMap\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v5\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_comp\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_zero\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMV name=\"v5\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_zero\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:437706ab5ec041819ddccf07dffc98c0054862f940af81ffd884722039b0e682",
+      "canonical_statement_sha256": "sha256:34b6adaa8b9d0485f5fe1037458088505fa9f22a24cdaad89c479a1a066c01ad",
+      "lean_target": "example {R M N P : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R N] [AddCommGroup P] [Module R P] (g : N →ₗ[R] P) : g.comp (0 : M →ₗ[R] N) = 0",
+      "lean_target_sha256": "sha256:6e3dc5a9db56c932f609902577d2098831d09e1208d9fa3c46d7bd8e4d42e598",
+      "lean_witness": "by\n  ext x\n  simp",
+      "lean_witness_sha256": "sha256:c1809a4d49051da725963348d74e7b03aa63c34b528613fd26633a54052478ba",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_modules_comp_zero_right",
+      "canonical_statement": "f:M→N と零写像0:N→Pの合成は零写像である。",
+      "proof_strategy": "各元で零写像を評価し、線形写像の外延性を使う。",
+      "sketch_steps": [
+        "束縛された環・加群・写像の型を固定する。",
+        "各演算の scalar ring と module carrier が一致することを確認する。",
+        "各元で零写像を評価し、線形写像の外延性を使う。",
+        "目的の部分加群等式・包含または写像性を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"N\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"Module\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"P\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"LinearMap\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"N\"/></OMA></OMATP><OMV name=\"f\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"LinearMap\"/><OMV name=\"R\"/><OMV name=\"N\"/><OMV name=\"P\"/></OMA></OMATP><OMV name=\"g\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_comp\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"N\"/><OMV name=\"P\"/><OMV name=\"f\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_zero\"/><OMV name=\"R\"/><OMV name=\"N\"/><OMV name=\"P\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" cd=\"module1\" name=\"linear_zero\"/><OMV name=\"R\"/><OMV name=\"M\"/><OMV name=\"P\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:7cedd866184e7ec69830678030eae6db742afe4c2b02a529fb53d461348604a2",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"Module\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"LinearMap\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v5\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"LinearMap\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v6\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_comp\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV><n1:OMV name=\"v5\"></n1:OMV><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_zero\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"module1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra-modules:v1\" name=\"linear_zero\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:900d8fbccc4fea5e49857d65688e2afa755b87bd8c3d718b5aa2e0f6674b809d",
+      "canonical_statement_sha256": "sha256:537a770ae23fc1b885cd3c27c94454b050a06856c16bc2c6b4864622becdeadf",
+      "lean_target": "example {R M N P : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R N] [AddCommGroup P] [Module R P] (f : M →ₗ[R] N) : (0 : N →ₗ[R] P).comp f = 0",
+      "lean_target_sha256": "sha256:5df290d03b5bfbf30a4d62fc04730ac2e0ec6e3bea278767f212fd6b55ce378f",
+      "lean_witness": "by\n  ext x\n  simp",
+      "lean_witness_sha256": "sha256:c1809a4d49051da725963348d74e7b03aa63c34b528613fd26633a54052478ba",
+      "openmath_profile": "typed-commutative-algebra-modules-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_modules_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed under explicit scalar-ring, module, and map-carrier conventions",
+        "openmath_to_lean": "reviewed against the named direct Mathlib module-theory statement",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    }
+  ],
+  "manifest_payload_sha256": "sha256:30fb9febd4177c7db84deb220e79a88ef459a5c59c6f137140cb3b840c15cf8e"
+}

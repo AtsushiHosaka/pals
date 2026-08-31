@@ -1,0 +1,913 @@
+{
+  "schema_version": "pals.typed-extension-draft-proposal.v1",
+  "source": "PALS first-party authored extension-gated proposal; no current-profile Drafts",
+  "current_profile_assessment": {
+    "publishable_card_count": 0,
+    "reason": "The current retrieval profile lacks type-indexed algebraic structures, polynomial objects, multivariable function spaces, derivatives, integrals, intervals, and ODE predicates. Encoding these statements with arith1 or unary real-function symbols would change their meaning.",
+    "rejected_shortcuts": [
+      "Do not represent an abstract group operation with arith1:times.",
+      "Do not represent a polynomial as a scalar-valued expression without a coefficient-ring and polynomial sort.",
+      "Do not represent a multivariable map with pals1:forall_real_function, which is only ℝ→ℝ.",
+      "Do not encode derivatives, integrals, or ODE satisfaction as free OMV names or prose strings."
+    ]
+  },
+  "minimum_profile_extension": {
+    "profile_id": "pals.typed-math.v1",
+    "required_profile_changes": [
+      "Add OMATTR (or an equivalent typed-binder form) to the retrieval profile so variables and lambda domains/codomains carry checked sorts.",
+      "Require every application to satisfy a registered dependent signature; reject a term when carrier, coefficient ring, vector dimension, or function codomain cannot be inferred uniquely.",
+      "Make equality type-homogeneous, quantified variables closed, and coercions explicit (especially naturals into rings and scalar functions into vector-valued functions).",
+      "Keep theorem-level predicates separate from proof-method witnesses: existential intermediate points, local intervals, and constants must be part of the proposition only when the theorem asserts their existence."
+    ],
+    "content_dictionaries": {
+      "pals-algebra1": {
+        "sorts": [
+          "Group",
+          "Ring",
+          "CommutativeRing",
+          "IntegralDomain",
+          "Field",
+          "Carrier(S)",
+          "Subgroup(G)",
+          "GroupHom(G,H)",
+          "Polynomial(R)"
+        ],
+        "operators": [
+          "carrier",
+          "mul",
+          "inv",
+          "one",
+          "ring_add",
+          "ring_mul",
+          "ring_neg",
+          "ring_zero",
+          "ring_one",
+          "kernel",
+          "normal_subgroup",
+          "poly_eval",
+          "poly_divides",
+          "poly_degree",
+          "formal_derivative"
+        ],
+        "critical_signatures": [
+          "mul(G,x,y): Carrier(G) when x,y:Carrier(G)",
+          "poly_eval(R,p,x):Carrier(R) when p:Polynomial(R), x:Carrier(R)",
+          "poly_divides(R,p,q): Proposition when p,q:Polynomial(R)"
+        ]
+      },
+      "pals-calculus1": {
+        "sorts": [
+          "EuclideanSpace(n)",
+          "TypedFunction(E,F)",
+          "ContinuousLinearMap(E,F)",
+          "Matrix(m,n,R)",
+          "SymmetricMatrix(n,R)",
+          "OpenSubset(E)",
+          "ClosedInterval(R)"
+        ],
+        "operators": [
+          "differentiable_at",
+          "frechet_derivative_at",
+          "gradient",
+          "partial_derivative",
+          "hessian",
+          "jacobian",
+          "directional_derivative",
+          "definite_integral",
+          "double_integral",
+          "C1_diffeomorphism",
+          "local_extremum",
+          "positive_definite"
+        ],
+        "critical_signatures": [
+          "frechet_derivative_at(f,x): ContinuousLinearMap(E,F) when f:TypedFunction(E,F), x:E",
+          "gradient(f,x):EuclideanSpace(n) only when f:TypedFunction(EuclideanSpace(n),R)",
+          "definite_integral(a,b,f):F only when f:TypedFunction(R,F) and an integration convention for F is registered"
+        ]
+      },
+      "pals-ode1": {
+        "sorts": [
+          "ODE_RHS(E)",
+          "ODESolution(I,E)",
+          "OrientedInterval(R)"
+        ],
+        "operators": [
+          "solves_ode_on",
+          "solves_second_order_ode_on",
+          "derivative",
+          "second_derivative",
+          "locally_lipschitz_in_state",
+          "exists_unique_local_solution"
+        ],
+        "critical_signatures": [
+          "solves_ode_on(y,F,I):Proposition when y:TypedFunction(I,E), F:TypedFunction(R×E,E)",
+          "derivative(y):TypedFunction(I,E) only for differentiable y",
+          "locally_lipschitz_in_state(F,U):Proposition with an explicitly typed state neighborhood U"
+        ]
+      },
+      "interval1": {
+        "required_symbols": [
+          "ordered_interval"
+        ],
+        "semantic_requirement": "Fix whether ordered_interval(a,b) is closed [a,b], define the empty case a>b, and provide separate symbols for open/interior intervals rather than relying on prose."
+      }
+    }
+  },
+  "cards": [
+    {
+      "id": "ext_group_inverse_product",
+      "domain": "abstract_algebra_groups",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For elements a and b of a group G, (a*b)⁻¹ = b⁻¹*a⁻¹.",
+      "required_symbols": [
+        "pals-algebra1:group",
+        "pals-algebra1:carrier",
+        "pals-algebra1:mul",
+        "pals-algebra1:inv",
+        "pals-algebra1:one"
+      ],
+      "type_requirements": [
+        "G : Group",
+        "a,b : carrier(G)",
+        "mul(G) is closed and associative",
+        "inv(G) and one(G) satisfy group inverse laws"
+      ],
+      "proof_strategy": "Verify that b⁻¹a⁻¹ is a two-sided inverse of ab and invoke uniqueness of inverses.",
+      "sketch_steps": [
+        "setup: Fix a,b in the carrier of G.",
+        "candidate: Propose b⁻¹a⁻¹ as the inverse of ab.",
+        "calculation: Use associativity to simplify (ab)(b⁻¹a⁻¹).",
+        "calculation: Cancel bb⁻¹ and aa⁻¹ to obtain the identity.",
+        "conclude: Use uniqueness of inverses."
+      ]
+    },
+    {
+      "id": "ext_group_left_cancellation",
+      "domain": "abstract_algebra_groups",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For a,b,c in a group G, a*b = a*c implies b = c.",
+      "required_symbols": [
+        "pals-algebra1:group",
+        "pals-algebra1:carrier",
+        "pals-algebra1:mul",
+        "pals-algebra1:inv",
+        "pals-algebra1:one"
+      ],
+      "type_requirements": [
+        "G : Group",
+        "a,b,c : carrier(G)",
+        "equality is equality in carrier(G)"
+      ],
+      "proof_strategy": "Multiply the equality on the left by a⁻¹ and simplify with associativity.",
+      "sketch_steps": [
+        "setup: Assume ab=ac in G.",
+        "transform: Multiply both sides on the left by a⁻¹.",
+        "reassociate: Rewrite a⁻¹(ab) and a⁻¹(ac).",
+        "simplify: Use a⁻¹a=1 and the identity law.",
+        "conclude: Deduce b=c."
+      ]
+    },
+    {
+      "id": "ext_group_left_equation_solution",
+      "domain": "abstract_algebra_groups",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For a,b in a group G, the equation a*x=b has the unique solution x=a⁻¹*b.",
+      "required_symbols": [
+        "pals-algebra1:group",
+        "pals-algebra1:carrier",
+        "pals-algebra1:mul",
+        "pals-algebra1:inv",
+        "pals-algebra1:one",
+        "pals-algebra1:exists_unique"
+      ],
+      "type_requirements": [
+        "G : Group",
+        "a,b,x : carrier(G)",
+        "exists_unique quantifies only over carrier(G)"
+      ],
+      "proof_strategy": "Construct a⁻¹b, verify it solves the equation, then use left cancellation for uniqueness.",
+      "sketch_steps": [
+        "setup: Fix a,b in G.",
+        "construct: Define x=a⁻¹b.",
+        "verify: Simplify a(a⁻¹b) to b.",
+        "uniqueness: Let y be any solution ay=b.",
+        "cancel: Apply left cancellation to ax=ay.",
+        "conclude: x is the unique solution."
+      ]
+    },
+    {
+      "id": "ext_group_conjugation_automorphism",
+      "domain": "abstract_algebra_groups",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For g in a group G, conjugation c_g(x)=g*x*g⁻¹ is a group automorphism of G.",
+      "required_symbols": [
+        "pals-algebra1:group",
+        "pals-algebra1:carrier",
+        "pals-algebra1:mul",
+        "pals-algebra1:inv",
+        "pals-algebra1:one",
+        "pals-algebra1:group_hom",
+        "pals-algebra1:bijective"
+      ],
+      "type_requirements": [
+        "G : Group",
+        "g,x,y : carrier(G)",
+        "c_g : carrier(G) → carrier(G)",
+        "group_hom and bijective are typed predicates on maps"
+      ],
+      "proof_strategy": "Show conjugation preserves multiplication and has inverse conjugation by g⁻¹.",
+      "sketch_steps": [
+        "setup: Fix g and define c_g(x)=gxg⁻¹.",
+        "homomorphism: Expand c_g(xy) and insert g⁻¹g.",
+        "reassociate: Obtain c_g(x)c_g(y) using associativity.",
+        "inverse_map: Define c_{g⁻¹} as the candidate inverse.",
+        "verify: Simplify both composites to the identity map.",
+        "conclude: c_g is a bijective group homomorphism."
+      ]
+    },
+    {
+      "id": "ext_group_hom_kernel_normal",
+      "domain": "abstract_algebra_groups",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For a group homomorphism φ:G→H, ker(φ) is a normal subgroup of G.",
+      "required_symbols": [
+        "pals-algebra1:group",
+        "pals-algebra1:carrier",
+        "pals-algebra1:mul",
+        "pals-algebra1:inv",
+        "pals-algebra1:one",
+        "pals-algebra1:group_hom",
+        "pals-algebra1:kernel",
+        "pals-algebra1:normal_subgroup"
+      ],
+      "type_requirements": [
+        "G,H : Group",
+        "φ : GroupHom(G,H)",
+        "kernel(φ) : Subgroup(G)",
+        "normal_subgroup is a predicate on Subgroup(G)"
+      ],
+      "proof_strategy": "Prove closure under products and inverses, then show closure under conjugation using homomorphism preservation.",
+      "sketch_steps": [
+        "setup: Define ker(φ)={x∈G | φ(x)=1_H}.",
+        "subgroup: Show the identity maps to 1_H.",
+        "subgroup: Use φ(xy)=φ(x)φ(y) for product closure.",
+        "subgroup: Use φ(x⁻¹)=φ(x)⁻¹ for inverse closure.",
+        "normality: For g∈G and k∈ker(φ), evaluate φ(gkg⁻¹).",
+        "conclude: The result is 1_H, so the kernel is normal."
+      ]
+    },
+    {
+      "id": "ext_commutative_ring_binomial_square",
+      "domain": "abstract_algebra_rings",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For a,b in a commutative ring R, (a+b)^2=a^2+2ab+b^2.",
+      "required_symbols": [
+        "pals-algebra1:commutative_ring",
+        "pals-algebra1:ring_add",
+        "pals-algebra1:ring_mul",
+        "pals-algebra1:ring_neg",
+        "pals-algebra1:ring_zero",
+        "pals-algebra1:ring_one"
+      ],
+      "type_requirements": [
+        "R : CommutativeRing",
+        "a,b : carrier(R)",
+        "natural numeral 2 is coerced through the characteristic-aware ring map"
+      ],
+      "proof_strategy": "Expand the square by distributivity, commute ba to ab, and collect the two cross terms.",
+      "sketch_steps": [
+        "setup: Fix a,b in R.",
+        "expand: Distribute (a+b)(a+b).",
+        "rewrite: Replace ba by ab using commutativity.",
+        "collect: Combine ab+ab as 2ab.",
+        "conclude: Reassemble the binomial square identity."
+      ]
+    },
+    {
+      "id": "ext_commutative_ring_difference_squares",
+      "domain": "abstract_algebra_rings",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For a,b in a commutative ring R, (a-b)(a+b)=a^2-b^2.",
+      "required_symbols": [
+        "pals-algebra1:commutative_ring",
+        "pals-algebra1:ring_add",
+        "pals-algebra1:ring_mul",
+        "pals-algebra1:ring_neg",
+        "pals-algebra1:ring_zero",
+        "pals-algebra1:ring_one"
+      ],
+      "type_requirements": [
+        "R : CommutativeRing",
+        "a,b : carrier(R)",
+        "subtraction is ring addition with additive inverse"
+      ],
+      "proof_strategy": "Expand the product and cancel the equal mixed terms using commutativity.",
+      "sketch_steps": [
+        "setup: Fix a,b in R.",
+        "expand: Distribute both factors.",
+        "rewrite: Identify ab and ba using commutativity.",
+        "cancel: Remove ab-ba.",
+        "conclude: The remaining terms are a²-b²."
+      ]
+    },
+    {
+      "id": "ext_integral_domain_cancellation",
+      "domain": "abstract_algebra_rings",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "In an integral domain R, if a≠0 and a*b=a*c, then b=c.",
+      "required_symbols": [
+        "pals-algebra1:commutative_ring",
+        "pals-algebra1:ring_add",
+        "pals-algebra1:ring_mul",
+        "pals-algebra1:ring_neg",
+        "pals-algebra1:ring_zero",
+        "pals-algebra1:ring_one",
+        "pals-algebra1:integral_domain",
+        "pals-algebra1:neq"
+      ],
+      "type_requirements": [
+        "R : IntegralDomain",
+        "a,b,c : carrier(R)",
+        "zero-divisor axiom is available for R"
+      ],
+      "proof_strategy": "Subtract the two sides, factor a(b-c), and use the no-zero-divisors property.",
+      "sketch_steps": [
+        "setup: Assume a≠0 and ab=ac.",
+        "subtract: Derive ab-ac=0.",
+        "factor: Rewrite the left side as a(b-c).",
+        "apply_theorem: Use the integral-domain zero-product property.",
+        "exclude: The a=0 branch contradicts the hypothesis.",
+        "conclude: b-c=0 and hence b=c."
+      ]
+    },
+    {
+      "id": "ext_polynomial_factor_theorem",
+      "domain": "abstract_algebra_polynomials",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For a polynomial p over a field K and a in K, p(a)=0 if and only if X-a divides p.",
+      "required_symbols": [
+        "pals-algebra1:polynomial",
+        "pals-algebra1:poly_eval",
+        "pals-algebra1:poly_divides",
+        "pals-algebra1:poly_degree",
+        "pals-algebra1:field",
+        "pals-algebra1:poly_sub",
+        "pals-algebra1:poly_X",
+        "pals-algebra1:iff"
+      ],
+      "type_requirements": [
+        "K : Field",
+        "p : Polynomial(K)",
+        "a : carrier(K)",
+        "X-a : Polynomial(K)",
+        "poly_divides is indexed by coefficient ring"
+      ],
+      "proof_strategy": "Apply polynomial division by X-a and identify the constant remainder with p(a).",
+      "sketch_steps": [
+        "setup: Divide p by X-a.",
+        "division: Obtain p=(X-a)q+r with degree(r)<1.",
+        "identify: Therefore r is a constant polynomial.",
+        "evaluate: Substitute a to show r(a)=p(a).",
+        "forward: If p(a)=0, the remainder is zero and X-a divides p.",
+        "reverse: A multiple of X-a evaluates to zero at a."
+      ]
+    },
+    {
+      "id": "ext_polynomial_division_algorithm",
+      "domain": "abstract_algebra_polynomials",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For p,q in K[X] with q≠0 over a field K, there are unique s,r with p=q*s+r and r=0 or degree(r)<degree(q).",
+      "required_symbols": [
+        "pals-algebra1:polynomial",
+        "pals-algebra1:poly_eval",
+        "pals-algebra1:poly_divides",
+        "pals-algebra1:poly_degree",
+        "pals-algebra1:field",
+        "pals-algebra1:poly_zero",
+        "pals-algebra1:exists_unique",
+        "pals-algebra1:poly_degree",
+        "pals-algebra1:or"
+      ],
+      "type_requirements": [
+        "K : Field",
+        "p,q,s,r : Polynomial(K)",
+        "degree uses the distinguished degree-zero convention",
+        "unique pair quantification is typed over Polynomial(K)×Polynomial(K)"
+      ],
+      "proof_strategy": "Perform leading-term cancellation inductively and prove uniqueness by comparing two remainders.",
+      "sketch_steps": [
+        "setup: Assume q is nonzero.",
+        "induction: Reduce the degree of the current dividend by canceling a leading term.",
+        "terminate: Stop when the remainder is zero or has smaller degree than q.",
+        "existence: Accumulate the canceled leading terms into s.",
+        "uniqueness: Subtract two decompositions p=qs+r=q s'+r'.",
+        "conclude: Degree bounds force r=r' and then s=s'."
+      ]
+    },
+    {
+      "id": "ext_polynomial_root_bound",
+      "domain": "abstract_algebra_polynomials",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "A nonzero polynomial p over a field K has at most degree(p) distinct roots in K.",
+      "required_symbols": [
+        "pals-algebra1:polynomial",
+        "pals-algebra1:poly_eval",
+        "pals-algebra1:poly_divides",
+        "pals-algebra1:poly_degree",
+        "pals-algebra1:field",
+        "pals-algebra1:root_set",
+        "pals-algebra1:set_cardinality",
+        "pals-algebra1:distinct"
+      ],
+      "type_requirements": [
+        "K : Field",
+        "p : Polynomial(K)",
+        "p≠0",
+        "root_set(p) is a finite set of carrier(K)",
+        "set_cardinality is defined only on certified finite sets"
+      ],
+      "proof_strategy": "Induct on degree, factoring out a linear factor at each chosen root.",
+      "sketch_steps": [
+        "setup: Induct on degree(p), with p nonzero.",
+        "base: A nonzero constant has no roots.",
+        "step: Choose a root a when one exists.",
+        "factor: Use the factor theorem to write p=(X-a)q.",
+        "degree: Show degree(q)=degree(p)-1.",
+        "count: Apply induction to q and add the one distinguished root."
+      ]
+    },
+    {
+      "id": "ext_polynomial_degree_product",
+      "domain": "abstract_algebra_polynomials",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For nonzero polynomials p,q over an integral domain R, degree(p*q)=degree(p)+degree(q).",
+      "required_symbols": [
+        "pals-algebra1:polynomial",
+        "pals-algebra1:poly_eval",
+        "pals-algebra1:poly_divides",
+        "pals-algebra1:poly_degree",
+        "pals-algebra1:integral_domain",
+        "pals-algebra1:poly_mul",
+        "pals-algebra1:poly_degree"
+      ],
+      "type_requirements": [
+        "R : IntegralDomain",
+        "p,q : Polynomial(R)",
+        "p≠0 and q≠0",
+        "leading coefficient multiplication is type-indexed by R"
+      ],
+      "proof_strategy": "Show the leading coefficient of pq is the nonzero product of leading coefficients.",
+      "sketch_steps": [
+        "setup: Assume p and q are nonzero.",
+        "leading_term: Identify the candidate highest term of pq.",
+        "coefficient: Its coefficient is leadCoeff(p)*leadCoeff(q).",
+        "nonzero: Use the integral-domain property to show this coefficient is nonzero.",
+        "degree: No higher degree term can occur in the product.",
+        "conclude: The degree is degree(p)+degree(q)."
+      ]
+    },
+    {
+      "id": "ext_polynomial_formal_derivative_product_rule",
+      "domain": "abstract_algebra_polynomials",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For polynomials p and q over a commutative ring R, formalDerivative(p*q)=formalDerivative(p)*q+p*formalDerivative(q).",
+      "required_symbols": [
+        "pals-algebra1:polynomial",
+        "pals-algebra1:poly_eval",
+        "pals-algebra1:poly_divides",
+        "pals-algebra1:poly_degree",
+        "pals-algebra1:commutative_ring",
+        "pals-algebra1:formal_derivative",
+        "pals-algebra1:poly_mul",
+        "pals-algebra1:poly_add"
+      ],
+      "type_requirements": [
+        "R : CommutativeRing",
+        "p,q : Polynomial(R)",
+        "formal_derivative maps Polynomial(R) to Polynomial(R)",
+        "natural coefficients are coerced through R"
+      ],
+      "proof_strategy": "Prove the identity coefficientwise, reducing to monomials and the ordinary power rule.",
+      "sketch_steps": [
+        "setup: Use linearity to reduce to monomial products.",
+        "monomial: Multiply X^m and X^n to obtain X^(m+n).",
+        "differentiate: Take the formal derivative of X^(m+n).",
+        "split: Rewrite (m+n)X^(m+n-1) as the two product-rule terms.",
+        "extend: Reassemble the coefficientwise identity by linearity.",
+        "conclude: The formal derivative satisfies the product rule."
+      ]
+    },
+    {
+      "id": "ext_multivar_gradient_directional_derivative",
+      "domain": "multivariable_calculus",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For differentiable f:ℝ^n→ℝ, the directional derivative at x in direction v equals gradient(f,x) · v.",
+      "required_symbols": [
+        "pals-calculus1:euclidean_space",
+        "pals-calculus1:typed_function",
+        "pals-calculus1:differentiable_at",
+        "pals-calculus1:frechet_derivative_at",
+        "pals-calculus1:continuous_linear_map",
+        "pals-calculus1:gradient",
+        "pals-calculus1:directional_derivative",
+        "pals-calculus1:inner_product"
+      ],
+      "type_requirements": [
+        "n : ℕ",
+        "x,v : ℝ^n",
+        "f : ℝ^n → ℝ",
+        "Frechet derivative is represented as a continuous linear map",
+        "gradient is the Riesz representative in Euclidean space"
+      ],
+      "proof_strategy": "Identify the directional derivative with the Frechet derivative applied to v, then use the Euclidean Riesz representation.",
+      "sketch_steps": [
+        "setup: Assume f is differentiable at x.",
+        "definition: Express the directional derivative as Df(x)[v].",
+        "identify: Represent Df(x) by the gradient under the Euclidean inner product.",
+        "evaluate: Apply the represented linear functional to v.",
+        "conclude: The value is ∇f(x)·v."
+      ]
+    },
+    {
+      "id": "ext_multivar_chain_rule",
+      "domain": "multivariable_calculus",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For differentiable f:ℝ^n→ℝ^m at x and g:ℝ^m→ℝ^k at f(x), D(g∘f)(x)=Dg(f(x))∘Df(x).",
+      "required_symbols": [
+        "pals-calculus1:euclidean_space",
+        "pals-calculus1:typed_function",
+        "pals-calculus1:differentiable_at",
+        "pals-calculus1:frechet_derivative_at",
+        "pals-calculus1:continuous_linear_map",
+        "pals-calculus1:function_compose",
+        "pals-calculus1:linear_compose"
+      ],
+      "type_requirements": [
+        "n,m,k : ℕ",
+        "f : ℝ^n→ℝ^m",
+        "g : ℝ^m→ℝ^k",
+        "x : ℝ^n",
+        "composition checks the codomain of f against the domain of g"
+      ],
+      "proof_strategy": "Compose the two differentiability expansions and bound the combined remainder.",
+      "sketch_steps": [
+        "setup: Write first-order expansions for f at x and g at f(x).",
+        "substitute: Insert the f expansion into the expansion for g.",
+        "linear_part: Collect Dg(f(x))∘Df(x) as the first-order term.",
+        "remainder: Bound the remaining terms by o(‖h‖).",
+        "conclude: The composite is differentiable with the stated derivative."
+      ]
+    },
+    {
+      "id": "ext_multivar_scalar_product_rule",
+      "domain": "multivariable_calculus",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For differentiable scalar functions f,g:ℝ^n→ℝ, D(fg)(x)[v]=f(x)Dg(x)[v]+g(x)Df(x)[v].",
+      "required_symbols": [
+        "pals-calculus1:euclidean_space",
+        "pals-calculus1:typed_function",
+        "pals-calculus1:differentiable_at",
+        "pals-calculus1:frechet_derivative_at",
+        "pals-calculus1:continuous_linear_map",
+        "pals-calculus1:scalar_mul_function",
+        "pals-calculus1:apply_linear_map"
+      ],
+      "type_requirements": [
+        "n : ℕ",
+        "f,g : ℝ^n→ℝ",
+        "x,v : ℝ^n",
+        "pointwise product has codomain ℝ"
+      ],
+      "proof_strategy": "Expand the product increment and isolate the linear terms, with the product of increments as the remainder.",
+      "sketch_steps": [
+        "setup: Expand f(x+h)g(x+h)-f(x)g(x).",
+        "split: Add and subtract f(x)g(x+h).",
+        "linear_part: Substitute the derivative expansions of f and g.",
+        "remainder: Show the product of increment errors is higher order.",
+        "conclude: Read off the directional product rule."
+      ]
+    },
+    {
+      "id": "ext_multivar_mixed_partials_schwarz",
+      "domain": "multivariable_calculus",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "If f:U⊆ℝ^n→ℝ is C² on an open set U, then ∂i∂j f(x)=∂j∂i f(x) for x∈U.",
+      "required_symbols": [
+        "pals-calculus1:euclidean_space",
+        "pals-calculus1:typed_function",
+        "pals-calculus1:differentiable_at",
+        "pals-calculus1:frechet_derivative_at",
+        "pals-calculus1:continuous_linear_map",
+        "pals-calculus1:open_set",
+        "pals-calculus1:C2_on",
+        "pals-calculus1:partial_derivative"
+      ],
+      "type_requirements": [
+        "U : Set(ℝ^n) with open_set(U)",
+        "f : U→ℝ",
+        "i,j<n",
+        "x∈U",
+        "C2_on includes continuity of the second Frechet derivative"
+      ],
+      "proof_strategy": "Apply symmetry of the second Frechet derivative and evaluate it on coordinate basis vectors.",
+      "sketch_steps": [
+        "setup: Use the C² hypothesis to obtain a continuous second derivative.",
+        "theorem: Apply symmetry of the second Frechet derivative.",
+        "coordinates: Evaluate the bilinear map on e_i and e_j.",
+        "identify: Interpret the two evaluations as the mixed partial derivatives.",
+        "conclude: Exchange the derivative order."
+      ]
+    },
+    {
+      "id": "ext_multivar_interior_extremum_gradient_zero",
+      "domain": "multivariable_calculus",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "If differentiable f:U⊆ℝ^n→ℝ has a local extremum at an interior point x of U, then gradient(f,x)=0.",
+      "required_symbols": [
+        "pals-calculus1:euclidean_space",
+        "pals-calculus1:typed_function",
+        "pals-calculus1:differentiable_at",
+        "pals-calculus1:frechet_derivative_at",
+        "pals-calculus1:continuous_linear_map",
+        "interval1:ordered_interval",
+        "pals-calculus1:interior",
+        "pals-calculus1:open_ball",
+        "pals-calculus1:local_extremum",
+        "pals-calculus1:zero_vector"
+      ],
+      "type_requirements": [
+        "U : Set(ℝ^n)",
+        "x∈interior(U)",
+        "f : U→ℝ",
+        "local_extremum is relative to the ambient Euclidean topology"
+      ],
+      "proof_strategy": "Restrict f to every line through x and apply the one-variable Fermat theorem.",
+      "sketch_steps": [
+        "setup: Let v be an arbitrary direction and use interiority to keep x+tv in U locally.",
+        "restrict: Form the one-variable function t↦f(x+tv).",
+        "apply_theorem: The restriction has a local extremum at t=0.",
+        "derive: Its derivative at zero is Df(x)[v]=0.",
+        "conclude: Since this holds for every v, the gradient is zero."
+      ]
+    },
+    {
+      "id": "ext_multivar_positive_hessian_strict_minimum",
+      "domain": "multivariable_calculus",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "If f is C² near x, gradient(f,x)=0, and Hessian(f,x) is positive definite, then x is a strict local minimum of f.",
+      "required_symbols": [
+        "pals-calculus1:euclidean_space",
+        "pals-calculus1:typed_function",
+        "pals-calculus1:differentiable_at",
+        "pals-calculus1:frechet_derivative_at",
+        "pals-calculus1:continuous_linear_map",
+        "pals-calculus1:hessian",
+        "pals-calculus1:positive_definite",
+        "pals-calculus1:strict_local_minimum"
+      ],
+      "type_requirements": [
+        "f : ℝ^n→ℝ",
+        "x : ℝ^n",
+        "Hessian(f,x) : SymmetricMatrix(n,ℝ)",
+        "positive_definite quantifies nonzero vectors in ℝ^n"
+      ],
+      "proof_strategy": "Use second-order Taylor expansion and dominate the remainder by a positive quadratic form.",
+      "sketch_steps": [
+        "setup: Use the critical-point hypothesis to remove the linear Taylor term.",
+        "quadratic: Positive definiteness gives vᵀHv≥c‖v‖² for some c>0.",
+        "Taylor: Expand f(x+h)-f(x) to second order.",
+        "bound: Make the o(‖h‖²) remainder smaller than half the quadratic term.",
+        "conclude: f(x+h)>f(x) for all sufficiently small nonzero h."
+      ]
+    },
+    {
+      "id": "ext_multivar_lagrange_multiplier",
+      "domain": "multivariable_calculus",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "If f,g:ℝ^n→ℝ are differentiable, x is a constrained local extremum of f on g⁻¹({0}), and gradient(g,x)≠0, then gradient(f,x)=λ gradient(g,x) for some λ∈ℝ.",
+      "required_symbols": [
+        "pals-calculus1:euclidean_space",
+        "pals-calculus1:typed_function",
+        "pals-calculus1:differentiable_at",
+        "pals-calculus1:frechet_derivative_at",
+        "pals-calculus1:continuous_linear_map",
+        "pals-calculus1:level_set",
+        "pals-calculus1:constrained_local_extremum",
+        "pals-calculus1:scalar_multiple"
+      ],
+      "type_requirements": [
+        "f,g : ℝ^n→ℝ",
+        "x : ℝ^n",
+        "regular constraint gradient(g,x)≠0",
+        "constraint manifold and tangent space are typed subsets/subspaces of ℝ^n"
+      ],
+      "proof_strategy": "Show Df vanishes on the tangent kernel of Dg, then use codimension one to obtain proportional linear functionals.",
+      "sketch_steps": [
+        "setup: Interpret g=0 as a regular level-set constraint near x.",
+        "tangent: Identify tangent vectors v by Dg(x)[v]=0.",
+        "extremum: Show Df(x)[v]=0 on every tangent vector.",
+        "linear_algebra: The annihilator of ker(Dg(x)) is spanned by Dg(x).",
+        "identify: Convert the proportional derivative relation to gradients.",
+        "conclude: Obtain the multiplier λ."
+      ]
+    },
+    {
+      "id": "ext_multivar_fubini_rectangle",
+      "domain": "multivariable_calculus",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For continuous f on [a,b]×[c,d], the double integral equals either iterated integral of f.",
+      "required_symbols": [
+        "interval1:ordered_interval",
+        "pals-calculus1:interior",
+        "pals-calculus1:open_ball",
+        "pals-calculus1:continuous_on",
+        "pals-calculus1:double_integral",
+        "pals-calculus1:definite_integral"
+      ],
+      "type_requirements": [
+        "a≤b and c≤d",
+        "f : ℝ²→ℝ",
+        "[a,b]×[c,d] is a typed product of closed intervals",
+        "integrals use an explicitly declared measure/integration convention"
+      ],
+      "proof_strategy": "Use continuity on a compact rectangle to establish integrability and invoke Fubini's theorem.",
+      "sketch_steps": [
+        "setup: Form the closed rectangle [a,b]×[c,d].",
+        "integrability: Continuous functions on compact rectangles are integrable.",
+        "apply_theorem: Invoke Fubini for the product measure.",
+        "interpret: Identify the two iterated integral functions.",
+        "conclude: Both iterated integrals equal the double integral."
+      ]
+    },
+    {
+      "id": "ext_multivar_change_of_variables",
+      "domain": "multivariable_calculus",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For a C¹ diffeomorphism T:U→V between open subsets of ℝ^n, ∫_V f(y)dy = ∫_U f(T(x))|det DT(x)|dx.",
+      "required_symbols": [
+        "pals-calculus1:euclidean_space",
+        "pals-calculus1:typed_function",
+        "pals-calculus1:differentiable_at",
+        "pals-calculus1:frechet_derivative_at",
+        "pals-calculus1:continuous_linear_map",
+        "pals-calculus1:C1_diffeomorphism",
+        "pals-calculus1:jacobian",
+        "pals-calculus1:determinant",
+        "pals-calculus1:definite_integral"
+      ],
+      "type_requirements": [
+        "U,V : open subsets of ℝ^n",
+        "T : U→V is bijective C¹ with C¹ inverse",
+        "DT(x) : Matrix(n,n,ℝ)",
+        "integrability hypotheses for f and the transformed integrand are explicit"
+      ],
+      "proof_strategy": "Apply the change-of-variables theorem with the Jacobian determinant as local volume scaling.",
+      "sketch_steps": [
+        "setup: Verify that T is a C¹ diffeomorphism from U onto V.",
+        "derivative: Form the Jacobian matrix DT(x).",
+        "scale: Use |det DT(x)| as the local volume factor.",
+        "integrability: Check the transformed integrand is integrable on U.",
+        "apply_theorem: Invoke change of variables.",
+        "conclude: Obtain the stated integral identity."
+      ]
+    },
+    {
+      "id": "ext_ode_linear_first_order_ivp",
+      "domain": "ordinary_differential_equations",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "The unique solution of y'(t)+p(t)y(t)=q(t), y(t₀)=y₀, is y(t)=μ(t)⁻¹(μ(t₀)y₀+∫[t₀,t] μ(s)q(s)ds), where μ(t)=exp(∫[t₀,t]p(s)ds).",
+      "required_symbols": [
+        "pals-ode1:solves_ode_on",
+        "pals-ode1:derivative",
+        "pals-calculus1:definite_integral",
+        "pals-calculus1:exp",
+        "interval1:ordered_interval"
+      ],
+      "type_requirements": [
+        "I : interval containing t₀",
+        "p,q : I→ℝ are continuous",
+        "y : I→ℝ is differentiable",
+        "oriented definite integrals support t<t₀ and t≥t₀",
+        "solves_ode_on binds the independent variable and codomain"
+      ],
+      "proof_strategy": "Multiply by the integrating factor, integrate the exact derivative, and derive uniqueness from the homogeneous equation.",
+      "sketch_steps": [
+        "setup: Define μ(t)=exp(∫[t₀,t]p(s)ds).",
+        "differentiate: Show (μy)'=μ(y'+py).",
+        "substitute: Replace y'+py by q.",
+        "integrate: Integrate from t₀ to t and use y(t₀)=y₀.",
+        "solve: Divide by the nonzero integrating factor μ(t).",
+        "uniqueness: Apply the same argument to the difference of two solutions."
+      ]
+    },
+    {
+      "id": "ext_ode_logistic_ivp",
+      "domain": "ordinary_differential_equations",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "For r,K>0 and 0<y₀<K, the logistic IVP y'=r y(1-y/K), y(0)=y₀ has solution y(t)=K/(1+((K-y₀)/y₀)e^{-rt}).",
+      "required_symbols": [
+        "pals-ode1:solves_ode_on",
+        "pals-ode1:derivative",
+        "pals-calculus1:exp",
+        "pals-calculus1:definite_integral",
+        "pals-calculus1:log"
+      ],
+      "type_requirements": [
+        "r,K,y₀ : ℝ with r>0,K>0,0<y₀<K",
+        "y : ℝ→ℝ",
+        "solution range is constrained to (0,K) before division/logarithm",
+        "ODE equality is pointwise on the declared interval"
+      ],
+      "proof_strategy": "Separate variables on the invariant interval (0,K), integrate partial fractions, and solve for y.",
+      "sketch_steps": [
+        "setup: Use the initial condition to work where 0<y<K.",
+        "separate: Rewrite dy/(y(1-y/K))=r dt.",
+        "partial_fractions: Split the left side into logarithmic derivatives.",
+        "integrate: Integrate from 0 to t and insert y(0)=y₀.",
+        "solve: Exponentiate and isolate y(t).",
+        "verify: Differentiate the closed form and check the initial value."
+      ]
+    },
+    {
+      "id": "ext_ode_picard_lindelof_local_existence_uniqueness",
+      "domain": "ordinary_differential_equations",
+      "difficulty": "advanced",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "If F(t,y) is continuous and locally Lipschitz in y near (t₀,y₀), then y'=F(t,y), y(t₀)=y₀ has a unique local solution.",
+      "required_symbols": [
+        "pals-ode1:ode_rhs",
+        "pals-ode1:locally_lipschitz_in_state",
+        "pals-ode1:solves_ode_on",
+        "pals-ode1:exists_unique_local_solution"
+      ],
+      "type_requirements": [
+        "E : finite-dimensional normed real vector space",
+        "F : ℝ×E→E",
+        "t₀ : ℝ",
+        "y₀ : E",
+        "local interval and solution map have explicit domains"
+      ],
+      "proof_strategy": "Turn the IVP into an integral fixed-point equation and apply the contraction mapping theorem on a small time interval.",
+      "sketch_steps": [
+        "setup: Choose a closed ball around (t₀,y₀) where F has a Lipschitz constant L.",
+        "space: Define the complete metric space of continuous paths on a short interval.",
+        "operator: Map a path y to y₀+∫F(s,y(s))ds.",
+        "contraction: Choose interval length so the operator is a contraction.",
+        "existence: Apply Banach's fixed-point theorem.",
+        "uniqueness: Any local solution is a fixed point, hence coincides with it."
+      ]
+    },
+    {
+      "id": "ext_ode_harmonic_oscillator_ivp",
+      "domain": "ordinary_differential_equations",
+      "difficulty": "intermediate",
+      "publication_status": "requires_typed_openmath_extension",
+      "canonical_statement": "The solution of y''+ω²y=0 with y(0)=a and y'(0)=b is y(t)=a cos(ωt)+(b/ω)sin(ωt) for ω≠0.",
+      "required_symbols": [
+        "pals-ode1:second_derivative",
+        "pals-ode1:solves_second_order_ode_on",
+        "pals-calculus1:sin",
+        "pals-calculus1:cos"
+      ],
+      "type_requirements": [
+        "ω,a,b : ℝ with ω≠0",
+        "y : ℝ→ℝ is twice differentiable",
+        "second derivative is a typed scalar function",
+        "initial conditions refer to y and derivative(y) at zero"
+      ],
+      "proof_strategy": "Verify the trigonometric ansatz, then use uniqueness of the associated first-order system.",
+      "sketch_steps": [
+        "setup: Propose y(t)=Acos(ωt)+Bsin(ωt).",
+        "differentiate: Compute y' and y''.",
+        "verify: Substitute to obtain y''+ω²y=0.",
+        "initial_data: Use y(0)=a to set A=a.",
+        "initial_data: Use y'(0)=b to set B=b/ω.",
+        "conclude: Invoke IVP uniqueness for the second-order equation."
+      ]
+    }
+  ]
+}

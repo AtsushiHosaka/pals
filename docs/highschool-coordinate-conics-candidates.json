@@ -1,0 +1,568 @@
+{
+  "schema_version": "pals.high-school-coordinate-conics-candidates.v1",
+  "source": "PALS first-party authored, generic-OpenMath and Lean-verified candidate set",
+  "current_profile_card_count": 27,
+  "topic_counts": {
+    "circle_intersections": 3,
+    "circle_loci": 2,
+    "circle_tangents": 1,
+    "discriminants_and_roots": 3,
+    "ellipse_intersections": 3,
+    "ellipse_loci": 1,
+    "ellipse_tangents": 1,
+    "hyperbola_asymptotes": 1,
+    "hyperbola_intersections": 3,
+    "hyperbola_loci": 1,
+    "hyperbola_tangents": 1,
+    "parabola_circle_intersections": 1,
+    "parabola_intersections": 3,
+    "parabola_loci": 1,
+    "parabola_tangents": 1,
+    "quadratic_loci": 1
+  },
+  "scope_note": "Every included problem is a closed real scalar-coordinate equation. The manifest does not bind native points, lines, conics, vectors, affine transformations, or complex values. A tangent label means only that the displayed line/conic scalar system has one real contact coordinate; intersection and locus labels are likewise scalar-system claims, not geometric-object predicates.",
+  "validation_contract": {
+    "generic_openmath": "Every card runs statement-semantics validation, generic retrieval C14N, and exact-C14N validation while generated.",
+    "lean": "Pass --verify-lean to compile one temporary Lean file containing all 27 witnesses in pals-agent/lean-workspace.",
+    "local_db": "Pass --verify-db --expected-db-count 308 to read-check local Draft ID and strict/legacy C14N collisions. This command does not write the DB."
+  },
+  "excluded_native_geometry": {
+    "examples": [
+      "a quantified point lies on a line",
+      "the tangent object to a conic at a bound point",
+      "affine reflection",
+      "vector normal",
+      "complex-plane conic parametrization"
+    ],
+    "why": "The current generic profile has only coarse term/proposition/function sorts. These need a typed affine/geometry profile and are intentionally not simulated by unlinked generic variables."
+  },
+  "cards": [
+    {
+      "id": "conic_parabola_horizontal_secant_y_four",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "parabola_intersections",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if y = x^2 and y = 4, then (x, y) is either (2, 4) or (-2, 4).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>4</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>4</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>-2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>4</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Substitute y = 4 into y = x^2 and factor x^2 - 4.",
+      "sketch_steps": [
+        "setup: Record the two scalar coordinate equations and their real-domain premises.",
+        "eliminate: Substitute the line or fixed-coordinate equation into the conic equation.",
+        "factor: Rewrite the resulting univariate quadratic as a product or a zero square.",
+        "cases: Apply the zero-product or zero-square rule to obtain every real root.",
+        "recover: Substitute each root into the remaining scalar equation.",
+        "conclude: State exactly the listed coordinate alternatives."
+      ],
+      "lean_witness": "example (x y : ℝ) : y = x^2 → y = 4 → (x = 2 ∧ y = 4) ∨ (x = -2 ∧ y = 4) := by\n  intro hp hy\n  have hfac : (x - 2) * (x + 2) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hfac with hx | hx\n  · left; constructor <;> linarith\n  · right; constructor <;> linarith"
+    },
+    {
+      "id": "conic_parabola_tangent_at_one",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "parabola_tangents",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, if y = x^2 and y = 2x - 1, then x = 1 and y = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMI>1</OMI></OMA></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>1</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Equate the parabola with y = 2x - 1 and recognize the double root (x - 1)^2 = 0.",
+      "sketch_steps": [
+        "setup: Record the conic equation and the proposed tangent-line scalar equation.",
+        "substitute: Eliminate the shared coordinate using the line equation.",
+        "double_root: Reduce the contact equation to a square equal to zero.",
+        "zero_square: Use that a real square vanishes only at zero.",
+        "recover: Compute the remaining coordinate at the contact value.",
+        "conclude: The scalar system has one real contact coordinate."
+      ],
+      "lean_witness": "example (x y : ℝ) : y = x^2 → y = 2*x - 1 → x = 1 ∧ y = 1 := by\n  intro hp hl\n  have hsq : (x - 1)^2 = 0 := by nlinarith\n  have hx : x - 1 = 0 := sq_eq_zero_iff.mp hsq\n  constructor <;> nlinarith"
+    },
+    {
+      "id": "conic_parabola_line_secant_y_three_x",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "parabola_intersections",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if y = x^2 and y = 3x, then (x, y) is either (0, 0) or (3, 9).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMV name=\"x\"/></OMA></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>9</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Equate x^2 and 3x, factor x(x - 3), then recover y from y = 3x.",
+      "sketch_steps": [
+        "setup: Record the two scalar coordinate equations and their real-domain premises.",
+        "eliminate: Substitute the line or fixed-coordinate equation into the conic equation.",
+        "factor: Rewrite the resulting univariate quadratic as a product or a zero square.",
+        "cases: Apply the zero-product or zero-square rule to obtain every real root.",
+        "recover: Substitute each root into the remaining scalar equation.",
+        "conclude: State exactly the listed coordinate alternatives."
+      ],
+      "lean_witness": "example (x y : ℝ) : y = x^2 → y = 3*x → (x = 0 ∧ y = 0) ∨ (x = 3 ∧ y = 9) := by\n  intro hp hl\n  have hfac : x * (x - 3) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hfac with hx | hx\n  · left; constructor <;> nlinarith\n  · right; constructor <;> nlinarith"
+    },
+    {
+      "id": "conic_parabola_horizontal_line_no_intersection",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "parabola_intersections",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, the equations y = x^2 and y = -1 cannot both hold.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>-1</OMI></OMA></OMA><OMS cd=\"logic1\" name=\"false\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "A square is nonnegative, so y = x^2 cannot equal -1 over the reals.",
+      "sketch_steps": [
+        "setup: Fix real scalar coordinates satisfying the displayed locus equation.",
+        "expand: Expand the translated squares or difference of squares.",
+        "cancel: Cancel the common scalar terms on both sides.",
+        "rearrange: Put the remaining expression into a square, product, or inequality form.",
+        "conclude: Read off the stated scalar locus consequence."
+      ],
+      "lean_witness": "example (x y : ℝ) : y = x^2 → y = -1 → False := by\n  intro hp hy\n  nlinarith [sq_nonneg x]"
+    },
+    {
+      "id": "conic_parabola_circle_two_intersections",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "parabola_circle_intersections",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, if y = x^2 and x^2 + y^2 = 2, then (x, y) is either (1, 1) or (-1, 1).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>-1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>1</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use y = x^2 to first solve y^2 + y = 2, then solve x^2 = 1.",
+      "sketch_steps": [
+        "setup: Record the two scalar coordinate equations and their real-domain premises.",
+        "eliminate: Substitute the line or fixed-coordinate equation into the conic equation.",
+        "factor: Rewrite the resulting univariate quadratic as a product or a zero square.",
+        "cases: Apply the zero-product or zero-square rule to obtain every real root.",
+        "recover: Substitute each root into the remaining scalar equation.",
+        "conclude: State exactly the listed coordinate alternatives."
+      ],
+      "lean_witness": "example (x y : ℝ) : y = x^2 → x^2 + y^2 = 2 → (x = 1 ∧ y = 1) ∨ (x = -1 ∧ y = 1) := by\n  intro hp hc\n  have hyfac : (y - 1) * (y + 2) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hyfac with hy | hy\n  · have hy1 : y = 1 := by linarith\n    have hxfac : (x - 1) * (x + 1) = 0 := by nlinarith\n    rcases mul_eq_zero.mp hxfac with hx | hx\n    · left; constructor <;> linarith\n    · right; constructor <;> linarith\n  · exfalso\n    nlinarith [sq_nonneg x]"
+    },
+    {
+      "id": "conic_parabola_vertex_lower_bound",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "parabola_loci",
+      "difficulty": "introductory",
+      "canonical_statement": "For all real x and y, if y = x^2 + 2x + 1, then 0 ≤ y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"y\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Complete the square to y = (x + 1)^2 and use nonnegativity.",
+      "sketch_steps": [
+        "setup: Fix real scalar coordinates satisfying the displayed locus equation.",
+        "expand: Expand the translated squares or difference of squares.",
+        "cancel: Cancel the common scalar terms on both sides.",
+        "rearrange: Put the remaining expression into a square, product, or inequality form.",
+        "conclude: Read off the stated scalar locus consequence."
+      ],
+      "lean_witness": "example (x y : ℝ) : y = x^2 + 2*x + 1 → 0 ≤ y := by\n  intro h\n  nlinarith [sq_nonneg (x + 1)]"
+    },
+    {
+      "id": "conic_circle_line_secant_y_one",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "circle_intersections",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if x^2 + y^2 = 5 and y = 1, then (x, y) is either (2, 1) or (-2, 1).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>5</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>-2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>1</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Substitute y = 1 into the circle equation and factor x^2 - 4.",
+      "sketch_steps": [
+        "setup: Record the two scalar coordinate equations and their real-domain premises.",
+        "eliminate: Substitute the line or fixed-coordinate equation into the conic equation.",
+        "factor: Rewrite the resulting univariate quadratic as a product or a zero square.",
+        "cases: Apply the zero-product or zero-square rule to obtain every real root.",
+        "recover: Substitute each root into the remaining scalar equation.",
+        "conclude: State exactly the listed coordinate alternatives."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^2 + y^2 = 5 → y = 1 → (x = 2 ∧ y = 1) ∨ (x = -2 ∧ y = 1) := by\n  intro hc hy\n  have hfac : (x - 2) * (x + 2) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hfac with hx | hx\n  · left; constructor <;> linarith\n  · right; constructor <;> linarith"
+    },
+    {
+      "id": "conic_circle_vertical_tangent_x_three",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "circle_tangents",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, if x^2 + y^2 = 9 and x = 3, then x = 3 and y = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>9</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Substitute x = 3; the remaining equation is y^2 = 0, showing one contact coordinate.",
+      "sketch_steps": [
+        "setup: Record the conic equation and the proposed tangent-line scalar equation.",
+        "substitute: Eliminate the shared coordinate using the line equation.",
+        "double_root: Reduce the contact equation to a square equal to zero.",
+        "zero_square: Use that a real square vanishes only at zero.",
+        "recover: Compute the remaining coordinate at the contact value.",
+        "conclude: The scalar system has one real contact coordinate."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^2 + y^2 = 9 → x = 3 → x = 3 ∧ y = 0 := by\n  intro hc hx\n  have hsq : y^2 = 0 := by nlinarith\n  constructor\n  · exact hx\n  · exact sq_eq_zero_iff.mp hsq"
+    },
+    {
+      "id": "conic_circle_translated_vertical_secant",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "circle_intersections",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, if (x - 1)^2 + (y + 2)^2 = 25 and x = 4, then (x, y) is either (4, 2) or (4, -6).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"y\"/><OMI>2</OMI></OMA><OMI>2</OMI></OMA></OMA><OMI>25</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>4</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>4</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>4</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>-6</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Fix x = 4, obtain (y + 2)^2 = 16, and factor the difference of squares.",
+      "sketch_steps": [
+        "setup: Record the two scalar coordinate equations and their real-domain premises.",
+        "eliminate: Substitute the line or fixed-coordinate equation into the conic equation.",
+        "factor: Rewrite the resulting univariate quadratic as a product or a zero square.",
+        "cases: Apply the zero-product or zero-square rule to obtain every real root.",
+        "recover: Substitute each root into the remaining scalar equation.",
+        "conclude: State exactly the listed coordinate alternatives."
+      ],
+      "lean_witness": "example (x y : ℝ) : (x - 1)^2 + (y + 2)^2 = 25 → x = 4 → (x = 4 ∧ y = 2) ∨ (x = 4 ∧ y = -6) := by\n  intro hc hx\n  have hfac : (y - 2) * (y + 6) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hfac with hy | hy\n  · left; constructor <;> linarith\n  · right; constructor <;> linarith"
+    },
+    {
+      "id": "conic_circle_common_chord_scalar_y_one",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "circle_intersections",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if x^2 + y^2 = 5 and x^2 + (y - 2)^2 = 5, then y = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>5</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"y\"/><OMI>2</OMI></OMA><OMI>2</OMI></OMA></OMA><OMI>5</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Subtract the two circle equations so that x^2 cancels, leaving a linear equation in y.",
+      "sketch_steps": [
+        "setup: Fix real scalar coordinates satisfying the displayed locus equation.",
+        "expand: Expand the translated squares or difference of squares.",
+        "cancel: Cancel the common scalar terms on both sides.",
+        "rearrange: Put the remaining expression into a square, product, or inequality form.",
+        "conclude: Read off the stated scalar locus consequence."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^2 + y^2 = 5 → x^2 + (y - 2)^2 = 5 → y = 1 := by\n  intro h1 h2\n  nlinarith"
+    },
+    {
+      "id": "conic_circle_equal_distance_locus_y_axis",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "circle_loci",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if (x - 1)^2 + y^2 = (x + 1)^2 + y^2, then x = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand the two squared distances and cancel y^2 to obtain the perpendicular-bisector scalar equation x = 0.",
+      "sketch_steps": [
+        "setup: Fix real scalar coordinates satisfying the displayed locus equation.",
+        "expand: Expand the translated squares or difference of squares.",
+        "cancel: Cancel the common scalar terms on both sides.",
+        "rearrange: Put the remaining expression into a square, product, or inequality form.",
+        "conclude: Read off the stated scalar locus consequence."
+      ],
+      "lean_witness": "example (x y : ℝ) : (x - 1)^2 + y^2 = (x + 1)^2 + y^2 → x = 0 := by\n  intro h\n  nlinarith"
+    },
+    {
+      "id": "conic_circle_fixed_x_radius_locus",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "circle_loci",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if x^2 + y^2 = 25 and x = 3, then y = 4 or y = -4.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>25</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>4</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>-4</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Fix x = 3, reduce to y^2 = 16, and apply the difference-of-squares factorization.",
+      "sketch_steps": [
+        "setup: Record the two scalar coordinate equations and their real-domain premises.",
+        "eliminate: Substitute the line or fixed-coordinate equation into the conic equation.",
+        "factor: Rewrite the resulting univariate quadratic as a product or a zero square.",
+        "cases: Apply the zero-product or zero-square rule to obtain every real root.",
+        "recover: Substitute each root into the remaining scalar equation.",
+        "conclude: State exactly the listed coordinate alternatives."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^2 + y^2 = 25 → x = 3 → y = 4 ∨ y = -4 := by\n  intro hc hx\n  have hfac : (y - 4) * (y + 4) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hfac with hy | hy\n  · left; linarith\n  · right; linarith"
+    },
+    {
+      "id": "conic_ellipse_major_axis_intersections",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "ellipse_intersections",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if 9x^2 + 4y^2 = 36 and y = 0, then (x, y) is either (2, 0) or (-2, 0).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>9</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>4</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA><OMI>36</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>-2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Set y = 0 in the scaled ellipse equation and solve x^2 = 4.",
+      "sketch_steps": [
+        "setup: Record the two scalar coordinate equations and their real-domain premises.",
+        "eliminate: Substitute the line or fixed-coordinate equation into the conic equation.",
+        "factor: Rewrite the resulting univariate quadratic as a product or a zero square.",
+        "cases: Apply the zero-product or zero-square rule to obtain every real root.",
+        "recover: Substitute each root into the remaining scalar equation.",
+        "conclude: State exactly the listed coordinate alternatives."
+      ],
+      "lean_witness": "example (x y : ℝ) : 9*x^2 + 4*y^2 = 36 → y = 0 → (x = 2 ∧ y = 0) ∨ (x = -2 ∧ y = 0) := by\n  intro he hy\n  have hfac : (x - 2) * (x + 2) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hfac with hx | hx\n  · left; constructor <;> linarith\n  · right; constructor <;> linarith"
+    },
+    {
+      "id": "conic_ellipse_minor_axis_intersections",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "ellipse_intersections",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if 9x^2 + 4y^2 = 36 and x = 0, then (x, y) is either (0, 3) or (0, -3).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>9</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>4</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA><OMI>36</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>-3</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Set x = 0 in the scaled ellipse equation and solve y^2 = 9.",
+      "sketch_steps": [
+        "setup: Record the two scalar coordinate equations and their real-domain premises.",
+        "eliminate: Substitute the line or fixed-coordinate equation into the conic equation.",
+        "factor: Rewrite the resulting univariate quadratic as a product or a zero square.",
+        "cases: Apply the zero-product or zero-square rule to obtain every real root.",
+        "recover: Substitute each root into the remaining scalar equation.",
+        "conclude: State exactly the listed coordinate alternatives."
+      ],
+      "lean_witness": "example (x y : ℝ) : 9*x^2 + 4*y^2 = 36 → x = 0 → (x = 0 ∧ y = 3) ∨ (x = 0 ∧ y = -3) := by\n  intro he hx\n  have hfac : (y - 3) * (y + 3) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hfac with hy | hy\n  · left; constructor <;> linarith\n  · right; constructor <;> linarith"
+    },
+    {
+      "id": "conic_ellipse_top_horizontal_tangent",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "ellipse_tangents",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, if 9x^2 + 4y^2 = 36 and y = 3, then x = 0 and y = 3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>9</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>4</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA><OMI>36</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>3</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Substitute y = 3 and reduce the contact equation to x^2 = 0.",
+      "sketch_steps": [
+        "setup: Record the conic equation and the proposed tangent-line scalar equation.",
+        "substitute: Eliminate the shared coordinate using the line equation.",
+        "double_root: Reduce the contact equation to a square equal to zero.",
+        "zero_square: Use that a real square vanishes only at zero.",
+        "recover: Compute the remaining coordinate at the contact value.",
+        "conclude: The scalar system has one real contact coordinate."
+      ],
+      "lean_witness": "example (x y : ℝ) : 9*x^2 + 4*y^2 = 36 → y = 3 → x = 0 ∧ y = 3 := by\n  intro he hy\n  have hsq : x^2 = 0 := by nlinarith\n  constructor\n  · exact sq_eq_zero_iff.mp hsq\n  · exact hy"
+    },
+    {
+      "id": "conic_ellipse_fractional_horizontal_secant",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "ellipse_intersections",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, if 9x^2 + 4y^2 = 36 and y = 12/5, then x = 6/5 or x = -6/5.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>9</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>4</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA><OMI>36</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>12</OMI><OMI>5</OMI></OMA></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>6</OMI><OMI>5</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMI>-6</OMI><OMI>5</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Substitute y = 12/5 into the scaled ellipse equation and factor (5x - 6)(5x + 6).",
+      "sketch_steps": [
+        "setup: Record the two scalar coordinate equations and their real-domain premises.",
+        "eliminate: Substitute the line or fixed-coordinate equation into the conic equation.",
+        "factor: Rewrite the resulting univariate quadratic as a product or a zero square.",
+        "cases: Apply the zero-product or zero-square rule to obtain every real root.",
+        "recover: Substitute each root into the remaining scalar equation.",
+        "conclude: State exactly the listed coordinate alternatives."
+      ],
+      "lean_witness": "example (x y : ℝ) : 9*x^2 + 4*y^2 = 36 → y = (12 : ℝ)/5 → x = (6 : ℝ)/5 ∨ x = (-6 : ℝ)/5 := by\n  intro he hy\n  have hfac : (5*x - 6) * (5*x + 6) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hfac with hx | hx\n  · left; linarith\n  · right; linarith"
+    },
+    {
+      "id": "conic_ellipse_coordinate_bounds",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "ellipse_loci",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if 9x^2 + 4y^2 = 36, then x^2 ≤ 4 and y^2 ≤ 9.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>9</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>4</OMI><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA><OMI>36</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMI>4</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA><OMI>9</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use nonnegativity of the other squared coordinate term to bound each coordinate separately.",
+      "sketch_steps": [
+        "setup: Fix real scalar coordinates satisfying the displayed locus equation.",
+        "expand: Expand the translated squares or difference of squares.",
+        "cancel: Cancel the common scalar terms on both sides.",
+        "rearrange: Put the remaining expression into a square, product, or inequality form.",
+        "conclude: Read off the stated scalar locus consequence."
+      ],
+      "lean_witness": "example (x y : ℝ) : 9*x^2 + 4*y^2 = 36 → x^2 ≤ 4 ∧ y^2 ≤ 9 := by\n  intro he\n  constructor <;> nlinarith [sq_nonneg x, sq_nonneg y]"
+    },
+    {
+      "id": "conic_hyperbola_transverse_axis_intersections",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "hyperbola_intersections",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if x^2 - y^2 = 1 and y = 0, then (x, y) is either (1, 0) or (-1, 0).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>-1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Set y = 0 and factor x^2 - 1 into its two transverse-axis intersections.",
+      "sketch_steps": [
+        "setup: Record the two scalar coordinate equations and their real-domain premises.",
+        "eliminate: Substitute the line or fixed-coordinate equation into the conic equation.",
+        "factor: Rewrite the resulting univariate quadratic as a product or a zero square.",
+        "cases: Apply the zero-product or zero-square rule to obtain every real root.",
+        "recover: Substitute each root into the remaining scalar equation.",
+        "conclude: State exactly the listed coordinate alternatives."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^2 - y^2 = 1 → y = 0 → (x = 1 ∧ y = 0) ∨ (x = -1 ∧ y = 0) := by\n  intro hh hy\n  have hfac : (x - 1) * (x + 1) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hfac with hx | hx\n  · left; constructor <;> linarith\n  · right; constructor <;> linarith"
+    },
+    {
+      "id": "conic_hyperbola_vertical_tangent_at_one_zero",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "hyperbola_tangents",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, if x^2 - y^2 = 1 and x = 1, then x = 1 and y = 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Set x = 1; the remaining equation y^2 = 0 gives the single vertical contact coordinate.",
+      "sketch_steps": [
+        "setup: Record the conic equation and the proposed tangent-line scalar equation.",
+        "substitute: Eliminate the shared coordinate using the line equation.",
+        "double_root: Reduce the contact equation to a square equal to zero.",
+        "zero_square: Use that a real square vanishes only at zero.",
+        "recover: Compute the remaining coordinate at the contact value.",
+        "conclude: The scalar system has one real contact coordinate."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^2 - y^2 = 1 → x = 1 → x = 1 ∧ y = 0 := by\n  intro hh hx\n  have hsq : y^2 = 0 := by nlinarith\n  constructor\n  · exact hx\n  · exact sq_eq_zero_iff.mp hsq"
+    },
+    {
+      "id": "conic_hyperbola_line_intersection",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "hyperbola_intersections",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if x^2 - y^2 = 3 and y = x - 1, then x = 2 and y = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>3</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMI>1</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Substitute y = x - 1; the quadratic terms cancel and leave a linear equation for x.",
+      "sketch_steps": [
+        "setup: Fix real scalar coordinates satisfying the displayed locus equation.",
+        "expand: Expand the translated squares or difference of squares.",
+        "cancel: Cancel the common scalar terms on both sides.",
+        "rearrange: Put the remaining expression into a square, product, or inequality form.",
+        "conclude: Read off the stated scalar locus consequence."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^2 - y^2 = 3 → y = x - 1 → x = 2 ∧ y = 1 := by\n  intro hh hl\n  constructor <;> nlinarith"
+    },
+    {
+      "id": "conic_hyperbola_no_y_axis_intersection",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "hyperbola_intersections",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, the equations x^2 - y^2 = 1 and x = 0 cannot both hold.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA></OMA><OMS cd=\"logic1\" name=\"false\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Substituting x = 0 would require -y^2 = 1, impossible over the reals.",
+      "sketch_steps": [
+        "setup: Fix real scalar coordinates satisfying the displayed locus equation.",
+        "expand: Expand the translated squares or difference of squares.",
+        "cancel: Cancel the common scalar terms on both sides.",
+        "rearrange: Put the remaining expression into a square, product, or inequality form.",
+        "conclude: Read off the stated scalar locus consequence."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^2 - y^2 = 1 → x = 0 → False := by\n  intro hh hx\n  nlinarith [sq_nonneg y]"
+    },
+    {
+      "id": "conic_hyperbola_asymptote_no_intersection",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "hyperbola_asymptotes",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, the equations x^2 - y^2 = 1 and y = x cannot both hold.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"y\"/><OMV name=\"x\"/></OMA></OMA><OMS cd=\"logic1\" name=\"false\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Substituting y = x cancels the difference of squares to 0 = 1.",
+      "sketch_steps": [
+        "setup: Fix real scalar coordinates satisfying the displayed locus equation.",
+        "expand: Expand the translated squares or difference of squares.",
+        "cancel: Cancel the common scalar terms on both sides.",
+        "rearrange: Put the remaining expression into a square, product, or inequality form.",
+        "conclude: Read off the stated scalar locus consequence."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^2 - y^2 = 1 → y = x → False := by\n  intro hh hl\n  subst y\n  nlinarith"
+    },
+    {
+      "id": "conic_hyperbola_reflection_scalar_symmetry",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "hyperbola_loci",
+      "difficulty": "introductory",
+      "canonical_statement": "For all real x and y, if x^2 - y^2 = 1, then (-x)^2 - y^2 = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>0</OMI><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>1</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Square the reflected x-coordinate and observe that the scalar equation is unchanged.",
+      "sketch_steps": [
+        "setup: Fix real scalar coordinates satisfying the displayed locus equation.",
+        "expand: Expand the translated squares or difference of squares.",
+        "cancel: Cancel the common scalar terms on both sides.",
+        "rearrange: Put the remaining expression into a square, product, or inequality form.",
+        "conclude: Read off the stated scalar locus consequence."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^2 - y^2 = 1 → (-x)^2 - y^2 = 1 := by\n  intro h\n  convert h using 1 <;> ring"
+    },
+    {
+      "id": "conic_quadratic_two_distinct_real_roots",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "discriminants_and_roots",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if x^2 - 5x + 6 = 0, then x = 2 or x = 3.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>5</OMI><OMV name=\"x\"/></OMA></OMA><OMI>6</OMI></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor x^2 - 5x + 6 as (x - 2)(x - 3), the positive-discriminant case.",
+      "sketch_steps": [
+        "setup: Move the displayed quadratic equation to one side.",
+        "classify: Identify the positive, zero, or negative discriminant case through its factorization or completed square.",
+        "reduce: Express the equation as a product equal to zero, a zero square, or a positive square sum.",
+        "roots: Apply the appropriate real-root rule.",
+        "conclude: State the exact real-root alternative or contradiction."
+      ],
+      "lean_witness": "example (x : ℝ) : x^2 - 5*x + 6 = 0 → x = 2 ∨ x = 3 := by\n  intro h\n  have hfac : (x - 2) * (x - 3) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hfac with hx | hx\n  · left; linarith\n  · right; linarith"
+    },
+    {
+      "id": "conic_quadratic_double_root",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "discriminants_and_roots",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if x^2 - 4x + 4 = 0, then x = 2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>4</OMI><OMV name=\"x\"/></OMA></OMA><OMI>4</OMI></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Complete the square to (x - 2)^2 = 0, the zero-discriminant case.",
+      "sketch_steps": [
+        "setup: Move the displayed quadratic equation to one side.",
+        "classify: Identify the positive, zero, or negative discriminant case through its factorization or completed square.",
+        "reduce: Express the equation as a product equal to zero, a zero square, or a positive square sum.",
+        "roots: Apply the appropriate real-root rule.",
+        "conclude: State the exact real-root alternative or contradiction."
+      ],
+      "lean_witness": "example (x : ℝ) : x^2 - 4*x + 4 = 0 → x = 2 := by\n  intro h\n  have hsq : (x - 2)^2 = 0 := by nlinarith\n  exact by linarith [sq_eq_zero_iff.mp hsq]"
+    },
+    {
+      "id": "conic_quadratic_no_real_root",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "discriminants_and_roots",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, the equation x^2 + 2x + 2 = 0 cannot hold.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA><OMI>0</OMI></OMA><OMS cd=\"logic1\" name=\"false\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Complete the square to (x + 1)^2 + 1 = 0, the negative-discriminant case.",
+      "sketch_steps": [
+        "setup: Move the displayed quadratic equation to one side.",
+        "classify: Identify the positive, zero, or negative discriminant case through its factorization or completed square.",
+        "reduce: Express the equation as a product equal to zero, a zero square, or a positive square sum.",
+        "roots: Apply the appropriate real-root rule.",
+        "conclude: State the exact real-root alternative or contradiction."
+      ],
+      "lean_witness": "example (x : ℝ) : x^2 + 2*x + 2 = 0 → False := by\n  intro h\n  nlinarith [sq_nonneg (x + 1)]"
+    },
+    {
+      "id": "conic_difference_of_squares_locus_lines",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_coordinate_geometry_conic_sections",
+      "level": "high_school",
+      "topic": "quadratic_loci",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, if x^2 - y^2 = 0, then x = y or x = -y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"or\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMI>0</OMI><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Factor the degenerate quadratic locus as (x - y)(x + y) = 0.",
+      "sketch_steps": [
+        "setup: Move the displayed quadratic equation to one side.",
+        "classify: Identify the positive, zero, or negative discriminant case through its factorization or completed square.",
+        "reduce: Express the equation as a product equal to zero, a zero square, or a positive square sum.",
+        "roots: Apply the appropriate real-root rule.",
+        "conclude: State the exact real-root alternative or contradiction."
+      ],
+      "lean_witness": "example (x y : ℝ) : x^2 - y^2 = 0 → x = y ∨ x = -y := by\n  intro h\n  have hfac : (x - y) * (x + y) = 0 := by nlinarith\n  rcases mul_eq_zero.mp hfac with hxy | hsum\n  · left; linarith\n  · right; linarith"
+    }
+  ]
+}

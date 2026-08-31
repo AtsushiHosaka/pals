@@ -1,0 +1,441 @@
+{
+  "schema_version": "pals.typed-commutative-algebra-v1-sealed-manifest.v1",
+  "status": "sealed_local_authoring_revision_not_admitted",
+  "seal": {
+    "scope": "local typed-commutative-algebra authoring evidence only",
+    "admission": "not admitted to the generic DB, seed, embedding index, or PFI package",
+    "revision": "typed-commutative-algebra-v1-local-r1"
+  },
+  "profile": {
+    "id": "typed-commutative-algebra-v1",
+    "typed_cdbase": "urn:pals:openmath:typed-commutative-algebra:v1",
+    "design_path": "docs/typed-commutative-algebra-v1-design.md",
+    "design_sha256": "sha256:2b27c13987771cdf072b3363407c6596182f4231d6da3c3cebeec342d3c889b7",
+    "registry_path": "pals_agent/content_dictionaries/typed-commutative-algebra-v1-registry.json",
+    "registry_sha256": "sha256:43ff3a01fa9b719f3c738cb6e8e32bb6b230a4b591aec1b0e4c99dabec74fee5",
+    "validator": "pals_agent.typed_commutative_algebra.validate_canonical_typed_commutative_algebra_openmath_xml",
+    "validator_path": "pals_agent/typed_commutative_algebra.py",
+    "validator_sha256": "sha256:1240ad67501c3d443ea1c71d3bd46c59508a3d49dad721990730e98bb945bdb1",
+    "canonicalizer_version": "openmath-cdbase-alpha-c14n-v4"
+  },
+  "lean_receipt": {
+    "witness_path": "docs/typed-commutative-algebra-v1-authoring-witnesses.lean",
+    "witness_file_sha256": "sha256:500682ebd326f212f12e5122603873eae2b493f6fde65393619eee33865a01d5",
+    "toolchain": "leanprover/lean4:v4.32.0-rc1",
+    "verification_command": "cd pals-agent/lean-workspace && lake env lean ../../docs/typed-commutative-algebra-v1-authoring-witnesses.lean",
+    "verification_status": "verified_local_pinned_workspace"
+  },
+  "admitted_card_count": 13,
+  "excluded_cards": [
+    {
+      "id": "commalg_quotient_map_kernel",
+      "reason": "quotient carrier and quotient map are not typed in this profile"
+    },
+    {
+      "id": "commalg_localization_prime_correspondence",
+      "reason": "submonoid, localization witness, and map are not typed in this profile"
+    },
+    {
+      "id": "commalg_spec_closed_sets",
+      "reason": "prime spectrum and set-valued constructors are outside the ideal core"
+    },
+    {
+      "id": "commalg_module_exact_sequence",
+      "reason": "module carrier and homomorphism dependencies are outside the ideal core"
+    }
+  ],
+  "excluded_card_count": 4,
+  "cards": [
+    {
+      "id": "commalg_ideal_le_sum_left",
+      "canonical_statement": "可換環 R とそのイデアル I,J について I⊆I+J。",
+      "proof_strategy": "イデアル束の sup の左包含を用いる。",
+      "sketch_steps": [
+        "R を可換環、I,J を R のイデアルとして固定する。",
+        "I+J をイデアル和として読む。",
+        "I から I+J への標準包含を適用する。",
+        "包含を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_le\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_sum\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:f1c34facc42d405409bf4b4584e7ea2c2b39cac2f91d54032ccc2d56e500854e",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_sum\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:503be688c485af7308aee18cda3a855fd19c917e9e4e6a0ff23fb50d2b59303c",
+      "canonical_statement_sha256": "sha256:2bf066d951de53d7f938d8179bc452f6bcf9d4ad3e02c3f82f13d5c1e7e8a84c",
+      "lean_target": "example {R : Type*} [CommRing R] (I J : Ideal R) : I ≤ I + J",
+      "lean_target_sha256": "sha256:c6390bf6ce9ec31d72b4df64d920d663ca81de6f4751f4c003a3e40c76e56bd8",
+      "lean_witness": "by\n  exact le_sup_left",
+      "lean_witness_sha256": "sha256:f1e863d7962f094f78f9631ad7dd6b7c824e4cafad096144c69e0a2985229a9f",
+      "openmath_profile": "typed-commutative-algebra-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with an explicit CommRing carrier and Ideal(R) dependency",
+        "openmath_to_lean": "reviewed against the named direct Mathlib ideal theorem",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_ideal_le_sum_right",
+      "canonical_statement": "可換環 R とそのイデアル I,J について J⊆I+J。",
+      "proof_strategy": "イデアル束の sup の右包含を用いる。",
+      "sketch_steps": [
+        "R を可換環、I,J を R のイデアルとして固定する。",
+        "I+J をイデアル和として読む。",
+        "J から I+J への標準包含を適用する。",
+        "包含を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_le\"/><OMV name=\"R\"/><OMV name=\"J\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_sum\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:18e988b9fa383c8d8bd4dba736871d1e254f90715e09fb5522ede34b452554f7",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_sum\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:bbf43645902a759a732876988f2c185f003d8524d8d121e11a4f0d342f4395c7",
+      "canonical_statement_sha256": "sha256:cef952db2d787fb046e0d0acb764888dcd0b111d38109910fa23746ee2a42258",
+      "lean_target": "example {R : Type*} [CommRing R] (I J : Ideal R) : J ≤ I + J",
+      "lean_target_sha256": "sha256:8e8db104a5b738965ed4bceb0a9f972335e97853850510a550a3affd9fb85a1b",
+      "lean_witness": "by\n  exact le_sup_right",
+      "lean_witness_sha256": "sha256:b1411188fadd434166eda09015db0b0d01c9f4d3c1ec03ba1aa3f90b31025e22",
+      "openmath_profile": "typed-commutative-algebra-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with an explicit CommRing carrier and Ideal(R) dependency",
+        "openmath_to_lean": "reviewed against the named direct Mathlib ideal theorem",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_ideal_product_le_left",
+      "canonical_statement": "可換環 R とそのイデアル I,J について IJ⊆I。",
+      "proof_strategy": "積イデアルの各生成元が左因子 I に入ることを使う。",
+      "sketch_steps": [
+        "R と I,J を固定する。",
+        "IJ を積イデアルとして形成する。",
+        "各積の左因子が I に属することを使う。",
+        "IJ⊆I を結論する。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_le\"/><OMV name=\"R\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_product\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA><OMV name=\"I\"/></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:31bf52a6d2ecab6b983887b6fe5154e2fb5b5d97f54ea485b534a345fd5d47b0",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_product\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:14491814801bd48cef8c74f9a2dab949efaee1d3928793bdafaa54175efdad1a",
+      "canonical_statement_sha256": "sha256:c363cc7373c9811c7e12bb476d0a4a74d63d11db4ec27b4d8f9bbaa75383c459",
+      "lean_target": "example {R : Type*} [CommRing R] (I J : Ideal R) : I * J ≤ I",
+      "lean_target_sha256": "sha256:19cb71a957f3fcf4789cc5db95000b2f9536abf0f2df76f901556132fe36bc9f",
+      "lean_witness": "by\n  exact Ideal.mul_le_right (I := I) (J := J)",
+      "lean_witness_sha256": "sha256:624e7ae728c7b05d912816a30816b4a0205baf2cf5ba5404ea8542e8ae74428f",
+      "openmath_profile": "typed-commutative-algebra-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with an explicit CommRing carrier and Ideal(R) dependency",
+        "openmath_to_lean": "reviewed against the named direct Mathlib ideal theorem",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_ideal_product_le_right",
+      "canonical_statement": "可換環 R とそのイデアル I,J について IJ⊆J。",
+      "proof_strategy": "積イデアルの各生成元が右因子 J に入ることを使う。",
+      "sketch_steps": [
+        "R と I,J を固定する。",
+        "IJ を積イデアルとして形成する。",
+        "各積の右因子が J に属することを使う。",
+        "IJ⊆J を結論する。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_le\"/><OMV name=\"R\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_product\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA><OMV name=\"J\"/></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:993a2e496b90f973f137275e4c28016dbdc384173d4455cd7c48896d8ff796da",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_product\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:bded2eca7215c50ea89becaa8a9aa07b6d0d93c0f6b13077f19f03314cf94540",
+      "canonical_statement_sha256": "sha256:3c3da7447a6f42b64b4104915ba50e88999f71d4f986280ba5002eb5ef05e17e",
+      "lean_target": "example {R : Type*} [CommRing R] (I J : Ideal R) : I * J ≤ J",
+      "lean_target_sha256": "sha256:b7d9eaf59328221956ca45271a6c2a2d17aa78ed344b288881bba6b498c57bbd",
+      "lean_witness": "by\n  exact Ideal.mul_le_left (I := I) (J := J)",
+      "lean_witness_sha256": "sha256:db9db86cb91515ad5f6281db1878528bb6fd8ba3f7e086bad425d15aa7315129",
+      "openmath_profile": "typed-commutative-algebra-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with an explicit CommRing carrier and Ideal(R) dependency",
+        "openmath_to_lean": "reviewed against the named direct Mathlib ideal theorem",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_ideal_product_le_inf",
+      "canonical_statement": "可換環 R とそのイデアル I,J について IJ⊆I∩J。",
+      "proof_strategy": "積イデアルの左右包含を交わりの普遍性で合わせる。",
+      "sketch_steps": [
+        "R と I,J を固定する。",
+        "IJ⊆I を得る。",
+        "IJ⊆J を得る。",
+        "交わりの普遍性から IJ⊆I∩J を得る。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_le\"/><OMV name=\"R\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_product\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_inf\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:5e4e1c194c71378bf28512ab3d310181ae8c89004807df3287313e1df6fba7b9",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_product\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_inf\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:11388bbccb5f2d5584413c4035dfe12c5e2a0ba070ffe788783751c0a76dcbe9",
+      "canonical_statement_sha256": "sha256:bfbd276d1d66f435101c10a17522f584ea207ca814f38993d1fac5b45440deb7",
+      "lean_target": "example {R : Type*} [CommRing R] (I J : Ideal R) : I * J ≤ I ⊓ J",
+      "lean_target_sha256": "sha256:19105c4b7662b977e4aa6ce00b365ed3faf12820af92c06afac1247ef41029ec",
+      "lean_witness": "by\n  exact le_inf (Ideal.mul_le_right (I := I) (J := J)) (Ideal.mul_le_left (I := I) (J := J))",
+      "lean_witness_sha256": "sha256:e9beb360bb2eba925aaf813b66fe055a70305073f087b3b059ae1db67e2513b3",
+      "openmath_profile": "typed-commutative-algebra-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with an explicit CommRing carrier and Ideal(R) dependency",
+        "openmath_to_lean": "reviewed against the named direct Mathlib ideal theorem",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_ideal_le_radical",
+      "canonical_statement": "可換環 R の任意のイデアル I は √I に含まれる。",
+      "proof_strategy": "1 乗を使い、I の元が radical の定義を満たすことを示す。",
+      "sketch_steps": [
+        "R と I を固定する。",
+        "I の任意の元を取る。",
+        "その 1 乗が I に入ることを確認する。",
+        "I⊆√I を結論する。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_le\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_radical\"/><OMV name=\"R\"/><OMV name=\"I\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:d69ad6fd331808efe585260f5853d9075d8686e6fbd26a5193712fb7d1fe7578",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_radical\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:b8f301515e56f9bb28a1219771281083d83ba209378c0b032ce8001098064460",
+      "canonical_statement_sha256": "sha256:32fb1390f0961e46b7041b74106e110f7cd73fb33c3a4c80e787f003e0ef7ad2",
+      "lean_target": "example {R : Type*} [CommRing R] (I : Ideal R) : I ≤ I.radical",
+      "lean_target_sha256": "sha256:5376ee14024d19a50ae7e5d5810a453aeead82e35617de691e12863f69f4b312",
+      "lean_witness": "by\n  exact Ideal.le_radical",
+      "lean_witness_sha256": "sha256:abeca99ffb36d71654749b117de47308cff160741706d106b5b71dff52ddc89f",
+      "openmath_profile": "typed-commutative-algebra-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with an explicit CommRing carrier and Ideal(R) dependency",
+        "openmath_to_lean": "reviewed against the named direct Mathlib ideal theorem",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_ideal_radical_idempotent",
+      "canonical_statement": "可換環 R の任意のイデアル I について √(√I)=√I。",
+      "proof_strategy": "radical が radical ideal であることを用いる。",
+      "sketch_steps": [
+        "R と I を固定する。",
+        "√I が radical ideal であることを使う。",
+        "radical を再び取っても変わらないことを適用する。",
+        "等式を閉じる。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_radical\"/><OMV name=\"R\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_radical\"/><OMV name=\"R\"/><OMV name=\"I\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_radical\"/><OMV name=\"R\"/><OMV name=\"I\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:8ea9d1ee0cec2eae2098a2ffa1d9d6dd43eda40fb03ecb1414984a0b596a9b05",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_radical\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_radical\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_radical\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:4c620a94e667efa041120b3307b5b2cd4feb43feb0edea5462fc21655cd22486",
+      "canonical_statement_sha256": "sha256:8077ae751d38823161b4a98f2f8f1680c6bedcbf0b21cf9be12ce5d95fe3bf7e",
+      "lean_target": "example {R : Type*} [CommRing R] (I : Ideal R) : I.radical.radical = I.radical",
+      "lean_target_sha256": "sha256:c091f2c2e6bac83cfa1435252805c4aa3a119791cad9c2ec58edfe847b249f6c",
+      "lean_witness": "by\n  exact Ideal.radical_idem I",
+      "lean_witness_sha256": "sha256:ec5720a9516c29f7565919d9cc89f0c5a38a42c3e1fb919e162327c07a8e38c5",
+      "openmath_profile": "typed-commutative-algebra-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with an explicit CommRing carrier and Ideal(R) dependency",
+        "openmath_to_lean": "reviewed against the named direct Mathlib ideal theorem",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_ideal_radical_mono",
+      "canonical_statement": "可換環 R のイデアル I,J で I⊆J ならば √I⊆√J。",
+      "proof_strategy": "冪が I に入るという証人を J への包含で移す。",
+      "sketch_steps": [
+        "R と I,J を固定し I⊆J を仮定する。",
+        "√I の元の冪に関する証人を取る。",
+        "I⊆J により同じ冪が J に入る。",
+        "√I⊆√J を結論する。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_le\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_le\"/><OMV name=\"R\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_radical\"/><OMV name=\"R\"/><OMV name=\"I\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_radical\"/><OMV name=\"R\"/><OMV name=\"J\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:ee3ceaf292f38e8b25e4dc0421ad99b016b69864e874600aa1734fd7aea96456",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_radical\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_radical\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:b86c9b294e875acf24f2ca1c98ce4f3c2805fee6dc7697d5b4c9a05116b4276b",
+      "canonical_statement_sha256": "sha256:711aadf8514316615dd7278e2f666ea08116f0f512e83f0678245cbbef7ed410",
+      "lean_target": "example {R : Type*} [CommRing R] (I J : Ideal R) (h : I ≤ J) : I.radical ≤ J.radical",
+      "lean_target_sha256": "sha256:522bcbbe5013707f3afb02f8a7a61065fe8a9618f8144089ac452be54b4de6f8",
+      "lean_witness": "by\n  exact Ideal.radical_mono h",
+      "lean_witness_sha256": "sha256:a1e4c8aea754f32265d652ff5737842750740263524f7fba514a9a215e271e67",
+      "openmath_profile": "typed-commutative-algebra-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with an explicit CommRing carrier and Ideal(R) dependency",
+        "openmath_to_lean": "reviewed against the named direct Mathlib ideal theorem",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_prime_ideal_is_radical",
+      "canonical_statement": "可換環 R の素イデアル P は √P=P を満たす。",
+      "proof_strategy": "素性から P が radical ideal であることを使う。",
+      "sketch_steps": [
+        "R と P を固定し P が素であると仮定する。",
+        "素イデアルが radical ideal であることを使う。",
+        "radical の特徴づけを適用する。",
+        "√P=P を結論する。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"P\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"is_prime_ideal\"/><OMV name=\"R\"/><OMV name=\"P\"/></OMA><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"relation1\" name=\"eq\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_radical\"/><OMV name=\"R\"/><OMV name=\"P\"/></OMA><OMV name=\"P\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:49db7e2466e39cfe67994a4e6c38d1577492a26dd013ac5635ce77b9b87d6f7e",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"is_prime_ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"eq\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_radical\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:e48dae5acdb463ec00261054d698bf7a23c8ec20d27ae2d03fca7bb5f5c58a63",
+      "canonical_statement_sha256": "sha256:45df41e803c4bda7c38e39f69e492f2e0dea1270b61fe2f6654b1661199266c7",
+      "lean_target": "example {R : Type*} [CommRing R] (P : Ideal R) (h : P.IsPrime) : P.radical = P",
+      "lean_target_sha256": "sha256:9a9751b30a2a616ccdc0fb830bd5f251a0723a726d74b8266eef7fac2d49cb34",
+      "lean_witness": "by\n  exact h.radical",
+      "lean_witness_sha256": "sha256:49b7d9a3ca63e38e7645f5db0816c681eba14aa466a63ffda690f9cb40119f43",
+      "openmath_profile": "typed-commutative-algebra-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with an explicit CommRing carrier and Ideal(R) dependency",
+        "openmath_to_lean": "reviewed against the named direct Mathlib ideal theorem",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_maximal_ideal_is_prime",
+      "canonical_statement": "可換環 R の極大イデアル M は素イデアルである。",
+      "proof_strategy": "商環が体となることから零因子がないことを使う。",
+      "sketch_steps": [
+        "R と M を固定し M が極大であると仮定する。",
+        "極大イデアルの商環が体であることを使う。",
+        "体には零因子がないことを用いる。",
+        "M が素であると結論する。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"M\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"is_maximal_ideal\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"is_prime_ideal\"/><OMV name=\"R\"/><OMV name=\"M\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:546a5a717b51b3652207e4f6cd03567d9d26fe164b326775b7c638d5f7da9ff8",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"is_maximal_ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"is_prime_ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:f05cd41259a7d3ff67b2f9fde9bd21ee4d2ad7ab5632386001c85171c8619142",
+      "canonical_statement_sha256": "sha256:f6719cef23612c3514eb11378a37e43641a25b55c3134b127b99b0335368606b",
+      "lean_target": "example {R : Type*} [CommRing R] (M : Ideal R) (h : M.IsMaximal) : M.IsPrime",
+      "lean_target_sha256": "sha256:81f8cd9c2d7eb0f53f4047ac911014865e0f12f3bf33428b55e8b8d75614dc04",
+      "lean_witness": "by\n  exact h.isPrime",
+      "lean_witness_sha256": "sha256:8d63e8b27b085977f9b21356bfaaa9ddee63ca6bc9b580695f0dd990006715a2",
+      "openmath_profile": "typed-commutative-algebra-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with an explicit CommRing carrier and Ideal(R) dependency",
+        "openmath_to_lean": "reviewed against the named direct Mathlib ideal theorem",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_ideal_inclusion_transitive",
+      "canonical_statement": "可換環 R のイデアル I,J,K で I⊆J かつ J⊆K ならば I⊆K。",
+      "proof_strategy": "イデアル包含の推移性を合成する。",
+      "sketch_steps": [
+        "R と I,J,K を固定する。",
+        "I⊆J と J⊆K を仮定する。",
+        "中間イデアル J を介して包含を合成する。",
+        "I⊆K を結論する。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"K\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"and\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_le\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_le\"/><OMV name=\"R\"/><OMV name=\"J\"/><OMV name=\"K\"/></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_le\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMV name=\"K\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:3ac7d667a9c57902749946c4a80be1fa380d94a91707c490107ee6d2ce824094",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"and\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:5effbeb10900e81d48ce698b932a78291322ba42b6eef32a9bfa52e49b314859",
+      "canonical_statement_sha256": "sha256:067a63fe7bfc222380d7f113cd6af13d0d4f2758fb7946b5d914ad76aca301d0",
+      "lean_target": "example {R : Type*} [CommRing R] (I J K : Ideal R) (hIJ : I ≤ J) (hJK : J ≤ K) : I ≤ K",
+      "lean_target_sha256": "sha256:55756319aed7b7f8c8e84ba782cba4a3bc62b0d5e698e975b0364d75ca79c0f4",
+      "lean_witness": "by\n  exact hIJ.trans hJK",
+      "lean_witness_sha256": "sha256:b3a3724d8a100fb7f10b0b9ccb13ee5cffc48a99bff9936275d486cffc241844",
+      "openmath_profile": "typed-commutative-algebra-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with an explicit CommRing carrier and Ideal(R) dependency",
+        "openmath_to_lean": "reviewed against the named direct Mathlib ideal theorem",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_ideal_sum_mono_left",
+      "canonical_statement": "可換環 R のイデアル I,J,K で I⊆J ならば I+K⊆J+K。",
+      "proof_strategy": "和の単調性を左因子に適用する。",
+      "sketch_steps": [
+        "R と I,J,K を固定し I⊆J を仮定する。",
+        "両辺に K をイデアル和として加える。",
+        "和の単調性を適用する。",
+        "I+K⊆J+K を得る。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"K\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_le\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_le\"/><OMV name=\"R\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_sum\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMV name=\"K\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_sum\"/><OMV name=\"R\"/><OMV name=\"J\"/><OMV name=\"K\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:55daaf0caaa361db2a81593fa080c4dc33563e0f7be49e46d0dd60cd38108786",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_sum\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_sum\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:16215fb6931df482ebb6e9b840e11a16c5d857a72cf34e2acc1e227b1bb98847",
+      "canonical_statement_sha256": "sha256:137a930433936c9df1d96618ca0c67e3a5b18ddcbac6b6be53b9ea8913b5ab0c",
+      "lean_target": "example {R : Type*} [CommRing R] (I J K : Ideal R) (h : I ≤ J) : I + K ≤ J + K",
+      "lean_target_sha256": "sha256:1fe3e78a6c277335b75549fc809547c9a1514fbf627d7519224a6c6f818ea883",
+      "lean_witness": "by\n  simpa [add_comm] using add_le_add_right h K",
+      "lean_witness_sha256": "sha256:094e3f5ba4652974137e899eb6443120b835004e3989cf2264518d381143ae71",
+      "openmath_profile": "typed-commutative-algebra-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with an explicit CommRing carrier and Ideal(R) dependency",
+        "openmath_to_lean": "reviewed against the named direct Mathlib ideal theorem",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    },
+    {
+      "id": "commalg_ideal_product_mono_left",
+      "canonical_statement": "可換環 R のイデアル I,J,K で I⊆J ならば IK⊆JK。",
+      "proof_strategy": "積イデアルの単調性を一方の因子に適用する。",
+      "sketch_steps": [
+        "R と I,J,K を固定し I⊆J を仮定する。",
+        "両辺に K を積イデアルとして掛ける。",
+        "積の単調性を適用する。",
+        "IK⊆JK を得る。"
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"CommRing\"/></OMATP><OMV name=\"R\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"I\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"J\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"typed1\" name=\"type\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"Ideal\"/><OMV name=\"R\"/></OMA></OMATP><OMV name=\"K\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"http://www.openmath.org/cd\" cd=\"logic1\" name=\"implies\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_le\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMV name=\"J\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_le\"/><OMV name=\"R\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_product\"/><OMV name=\"R\"/><OMV name=\"I\"/><OMV name=\"K\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" cd=\"commalg1\" name=\"ideal_product\"/><OMV name=\"R\"/><OMV name=\"J\"/><OMV name=\"K\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "openmath_xml_sha256": "sha256:9875460d092e2835140e6c11e6e65c4855888ea5efd2e120e93b5093058ec47a",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_product\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_product\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:d11747c00ea3d02cde9c7433ba47b3001864dd4fbe91792519706f8f54335c16",
+      "canonical_statement_sha256": "sha256:55943c7266ae45b591d48a29f46bc2f4b972b3c62b9093a25f5942484661fad1",
+      "lean_target": "example {R : Type*} [CommRing R] (I J K : Ideal R) (h : I ≤ J) : I * K ≤ J * K",
+      "lean_target_sha256": "sha256:afad69f391981e4b6fe85ac5090c7b93a8be9db346af7829e36f6ea29c599f99",
+      "lean_witness": "by\n  exact mul_le_mul_left h K",
+      "lean_witness_sha256": "sha256:3456dcb5f17bfb694c0f01e0920d857d6da4fd886038cd35b7106ad00eedf079",
+      "openmath_profile": "typed-commutative-algebra-v1",
+      "profile_validation_status": "validated_local_typed_commutative_algebra_v1_sealed",
+      "compiler_receipt_status": "verified",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or an OpenMath-to-Lean translation receipt",
+      "alignment": {
+        "status": "sealed_local_authoring_review_not_admitted",
+        "statement_to_openmath": "reviewed with an explicit CommRing carrier and Ideal(R) dependency",
+        "openmath_to_lean": "reviewed against the named direct Mathlib ideal theorem",
+        "admission_gate": "requires independent project review before any typed catalog admission"
+      }
+    }
+  ],
+  "manifest_payload_sha256": "sha256:02c0dc8e2deb38046d2e79c9f0a59ce72428cd10fbf7cf81d156e297fe006cf6"
+}

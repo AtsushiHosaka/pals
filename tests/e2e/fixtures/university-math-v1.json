@@ -1,0 +1,87 @@
+{
+  "schema_version": "pals.local-e2e-fixture.v1",
+  "suite_id": "university-math-v1",
+  "output_language": "ja",
+  "cases": [
+    {
+      "id": "rank-nullity",
+      "field": "linear-algebra",
+      "natural_language_statement": "体 K 上の有限次元ベクトル空間 V と線形写像 f : V → W に対し、dim(ker f) + dim(range f) = dim V を証明せよ。途中の根拠を省略せず、自然言語で最後まで説明すること。",
+      "formal_statement": "theorem pals_rank_nullity\n    {K V W : Type*} [Field K]\n    [AddCommGroup V] [Module K V] [FiniteDimensional K V]\n    [AddCommGroup W] [Module K W]\n    (f : V →ₗ[K] W) :\n    Module.finrank K (LinearMap.ker f) + Module.finrank K (LinearMap.range f) =\n      Module.finrank K V := by",
+      "expected_answer_summary": "核の基底をVの基底へ延長し、追加した基底ベクトルの像がrange fの基底になることから次元を数える。",
+      "grading_points": ["有限次元という仮定を使う", "kerとrangeの次元を正しい等式で結ぶ", "結論まで論理が閉じている"]
+    },
+    {
+      "id": "continuous-square",
+      "field": "real-analysis",
+      "natural_language_statement": "関数 f : ℝ → ℝ, f(x) = x² が連続であることを証明せよ。途中の根拠を省略せず、自然言語で最後まで説明すること。",
+      "formal_statement": "theorem pals_continuous_square :\n    Continuous (fun x : ℝ => x ^ 2) := by",
+      "expected_answer_summary": "恒等関数の連続性と連続関数の積の連続性、または|x²-a²|=|x-a||x+a|を用いる。",
+      "grading_points": ["連続性の根拠を示す", "x²=x·xを正しく扱う", "全実数上の結論を述べる"]
+    },
+    {
+      "id": "derivative-exp",
+      "field": "calculus",
+      "natural_language_statement": "任意の x ∈ ℝ において、実指数関数の導関数が d(eˣ)/dx = eˣ であることを証明せよ。途中の根拠を省略せず、自然言語で最後まで説明すること。",
+      "formal_statement": "theorem pals_derivative_exp (x : ℝ) :\n    HasDerivAt Real.exp (Real.exp x) x := by",
+      "expected_answer_summary": "指数法則で差商をeˣ(eʰ-1)/hと変形し、h→0で(eʰ-1)/h→1を使う。",
+      "grading_points": ["差商または既知の指数関数微分定理を正しく使う", "導関数の値eˣを得る", "任意のxについて結論する"]
+    },
+    {
+      "id": "left-inverse-unique",
+      "field": "group-theory",
+      "natural_language_statement": "群 G の元 a, b が ba = 1 を満たすとき、b = a⁻¹ であることを証明せよ。途中の根拠を省略せず、自然言語で最後まで説明すること。",
+      "formal_statement": "theorem pals_left_inverse_unique\n    {G : Type*} [Group G] (a b : G) (h : b * a = 1) :\n    b = a⁻¹ := by",
+      "expected_answer_summary": "b=b(aa⁻¹)=(ba)a⁻¹=1a⁻¹=a⁻¹と結合則、逆元、単位元を使う。",
+      "grading_points": ["結合則を正しく使う", "ba=1を代入する", "b=a⁻¹まで導く"]
+    },
+    {
+      "id": "binomial-square",
+      "field": "ring-theory",
+      "natural_language_statement": "可換環 R の任意の元 x, y に対して (x + y)² = x² + 2xy + y² を証明せよ。途中の根拠を省略せず、自然言語で最後まで説明すること。",
+      "formal_statement": "theorem pals_binomial_square\n    {R : Type*} [CommRing R] (x y : R) :\n    (x + y) ^ 2 = x ^ 2 + 2 * x * y + y ^ 2 := by",
+      "expected_answer_summary": "分配法則でx²+xy+yx+y²へ展開し、可換性yx=xyから中央二項を2xyにまとめる。",
+      "grading_points": ["分配法則による展開が正しい", "可換性を明示する", "係数2の意味を環で正しく扱う"]
+    },
+    {
+      "id": "prime-divides-product",
+      "field": "number-theory",
+      "natural_language_statement": "p を素数、a, b を自然数とする。このとき p ∣ ab ⇔ p ∣ a または p ∣ b を証明せよ。途中の根拠を省略せず、自然言語で最後まで説明すること。",
+      "formal_statement": "theorem pals_prime_dvd_product\n    {p a b : ℕ} (hp : Nat.Prime p) :\n    p ∣ a * b ↔ p ∣ a ∨ p ∣ b := by",
+      "expected_answer_summary": "逆向きは整除性の積に対する保存、順向きはEuclidの補題を使う。",
+      "grading_points": ["⇒と⇐の両方を示す", "素数仮定をEuclidの補題に使う", "自然数の整除性として正しく結論する"]
+    },
+    {
+      "id": "finset-inclusion-exclusion",
+      "field": "discrete-mathematics",
+      "natural_language_statement": "有限集合 S, T に対して |S ∪ T| + |S ∩ T| = |S| + |T| を証明せよ。途中の根拠を省略せず、自然言語で最後まで説明すること。",
+      "formal_statement": "theorem pals_finset_inclusion_exclusion\n    {alpha : Type*} [DecidableEq alpha] (s t : Finset alpha) :\n    (s ∪ t).card + (s ∩ t).card = s.card + t.card := by",
+      "expected_answer_summary": "S∪TをS\\T、T\\S、S∩Tへ分割し、各要素が左右で同数回数えられることを示す。",
+      "grading_points": ["有限集合であることを使う", "共通部分の二重計数を説明する", "与えられた等式の向きで結論する"]
+    },
+    {
+      "id": "complex-normsq-mul",
+      "field": "complex-numbers",
+      "natural_language_statement": "複素数 z, w に対して normSq(zw) = normSq(z) normSq(w) を証明せよ。ただし normSq(a + bi) = a² + b² とする。途中の根拠を省略せず、自然言語で最後まで説明すること。",
+      "formal_statement": "theorem pals_complex_normSq_mul (z w : ℂ) :\n    Complex.normSq (z * w) = Complex.normSq z * Complex.normSq w := by",
+      "expected_answer_summary": "z=a+bi、w=c+diとおき、積の実部・虚部を展開して交差項が相殺することを示す。",
+      "grading_points": ["複素数積の実部・虚部が正しい", "平方和の展開が正しい", "最終的に二つのnormSqの積へ因数分解する"]
+    },
+    {
+      "id": "compact-continuous-image",
+      "field": "topology",
+      "natural_language_statement": "位相空間 X, Y、コンパクト集合 K ⊆ X、連続写像 f : X → Y に対し、像 f(K) がコンパクトであることを証明せよ。途中の根拠を省略せず、自然言語で最後まで説明すること。",
+      "formal_statement": "theorem pals_compact_continuous_image\n    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]\n    (K : Set X) (f : X → Y) (hK : IsCompact K) (hf : Continuous f) :\n    IsCompact (f '' K) := by",
+      "expected_answer_summary": "f(K)の開被覆を逆像でKの開被覆へ移し、Kの有限部分被覆を連続像側へ戻す。",
+      "grading_points": ["連続性により開集合の逆像が開くことを使う", "Kのコンパクト性から有限部分被覆を得る", "それがf(K)を被覆することを示す"]
+    },
+    {
+      "id": "finite-geometric-sum",
+      "field": "sequences-and-series",
+      "natural_language_statement": "実数 x と自然数 n に対し、(∑ₖ₌₀ⁿ⁻¹ xᵏ)(x − 1) = xⁿ − 1 を証明せよ。x = 1 の場合も含め、途中の根拠を省略せず自然言語で最後まで説明すること。",
+      "formal_statement": "theorem pals_finite_geometric_sum\n    (x : ℝ) (n : ℕ) :\n    (∑ k ∈ Finset.range n, x ^ k) * (x - 1) = x ^ n - 1 := by",
+      "expected_answer_summary": "有限和へx-1を掛け、ずらした二つの和の中間項を相殺してxⁿ-1を得る。x=1でも両辺0である。",
+      "grading_points": ["有限和の添字範囲を正しく扱う", "望遠和による相殺を示す", "x=1とn=0を含む結論になっている"]
+    }
+  ]
+}

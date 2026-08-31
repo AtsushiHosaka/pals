@@ -1,0 +1,604 @@
+{
+  "schema_version": "pals.high-school-real-exponent-logarithm-expansion-candidates.v1",
+  "source": "PALS first-party authored, generic-OpenMath and Lean-verified candidate set",
+  "current_profile_card_count": 30,
+  "topic_counts": {
+    "exponential_equations": 1,
+    "exponential_inequalities": 6,
+    "exponential_laws": 5,
+    "logarithm_exponential_inverses": 3,
+    "logarithm_laws": 7,
+    "logarithmic_equations": 2,
+    "logarithmic_inequalities": 6
+  },
+  "scope_note": "All cards use only real scalar arithmetic, transc1:exp, transc1:ln, relations, logic, and explicit real-membership premises. Every variable expression passed to ln has an explicit strict-positivity premise; the sole ln(exp(x+y)) card explicitly records positivity of that exponential argument.",
+  "validation_contract": {
+    "generic_openmath": "Every card runs statement-semantics validation, generic retrieval C14N, and exact-C14N validation while generated.",
+    "legacy_manifest": "Generation rejects IDs and legacy C14N collisions against docs/exponent-log-number-theory-candidates.json.",
+    "lean": "Pass --verify-lean to compile one temporary Lean file containing all 30 witnesses in pals-agent/lean-workspace.",
+    "local_db": "Pass --verify-db --expected-db-count 401 to read-check local Draft IDs and strict/legacy C14N collisions. This command does not write the database."
+  },
+  "excluded_backlog": [
+    {
+      "item": "General real-base expressions a^x and logarithms log_a(x)",
+      "reason": "The current generic profile has no typed real-base exponentiation, a base-not-equal-to-one condition, or a base-order contract."
+    },
+    {
+      "item": "Complex logarithms and branch-sensitive identities",
+      "reason": "They require a complex carrier, branch data, and typed coercions; use a separate typed complex profile."
+    },
+    {
+      "item": "Unqualified logarithm product or quotient laws",
+      "reason": "The high-school real logarithm laws require positive arguments. Every included variable logarithm law retains strict positivity in its proposition."
+    },
+    {
+      "item": "Numerical drill variants differing only by constants",
+      "reason": "This expansion favors reusable identity, equation, inequality, and substitution patterns rather than constant substitutions."
+    }
+  ],
+  "cards": [
+    {
+      "id": "exlog_expand_exp_sub",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "exponential_laws",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, exp(x - y) = exp(x)/exp(y).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Rewrite subtraction as addition of an inverse in the exponent.",
+      "sketch_steps": [
+        "setup: Bind the displayed real variables and identify the exponential arguments.",
+        "rewrite: Apply the exponential addition, subtraction, or inverse identity.",
+        "normalize: Simplify the real product, quotient, or integer multiple.",
+        "domain: Use that every real exponential is strictly positive when cancellation is needed.",
+        "conclude: State the resulting real exponential equality."
+      ],
+      "lean_witness": "example (x y : ℝ) : Real.exp (x - y) = Real.exp x / Real.exp y := Real.exp_sub x y"
+    },
+    {
+      "id": "exlog_expand_exp_double",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "exponential_laws",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, exp(2x) = exp(x)^2.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA><OMI>2</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the natural-multiple exponential law with multiplier two.",
+      "sketch_steps": [
+        "setup: Bind the displayed real variables and identify the exponential arguments.",
+        "rewrite: Apply the exponential addition, subtraction, or inverse identity.",
+        "normalize: Simplify the real product, quotient, or integer multiple.",
+        "domain: Use that every real exponential is strictly positive when cancellation is needed.",
+        "conclude: State the resulting real exponential equality."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.exp (2*x) = Real.exp x ^ 2 := by simpa using Real.exp_nat_mul x 2"
+    },
+    {
+      "id": "exlog_expand_exp_neg_product",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "exponential_laws",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, exp(x)*exp(-x) = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"x\"/></OMA></OMA></OMA><OMI>1</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Replace exp(-x) by the reciprocal of exp(x), then cancel the nonzero exponential.",
+      "sketch_steps": [
+        "setup: Bind the displayed real variables and identify the exponential arguments.",
+        "rewrite: Apply the exponential addition, subtraction, or inverse identity.",
+        "normalize: Simplify the real product, quotient, or integer multiple.",
+        "domain: Use that every real exponential is strictly positive when cancellation is needed.",
+        "conclude: State the resulting real exponential equality."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.exp x * Real.exp (-x) = 1 := by rw [Real.exp_neg]; field_simp"
+    },
+    {
+      "id": "exlog_expand_exp_add_cancel_right",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "exponential_laws",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, exp(x + y)*exp(-y) = exp(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"unary_minus\"/><OMV name=\"y\"/></OMA></OMA></OMA><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Expand exp(x+y), then cancel the exponential factor associated with y.",
+      "sketch_steps": [
+        "setup: Bind the displayed real variables and identify the exponential arguments.",
+        "rewrite: Apply the exponential addition, subtraction, or inverse identity.",
+        "normalize: Simplify the real product, quotient, or integer multiple.",
+        "domain: Use that every real exponential is strictly positive when cancellation is needed.",
+        "conclude: State the resulting real exponential equality."
+      ],
+      "lean_witness": "example (x y : ℝ) : Real.exp (x + y) * Real.exp (-y) = Real.exp x := by rw [Real.exp_add, Real.exp_neg]; field_simp"
+    },
+    {
+      "id": "exlog_expand_exp_sub_recover",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "exponential_laws",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, exp(x - y)*exp(y) = exp(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the exponential subtraction formula and cancel the certified nonzero denominator.",
+      "sketch_steps": [
+        "setup: Bind the displayed real variables and identify the exponential arguments.",
+        "rewrite: Apply the exponential addition, subtraction, or inverse identity.",
+        "normalize: Simplify the real product, quotient, or integer multiple.",
+        "domain: Use that every real exponential is strictly positive when cancellation is needed.",
+        "conclude: State the resulting real exponential equality."
+      ],
+      "lean_witness": "example (x y : ℝ) : Real.exp (x - y) * Real.exp y = Real.exp x := by rw [Real.exp_sub]; field_simp"
+    },
+    {
+      "id": "exlog_expand_exp_eq_iff",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "exponential_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, exp(x) = exp(y) if and only if x = y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use injectivity of the strictly increasing real exponential function.",
+      "sketch_steps": [
+        "setup: Bind the two real inputs or the displayed real input.",
+        "monotonicity: Use strict monotonicity of the real exponential function.",
+        "translate: Move the equality or order relation between the exponential values and exponents.",
+        "conclude: State the requested equivalence over the real numbers."
+      ],
+      "lean_witness": "example (x y : ℝ) : Real.exp x = Real.exp y ↔ x = y := Real.exp_eq_exp"
+    },
+    {
+      "id": "exlog_expand_exp_lt_iff",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "exponential_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, exp(x) < exp(y) if and only if x < y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use strict monotonicity of exp to compare exponents directly.",
+      "sketch_steps": [
+        "setup: Bind the two real inputs or the displayed real input.",
+        "monotonicity: Use strict monotonicity of the real exponential function.",
+        "translate: Move the equality or order relation between the exponential values and exponents.",
+        "conclude: State the requested equivalence over the real numbers."
+      ],
+      "lean_witness": "example (x y : ℝ) : Real.exp x < Real.exp y ↔ x < y := Real.exp_lt_exp"
+    },
+    {
+      "id": "exlog_expand_exp_le_iff",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "exponential_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, exp(x) ≤ exp(y) if and only if x ≤ y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use monotonicity and injectivity of exp to compare non-strict inequalities.",
+      "sketch_steps": [
+        "setup: Bind the two real inputs or the displayed real input.",
+        "monotonicity: Use strict monotonicity of the real exponential function.",
+        "translate: Move the equality or order relation between the exponential values and exponents.",
+        "conclude: State the requested equivalence over the real numbers."
+      ],
+      "lean_witness": "example (x y : ℝ) : Real.exp x ≤ Real.exp y ↔ x ≤ y := Real.exp_le_exp"
+    },
+    {
+      "id": "exlog_expand_one_lt_exp_iff",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "exponential_inequalities",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, 1 < exp(x) if and only if 0 < x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMI>1</OMI><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMI>0</OMI><OMV name=\"x\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Compare exp(x) to exp(0)=1 using strict monotonicity.",
+      "sketch_steps": [
+        "setup: Bind the two real inputs or the displayed real input.",
+        "monotonicity: Use strict monotonicity of the real exponential function.",
+        "translate: Move the equality or order relation between the exponential values and exponents.",
+        "conclude: State the requested equivalence over the real numbers."
+      ],
+      "lean_witness": "example (x : ℝ) : 1 < Real.exp x ↔ 0 < x := Real.one_lt_exp_iff"
+    },
+    {
+      "id": "exlog_expand_exp_lt_one_iff",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "exponential_inequalities",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, exp(x) < 1 if and only if x < 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Compare exp(x) to exp(0)=1 using strict monotonicity.",
+      "sketch_steps": [
+        "setup: Bind the two real inputs or the displayed real input.",
+        "monotonicity: Use strict monotonicity of the real exponential function.",
+        "translate: Move the equality or order relation between the exponential values and exponents.",
+        "conclude: State the requested equivalence over the real numbers."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.exp x < 1 ↔ x < 0 := Real.exp_lt_one_iff"
+    },
+    {
+      "id": "exlog_expand_one_le_exp_iff",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "exponential_inequalities",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, 1 ≤ exp(x) if and only if 0 ≤ x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>1</OMI><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMV name=\"x\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Compare exp(x) to exp(0)=1 using monotonicity.",
+      "sketch_steps": [
+        "setup: Bind the two real inputs or the displayed real input.",
+        "monotonicity: Use strict monotonicity of the real exponential function.",
+        "translate: Move the equality or order relation between the exponential values and exponents.",
+        "conclude: State the requested equivalence over the real numbers."
+      ],
+      "lean_witness": "example (x : ℝ) : 1 ≤ Real.exp x ↔ 0 ≤ x := Real.one_le_exp_iff"
+    },
+    {
+      "id": "exlog_expand_exp_le_one_iff",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "exponential_inequalities",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, exp(x) ≤ 1 if and only if x ≤ 0.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMV name=\"x\"/></OMA><OMI>1</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMI>0</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Compare exp(x) to exp(0)=1 using monotonicity.",
+      "sketch_steps": [
+        "setup: Bind the two real inputs or the displayed real input.",
+        "monotonicity: Use strict monotonicity of the real exponential function.",
+        "translate: Move the equality or order relation between the exponential values and exponents.",
+        "conclude: State the requested equivalence over the real numbers."
+      ],
+      "lean_witness": "example (x : ℝ) : Real.exp x ≤ 1 ↔ x ≤ 0 := Real.exp_le_one_iff"
+    },
+    {
+      "id": "exlog_expand_log_cube_positive",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithm_laws",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if x > 0 then ln(x^3) = 3ln(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>3</OMI><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the logarithm power rule after retaining the positive argument condition.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record strict positivity for each variable logarithm argument.",
+        "domain: Derive positivity and nonzeroness of every product, quotient, or power used inside ln.",
+        "rule: Apply the relevant logarithm or exponential inverse rule.",
+        "normalize: Rearrange the resulting real sum, difference, or integer multiple.",
+        "conclude: State the equality with its positive-domain hypotheses intact."
+      ],
+      "lean_witness": "example (x : ℝ) (_hx : 0 < x) : Real.log (x^3) = 3 * Real.log x := by simpa using Real.log_pow x 3"
+    },
+    {
+      "id": "exlog_expand_log_fourth_power_positive",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithm_laws",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if x > 0 then ln(x^4) = 4ln(x).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>4</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>4</OMI><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the logarithm power rule after retaining the positive argument condition.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record strict positivity for each variable logarithm argument.",
+        "domain: Derive positivity and nonzeroness of every product, quotient, or power used inside ln.",
+        "rule: Apply the relevant logarithm or exponential inverse rule.",
+        "normalize: Rearrange the resulting real sum, difference, or integer multiple.",
+        "conclude: State the equality with its positive-domain hypotheses intact."
+      ],
+      "lean_witness": "example (x : ℝ) (_hx : 0 < x) : Real.log (x^4) = 4 * Real.log x := by simpa using Real.log_pow x 4"
+    },
+    {
+      "id": "exlog_expand_log_product_three_positive",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithm_laws",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x, y, and z, if x > 0, y > 0, and z > 0 then ln(xyz) = ln(x) + ln(y) + ln(z).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"y\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"z\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"y\"/></OMA><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"z\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the product rule twice, preserving positivity of all three factors.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record strict positivity for each variable logarithm argument.",
+        "domain: Derive positivity and nonzeroness of every product, quotient, or power used inside ln.",
+        "rule: Apply the relevant logarithm or exponential inverse rule.",
+        "normalize: Rearrange the resulting real sum, difference, or integer multiple.",
+        "conclude: State the equality with its positive-domain hypotheses intact."
+      ],
+      "lean_witness": "example (x y z : ℝ) (hx : 0 < x) (hy : 0 < y) (hz : 0 < z) : Real.log (x*y*z) = Real.log x + Real.log y + Real.log z := by\n  rw [Real.log_mul (mul_ne_zero (ne_of_gt hx) (ne_of_gt hy)) (ne_of_gt hz), Real.log_mul (ne_of_gt hx) (ne_of_gt hy)]"
+    },
+    {
+      "id": "exlog_expand_log_quotient_product_positive",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithm_laws",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x, y, and z, if x > 0, y > 0, and z > 0 then ln(x/(yz)) = ln(x) - ln(y) - ln(z).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"y\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"z\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMA></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"z\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the quotient rule, then split the denominator with the product rule.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record strict positivity for each variable logarithm argument.",
+        "domain: Derive positivity and nonzeroness of every product, quotient, or power used inside ln.",
+        "rule: Apply the relevant logarithm or exponential inverse rule.",
+        "normalize: Rearrange the resulting real sum, difference, or integer multiple.",
+        "conclude: State the equality with its positive-domain hypotheses intact."
+      ],
+      "lean_witness": "example (x y z : ℝ) (hx : 0 < x) (hy : 0 < y) (hz : 0 < z) : Real.log (x / (y*z)) = Real.log x - Real.log y - Real.log z := by\n  rw [Real.log_div (ne_of_gt hx) (mul_ne_zero (ne_of_gt hy) (ne_of_gt hz)), Real.log_mul (ne_of_gt hy) (ne_of_gt hz)]\n  ring"
+    },
+    {
+      "id": "exlog_expand_log_product_quotient_positive",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithm_laws",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x, y, and z, if x > 0, y > 0, and z > 0 then ln(xy/z) = ln(x) + ln(y) - ln(z).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/><OMV name=\"z\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"z\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"y\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"z\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA><OMV name=\"z\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"z\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Apply the quotient rule after the product rule in the numerator.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record strict positivity for each variable logarithm argument.",
+        "domain: Derive positivity and nonzeroness of every product, quotient, or power used inside ln.",
+        "rule: Apply the relevant logarithm or exponential inverse rule.",
+        "normalize: Rearrange the resulting real sum, difference, or integer multiple.",
+        "conclude: State the equality with its positive-domain hypotheses intact."
+      ],
+      "lean_witness": "example (x y z : ℝ) (hx : 0 < x) (hy : 0 < y) (hz : 0 < z) : Real.log (x*y / z) = Real.log x + Real.log y - Real.log z := by\n  rw [Real.log_div (mul_ne_zero (ne_of_gt hx) (ne_of_gt hy)) (ne_of_gt hz), Real.log_mul (ne_of_gt hx) (ne_of_gt hy)]"
+    },
+    {
+      "id": "exlog_expand_log_square_quotient_positive",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithm_laws",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, if x > 0 and y > 0 then ln(x^2/y) = 2ln(x) - ln(y).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Combine the quotient rule with the square power rule.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record strict positivity for each variable logarithm argument.",
+        "domain: Derive positivity and nonzeroness of every product, quotient, or power used inside ln.",
+        "rule: Apply the relevant logarithm or exponential inverse rule.",
+        "normalize: Rearrange the resulting real sum, difference, or integer multiple.",
+        "conclude: State the equality with its positive-domain hypotheses intact."
+      ],
+      "lean_witness": "example (x y : ℝ) (hx : 0 < x) (hy : 0 < y) : Real.log (x^2 / y) = 2 * Real.log x - Real.log y := by\n  rw [Real.log_div (pow_ne_zero _ (ne_of_gt hx)) (ne_of_gt hy), Real.log_pow]\n  norm_num"
+    },
+    {
+      "id": "exlog_expand_log_quotient_square_positive",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithm_laws",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, if x > 0 and y > 0 then ln(x/y^2) = ln(x) - 2ln(y).",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMV name=\"x\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"y\"/><OMI>2</OMI></OMA></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMI>2</OMI><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Combine the quotient rule with the square power rule in the denominator.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record strict positivity for each variable logarithm argument.",
+        "domain: Derive positivity and nonzeroness of every product, quotient, or power used inside ln.",
+        "rule: Apply the relevant logarithm or exponential inverse rule.",
+        "normalize: Rearrange the resulting real sum, difference, or integer multiple.",
+        "conclude: State the equality with its positive-domain hypotheses intact."
+      ],
+      "lean_witness": "example (x y : ℝ) (hx : 0 < x) (hy : 0 < y) : Real.log (x / y^2) = Real.log x - 2 * Real.log y := by\n  rw [Real.log_div (ne_of_gt hx) (pow_ne_zero _ (ne_of_gt hy)), Real.log_pow]\n  norm_num"
+    },
+    {
+      "id": "exlog_expand_exp_log_product_positive",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithm_exponential_inverses",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if x > 0 and y > 0 then exp(ln(x) + ln(y)) = xy.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"y\"/></OMA></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the exponential addition formula and cancel each logarithm on its positive domain.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record strict positivity for each variable logarithm argument.",
+        "domain: Derive positivity and nonzeroness of every product, quotient, or power used inside ln.",
+        "rule: Apply the relevant logarithm or exponential inverse rule.",
+        "normalize: Rearrange the resulting real sum, difference, or integer multiple.",
+        "conclude: State the equality with its positive-domain hypotheses intact."
+      ],
+      "lean_witness": "example (x y : ℝ) (hx : 0 < x) (hy : 0 < y) : Real.exp (Real.log x + Real.log y) = x*y := by\n  rw [Real.exp_add, Real.exp_log hx, Real.exp_log hy]"
+    },
+    {
+      "id": "exlog_expand_exp_log_quotient_positive",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithm_exponential_inverses",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if x > 0 and y > 0 then exp(ln(x) - ln(y)) = x/y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"y\"/></OMA></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the exponential subtraction formula and cancel each logarithm on its positive domain.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record strict positivity for each variable logarithm argument.",
+        "domain: Derive positivity and nonzeroness of every product, quotient, or power used inside ln.",
+        "rule: Apply the relevant logarithm or exponential inverse rule.",
+        "normalize: Rearrange the resulting real sum, difference, or integer multiple.",
+        "conclude: State the equality with its positive-domain hypotheses intact."
+      ],
+      "lean_witness": "example (x y : ℝ) (hx : 0 < x) (hy : 0 < y) : Real.exp (Real.log x - Real.log y) = x/y := by\n  rw [Real.exp_sub, Real.exp_log hx, Real.exp_log hy]"
+    },
+    {
+      "id": "exlog_expand_log_exp_sum",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithm_exponential_inverses",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if exp(x+y) > 0 then ln(exp(x+y)) = x+y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMA><OMS cd=\"transc1\" name=\"exp\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "The explicit positive-domain premise certifies the logarithm input; then logarithm and exponential cancel.",
+      "sketch_steps": [
+        "setup: Bind the real variables and record strict positivity for each variable logarithm argument.",
+        "domain: Derive positivity and nonzeroness of every product, quotient, or power used inside ln.",
+        "rule: Apply the relevant logarithm or exponential inverse rule.",
+        "normalize: Rearrange the resulting real sum, difference, or integer multiple.",
+        "conclude: State the equality with its positive-domain hypotheses intact."
+      ],
+      "lean_witness": "example (x y : ℝ) (_h : 0 < Real.exp (x+y)) : Real.log (Real.exp (x+y)) = x+y := Real.log_exp _"
+    },
+    {
+      "id": "exlog_expand_log_zero_iff_one_positive",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithmic_equations",
+      "difficulty": "standard",
+      "canonical_statement": "For every real x, if x > 0 then ln(x) = 0 if and only if x = 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "On the positive real domain, logarithm is injective and ln(1)=0.",
+      "sketch_steps": [
+        "setup: Bind the positive real variables and retain their strict positivity hypotheses.",
+        "domain: Verify that both logarithm arguments lie in the positive real domain.",
+        "monotonicity: Apply strict monotonicity of ln on the positive reals.",
+        "translate: Transfer the displayed equality or order relation back to the original variables.",
+        "conclude: State the positive-domain equivalence."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : 0 < x) : Real.log x = 0 ↔ x = 1 := by\n  constructor\n  · exact Real.eq_one_of_pos_of_log_eq_zero hx\n  · rintro rfl\n    exact Real.log_one"
+    },
+    {
+      "id": "exlog_expand_log_eq_iff_positive",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithmic_equations",
+      "difficulty": "advanced",
+      "canonical_statement": "For all real x and y, if x > 0 and y > 0 then ln(x) = ln(y) if and only if x = y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"eq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Exponentiate both sides on the positive real domain to use the inverse law.",
+      "sketch_steps": [
+        "setup: Bind the positive real variables and retain their strict positivity hypotheses.",
+        "domain: Verify that both logarithm arguments lie in the positive real domain.",
+        "monotonicity: Apply strict monotonicity of ln on the positive reals.",
+        "translate: Transfer the displayed equality or order relation back to the original variables.",
+        "conclude: State the positive-domain equivalence."
+      ],
+      "lean_witness": "example (x y : ℝ) (hx : 0 < x) (hy : 0 < y) : Real.log x = Real.log y ↔ x = y := by\n  constructor\n  · intro h\n    have h_exp := congrArg Real.exp h\n    simpa only [Real.exp_log hx, Real.exp_log hy] using h_exp\n  · intro h\n    rw [h]"
+    },
+    {
+      "id": "exlog_expand_log_lt_iff_positive",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithmic_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if x > 0 and y > 0 then ln(x) < ln(y) if and only if x < y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use strict monotonicity of logarithm on positive real inputs.",
+      "sketch_steps": [
+        "setup: Bind the positive real variables and retain their strict positivity hypotheses.",
+        "domain: Verify that both logarithm arguments lie in the positive real domain.",
+        "monotonicity: Apply strict monotonicity of ln on the positive reals.",
+        "translate: Transfer the displayed equality or order relation back to the original variables.",
+        "conclude: State the positive-domain equivalence."
+      ],
+      "lean_witness": "example (x y : ℝ) (hx : 0 < x) (hy : 0 < y) : Real.log x < Real.log y ↔ x < y := Real.log_lt_log_iff hx hy"
+    },
+    {
+      "id": "exlog_expand_log_le_iff_positive",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithmic_inequalities",
+      "difficulty": "standard",
+      "canonical_statement": "For all real x and y, if x > 0 and y > 0 then ln(x) ≤ ln(y) if and only if x ≤ y.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/><OMV name=\"y\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"y\"/><OMS cd=\"setname1\" name=\"R\"/></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"y\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"y\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMV name=\"y\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use monotonicity and injectivity of logarithm on positive real inputs.",
+      "sketch_steps": [
+        "setup: Bind the positive real variables and retain their strict positivity hypotheses.",
+        "domain: Verify that both logarithm arguments lie in the positive real domain.",
+        "monotonicity: Apply strict monotonicity of ln on the positive reals.",
+        "translate: Transfer the displayed equality or order relation back to the original variables.",
+        "conclude: State the positive-domain equivalence."
+      ],
+      "lean_witness": "example (x y : ℝ) (hx : 0 < x) (hy : 0 < y) : Real.log x ≤ Real.log y ↔ x ≤ y := Real.log_le_log_iff hx hy"
+    },
+    {
+      "id": "exlog_expand_log_positive_iff",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithmic_inequalities",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, if x > 0 then 0 < ln(x) if and only if 1 < x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMI>0</OMI><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMI>1</OMI><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Compare ln(x) with ln(1)=0 on the positive real domain.",
+      "sketch_steps": [
+        "setup: Bind the positive real variables and retain their strict positivity hypotheses.",
+        "domain: Verify that both logarithm arguments lie in the positive real domain.",
+        "monotonicity: Apply strict monotonicity of ln on the positive reals.",
+        "translate: Transfer the displayed equality or order relation back to the original variables.",
+        "conclude: State the positive-domain equivalence."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : 0 < x) : 0 < Real.log x ↔ 1 < x := Real.log_pos_iff hx.le"
+    },
+    {
+      "id": "exlog_expand_log_negative_iff",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithmic_inequalities",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, if x > 0 then ln(x) < 0 if and only if x < 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Compare ln(x) with ln(1)=0 on the positive real domain.",
+      "sketch_steps": [
+        "setup: Bind the positive real variables and retain their strict positivity hypotheses.",
+        "domain: Verify that both logarithm arguments lie in the positive real domain.",
+        "monotonicity: Apply strict monotonicity of ln on the positive reals.",
+        "translate: Transfer the displayed equality or order relation back to the original variables.",
+        "conclude: State the positive-domain equivalence."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : 0 < x) : Real.log x < 0 ↔ x < 1 := Real.log_neg_iff hx"
+    },
+    {
+      "id": "exlog_expand_log_nonnegative_iff",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithmic_inequalities",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, if x > 0 then 0 ≤ ln(x) if and only if 1 ≤ x.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>0</OMI><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMI>1</OMI><OMV name=\"x\"/></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the positive-domain logarithm order equivalence against one.",
+      "sketch_steps": [
+        "setup: Bind the positive real variables and retain their strict positivity hypotheses.",
+        "domain: Verify that both logarithm arguments lie in the positive real domain.",
+        "monotonicity: Apply strict monotonicity of ln on the positive reals.",
+        "translate: Transfer the displayed equality or order relation back to the original variables.",
+        "conclude: State the positive-domain equivalence."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : 0 < x) : 0 ≤ Real.log x ↔ 1 ≤ x := Real.log_nonneg_iff hx"
+    },
+    {
+      "id": "exlog_expand_log_nonpositive_iff",
+      "profile": "current_openmath_profile",
+      "domain": "high_school_real_exponentials_and_logarithms",
+      "level": "high_school",
+      "topic": "logarithmic_inequalities",
+      "difficulty": "introductory",
+      "canonical_statement": "For every real x, if x > 0 then ln(x) ≤ 0 if and only if x ≤ 1.",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cd=\"quant1\" name=\"forall\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"set1\" name=\"in\"/><OMV name=\"x\"/><OMS cd=\"setname1\" name=\"R\"/></OMA><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"gt\"/><OMV name=\"x\"/><OMI>0</OMI></OMA><OMA><OMS cd=\"logic1\" name=\"equivalent\"/><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMA><OMS cd=\"transc1\" name=\"ln\"/><OMV name=\"x\"/></OMA><OMI>0</OMI></OMA><OMA><OMS cd=\"relation1\" name=\"leq\"/><OMV name=\"x\"/><OMI>1</OMI></OMA></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "proof_strategy": "Use the positive-domain logarithm order equivalence against one.",
+      "sketch_steps": [
+        "setup: Bind the positive real variables and retain their strict positivity hypotheses.",
+        "domain: Verify that both logarithm arguments lie in the positive real domain.",
+        "monotonicity: Apply strict monotonicity of ln on the positive reals.",
+        "translate: Transfer the displayed equality or order relation back to the original variables.",
+        "conclude: State the positive-domain equivalence."
+      ],
+      "lean_witness": "example (x : ℝ) (hx : 0 < x) : Real.log x ≤ 0 ↔ x ≤ 1 := Real.log_nonpos_iff hx.le"
+    }
+  ]
+}

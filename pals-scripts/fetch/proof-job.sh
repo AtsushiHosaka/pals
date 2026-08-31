@@ -27,13 +27,18 @@ if [[ -z "${proof_job_id}" ]]; then
   exit 2
 fi
 
+if [[ -z "${PALS_ACCESS_TOKEN:-}" ]]; then
+  echo "error: PALS_ACCESS_TOKEN is required; anonymous proof-job fetch is disabled" >&2
+  exit 64
+fi
+
 out_dir="$(make_output_dir proof-job)"
 
 curl -fsS \
+  -H "Authorization: Bearer ${PALS_ACCESS_TOKEN}" \
   "${PALS_API_BASE_URL}/v1/proof-jobs/${proof_job_id}" \
   > "${out_dir}/proof-job.json"
 
 redact_file_in_place "${out_dir}/proof-job.json"
 write_manifest "${out_dir}" "proof-job"
 echo "${out_dir}"
-

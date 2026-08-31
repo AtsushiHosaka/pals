@@ -1,0 +1,712 @@
+{
+  "schema_version": "pals.typed-real-analysis-v1-expansion-sealed-manifest.v1",
+  "status": "sealed_local_authoring_revision_not_admitted",
+  "seal": {
+    "scope": "local typed-real-analysis-v1 r2 expansion authoring evidence only",
+    "admission": "not admitted to the generic DB, seed, embedding index, or PFI package",
+    "revision": "typed-real-analysis-v1-expansion-r2"
+  },
+  "immutability_contract": {
+    "digest_algorithm": "sha256 over exact UTF-8 field bytes",
+    "structural_openmath_c14n": "canonical_openmath_xml is produced only after typed-real-analysis-v1 validation and profile C14N; raw authoring XML remains separately hashed.",
+    "profile_c14n": "Every card is revalidated from raw openmath_xml and compared with its profile-separated canonical bytes before this manifest digest is written.",
+    "mutation_rule": "Any change to statement, proof strategy, sketch, XML, signature trace, Lean target, Lean proof, design digest, or profile registry creates a new sealed revision and manifest digest."
+  },
+  "profile": {
+    "id": "typed-real-analysis-v1",
+    "typed_cdbase": "urn:pals:openmath:typed-math:v1",
+    "profile_design_path": "docs/typed-real-analysis-v1-expansion-r2-design.md",
+    "profile_design_sha256": "sha256:743ac1c493acaa79ffd0955fd08e7b8beeba77ac114c2b4d97c656f2af09b480",
+    "registry_path": "pals_agent/content_dictionaries/typed-real-analysis-v1-registry.json",
+    "registry_digest": "sha256:4883e72556db23da39aa2def8bc6669cb8007a4b5f2f851f9c3e2e7a06fa05df",
+    "registry_status": "implemented isolated validator and registry; sealed local evidence only, no DB admission is implied"
+  },
+  "lean_receipt": {
+    "witness_path": "docs/typed-real-analysis-v1-expansion-r2-authoring-witnesses.lean",
+    "witness_file_sha256": "sha256:5cb51a0e99e65aa0c76460bdd08cf5bed7e12983b06050fb83dd26f304c5b9ed",
+    "verification_status": "compiled when generator is run with --verify-lean; sealed evidence only, not an OpenMath-to-Lean translation receipt"
+  },
+  "adopted_card_count": 15,
+  "excluded_witness_count": 0,
+  "witness_audit_count": 15,
+  "cards": [
+    {
+      "id": "real_analysis_eps_delta_affine_shift",
+      "canonical_statement": "For every real a and every positive real ε, the affine function x ↦ x+3 has a positive δ such that |x-a|<δ implies |(x+3)-(a+3)|<ε.",
+      "proof_strategy": "Choose δ=ε and cancel the common affine shift in the output distance.",
+      "sketch_steps": [
+        "Fix arbitrary real a and positive real ε.",
+        "Choose δ=ε.",
+        "The choice is positive by the hypothesis on ε.",
+        "Let x satisfy |x-a|<δ.",
+        "Cancel the shared constant 3 and conclude the required output bound."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR></OMBVAR><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"eps\"/></OMATTR></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>0</OMI></OMA><OMV name=\"eps\"/></OMA><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"exists\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"delta\"/></OMATTR></OMBVAR><OMA><OMS cd=\"logic1\" name=\"and\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>0</OMI></OMA><OMV name=\"delta\"/></OMA><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMV name=\"a\"/></OMA></OMA><OMV name=\"delta\"/></OMA><OMA><OMS cd=\"relation1\" name=\"lt\"/><OMA><OMS cd=\"arith1\" name=\"abs\"/><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>3</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"a\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>3</OMI></OMA></OMA></OMA></OMA><OMV name=\"eps\"/></OMA></OMA></OMBIND></OMA></OMBIND></OMA></OMBIND></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:exists",
+        "typed1:Real",
+        "realanalysis1:of_int",
+        "arith1:plus",
+        "arith1:minus",
+        "arith1:abs",
+        "relation1:lt",
+        "logic1:and",
+        "logic1:implies"
+      ],
+      "lean_target": "∀ (a ε : ℝ), 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ, |x - a| < δ → |(x + 3) - (a + 3)| < ε",
+      "lean_witness": "example (a ε : ℝ) (hε : 0 < ε) :\n    ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ, |x - a| < δ → |(x + 3) - (a + 3)| < ε := by\n  refine ⟨ε, hε, ?_⟩\n  intro x hx\n  simpa using hx",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_09_epsilon_delta_affine_shift"
+      ],
+      "alignment": "The XML is a complete raw ε–δ formula for x↦x+3. The Lean witness has the same quantifiers and proves the target by δ=ε and cancellation of the shared shift.",
+      "openmath_xml_sha256": "sha256:2ebfb4fb27516e3b2686b7ef6100de8ef17f54ae0f02f2cd5f5b1cca470f98a0",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"relation1\" name=\"lt\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>0</n1:OMI></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"exists\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" name=\"and\"></n1:OMS><n1:OMA><n1:OMS cd=\"relation1\" name=\"lt\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>0</n1:OMI></n1:OMA><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"relation1\" name=\"lt\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"abs\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"minus\"></n1:OMS><n1:OMV name=\"v4\"></n1:OMV><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"relation1\" name=\"lt\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"abs\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"minus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"plus\"></n1:OMS><n1:OMV name=\"v4\"></n1:OMV><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>3</n1:OMI></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" name=\"plus\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>3</n1:OMI></n1:OMA></n1:OMA></n1:OMA></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMA></n1:OMBIND></n1:OMA></n1:OMBIND></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:61a813cbc353ed999950528366ff28efe2ce52331d5da80424e9d45b3f5c6718",
+      "canonical_statement_sha256": "sha256:4162fbbf1a130c22541aa9ec0cf8436d0b8b537616eb3f12976cb251e76dd427",
+      "lean_target_sha256": "sha256:cc41e85cd7a8d7b2f01892034a67ae62c53bb70b1330f6c9ef11ca44d13db2cc",
+      "lean_witness_sha256": "sha256:a75c494789d14635b20aa05b7f33b4a5e047986529c6f2036906af68013b39eb",
+      "source_witness_sha256": "sha256:a75c494789d14635b20aa05b7f33b4a5e047986529c6f2036906af68013b39eb",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_epsilon_delta_continuous_square",
+      "canonical_statement": "For every real a, x ↦ x^2 is ε–δ continuous at a.",
+      "proof_strategy": "Use the profile abbreviation whose fixed semantics is the raw ε–δ continuity predicate, then prove polynomial continuity.",
+      "sketch_steps": [
+        "Fix an arbitrary real a.",
+        "Recognize x↦x² as a real polynomial.",
+        "Use continuity of polynomial operations at a.",
+        "Lower the abbreviation to ContinuousAt in the pinned Lean semantics.",
+        "Conclude ε–δ continuity at a."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"epsilon_delta_continuous_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND><OMV name=\"a\"/></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Real",
+        "realanalysis1:lambda",
+        "realanalysis1:epsilon_delta_continuous_at",
+        "arith1:power"
+      ],
+      "lean_target": "∀ a : ℝ, ContinuousAt (fun x : ℝ => x ^ 2) a",
+      "lean_witness": "example (a : ℝ) : ContinuousAt (fun x : ℝ => x ^ 2) a := by\n  fun_prop",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_10_epsilon_delta_continuous_square"
+      ],
+      "alignment": "realanalysis1:epsilon_delta_continuous_at has the profile-fixed raw ε–δ semantics; for this polynomial it lowers to the exact Lean ContinuousAt target.",
+      "openmath_xml_sha256": "sha256:3ca8d0b223019e4a63d1f759e524e6a7064e8bf0aed6b2c67826da3fd26e0919",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"epsilon_delta_continuous_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:8d691d8dd5b3a46214982d53d399dad4b8e7634eb44bdd0f3c4504f005d324ca",
+      "canonical_statement_sha256": "sha256:7a0e6982deeb331b0566dbccda43ba471a6c14f57bf401a23602d7442fabe265",
+      "lean_target_sha256": "sha256:41fb820ce8a3564e625f011f3f96a63175995d8e6207f62c83a55003856f6b03",
+      "lean_witness_sha256": "sha256:efac1bd678214558bc9fbffe06811f083868e8041c9d921a2f942a8b30951a15",
+      "source_witness_sha256": "sha256:efac1bd678214558bc9fbffe06811f083868e8041c9d921a2f942a8b30951a15",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_continuous_cubic_minus_linear",
+      "canonical_statement": "For every real a, x ↦ x^3-2x is continuous at a.",
+      "proof_strategy": "Build continuity from powers, scalar multiplication, and subtraction.",
+      "sketch_steps": [
+        "Fix an arbitrary real a.",
+        "The cubic map is continuous at a.",
+        "The linear map x↦2x is continuous at a.",
+        "Use closure under subtraction.",
+        "Conclude continuity of x³-2x at a."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"continuous_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>2</OMI></OMA><OMV name=\"x\"/></OMA></OMA></OMBIND><OMV name=\"a\"/></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Real",
+        "realanalysis1:lambda",
+        "realanalysis1:continuous_at",
+        "realanalysis1:of_int",
+        "arith1:power",
+        "arith1:times",
+        "arith1:minus"
+      ],
+      "lean_target": "∀ a : ℝ, ContinuousAt (fun x : ℝ => x ^ 3 - 2 * x) a",
+      "lean_witness": "example (a : ℝ) : ContinuousAt (fun x : ℝ => x ^ 3 - 2 * x) a := by\n  fun_prop",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_11_continuous_cubic_minus_linear"
+      ],
+      "alignment": "realanalysis1:continuous_at(f,a) lowers directly to ContinuousAt f a; the OpenMath polynomial body matches the Lean function after explicit integer-to-real lowering.",
+      "openmath_xml_sha256": "sha256:9542581b868774c45a22d5cb96b141f98a94788fc71b403d5de3ca1e1837baa3",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"continuous_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"minus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMI>3</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>2</n1:OMI></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:35ccb20ec40ad0a97c3e5460e346b15992c2359ea92f83bdfe61d717f1a24faa",
+      "canonical_statement_sha256": "sha256:8553a2f153d0b31a3cee37e88a1d3dd1663a8fc6d2c564c8bacdd9eaf86dc1a0",
+      "lean_target_sha256": "sha256:e5b07c170e0315c3eac857beb5847bc960b77443d358092aa246b4a967c8fef2",
+      "lean_witness_sha256": "sha256:5b25272c90b8a919731d02c939ce1ce7596a87b7f586d1752bba47d6bda180ec",
+      "source_witness_sha256": "sha256:5b25272c90b8a919731d02c939ce1ce7596a87b7f586d1752bba47d6bda180ec",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_continuous_reciprocal_nonzero",
+      "canonical_statement": "For every nonzero real a, x ↦ 1/x is continuous at a.",
+      "proof_strategy": "Use continuity of inversion with the explicit nonzero denominator premise.",
+      "sketch_steps": [
+        "Fix a real a with a≠0.",
+        "Represent the reciprocal as 1 divided by x.",
+        "The denominator is nonzero at a by the premise.",
+        "Apply continuity of inversion at a.",
+        "Conclude continuity of x↦1/x at a."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"a\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"continuous_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>1</OMI></OMA><OMV name=\"x\"/></OMA></OMBIND><OMV name=\"a\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Real",
+        "realanalysis1:lambda",
+        "realanalysis1:continuous_at",
+        "realanalysis1:of_int",
+        "arith1:divide",
+        "relation1:neq",
+        "logic1:implies"
+      ],
+      "lean_target": "∀ a : ℝ, a ≠ 0 → ContinuousAt (fun x : ℝ => 1 / x) a",
+      "lean_witness": "example (a : ℝ) (h : a ≠ 0) : ContinuousAt (fun x : ℝ => 1 / x) a := by\n  simpa only [one_div] using continuousAt_inv₀ h",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_12_continuous_reciprocal_nonzero"
+      ],
+      "alignment": "The XML carries a≠0 as a premise before continuous_at. It lowers exactly to the Lean inversion-continuity theorem; no denominator condition is inferred from prose.",
+      "openmath_xml_sha256": "sha256:5196d86c7dd27e68d34c4aa0d1a0f00f7da886a2c19f656091a389aa8884a3b1",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"relation1\" name=\"neq\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>0</n1:OMI></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"continuous_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"divide\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:6a1da8a8b5d2b1b0d792bfa8a68a56eeb4dd53ec887269ff5206cffb4028a640",
+      "canonical_statement_sha256": "sha256:e9fc3c9db271c950e64df607065d19b7ee41cd5220047a50f13819071c276ccd",
+      "lean_target_sha256": "sha256:34a4461f9e8f1046f8746d1620bf96965bb28f4b9b05a0f31b114559b838c232",
+      "lean_witness_sha256": "sha256:d1d52604c99cbd0bd900a83514616d4d02a1cc3060742b8bda43debc51f206bc",
+      "source_witness_sha256": "sha256:d1d52604c99cbd0bd900a83514616d4d02a1cc3060742b8bda43debc51f206bc",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_has_deriv_affine",
+      "canonical_statement": "For every real a, the derivative of 3x+5 at a is 3.",
+      "proof_strategy": "Combine the derivative of the identity with scalar multiplication and a constant shift.",
+      "sketch_steps": [
+        "Fix an arbitrary real a.",
+        "Differentiate the identity map at a.",
+        "Multiply the derivative by 3.",
+        "Adding the constant 5 leaves the derivative unchanged.",
+        "Record HasDerivAt with slope 3."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"has_deriv_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>3</OMI></OMA><OMV name=\"x\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>5</OMI></OMA></OMA></OMBIND><OMV name=\"a\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>3</OMI></OMA></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Real",
+        "realanalysis1:lambda",
+        "realanalysis1:has_deriv_at",
+        "realanalysis1:of_int",
+        "arith1:times",
+        "arith1:plus"
+      ],
+      "lean_target": "∀ a : ℝ, HasDerivAt (fun x : ℝ => 3 * x + 5) 3 a",
+      "lean_witness": "example (a : ℝ) : HasDerivAt (fun x : ℝ => 3 * x + 5) 3 a := by\n  simpa using ((hasDerivAt_id (x := a)).const_mul (3 : ℝ)).add_const (5 : ℝ)",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_13_has_deriv_affine"
+      ],
+      "alignment": "The function, point, and slope occupy the exact has_deriv_at signature slots and lower directly to HasDerivAt.",
+      "openmath_xml_sha256": "sha256:6231dfa32383744157dbe2afb75fb7b4996c4e7771308b8d223c746f4de19ccf",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"has_deriv_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"plus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>3</n1:OMI></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>5</n1:OMI></n1:OMA></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>3</n1:OMI></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:91699ae9a9d07c206ccc33e61b053f41cbb5e10dc10c4a5e7d79db63bb12a84b",
+      "canonical_statement_sha256": "sha256:69dc27ddf9aac6421fc3c79858460a5a113bd0ff16caf7ed957caddcc45a317e",
+      "lean_target_sha256": "sha256:7b2c56e14600cebe38bb5194aaf7793bfef681f03832853e4ec0c3edf88147d8",
+      "lean_witness_sha256": "sha256:e7add4b730cba481fd5de4ef2725cd7ac64edb60ca8f996a74eb6c4c01886abe",
+      "source_witness_sha256": "sha256:e7add4b730cba481fd5de4ef2725cd7ac64edb60ca8f996a74eb6c4c01886abe",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_has_deriv_sum_square_linear",
+      "canonical_statement": "For every real a, the derivative of x^2+3x at a is 2a+3.",
+      "proof_strategy": "Apply the sum rule to the square and linear terms and normalize the slope.",
+      "sketch_steps": [
+        "Fix an arbitrary real a.",
+        "Differentiate x² at a to obtain 2a.",
+        "Differentiate 3x at a to obtain 3.",
+        "Apply the derivative sum rule.",
+        "Normalize the resulting slope to 2a+3."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"has_deriv_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>3</OMI></OMA><OMV name=\"x\"/></OMA></OMA></OMBIND><OMV name=\"a\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>2</OMI></OMA><OMV name=\"a\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>3</OMI></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Real",
+        "realanalysis1:lambda",
+        "realanalysis1:has_deriv_at",
+        "realanalysis1:of_int",
+        "arith1:power",
+        "arith1:times",
+        "arith1:plus"
+      ],
+      "lean_target": "∀ a : ℝ, HasDerivAt (fun x : ℝ => x ^ 2 + 3 * x) (2 * a + 3) a",
+      "lean_witness": "example (a : ℝ) : HasDerivAt (fun x : ℝ => x ^ 2 + 3 * x) (2 * a + 3) a := by\n  convert! (hasDerivAt_pow 2 a).add (hasDerivAt_const_mul 3) using 1\n  all_goals ring",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_14_has_deriv_sum_square_linear"
+      ],
+      "alignment": "The XML is the same polynomial and slope as the Lean HasDerivAt target. The witness explicitly invokes the sum rule and normalizes algebraically.",
+      "openmath_xml_sha256": "sha256:469ae6e18f3f0fb4d8b6cfea5a40684f012b11fbec01b8dee37234127d1f419d",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"has_deriv_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"plus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>3</n1:OMI></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"arith1\" name=\"plus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>2</n1:OMI></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>3</n1:OMI></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:b0209a1fd9b78ba0db8e5930211b6b3798545490b95312452f2d8df5796bdbb7",
+      "canonical_statement_sha256": "sha256:d1766b49a324222bf572cc449add4bd28d7e462ea60617f3c53e8b8cda98541e",
+      "lean_target_sha256": "sha256:54de9d93aa4438485e2140104d8aff40cc964b8930aa541380f54f11b1c03b8e",
+      "lean_witness_sha256": "sha256:675e9c67c8fb5b19bec7e48ced07e1c8e89161f577b1defa3721299be3bf2027",
+      "source_witness_sha256": "sha256:675e9c67c8fb5b19bec7e48ced07e1c8e89161f577b1defa3721299be3bf2027",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_has_deriv_product_shifted_identity",
+      "canonical_statement": "For every real a, the derivative of (x+1)(x-1) at a is 2a.",
+      "proof_strategy": "Use the product rule after differentiating both shifted identity factors.",
+      "sketch_steps": [
+        "Fix an arbitrary real a.",
+        "Differentiate x+1 and x-1 at a.",
+        "Apply the product rule.",
+        "Substitute the two function values at a.",
+        "Simplify the slope to 2a."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"has_deriv_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMV name=\"x\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>1</OMI></OMA></OMA></OMA></OMBIND><OMV name=\"a\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>2</OMI></OMA><OMV name=\"a\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Real",
+        "realanalysis1:lambda",
+        "realanalysis1:has_deriv_at",
+        "realanalysis1:of_int",
+        "arith1:plus",
+        "arith1:minus",
+        "arith1:times"
+      ],
+      "lean_target": "∀ a : ℝ, HasDerivAt (fun x : ℝ => (x + 1) * (x - 1)) (2 * a) a",
+      "lean_witness": "example (a : ℝ) : HasDerivAt (fun x : ℝ => (x + 1) * (x - 1)) (2 * a) a := by\n  convert! ((hasDerivAt_id (x := a)).add_const 1).mul ((hasDerivAt_id (x := a)).sub_const 1) using 1\n  all_goals simp [id_eq]\n  all_goals ring",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_15_has_deriv_product_shifted_identity"
+      ],
+      "alignment": "The profile permits the product expression and an exact Real slope only. The Lean witness uses HasDerivAt.mul and no total derivative operator.",
+      "openmath_xml_sha256": "sha256:c9553dfa1ea52ea2424114ca7074799483e92da641e92f319bae99aa6a2b0bb6",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"has_deriv_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"plus\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" name=\"minus\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>2</n1:OMI></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:50e258e793d8572438f126b29b28cd914148980290ed03fd8c20bfd1622a06e9",
+      "canonical_statement_sha256": "sha256:9787f00eb4dd2872491b26f31c191896566a84bceb1548d1021651ddb9b2316b",
+      "lean_target_sha256": "sha256:f9cbf552cea2bf93a2e8a16ff4a85dd021a2e5a1e2900539e7476c2b69ef31ba",
+      "lean_witness_sha256": "sha256:acb510826366c5f3f7bc06cd755d324ed6b85c1251f4990b57ba46e12e58b58a",
+      "source_witness_sha256": "sha256:acb510826366c5f3f7bc06cd755d324ed6b85c1251f4990b57ba46e12e58b58a",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_has_deriv_chain_polynomial",
+      "canonical_statement": "For every real a, the derivative of (x^2+1)^3 at a is 3(a^2+1)^2(2a).",
+      "proof_strategy": "Apply the chain rule to the cube of the quadratic inner function.",
+      "sketch_steps": [
+        "Fix an arbitrary real a.",
+        "Differentiate the inner function x²+1 at a.",
+        "Apply the power rule to the outer third power.",
+        "Multiply the outer and inner derivative factors.",
+        "Record the exact HasDerivAt slope at a."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"has_deriv_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>1</OMI></OMA></OMA><OMI>3</OMI></OMA></OMBIND><OMV name=\"a\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>3</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"power\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"a\"/><OMI>2</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>1</OMI></OMA></OMA><OMI>2</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>2</OMI></OMA><OMV name=\"a\"/></OMA></OMA></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Real",
+        "realanalysis1:lambda",
+        "realanalysis1:has_deriv_at",
+        "realanalysis1:of_int",
+        "arith1:power",
+        "arith1:plus",
+        "arith1:times"
+      ],
+      "lean_target": "∀ a : ℝ, HasDerivAt (fun x : ℝ => (x ^ 2 + 1) ^ 3) (3 * (a ^ 2 + 1) ^ 2 * (2 * a)) a",
+      "lean_witness": "example (a : ℝ) : HasDerivAt (fun x : ℝ => (x ^ 2 + 1) ^ 3) (3 * (a ^ 2 + 1) ^ 2 * (2 * a)) a := by\n  convert! ((hasDerivAt_pow 2 a).add_const 1).pow 3 using 1\n  all_goals ring",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_16_has_deriv_chain_polynomial"
+      ],
+      "alignment": "The statement uses the predicate-valued has_deriv_at signature rather than a total derivative term. The Lean witness composes the exact polynomial derivative rules.",
+      "openmath_xml_sha256": "sha256:d2cdb9fa46ec11761562a350579b868a2b863bb0d6b67070c30597f1b2f35e29",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"has_deriv_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"plus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA><n1:OMI>3</n1:OMI></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>3</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"plus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>2</n1:OMI></n1:OMA><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:f4b21f98ca78bb93c11f0551202d915129a11efd1d56ab28b3d91095856c70fb",
+      "canonical_statement_sha256": "sha256:7ef754b2dd7c202b5cdc6ef944cf79da3fbeced23d0e533c9340988ed541931b",
+      "lean_target_sha256": "sha256:6b6dffee1735b5be85b28e3dfcd422ca1af159bc50e1a01eb61e3bf260fb3579",
+      "lean_witness_sha256": "sha256:0b236e93711599f29e3d07bd2cd52f6fa61587382dc5c95f48158b14d0e16c05",
+      "source_witness_sha256": "sha256:0b236e93711599f29e3d07bd2cd52f6fa61587382dc5c95f48158b14d0e16c05",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_differentiable_affine",
+      "canonical_statement": "For every real a, 3x+5 is differentiable at a.",
+      "proof_strategy": "Use differentiability closure for the identity, scalar multiplication, and constant addition.",
+      "sketch_steps": [
+        "Fix an arbitrary real a.",
+        "The identity map is differentiable at a.",
+        "Scale it by 3.",
+        "Add the constant 5.",
+        "Conclude differentiability at a."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"differentiable_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>3</OMI></OMA><OMV name=\"x\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>5</OMI></OMA></OMA></OMBIND><OMV name=\"a\"/></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Real",
+        "realanalysis1:lambda",
+        "realanalysis1:differentiable_at",
+        "realanalysis1:of_int",
+        "arith1:times",
+        "arith1:plus"
+      ],
+      "lean_target": "∀ a : ℝ, DifferentiableAt ℝ (fun x : ℝ => 3 * x + 5) a",
+      "lean_witness": "example (a : ℝ) : DifferentiableAt ℝ (fun x : ℝ => 3 * x + 5) a := by\n  fun_prop",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_17_differentiable_affine"
+      ],
+      "alignment": "The profile predicate lowers directly to DifferentiableAt ℝ. It records differentiability only, without assigning a total derivative value.",
+      "openmath_xml_sha256": "sha256:17b76ffaddef1c554d52dfc96d4c9b6f4d3dd0c49a03d7c84e66fe523d4c1652",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"differentiable_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"plus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>3</n1:OMI></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>5</n1:OMI></n1:OMA></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:181dd372b2494b773967df42359c50fc98da4ac985c0c08c85211c7af9c24539",
+      "canonical_statement_sha256": "sha256:d0e2338dc4bdb04a93b1bd20d759f12ab316f057dcb99c9cac26c406f6255b27",
+      "lean_target_sha256": "sha256:c87090d6c4ac999013f3c065fb3ea072b1c6c8e64942cbda2922cfe0cff6ebb4",
+      "lean_witness_sha256": "sha256:061ed6a96d564c34b014c66b638074e0d9e5fc20c6771fdced429e4aabbcf178",
+      "source_witness_sha256": "sha256:061ed6a96d564c34b014c66b638074e0d9e5fc20c6771fdced429e4aabbcf178",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_differentiable_product_polynomial",
+      "canonical_statement": "For every real a, (x^2+1)(x-1) is differentiable at a.",
+      "proof_strategy": "Use closure of differentiability under powers, addition, subtraction, and multiplication.",
+      "sketch_steps": [
+        "Fix an arbitrary real a.",
+        "Establish differentiability of x²+1 at a.",
+        "Establish differentiability of x-1 at a.",
+        "Apply closure under multiplication.",
+        "Conclude differentiability of the product at a."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"differentiable_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>1</OMI></OMA></OMA></OMA></OMBIND><OMV name=\"a\"/></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Real",
+        "realanalysis1:lambda",
+        "realanalysis1:differentiable_at",
+        "realanalysis1:of_int",
+        "arith1:power",
+        "arith1:plus",
+        "arith1:minus",
+        "arith1:times"
+      ],
+      "lean_target": "∀ a : ℝ, DifferentiableAt ℝ (fun x : ℝ => (x ^ 2 + 1) * (x - 1)) a",
+      "lean_witness": "example (a : ℝ) : DifferentiableAt ℝ (fun x : ℝ => (x ^ 2 + 1) * (x - 1)) a := by\n  fun_prop",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_18_differentiable_product_polynomial"
+      ],
+      "alignment": "Each OpenMath operation has a fixed Real signature. The Lean target is the same product and uses only DifferentiableAt closure rules.",
+      "openmath_xml_sha256": "sha256:c8e1218de9f334c34af23ec691e66ec9071d9d9d8965d673d0c9b7b1bcb5d4a0",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"differentiable_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"plus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" name=\"minus\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:9e84f29f11b579809ac2987fe40e0a453d5ba4b4b438c51055b2af5c593be9ef",
+      "canonical_statement_sha256": "sha256:2b7e47dee899ec2961e2ec272d3edc75c6038c6e8aca0cc0ca2916505ef203e7",
+      "lean_target_sha256": "sha256:b4b691bb86bd4e2f2bcb70e9dddb8d47d4bd4a419fe8a00e81312613873396ce",
+      "lean_witness_sha256": "sha256:67c55c52eede2b97c294db50f42806f5ee0626094ad428892a002937dce3a345",
+      "source_witness_sha256": "sha256:67c55c52eede2b97c294db50f42806f5ee0626094ad428892a002937dce3a345",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_differentiable_reciprocal_nonzero",
+      "canonical_statement": "For every nonzero real a, x ↦ 1/x is differentiable at a.",
+      "proof_strategy": "Apply differentiability of inversion after discharging the explicit nonzero denominator premise.",
+      "sketch_steps": [
+        "Fix a real a with a≠0.",
+        "Express the function as reciprocal of x.",
+        "Use the nonzero premise at the evaluation point.",
+        "Apply differentiability of inversion.",
+        "Conclude differentiability at a."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR></OMBVAR><OMA><OMS cd=\"logic1\" name=\"implies\"/><OMA><OMS cd=\"relation1\" name=\"neq\"/><OMV name=\"a\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>0</OMI></OMA></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"differentiable_at\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>1</OMI></OMA><OMV name=\"x\"/></OMA></OMBIND><OMV name=\"a\"/></OMA></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Real",
+        "realanalysis1:lambda",
+        "realanalysis1:differentiable_at",
+        "realanalysis1:of_int",
+        "arith1:divide",
+        "relation1:neq",
+        "logic1:implies"
+      ],
+      "lean_target": "∀ a : ℝ, a ≠ 0 → DifferentiableAt ℝ (fun x : ℝ => 1 / x) a",
+      "lean_witness": "example (a : ℝ) (h : a ≠ 0) : DifferentiableAt ℝ (fun x : ℝ => 1 / x) a := by\n  simpa only [one_div] using differentiableAt_inv (𝕜 := ℝ) h",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_19_differentiable_reciprocal_nonzero"
+      ],
+      "alignment": "The nonzero denominator is an explicit typed premise. This card uses differentiable_at only and does not smuggle in a derivative value at the excluded point.",
+      "openmath_xml_sha256": "sha256:1171232e5ab267d0bf5e7582cbcee1ddf99f72f16767c65292222c1a4ae525a4",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"relation1\" name=\"neq\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>0</n1:OMI></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"differentiable_at\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"divide\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:f238f501d8cf41ba60bbd343ddf12ea6364670942780c1fc47c0cf9d1f2579d4",
+      "canonical_statement_sha256": "sha256:b23e10b317cfab8d9e3b68db2eecbb89ccbbd225a13c3a4d97ef2c2014d554b5",
+      "lean_target_sha256": "sha256:eaac0f46880ff6159c4a2c3e0f4efa3fc9a6079bb98ead3df93957b20d6c4c73",
+      "lean_witness_sha256": "sha256:6d624817e03b5a7834cce7d82e4894e9a728ed40c176dd5fa75872a1aa20a7ea",
+      "source_witness_sha256": "sha256:6d624817e03b5a7834cce7d82e4894e9a728ed40c176dd5fa75872a1aa20a7ea",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_interval_integrable_affine_all_endpoints",
+      "canonical_statement": "For all real endpoints a and b, 3x+5 is interval-integrable from a to b.",
+      "proof_strategy": "Prove global continuity of the affine function and restrict it to the requested oriented interval.",
+      "sketch_steps": [
+        "Fix arbitrary real endpoints a and b.",
+        "Recognize 3x+5 as an affine continuous function.",
+        "Establish continuity on all real numbers.",
+        "Apply continuity-implies-interval-integrability for volume.",
+        "Conclude interval integrability from a to b."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"b\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"interval_integrable\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>3</OMI></OMA><OMV name=\"x\"/></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>5</OMI></OMA></OMA></OMBIND><OMV name=\"a\"/><OMV name=\"b\"/></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Real",
+        "realanalysis1:lambda",
+        "realanalysis1:interval_integrable",
+        "realanalysis1:of_int",
+        "arith1:times",
+        "arith1:plus"
+      ],
+      "lean_target": "∀ a b : ℝ, IntervalIntegrable (fun x : ℝ => 3 * x + 5) (MeasureTheory.volume : MeasureTheory.Measure ℝ) a b",
+      "lean_witness": "example (a b : ℝ) : IntervalIntegrable (fun x : ℝ => 3 * x + 5)\n    (MeasureTheory.volume : MeasureTheory.Measure ℝ) a b := by\n  exact (by fun_prop : Continuous (fun x : ℝ => 3 * x + 5)).intervalIntegrable (μ := (MeasureTheory.volume : MeasureTheory.Measure ℝ)) a b",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_20_interval_integrable_affine_all_endpoints"
+      ],
+      "alignment": "The profile's only integration predicate lowers to IntervalIntegrable f volume a b. No integral value or linearity equality is asserted.",
+      "openmath_xml_sha256": "sha256:a9d4f1d76bc7b2a9a143a5bf6a70b63beedd726a57fe6963c2f0913e240c5974",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"interval_integrable\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"plus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>3</n1:OMI></n1:OMA><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>5</n1:OMI></n1:OMA></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:a1d7045c099c3134b7700b9bc713935593f99e7b1deb103e1c7bc012e93f72f5",
+      "canonical_statement_sha256": "sha256:5a41f5ee9d126518b8cb044c32d0103d90dac71573587f3b9eb7a314b285baac",
+      "lean_target_sha256": "sha256:b226f445a93e2854eb8755a5cea4798614b7b82ee2a20e1302bbca7e78e51ba6",
+      "lean_witness_sha256": "sha256:01951dbf62233d0981144e4eb90315e8d57f2f1404d9f35b8362e95787b59788",
+      "source_witness_sha256": "sha256:01951dbf62233d0981144e4eb90315e8d57f2f1404d9f35b8362e95787b59788",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_interval_integrable_cubic_all_endpoints",
+      "canonical_statement": "For all real endpoints a and b, x^3-2x is interval-integrable from a to b.",
+      "proof_strategy": "Use global polynomial continuity to obtain interval integrability.",
+      "sketch_steps": [
+        "Fix arbitrary real endpoints a and b.",
+        "Recognize x³-2x as a polynomial function.",
+        "Establish its continuity on ℝ.",
+        "Apply the interval-integrability consequence of continuity.",
+        "Conclude interval integrability from a to b."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"b\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"interval_integrable\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>3</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>2</OMI></OMA><OMV name=\"x\"/></OMA></OMA></OMBIND><OMV name=\"a\"/><OMV name=\"b\"/></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Real",
+        "realanalysis1:lambda",
+        "realanalysis1:interval_integrable",
+        "realanalysis1:of_int",
+        "arith1:power",
+        "arith1:times",
+        "arith1:minus"
+      ],
+      "lean_target": "∀ a b : ℝ, IntervalIntegrable (fun x : ℝ => x ^ 3 - 2 * x) (MeasureTheory.volume : MeasureTheory.Measure ℝ) a b",
+      "lean_witness": "example (a b : ℝ) : IntervalIntegrable (fun x : ℝ => x ^ 3 - 2 * x)\n    (MeasureTheory.volume : MeasureTheory.Measure ℝ) a b := by\n  exact (by fun_prop : Continuous (fun x : ℝ => x ^ 3 - 2 * x)).intervalIntegrable (μ := (MeasureTheory.volume : MeasureTheory.Measure ℝ)) a b",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_21_interval_integrable_cubic_all_endpoints"
+      ],
+      "alignment": "The Lean receipt proves the exact IntervalIntegrable target for arbitrary real endpoints, matching the profile's oriented-interval predicate.",
+      "openmath_xml_sha256": "sha256:83ccd39c868568e991df9dfe012c128e4fc4aee25bf64a2363ae7ce58a2d7a5c",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"interval_integrable\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"minus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMV name=\"v3\"></n1:OMV><n1:OMI>3</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>2</n1:OMI></n1:OMA><n1:OMV name=\"v3\"></n1:OMV></n1:OMA></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:ed7c776571e5a6ef20e14ecff7d91e14a8df6b67d9ba1e0a624ab01c71bf0a9e",
+      "canonical_statement_sha256": "sha256:9ffa6d13f438b09fcfd9b49b73bca6ad32e5d5026236688a8072a035144659fb",
+      "lean_target_sha256": "sha256:c5e9d5c5103b1316c90473819304ddaf510a3ef6949bf517a44ef075cd65864c",
+      "lean_witness_sha256": "sha256:30bb651d731e96d6cc195cf470b8c5e78a05e3fb53a77623123cf82244565617",
+      "source_witness_sha256": "sha256:30bb651d731e96d6cc195cf470b8c5e78a05e3fb53a77623123cf82244565617",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_interval_integrable_product_all_endpoints",
+      "canonical_statement": "For all real endpoints a and b, (x^2+1)(x-1) is interval-integrable from a to b.",
+      "proof_strategy": "Use closure of continuous polynomials under products, then interval integrability.",
+      "sketch_steps": [
+        "Fix arbitrary real endpoints a and b.",
+        "Establish continuity of x²+1.",
+        "Establish continuity of x-1.",
+        "Multiply the continuous factors.",
+        "Apply continuity-implies-interval-integrability.",
+        "Conclude interval integrability from a to b."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"b\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"interval_integrable\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"times\"/><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>1</OMI></OMA></OMA><OMA><OMS cd=\"arith1\" name=\"minus\"/><OMV name=\"x\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>1</OMI></OMA></OMA></OMA></OMBIND><OMV name=\"a\"/><OMV name=\"b\"/></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Real",
+        "realanalysis1:lambda",
+        "realanalysis1:interval_integrable",
+        "realanalysis1:of_int",
+        "arith1:power",
+        "arith1:plus",
+        "arith1:minus",
+        "arith1:times"
+      ],
+      "lean_target": "∀ a b : ℝ, IntervalIntegrable (fun x : ℝ => (x ^ 2 + 1) * (x - 1)) (MeasureTheory.volume : MeasureTheory.Measure ℝ) a b",
+      "lean_witness": "example (a b : ℝ) : IntervalIntegrable (fun x : ℝ => (x ^ 2 + 1) * (x - 1))\n    (MeasureTheory.volume : MeasureTheory.Measure ℝ) a b := by\n  exact (by fun_prop : Continuous (fun x : ℝ => (x ^ 2 + 1) * (x - 1))).intervalIntegrable (μ := (MeasureTheory.volume : MeasureTheory.Measure ℝ)) a b",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_22_interval_integrable_product_all_endpoints"
+      ],
+      "alignment": "This is an integrability-only receipt. The profile does not contain an interval-integral value constructor, so no unsupported value claim is present.",
+      "openmath_xml_sha256": "sha256:821baaadd9f317ae8d3f93b452f7bfd2959d8cf00c17e456494758933e4d6c9a",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"interval_integrable\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"times\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"plus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMV name=\"v3\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" name=\"minus\"></n1:OMS><n1:OMV name=\"v3\"></n1:OMV><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:28debd065243951832ae3d3ca25112cec65faff53aa2babe9d7d5572f0ce90c4",
+      "canonical_statement_sha256": "sha256:d3786fa9755bf21e7a4caeead9779ee80b8097370deed92543395d3db4fdc93a",
+      "lean_target_sha256": "sha256:1f7f74dd5da7d2c91b0e9f424702676b7770229c4c4c7ead6d5fb16e537b7126",
+      "lean_witness_sha256": "sha256:0fc69f60807550df3c33fb9263549d7d24b4058f1e3cbf2c78ff48f4677375e4",
+      "source_witness_sha256": "sha256:0fc69f60807550df3c33fb9263549d7d24b4058f1e3cbf2c78ff48f4677375e4",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    },
+    {
+      "id": "real_analysis_interval_integrable_reciprocal_quadratic",
+      "canonical_statement": "For all real endpoints a and b, x ↦ 1/(x^2+1) is interval-integrable from a to b.",
+      "proof_strategy": "Show the denominator is positive everywhere, obtain global continuity, then use interval integrability.",
+      "sketch_steps": [
+        "Fix arbitrary real endpoints a and b.",
+        "Observe x²+1 is strictly positive for every real x.",
+        "Use that fact to establish continuity of the reciprocal quotient.",
+        "Apply continuity-implies-interval-integrability for volume.",
+        "Conclude interval integrability from a to b."
+      ],
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"forall\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"a\"/></OMATTR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"b\"/></OMATTR></OMBVAR><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"interval_integrable\"/><OMBIND><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"lambda\"/><OMBVAR><OMATTR><OMATP><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"type\"/><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"typed1\" name=\"Real\"/></OMATP><OMV name=\"x\"/></OMATTR></OMBVAR><OMA><OMS cd=\"arith1\" name=\"divide\"/><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>1</OMI></OMA><OMA><OMS cd=\"arith1\" name=\"plus\"/><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA><OMA><OMS cdbase=\"urn:pals:openmath:typed-math:v1\" cd=\"realanalysis1\" name=\"of_int\"/><OMI>1</OMI></OMA></OMA></OMA></OMBIND><OMV name=\"a\"/><OMV name=\"b\"/></OMA></OMBIND></OMOBJ>",
+      "signature_trace": [
+        "typed1:forall",
+        "typed1:Real",
+        "realanalysis1:lambda",
+        "realanalysis1:interval_integrable",
+        "realanalysis1:of_int",
+        "arith1:power",
+        "arith1:plus",
+        "arith1:divide"
+      ],
+      "lean_target": "∀ a b : ℝ, IntervalIntegrable (fun x : ℝ => 1 / (x ^ 2 + 1)) (MeasureTheory.volume : MeasureTheory.Measure ℝ) a b",
+      "lean_witness": "example (a b : ℝ) : IntervalIntegrable (fun x : ℝ => 1 / (x ^ 2 + 1))\n    (MeasureTheory.volume : MeasureTheory.Measure ℝ) a b := by\n  have hcont : Continuous (fun x : ℝ => 1 / (x ^ 2 + 1)) := by\n    apply continuous_const.div (by fun_prop)\n    intro x\n    nlinarith [sq_nonneg x]\n  exact hcont.intervalIntegrable (μ := (MeasureTheory.volume : MeasureTheory.Measure ℝ)) a b",
+      "source_witness_ids": [
+        "typed_real_analysis_witness_23_interval_integrable_reciprocal_quadratic"
+      ],
+      "alignment": "The denominator safety is discharged in the Lean witness for every real x. The typed statement itself asserts only interval_integrable, never an integral value.",
+      "openmath_xml_sha256": "sha256:549929ec7fa4877d770df40a63bd0db9dcdd6c56f5271a682050d8dfab312ac4",
+      "canonical_openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"interval_integrable\"></n1:OMS><n1:OMBIND><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"lambda\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"Real\"></n1:OMS></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"arith1\" name=\"divide\"></n1:OMS><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" name=\"plus\"></n1:OMS><n1:OMA><n1:OMS cd=\"arith1\" name=\"power\"></n1:OMS><n1:OMV name=\"v3\"></n1:OMV><n1:OMI>2</n1:OMI></n1:OMA><n1:OMA><n1:OMS cd=\"realanalysis1\" cdbase=\"urn:pals:openmath:typed-math:v1\" name=\"of_int\"></n1:OMS><n1:OMI>1</n1:OMI></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "canonical_openmath_xml_sha256": "sha256:287e9c2d842f04ab24a01fcfd3051deee7432ea0feb135bb3abe0e4e73343465",
+      "canonical_statement_sha256": "sha256:9c71b18f51e251bf55a94535f9e25000534e52126b4fa4c22c46b4005983d36a",
+      "lean_target_sha256": "sha256:b6bddcd5a89aaf8bd3d169729256635ffef5131045ff7801802790c2689570f8",
+      "lean_witness_sha256": "sha256:6d0458a177d9d2cfd91a2ac96d266e501a08a949b07d5e078a2514918620f6a2",
+      "source_witness_sha256": "sha256:6d0458a177d9d2cfd91a2ac96d266e501a08a949b07d5e078a2514918620f6a2",
+      "profile_validation_status": "validated_local_typed_real_analysis_v1_sealed",
+      "admission_status": "sealed-local-authoring-revision: not a DB Draft or a translation receipt"
+    }
+  ],
+  "witness_audit": [
+    {
+      "witness_id": "typed_real_analysis_witness_09_epsilon_delta_affine_shift",
+      "source_sha256": "sha256:a75c494789d14635b20aa05b7f33b4a5e047986529c6f2036906af68013b39eb",
+      "disposition": "adopted",
+      "card_id": "real_analysis_eps_delta_affine_shift",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_10_epsilon_delta_continuous_square",
+      "source_sha256": "sha256:efac1bd678214558bc9fbffe06811f083868e8041c9d921a2f942a8b30951a15",
+      "disposition": "adopted",
+      "card_id": "real_analysis_epsilon_delta_continuous_square",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_11_continuous_cubic_minus_linear",
+      "source_sha256": "sha256:5b25272c90b8a919731d02c939ce1ce7596a87b7f586d1752bba47d6bda180ec",
+      "disposition": "adopted",
+      "card_id": "real_analysis_continuous_cubic_minus_linear",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_12_continuous_reciprocal_nonzero",
+      "source_sha256": "sha256:d1d52604c99cbd0bd900a83514616d4d02a1cc3060742b8bda43debc51f206bc",
+      "disposition": "adopted",
+      "card_id": "real_analysis_continuous_reciprocal_nonzero",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_13_has_deriv_affine",
+      "source_sha256": "sha256:e7add4b730cba481fd5de4ef2725cd7ac64edb60ca8f996a74eb6c4c01886abe",
+      "disposition": "adopted",
+      "card_id": "real_analysis_has_deriv_affine",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_14_has_deriv_sum_square_linear",
+      "source_sha256": "sha256:675e9c67c8fb5b19bec7e48ced07e1c8e89161f577b1defa3721299be3bf2027",
+      "disposition": "adopted",
+      "card_id": "real_analysis_has_deriv_sum_square_linear",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_15_has_deriv_product_shifted_identity",
+      "source_sha256": "sha256:acb510826366c5f3f7bc06cd755d324ed6b85c1251f4990b57ba46e12e58b58a",
+      "disposition": "adopted",
+      "card_id": "real_analysis_has_deriv_product_shifted_identity",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_16_has_deriv_chain_polynomial",
+      "source_sha256": "sha256:0b236e93711599f29e3d07bd2cd52f6fa61587382dc5c95f48158b14d0e16c05",
+      "disposition": "adopted",
+      "card_id": "real_analysis_has_deriv_chain_polynomial",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_17_differentiable_affine",
+      "source_sha256": "sha256:061ed6a96d564c34b014c66b638074e0d9e5fc20c6771fdced429e4aabbcf178",
+      "disposition": "adopted",
+      "card_id": "real_analysis_differentiable_affine",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_18_differentiable_product_polynomial",
+      "source_sha256": "sha256:67c55c52eede2b97c294db50f42806f5ee0626094ad428892a002937dce3a345",
+      "disposition": "adopted",
+      "card_id": "real_analysis_differentiable_product_polynomial",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_19_differentiable_reciprocal_nonzero",
+      "source_sha256": "sha256:6d624817e03b5a7834cce7d82e4894e9a728ed40c176dd5fa75872a1aa20a7ea",
+      "disposition": "adopted",
+      "card_id": "real_analysis_differentiable_reciprocal_nonzero",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_20_interval_integrable_affine_all_endpoints",
+      "source_sha256": "sha256:01951dbf62233d0981144e4eb90315e8d57f2f1404d9f35b8362e95787b59788",
+      "disposition": "adopted",
+      "card_id": "real_analysis_interval_integrable_affine_all_endpoints",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_21_interval_integrable_cubic_all_endpoints",
+      "source_sha256": "sha256:30bb651d731e96d6cc195cf470b8c5e78a05e3fb53a77623123cf82244565617",
+      "disposition": "adopted",
+      "card_id": "real_analysis_interval_integrable_cubic_all_endpoints",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_22_interval_integrable_product_all_endpoints",
+      "source_sha256": "sha256:0fc69f60807550df3c33fb9263549d7d24b4058f1e3cbf2c78ff48f4677375e4",
+      "disposition": "adopted",
+      "card_id": "real_analysis_interval_integrable_product_all_endpoints",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    },
+    {
+      "witness_id": "typed_real_analysis_witness_23_interval_integrable_reciprocal_quadratic",
+      "source_sha256": "sha256:6d0458a177d9d2cfd91a2ac96d266e501a08a949b07d5e078a2514918620f6a2",
+      "disposition": "adopted",
+      "card_id": "real_analysis_interval_integrable_reciprocal_quadratic",
+      "three_way_alignment": "statement, complete typed OpenMath, and Lean target/witness are manually reviewed as the same proposition"
+    }
+  ],
+  "excluded_witnesses": [],
+  "manifest_payload_sha256": "sha256:c6d88083acb368123eb81276d70ec910b2a0f655d4af9d463e65af8a4dbb3124"
+}
