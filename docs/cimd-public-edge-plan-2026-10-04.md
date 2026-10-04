@@ -15,7 +15,8 @@ Miniの同期済みAPI baseは `c0062c38eb6bef3b470cb827a2ded869700fd051`。
 共有MacBook checkoutは他担当の変更で進んでいるため、HEADやdirty全体をMiniへ同期しない。
 base/after SHA・archive SHA、migration・role・client・公開経路一覧を渡し、stagingと別DBで確認した署名付きchild releaseを使う。
 既存checkout、通常release、稼働DB、会計データを保持する。
-API upstreamは `127.0.0.1:8000`。Tunnelの接続先は、Miniが検証したローカルedgeの別portとし、APIを直接指さない。
+API upstreamは `127.0.0.1:8000`。通常API edgeは `127.0.0.1:18000` / Host `api.palschat.site` とMiniから報告された。
+その現行allowlistにはCIMDを含まない。この追加配備後の検証済みedgeへTunnelを接続し、APIを直接指さない。
 
 ## API hostnameだけへexact pathとmethodを追加する
 

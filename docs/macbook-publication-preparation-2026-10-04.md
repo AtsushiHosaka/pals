@@ -38,7 +38,14 @@ APIのNXDOMAINは、まだ公開用レコードを追加していない現状と
 証明書の確認画像は同じディレクトリの `cloudflare-universal-ssl-active-20261004.jpg` に保持する。
 通常公開のローカルedge実装はMini担当、外部DNS/Tunnelの変更はこの担当に一元化する。
 MiniのAPIは `127.0.0.1:8000`、Webは `127.0.0.1:3000`。
-公開用edgeの別portはMiniで実装・検証後の正確な値を受領する。後述の13000/18000を確定値として扱わない。
+親からMini担当の通常edge検証結果を受領した。
+Web公開向けは `http://127.0.0.1:13000` / Host `palschat.site`、
+API公開向けは `http://127.0.0.1:18000` / Host `api.palschat.site`。
+内部Caddyは8080/8081、non-root、cap-drop、read-only、admin無効。
+許可6経路の匿名401、拒否77件の404、誤Host404、Web signin200、正規CORS200/外部400をMiniで確認したという報告である。
+SSE fixtureは逐次転送・Bearer保持を通したが、実認証SSEの証拠ではない。
+現在は一時loopback Webに向けた検証configであり、公開直前にMiniが署名済み正式Web `b40fd…` へ戻し、
+production configとhealthを確認する。CIMD追加はない。
 通常公開の合格条件と公開ルート変更の承認は、NS変更の承認とは別に残る。
 別CIMD依頼の追加経路は[レビュー用の公開案](cimd-public-edge-plan-2026-10-04.md)に分け、通常公開の必須条件へ加えない。
 同担当から、本人許可による既存poolのEssentials変更・専用public client追加・API roleの読み取りpolicy追加を報告された。
