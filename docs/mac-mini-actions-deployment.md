@@ -2,7 +2,7 @@
 
 更新日: 2026年10月4日。対象はPALSの運用者。最初は「有効化の順序」まで読み、設定や更新プログラムを実装するときに後半の契約を参照する。
 
-## GitHub側の実行入口を追加した。実機の更新は未接続
+## GitHub側の検査は成功。実機更新はAWS再ログインとcontrollerの仕上げ待ち
 
 親リポジトリの `.github/workflows/deploy-macmini.yml` が、mainへのpushと手動実行を受け付ける。親のコミットと、そのコミットが参照するsubmoduleを取得し、専用のMac mini runnerで `pals-scripts/deploy-macmini.py` を実行する。
 
@@ -17,6 +17,10 @@ runnerは、GitHub Actionsから仕事を受け取る実行プログラム。親
 Miniの手動接続では保存済みgh認証を使えたが、[実runnerでの診断](https://github.com/AtsushiHosaka/pals/actions/runs/37204088395) ではloginとprivate repository accessがともに利用不可だった。runnerのLaunchAgentを保全して `SessionCreate=false` に変更し、idle状態で再起動した。[変更後のcheckout-check](https://github.com/AtsushiHosaka/pals/actions/runs/37205359405) は成功し、保存済み認証と親・全submoduleのSHA一致を実runnerで確認できた。認証情報の抽出や、新しいGitHub secretの作成は行っていない。
 
 MiniはOrbStackへ移行し、回答2件・利用量10行を含む74テーブル、権限、DB識別子、volume・host marker、署名済みimageの一致と公開復帰を確認した。[移行後のrunner-check](https://github.com/AtsushiHosaka/pals/actions/runs/37203849915) も成功した。Actionsは `/Users/hosakaatsushi/.orbstack/bin/docker` とcontext `orbstack` を使う。通常更新のホスト設定とcontrollerへの接続は継続中。
+
+[実runnerのpreflight](https://github.com/AtsushiHosaka/pals/actions/runs/37205576721) は成功した。これはソース・ホスト設定・Docker接続の検査で、実更新は行わない。通常更新用の3イメージはMiniでbuild済み。controllerの終了時処理と、途中で止まったコンテナ作成の再開処理は独立レビューの指摘を修正中。
+
+2026年10月4日14:01 UTC、Miniの既存 `pals-prod-member` SSOが期限切れで、資格情報brokerの更新とworkerが停止していることを確認した。API・Web・DB・公開edgeは稼働している。本人にMini側での再ログインを依頼済み。ログイン後、既存brokerと旧workerを復帰し、署名付き実更新を検証してから自動連動を有効にする。ONの追加承認待ちではない。現在の認証方式では、SSO失効時に無人での資格情報更新と配備が停止する。
 
 既存のMac用DB初期化は、空のDBへの初回適用と同一署名の再実行に限定される。通常のAPI・Web・workerを新しいコミットへ継続更新するプログラムは、まだこの入口に接続されていない。初回用の `sign-and-apply-production-release.py` や `--apply-mac` を、自動更新の代わりに呼ばない。
 
@@ -64,6 +68,8 @@ MiniはOrbStackへ移行し、回答2件・利用量10行を含む74テーブル
 DB移行を伴うv2は、旧署名に一致する23段階のregistryを保持し、`project-materials` と `project-materials-ocr` の追加だけを許可する。追加するmanifest・SQLのdigestを新署名に固定し、旧schemaの一致・処理の完了・権限を検査してから、DDLと更新admissionを同じトランザクションで適用する。既存回答の書き換えや任意migrationの実行は許可しない。CIMD childが存在するDBや、新しいDB・volumeへの移行はこの契約で扱わない。
 
 API側の通常更新とDB移行は [pals-api `ddb0c8d`](https://github.com/AtsushiHosaka/pals-api/commit/ddb0c8d9d8f24bcfb8a67184001bdef76faa1865) でpush済み。最新ソースのv1と、旧23段階から25段階へのv2を隔離した実PostgreSQLで検証し、旧データ・ACLの維持、DDLとadmissionの一括rollback、commit後の通信失敗の再観測を確認した。関連unit 230件も成功した。署名テストは実EC鍵を使うローカル検証であり、Miniの実KMSとサービス切替を通した検証は未実施。CIMD専用のAPI child配備や初回署名スクリプトは、3サービスの継続更新を代用しない。
+
+[継続更新の追加試験 `c616968`](https://github.com/AtsushiHosaka/pals-api/commit/c616968bca527ef6ca0b35e58c0a4e6808b5f5be) では、実23段階からv2 seq2へ進み、さらに新しい親・全ソース・3イメージを持つv1 seq3へ更新できた。同ファイルの19試験が成功し、旧データ・ACL、最終admissionの全18項目一致、v1でDDLがないことを確認した。Docker通信はfixtureを使い、DBとEC署名は実処理で検証している。
 
 controllerは既存の本番用ロックを更新・復旧の全期間保持する。APIの更新・再観測CLIには別の専用ロックを渡す。同じinodeを親と子が別々に取得して待ち合う構成にしない。commit結果が不明な場合は、署名と現行admissionを読み取りで照合する。候補が現行なら候補サービスで復旧し、旧リリースが現行なら旧サービスを再開できる。どちらとも確認できなければ公開を停止したまま運用者へ知らせる。DBのadmissionを旧値へ戻す処理は行わない。
 
