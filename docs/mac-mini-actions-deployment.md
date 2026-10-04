@@ -1,8 +1,8 @@
 # Mac miniの自動デプロイを有効にする手順
 
-更新日: 2026年10月4日。対象はPALSの運用者。最初は「有効化の順序」まで読み、設定や更新プログラムを実装するときに後半の契約を参照する。
+更新日: 2026年10月5日。対象はPALSの運用者。最初は「有効化の順序」まで読み、設定や更新プログラムを実装するときに後半の契約を参照する。
 
-## GitHub側の検査は成功。実機更新はAWS再ログインとcontrollerの仕上げ待ち
+## ホスト検証は成功。実runnerのmacOS許可待ち
 
 親リポジトリの `.github/workflows/deploy-macmini.yml` が、mainへのpushと手動実行を受け付ける。親のコミットと、そのコミットが参照するsubmoduleを取得し、専用のMac mini runnerで `pals-scripts/deploy-macmini.py` を実行する。
 
@@ -10,19 +10,25 @@ runnerは、GitHub Actionsから仕事を受け取る実行プログラム。親
 
 登録前のGitHub側検査は [初回Actions run](https://github.com/AtsushiHosaka/pals/actions/runs/37180834429) で成功した。その後、Environment `macmini` をmain限定で作成し、`MACMINI_CHECKOUT_AUTH=host-gh` と、ホスト設定の絶対パス `MACMINI_DEPLOY_CONFIG` を登録した。新しいprivate submodule用secretは作成していない。
 
-登録後、`MACMINI_RUNNER_READY=true` を設定した。[Miniでのrunner-check](https://github.com/AtsushiHosaka/pals/actions/runs/37186033515) は成功し、`Darwin arm64`、Apple Git 2.54.0、Python 3.9.6、Docker `linux aarch64` を確認した。本番更新jobはskip。`MACMINI_DEPLOY_READY` と `MACMINI_AUTO_DEPLOY` は未設定のままである。
+登録後、`MACMINI_RUNNER_READY=true` を設定した。[Miniでのrunner-check](https://github.com/AtsushiHosaka/pals/actions/runs/37186033515) は成功し、`Darwin arm64`、Apple Git 2.54.0、Python 3.9.6、Docker `linux aarch64` を確認した。当時、本番更新jobはskipで、`MACMINI_DEPLOY_READY` と `MACMINI_AUTO_DEPLOY` は未設定だった。
 
 ユーザーは自動デプロイのONを許可済み。元のworkspaceでは、途中で止まったcloneがindex未作成・作業ファイルなしの状態で、Gitから全ファイル削除と表示されていた。元の領域を保持し、専用の固定checkout `macmini-deploy` だけを使う。初期化の再開は、Gitのindex lockと既存indexを置き換えない作成処理を使い、作業ファイルを強制上書きしない。実Git・競合・認証helper継承・プロセス終了・出力秘匿を含む30テストが成功した。
 
 Miniの手動接続では保存済みgh認証を使えたが、[実runnerでの診断](https://github.com/AtsushiHosaka/pals/actions/runs/37204088395) ではloginとprivate repository accessがともに利用不可だった。runnerのLaunchAgentを保全して `SessionCreate=false` に変更し、idle状態で再起動した。[変更後のcheckout-check](https://github.com/AtsushiHosaka/pals/actions/runs/37205359405) は成功し、保存済み認証と親・全submoduleのSHA一致を実runnerで確認できた。認証情報の抽出や、新しいGitHub secretの作成は行っていない。
 
-MiniはOrbStackへ移行し、回答2件・利用量10行を含む74テーブル、権限、DB識別子、volume・host marker、署名済みimageの一致と公開復帰を確認した。[移行後のrunner-check](https://github.com/AtsushiHosaka/pals/actions/runs/37203849915) も成功した。Actionsは `/Users/hosakaatsushi/.orbstack/bin/docker` とcontext `orbstack` を使う。通常更新のホスト設定とcontrollerへの接続は継続中。
+MiniはOrbStackへ移行し、回答2件・利用量10行を含む74テーブル、権限、DB識別子、volume・host marker、署名済みimageの一致と公開復帰を確認した。[移行後のrunner-check](https://github.com/AtsushiHosaka/pals/actions/runs/37203849915) も成功した。Actionsは `/Users/hosakaatsushi/.orbstack/bin/docker` とcontext `orbstack` を使い、通常更新controllerもこのcontextへ接続している。
 
-[実runnerのpreflight](https://github.com/AtsushiHosaka/pals/actions/runs/37205576721) は成功した。これはソース・ホスト設定・Docker接続の検査で、実更新は行わない。通常更新用の3イメージはMiniでbuild済み。controllerの終了時処理と、途中で止まったコンテナ作成の再開処理は独立レビューの指摘を修正中。
+[実runnerのpreflight](https://github.com/AtsushiHosaka/pals/actions/runs/37205576721) は成功した。これはソース・ホスト設定・Docker接続の検査で、実更新は行わない。通常更新用の3イメージはMiniでbuild済み。controllerの終了時処理と、途中で止まったコンテナ作成の再開処理は独立レビュー後に修正した。
 
-2026年10月4日14:01 UTC、Miniの既存 `pals-prod-member` SSOが期限切れで、資格情報brokerの更新とworkerが停止していることを確認した。API・Web・DB・公開edgeは稼働している。本人にMini側での再ログインを依頼済み。ログイン後、既存brokerと旧workerを復帰し、署名付き実更新を検証してから自動連動を有効にする。ONの追加承認待ちではない。現在の認証方式では、SSO失効時に無人での資格情報更新と配備が停止する。
+2026年10月4日14:01 UTC、Miniの既存 `pals-prod-member` SSOが期限切れで、資格情報brokerの更新とworkerが停止していることを確認した。本人の再ログイン後、同じAWS identityを確認し、14:24 UTCに既存brokerと旧workerのreadyを確認した。workerのCID・imageは同一で、署名やDB更新は行っていない。現在の認証方式では、SSO失効時に無人での資格情報更新と配備が停止する。
 
-既存のMac用DB初期化は、空のDBへの初回適用と同一署名の再実行に限定される。通常のAPI・Web・workerを新しいコミットへ継続更新するプログラムは、まだこの入口に接続されていない。初回用の `sign-and-apply-production-release.py` や `--apply-mac` を、自動更新の代わりに呼ばない。
+controllerの終了・復旧処理は修正済み。実subprocessでtimeout・SIGTERM・親のSIGKILLを検証し、子孫終了までロックを保持できた。実OrbStackの隔離試験では、同じCIDへの不足networkの補完と、更新結果がunknown・other・観測失敗の場合の公開edge停止を確認した。余分な権限やホスト共有を拒否する試験も成功した。workerの独立policy directoryを読み取り専用で渡し、新workerの認証チェックも成功した。[親15f493fのpreflight](https://github.com/AtsushiHosaka/pals/actions/runs/37209518920) も成功した。
+
+稼働API用roleはKMSのGetPublicKeyを許可していないため、配備専用のnative処理には既存release-signerの900秒STS sessionを使う。認証情報はメモリと専用プロセスの環境変数で扱い、保存・ログ出力・稼働コンテナへの受け渡しをしない。IAMは変更していない。設置controllerのSHA256は `8034a5349376cf7eeed1b74aeebae3e20c94e5000a5a998521e3982a1908807a`、authorityは `99d14e0776db294006cf042f8e0c5718d49b172e6fc32114723d7a3e111b0053`。関連32テストと、既存KMSでの公開鍵取得・旧署名検証が成功した。
+
+[手動の実更新](https://github.com/AtsushiHosaka/pals/actions/runs/37211520009) は親 `fca2dde` の取得を通過したが、配備用Pythonの起動時に停止した。macOSのTCC記録で、同じPython PIDがDocumentsFolderの承認待ちになっていることを確認した。責任主体はrunner起動元の `node`。Miniの画面でも「node」から「書類」へのアクセス許可が表示されており、本人操作を依頼した。検証を中止し、`MACMINI_DEPLOY_READY=false` に戻した。署名・DB更新・サービス切替には未到達で、現行admissionはsequence1、旧サービスは稼働している。`MACMINI_AUTO_DEPLOY` は引き続き未設定。許可後に実更新を再検証する。ONの追加承認待ちではない。
+
+既存のMac用DB初期化は、空のDBへの初回適用と同一署名の再実行に限定される。通常のAPI・Web・workerを新しいコミットへ継続更新するプログラムは、ホストの入口へ接続済みで、実runnerからの配備検証を残している。初回用の `sign-and-apply-production-release.py` や `--apply-mac` を、自動更新の代わりに呼ばない。
 
 関連する制約は [Mac PostgreSQL admission](../specs/domainless-production-bootstrap/mac-postgres-admission.md) と [10月4日の公開準備](macbook-publication-preparation-2026-10-04.md) にある。Miniの「検証 PALS本番起動」チャットでは、本番の起動・復元試験が進行中だった。設定を追加する前に、同チャットの最新状況を確認する。
 
