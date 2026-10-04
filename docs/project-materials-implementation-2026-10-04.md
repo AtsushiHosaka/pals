@@ -1,4 +1,4 @@
-# Project attachments: implemented upload and viewing
+# Project attachments: upload, OCR and AI answers
 
 Implemented on 2026-10-04 in `pals-api` and `pals-webfront`, and applied to the existing `pals-local` API/Web/PostgreSQL services. The public deployment destination has not been confirmed; this evidence does not establish a release to palschat.site.
 
@@ -26,6 +26,22 @@ Runtime evidence and synthetic files are task-local under `/private/tmp/pals-mat
 
 The synthetic three-page PDF is retained in the local test account's project `b61b5941-7406-45b4-a77b-916273489244` for manual inspection. The PNG used to verify deletion was removed; all four disposable database fixtures were cleaned up.
 
+## OCR and material answers follow-up
+
+The follow-up implements automatic page-by-page ingestion, actual model input and authenticated page citations. Commits: API `27ab863`, agent `04c2528`, frontend `11c3885`; all were pushed to their main branches. The OCR dispatcher runs in the long-running ASGI API process used by the verified local Docker stack. Text PDFs use PDFium extraction; scanned PDF pages and PNG/JPEG images use local Tesseract with English, Japanese, simplified Chinese and traditional Chinese language data. Mixed pages preserve the text layer and raster OCR. Japanese/CJK spacing normalization supports lexical full-text and CJK substring retrieval. This is lexical retrieval, not an embedding-based semantic index.
+
+Durable queued/processing/ready/failed jobs persist each completed page, recover expired leases after restart, display page progress, and allow failed reading to be retried. A material becomes ready only after every page is committed. A release-window backfill also detects files inserted by an older API after the migration. Per-page subprocess bounds are 55 seconds, 45 CPU seconds and 1.5 GB address space; ingestion uses one job at a time per API instance. OCR subprocesses receive no application credentials. Deleting a file fences late extraction and answer publication.
+
+At admission, every attached material must be ready; processing or failed materials produce an explicit user-facing error. The current query selects at most twelve page excerpts, three thousand characters per page and twenty thousand characters overall. An immutable RFC8785/SHA-256 snapshot binds those exact excerpts, original content hashes and owning project to the quote and request. Clarification/retry uses the same snapshot. The private endpoint requires a live matching claim, and rechecks owner/project/source availability. The API validates each published citation's page, filename, hash and exact excerpt, then holds the project lock through settlement. Deleted/unavailable sources turn the result into a failure and release its usage reservation.
+
+The agent sends the same selected untrusted OCR excerpts into proposition preflight, answer generation and fresh independent QA. It does not treat OCR as verified mathematics or as instructions. A document/exercise reference requires the full extracted proposition to be displayed and explicitly confirmed before proof generation; this confirmation is checked deterministically against prior turns. Actual provider input counts include the material text, and normal per-call token permits/receipts and success-only settlement remain enforced.
+
+The UI displays extraction progress, failed-reading retry and readiness in all four existing UI languages. Answers display material filenames, page numbers and bound excerpts; clicking a citation opens that exact page through the existing authenticated PNG preview. Missing/deleted files never open a different source. Account/project changes abort outstanding source lookups and revoke preview URLs.
+
+Verification used both clean exports containing only this chat's changes and the reused local services. Clean API unit/regression checks, agent material/worker/metering tests, frontend material/citation tests and TypeScript passed. Real PostgreSQL tests verified request admission, claim-bound pages, settlement replay, deletion during generation and quota release. Separate durable ingestion processed and committed all 1,000 pages. The host unit runner lacks Tesseract and skips only the real OCR raster test; the Docker image includes the actual language data and was used for runtime extraction. Actual Japanese PNG, scanned PDF and mixed text/raster PDF extraction all passed; the mixed page retained both its text header and raster body. Real OCR can still misread individual characters, so these results do not claim exact transcription.
+
+The real authenticated flow used a synthetic Japanese image in the existing test project: OCR completed, the AI displayed the exact proposition about n(n+1) being even, the confirmation button resumed generation, and a real model plus independent QA produced a persisted answer with a citation to image page one. The citation opened its original page in Chrome. The final token summary recorded 3,073 utilization tokens and no remaining reservation; the preceding clarification consumed no utilization tokens. Task-local evidence is in `/private/tmp/pals-materials-ocr/` and is not committed.
+
 ## Remaining proposal scope
 
-OCR, semantic search, using material contents as actual AI input, answer citations, inline chat image input, and paid-only project creation remain outside this attachment upload/viewing implementation. PDF validation/page viewing does not establish all-page OCR completion or proof readiness. These items in the older project-materials proposal must not be marked complete by these results.
+Inline chat image input and paid-only project creation remain outside these changes. The bounded lexical page selection does not claim that every original page is submitted to the provider, or that an exercise absent from the selected excerpts is absent from the whole document.
