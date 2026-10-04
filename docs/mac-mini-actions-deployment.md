@@ -10,6 +10,8 @@ runnerは、GitHub Actionsから仕事を受け取る実行プログラム。親
 
 登録前のGitHub側検査は [初回Actions run](https://github.com/AtsushiHosaka/pals/actions/runs/37180834429) で成功した。Environment・デプロイ設定・private submodule用のsecretは未登録であり、本番更新はまだ実行しない。
 
+登録後、`MACMINI_RUNNER_READY=true` を設定した。[Miniでのrunner-check](https://github.com/AtsushiHosaka/pals/actions/runs/37186033515) は成功し、`Darwin arm64`、Apple Git 2.54.0、Python 3.9.6、Docker `linux aarch64` を確認した。本番更新jobはskip。`MACMINI_DEPLOY_READY` と `MACMINI_AUTO_DEPLOY` は未設定のままである。
+
 既存のMac用DB初期化は、空のDBへの初回適用と同一署名の再実行に限定される。通常のAPI・Web・workerを新しいコミットへ継続更新するプログラムは、まだこの入口に接続されていない。初回用の `sign-and-apply-production-release.py` や `--apply-mac` を、自動更新の代わりに呼ばない。
 
 関連する制約は [Mac PostgreSQL admission](../specs/domainless-production-bootstrap/mac-postgres-admission.md) と [10月4日の公開準備](macbook-publication-preparation-2026-10-04.md) にある。Miniの「検証 PALS本番起動」チャットでは、本番の起動・復元試験が進行中だった。設定を追加する前に、同チャットの最新状況を確認する。
