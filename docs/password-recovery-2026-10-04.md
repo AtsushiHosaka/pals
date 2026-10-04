@@ -8,9 +8,15 @@ The account's creation timestamp also matched a successful email invitation.
 Invitation delivery alone was not treated as proof of mailbox ownership.
 
 Read-only AWS checks found no MFA, custom Lambda triggers, or browser-client
-secret. No pool configuration, user attributes, password, or delivery state was
-changed during the investigation. Mailbox ownership confirmation is pending;
-live recovery-code delivery and password confirmation remain unverified.
+secret. After the user confirmed ownership and access to the registered mailbox,
+the administrator set `email_verified=true` for this account only. A fresh
+`AdminGetUser` read confirmed the other attributes, enabled state, and account
+status were unchanged. The pool configuration and password were not changed.
+
+`ForgotPassword` then succeeded using the existing browser client and returned
+`CodeDeliveryDetails` with `DeliveryMedium=EMAIL` and `AttributeName=email`.
+Actual inbox receipt and confirmation of the user's new password remain for
+the user to complete. No password or confirmation code was obtained or stored.
 
 The web frontend now explains the known missing-recovery-address error and code
 delivery failures in all four UI languages. It retains the generic fallback for
