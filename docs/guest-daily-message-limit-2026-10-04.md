@@ -43,7 +43,9 @@ exact previous schema. Drift and key changes are rejected.
 
 Existing `pals-local-api-1` and `pals-local-webfront-1` were updated with versioned images
 `pals-api:guest-three-messages-20261004` and `pals-webfront:guest-three-messages-20261004`.
-The API image overlays only the guest files on the running materials image. The active Compose
+The API image overlays only the guest files on the running materials image. Parallel materials
+work later rebuilt the active API as `pals-api:materials-20261004`; its core, repository, route,
+and guest migration file hashes match this change exactly. The active Compose
 configuration was retained and extended with the git-ignored
 `.local/e2e/guest-three/compose.json` image override. PostgreSQL and the worker were reused.
 The schema release preserved the original guest key. Both services became healthy; `/health`
@@ -60,3 +62,7 @@ failure. The admission/state behavior is verified separately by the actual Postg
 
 Public production ingress/deployment was not changed or verified. Existing guest source files
 were already untracked before this chat; their earlier changes have not been staged or committed.
+
+Final inventory: the existing API and Web services are healthy; the unrelated reconciler is
+restarting. No service was duplicated. The source delta remains available locally for commit
+after resolving ownership of the previously untracked guest feature.
