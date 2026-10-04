@@ -77,4 +77,5 @@ callbackはCIMD担当が保持する実ダイアログの値を使い、ダイ�
 NSのみの承認や、Cognito専用client作成の承認を、このedge追加の承認として流用しない。
 
 実装照合: `pals-api/app/api/routes/cimd_oauth.py`、`external_mcp.py`、`app/core/cimd_oauth_config.py`。
-AWS追加設定の報告と未完了範囲は[CIMD担当の実接続記録](cimd-connection-evidence-2026-10-04.md)を参照する。
+AWS追加設定の報告と未完了範囲はCIMD担当の `docs/cimd-connection-evidence-2026-10-04.md` にある。
+この案の作成時には同記録が共有worktreeの未追跡ファイルだったため、この担当のcommitには含めない。

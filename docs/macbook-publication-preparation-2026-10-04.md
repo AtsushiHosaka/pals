@@ -18,8 +18,15 @@ Mini側の起動・本番認証・質問送信・復元試験は別担当が行�
 `ns01.trs-dns.com` と `.net` の両方が上記Cloudflare NS2件への委任を返した（TTL 900）。
 同 `.com` のDS照会はAA付きNOERROR・回答0件で、DSはない。
 Googleのrecursive DNSには旧NSがTTL 20,336、1.1.1.1には旧NSがTTL 172,800で残っていた。
-CloudflareはPendingのまま「ネームサーバを今すぐ確認」を1回要求済みで、確認中の表示を確認した。
+この照合時点のCloudflareはPendingで、「ネームサーバを今すぐ確認」を1回要求し、確認中の表示を確認した。
 レジストリの委任完了とrecursive cacheの更新・Cloudflareの有効化を区別する。
+
+05:46 UTCのCloudflare概要再読込でPending案内が消え、
+「ドメインはCloudflareによって保護されています」に変わった。zone有効化を確認した。
+続くエッジ証明書画面で `*.palschat.site, palschat.site` のUniversal証明書が
+「アクティブ」、有効期限 `2027-01-02` と確認できた。有料証明書や追加subscriptionは作成していない。
+その後のDNSレコード再読込でもACM CNAME1件だけで、root/API公開レコードはない。
+証明書の管理画面の状態はアプリへ外部HTTPS接続できる証拠ではなく、公開後の実接続確認は残る。
 
 ACM CNAMEは旧Route 53とCloudflareの権威DNSから同じ値・TTL 300で返ることを切替前に確認した。
 Cloudflare DNSSECは未有効で、DNSレコードは保持ACM CNAME1件だけ。
@@ -28,11 +35,15 @@ Cloudflare DNSSECは未有効で、DNSレコードは保持ACM CNAME1件だけ�
 APIのNXDOMAINは、まだ公開用レコードを追加していない現状と一致する。
 
 保存後の確認画像は `/tmp/pals-macbook-public-prep-20261004/onamae-ns-readback-20261004.jpg` に保持する。
+証明書の確認画像は同じディレクトリの `cloudflare-universal-ssl-active-20261004.jpg` に保持する。
 通常公開のローカルedge実装はMini担当、外部DNS/Tunnelの変更はこの担当に一元化する。
 MiniのAPIは `127.0.0.1:8000`、Webは `127.0.0.1:3000`。
 公開用edgeの別portはMiniで実装・検証後の正確な値を受領する。後述の13000/18000を確定値として扱わない。
 通常公開の合格条件と公開ルート変更の承認は、NS変更の承認とは別に残る。
 別CIMD依頼の追加経路は[レビュー用の公開案](cimd-public-edge-plan-2026-10-04.md)に分け、通常公開の必須条件へ加えない。
+同担当から、本人許可による既存poolのEssentials変更・専用public client追加・API roleの読み取りpolicy追加を報告された。
+これはMacBook公開担当のAWS変更ではなく、以下の04:05〜04:13 UTCの照合後の別作業である。
+通常Web clientが維持されたという報告を親へ共有し、Mini配備前の実Cognito検査は担当の証拠で照合する。
 
 ## 同期したコミットを公開作業の正本として保持する
 
