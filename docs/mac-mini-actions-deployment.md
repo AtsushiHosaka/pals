@@ -59,7 +59,7 @@ runnerは、GitHub Actionsから仕事を受け取る実行プログラム。親
 
 DB移行を伴うv2は、旧署名に一致する23段階のregistryを保持し、`project-materials` と `project-materials-ocr` の追加だけを許可する。追加するmanifest・SQLのdigestを新署名に固定し、旧schemaの一致・処理の完了・権限を検査してから、DDLと更新admissionを同じトランザクションで適用する。既存回答の書き換えや任意migrationの実行は許可しない。CIMD childが存在するDBや、新しいDB・volumeへの移行はこの契約で扱わない。
 
-API側の通常更新とDB移行は実装・検証中で、Miniの実KMSとサービス切替を通した検証は未実施。CIMD専用のAPI child配備や初回署名スクリプトは、3サービスの継続更新を代用しない。
+API側の通常更新とDB移行は [pals-api `ddb0c8d`](https://github.com/AtsushiHosaka/pals-api/commit/ddb0c8d9d8f24bcfb8a67184001bdef76faa1865) でpush済み。最新ソースのv1と、旧23段階から25段階へのv2を隔離した実PostgreSQLで検証し、旧データ・ACLの維持、DDLとadmissionの一括rollback、commit後の通信失敗の再観測を確認した。関連unit 230件も成功した。署名テストは実EC鍵を使うローカル検証であり、Miniの実KMSとサービス切替を通した検証は未実施。CIMD専用のAPI child配備や初回署名スクリプトは、3サービスの継続更新を代用しない。
 
 controllerは既存の本番用ロックを更新・復旧の全期間保持する。APIの更新・再観測CLIには別の専用ロックを渡す。同じinodeを親と子が別々に取得して待ち合う構成にしない。commit結果が不明な場合は、署名と現行admissionを読み取りで照合する。候補が現行なら候補サービスで復旧し、旧リリースが現行なら旧サービスを再開できる。どちらとも確認できなければ公開を停止したまま運用者へ知らせる。DBのadmissionを旧値へ戻す処理は行わない。
 
