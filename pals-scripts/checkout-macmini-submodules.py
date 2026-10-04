@@ -298,18 +298,27 @@ def verify_exact_source(
 
 
 def execute(source: Path, revision: str) -> dict:
-    require_runner_checkout(source, dict(os.environ))
     environment = checkout_environment(dict(os.environ))
-    validate_parent(source, revision, environment)
+    try:
+        require_runner_checkout(source, dict(os.environ))
+        validate_parent(source, revision, environment)
+    except CheckoutError as error:
+        raise CheckoutError("Runner source validation failed: " + str(error)) from None
     require(os.access(GH, os.X_OK), "The existing host GitHub CLI is unavailable.")
     arguments = authenticated_git(source)
-    capture([*arguments, "submodule", "sync", "--recursive"], environment)
-    capture(
-        [*arguments, "submodule", "update", "--init", "--recursive", "--checkout"],
-        environment,
-        timeout=300,
-    )
-    revisions = verify_exact_source(source, revision, environment)
+    try:
+        capture([*arguments, "submodule", "sync", "--recursive"], environment)
+        capture(
+            [*arguments, "submodule", "update", "--init", "--recursive", "--checkout"],
+            environment,
+            timeout=300,
+        )
+    except CheckoutError as error:
+        raise CheckoutError("Host-authenticated source fetch failed: " + str(error)) from None
+    try:
+        revisions = verify_exact_source(source, revision, environment)
+    except CheckoutError as error:
+        raise CheckoutError("Fetched source verification failed: " + str(error)) from None
     return {
         "status": "checkout-passed",
         "parent_sha": revision,
@@ -329,7 +338,11 @@ def main() -> int:
     except KeyboardInterrupt:
         print("Mac mini checkout interrupted; no deployment occurred.", file=sys.stderr)
         return 130
-    except (CheckoutError, OSError, ValueError, subprocess.SubprocessError):
+    except CheckoutError as error:
+        # Contract exceptions contain only code-owned diagnostics, never tool output.
+        print("Mac mini checkout failed: " + str(error), file=sys.stderr)
+        return 2
+    except (OSError, ValueError, subprocess.SubprocessError):
         print(
             "Mac mini checkout failed; host command output is withheld.",
             file=sys.stderr,
