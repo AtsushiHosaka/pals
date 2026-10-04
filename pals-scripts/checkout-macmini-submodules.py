@@ -104,7 +104,20 @@ def capture(
 
 
 def git(source: Path, environment: dict[str, str], *arguments: str) -> str:
-    return capture([GIT, "-C", str(source), *arguments], environment)
+    stages = {
+        ("rev-parse", "--show-toplevel"): "parent root",
+        ("rev-parse", "HEAD"): "parent revision",
+        ("status", "--porcelain=v1"): "parent cleanliness",
+        ("config", "--local"): "local Git settings",
+        ("config", "--file"): "submodule metadata",
+        ("ls-tree", "HEAD"): "submodule pins",
+        ("submodule", "foreach"): "initialized submodule inspection",
+    }
+    try:
+        return capture([GIT, "-C", str(source), *arguments], environment)
+    except CheckoutError as error:
+        stage = stages.get(tuple(arguments[:2]), "source inspection")
+        raise CheckoutError("Git " + stage + " failed: " + str(error)) from None
 
 
 def validate_git_settings(source: Path, environment: dict[str, str]) -> None:
