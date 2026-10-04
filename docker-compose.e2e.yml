@@ -197,7 +197,7 @@ services:
     security_opt:
       - no-new-privileges:true
     tmpfs:
-      - /tmp:rw,noexec,nosuid,size=64m
+      - /tmp:rw,noexec,nosuid,size=256m
     # Optional sandbox-only file. The ignored host directory contains only the
     # mode-0600 billing JSON; never put its contents in Compose environment.
     volumes:
