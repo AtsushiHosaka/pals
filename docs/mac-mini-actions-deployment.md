@@ -8,9 +8,11 @@
 
 runnerは、GitHub Actionsから仕事を受け取る実行プログラム。親 `AtsushiHosaka/pals` はprivate。2026年10月4日、ユーザーがMiniの `~/actions-runner-pals` にARM64 runnerを登録し、LaunchAgentとして起動した。GitHub側でも `pals-macmini` のonlineと、`self-hosted`・`macOS`・`ARM64`・`pals-macmini` の4ラベルを確認した。
 
-登録前のGitHub側検査は [初回Actions run](https://github.com/AtsushiHosaka/pals/actions/runs/37180834429) で成功した。Environment・デプロイ設定・private submodule用のsecretは未登録であり、本番更新はまだ実行しない。
+登録前のGitHub側検査は [初回Actions run](https://github.com/AtsushiHosaka/pals/actions/runs/37180834429) で成功した。その後、Environment `macmini` をmain限定で作成し、`MACMINI_CHECKOUT_AUTH=host-gh` と、ホスト設定の絶対パス `MACMINI_DEPLOY_CONFIG` を登録した。新しいprivate submodule用secretは作成していない。
 
 登録後、`MACMINI_RUNNER_READY=true` を設定した。[Miniでのrunner-check](https://github.com/AtsushiHosaka/pals/actions/runs/37186033515) は成功し、`Darwin arm64`、Apple Git 2.54.0、Python 3.9.6、Docker `linux aarch64` を確認した。本番更新jobはskip。`MACMINI_DEPLOY_READY` と `MACMINI_AUTO_DEPLOY` は未設定のままである。
+
+ユーザーは自動デプロイのONを許可済み。Miniの既存gh認証ではprivate親・全submoduleを取得できた。Actionsの元のworkspaceにはsubmoduleの削除状態があり、Git検査で停止したため、既存ファイル・indexを保持して専用の固定checkout `macmini-deploy` を使うよう変更した。[再検査](https://github.com/AtsushiHosaka/pals/actions/runs/37200993016) ではソース検査を通過し、ホスト認証による取得で停止した。保存済みgh認証とrunnerの実行環境を切り分けている。ホスト側ではOrbStackへの移行も進行中のため、移行後のcontext・DB・volumeを確認してから実機更新を接続する。
 
 既存のMac用DB初期化は、空のDBへの初回適用と同一署名の再実行に限定される。通常のAPI・Web・workerを新しいコミットへ継続更新するプログラムは、まだこの入口に接続されていない。初回用の `sign-and-apply-production-release.py` や `--apply-mac` を、自動更新の代わりに呼ばない。
 
@@ -53,9 +55,13 @@ runnerは、GitHub Actionsから仕事を受け取る実行プログラム。親
 <controller> --source-dir <checkout> --parent-sha <40文字のSHA> --receipt-file <結果JSONの絶対パス>
 ```
 
-更新プログラムは、指定ソースからAPI・Web・workerをビルドし、既存のホスト・DB・volumeに結び付いた新しいリリースを実KMSで署名する。第一版はDB構造と既存のartifact registryを維持する通常コード更新を対象にする。処理中ジョブを完了させ、API・workerなどの書き込み元を停止してから、署名付きの更新admissionを追加し、既存の論理サービスを切り替える。既存の本番用デプロイロックとも連携する。初期化用コマンドの再利用、DB/volumeの削除、localモードへの変更、署名検証の省略は含めない。
+更新プログラムは、指定ソースからAPI・Web・workerをビルドし、既存のホスト・DB・volumeに結び付いた新しいリリースを実KMSで署名する。通常コード更新のv1はDB構造と既存のartifact registryを維持する。処理中ジョブを完了させ、API・workerなどの書き込み元を停止してから、署名付きの更新admissionを追加し、既存の論理サービスを切り替える。初期化用コマンドの再利用、DB/volumeの削除、localモードへの変更、署名検証の省略は含めない。
 
-この通常更新用プログラムは実装中で、実機検証は未実施。DB構造・artifact registryの変更やCIMD childが存在するDBは検査で拒否する。DB移行とchildの再署名は別の更新契約で扱う。CIMD専用のAPI child配備や初回署名スクリプトは、3サービスの継続更新を代用しない。
+DB移行を伴うv2は、旧署名に一致する23段階のregistryを保持し、`project-materials` と `project-materials-ocr` の追加だけを許可する。追加するmanifest・SQLのdigestを新署名に固定し、旧schemaの一致・処理の完了・権限を検査してから、DDLと更新admissionを同じトランザクションで適用する。既存回答の書き換えや任意migrationの実行は許可しない。CIMD childが存在するDBや、新しいDB・volumeへの移行はこの契約で扱わない。
+
+API側の通常更新とDB移行は実装・検証中で、Miniの実KMSとサービス切替を通した検証は未実施。CIMD専用のAPI child配備や初回署名スクリプトは、3サービスの継続更新を代用しない。
+
+controllerは既存の本番用ロックを更新・復旧の全期間保持する。APIの更新・再観測CLIには別の専用ロックを渡す。同じinodeを親と子が別々に取得して待ち合う構成にしない。commit結果が不明な場合は、署名と現行admissionを読み取りで照合する。候補が現行なら候補サービスで復旧し、旧リリースが現行なら旧サービスを再開できる。どちらとも確認できなければ公開を停止したまま運用者へ知らせる。DBのadmissionを旧値へ戻す処理は行わない。
 
 runnerの取得ソースは一時的な作業領域として扱う。稼働コンテナからbind mountしない。必要な資産はイメージまたはホストの管理領域に収録し、次回checkoutで稼働サービスが変わらないようにする。
 
