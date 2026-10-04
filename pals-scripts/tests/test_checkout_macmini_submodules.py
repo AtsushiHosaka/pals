@@ -242,6 +242,26 @@ class CheckoutGitBoundaryTests(unittest.TestCase):
         ):
             checkout.execute(alias, self.sha)
 
+    def test_dedicated_checkout_preserves_old_staged_submodule_deletions(self):
+        checkout.execute(self.source, self.sha)
+        old_module = self.source / "pals-agent"
+        tracked = git(old_module, "ls-files").splitlines()[0]
+        git(old_module, "rm", "--", tracked)
+        staged = git(old_module, "diff", "--cached", "--name-status")
+        dedicated = self.source / "macmini-deploy"
+        git(self.root, "clone", str(self.parent), str(dedicated))
+
+        result = checkout.execute(dedicated, self.sha)
+        self.assertEqual(result["status"], "checkout-passed")
+        self.assertEqual(git(old_module, "diff", "--cached", "--name-status"), staged)
+        self.assertFalse((old_module / tracked).exists())
+
+    def test_arbitrary_checkout_child_is_rejected(self):
+        other = self.source / "other-checkout"
+        git(self.root, "clone", str(self.parent), str(other))
+        with self.assertRaises(checkout.CheckoutError):
+            checkout.execute(other, self.sha)
+
     def test_url_specific_tls_bypass_or_headers_in_reused_checkout_rejected(self):
         checkout.execute(self.source, self.sha)
         nested = self.source / "pals-api/nested/library"

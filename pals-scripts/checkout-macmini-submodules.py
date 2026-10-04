@@ -146,7 +146,7 @@ def require_runner_checkout(source: Path, environment: dict[str, str]) -> None:
     temporary = Path(environment.get("RUNNER_TEMP", ""))
     require(
         source.is_absolute()
-        and source == workspace
+        and source in {workspace, workspace / "macmini-deploy"}
         and temporary.is_absolute()
         and deployment.inside(source, temporary.parent)
         and source != temporary.parent
