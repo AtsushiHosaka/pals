@@ -154,7 +154,10 @@ else
 fi
 
 TEXT_FILE="${WORK_DIR}/adversarial.txt"
-cat > "${TEXT_FILE}" <<'TEXT'
+# Assemble synthetic secret-shaped fixtures only in the temporary test input.
+TEST_PRIVATE_KEY_KIND='PRIVATE KEY'
+TEST_DB_PASSWORD='text-db-password-sentinel'
+cat > "${TEXT_FILE}" <<TEXT
 Authorization: Bearer bearerHeader.bearerPayload.bearerSignature
 accessToken=text-access-token-sentinel
 PALS_WORKER_SHARED_SECRET: text-worker-secret-sentinel
@@ -162,10 +165,10 @@ AWS_SECRET_ACCESS_KEY = text-aws-secret-sentinel
 password: "text-password-sentinel"
 password=space-password-first-sentinel space-password-second-sentinel
 api_key='text-api-key-sentinel'
-database=postgresql://text-user:text-db-password-sentinel@localhost:5432/pals
------BEGIN PRIVATE KEY-----
+database=postgresql://text-user:${TEST_DB_PASSWORD}@localhost:5432/pals
+-----BEGIN ${TEST_PRIVATE_KEY_KIND}-----
 text-private-key-sentinel
------END PRIVATE KEY-----
+-----END ${TEST_PRIVATE_KEY_KIND}-----
 safe=retain-this-text
 TEXT
 redact_file_in_place "${TEXT_FILE}"

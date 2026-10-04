@@ -1,0 +1,149 @@
+name: Deploy Mac mini
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Validate the Mac mini configuration or deploy this main commit
+        type: choice
+        options:
+          - preflight
+          - deploy
+        default: preflight
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-macmini
+  cancel-in-progress: false
+
+jobs:
+  parent-checks:
+    name: Parent repository checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout the triggering parent commit
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ github.sha }}
+          submodules: false
+          persist-credentials: false
+      - name: Check parent repository secrets
+        run: bash pals-scripts/check-secrets.sh
+      - name: Read the parent-pinned public agent revision
+        id: public-agent
+        shell: bash
+        run: |
+          set -euo pipefail
+          read -r mode object_type agent_revision agent_path < <(git ls-tree HEAD -- pals-agent)
+          if [[ "$mode" != '160000' ]] || [[ "$object_type" != 'commit' ]] || \
+             [[ "$agent_path" != 'pals-agent' ]] || [[ ! "$agent_revision" =~ ^[0-9a-f]{40}$ ]]; then
+            echo 'The parent must pin pals-agent to a full submodule commit SHA.' >&2
+            exit 1
+          fi
+          printf 'revision=%s\n' "$agent_revision" >> "$GITHUB_OUTPUT"
+      - name: Checkout the pinned public agent for its package boundary check
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: AtsushiHosaka/pals-agent
+          ref: ${{ steps.public-agent.outputs.revision }}
+          path: pals-agent
+          persist-credentials: false
+      - name: Build and check the actual public agent wheel
+        shell: bash
+        run: |
+          set -euo pipefail
+          wheel_dir="$RUNNER_TEMP/pals-public-agent-wheel"
+          python3 -m pip wheel --no-deps --wheel-dir "$wheel_dir" ./pals-agent
+          set -- "$wheel_dir"/*.whl
+          if [[ "$#" -ne 1 ]] || [[ ! -f "$1" ]]; then
+            echo 'The public agent build must produce exactly one wheel.' >&2
+            exit 1
+          fi
+          PALS_PUBLIC_AGENT_WHEEL="$1" bash pals-scripts/check-public-agent-boundary.sh
+      - name: Check the Mac mini deployment controller contract
+        run: |
+          python3 -m unittest discover -s pals-scripts/tests -p 'test_deploy_macmini.py'
+          python3 -m py_compile pals-scripts/deploy-macmini.py
+
+  deploy:
+    name: Mac mini preflight or deployment
+    needs: parent-checks
+    # An unregistered runner must never leave a deployment queued. Preflight
+    # needs the runner gate; actual deployment also needs the deployment gate.
+    if: >-
+      github.repository == 'AtsushiHosaka/pals' &&
+      github.event.repository.private == true &&
+      github.ref == 'refs/heads/main' &&
+      vars.MACMINI_RUNNER_READY == 'true' &&
+      (
+        (
+          github.event_name == 'workflow_dispatch' &&
+          (
+            inputs.mode == 'preflight' ||
+            (inputs.mode == 'deploy' && vars.MACMINI_DEPLOY_READY == 'true')
+          )
+        ) ||
+        (
+          github.event_name == 'push' &&
+          vars.MACMINI_AUTO_DEPLOY == 'true' &&
+          vars.MACMINI_DEPLOY_READY == 'true'
+        )
+      )
+    runs-on: [self-hosted, macOS, pals-macmini]
+    environment: macmini
+    timeout-minutes: 60
+    env:
+      PALS_MACMINI_CONFIG: ${{ vars.MACMINI_DEPLOY_CONFIG }}
+      PALS_DEPLOY_REVISION: ${{ github.sha }}
+      PALS_MACMINI_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'deploy' }}
+    steps:
+      - name: Require private checkout credentials and host configuration
+        shell: bash
+        env:
+          PALS_SUBMODULES_READ_TOKEN: ${{ secrets.PALS_SUBMODULES_READ_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$PALS_SUBMODULES_READ_TOKEN" ]]; then
+            echo 'PALS_SUBMODULES_READ_TOKEN must allow Contents read for the parent and private submodules.' >&2
+            exit 1
+          fi
+          if [[ "$PALS_MACMINI_CONFIG" != /* ]] || [[ ! -r "$PALS_MACMINI_CONFIG" ]]; then
+            echo 'MACMINI_DEPLOY_CONFIG must name a readable absolute host configuration path.' >&2
+            exit 1
+          fi
+      - name: Checkout the exact parent and pinned submodules
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ github.sha }}
+          token: ${{ secrets.PALS_SUBMODULES_READ_TOKEN }}
+          submodules: recursive
+          persist-credentials: false
+          # This is the runner-owned workspace, never the live server checkout.
+          clean: true
+      - name: Run the host deployment controller contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$PALS_MACMINI_MODE" in
+            preflight)
+              python3 pals-scripts/deploy-macmini.py \
+                --config "$PALS_MACMINI_CONFIG" \
+                --revision "$PALS_DEPLOY_REVISION" \
+                --preflight-only
+              ;;
+            deploy)
+              python3 pals-scripts/deploy-macmini.py \
+                --config "$PALS_MACMINI_CONFIG" \
+                --revision "$PALS_DEPLOY_REVISION"
+              ;;
+            *)
+              echo 'Unsupported deployment mode.' >&2
+              exit 1
+              ;;
+          esac
