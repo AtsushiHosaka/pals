@@ -34,9 +34,7 @@ CheckoutError = deployment.DeploymentError
 require = deployment.require
 GIT = "/usr/bin/git"
 GH = "/usr/local/bin/gh"
-NATIVE_PATH = (
-    "/usr/bin:/bin:/usr/sbin:/sbin:/Applications/Docker.app/Contents/Resources/bin"
-)
+NATIVE_PATH = "/usr/bin:/bin:/usr/sbin:/sbin:/Users/hosakaatsushi/.orbstack/bin"
 
 
 def checkout_environment(environment: dict[str, str]) -> dict[str, str]:
@@ -87,7 +85,9 @@ def capture(
         start_new_session=True,
     ) as process:
         try:
-            output, _ = process.communicate(input=input_text, timeout=timeout)
+            output, private_error = process.communicate(
+                input=input_text, timeout=timeout
+            )
         except BaseException:
             deployment.stop_controller(process)
             raise
@@ -100,8 +100,42 @@ def capture(
             raise CheckoutError(
                 "Checkout command left child processes; checkout failed."
             )
-        require(process.returncode == 0, "Checkout command failed; output is withheld.")
+        if process.returncode != 0:
+            category = failure_category(private_error)
+            raise CheckoutError(
+                "Checkout command failed (" + category + "); output is withheld."
+            )
     return output.rstrip("\r\n")
+
+
+def failure_category(private_error: str) -> str:
+    """Return only a fixed diagnostic label; never expose host command output."""
+    error = private_error.lower()
+    patterns = (
+        (("transport 'ssh' not allowed",), "SSH transport denied"),
+        (("transport 'file' not allowed",), "file transport denied"),
+        (
+            ("terminal prompts disabled", "could not read username"),
+            "Git credentials unavailable",
+        ),
+        (
+            ("authentication failed", "invalid username or token"),
+            "Git authentication rejected",
+        ),
+        (("repository not found",), "repository access unavailable"),
+        (
+            ("not our ref", "did not contain", "not a valid object name"),
+            "pinned revision unavailable",
+        ),
+        (("index.lock",), "Git index lock conflict"),
+        (("destination path",), "checkout destination conflict"),
+        (("interaction is not allowed",), "host credential store access unavailable"),
+        (("permission denied", "operation not permitted"), "host permission denied"),
+    )
+    for needles, label in patterns:
+        if any(needle in error for needle in needles):
+            return label
+    return "unclassified host command failure"
 
 
 def git(source: Path, environment: dict[str, str], *arguments: str) -> str:

@@ -119,8 +119,8 @@ jobs:
           runtime = observe(
               "Docker runtime check",
               [
-                  "/Applications/Docker.app/Contents/Resources/bin/docker",
-                  "--context", "desktop-linux", "info",
+                  "/Users/hosakaatsushi/.orbstack/bin/docker",
+                  "--context", "orbstack", "info",
                   "--format", "{{.OSType}} {{.Architecture}}",
               ],
           )
@@ -146,7 +146,7 @@ jobs:
     runs-on: [self-hosted, macOS, ARM64, pals-macmini]
     timeout-minutes: 15
     env:
-      PATH: /usr/bin:/bin:/usr/sbin:/sbin:/Applications/Docker.app/Contents/Resources/bin
+      PATH: /usr/bin:/bin:/usr/sbin:/sbin:/Users/hosakaatsushi/.orbstack/bin
       PALS_DEPLOY_REVISION: ${{ github.sha }}
     steps:
       - name: Checkout the exact parent with repository authentication
@@ -193,7 +193,7 @@ jobs:
     environment: macmini
     timeout-minutes: 60
     env:
-      PATH: /usr/bin:/bin:/usr/sbin:/sbin:/Applications/Docker.app/Contents/Resources/bin
+      PATH: /usr/bin:/bin:/usr/sbin:/sbin:/Users/hosakaatsushi/.orbstack/bin
       PALS_MACMINI_CONFIG: ${{ vars.MACMINI_DEPLOY_CONFIG }}
       PALS_DEPLOY_REVISION: ${{ github.sha }}
       PALS_MACMINI_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'deploy' }}
