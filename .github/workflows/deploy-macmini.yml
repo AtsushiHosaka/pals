@@ -6,9 +6,10 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Validate the Mac mini configuration or deploy this main commit
+        description: Check the runner, validate configuration, or deploy this main commit
         type: choice
         options:
+          - runner-check
           - preflight
           - deploy
         default: preflight
@@ -70,6 +71,63 @@ jobs:
         run: |
           python3 -m unittest discover -s pals-scripts/tests -p 'test_deploy_macmini.py'
           python3 -m py_compile pals-scripts/deploy-macmini.py
+
+  runner-check:
+    name: Mac mini runner connectivity and runtime check
+    needs: parent-checks
+    if: >-
+      github.repository == 'AtsushiHosaka/pals' &&
+      github.event.repository.private == true &&
+      github.ref == 'refs/heads/main' &&
+      vars.MACMINI_RUNNER_READY == 'true' &&
+      github.event_name == 'workflow_dispatch' &&
+      inputs.mode == 'runner-check'
+    runs-on: [self-hosted, macOS, ARM64, pals-macmini]
+    permissions: {}
+    timeout-minutes: 5
+    steps:
+      - name: Check host tools and the existing Docker engine
+        shell: bash
+        run: |
+          set -euo pipefail
+          /usr/bin/python3 - <<'PY'
+          import subprocess
+
+          def observe(label, arguments):
+              try:
+                  result = subprocess.run(
+                      arguments, capture_output=True, text=True, timeout=30, check=False
+                  )
+              except (OSError, subprocess.TimeoutExpired):
+                  raise SystemExit(label + " is unavailable or timed out.") from None
+              if result.returncode != 0:
+                  raise SystemExit(label + " failed; command output is withheld.")
+              return result.stdout.strip()
+
+          host = observe("Host platform check", ["/usr/bin/uname", "-sm"])
+          if host != "Darwin arm64":
+              raise SystemExit("The runner must be a native ARM64 macOS host.")
+          git_version = observe("Git version check", ["/usr/bin/git", "--version"])
+          python_version = observe(
+              "Python version check", ["/usr/bin/python3", "--version"]
+          )
+          if not git_version.startswith("git version ") or not python_version.startswith("Python "):
+              raise SystemExit("Host tool version output is invalid.")
+          runtime = observe(
+              "Docker runtime check",
+              [
+                  "/Applications/Docker.app/Contents/Resources/bin/docker",
+                  "--context", "desktop-linux", "info",
+                  "--format", "{{.OSType}} {{.Architecture}}",
+              ],
+          )
+          if runtime not in {"linux arm64", "linux aarch64"}:
+              raise SystemExit("The existing Docker engine must run ARM64 Linux containers.")
+          print("Host: " + host)
+          print(git_version)
+          print(python_version)
+          print("Docker runtime: " + runtime)
+          PY
 
   deploy:
     name: Mac mini preflight or deployment

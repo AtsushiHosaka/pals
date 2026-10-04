@@ -6,9 +6,11 @@
 
 親リポジトリの `.github/workflows/deploy-macmini.yml` が、mainへのpushと手動実行を受け付ける。親のコミットと、そのコミットが参照するsubmoduleを取得し、専用のMac mini runnerで `pals-scripts/deploy-macmini.py` を実行する。
 
-runnerは、GitHub Actionsから仕事を受け取る実行プログラム。2026年10月4日の読み取りでは、親 `AtsushiHosaka/pals` はprivateで、runner・Environment・repository variables・repository secretsは未登録だった。未設定のままpushしても、GitHub側の検査だけが動き、Mac miniへの実行待ちは作らない。
+runnerは、GitHub Actionsから仕事を受け取る実行プログラム。親 `AtsushiHosaka/pals` はprivate。2026年10月4日、ユーザーがMiniの `~/actions-runner-pals` にARM64 runnerを登録し、LaunchAgentとして起動した。GitHub側でも `pals-macmini` のonlineと、`self-hosted`・`macOS`・`ARM64`・`pals-macmini` の4ラベルを確認した。
 
-既存のMac用DB初期化は、空のDBへの初回適用と同一署名の再実行に限定される。新しいコミットへの更新を扱うプログラムはまだない。初回用の `sign-and-apply-production-release.py` や `--apply-mac` を、自動更新の代わりに呼ばない。
+登録前のGitHub側検査は [初回Actions run](https://github.com/AtsushiHosaka/pals/actions/runs/37180834429) で成功した。Environment・デプロイ設定・private submodule用のsecretは未登録であり、本番更新はまだ実行しない。
+
+既存のMac用DB初期化は、空のDBへの初回適用と同一署名の再実行に限定される。通常のAPI・Web・workerを新しいコミットへ継続更新するプログラムは、まだこの入口に接続されていない。初回用の `sign-and-apply-production-release.py` や `--apply-mac` を、自動更新の代わりに呼ばない。
 
 関連する制約は [Mac PostgreSQL admission](../specs/domainless-production-bootstrap/mac-postgres-admission.md) と [10月4日の公開準備](macbook-publication-preparation-2026-10-04.md) にある。Miniの「検証 PALS本番起動」チャットでは、本番の起動・復元試験が進行中だった。設定を追加する前に、同チャットの最新状況を確認する。
 
@@ -18,11 +20,12 @@ runnerは、GitHub Actionsから仕事を受け取る実行プログラム。202
 
 1. Miniの既存本番検証を終え、既存DB・volume・サービスの識別情報を確認する。更新プログラムは次節の契約に従って実装・実機検証する。
 2. 親repoの Settings → Actions → Runners から、Mini用のrunnerを登録する。専用ラベルを `pals-macmini` にする。runnerの作業ディレクトリを、本番ソース・秘密設定・DB volumeと分ける。
-3. private submoduleを読む資格情報を `PALS_SUBMODULES_READ_TOKEN` というrepository secretに登録する。親と必要なsubmoduleのContents readに絞る。親repoの `GITHUB_TOKEN` だけでは別private repoを取得できない。
-4. Miniに保護されたホスト設定と更新プログラムを設置する。repository variable `MACMINI_DEPLOY_CONFIG` に、設定ファイルの絶対パスを入れる。Environment `macmini` の許可ブランチはmainに限定する。
-5. repository variable `MACMINI_RUNNER_READY=true` を設定する。Actionsからmainを選び、手動実行のmodeを `preflight` にする。これはホスト設定・ソース・Docker・ロックを検査し、サービスを更新しない。
-6. 更新プログラムの実機検証後に `MACMINI_DEPLOY_READY=true` を設定し、modeを `deploy` にして手動実行する。GitHubの成功だけで完了とせず、実認証・質問・保存・利用量・処理中ジョブの扱いも確認する。
-7. 手動更新が合格したら `MACMINI_AUTO_DEPLOY=true` を設定する。以後は親mainへのpushが起点になる。
+3. repository variable `MACMINI_RUNNER_READY=true` を設定し、手動実行のmodeを `runner-check` にする。これはcheckoutやsecretを使わず、MiniのOS・ARM64・Git・Python・Docker接続を読み取り確認する。
+4. private submoduleを読む資格情報を `PALS_SUBMODULES_READ_TOKEN` というrepository secretに登録する。親と必要なsubmoduleのContents readに絞る。親repoの `GITHUB_TOKEN` だけでは別private repoを取得できない。
+5. Miniに保護されたホスト設定と更新プログラムを設置する。repository variable `MACMINI_DEPLOY_CONFIG` に、設定ファイルの絶対パスを入れる。Environment `macmini` の許可ブランチはmainに限定する。
+6. Actionsからmainを選び、手動実行のmodeを `preflight` にする。これはホスト設定・ソース・Docker・ロックを検査し、サービスを更新しない。
+7. 更新プログラムの実機検証後に `MACMINI_DEPLOY_READY=true` を設定し、modeを `deploy` にして手動実行する。GitHubの成功だけで完了とせず、実認証・質問・保存・利用量・処理中ジョブの扱いも確認する。
+8. 手動更新が合格したら `MACMINI_AUTO_DEPLOY=true` を設定する。以後は親mainへのpushが起点になる。
 
 各実装repoを先にpushし、その後、親のsubmodule参照を更新してpushする。各submoduleのmainを個別に追いかけず、親のコミットで反映する組み合わせを固定する。
 
@@ -47,7 +50,7 @@ runnerは、GitHub Actionsから仕事を受け取る実行プログラム。202
 
 更新プログラムは、指定ソースからAPI・Web・workerをビルドし、既存のホスト・DB・volumeに結び付いた新しいリリースを実KMSで署名する。更新admissionとmigrationを適用し、処理中ジョブを完了させてから、既存の論理サービスを切り替える。既存の本番用デプロイロックとも連携する。初期化用コマンドの再利用、DB/volumeの削除、localモードへの変更、署名検証の省略は含めない。
 
-このプログラムはまだ未実装。現在の初回署名スクリプトを設定に指定しても、この更新契約を満たさない。
+この通常更新用プログラムは未接続で、実機検証も未実施。CIMD専用のAPI child配備は別の契約であり、3サービスの継続更新を代用しない。現在の初回署名スクリプトを設定に指定しても、この更新契約を満たさない。
 
 runnerの取得ソースは一時的な作業領域として扱う。稼働コンテナからbind mountしない。必要な資産はイメージまたはホストの管理領域に収録し、次回checkoutで稼働サービスが変わらないようにする。
 
