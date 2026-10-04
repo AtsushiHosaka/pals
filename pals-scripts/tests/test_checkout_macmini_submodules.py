@@ -2,16 +2,21 @@
 
 from __future__ import annotations
 
+import base64
 import importlib.util
 import os
+import shlex
 import signal
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import unittest
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from unittest import mock
+from urllib.parse import urlsplit
 
 SCRIPT = Path(__file__).resolve().parents[1] / "checkout-macmini-submodules.py"
 SPEC = importlib.util.spec_from_file_location("checkout_macmini", SCRIPT)
@@ -641,6 +646,315 @@ class CredentialAndProcessBoundaryTests(unittest.TestCase):
                 self.environment,
             )
         self.assertNotIn("private-fixture-value", str(observed.exception))
+
+    def test_command_stderr_categories_never_expose_private_process_output(self):
+        categories = (
+            ("transport 'ssh' not allowed", "SSH transport denied"),
+            ("transport 'file' not allowed", "file transport denied"),
+            ("terminal prompts disabled", "Git credentials unavailable"),
+            ("could not read username", "Git credentials unavailable"),
+            ("authentication failed", "Git authentication rejected"),
+            ("invalid username or token", "Git authentication rejected"),
+            ("repository not found", "repository access unavailable"),
+            ("not our ref", "pinned revision unavailable"),
+            ("did not contain", "pinned revision unavailable"),
+            ("not a valid object name", "pinned revision unavailable"),
+            ("index.lock", "Git index lock conflict"),
+            ("destination path", "checkout destination conflict"),
+            ("interaction is not allowed", "host credential store access unavailable"),
+            ("permission denied", "host permission denied"),
+            ("operation not permitted", "host permission denied"),
+            ("unexpected fixture diagnostic", "unclassified host command failure"),
+        )
+        private = "private-stderr-fixture-must-stay-hidden"
+        for trigger, category in categories:
+            with self.subTest(trigger=trigger):
+                message = private + " " + trigger.upper() + " " + private
+                self.assertEqual(checkout.failure_category(message), category)
+                with self.assertRaises(checkout.CheckoutError) as observed:
+                    checkout.capture(
+                        [
+                            sys.executable,
+                            "-c",
+                            (
+                                "import sys; print(sys.argv[1]); "
+                                "sys.stderr.write(sys.argv[2]); sys.exit(1)"
+                            ),
+                            private,
+                            message,
+                        ],
+                        self.environment,
+                    )
+                self.assertEqual(
+                    str(observed.exception),
+                    "Checkout command failed (" + category + "); output is withheld.",
+                )
+                self.assertNotIn(private, str(observed.exception))
+
+    def test_successful_command_keeps_private_stderr_out_of_returned_output(self):
+        output = checkout.capture(
+            [
+                sys.executable,
+                "-c",
+                (
+                    "import sys; print('fixture-result'); "
+                    "sys.stderr.write('private-stderr-fixture')"
+                ),
+            ],
+            self.environment,
+        )
+        self.assertEqual(output, "fixture-result")
+
+
+class PrivateGitHttpFixture:
+    """Loopback synthetic Basic auth plus real Git CGI; never calls GitHub or gh."""
+
+    def __init__(self, origins):
+        self.origins = origins
+        self.processes = set()
+        self.lock = threading.Lock()
+        self.authorized = set()
+        self.challenged = set()
+        fixture = self
+
+        class Handler(BaseHTTPRequestHandler):
+            def log_message(self, *_arguments):
+                pass
+
+            def do_GET(self):
+                self.handle_git()
+
+            def do_POST(self):
+                self.handle_git()
+
+            def handle_git(self):
+                path = urlsplit(self.path)
+                expected = (
+                    "Basic "
+                    + base64.b64encode(b"fixture-user:fixture-http-password").decode()
+                )
+                with fixture.lock:
+                    destination = (
+                        fixture.authorized
+                        if self.headers.get("Authorization") == expected
+                        else fixture.challenged
+                    )
+                    destination.add(path.path)
+                if self.headers.get("Authorization") != expected:
+                    self.send_response(401)
+                    self.send_header(
+                        "WWW-Authenticate", 'Basic realm="isolated-fixture"'
+                    )
+                    self.send_header("Content-Length", "0")
+                    self.end_headers()
+                    return
+                length = int(self.headers.get("Content-Length", "0"))
+                if not 0 <= length <= 1048576:
+                    self.send_error(413)
+                    return
+                body = self.rfile.read(length)
+                environment = checkout.checkout_environment(dict(os.environ))
+                environment.update(
+                    GIT_PROJECT_ROOT=str(fixture.origins),
+                    GIT_HTTP_EXPORT_ALL="1",
+                    PATH_INFO=path.path,
+                    QUERY_STRING=path.query,
+                    REQUEST_METHOD=self.command,
+                    CONTENT_TYPE=self.headers.get("Content-Type", ""),
+                    CONTENT_LENGTH=str(length),
+                    REMOTE_USER="fixture-user",
+                    HTTP_GIT_PROTOCOL=self.headers.get("Git-Protocol", ""),
+                )
+                with subprocess.Popen(
+                    [checkout.GIT, "http-backend"],
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    env=environment,
+                    start_new_session=True,
+                ) as process:
+                    with fixture.lock:
+                        fixture.processes.add(process)
+                    try:
+                        output, _private_error = process.communicate(
+                            input=body, timeout=10
+                        )
+                    except BaseException:
+                        checkout.deployment.stop_controller(process)
+                        raise
+                    finally:
+                        with fixture.lock:
+                            fixture.processes.discard(process)
+                headers, separator, response = output.partition(b"\r\n\r\n")
+                if process.returncode != 0 or not separator:
+                    self.send_error(500)
+                    return
+                fields = [
+                    line.decode("latin1").split(":", 1)
+                    for line in headers.split(b"\r\n")
+                ]
+                status = next(
+                    (
+                        int(value.strip().split()[0])
+                        for key, value in fields
+                        if key.lower() == "status"
+                    ),
+                    200,
+                )
+                self.send_response(status)
+                for key, value in fields:
+                    if key.lower() != "status":
+                        self.send_header(key, value.strip())
+                self.send_header("Content-Length", str(len(response)))
+                self.end_headers()
+                self.wfile.write(response)
+
+        self.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        self.thread = threading.Thread(
+            target=self.server.serve_forever,
+            kwargs={"poll_interval": 0.05},
+            daemon=True,
+        )
+        self.previous_signal = None
+
+    def __enter__(self):
+        self.previous_signal = signal.getsignal(signal.SIGTERM)
+
+        def interrupted(*_arguments):
+            raise KeyboardInterrupt
+
+        signal.signal(signal.SIGTERM, interrupted)
+        self.thread.start()
+        return self
+
+    def __exit__(self, *_arguments):
+        signal.signal(signal.SIGTERM, signal.SIG_IGN)
+        try:
+            self.server.shutdown()
+            with self.lock:
+                active = tuple(self.processes)
+            for process in active:
+                checkout.deployment.stop_controller(process)
+            self.server.server_close()
+            self.thread.join(timeout=5)
+            if self.thread.is_alive():
+                raise RuntimeError("Git HTTP fixture did not stop")
+        finally:
+            signal.signal(signal.SIGTERM, self.previous_signal)
+
+
+class RecursiveHttpCredentialBoundaryTests(unittest.TestCase):
+    def test_real_recursive_http_fetch_inherits_command_scoped_credential_helper(self):
+        with temporary_directory() as temporary:
+            root = Path(temporary)
+            origins = root / "origins"
+            origins.mkdir()
+            leaf = root / "leaf-work"
+            leaf.mkdir()
+            git(leaf, "init", "-b", "main")
+            (leaf / "leaf.txt").write_text("nested fixture\n")
+            git(leaf, "add", ".")
+            git(leaf, "commit", "-m", "Leaf fixture")
+            git(root, "clone", "--bare", str(leaf), str(origins / "leaf.git"))
+            child = root / "child-work"
+            child.mkdir()
+            git(child, "init", "-b", "main")
+            git(child, "submodule", "add", str(origins / "leaf.git"), "nested/leaf")
+            git(
+                child,
+                "config",
+                "-f",
+                ".gitmodules",
+                "submodule.nested/leaf.url",
+                "https://github.com/AtsushiHosaka/leaf.git",
+            )
+            git(child, "add", ".")
+            git(child, "commit", "-m", "Child fixture")
+            git(root, "clone", "--bare", str(child), str(origins / "child.git"))
+            parent = root / "parent-work"
+            parent.mkdir()
+            git(parent, "init", "-b", "main")
+            git(parent, "submodule", "add", str(origins / "child.git"), "child")
+            git(
+                parent,
+                "config",
+                "-f",
+                ".gitmodules",
+                "submodule.child.url",
+                "https://github.com/AtsushiHosaka/child.git",
+            )
+            git(parent, "add", ".")
+            git(parent, "commit", "-m", "Parent fixture")
+            source = root / "source"
+            git(root, "clone", str(parent), str(source))
+            calls = root / "credential-gets"
+            helper = root / "synthetic-gh"
+            helper.write_text(
+                "#!/bin/sh\n"
+                'test -z "${GH_TOKEN:-}${GITHUB_TOKEN:-}${GH_DEBUG:-}${GIT_TRACE:-}" || exit 9\n'
+                'test "$1" = auth && test "$2" = git-credential || exit 8\n'
+                'test "$3" = get || exit 0\n'
+                "printf 'get\\n' >> " + shlex.quote(str(calls)) + "\n"
+                "printf '%s\\n' 'username=fixture-user' 'password=fixture-http-password'\n"
+            )
+            helper.chmod(0o700)
+            with (
+                PrivateGitHttpFixture(origins) as http,
+                mock.patch.object(checkout, "GH", str(helper)),
+            ):
+                address = "http://127.0.0.1:" + str(http.server.server_port)
+                environment = checkout.checkout_environment(
+                    {
+                        **os.environ,
+                        "GH_TOKEN": "shadow-fixture",
+                        "GITHUB_TOKEN": "shadow-fixture",
+                    }
+                )
+                checkout.capture(
+                    [
+                        *checkout.authenticated_git(source),
+                        "-c",
+                        "protocol.http.allow=always",
+                        "-c",
+                        f"credential.{address}.helper={helper} auth git-credential",
+                        "-c",
+                        f"url.{address}/.insteadOf=https://github.com/AtsushiHosaka/",
+                        "submodule",
+                        "update",
+                        "--init",
+                        "--recursive",
+                        "--checkout",
+                    ],
+                    environment,
+                    timeout=30,
+                )
+                self.assertGreaterEqual(len(calls.read_text().splitlines()), 2)
+                for repository in ("child.git", "leaf.git"):
+                    self.assertTrue(
+                        any(
+                            path.startswith("/" + repository + "/")
+                            for path in http.challenged
+                        )
+                    )
+                    self.assertTrue(
+                        any(
+                            path.startswith("/" + repository + "/")
+                            for path in http.authorized
+                        )
+                    )
+            self.assertEqual(
+                git(source / "child", "rev-parse", "HEAD"),
+                git(parent, "rev-parse", "HEAD:child"),
+            )
+            self.assertEqual(
+                git(source / "child/nested/leaf", "rev-parse", "HEAD"),
+                git(child, "rev-parse", "HEAD:nested/leaf"),
+            )
+            for repository in (source, source / "child", source / "child/nested/leaf"):
+                config = git(repository, "config", "--local", "--list")
+                self.assertNotIn("credential.", config)
+                self.assertNotIn("fixture-http-password", config)
+                self.assertEqual(git(repository, "status", "--porcelain=v1"), "")
 
 
 if __name__ == "__main__":

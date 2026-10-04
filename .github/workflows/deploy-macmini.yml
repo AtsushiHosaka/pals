@@ -162,6 +162,28 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          /usr/bin/python3 -B - <<'PY'
+          import importlib.util
+          import os
+          import subprocess
+
+          spec = importlib.util.spec_from_file_location(
+              "checkout_probe", "pals-scripts/checkout-macmini-submodules.py"
+          )
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+          environment = module.checkout_environment(dict(os.environ))
+          for label, arguments in (
+              ("Saved host gh login", [module.GH, "auth", "status"]),
+              ("Saved host private repository access", [module.GH, "api", "repos/AtsushiHosaka/pals-api", "--jq", ".id"]),
+          ):
+              try:
+                  module.capture(arguments, environment, timeout=30)
+                  available = True
+              except (module.CheckoutError, OSError, subprocess.SubprocessError):
+                  available = False
+              print(label + ": " + ("available" if available else "unavailable"))
+          PY
           /usr/bin/python3 pals-scripts/checkout-macmini-submodules.py \
             --source-dir "$GITHUB_WORKSPACE/macmini-deploy" --revision "$PALS_DEPLOY_REVISION"
 
