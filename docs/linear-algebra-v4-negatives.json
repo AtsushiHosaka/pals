@@ -1,0 +1,245 @@
+{
+  "schema_version": "pals.authored-hard-negative-queries.v1",
+  "profile_id": "typed-linear-algebra-v4",
+  "status": "authored_counterexamples_not_retrieval_evaluated",
+  "cases": [
+    {
+      "id": "la_v4_det_transpose_negative",
+      "positive_card_id": "la_v4_det_transpose",
+      "query": "Taking the transpose gives det(Aᵀ)=-det A",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Over ℚ take A=I₁. Both determinants are 1, not negatives."
+    },
+    {
+      "id": "la_v4_det_diagonal_negative",
+      "positive_card_id": "la_v4_det_diagonal",
+      "query": "det(diag d)=sum of the diagonal entries",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Over ℚ take diag(2,3). Its determinant is 6 but the sum is 5."
+    },
+    {
+      "id": "la_v4_det_upper_triangular_negative",
+      "positive_card_id": "la_v4_det_upper_triangular",
+      "query": "Every square matrix has determinant equal to its diagonal product",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The matrix [[1,1],[1,1]] over ℚ has determinant 0 and diagonal product 1. The triangular hypothesis is necessary."
+    },
+    {
+      "id": "la_v4_adjugate_identity_negative",
+      "positive_card_id": "la_v4_adjugate_identity",
+      "query": "A adj(A)=I for every square A",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For A=diag(2,3) over ℚ, A adj(A)=6I. The scalar factor is det A."
+    },
+    {
+      "id": "la_v4_adjugate_product_negative",
+      "positive_card_id": "la_v4_adjugate_product",
+      "query": "adj(AB)=adj(A)adj(B) with the unreversed order",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Over ℚ let A=[[1,1],[0,1]] and B=diag(2,1). adj(AB)=[[1,-1],[0,2]], while adj(A)adj(B)=[[1,-2],[0,2]]."
+    },
+    {
+      "id": "la_v4_inverse_adjugate_negative",
+      "positive_card_id": "la_v4_inverse_adjugate",
+      "query": "A⁻¹=adj(A) without dividing by det A",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For the 1×1 matrix [2] over ℚ, the inverse is [1/2] while the adjugate is [1]."
+    },
+    {
+      "id": "la_v4_inverse_product_negative",
+      "positive_card_id": "la_v4_inverse_product",
+      "query": "(AB)⁻¹=A⁻¹B⁻¹ without reversing order",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Over ℚ let A=[[1,1],[0,1]] and B=diag(2,1). The inverse of AB has upper-right entry -1/2; A⁻¹B⁻¹ has upper-right entry -1."
+    },
+    {
+      "id": "la_v4_inverse_transpose_negative",
+      "positive_card_id": "la_v4_inverse_transpose",
+      "query": "A⁻¹=Aᵀ for every invertible matrix",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For A=[2] over ℚ, the inverse is [1/2] and the transpose is [2]. Orthogonality is an additional property."
+    },
+    {
+      "id": "la_v4_inverse_determinant_negative",
+      "positive_card_id": "la_v4_inverse_determinant",
+      "query": "det(A⁻¹)=-det A",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For A=[2] over ℚ, the inverse determinant is 1/2, not -2."
+    },
+    {
+      "id": "la_v4_unit_iff_det_nonzero_negative",
+      "positive_card_id": "la_v4_unit_iff_det_nonzero",
+      "query": "Over any commutative ring, nonzero determinant guarantees a matrix unit",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Over ℤ the matrix [2] has nonzero determinant but no inverse over ℤ. The profile requires a field."
+    },
+    {
+      "id": "la_v4_one_sided_inverse_negative",
+      "positive_card_id": "la_v4_one_sided_inverse",
+      "query": "For rectangular A,B, AB=I implies BA=I of the other size",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Take A=[1 0] and B=[1;0] over ℚ. AB=I₁ but BA=diag(1,0)≠I₂."
+    },
+    {
+      "id": "la_v4_inverse_uniqueness_negative",
+      "positive_card_id": "la_v4_inverse_uniqueness",
+      "query": "AB=AC alone implies B=C without a hypothesis on A",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Take A=0 and two distinct square matrices B,C. Both products vanish. Inverse identities cannot be replaced by arbitrary equal products."
+    },
+    {
+      "id": "la_v4_unique_linear_solution_negative",
+      "positive_card_id": "la_v4_unique_linear_solution",
+      "query": "Every square system Ax=y has a unique solution without det A≠0",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For A=0 of positive size and y=0, every x is a solution; for y≠0 there is no solution."
+    },
+    {
+      "id": "la_v4_cramer_negative",
+      "positive_card_id": "la_v4_cramer",
+      "query": "x=cramer(A,y) is the solution of Ax=y without dividing by det A",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Over ℚ take A=[2], y=[1]. The Cramer vector is [1], but the solution is [1/2]."
+    },
+    {
+      "id": "la_v4_det_power_negative",
+      "positive_card_id": "la_v4_det_power",
+      "query": "det(A^k)=k det A",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Over ℚ take A=[2] and k=3. The two sides are 8 and 6."
+    },
+    {
+      "id": "la_v4_rank_transpose_negative",
+      "positive_card_id": "la_v4_rank_transpose",
+      "query": "The row count is unchanged by transposition of a rectangular matrix",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "A 2×3 matrix becomes 3×2 under transpose. Rank is preserved, but the dependent row and column dimensions are exchanged."
+    },
+    {
+      "id": "la_v4_rank_product_bounds_negative",
+      "positive_card_id": "la_v4_rank_product_bounds",
+      "query": "rank(AB)=min(rank A,rank B) for every product",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Over ℚ take A=diag(1,0), B=diag(0,1). Both have rank 1 but AB=0 has rank 0."
+    },
+    {
+      "id": "la_v4_zero_product_rank_bound_negative",
+      "positive_card_id": "la_v4_zero_product_rank_bound",
+      "query": "AB=0 implies rank A+rank B equals the inner dimension",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Take A=B=0 of size 2×2. The sum of ranks is 0, strictly below 2."
+    },
+    {
+      "id": "la_v4_rank_invertible_multipliers_negative",
+      "positive_card_id": "la_v4_rank_invertible_multipliers",
+      "query": "Multiplication by any square B preserves rank",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Take A=I₂ and B=0. rank A=2 while AB=BA=0 has rank 0. Invertibility is essential."
+    },
+    {
+      "id": "la_v4_rank_diagonal_negative",
+      "positive_card_id": "la_v4_rank_diagonal",
+      "query": "A diagonal matrix always has full rank",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "diag(1,0) over ℚ has rank 1, less than its size 2. Only nonzero entries contribute."
+    },
+    {
+      "id": "la_v4_cayley_hamilton_negative",
+      "positive_card_id": "la_v4_cayley_hamilton",
+      "query": "Every polynomial q satisfies q(A)=0",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For q=1 and A=[0] over ℚ, q(A)=I₁≠0. The characteristic polynomial is a specific annihilating polynomial."
+    },
+    {
+      "id": "la_v4_charpoly_monic_degree_negative",
+      "positive_card_id": "la_v4_charpoly_monic_degree",
+      "query": "The characteristic polynomial has degree equal to rank A",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The zero 2×2 matrix has rank 0 but characteristic polynomial X² of degree 2."
+    },
+    {
+      "id": "la_v4_charpoly_scalar_evaluation_negative",
+      "positive_card_id": "la_v4_charpoly_scalar_evaluation",
+      "query": "χ_A(t)=det(A-tI) without a sign",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For the 1×1 zero matrix over ℚ and t=1, χ_A(1)=1 while det(A-I)=-1. The convention is det(tI-A)."
+    },
+    {
+      "id": "la_v4_charpoly_transpose_negative",
+      "positive_card_id": "la_v4_charpoly_transpose",
+      "query": "Equal characteristic polynomials imply equal matrices",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Over ℚ a nonzero 2×2 strictly upper triangular matrix and the zero matrix both have characteristic polynomial X² but differ."
+    },
+    {
+      "id": "la_v4_charpoly_product_swap_negative",
+      "positive_card_id": "la_v4_charpoly_product_swap",
+      "query": "For rectangular A:m×n and B:n×m, χ_AB=χ_BA",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Take A=[1 0] and B=[1;0]. χ_AB=X-1 whereas χ_BA=X(X-1). Equal square size is required for this exact identity."
+    },
+    {
+      "id": "la_v4_charpoly_similarity_negative",
+      "positive_card_id": "la_v4_charpoly_similarity",
+      "query": "χ_(BAB⁻¹)=χ_A even when B is singular and inverse is total",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Over ℚ take n=1, B=0 and A=[1]. The conjugated matrix is zero, with χ=X rather than X-1."
+    },
+    {
+      "id": "la_v4_charpoly_diagonal_negative",
+      "positive_card_id": "la_v4_charpoly_diagonal",
+      "query": "The characteristic polynomial is the sum of its diagonal linear factors",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For diag(0,0), the characteristic polynomial is X², while the proposed sum is 2X."
+    },
+    {
+      "id": "la_v4_charpoly_recovers_det_trace_negative",
+      "positive_card_id": "la_v4_charpoly_recovers_det_trace",
+      "query": "trace A is minus the coefficient of degree n-1 even at n=0 with natural subtraction",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For the empty matrix, n-1=0 as a natural number, χ_A=1, and trace A=0. Minus coeff(0) is -1 over ℚ. The nextCoeff convention avoids this boundary error."
+    },
+    {
+      "id": "la_v4_nilpotent_charpoly_negative",
+      "positive_card_id": "la_v4_nilpotent_charpoly",
+      "query": "det A=0 implies χ_A=X^n",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "diag(0,1) over ℚ has determinant 0 but χ_A=X(X-1), not X². Singularity does not imply nilpotence."
+    },
+    {
+      "id": "la_v4_nilpotent_trace_negative",
+      "positive_card_id": "la_v4_nilpotent_trace",
+      "query": "trace A=0 implies A is nilpotent",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "diag(1,-1) over ℚ has trace zero but every even power is the identity. The theorem only gives the forward implication."
+    },
+    {
+      "id": "la_v4_trace_cyclic_rectangular_negative",
+      "positive_card_id": "la_v4_trace_cyclic_rectangular",
+      "query": "Cyclicity of trace implies AB=BA",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For A=[[1,1],[0,1]] and B=diag(2,1), AB and BA have different upper-right entries, 1 and 2, while both traces are 3."
+    },
+    {
+      "id": "la_v4_similarity_det_trace_negative",
+      "positive_card_id": "la_v4_similarity_det_trace",
+      "query": "Equal determinant and trace imply similarity",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The zero 2×2 matrix and [[0,1],[0,0]] have trace 0 and determinant 0 over ℚ. A conjugate of zero is zero, so these matrices are not similar."
+    },
+    {
+      "id": "la_v4_transpose_product_negative",
+      "positive_card_id": "la_v4_transpose_product",
+      "query": "(AB)ᵀ=AᵀBᵀ without reversing order",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For A=[[1,1],[0,1]] and B=diag(2,1), (AB)ᵀ has lower-left entry 1 whereas AᵀBᵀ has lower-left entry 2."
+    },
+    {
+      "id": "la_v4_matrix_action_composition_negative",
+      "positive_card_id": "la_v4_matrix_action_composition",
+      "query": "(AB)x=B(Ax) for arbitrary square A,B",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Over ℚ let A=[[1,1],[0,1]], B=diag(2,1), x=e₂. ABx=(1,1), while BAx=(2,1). The operator order matters."
+    }
+  ]
+}

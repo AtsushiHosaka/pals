@@ -1,0 +1,394 @@
+{
+  "schema_version": "pals.typed-catalog-expansion-hard-negatives.v1",
+  "profile_id": "typed-calculus-v5",
+  "status": "authored_candidates_not_retrieval_tested",
+  "cases": [
+    {
+      "id": "calculus_v5_negative_integral_absolute_bound",
+      "paired_card_ids": [
+        "calculus_v5_integral_absolute_bound"
+      ],
+      "candidate_question": "May the same inequality |∫f|≤∫|f| be used when a>b?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For f=1 and a>b, the left side is a-b>0 but the oriented integral of |f| is b-a<0."
+    },
+    {
+      "id": "calculus_v5_negative_integral_uniform_bound",
+      "paired_card_ids": [
+        "calculus_v5_integral_uniform_bound"
+      ],
+      "candidate_question": "Does a bound |f(a)|,|f(b)|≤c at the endpoints suffice for |∫f|≤c|b-a|?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. On any a<b, f(x)=(x-a)(b-x) vanishes at the endpoints, so c=0 satisfies the endpoint bound, but its integral is (b-a)^3/6>0."
+    },
+    {
+      "id": "calculus_v5_negative_integral_strict_positive",
+      "paired_card_ids": [
+        "calculus_v5_integral_strict_positive"
+      ],
+      "candidate_question": "Can continuity be dropped if a nonnegative integrable f is positive at one point?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The indicator of a singleton inside any nondegenerate interval is nonnegative and positive at that point but has integral zero."
+    },
+    {
+      "id": "calculus_v5_negative_zero_integral_continuous_nonnegative",
+      "paired_card_ids": [
+        "calculus_v5_zero_integral_continuous_nonnegative"
+      ],
+      "candidate_question": "Does a continuous function with zero integral vanish everywhere even without nonnegativity?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. On any a<b, f(x)=x-(a+b)/2 has zero integral by cancellation and f(a)=(a-b)/2≠0. A separate compiled v5 card proves this parameterized counterexample."
+    },
+    {
+      "id": "calculus_v5_negative_weighted_integral_mean_value",
+      "paired_card_ids": [
+        "calculus_v5_weighted_integral_mean_value"
+      ],
+      "candidate_question": "Can the nonnegative-weight assumption be removed from the weighted mean-value formula?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. On [-r,r] with r>0 choose f(x)=g(x)=x. The weight integral is zero, but ∫f*g=2r³/3>0, so no c can satisfy the formula."
+    },
+    {
+      "id": "calculus_v5_negative_odd_symmetric_integral",
+      "paired_card_ids": [
+        "calculus_v5_odd_symmetric_integral"
+      ],
+      "candidate_question": "Does oddness and the total integral value zero prove that f is integrable?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The total reciprocal f(x)=1/x is odd but is not Lebesgue integrable on any [-r,r], r>0. Its totalized interval-integral value is zero."
+    },
+    {
+      "id": "calculus_v5_negative_even_symmetric_integral",
+      "paired_card_ids": [
+        "calculus_v5_even_symmetric_integral"
+      ],
+      "candidate_question": "Does ∫[-a,a]f=2∫[0,a]f hold for continuous odd f as well?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Take f(x)=x and any a≠0. The symmetric integral is zero whereas twice the half integral is a²>0."
+    },
+    {
+      "id": "calculus_v5_negative_period_integral_translation",
+      "paired_card_ids": [
+        "calculus_v5_period_integral_translation"
+      ],
+      "candidate_question": "Can equality of integrals over translated intervals be inferred from f(a)=f(b) alone?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. On [0,1] and [1,2], f(x)=x(x-1) has f(0)=f(1)=0, but the length-one integrals are -1/6 and 5/6. Endpoint equality does not give periodicity."
+    },
+    {
+      "id": "calculus_v5_negative_affine_substitution_integrable",
+      "paired_card_ids": [
+        "calculus_v5_affine_substitution_integrable"
+      ],
+      "candidate_question": "Can the factor 1/c in the oriented affine-substitution formula be replaced by 1/|c|?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For any c<0 and f=1 on [0,1], the left integral is 1 while (1/|c|)∫[d,c+d]1=c/|c|=-1."
+    },
+    {
+      "id": "calculus_v5_negative_absolute_integrability",
+      "paired_card_ids": [
+        "calculus_v5_absolute_integrability"
+      ],
+      "candidate_question": "Does integrability of |f| alone imply integrability of every real f without a measurability assumption?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Choose a non-Lebesgue-measurable subset A of a finite interval and let f be 1 on A and -1 off A. Then |f|=1 is integrable, while f is not almost-everywhere strongly measurable and hence not integrable."
+    },
+    {
+      "id": "calculus_v5_negative_continuous_multiplier_integrability",
+      "paired_card_ids": [
+        "calculus_v5_continuous_multiplier_integrability"
+      ],
+      "candidate_question": "Is a product of two interval-integrable functions always interval-integrable?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. On [0,1], f(x)=g(x)=1/√x for x>0, extended by zero at 0, are integrable, but fg=1/x is not. Continuity of one multiplier on the compact interval supplies the missing bound."
+    },
+    {
+      "id": "calculus_v5_negative_integral_orientation_reversal",
+      "paired_card_ids": [
+        "calculus_v5_integral_orientation_reversal"
+      ],
+      "candidate_question": "Is the integral unchanged by reversing endpoints?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For f=1 and a<b, ∫[a,b]f=b-a and ∫[b,a]f=a-b; reversal changes sign."
+    },
+    {
+      "id": "calculus_v5_negative_integral_difference",
+      "paired_card_ids": [
+        "calculus_v5_integral_difference"
+      ],
+      "candidate_question": "Does totalized integral subtraction hold with no integrability hypotheses?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. On [0,1], let q(x)=1/x away from 0, f=q, g=q-1. Both f and g are nonintegrable, so their total integrals are zero, whereas f-g=1 has integral 1."
+    },
+    {
+      "id": "calculus_v5_negative_fundamental_theorem_lower_endpoint",
+      "paired_card_ids": [
+        "calculus_v5_fundamental_theorem_lower_endpoint"
+      ],
+      "candidate_question": "Is d/dx ∫[x,b]f equal to +f(x)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For constant f=c≠0, the integral is c(b-x) and its derivative is -c."
+    },
+    {
+      "id": "calculus_v5_negative_moving_both_endpoints",
+      "paired_card_ids": [
+        "calculus_v5_moving_both_endpoints"
+      ],
+      "candidate_question": "Can the velocity of the lower endpoint be omitted in differentiating ∫[g(x),h(x)]f?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Let f=1 and g=h=id. The integral is identically zero, but retaining only the upper endpoint term would give derivative 1."
+    },
+    {
+      "id": "calculus_v5_negative_local_integration_by_parts",
+      "paired_card_ids": [
+        "calculus_v5_local_integration_by_parts"
+      ],
+      "candidate_question": "Can closed-interval continuity be dropped when interior derivatives and their integrability hold?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. On any a<b set f=0 on (a,b] and f(a)=1, with g=1 and h=k=0. All interior derivatives exist and the derivative integral is zero, but f(b)g(b)-f(a)g(a)=-1."
+    },
+    {
+      "id": "calculus_v5_negative_local_image_substitution",
+      "paired_card_ids": [
+        "calculus_v5_local_image_substitution"
+      ],
+      "candidate_question": "Does a sign-changing substitution derivative require replacing h by |h| in the oriented substitution formula?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Set f(x)=-x, h=-1 and g=1. On a<b, the left integral with |h| is b-a but the oriented image integral is a-b. Absolute Jacobians apply to a different integration statement."
+    },
+    {
+      "id": "calculus_v5_negative_inverse_derivative",
+      "paired_card_ids": [
+        "calculus_v5_inverse_derivative"
+      ],
+      "candidate_question": "Can u≠0 be omitted from the reciprocal inverse derivative rule?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The mutually inverse functions f(x)=x³ and g(x)=real cube root of x have f′(0)=0, but g is not differentiable at 0. Totalized 1/0=0 is not a derivative witness."
+    },
+    {
+      "id": "calculus_v5_negative_positive_derivative_strict_monotonicity",
+      "paired_card_ids": [
+        "calculus_v5_positive_derivative_strict_monotonicity"
+      ],
+      "candidate_question": "Can strict positivity of the derivative be replaced by nonnegativity while retaining strict monotonicity?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Every constant function has derivative zero everywhere and is not strictly increasing on a nondegenerate interval."
+    },
+    {
+      "id": "calculus_v5_negative_monotone_derivative_nonnegative",
+      "paired_card_ids": [
+        "calculus_v5_monotone_derivative_nonnegative"
+      ],
+      "candidate_question": "Does strict increase of f force its derivative to be strictly positive at every point?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For any a, f(x)=(x-a)³ is strictly increasing but has derivative zero at a."
+    },
+    {
+      "id": "calculus_v5_negative_monotone_derivative_convex",
+      "paired_card_ids": [
+        "calculus_v5_monotone_derivative_convex"
+      ],
+      "candidate_question": "Can differentiability be dropped when the total derivative is nondecreasing?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The function equal to 1 at a and 0 elsewhere has total derivative zero everywhere, but is discontinuous at a and is not globally convex."
+    },
+    {
+      "id": "calculus_v5_negative_strict_derivative_strict_convex",
+      "paired_card_ids": [
+        "calculus_v5_strict_derivative_strict_convex"
+      ],
+      "candidate_question": "Does nondecrease, instead of strict increase, of the derivative imply strict convexity?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Any affine function f(x)=mx+c is continuous and has constant, hence nondecreasing, derivative m, but its convexity inequality is equality between distinct points."
+    },
+    {
+      "id": "calculus_v5_negative_second_derivative_convex",
+      "paired_card_ids": [
+        "calculus_v5_second_derivative_convex"
+      ],
+      "candidate_question": "Do nonnegative second derivatives only at two endpoints force convexity between them?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. On [-1,1], f(x)=x⁴-x² has f″(±1)=10>0, but f″(0)=-2 and f(0)=0>(f(-1/2)+f(1/2))/2=-3/16."
+    },
+    {
+      "id": "calculus_v5_negative_second_derivative_minimum",
+      "paired_card_ids": [
+        "calculus_v5_second_derivative_minimum"
+      ],
+      "candidate_question": "Does f′(a)=0 and f″(a)=0 imply a local minimum?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For arbitrary a, f(x)=(x-a)³ has both derivatives zero at a and changes sign across a, so a is neither a local minimum nor maximum."
+    },
+    {
+      "id": "calculus_v5_negative_darboux_derivative_intermediate",
+      "paired_card_ids": [
+        "calculus_v5_darboux_derivative_intermediate"
+      ],
+      "candidate_question": "Does every monotone function g have the intermediate value property enjoyed by derivatives?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. A step function jumping from 0 to 1 at a is monotone but never takes 1/2. Darboux excludes such a jump for an actual derivative defined on an interval."
+    },
+    {
+      "id": "calculus_v5_negative_cauchy_mean_value",
+      "paired_card_ids": [
+        "calculus_v5_cauchy_mean_value"
+      ],
+      "candidate_question": "May the cross-multiplied Cauchy identity always be divided by g(b)-g(a) and k(c)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. With constant g both quantities are zero. The cross-multiplied statement is valid, but the divided ratios have zero denominators and do not encode the claimed secant comparison."
+    },
+    {
+      "id": "calculus_v5_negative_derivative_difference_quotient_limit",
+      "paired_card_ids": [
+        "calculus_v5_derivative_difference_quotient_limit"
+      ],
+      "candidate_question": "May the difference quotient at a omit the subtraction f(a)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. A nonzero constant function f=c has derivative zero everywhere, but f(a+t)/t=c/t has no finite two-sided limit at zero."
+    },
+    {
+      "id": "calculus_v5_negative_exponential_dominates_natural_power",
+      "paired_card_ids": [
+        "calculus_v5_exponential_dominates_natural_power"
+      ],
+      "candidate_question": "May the fixed natural degree be replaced by a growing exponent x?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For x>0, x^x exp(-x)=exp(x(log x-1)), which tends to positive infinity. The theorem fixes n before taking the real-variable limit."
+    },
+    {
+      "id": "calculus_v5_negative_log_power_over_affine_limit",
+      "paired_card_ids": [
+        "calculus_v5_log_power_over_affine_limit"
+      ],
+      "candidate_question": "Can the condition a≠0 be removed uniformly for every n,b?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. If a=0,b=1,n=1, the quotient is log x and tends to positive infinity, not zero."
+    },
+    {
+      "id": "calculus_v5_negative_lhopital_zero_right",
+      "paired_card_ids": [
+        "calculus_v5_lhopital_zero_right"
+      ],
+      "candidate_question": "May L’Hôpital’s 0/0 rule be used when the numerator tends to a nonzero constant?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. As x→0+, f(x)=1+x and g(x)=x have derivative quotient 1, but f/g=1+1/x diverges to positive infinity. The numerator zero-limit premise is essential."
+    },
+    {
+      "id": "calculus_v5_negative_compact_interval_uniform_continuity",
+      "paired_card_ids": [
+        "calculus_v5_compact_interval_uniform_continuity"
+      ],
+      "candidate_question": "Does continuity on an open bounded interval imply uniform continuity?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. On (a,b), a<b, f(x)=1/(x-a) is continuous but not uniformly continuous near a; compactness of the closed domain matters."
+    },
+    {
+      "id": "calculus_v5_negative_monotone_interval_integrability",
+      "paired_card_ids": [
+        "calculus_v5_monotone_interval_integrability"
+      ],
+      "candidate_question": "Does monotonicity on all of ℝ imply integrability over the entire real line?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The constant function 1 is nondecreasing but its absolute integral on ℝ is infinite. This card concerns finite endpoints."
+    },
+    {
+      "id": "calculus_v5_negative_convex_secant_derivative_bounds",
+      "paired_card_ids": [
+        "calculus_v5_convex_secant_derivative_bounds"
+      ],
+      "candidate_question": "May the derivative inequalities bounding the secant slope be reversed for convex f?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For f(x)=x² with a<b, derivatives are 2a,2b and the secant slope is a+b, so 2a<a+b<2b."
+    },
+    {
+      "id": "calculus_v5_negative_convex_derivative_monotone",
+      "paired_card_ids": [
+        "calculus_v5_convex_derivative_monotone"
+      ],
+      "candidate_question": "Does convexity alone ensure a derivative exists at every point?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For any a the convex function |x-a| has no derivative at a. A separate differentiability premise is needed for a conclusion about actual derivatives everywhere."
+    },
+    {
+      "id": "calculus_v5_negative_punctured_limit_sum_product",
+      "paired_card_ids": [
+        "calculus_v5_punctured_limit_sum_product"
+      ],
+      "candidate_question": "Does convergence of f+g imply that f and g individually have finite punctured limits?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For any a let f(x)=1/(x-a) and g=-f. Their sum is zero but neither has a finite two-sided limit at a."
+    },
+    {
+      "id": "calculus_v5_negative_punctured_limit_quotient",
+      "paired_card_ids": [
+        "calculus_v5_punctured_limit_quotient"
+      ],
+      "candidate_question": "Can the denominator limit v=0 be allowed by interpreting u/v as totalized division?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. With f(x)=g(x)=x-a, both limits are zero, but the punctured quotient is 1 and tends to 1, whereas Lean real division gives 0/0=0."
+    },
+    {
+      "id": "calculus_v5_negative_punctured_limit_continuous_composition",
+      "paired_card_ids": [
+        "calculus_v5_punctured_limit_continuous_composition"
+      ],
+      "candidate_question": "Can outer continuity be replaced by only a punctured outer limit with no condition that the inner function avoids the limiting point?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Let f≡b and g(b)=1,g(y)=0 for y≠b. The inner limit is b and the outer punctured limit at b is 0, but g∘f is constantly 1."
+    },
+    {
+      "id": "calculus_v5_negative_removable_singularity_extension",
+      "paired_card_ids": [
+        "calculus_v5_removable_singularity_extension"
+      ],
+      "candidate_question": "Does a finite punctured limit automatically make the original function continuous?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Let f(a)=v and f(x)=u off a, with u≠v. Its punctured limit is u but it is not continuous at a. Continuity requires replacing the exceptional value by u."
+    },
+    {
+      "id": "calculus_v5_negative_punctured_squeeze_limit",
+      "paired_card_ids": [
+        "calculus_v5_punctured_squeeze_limit"
+      ],
+      "candidate_question": "Does merely f≤g≤h and existence of different bounding limits force g to have a limit?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. On punctured x near a, -1≤sin(1/(x-a))≤1, while the middle function has no limit. The two bounding limits must agree."
+    },
+    {
+      "id": "calculus_v5_negative_two_sided_limit_characterization",
+      "paired_card_ids": [
+        "calculus_v5_two_sided_limit_characterization"
+      ],
+      "candidate_question": "Does existence of finite left and right limits suffice even if their values differ?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The step function 0 for x<a and 1 for x≥a has left limit 0 and right limit 1 at a, and no two-sided limit there."
+    },
+    {
+      "id": "calculus_v5_negative_counterexample_limit_without_continuity",
+      "paired_card_ids": [
+        "calculus_v5_counterexample_limit_without_continuity"
+      ],
+      "candidate_question": "Does this counterexample remain discontinuous when u=v?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. When u=v the update leaves the constant function unchanged; it is continuous. Distinct limiting and point values are the essential premise."
+    },
+    {
+      "id": "calculus_v5_negative_counterexample_zero_integral_cancellation",
+      "paired_card_ids": [
+        "calculus_v5_counterexample_zero_integral_cancellation"
+      ],
+      "candidate_question": "Can the nonzero endpoint conclusion of this cancellation family be used when a=b?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The integral is still zero but the centered affine function also vanishes at the single endpoint. The strict endpoint inequality establishes its nonzero value."
+    },
+    {
+      "id": "calculus_v5_negative_counterexample_continuous_not_differentiable",
+      "paired_card_ids": [
+        "calculus_v5_counterexample_continuous_not_differentiable"
+      ],
+      "candidate_question": "Does the translated absolute value fail to be differentiable everywhere?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For x≠a it has derivative -1 on x<a and +1 on x>a. The counterexample identifies nondifferentiability at the cusp a only."
+    }
+  ]
+}

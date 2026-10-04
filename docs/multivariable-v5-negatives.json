@@ -1,0 +1,295 @@
+{
+  "schema_version": "pals.typed-catalog-expansion-hard-negatives.v1",
+  "profile_id": "typed-multivariable-v5",
+  "status": "authored_candidates_not_retrieval_tested",
+  "cases": [
+    {
+      "id": "mv_v5_negative_coordinate_projection",
+      "paired_card_ids": [
+        "mv_v5_coordinate_projection"
+      ],
+      "candidate_question": "Is the derivative of the ith coordinate projection the value xᵢ at the point?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Even at x=0, the ith projection has derivative h↦hᵢ, which is nonzero when i exists, while the proposed scalar value is zero. The derivative is a functional, not a scalar point value."
+    },
+    {
+      "id": "mv_v5_negative_coordinate_update",
+      "paired_card_ids": [
+        "mv_v5_coordinate_update"
+      ],
+      "candidate_question": "Does varying one coordinate have velocity equal to the base vector x?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The velocity is eᵢ independently of x. At the zero base vector it is still eᵢ≠0. A valid index ensures the selected coordinate exists."
+    },
+    {
+      "id": "mv_v5_negative_coordinate_partial_from_total",
+      "paired_card_ids": [
+        "mv_v5_coordinate_partial_from_total"
+      ],
+      "candidate_question": "For a coordinate slice t↦f(update(x,i,t)), can its derivative at t=0 always be substituted for the partial derivative at x?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The slice returns x at t=xᵢ. For f(t)=t² on ℝ and base coordinate x=3, the slice derivative at the intended point is 6; at t=0 it is 0."
+    },
+    {
+      "id": "mv_v5_negative_component_derivative_assembly",
+      "paired_card_ids": [
+        "mv_v5_component_derivative_assembly"
+      ],
+      "candidate_question": "Do existing input-coordinate partial derivatives alone imply a total derivative?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The axis-jump family in mv_v5_partials_without_continuity has both block derivatives zero at the origin and is not even continuous there. Component assembly requires full Fréchet derivatives of output components."
+    },
+    {
+      "id": "mv_v5_negative_component_differentiability",
+      "paired_card_ids": [
+        "mv_v5_component_differentiability"
+      ],
+      "candidate_question": "Is differentiability of just one output component enough?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The map t↦(|t|,t) has a differentiable second component but is not differentiable at zero because its first component is not."
+    },
+    {
+      "id": "mv_v5_negative_jacobian_entries",
+      "paired_card_ids": [
+        "mv_v5_jacobian_entries"
+      ],
+      "candidate_question": "May the input and output indices be reversed in the Jacobian without transposition?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For f(t)=(t,t²), the Jacobian has 2 output rows and 1 input column. Reversing the roles gives a matrix of the wrong shape."
+    },
+    {
+      "id": "mv_v5_negative_jacobian_chain",
+      "paired_card_ids": [
+        "mv_v5_jacobian_chain"
+      ],
+      "candidate_question": "May the Jacobian factors in the chain rule be reversed?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Take linear maps with A=[[1,1],[0,1]] and B=[[2,0],[0,1]]. For g∘f the product BA=[[2,2],[0,1]], whereas AB=[[2,1],[0,1]]."
+    },
+    {
+      "id": "mv_v5_negative_jacobian_first_order_remainder",
+      "paired_card_ids": [
+        "mv_v5_jacobian_first_order_remainder"
+      ],
+      "candidate_question": "Does differentiability alone imply that the first-order remainder is bounded by C‖h‖² near zero?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. f(t)=|t|^(3/2) is differentiable with derivative zero at zero, but its remainder divided by t² is |t|^(-1/2), unbounded as t tends to zero."
+    },
+    {
+      "id": "mv_v5_negative_continuous_block_partials",
+      "paired_card_ids": [
+        "mv_v5_continuous_block_partials"
+      ],
+      "candidate_question": "Can the neighborhood partial derivatives and their joint continuity be replaced by two partial derivatives existing just at the point?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The nonzero-amplitude axis-jump family has zero block partial derivatives at the origin and is discontinuous there. Isolated partials do not satisfy the joint-continuity criterion."
+    },
+    {
+      "id": "mv_v5_negative_smooth_derivative_field",
+      "paired_card_ids": [
+        "mv_v5_smooth_derivative_field"
+      ],
+      "candidate_question": "Does a C^k function always have a C^k derivative field, with no lost derivative?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. f(t)=t|t| is C¹ with derivative 2|t|, but that derivative is not differentiable at zero. The theorem requires C^(k+1) to obtain a C^k derivative field."
+    },
+    {
+      "id": "mv_v5_negative_quadratic_derivative",
+      "paired_card_ids": [
+        "mv_v5_quadratic_derivative"
+      ],
+      "candidate_question": "For arbitrary bilinear B, can the derivative of B(x,x) be written 2B(x,h)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Only with symmetry. For B(u,v)=u₁v₂, x=(0,1), h=(1,0), the actual derivative B(x,h)+B(h,x)=1, whereas 2B(x,h)=0."
+    },
+    {
+      "id": "mv_v5_negative_quadratic_hessian",
+      "paired_card_ids": [
+        "mv_v5_quadratic_hessian"
+      ],
+      "candidate_question": "Is the Hessian of x↦B(x,x) equal to B, without its transpose term?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For B(u,v)=u₁v₂ the Hessian is B+B.flip. Evaluated at u=(0,1),v=(1,0) it is 1, while B(u,v)=0."
+    },
+    {
+      "id": "mv_v5_negative_quadratic_taylor_exact",
+      "paired_card_ids": [
+        "mv_v5_quadratic_taylor_exact"
+      ],
+      "candidate_question": "Can the quadratic term B(h,h) be removed from the exact expansion?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. On ℝ take B(u,v)=uv, x=0 and h=1. The value at x+h is 1, while the constant and first-order terms at x are both zero."
+    },
+    {
+      "id": "mv_v5_negative_lagrange_abnormal_allowed",
+      "paired_card_ids": [
+        "mv_v5_lagrange_abnormal_allowed"
+      ],
+      "candidate_question": "Does the weak Lagrange theorem imply that the objective multiplier b is nonzero?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. With constraint f(t)=t², objective g(t)=t and x=0, the level set is {0} and hence g has a constrained extremum. A=0 and B=1, so aA+bB=0 forces b=0."
+    },
+    {
+      "id": "mv_v5_negative_lagrange_regular_constraint",
+      "paired_card_ids": [
+        "mv_v5_lagrange_regular_constraint"
+      ],
+      "candidate_question": "Can B=λA be concluded when the constraint derivative may vanish?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The strictly differentiable constraint f(t)=t² and objective g(t)=t have a constrained extremum at zero, but A=0 and B=1. No scalar multiple of A equals B."
+    },
+    {
+      "id": "mv_v5_negative_lagrange_finite_constraints",
+      "paired_card_ids": [
+        "mv_v5_lagrange_finite_constraints"
+      ],
+      "candidate_question": "Must the constraint multiplier vector itself be nonzero?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For the single regular constraint f(t)=t and constant objective g(t)=0 at zero, the multiplier identity forces the constraint multiplier to be zero; the objective multiplier can be nonzero. Only their combined vector is required to be nonzero."
+    },
+    {
+      "id": "mv_v5_negative_fubini",
+      "paired_card_ids": [
+        "mv_v5_fubini"
+      ],
+      "candidate_question": "May Fubini be applied merely because both signed iterated integrals are finite?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. On (0,1)² let f(x,y)=(x²−y²)/(x²+y²)², extended by zero elsewhere. Integrating y first gives π/4, and x first gives −π/4. Its absolute product integral diverges near the origin, so it is not product integrable."
+    },
+    {
+      "id": "mv_v5_negative_fubini_order_exchange",
+      "paired_card_ids": [
+        "mv_v5_fubini_order_exchange"
+      ],
+      "candidate_question": "Can any real two-variable function have its integration order exchanged?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For f(x,y)=(x²−y²)/(x²+y²)² on (0,1)² and zero outside, the two signed iterated integrals are π/4 and −π/4. The missing hypothesis is product integrability."
+    },
+    {
+      "id": "mv_v5_negative_separable_product_integral",
+      "paired_card_ids": [
+        "mv_v5_separable_product_integral"
+      ],
+      "candidate_question": "Does formal separated-product factorization alone certify that the multiple integral exists as an integrable function?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Take both factors identically 1 on ℝ. Their product is not integrable on ℝ². Lean totalizes these nonintegrable Bochner integrals to zero, so a numerical identity involving totalized integrals is not an existence proof."
+    },
+    {
+      "id": "mv_v5_negative_separable_product_integrable",
+      "paired_card_ids": [
+        "mv_v5_separable_product_integrable"
+      ],
+      "candidate_question": "Is measurability of the two factors sufficient for product integrability?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Constant factors f=g=1 on ℝ are measurable, but their product has infinite absolute integral on ℝ²."
+    },
+    {
+      "id": "mv_v5_negative_fubini_rectangular_domain",
+      "paired_card_ids": [
+        "mv_v5_fubini_rectangular_domain"
+      ],
+      "candidate_question": "For a non-Cartesian region may one integrate over its two coordinate projections independently?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The triangle 0<x<1, 0<y<x has area 1/2, whereas the product of its projections is the unit square with area 1. A domain s×t is required for fixed independent section bounds."
+    },
+    {
+      "id": "mv_v5_negative_almost_every_section_integrable",
+      "paired_card_ids": [
+        "mv_v5_almost_every_section_integrable"
+      ],
+      "candidate_question": "Does product integrability imply that every section is integrable?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Let f(x,y)=1 when x=0 and 0 otherwise on ℝ². It is zero almost everywhere and product integrable, but its x=0 section is the constant 1 on ℝ and is not integrable."
+    },
+    {
+      "id": "mv_v5_negative_inner_integral_integrable",
+      "paired_card_ids": [
+        "mv_v5_inner_integral_integrable"
+      ],
+      "candidate_question": "Is the inner-integral function always integrable if each inner integral is finite?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Set f(x,y)=1_(0,1)(y), independent of x. Every inner integral is 1, but the resulting constant 1 on ℝ is not integrable."
+    },
+    {
+      "id": "mv_v5_negative_absolute_section_criterion",
+      "paired_card_ids": [
+        "mv_v5_absolute_section_criterion"
+      ],
+      "candidate_question": "Can the inner integral of |f| be replaced by the absolute value of the signed inner integral?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The signed sections of (x²−y²)/(x²+y²)² on (0,1)² integrate to 1/(1+x²), an integrable outer function, although the absolute product integral diverges near zero. Cancellation destroys the needed norm control."
+    },
+    {
+      "id": "mv_v5_negative_finite_separated_product_integral",
+      "paired_card_ids": [
+        "mv_v5_finite_separated_product_integral"
+      ],
+      "candidate_question": "In dimension zero should the separated-product integral be zero because there are no factors?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. ℝ⁰ is a singleton with product volume 1, and the empty product is 1. The integral and the empty product of factor integrals are both 1."
+    },
+    {
+      "id": "mv_v5_negative_finite_separated_product_integrable",
+      "paired_card_ids": [
+        "mv_v5_finite_separated_product_integrable"
+      ],
+      "candidate_question": "For a finite separated product, may one omit the integrability requirement on one factor just because the other factors are integrable?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. In dimension two take f₁=1 on ℝ and f₂=1_(0,1). The second factor is integrable but the product has infinite absolute integral over ℝ². Every factor hypothesis in this sufficient criterion must be supplied."
+    },
+    {
+      "id": "mv_v5_negative_jacobian_change_variables",
+      "paired_card_ids": [
+        "mv_v5_jacobian_change_variables"
+      ],
+      "candidate_question": "Can the absolute determinant in volume substitution be replaced by the signed determinant?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For f(t)=−t on [0,1] and g=1, the image interval [−1,0] has integral 1, whereas the signed-determinant integrand is −1 and gives −1."
+    },
+    {
+      "id": "mv_v5_negative_jacobian_integrability_equivalence",
+      "paired_card_ids": [
+        "mv_v5_jacobian_integrability_equivalence"
+      ],
+      "candidate_question": "Does the change-of-variables integrability equivalence hold without injectivity on the domain?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. On s=ℝ take f(t)=sin t and g=1. The image is [−1,1], where g is integrable, but the weighted pullback |cos t| is not integrable on ℝ. Repeated covering creates infinite multiplicity."
+    },
+    {
+      "id": "mv_v5_negative_differentiable_injective_image_measurable",
+      "paired_card_ids": [
+        "mv_v5_differentiable_injective_image_measurable"
+      ],
+      "candidate_question": "Does injectivity alone guarantee that the image of every measurable set is measurable?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. A bijection from [0,1] onto a nonmeasurable Vitali subset of [0,1] gives an injective restriction with nonmeasurable image. Such a bijection exists since both sets have continuum cardinality. It has no asserted differentiability or measurability."
+    },
+    {
+      "id": "mv_v5_negative_potential_line_integral",
+      "paired_card_ids": [
+        "mv_v5_potential_line_integral"
+      ],
+      "candidate_question": "May an arbitrary supplied vector u(t) be used as the velocity in the potential integral?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. In dimension one take f(x)=x, D=1, c(t)=t on [0,1], but supply u(t)=0. The integral is 0 and the endpoint potential difference is 1; the required curve derivative premise fails."
+    },
+    {
+      "id": "mv_v5_negative_potential_path_independence",
+      "paired_card_ids": [
+        "mv_v5_potential_path_independence"
+      ],
+      "candidate_question": "Does every continuous one-form have path-independent integrals?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. On ℝ² the form D(x,y)(u,v)=−yu+xv integrates to 2π along the unit circle traversed once and to 0 along the constant path at (1,0), with the same endpoints. It is not the derivative of a global scalar potential."
+    },
+    {
+      "id": "mv_v5_negative_partials_without_continuity",
+      "paired_card_ids": [
+        "mv_v5_partials_without_continuity"
+      ],
+      "candidate_question": "Is the axis-jump family still a discontinuity counterexample when its amplitude a=0?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For a=0 both branches vanish, so the entire function is identically zero and continuous. The nonzero amplitude assumption is essential."
+    }
+  ]
+}

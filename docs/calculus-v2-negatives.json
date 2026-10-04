@@ -1,0 +1,219 @@
+{
+  "schema_version": "pals.typed-catalog-expansion-hard-negatives.v1",
+  "profile_id": "typed-calculus-v2",
+  "status": "authored_candidates_not_retrieval_tested",
+  "cases": [
+    {
+      "id": "calculus_v2_negative_negative_exponent",
+      "paired_card_ids": [
+        "calculus_v2_natural_power_derivative",
+        "calculus_v2_natural_power_continuous",
+        "calculus_v2_natural_power_chain"
+      ],
+      "candidate_question": "For n=-1, does the natural-power theorem show x^n is differentiable and continuous at x=0?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The exponent is outside Nat. The reciprocal is not continuous at zero and requires the additional nonzero-point condition."
+    },
+    {
+      "id": "calculus_v2_negative_power_integral_denominator",
+      "paired_card_ids": [
+        "calculus_v2_natural_power_integral"
+      ],
+      "candidate_question": "For arbitrary natural n, is the integral of x^n from a to b simply b^(n+1)-a^(n+1)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The factor 1/(n+1) is essential: n=1,a=0,b=1 gives integral 1/2, not 1."
+    },
+    {
+      "id": "calculus_v2_negative_chain_missing_inner_slope",
+      "paired_card_ids": [
+        "calculus_v2_exp_chain",
+        "calculus_v2_sin_chain"
+      ],
+      "candidate_question": "May I omit the inner derivative u when differentiating exp(f(x)) or sin(f(x))?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For f(x)=2x at x=0, both resulting derivatives are 2. Omitting the inner derivative gives 1."
+    },
+    {
+      "id": "calculus_v2_negative_cosine_sign",
+      "paired_card_ids": [
+        "calculus_v2_cos_chain"
+      ],
+      "candidate_question": "Is the derivative of cos(f(x)) equal to sin(f(a))*f'(a)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For f(x)=x at a=π/2, the derivative is -1; the proposed expression is +1."
+    },
+    {
+      "id": "calculus_v2_negative_log_zero",
+      "paired_card_ids": [
+        "calculus_v2_log_chain"
+      ],
+      "candidate_question": "Since Real.log is totalized at zero, can the log chain rule be applied at f(a)=0?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take f(x)=x and a=0. Real.log 0=0 does not make log continuous or differentiable there: log|x| tends to negative infinity near zero."
+    },
+    {
+      "id": "calculus_v2_negative_sqrt_corner",
+      "paired_card_ids": [
+        "calculus_v2_sqrt_chain"
+      ],
+      "candidate_question": "Can the square-root chain rule be applied at f(a)=0 without another condition?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take f(x)=x and a=0. The right difference quotient of sqrt(x) is 1/sqrt(x), which diverges, so no finite derivative exists."
+    },
+    {
+      "id": "calculus_v2_negative_arctan_denominator",
+      "paired_card_ids": [
+        "calculus_v2_arctan_chain"
+      ],
+      "candidate_question": "Is the derivative of arctan(f(x)) always just f'(a)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For f(x)=x,a=1, the derivative is 1/(1+1²)=1/2, not 1."
+    },
+    {
+      "id": "calculus_v2_negative_integral_unoriented",
+      "paired_card_ids": [
+        "calculus_v2_exp_integral",
+        "calculus_v2_sin_integral",
+        "calculus_v2_cos_integral"
+      ],
+      "candidate_question": "May I exchange endpoints in these definite-integral formulas without changing the result?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Oriented integrals change sign. The exp integral from 0 to 1 is e-1, whereas its integral from 1 to 0 is 1-e. The same orientation rule governs sine and cosine."
+    },
+    {
+      "id": "calculus_v2_negative_reciprocal_crosses_zero",
+      "paired_card_ids": [
+        "calculus_v2_reciprocal_integral_positive"
+      ],
+      "candidate_question": "Since both endpoints -1 and 1 are nonzero, is the ordinary integral of 1/x from -1 to 1 finite and equal to log(1/(-1))?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The interval crosses the nonintegrable singularity at zero. A Cauchy principal value is a different notion and is not this finite Bochner interval integral."
+    },
+    {
+      "id": "calculus_v2_negative_mvt_endpoint_discontinuity",
+      "paired_card_ids": [
+        "calculus_v2_mean_value"
+      ],
+      "candidate_question": "If f is differentiable throughout (0,1), must some derivative there equal f(1)-f(0), without endpoint continuity?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Let f(0)=0 and f(x)=1 for x>0. On (0,1) its derivative is 0, but the endpoint slope is 1. Continuity at the closed endpoints is necessary."
+    },
+    {
+      "id": "calculus_v2_negative_rolle_unequal_endpoints",
+      "paired_card_ids": [
+        "calculus_v2_rolle"
+      ],
+      "candidate_question": "If f is continuous on [0,1] and differentiable in (0,1), must its derivative vanish at some interior point?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For f(x)=x, the derivative is identically 1. Rolle also requires equal endpoint values."
+    },
+    {
+      "id": "calculus_v2_negative_derivative_not_integrable",
+      "paired_card_ids": [
+        "calculus_v2_fundamental_theorem_antiderivative"
+      ],
+      "candidate_question": "Does existence of an everywhere derivative alone guarantee the finite Lebesgue interval integral needed by the antiderivative formula?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Define F(0)=0 and F(x)=x² sin(1/x²) for x≠0. F is differentiable everywhere, but F'(x)=2x sin(1/x²)-2 cos(1/x²)/x for x≠0 is not absolutely integrable near zero. The integrability premise cannot be dropped."
+    },
+    {
+      "id": "calculus_v2_negative_ftc_discontinuous_point",
+      "paired_card_ids": [
+        "calculus_v2_fundamental_theorem_variable_upper"
+      ],
+      "candidate_question": "For an arbitrary integrable f, is the derivative of the indefinite integral at every b equal to f(b)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take f to be 1 at zero and 0 elsewhere. Every interval integral is zero, so the indefinite integral has derivative zero at b=0, while f(0)=1. Pointwise continuity or an appropriate differentiation condition is needed."
+    },
+    {
+      "id": "calculus_v2_negative_parts_missing_term",
+      "paired_card_ids": [
+        "calculus_v2_integration_by_parts"
+      ],
+      "candidate_question": "Does integration by parts give integral f*g' = f(b)g(b)-f(a)g(a) without subtracting integral f'*g?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For f(x)=g(x)=x on [0,1], the left side is 1/2 and the boundary term is 1. The omitted integral is 1/2."
+    },
+    {
+      "id": "calculus_v2_negative_substitution_missing_factor",
+      "paired_card_ids": [
+        "calculus_v2_integration_substitution"
+      ],
+      "candidate_question": "For a smooth substitution f, can I replace integral g(f(x)) dx by integral g(y) dy between f(a) and f(b) without multiplying by f'(x)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take f(x)=2x, g=1, a=0,b=1. The first integral is 1 and the transformed integral is 2. The derivative factor is essential."
+    },
+    {
+      "id": "calculus_v2_negative_integral_add_without_integrability",
+      "paired_card_ids": [
+        "calculus_v2_integral_additivity"
+      ],
+      "candidate_question": "Does additivity of totalized Bochner integrals hold for arbitrary nonintegrable f and g?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "On (0,1], set f(x)=1/x and g(x)=1-1/x, with arbitrary values at zero. Both individual integrals are totalized to 0 because they are nonintegrable, but f+g=1 almost everywhere has integral 1. Both integrability premises matter."
+    },
+    {
+      "id": "calculus_v2_negative_scalar_is_function",
+      "paired_card_ids": [
+        "calculus_v2_integral_scalar_linearity"
+      ],
+      "candidate_question": "Can the constant c in integral linearity be an arbitrary function c(x), pulled out as c(a)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take f=1, c(x)=x, a=0,b=1. The actual integral is 1/2; pulling out c(a)=0 gives zero."
+    },
+    {
+      "id": "calculus_v2_negative_interval_gap",
+      "paired_card_ids": [
+        "calculus_v2_integral_join_intervals"
+      ],
+      "candidate_question": "Does integral over [a,b] plus integral over [c,d] equal the integral over [a,d] with no condition b=c?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For f=1 and intervals [0,1] and [2,3], the sum is 2 but the integral over [0,3] is 3. Adjacent-interval additivity requires the shared endpoint."
+    },
+    {
+      "id": "calculus_v2_negative_integral_order_reversed",
+      "paired_card_ids": [
+        "calculus_v2_integral_order"
+      ],
+      "candidate_question": "If f≤g, is integral from a to b of f≤integral from a to b of g regardless of endpoint order?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take f=0,g=1,a=1,b=0. The proposed inequality is 0≤-1, which is false. The a≤b premise fixes orientation."
+    },
+    {
+      "id": "calculus_v2_negative_derivative_sign_at_one_point",
+      "paired_card_ids": [
+        "calculus_v2_nonnegative_derivative_monotone"
+      ],
+      "candidate_question": "If f'(0)≥0, is f globally nondecreasing?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take f(x)=-x². Its derivative at 0 is 0, yet f decreases on the positive half-line. The derivative must be nonnegative at every point in the stated domain."
+    },
+    {
+      "id": "calculus_v2_negative_zero_almost_everywhere",
+      "paired_card_ids": [
+        "calculus_v2_zero_derivative_constant"
+      ],
+      "candidate_question": "If the derivative is zero almost everywhere, must the function be constant?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The Cantor function is continuous, nonconstant, and has derivative zero almost everywhere. The card requires a derivative equal to zero at every real point, not merely almost everywhere."
+    },
+    {
+      "id": "calculus_v2_negative_ivt_without_continuity",
+      "paired_card_ids": [
+        "calculus_v2_intermediate_value"
+      ],
+      "candidate_question": "If f(0)=0 and f(1)=1, must f attain 1/2 somewhere between them without continuity?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "A step function taking only values 0 and 1 satisfies the endpoint conditions but never attains 1/2."
+    },
+    {
+      "id": "calculus_v2_negative_minimum_open_interval",
+      "paired_card_ids": [
+        "calculus_v2_extreme_value_minimum"
+      ],
+      "candidate_question": "Does every continuous function on a bounded open interval attain its minimum?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The function f(x)=x on (0,1) is continuous but never attains its infimum 0. Compactness of the nonempty closed interval is essential."
+    }
+  ]
+}

@@ -110,6 +110,11 @@ outside the Draft record.
   fall back to an incompatible catalog.
 - A successful publication shall make every admitted row in that generation reachable
   through the real runtime retrieval path.
+- After selecting one typed profile, invalid generated OpenMath may receive at most one
+  model-assisted correction under the same original statement, registry and grammar. Both
+  attempts share a 90-second structuring deadline and the same full validation. The first
+  failure and correction use remain auditable. No other retrieval stage is retried by this
+  correction path, and no different profile or catalog is substituted. Generic v1 is unchanged.
 
 ### DCE-011–DCE-012: release quality and rollback
 

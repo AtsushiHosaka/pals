@@ -1,0 +1,49 @@
+{
+  "suite_id": "commutative-algebra-v1",
+  "output_language": "ja",
+  "problems": [
+    {
+      "id": "radical_product_intersection",
+      "field": "commutative-algebra",
+      "statement": "単位元を持つ任意の可換環 R とその任意のイデアル I, J に対して、√(IJ) = √(I ∩ J) = √I ∩ √J を証明してください。整域性やネーター性は仮定しません。説明では両方向の包含を示し、x^m ∈ I と x^n ∈ J からどのべきが IJ に入るかを明記してください。既知の根基公式の名前を挙げるだけで終わらず、各仮定をどこで使うか説明してください。",
+      "expected_answer_summary": "IJ ⊆ I∩Jから一方の包含を得る。x^m∈I, x^n∈Jならx^(m+n)∈IJなので逆包含を得る。根基の単調性を使って三者の等式を結ぶ。",
+      "grading_points": [
+        "arbitrary commutative ring with identity",
+        "no domain/noetherian assumptions added",
+        "x^(m+n) in IJ from x^m in I and x^n in J",
+        "IJ subset I intersection J",
+        "all inclusions and equality chain without circular use of goal"
+      ]
+    },
+    {
+      "id": "localization_prime_extension_contraction",
+      "field": "commutative-algebra",
+      "statement": "R を単位元を持つ可換環、S を R の乗法的部分集合、P を S と交わらない R の素イデアルとします。λ:R→S⁻¹R を局所化写像、P^e を λ(P) が生成するイデアルとします。任意の a∈R と s∈S について a/s∈P^e と a∈P が同値であることを示し、P^e が S⁻¹R の素イデアルであること、および λ⁻¹(P^e)=P を証明してください。R が整域であることや λ が単射であることは仮定しません。零因子があっても成立する論理を説明し、分数を無条件に約分しないでください。",
+      "expected_answer_summary": "局所化イデアルの分数所属は、あるt∈Sについてta∈Pと同値。素性とS∩P=∅からa∈Pを得る。任意の局所化元を分数で表し、propernessと積の条件を確認する。分母1の場合から収縮がPに戻る。",
+      "grading_points": [
+        "retain commutative ring with zero divisors allowed",
+        "retain prime proper ideal and disjoint S",
+        "localization membership clears denominators using u in S",
+        "use primeness and S disjoint P to infer numerator in P",
+        "extension proper and prime",
+        "contraction equals P",
+        "no assumption of injective localization"
+      ]
+    },
+    {
+      "id": "nakayama_generators_lift",
+      "field": "commutative-algebra",
+      "statement": "R を単位元を持つ可換局所環、m をその唯一の極大イデアル、M を有限生成 R 加群とします。有限個の元 x₁,…,xₙ∈M の像が M/mM を剰余体 R/m 上のベクトル空間として生成するとき、x₁,…,xₙ が M を R 加群として生成することを証明してください。M が自由加群であることや R がネーター環であることは仮定しません。説明では中山の補題を何に適用するか、有限生成性と局所性がどこで必要かを明記し、補題名の引用だけで終わらせないでください。",
+      "expected_answer_summary": "N=span(x₁,…,xₙ)とすると商での生成からM=N+mM。有限生成商Q=M/NにmQ=Qが成り立つ。局所環の極大イデアルはJacobson根基なので中山の補題からQ=0、従ってN=M。",
+      "grading_points": [
+        "finite generated module, no freeness or noetherian hypothesis",
+        "N span of supplied elements, M=N+mM from quotient generation",
+        "apply Nakayama to the finite quotient Q=M/N, or an equivalent submodule form with its hypotheses justified",
+        "justify mQ=Q for the quotient proof, or M=N+mM for the equivalent submodule proof",
+        "maximal ideal is Jacobson radical for local ring",
+        "deduce N=M from Nakayama without assuming the requested generation conclusion",
+        "no circular assertion that x_i already generate M"
+      ]
+    }
+  ]
+}

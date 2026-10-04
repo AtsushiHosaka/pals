@@ -1,0 +1,176 @@
+{
+  "schema_version": "pals.authored-hard-negative-queries.v1",
+  "profile_id": "typed-commutative-algebra-modules-v1",
+  "status": "authored_counterexamples_not_retrieval_evaluated",
+  "scalar_field_for_counterexamples": "Real numbers; each example is also a module over the commutative ring ℝ.",
+  "cases": [
+    {
+      "id": "la_reuse_kernel_injectivity_negative",
+      "positive_card_id": "la_reuse_kernel_injectivity",
+      "query": "像が全体なら線形写像は単射である。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "実数上で f:ℝ²→ℝ, f(x,y)=x は全射だが、f(0,0)=f(0,1) なので単射でない。"
+    },
+    {
+      "id": "la_reuse_range_surjectivity_negative",
+      "positive_card_id": "la_reuse_range_surjectivity",
+      "query": "核が零なら線形写像は全射である。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "実数上で f:ℝ→ℝ², f(x)=(x,0) の核は零だが、(0,1) は像に入らない。"
+    },
+    {
+      "id": "la_reuse_kernel_detects_zero_negative",
+      "positive_card_id": "la_reuse_kernel_detects_zero",
+      "query": "線形写像の核が真部分加群なら、その線形写像は零である。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ 上の恒等写像の核は零という真部分空間だが、恒等写像は零ではない。"
+    },
+    {
+      "id": "la_reuse_range_detects_zero_negative",
+      "positive_card_id": "la_reuse_range_detects_zero",
+      "query": "線形写像の像が真部分加群なら、その線形写像は零である。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "f:ℝ→ℝ², f(x)=(x,0) の像は真部分空間で、f(1)≠0。"
+    },
+    {
+      "id": "la_reuse_kernel_composition_inclusion_negative",
+      "positive_card_id": "la_reuse_kernel_composition_inclusion",
+      "query": "任意の線形写像 f,g に対し ker(g∘f)⊆ker(f)。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ 上で f=id, g=0 とすると合成の核はℝ、fの核は零である。"
+    },
+    {
+      "id": "la_reuse_kernel_postcompose_injective_negative",
+      "positive_card_id": "la_reuse_kernel_postcompose_injective",
+      "query": "g の単射性を仮定せず常に ker(g∘f)=ker(f)。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ 上で f=id, g=0。合成の核は全体、fの核は零で異なる。"
+    },
+    {
+      "id": "la_reuse_range_precompose_surjective_negative",
+      "positive_card_id": "la_reuse_range_precompose_surjective",
+      "query": "f の全射性を仮定せず常に im(g∘f)=im(g)。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ 上で f=0, g=id。合成の像は零、gの像は全体で異なる。"
+    },
+    {
+      "id": "la_reuse_zero_composite_criterion_negative",
+      "positive_card_id": "la_reuse_zero_composite_criterion",
+      "query": "g∘f=0 なら常に im(f)=ker(g)。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ→ℝ→ℝ の両写像を零にすると合成は零だが、im(f)=0 と ker(g)=ℝ は異なる。"
+    },
+    {
+      "id": "la_reuse_injective_composition_negative",
+      "positive_card_id": "la_reuse_injective_composition",
+      "query": "f が単射なら g∘f は任意の g に対して単射である。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ 上で f=id, g=0。f は単射だが合成は零写像で単射でない。"
+    },
+    {
+      "id": "la_reuse_surjective_composition_negative",
+      "positive_card_id": "la_reuse_surjective_composition",
+      "query": "f が全射なら g∘f は任意の g に対して全射である。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ 上で f=id, g=0。f は全射だが合成の像は零である。"
+    },
+    {
+      "id": "la_reuse_injective_composite_first_factor_negative",
+      "positive_card_id": "la_reuse_injective_composite_first_factor",
+      "query": "g∘f が単射なら後段の g も全域で単射である。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "f:ℝ→ℝ², f(x)=(x,0)、g:ℝ²→ℝ, g(x,y)=x なら合成は恒等だが g は単射でない。"
+    },
+    {
+      "id": "la_reuse_surjective_composite_last_factor_negative",
+      "positive_card_id": "la_reuse_surjective_composite_last_factor",
+      "query": "g∘f が全射なら前段の f も全射である。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "f:ℝ→ℝ², f(x)=(x,0)、g:ℝ²→ℝ, g(x,y)=x なら合成は恒等だが f は全射でない。"
+    },
+    {
+      "id": "la_reuse_left_inverse_injective_negative",
+      "positive_card_id": "la_reuse_left_inverse_injective",
+      "query": "f が線形右逆写像を持つなら f は単射である。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "f:ℝ²→ℝ, f(x,y)=x と g:ℝ→ℝ², g(x)=(x,0) は f∘g=id を満たすが f は単射でない。"
+    },
+    {
+      "id": "la_reuse_right_inverse_surjective_negative",
+      "positive_card_id": "la_reuse_right_inverse_surjective",
+      "query": "f が線形左逆写像を持つなら f は全射である。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "f:ℝ→ℝ², f(x)=(x,0) と g:ℝ²→ℝ, g(x,y)=x は g∘f=id を満たすが f は全射でない。"
+    },
+    {
+      "id": "la_reuse_cancel_injective_postcomposition_negative",
+      "positive_card_id": "la_reuse_cancel_injective_postcomposition",
+      "query": "g∘f=g∘h なら g の単射性なしに f=h と結論できる。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ 上で g=0, f=id, h=0。合成は共に零だが f≠h。"
+    },
+    {
+      "id": "la_reuse_cancel_surjective_precomposition_negative",
+      "positive_card_id": "la_reuse_cancel_surjective_precomposition",
+      "query": "g∘f=h∘f なら f の全射性なしに g=h と結論できる。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ 上で f=0, g=id, h=0。合成は共に零だが g≠h。"
+    },
+    {
+      "id": "la_reuse_inverse_uniqueness_negative",
+      "positive_card_id": "la_reuse_inverse_uniqueness",
+      "query": "一つの線形写像の二つの左逆写像は必ず一致する。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "f:ℝ→ℝ², f(x)=(x,0) に対し g(x,y)=x と h(x,y)=x+y は両方左逆だが g(0,1)=0≠1=h(0,1)。"
+    },
+    {
+      "id": "la_reuse_split_kernel_range_complement_negative",
+      "positive_card_id": "la_reuse_split_kernel_range_complement",
+      "query": "右逆関係がなくても im(g) と ker(f) は補空間になる。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ 上で f=0, g=id とすると im(g)=ker(f)=ℝ なので共通部分は零ではない。"
+    },
+    {
+      "id": "la_reuse_idempotent_kernel_range_complement_negative",
+      "positive_card_id": "la_reuse_idempotent_kernel_range_complement",
+      "query": "任意の線形自己写像 f で im(f)+ker(f)=M かつ im(f)∩ker(f)=0。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ² 上で f(x,y)=(y,0) とすると像と核は共に x 軸で、和は全体でなく共通部分も非零。f は冪等でない。"
+    },
+    {
+      "id": "la_reuse_submodule_modular_law_negative",
+      "positive_card_id": "la_reuse_submodule_modular_law",
+      "query": "任意の I,J,K に対し I+(J∩K)=(I+J)∩K。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ² で I=x軸、J=y軸、K={(t,t)} とすると左辺はx軸、右辺は対角線Kで異なる。I⊆K が欠けている。"
+    },
+    {
+      "id": "la_reuse_exact_sequence_zero_composite_negative",
+      "positive_card_id": "la_reuse_exact_sequence_zero_composite",
+      "query": "合成が零であればその二つの線形写像は必ず完全である。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "非零空間ℝ上の零写像を二つ並べると合成は零だが、像0と次の核ℝは一致しない。"
+    },
+    {
+      "id": "la_reuse_exactness_precompose_surjection_negative",
+      "positive_card_id": "la_reuse_exactness_precompose_surjection",
+      "query": "完全な列の前に任意の線形写像 h を合成しても完全性は保存される。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ上で f=id, g=0 は完全だが、h=0 を前合成すると im(f∘h)=0≠ℝ=ker(g)。hの全射性が必要。"
+    },
+    {
+      "id": "la_reuse_exactness_postcompose_injection_negative",
+      "positive_card_id": "la_reuse_exactness_postcompose_injection",
+      "query": "完全な列の後に任意の線形写像 h を合成しても完全性は保存される。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ上で f=0, g=id は完全だが、h=0 を後合成すると im(f)=0≠ℝ=ker(h∘g)。hの単射性が必要。"
+    },
+    {
+      "id": "la_reuse_commuting_maps_kernel_sum_negative",
+      "positive_card_id": "la_reuse_commuting_maps_kernel_sum",
+      "query": "可換性なしに ker(f)+ker(g)⊆ker(g∘f)。",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ² 上で f(x,y)=(y,x)、g(x,y)=(x,0) とする。(0,1) は ker(g) に入るが g(f(0,1))=(1,0)≠0。"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "schema_version": "pals.proposed-explicit-curriculum-bindings.v1",
+  "status": "proposed_for_parent_review",
+  "bindings": [
+    {
+      "family_id": "univ.multivar.integral-theorems",
+      "draft_id": "vector_v6_gauss_rectangle",
+      "primary_mode": "justify_prove",
+      "difficulty": "standard",
+      "authoring_manifest": "docs/vector-calculus-v6-batch.json",
+      "admission_manifest": null
+    },
+    {
+      "family_id": "univ.multivar.integral-theorems",
+      "draft_id": "vector_v6_green_countable_exceptions",
+      "primary_mode": "justify_prove",
+      "difficulty": "advanced",
+      "authoring_manifest": "docs/vector-calculus-v6-batch.json",
+      "admission_manifest": null
+    },
+    {
+      "family_id": "univ.multivar.integral-theorems",
+      "draft_id": "vector_v6_affine_flux",
+      "primary_mode": "compute_construct",
+      "difficulty": "introductory",
+      "authoring_manifest": "docs/vector-calculus-v6-batch.json",
+      "admission_manifest": null
+    },
+    {
+      "family_id": "univ.multivar.integral-theorems",
+      "draft_id": "vector_v6_c1_gauss_hypotheses",
+      "primary_mode": "recognize",
+      "difficulty": "standard",
+      "authoring_manifest": "docs/vector-calculus-v6-batch.json",
+      "admission_manifest": null
+    },
+    {
+      "family_id": "univ.multivar.integral-theorems",
+      "draft_id": "vector_v6_missing_boundary_continuity",
+      "primary_mode": "counterexample_audit",
+      "difficulty": "standard",
+      "authoring_manifest": "docs/vector-calculus-v6-batch.json",
+      "admission_manifest": null
+    }
+  ]
+}

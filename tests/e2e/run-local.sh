@@ -15,6 +15,7 @@ infra_compose="$project_root/pals-infra/docker-compose.localstack.yml"
 e2e_compose="$project_root/docker-compose.e2e.yml"
 local_env="${PALS_E2E_LOCAL_ENV_FILE:-$project_root/.env.local}"
 release_env="${PALS_E2E_RELEASE_ENV_FILE:-$project_root/.local/e2e/release.env}"
+recipe_env="${PALS_E2E_RECIPE_ENV_FILE:-$project_root/.local/e2e/recipe.env}"
 bootstrap="$project_root/pals-scripts/bootstrap-local-verifier-tls.py"
 project_name=pals-local
 verifier_image=pals-lean-verifier:local
@@ -29,6 +30,8 @@ test -f "$local_env" || fail "local environment file is missing: $local_env"
 test -f "$bootstrap" || fail "TLS bootstrap is missing: $bootstrap"
 test -x "$project_root/pals-agent/.venv/bin/python" || \
   fail "pals-agent/.venv/bin/python is required for TLS bootstrap"
+test -x "$project_root/pals-api/.venv/bin/python" || \
+  fail "pals-api/.venv/bin/python is required for local role configuration"
 test ! -L "$release_env" || fail "release environment must not be a symbolic link"
 
 umask 077
@@ -94,6 +97,8 @@ compose build --provenance=false api verifier worker webfront
 
 # Secrets Manager must be ready before a real certificate generation can be created.
 compose up -d --wait postgres localstack cognito-local
+"$project_root/pals-agent/.venv/bin/python" \
+  "$project_root/pals-scripts/harden-local-postgres-access.py" --apply
 
 verifier_digest=$(docker image inspect --format '{{.Id}}' "$verifier_image")
 toolchain_sha256=${verifier_digest#sha256:}
@@ -174,14 +179,28 @@ if test "$refresh_release" = true; then
 fi
 
 test -f "$release_env" || fail "release environment was not created"
-docker compose \
+"$project_root/pals-api/.venv/bin/python" \
+  "$project_root/pals-scripts/bootstrap-local-recipe-config.py" \
+  --env-file "$local_env" --release-env "$release_env" \
+  --output "$recipe_env" --lean-workspace "$project_root/pals-agent/lean-workspace"
+
+compose_runtime() {
+  docker compose \
   --project-name "$project_name" \
   --env-file "$local_env" \
   --env-file "$release_env" \
+  --env-file "$recipe_env" \
   -f "$base_compose" \
   -f "$infra_compose" \
   -f "$e2e_compose" \
-  up -d --wait
+  "$@"
+}
+
+# Quiesce mutations before the release job; it has no API ports or fixed IP.
+# Failure stops startup and preserves the database for diagnosis.
+compose_runtime stop worker recipe-reviewer api reconciler
+compose_runtime run --rm --no-deps schema-release
+compose_runtime up -d --wait
 
 # A successful rotation makes only the five references from this runner's previous
 # release file obsolete. Delete exactly those; unrelated local secrets are untouched.

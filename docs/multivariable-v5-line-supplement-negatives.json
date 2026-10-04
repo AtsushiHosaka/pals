@@ -1,0 +1,30 @@
+{
+  "schema_version": "pals.line-supplement-negatives.v1",
+  "profile_id": "typed-multivariable-v5",
+  "cases": [
+    {
+      "id": "mv_line_supp_v5_orientation_law_negative",
+      "positive_card_id": "mv_line_supp_v5_orientation_law",
+      "candidate_question": "Reversing the integration direction leaves every line integral unchanged.",
+      "why_invalid": "For the coordinate form dx_i along a coordinate segment from a to b with a≠b, the two integrals are b-a and a-b, which are unequal."
+    },
+    {
+      "id": "mv_line_supp_v5_split_parameter_interval_negative",
+      "positive_card_id": "mv_line_supp_v5_split_parameter_interval",
+      "candidate_question": "The splitting identity is valid for totalized integrals without any integrability assumptions.",
+      "why_invalid": "On [-1,1], take a scalar pullback equal to 1/|t| for t<0 and 1 for t>0. The integrals on [-1,0] and [-1,1] totalize to zero because they are not integrable, while the integral on [0,1] is 1; hence 0+1≠0."
+    },
+    {
+      "id": "mv_line_supp_v5_orientation_counterexample_negative",
+      "positive_card_id": "mv_line_supp_v5_orientation_counterexample",
+      "candidate_question": "A line integral of an exact one-form is independent even of the order of its endpoints.",
+      "why_invalid": "Exactness removes dependence on the intervening path, not on endpoint order: this coordinate-family integral is b-a and changes to a-b on reversal."
+    },
+    {
+      "id": "mv_line_supp_v5_bilinear_curve_integration_by_parts_negative",
+      "positive_card_id": "mv_line_supp_v5_bilinear_curve_integration_by_parts",
+      "candidate_question": "The endpoint difference equals the first integral alone, with no second velocity contribution.",
+      "why_invalid": "In dimension one take B(x,y)=xy, c(t)=d(t)=t and [a,b]=[0,1]. The first integral is 1/2 but the endpoint difference is 1; the second integral supplies the missing 1/2."
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "schema_version": "pals.typed-catalog-expansion-hard-negatives.v1",
+  "profile_id": "typed-multivariable-v5",
+  "status": "authored_candidates_not_retrieval_tested",
+  "cases": [
+    {
+      "id": "mv_foundation_partial_value_criterion_negative",
+      "paired_card_ids": [
+        "mv_foundation_partial_value_criterion"
+      ],
+      "candidate_question": "Can a coordinate partial value be read as A(x), rather than A(eᵢ)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For a nonzero coordinate projection at x=0, A(x)=0 but A(eᵢ)=1. The derivative is applied to the coordinate direction, not the base point."
+    },
+    {
+      "id": "mv_foundation_zero_totalized_jacobian_counterexample_negative",
+      "paired_card_ids": [
+        "mv_foundation_zero_totalized_jacobian_counterexample"
+      ],
+      "candidate_question": "Does an identically zero totalized Jacobian at a point certify differentiability there?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The paired Lean theorem constructs output coordinates |xᵢ|. The map is not differentiable at zero, and Lean sets its fderiv and Jacobian there to zero. An actual HasFDerivAt or DifferentiableAt premise is essential."
+    },
+    {
+      "id": "mv_foundation_jacobian_curve_velocity_negative",
+      "paired_card_ids": [
+        "mv_foundation_jacobian_curve_velocity"
+      ],
+      "candidate_question": "Can the Jacobian-velocity product be replaced by the velocity vector without accounting for f?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For f(x)=2x and a curve with nonzero velocity u, the composite velocity is 2u, not u. For different input/output dimensions the suggested replacement is also ill-typed."
+    },
+    {
+      "id": "mv_foundation_quadratic_hessian_criterion_negative",
+      "paired_card_ids": [
+        "mv_foundation_quadratic_hessian_criterion"
+      ],
+      "candidate_question": "Is B alone always the Hessian of the quadratic B(x,x)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For a nonzero symmetric bilinear form the Hessian is 2B. For B(u,w)≠0 the paired missing-flip theorem formally refutes the proposed derivative B."
+    },
+    {
+      "id": "mv_foundation_quadratic_hessian_missing_flip_counterexample_negative",
+      "paired_card_ids": [
+        "mv_foundation_quadratic_hessian_missing_flip_counterexample"
+      ],
+      "candidate_question": "Can the nonzero-value assumption be removed to conclude B is never this Hessian?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. If B=0, the quadratic and derivative field are zero and B=0 is their correct derivative. A nonzero B(u,w) is necessary for this family of counterexamples."
+    },
+    {
+      "id": "mv_foundation_lagrange_multiplier_from_direction_negative",
+      "paired_card_ids": [
+        "mv_foundation_lagrange_multiplier_from_direction"
+      ],
+      "candidate_question": "Can a direction with A(u)=0 determine the normalized multiplier from cA(u)=B(u)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take the nonzero functional A(x)=x₁ and objective derivative B=A, but choose u=0. The scalar equation is 0=0 for every c, although the functional identity forces c=1. The nonzero directional denominator is essential."
+    },
+    {
+      "id": "mv_foundation_singular_constraint_counterexample_negative",
+      "paired_card_ids": [
+        "mv_foundation_singular_constraint_counterexample"
+      ],
+      "candidate_question": "Does every constrained smooth extremum admit a normalized Lagrange multiplier even when the constraint derivative vanishes?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For nonzero A, the constraint (A x)²=0 forces A x=0, so objective A x is constant on the constraint. At zero the constraint derivative is zero and the objective derivative is A≠0; no normalized multiplier exists. The original unnormalized multiplier theorem remains valid."
+    },
+    {
+      "id": "mv_foundation_exceptional_section_counterexample_negative",
+      "paired_card_ids": [
+        "mv_foundation_exceptional_section_counterexample"
+      ],
+      "candidate_question": "Does product integrability imply integrability of the section through every base point?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For nonzero c, f(x,y)=c when x=0 and zero otherwise is almost everywhere zero on positive-dimensional product Euclidean space. It is integrable, but the exceptional section at x=0 is the nonintegrable constant c. Almost-everywhere quantification cannot be strengthened to every point."
+    }
+  ]
+}

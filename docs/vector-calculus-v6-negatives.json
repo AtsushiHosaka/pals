@@ -1,0 +1,52 @@
+{
+  "schema_version": "pals.typed-catalog-expansion-hard-negatives.v1",
+  "profile_id": "typed-vector-calculus-v6",
+  "status": "authored_candidates_not_retrieval_tested",
+  "cases": [
+    {
+      "id": "vector_v6_negative_gauss_rectangle",
+      "paired_card_ids": [
+        "vector_v6_gauss_rectangle"
+      ],
+      "candidate_question": "Can outward flux be computed by adding all four side integrals with positive signs?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For the constant field (1,0) on a positive-width/height rectangle, divergence and true flux are zero. Adding left and right contributions with the same sign instead gives twice the height. Outward normal signs are essential."
+    },
+    {
+      "id": "vector_v6_negative_green_countable_exceptions",
+      "paired_card_ids": [
+        "vector_v6_green_countable_exceptions"
+      ],
+      "candidate_question": "Can the scalar curl in counterclockwise Green be changed from ∂xQ−∂yP to ∂yP−∂xQ?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For P=0,Q=x on any rectangle with positive width and height, counterclockwise circulation is the positive area. The reversed curl integrates to the negative area. Derivative exception countability also does not remove the separate boundary-continuity or curl-integrability hypotheses."
+    },
+    {
+      "id": "vector_v6_negative_affine_flux",
+      "paired_card_ids": [
+        "vector_v6_affine_flux"
+      ],
+      "candidate_question": "Does the outward flux of a general affine field depend on the off-diagonal coefficients β+γ instead of α+δ?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The radial field (x,y) has α=δ=1, β=γ=0 and flux twice the positive rectangle area. Constant and cross-coordinate terms cancel between opposite sides; the trace remains."
+    },
+    {
+      "id": "vector_v6_negative_c1_gauss_hypotheses",
+      "paired_card_ids": [
+        "vector_v6_c1_gauss_hypotheses"
+      ],
+      "candidate_question": "Is mere continuity of both vector-field components enough to supply actual derivatives at every point?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The component |x| is continuous on the plane and is not differentiable along x=0. On a rectangle crossing that line it does not satisfy the everywhere-interior derivative hypotheses. Its nondifferentiability set is uncountable, so even the countable-exception variant cannot be applied directly with that set."
+    },
+    {
+      "id": "vector_v6_negative_missing_boundary_continuity",
+      "paired_card_ids": [
+        "vector_v6_missing_boundary_continuity"
+      ],
+      "candidate_question": "Can closed-boundary continuity be dropped when the field has zero derivatives throughout the interior?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For every positive rectangle and c≠0, the paired Lean theorem constructs f=c on the left boundary line and zero elsewhere. For the vector field (f,0), divergence is zero on the interior but right-minus-left flux is −c times the positive height, which is nonzero. The missing boundary continuity is substantive."
+    }
+  ]
+}

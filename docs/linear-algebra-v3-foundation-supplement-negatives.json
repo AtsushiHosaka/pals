@@ -1,0 +1,14 @@
+{
+  "schema_version": "pals.authored-hard-negative-queries.v1",
+  "profile_id": "typed-linear-algebra-v3",
+  "status": "authored_counterexamples_not_retrieval_evaluated",
+  "cases": [
+    {
+      "id": "la_v3_nonadditive_norm_family_negative",
+      "positive_card_id": "la_v3_nonadditive_norm_family",
+      "query": "The norm is additive on every pair of vectors in an inner product space.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For any nonzero x, choose the pair x and −x. The sum has norm zero, while the sum of the two norms is 2‖x‖>0. If x=0 this is not a strict counterexample, so the nonzero premise is explicit."
+    }
+  ]
+}

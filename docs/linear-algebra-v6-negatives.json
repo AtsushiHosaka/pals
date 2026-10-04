@@ -1,0 +1,133 @@
+{
+  "schema_version": "pals.authored-hard-negative-queries.v1",
+  "profile_id": "typed-linear-algebra-v6",
+  "status": "authored_counterexamples_not_retrieval_evaluated",
+  "cases": [
+    {
+      "id": "la_v6_fredholm_solvability_negative",
+      "positive_card_id": "la_v6_fredholm_solvability",
+      "query": "Testing just one nonzero functional always decides whether f(x)=y is solvable.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For f:ℚ→ℚ², f(t)=(t,0), let y=(0,1). The first-coordinate functional does not annihilate all outputs, so its conditional test is vacuous even though the system is insoluble. All annihilating functionals are required."
+    },
+    {
+      "id": "la_v6_kernel_causes_nonunique_solutions_negative",
+      "positive_card_id": "la_v6_kernel_causes_nonunique_solutions",
+      "query": "A nontrivial kernel makes every right-hand side solvable.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The zero map ℚ→ℚ has a nontrivial kernel, but f(x)=1 has no solution. The theorem constructs another solution only from an existing one."
+    },
+    {
+      "id": "la_v6_left_inverse_detects_injective_action_negative",
+      "positive_card_id": "la_v6_left_inverse_detects_injective_action",
+      "query": "AB=I makes A injective as well as B.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Take A=(1 0):ℚ²→ℚ and B=(1,0)ᵀ:ℚ→ℚ². Then AB=I, but A(0,1)=0, so A is not injective."
+    },
+    {
+      "id": "la_v6_matrix_units_noncommute_negative",
+      "positive_card_id": "la_v6_matrix_units_noncommute",
+      "query": "The products differ even if the coefficient t is zero or the indices coincide.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "If t=0 both products vanish; if i=j both are scalar multiples of the same diagonal unit. Both hypotheses in the positive card are essential."
+    },
+    {
+      "id": "la_v6_nilpotent_geometric_inverse_negative",
+      "positive_card_id": "la_v6_nilpotent_geometric_inverse",
+      "query": "Any finite geometric sum is an inverse of I−N without the condition N^k=0.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Over ℚ take N=2I and k=2 in a positive dimension. The sum is 3I while (I−N)3I=−3I, not I. The uncancelled remainder is −N^k."
+    },
+    {
+      "id": "la_v6_subspace_sum_membership_negative",
+      "positive_card_id": "la_v6_subspace_sum_membership",
+      "query": "Membership in S+T means membership in the set union S∪T.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For the two coordinate lines in ℚ², (1,1) belongs to their sum but neither line."
+    },
+    {
+      "id": "la_v6_incomparable_union_not_closed_negative",
+      "positive_card_id": "la_v6_incomparable_union_not_closed",
+      "query": "The union of any two subspaces fails closure under addition.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "If S⊆T then S∪T=T is itself a subspace. The two incomparability assumptions distinguish precisely the constructive counterexample case."
+    },
+    {
+      "id": "la_v6_injective_images_preserve_intersection_negative",
+      "positive_card_id": "la_v6_injective_images_preserve_intersection",
+      "query": "All linear maps preserve intersections of subspaces under direct image.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Let f:ℚ²→ℚ be f(x,y)=x+y. For S=span(e₁) and T=span(e₂), S∩T=0 but f(S)=f(T)=ℚ. The common image need not have a common preimage without injectivity."
+    },
+    {
+      "id": "la_v6_independence_zero_coefficients_negative",
+      "positive_card_id": "la_v6_independence_zero_coefficients",
+      "query": "It is enough to check relations whose coefficients are all equal.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For v=(1,2) in the ℚ-space ℚ, a(1+2)=0 forces a=0, but the relation 2·1−1·2=0 is nontrivial. All coefficient functions must be tested."
+    },
+    {
+      "id": "la_v6_span_construct_coefficients_negative",
+      "positive_card_id": "la_v6_span_construct_coefficients",
+      "query": "Every finite spanning family gives unique coefficients.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The family (1,1) spans ℚ, but the vector 1 has coefficient choices (1,0) and (0,1). Existence of coefficients does not imply independence."
+    },
+    {
+      "id": "la_v6_repeated_vector_dependence_negative",
+      "positive_card_id": "la_v6_repeated_vector_dependence",
+      "query": "A finite family with pairwise distinct nonzero vectors must be independent.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The distinct nonzero vectors e₁,e₂,e₁+e₂ in ℚ² are dependent. Repetition is a sufficient obstruction, not the only obstruction."
+    },
+    {
+      "id": "la_v6_independence_under_restricted_injection_negative",
+      "positive_card_id": "la_v6_independence_under_restricted_injection",
+      "query": "Independence is preserved by every linear map, regardless of its kernel on the span.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The nonzero single-vector family (1) is independent in ℚ, but the zero map sends it to (0). Its span meets the kernel nontrivially, so the restriction hypothesis fails."
+    },
+    {
+      "id": "la_v6_basis_recognition_negative",
+      "positive_card_id": "la_v6_basis_recognition",
+      "query": "A spanning family alone is the family of a basis with those exact indices.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The family (1,1) spans ℚ but is dependent and cannot be the values of any two-element basis. Both spanning and independence are required."
+    },
+    {
+      "id": "la_v6_zeroing_basis_vector_loses_span_negative",
+      "positive_card_id": "la_v6_zeroing_basis_vector_loses_span",
+      "query": "Every family of dim V vectors spans V.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For any nonempty finite basis, the positive card constructs a same-length family by replacing one basis vector by zero. The corresponding coordinate functional separates the removed vector from the new span."
+    },
+    {
+      "id": "la_v6_nonzero_translation_not_linear_negative",
+      "positive_card_id": "la_v6_nonzero_translation_not_linear",
+      "query": "Every affine translation is linear because it preserves differences.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For any nonzero translation vector u, translation sends 0 to u≠0, violating the zero-preservation law of a linear map. If u=0 it is the identity, so the nonzero premise matters."
+    },
+    {
+      "id": "la_v6_nonzero_maps_zero_composite_negative",
+      "positive_card_id": "la_v6_nonzero_maps_zero_composite",
+      "query": "If p∘q=0 then p=0 or q=0.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For any basis with two distinct indices, coordinate projections onto those two basis lines are nonzero while their composite vanishes. No special matrix size or numerical coefficient is needed."
+    },
+    {
+      "id": "la_v6_idempotent_kernel_range_decomposition_negative",
+      "positive_card_id": "la_v6_idempotent_kernel_range_decomposition",
+      "query": "Range and kernel of every endomorphism are complementary.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "On ℚ² let f(x,y)=(y,0). Its range and kernel are both span(e₁), so their intersection is nonzero and their sum is not the whole space. Here f²=0≠f."
+    },
+    {
+      "id": "la_v6_rectangular_determinant_transfer_negative",
+      "positive_card_id": "la_v6_rectangular_determinant_transfer",
+      "query": "For rectangular A and B, det(AB)=det(BA) without adding identities.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Take A=(1 0):ℚ²→ℚ and B=(1,0)ᵀ:ℚ→ℚ². AB has determinant 1, while BA=diag(1,0) has determinant 0. The identity shifts in Sylvester’s formula are essential."
+    }
+  ]
+}

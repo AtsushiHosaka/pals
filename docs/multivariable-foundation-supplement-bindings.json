@@ -1,0 +1,110 @@
+{
+  "schema_version": "pals.proposed-explicit-curriculum-bindings.v1",
+  "status": "proposed_for_parent_review",
+  "bindings": [
+    {
+      "family_id": "univ.multivar.partials",
+      "draft_id": "mv_foundation_partial_value_criterion",
+      "primary_mode": "recognize",
+      "difficulty": "introductory",
+      "authoring_manifest": "docs/multivariable-v5-foundation-supplement.json",
+      "admission_manifest": null
+    },
+    {
+      "family_id": "univ.multivar.total-jacobian",
+      "draft_id": "mv_foundation_zero_totalized_jacobian_counterexample",
+      "primary_mode": "counterexample_audit",
+      "difficulty": "standard",
+      "authoring_manifest": "docs/multivariable-v5-foundation-supplement.json",
+      "admission_manifest": null
+    },
+    {
+      "family_id": "univ.multivar.total-jacobian",
+      "draft_id": "mv_foundation_jacobian_curve_velocity",
+      "primary_mode": "synthesize",
+      "difficulty": "advanced",
+      "authoring_manifest": "docs/multivariable-v5-foundation-supplement.json",
+      "admission_manifest": null
+    },
+    {
+      "family_id": "univ.multivar.hessian-taylor",
+      "draft_id": "mv_foundation_quadratic_hessian_criterion",
+      "primary_mode": "recognize",
+      "difficulty": "introductory",
+      "authoring_manifest": "docs/multivariable-v5-foundation-supplement.json",
+      "admission_manifest": null
+    },
+    {
+      "family_id": "univ.multivar.hessian-taylor",
+      "draft_id": "mv_foundation_quadratic_hessian_missing_flip_counterexample",
+      "primary_mode": "counterexample_audit",
+      "difficulty": "standard",
+      "authoring_manifest": "docs/multivariable-v5-foundation-supplement.json",
+      "admission_manifest": null
+    },
+    {
+      "family_id": "univ.multivar.lagrange",
+      "draft_id": "mv_foundation_lagrange_multiplier_from_direction",
+      "primary_mode": "compute_construct",
+      "difficulty": "introductory",
+      "authoring_manifest": "docs/multivariable-v5-foundation-supplement.json",
+      "admission_manifest": null
+    },
+    {
+      "family_id": "univ.multivar.lagrange",
+      "draft_id": "mv_foundation_singular_constraint_counterexample",
+      "primary_mode": "counterexample_audit",
+      "difficulty": "standard",
+      "authoring_manifest": "docs/multivariable-v5-foundation-supplement.json",
+      "admission_manifest": null
+    },
+    {
+      "family_id": "univ.multivar.multiple-integrals",
+      "draft_id": "mv_foundation_exceptional_section_counterexample",
+      "primary_mode": "counterexample_audit",
+      "difficulty": "standard",
+      "authoring_manifest": "docs/multivariable-v5-foundation-supplement.json",
+      "admission_manifest": null
+    },
+    {
+      "family_id": "univ.multivar.gradient",
+      "draft_id": "mv_foundation_stationary_not_minimum",
+      "primary_mode": "counterexample_audit",
+      "difficulty": "standard",
+      "authoring_manifest": "docs/calculus-v4-foundation-supplement.json",
+      "admission_manifest": null
+    },
+    {
+      "family_id": "univ.multivar.extrema",
+      "draft_id": "mv_foundation_nondifferentiable_minimum",
+      "primary_mode": "counterexample_audit",
+      "difficulty": "standard",
+      "authoring_manifest": "docs/calculus-v4-foundation-supplement.json",
+      "admission_manifest": null
+    },
+    {
+      "family_id": "univ.multivar.extrema",
+      "draft_id": "mv_foundation_quadratic_minimum_criterion",
+      "primary_mode": "recognize",
+      "difficulty": "introductory",
+      "authoring_manifest": "docs/calculus-v4-foundation-supplement.json",
+      "admission_manifest": null
+    },
+    {
+      "family_id": "univ.multivar.extrema",
+      "draft_id": "mv_foundation_nonnegative_quadratic_minimum",
+      "primary_mode": "compute_construct",
+      "difficulty": "introductory",
+      "authoring_manifest": "docs/calculus-v4-foundation-supplement.json",
+      "admission_manifest": null
+    },
+    {
+      "family_id": "univ.multivar.extrema",
+      "draft_id": "mv_foundation_exact_residual_minimum",
+      "primary_mode": "synthesize",
+      "difficulty": "advanced",
+      "authoring_manifest": "docs/calculus-v4-foundation-supplement.json",
+      "admission_manifest": null
+    }
+  ]
+}

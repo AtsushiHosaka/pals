@@ -1,0 +1,275 @@
+{
+  "schema_version": "pals.typed-catalog-expansion-hard-negatives.v1",
+  "profile_id": "typed-commalg-v4",
+  "status": "authored_counterexamples_not_runtime_evaluated",
+  "cases": [
+    {
+      "id": "commalg_v4_negative_galois_wrong_order",
+      "paired_card_ids": [
+        "commalg_v4_vanishing_galois"
+      ],
+      "candidate_question": "Does T⊆V(I) imply vanishingIdeal(T)⊆I?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The ideal inclusion is reversed: I⊆vanishingIdeal(T). Take R=Z, I=0 and T={(2)}. Then T⊆V(0), but vanishingIdeal(T)=(2) is not contained in 0."
+    },
+    {
+      "id": "commalg_v4_negative_double_vanishing_not_identity",
+      "paired_card_ids": [
+        "commalg_v4_zero_locus_vanishing_closure",
+        "commalg_v4_closed_sets_zero_loci"
+      ],
+      "candidate_question": "Is V(vanishingIdeal(T))=T for every subset T of Spec R?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For R=Z and T={(0)}, the vanishing ideal is 0 and V(0)=Spec Z. The point (0) is not closed, and the required result is closure(T), not T itself."
+    },
+    {
+      "id": "commalg_v4_negative_radical_not_original",
+      "paired_card_ids": [
+        "commalg_v4_vanishing_zero_locus_radical"
+      ],
+      "candidate_question": "Is vanishingIdeal(V(I)) always I?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Let R=k[t] and I=(t²). V(I)=V((t)), and its vanishing ideal is (t), strictly larger than (t²). The formula returns the radical."
+    },
+    {
+      "id": "commalg_v4_negative_sum_union_swapped",
+      "paired_card_ids": [
+        "commalg_v4_zero_locus_sum",
+        "commalg_v4_zero_locus_product"
+      ],
+      "candidate_question": "Can V(I+J) be written as V(I)∪V(J), and V(IJ) as V(I)∩V(J)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "In Z take I=(2),J=(3). Their sum is Z with empty zero locus, whereas their product (6) has zero locus {(2),(3)}. V(I) and V(J) are disjoint nonempty singletons. The proposed operations give the wrong sets."
+    },
+    {
+      "id": "commalg_v4_negative_every_prime_closed",
+      "paired_card_ids": [
+        "commalg_v4_closure_prime_point",
+        "commalg_v4_closed_point_maximal",
+        "commalg_v4_spectrum_t0"
+      ],
+      "candidate_question": "Are all points of Spec R closed because the spectrum is T0?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Spec Z is T0, but the prime (0) is not maximal and its closure is all of Spec Z. T0 does not imply T1 or Hausdorff, nor that every singleton is closed."
+    },
+    {
+      "id": "commalg_v4_negative_proper_ideal_irreducible",
+      "paired_card_ids": [
+        "commalg_v4_irreducible_zero_locus"
+      ],
+      "candidate_question": "Is the zero locus of every proper ideal irreducible?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For R=k[x,y] and I=(xy), V(I)=V(x)∪V(y) with neither closed component containing the other. Its radical is not prime. Also V(R)=∅ is not irreducible under the nonempty convention."
+    },
+    {
+      "id": "commalg_v4_negative_compact_means_finite",
+      "paired_card_ids": [
+        "commalg_v4_basic_open_quasicompact"
+      ],
+      "candidate_question": "Does quasi-compactness of D(x) mean that D(x) contains only finitely many primes?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take R=Z and x=1. D(1)=Spec Z is quasi-compact but contains (0) and (p) for every rational prime p, hence infinitely many points. Quasi-compactness is the finite-subcover property, not finiteness of the set."
+    },
+    {
+      "id": "commalg_v4_negative_empty_basic_open_implies_zero",
+      "paired_card_ids": [
+        "commalg_v4_basic_open_empty_nilpotent"
+      ],
+      "candidate_question": "If D(x) is empty, must x=0?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "In R=k[ε]/(ε²), the class ε is nonzero and nilpotent. It belongs to every prime ideal, so D(ε)=∅ despite ε≠0."
+    },
+    {
+      "id": "commalg_v4_negative_basic_open_radical_slots",
+      "paired_card_ids": [
+        "commalg_v4_basic_open_inclusion_radical"
+      ],
+      "candidate_question": "Does D(x)⊆D(y) mean y belongs to the radical of (x)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take a field k, x=0 and y=1. D(0)=∅⊆D(1)=Spec k, but 1 is not in √(0). The correct membership is x∈√(y)."
+    },
+    {
+      "id": "commalg_v4_negative_clopen_unique_without_idempotence",
+      "paired_card_ids": [
+        "commalg_v4_clopen_unique_idempotent"
+      ],
+      "candidate_question": "Is a ring element e with T=D(e) unique without requiring e²=e?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "In Q both e=1 and e=2 define D(e)=Spec Q, but they are distinct. Only 1 is idempotent; the uniqueness assertion is among idempotents."
+    },
+    {
+      "id": "commalg_v4_negative_zero_ring_nonempty_spec",
+      "paired_card_ids": [
+        "commalg_v4_spectrum_nonempty_nontrivial"
+      ],
+      "candidate_question": "Does every unital commutative ring have a prime ideal, including the zero ring?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The zero ring has 0=1 and only one ideal, the whole ring. Prime ideals must be proper, so its spectrum is empty. Nontriviality is essential."
+    },
+    {
+      "id": "commalg_v4_negative_continuous_spectrum_injective",
+      "paired_card_ids": [
+        "commalg_v4_spectrum_comap_continuous",
+        "commalg_v4_spectrum_preimage_zero_locus"
+      ],
+      "candidate_question": "Does every ring homomorphism induce an injective map of spectra?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For k→k[t], the distinct primes (0) and (t) of k[t] both contract to (0) in k. The induced map is continuous and obeys the zero-locus preimage formula, but is not injective."
+    },
+    {
+      "id": "commalg_v4_negative_no_surjectivity_closed_embedding",
+      "paired_card_ids": [
+        "commalg_v4_surjective_map_closed_embedding",
+        "commalg_v4_integral_spectrum_closed_map"
+      ],
+      "candidate_question": "Does any injective ring homomorphism induce a closed embedding or closed map of spectra?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The inclusion Z→Q induces the map from the one-point Spec Q to the generic point (0) of Spec Z. Its image is not closed. Injectivity of the ring map does not replace surjectivity in the closed-embedding theorem or integrality in the closed-map theorem."
+    },
+    {
+      "id": "commalg_v4_negative_range_not_closure",
+      "paired_card_ids": [
+        "commalg_v4_spectrum_range_closure"
+      ],
+      "candidate_question": "Is the image of Spec S→Spec R always exactly V(ker f)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For Z→Q the kernel is zero and V(0)=Spec Z, but the image consists only of (0). Its closure is V(0); the actual image need not be closed."
+    },
+    {
+      "id": "commalg_v4_negative_general_localization_open",
+      "paired_card_ids": [
+        "commalg_v4_localization_spectrum_embedding"
+      ],
+      "candidate_question": "Is every localization spectrum map an open embedding?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Localize Z at all nonzero integers, obtaining Q. Its spectrum maps to {(0)}, which is not open in Spec Z: every basic neighborhood D(n) of (0), with n≠0, contains primes (p) not dividing n. The general result gives an embedding, whereas a single-element localization gives an open embedding."
+    },
+    {
+      "id": "commalg_v4_negative_away_closed_instead_of_open",
+      "paired_card_ids": [
+        "commalg_v4_localization_away_basic_open"
+      ],
+      "candidate_question": "Is Spec R[1/x] identified with V(x), the primes containing x?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For R=Z and x=2 the prime (2) is in V(2) but disappears after inverting 2. The image is D(2), the primes avoiding 2; in particular it contains (0)."
+    },
+    {
+      "id": "commalg_v4_negative_quotient_always_homeomorphic",
+      "paired_card_ids": [
+        "commalg_v4_nil_quotient_spectrum_homeomorphism"
+      ],
+      "candidate_question": "Does every quotient R/I have the same spectrum as R via the quotient map?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For R=Z,I=(2), Spec(R/I) has one point whose image is (2), whereas Spec Z has many points. The hypothesis I⊆nilradical(R)=0 fails. Quotienting by a nil ideal, not an arbitrary ideal, preserves the whole spectrum."
+    },
+    {
+      "id": "commalg_v4_negative_lying_over_without_injectivity",
+      "paired_card_ids": [
+        "commalg_v4_integral_lying_over"
+      ],
+      "candidate_question": "Does every integral ring homomorphism induce a surjection on spectra without injectivity?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The quotient Z→Z/2Z is integral, but the only contracted prime is (2); the prime (3) of Z has no prime above it. Injectivity guarantees the needed absence of a kernel obstruction for all primes."
+    },
+    {
+      "id": "commalg_v4_negative_going_up_without_integrality",
+      "paired_card_ids": [
+        "commalg_v4_integral_going_up"
+      ],
+      "candidate_question": "Does going up hold for every injective homomorphism of domains?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For Z→Q the prime J=(0) of Q contracts to (0)⊆(2), but Q has no prime contracting to (2). This extension is injective and both rings are domains, but it is not integral."
+    },
+    {
+      "id": "commalg_v4_negative_incomparability_without_integrality",
+      "paired_card_ids": [
+        "commalg_v4_integral_incomparability"
+      ],
+      "candidate_question": "Can two distinct comparable primes in S have the same contraction to R for an arbitrary R-algebra?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For a field k and S=k[t], the primes (0)⊊(t) both contract to (0) in k. Integrality is what forbids this pair in the card."
+    },
+    {
+      "id": "commalg_v4_negative_maximal_missing_prime_or_integrality",
+      "paired_card_ids": [
+        "commalg_v4_integral_maximal_equivalence"
+      ],
+      "candidate_question": "Is an ideal maximal exactly when its contraction is maximal, without primality or integrality hypotheses?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Primality cannot be omitted: in the integral extension k→k[ε]/(ε²), I=0 contracts to the maximal ideal 0 of k, but I is not maximal. Integrality cannot be omitted either: for Z→Q the maximal ideal 0 contracts to the nonmaximal ideal 0 of Z."
+    },
+    {
+      "id": "commalg_v4_negative_proper_extension_kernel",
+      "paired_card_ids": [
+        "commalg_v4_integral_extension_proper"
+      ],
+      "candidate_question": "Does every proper ideal remain proper under an integral homomorphism, regardless of the kernel?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take f:k[t]→k evaluating at 0 and I=(t−1). The map is integral and I is proper, but f(t−1)=−1 is a unit, so the extension is all of k. I does not contain ker f=(t)."
+    },
+    {
+      "id": "commalg_v4_negative_proper_extension_integral",
+      "paired_card_ids": [
+        "commalg_v4_integral_extension_proper"
+      ],
+      "candidate_question": "May the integrality hypothesis be dropped from preservation of proper ideals containing the kernel?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For Z→Q the kernel is zero, so (2) contains it, but the extension of (2) is Q because 2 is invertible. The map is not integral."
+    },
+    {
+      "id": "commalg_v4_negative_going_down_without_injectivity",
+      "paired_card_ids": [
+        "commalg_v4_going_down_normal_domain",
+        "commalg_v4_going_down_flat"
+      ],
+      "candidate_question": "Does any integral map from an integrally closed domain to a domain satisfy going down without injectivity or flatness?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Let R=k[t],S=k and evaluate t at 0. Both rings are domains, R is integrally closed, and S is integral over R. For p=0⊊q=(t), the prime Q=0 of S lies over q. No prime of S contracts to p, so going down fails. The map is neither injective nor flat."
+    },
+    {
+      "id": "commalg_v4_negative_going_down_without_domain_target",
+      "paired_card_ids": [
+        "commalg_v4_going_down_normal_domain"
+      ],
+      "candidate_question": "Does an injective integral extension of an integrally closed domain satisfy this going-down theorem if S need not be a domain?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Let R=k[t] and S=R×k, with r↦(r,r(0)). This map is injective and finite, hence integral, and R is normal. The prime Q=R×0 contracts to q=(t), and there is no prime strictly below Q: it is the generic and closed point of the separate Spec k component. Thus p=0⊊q has no prime below Q lying over p. S is not a domain."
+    },
+    {
+      "id": "commalg_v4_negative_going_down_without_normal_base",
+      "paired_card_ids": [
+        "commalg_v4_going_down_normal_domain"
+      ],
+      "candidate_question": "May integrally closedness of the base domain be dropped in integral-domain going down?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Let S=Q[t,z] and R=Q[t²−1,t(t²−1),z]⊂S. S is integral over R since t satisfies X²−(t²−1)−1=0, and both are domains, but R is not integrally closed (t is not in R). Put Q=(t−1,z)⊂S, q=Q∩R, P₀=(t+1−z)⊂S and p=P₀∩R. Then p⊊q: evaluating at (−1,0) and (1,0) agrees on R, while z∉p and z∈q. Put a=t²−1; a∉p and S[1/a]=R[1/a], so P₀ is the unique prime over p. But P₀⊄Q since t+1−z has value 2 at (1,0). Thus no prime below Q lies over p."
+    },
+    {
+      "id": "commalg_v4_negative_dimension_inequality_reversed",
+      "paired_card_ids": [
+        "commalg_v4_dimension_surjective_map"
+      ],
+      "candidate_question": "For a surjective ring map R→S, must dim R≤dim S?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Evaluate k[t] at 0 to obtain the surjection k[t]→k. The source has dimension 1 and the target has dimension 0. The correct general inequality goes from the target dimension to the source dimension."
+    },
+    {
+      "id": "commalg_v4_negative_dimension_polynomial_missing_one",
+      "paired_card_ids": [
+        "commalg_v4_dimension_polynomial_noetherian"
+      ],
+      "candidate_question": "Does adjoining an indeterminate leave the dimension of every Noetherian ring unchanged?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "A field k is Noetherian and has dimension 0, whereas k[t] has the strict prime chain (0)⊊(t) and dimension 1. The +1 in the polynomial dimension formula is essential."
+    },
+    {
+      "id": "commalg_v4_negative_local_dimension_not_ambient_dimension",
+      "paired_card_ids": [
+        "commalg_v4_dimension_localization_height"
+      ],
+      "candidate_question": "Is dim R_p always equal to dim R rather than to the height of p?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Let R=k[x,y] and p=(x). The ring has dimension 2, while p has height 1 and R_p has dimension 1. Local dimension measures chains of primes below p, not all chains in R."
+    }
+  ]
+}

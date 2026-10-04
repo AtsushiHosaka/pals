@@ -1,0 +1,280 @@
+{
+  "schema_version": "pals.authored-hard-negative-queries.v1",
+  "profile_id": "typed-linear-algebra-v5",
+  "status": "authored_counterexamples_not_retrieval_evaluated",
+  "cases": [
+    {
+      "id": "la_v5_basis_reconstruction_negative",
+      "positive_card_id": "la_v5_basis_reconstruction",
+      "query": "Every generating family reconstructs x by the same unique coordinate formula.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℚ, the generating family (1,1) has representations 1=1·1+0·1=0·1+1·1. Independence is essential for unique coordinates."
+    },
+    {
+      "id": "la_v5_coordinates_of_combination_negative",
+      "positive_card_id": "la_v5_coordinates_of_combination",
+      "query": "Two distinct coefficient vectors on a basis can give the same vector.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For any basis, subtracting the combinations gives a linear dependence; all coefficient differences are zero, so the claimed distinctness is impossible."
+    },
+    {
+      "id": "la_v5_prescribed_basis_map_negative",
+      "positive_card_id": "la_v5_prescribed_basis_map",
+      "query": "Any prescription on an arbitrary spanning family extends to a linear map.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℚ, prescribe the images of the repeated spanning family (1,1) to be (0,1). A function cannot send 1 to both values."
+    },
+    {
+      "id": "la_v5_constructed_map_formula_negative",
+      "positive_card_id": "la_v5_constructed_map_formula",
+      "query": "A linear map applies f to each coefficient rather than preserving coefficients in a basis expansion.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The coefficients lie in K, whereas f has domain V. For f:ℚ²→ℚ the proposed f(aᵢ) is not even typed; the correct formula applies f to basis vectors."
+    },
+    {
+      "id": "la_v5_constructed_map_range_negative",
+      "positive_card_id": "la_v5_constructed_map_range",
+      "query": "The image of a map is only the set of its basis images.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For identity on ℚ² the basis image set is {e₁,e₂}, but e₁+e₂ is also in the range. The span, not the finite set, is required."
+    },
+    {
+      "id": "la_v5_constructed_map_injective_negative",
+      "positive_card_id": "la_v5_constructed_map_injective",
+      "query": "Every map prescribed on a basis is injective.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Choose every prescribed image to be zero on a nonzero source. The constructed map is zero and sends every pair to the same value."
+    },
+    {
+      "id": "la_v5_constructed_map_surjective_negative",
+      "positive_card_id": "la_v5_constructed_map_surjective",
+      "query": "Independent prescribed images always make a map surjective.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The map ℚ→ℚ² with prescribed image e₁ is injective, but e₂ is not in its range. The images must span the target."
+    },
+    {
+      "id": "la_v5_basis_determines_map_negative",
+      "positive_card_id": "la_v5_basis_determines_map",
+      "query": "Agreement on one nonzero vector always determines a linear map.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "On ℚ², identity and projection onto the first coordinate agree on e₁ but differ on e₂. Agreement is needed on a spanning family."
+    },
+    {
+      "id": "la_v5_matrix_action_coordinates_negative",
+      "positive_card_id": "la_v5_matrix_action_coordinates",
+      "query": "Multiplication by the representing matrix gives the output vector in the original abstract space.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "A matrix acts on coordinate functions, not on an arbitrary carrier V. For an abstract target W the output must first be expressed in its selected basis."
+    },
+    {
+      "id": "la_v5_matrix_representation_unique_negative",
+      "positive_card_id": "la_v5_matrix_representation_unique",
+      "query": "A linear map has the same matrix in all bases.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "On ℚ² take f=diag(1,2) in the standard basis. Swapping the basis gives diag(2,1), so uniqueness requires fixed source and target bases."
+    },
+    {
+      "id": "la_v5_matrix_of_composition_negative",
+      "positive_card_id": "la_v5_matrix_of_composition",
+      "query": "The matrix of g∘f is M(f)M(g) in unreversed order.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For f=[[1,1],[0,1]] and g=diag(2,1), gf has upper-right entry 2 while fg has upper-right entry 1. The order is M(g)M(f)."
+    },
+    {
+      "id": "la_v5_matrix_representation_linear_negative",
+      "positive_card_id": "la_v5_matrix_representation_linear",
+      "query": "Matrix representation sends a sum of maps to the product of their matrices.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "On ℚ, maps f=g=identity have sum matrix [2], whereas the product of their matrices is [1]."
+    },
+    {
+      "id": "la_v5_basis_change_coordinates_negative",
+      "positive_card_id": "la_v5_basis_change_coordinates",
+      "query": "b.toMatrix c converts b-coordinates into c-coordinates.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "On ℚ let b=(1), c=(2), x=2. b.toMatrix c=[2]. Multiplying b-coordinate 2 gives 4, but the c-coordinate is 1. It converts c-coordinates to b-coordinates."
+    },
+    {
+      "id": "la_v5_basis_change_cocycle_negative",
+      "positive_card_id": "la_v5_basis_change_cocycle",
+      "query": "One may reverse the order of successive coordinate changes.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In dimension two, choose successive transition matrices [[1,1],[0,1]] and diag(2,1). They do not commute: upper-right entries of the products are 1 and 2."
+    },
+    {
+      "id": "la_v5_basis_change_inverse_negative",
+      "positive_card_id": "la_v5_basis_change_inverse",
+      "query": "Every coordinate-change matrix is its own inverse.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "On ℚ with b=(1), c=(2), the change is [2] and the reverse change [1/2], which are unequal."
+    },
+    {
+      "id": "la_v5_two_sided_basis_change_negative",
+      "positive_card_id": "la_v5_two_sided_basis_change",
+      "query": "Changing source and target bases always uses one conjugating matrix.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For a map ℚ→ℚ² the representing matrix is 2×1. Its source and target changes have sizes 1×1 and 2×2, so a single conjugation is not defined."
+    },
+    {
+      "id": "la_v5_eigenbasis_diagonal_matrix_negative",
+      "positive_card_id": "la_v5_eigenbasis_diagonal_matrix",
+      "query": "An eigenvector list, even dependent, gives a diagonal matrix representation.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For a nonzero square-zero Jordan block on ℚ², its only eigenvectors lie on the first coordinate line. Repeating e₁ gives eigenvectors but no basis, and the operator is not diagonalizable."
+    },
+    {
+      "id": "la_v5_dual_basis_expansion_negative",
+      "positive_card_id": "la_v5_dual_basis_expansion",
+      "query": "Every linear functional equals the sum of the coordinate functionals without coefficients.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "On ℚ take standard basis and φ(x)=2x. Its coordinate functional is x↦x; coefficient φ(1)=2 is necessary."
+    },
+    {
+      "id": "la_v5_dual_coordinates_independent_negative",
+      "positive_card_id": "la_v5_dual_coordinates_independent",
+      "query": "Coordinate functionals corresponding to a redundant spanning family remain independent.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "A redundant list is not a basis and does not provide a unique coordinate map. On ℚ the repeated list (1,1) cannot yield two independent functionals in the one-dimensional dual."
+    },
+    {
+      "id": "la_v5_subspace_has_complement_negative",
+      "positive_card_id": "la_v5_subspace_has_complement",
+      "query": "Every subgroup of an abelian group has a direct-sum complement.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The subgroup 2ℤ of ℤ has no complement: every nonzero subgroup intersects it nontrivially, while the zero subgroup does not span ℤ with 2ℤ. The field/vector-space hypotheses matter."
+    },
+    {
+      "id": "la_v5_injective_map_splits_negative",
+      "positive_card_id": "la_v5_injective_map_splits",
+      "query": "Every injective homomorphism of modules over any ring has a left inverse.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Multiplication by 2 on the ℤ-module ℤ is injective. A ℤ-linear left inverse would send 2 to 1, impossible because its value on 2 is twice its value on 1."
+    },
+    {
+      "id": "la_v5_surjective_map_splits_negative",
+      "positive_card_id": "la_v5_surjective_map_splits",
+      "query": "Every surjective homomorphism of modules over any ring has a right inverse.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The quotient ℤ→ℤ/2ℤ is surjective, but a section would give a nonzero element of order two in ℤ. Splitting here relies on vector spaces over a field."
+    },
+    {
+      "id": "la_v5_polynomial_on_eigenvector_negative",
+      "positive_card_id": "la_v5_polynomial_on_eigenvector",
+      "query": "P(f)x=P(z)x for every x without an eigenvector hypothesis.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Let f=diag(1,2), x=e₁+e₂, z=1, P=X over ℚ. Then f(x)=e₁+2e₂ differs from z x."
+    },
+    {
+      "id": "la_v5_eigenvalue_charpoly_negative",
+      "positive_card_id": "la_v5_eigenvalue_charpoly",
+      "query": "Every characteristic root exists in the base field.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The real rotation matrix [[0,-1],[1,0]] has characteristic polynomial X²+1, with no real root. The equivalence concerns a supplied scalar z in K."
+    },
+    {
+      "id": "la_v5_eigenvalue_minpoly_negative",
+      "positive_card_id": "la_v5_eigenvalue_minpoly",
+      "query": "A root of an arbitrary polynomial implies it is an eigenvalue of f.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Take f=identity on ℚ and P=X. The polynomial has root 0, but 0 is not an eigenvalue of identity. Minimality/annihilation conditions cannot be omitted."
+    },
+    {
+      "id": "la_v5_minpoly_divides_charpoly_negative",
+      "positive_card_id": "la_v5_minpoly_divides_charpoly",
+      "query": "The characteristic polynomial always divides the minimal polynomial.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For identity on ℚ², χ=(X-1)² but the minimal polynomial is X-1. The divisibility direction is the reverse."
+    },
+    {
+      "id": "la_v5_annihilator_minpoly_divisibility_negative",
+      "positive_card_id": "la_v5_annihilator_minpoly_divisibility",
+      "query": "P(f)=0 iff P divides the minimal polynomial.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For f=identity on ℚ, P=(X-1)² annihilates f, but does not divide minpoly(f)=X-1. The minimal polynomial divides P."
+    },
+    {
+      "id": "la_v5_commuting_preserves_eigenspace_negative",
+      "positive_card_id": "la_v5_commuting_preserves_eigenspace",
+      "query": "Commuting maps send every eigenvector to a nonzero eigenvector.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Take f=identity, g=zero. They commute, but g sends every nonzero vector to zero. Eigenspace membership includes zero; being an eigenvector does not."
+    },
+    {
+      "id": "la_v5_common_eigenbasis_commutes_negative",
+      "positive_card_id": "la_v5_common_eigenbasis_commutes",
+      "query": "Commuting maps over any field must have a common eigenbasis.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "A nonzero square-zero map commutes with identity, but the square-zero map has no eigenbasis. Commutation alone does not imply diagonalizability."
+    },
+    {
+      "id": "la_v5_diagonal_operator_spectrum_negative",
+      "positive_card_id": "la_v5_diagonal_operator_spectrum",
+      "query": "Every scalar is an eigenvalue of an operator diagonal in a basis.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Identity on ℚ has diagonal entry 1 only; scalar 2 is not an eigenvalue. Eigenvalues must occur among the actual diagonal entries."
+    },
+    {
+      "id": "la_v5_diagonal_operator_eigenspaces_span_negative",
+      "positive_card_id": "la_v5_diagonal_operator_eigenspaces_span",
+      "query": "The set-theoretic union of eigenspaces of a diagonal operator is the entire space.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For diag(1,2) on ℚ², eigenspaces are the coordinate axes and {0}; e₁+e₂ lies in neither axis. Their subspace supremum is the whole space, not their set union."
+    },
+    {
+      "id": "la_v5_row_addition_preserves_determinant_negative",
+      "positive_card_id": "la_v5_row_addition_preserves_determinant",
+      "query": "Adding t times a row to itself always preserves the determinant.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For A=[1] over ℚ and t=1 the updated matrix is [2]. The distinct-row hypothesis is necessary."
+    },
+    {
+      "id": "la_v5_row_scaling_determinant_negative",
+      "positive_card_id": "la_v5_row_scaling_determinant",
+      "query": "Scaling one row by t multiplies determinant by t raised to n.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For A=I₂ over ℚ and t=2, scaling only the first row yields determinant 2, not 4. The exponent n applies when every row is scaled."
+    },
+    {
+      "id": "la_v5_row_addition_matrix_realization_negative",
+      "positive_card_id": "la_v5_row_addition_matrix_realization",
+      "query": "Right multiplication by Eᵢⱼ(t) performs the same row addition as left multiplication.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "With A=diag(2,3), i=1,j=2,t=1, EA has upper-right entry 3 but AE has upper-right entry 2. Right multiplication performs a column operation."
+    },
+    {
+      "id": "la_v5_row_addition_inverse_negative",
+      "positive_card_id": "la_v5_row_addition_inverse",
+      "query": "Eᵢᵢ(-t) is always inverse to Eᵢᵢ(t).",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Over ℚ take t=1. Eᵢᵢ(1) scales the selected coordinate by 2, while Eᵢᵢ(-1) kills it; their product is not identity."
+    },
+    {
+      "id": "la_v5_row_operation_preserves_system_negative",
+      "positive_card_id": "la_v5_row_operation_preserves_system",
+      "query": "Row operations may be applied to the coefficient matrix without changing the right hand side.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For A=I₂, y=e₂, add row 2 to row 1. Original x=e₂ solves Ax=y, but transformed A times e₂ is e₁+e₂, not y. The right hand side must also be transformed."
+    },
+    {
+      "id": "la_v5_nonzero_square_zero_family_negative",
+      "positive_card_id": "la_v5_nonzero_square_zero_family",
+      "query": "A nonzero diagonal matrix unit can also be square zero.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For arbitrary nonzero t in a field, (tEᵢᵢ)²=t²Eᵢᵢ≠0. The distinct-index hypothesis makes the off-diagonal matrix unit square to zero."
+    },
+    {
+      "id": "la_v5_determinant_one_nonidentity_family_negative",
+      "positive_card_id": "la_v5_determinant_one_nonidentity_family",
+      "query": "Eᵢⱼ(t) is never identity, even when t=0.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "With t=0 the transvection is exactly identity. Nonzero coefficient is required for the nonidentity conclusion."
+    },
+    {
+      "id": "la_v5_square_zero_obstructs_eigenbasis_negative",
+      "positive_card_id": "la_v5_square_zero_obstructs_eigenbasis",
+      "query": "Every square-zero map has no eigenbasis, including the zero map.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The zero endomorphism is diagonal on every basis with all eigenvalues zero. The nonzero-map hypothesis is essential."
+    }
+  ]
+}

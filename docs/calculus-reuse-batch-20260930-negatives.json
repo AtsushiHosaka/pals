@@ -1,0 +1,164 @@
+{
+  "schema_version": "pals.typed-catalog-expansion-hard-negatives.v1",
+  "profile_id": "typed-real-analysis-v1",
+  "status": "authored_candidates_not_retrieval_tested",
+  "cases": [
+    {
+      "id": "calculus_negative_one_derivative_only",
+      "paired_card_ids": [
+        "calculus_reuse_derivative_sum",
+        "calculus_reuse_derivative_difference"
+      ],
+      "candidate_question": "Assume only f is differentiable at a. Prove that f+g and f-g are differentiable at a for every real function g.",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take a=0, f=0, g(x)=|x|. Neither sum nor difference is differentiable there; the hypothesis on g is essential."
+    },
+    {
+      "id": "calculus_negative_product_missing_term",
+      "paired_card_ids": [
+        "calculus_reuse_derivative_product"
+      ],
+      "candidate_question": "If f has derivative u and g has derivative v at a, is the product derivative u*g(a)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The missing term f(a)*v cannot be omitted. Take f(x)=1 and g(x)=x at a=0: proposed derivative is 0 but actual derivative is 1."
+    },
+    {
+      "id": "calculus_negative_zero_denominator",
+      "paired_card_ids": [
+        "calculus_reuse_derivative_quotient",
+        "calculus_reuse_derivative_reciprocal_function",
+        "calculus_reuse_differentiable_quotient",
+        "calculus_reuse_continuous_quotient"
+      ],
+      "candidate_question": "Since f and g are differentiable at a, can I conclude f/g is continuous and differentiable at a even if g(a)=0?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take f=1, g(x)=x, a=0. Real inversion is discontinuous at zero even when division by zero is totalized; all quotient rules require a nonzero denominator value."
+    },
+    {
+      "id": "calculus_negative_chain_wrong_point",
+      "paired_card_ids": [
+        "calculus_reuse_derivative_chain",
+        "calculus_reuse_differentiable_composition",
+        "calculus_reuse_continuous_composition"
+      ],
+      "candidate_question": "Assume f and g are differentiable at a. Must f(g(x)) be differentiable or continuous at a?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The outer hypothesis must hold at g(a). Let a=0, g(x)=x+1, and f(t)=1/(t-1), using totalized inversion at t=1. Both are differentiable at 0, but f(g(x))=1/x is discontinuous at 0."
+    },
+    {
+      "id": "calculus_negative_variable_scalar",
+      "paired_card_ids": [
+        "calculus_reuse_derivative_scalar_multiple",
+        "calculus_reuse_interval_integrable_scalar_multiple"
+      ],
+      "candidate_question": "Can the constant c in the scalar multiple rule be replaced by an arbitrary real function c(x) without additional assumptions?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For derivatives, c(x)=x and f(x)=1 gives derivative 1 rather than c(a)*0. For integrability, c(x)=1/x on (0,1] and f=1 yields a nonintegrable product, although f is integrable."
+    },
+    {
+      "id": "calculus_negative_different_points",
+      "paired_card_ids": [
+        "calculus_reuse_derivative_unique"
+      ],
+      "candidate_question": "If f has derivative u at a and v at b, must u=v?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Uniqueness compares derivatives at the same point. For f(x)=x^2, a=0 and b=1 give u=0 and v=2."
+    },
+    {
+      "id": "calculus_negative_value_not_derivative",
+      "paired_card_ids": [
+        "calculus_reuse_derivative_implies_differentiable"
+      ],
+      "candidate_question": "If f(a)=u for real u, does f have a derivative at a?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "A function value is not a HasDerivAt certificate. f(x)=|x| has f(0)=0 but is not differentiable at 0."
+    },
+    {
+      "id": "calculus_negative_continuity_converse",
+      "paired_card_ids": [
+        "calculus_reuse_differentiable_implies_continuous"
+      ],
+      "candidate_question": "Since f is continuous at a, can I infer differentiability at a?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Continuity alone is insufficient. f(x)=|x| is continuous but not differentiable at a=0."
+    },
+    {
+      "id": "calculus_negative_closure_missing_second_hypothesis",
+      "paired_card_ids": [
+        "calculus_reuse_differentiable_sum",
+        "calculus_reuse_differentiable_product",
+        "calculus_reuse_continuous_sum",
+        "calculus_reuse_continuous_product"
+      ],
+      "candidate_question": "If f is continuous or differentiable at a, does the same follow for f+g and f*g with no hypothesis on g?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take f=1 and g the indicator of {0}, with a=0. Both f+g and f*g are discontinuous at a. For failure of differentiability with continuous g, use g(x)=|x|."
+    },
+    {
+      "id": "calculus_negative_abs_corner",
+      "paired_card_ids": [
+        "calculus_reuse_differentiable_absolute_value",
+        "calculus_reuse_continuous_absolute_value"
+      ],
+      "candidate_question": "If f is differentiable at a, is |f| differentiable there even when f(a)=0?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "f(x)=x and a=0 gives |f(x)|=|x|, which has different left and right derivatives. Absolute value always preserves continuity but requires the nonzero-value premise for this differentiability rule."
+    },
+    {
+      "id": "calculus_negative_integrable_product",
+      "paired_card_ids": [
+        "calculus_reuse_interval_integrable_sum",
+        "calculus_reuse_interval_integrable_difference"
+      ],
+      "candidate_question": "If f and g are interval-integrable on [a,b], can the addition/subtraction closure rule also prove integrability of f*g?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. On (0,1], take f(x)=g(x)=x^(-1/2), and assign value 0 at x=0. Both are integrable on [0,1], while f*g=1/x is not. Product integrability needs stronger assumptions."
+    },
+    {
+      "id": "calculus_negative_unrelated_intervals",
+      "paired_card_ids": [
+        "calculus_reuse_interval_integrable_reverse",
+        "calculus_reuse_interval_integrable_join"
+      ],
+      "candidate_question": "If f is interval-integrable on [a,b], can I conclude integrability on any other interval [c,d]?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Endpoint reversal preserves the same interval, while joining requires a second integrability premise. f(x)=1/x is integrable on [1,2] but not on [0,1]."
+    },
+    {
+      "id": "calculus_negative_continuous_at_one_point",
+      "paired_card_ids": [
+        "calculus_reuse_continuous_implies_interval_integrable"
+      ],
+      "candidate_question": "If f is continuous at a single real point, is it interval-integrable between every pair of finite endpoints?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "A single continuity point gives no global control. f(x)=1/x is continuous at 1 but not integrable on [0,1]. The card assumes continuity at every real point."
+    },
+    {
+      "id": "calculus_negative_affine_variable_coefficients",
+      "paired_card_ids": [
+        "calculus_reuse_derivative_affine_parameters"
+      ],
+      "candidate_question": "For arbitrary real functions b(x) and c(x), is the derivative of b(x)*x+c(x) equal to b(a)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The coefficients in the affine rule are constants. Taking b(x)=x and c(x)=0 gives x^2, with derivative 2a rather than a."
+    },
+    {
+      "id": "calculus_negative_constant_infinite_interval",
+      "paired_card_ids": [
+        "calculus_reuse_interval_integrable_constant"
+      ],
+      "candidate_question": "Does the constant-function interval-integrability card prove integrability of f(x)=1 over all real numbers?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The card quantifies finite real endpoints only. The integral of the constant 1 over the whole real line is infinite, so it is not integrable for real volume."
+    },
+    {
+      "id": "calculus_negative_epsilon_delta_uniform",
+      "paired_card_ids": [
+        "calculus_reuse_continuous_epsilon_delta"
+      ],
+      "candidate_question": "If f is continuous everywhere, can its epsilon-delta radius be chosen independently of the base point over all of R?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Pointwise continuity permits δ to depend on a. f(x)=x^2 is continuous everywhere but not uniformly continuous on R."
+    }
+  ]
+}

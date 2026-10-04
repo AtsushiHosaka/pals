@@ -1,0 +1,259 @@
+{
+  "schema_version": "pals.authored-hard-negative-queries.v1",
+  "profile_id": "typed-linear-algebra-v3",
+  "status": "authored_counterexamples_not_retrieval_evaluated",
+  "cases": [
+    {
+      "id": "la_v3_inner_self_negative",
+      "positive_card_id": "la_v3_inner_self",
+      "query": "⟨x,x⟩=‖x‖ for all x",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ with x=2, the inner product is 4 and the norm is 2."
+    },
+    {
+      "id": "la_v3_cauchy_schwarz_negative",
+      "positive_card_id": "la_v3_cauchy_schwarz",
+      "query": "|⟨x,y⟩|=‖x‖‖y‖ for all x,y",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ², x=e₁ and y=e₂ give 0 on the left and 1 on the right."
+    },
+    {
+      "id": "la_v3_pythagorean_iff_negative",
+      "positive_card_id": "la_v3_pythagorean_iff",
+      "query": "‖x+y‖²=‖x‖²+‖y‖² without orthogonality",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ, x=y=1 gives 4 versus 2."
+    },
+    {
+      "id": "la_v3_parallelogram_negative",
+      "positive_card_id": "la_v3_parallelogram",
+      "query": "The parallelogram identity holds in every normed space",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ² with the ℓ¹ norm, x=e₁,y=e₂ give left side 8 and right side 4. An inner-product norm is necessary."
+    },
+    {
+      "id": "la_v3_polarization_negative",
+      "positive_card_id": "la_v3_polarization",
+      "query": "2⟨x,y⟩=‖x+y‖²-‖x-y‖²",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ, x=y=1 gives 2 versus 4."
+    },
+    {
+      "id": "la_v3_orthogonal_independent_negative",
+      "positive_card_id": "la_v3_orthogonal_independent",
+      "query": "Every pairwise orthogonal family is independent, even with zero vectors",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The one-element family consisting of zero is pairwise orthogonal but linearly dependent."
+    },
+    {
+      "id": "la_v3_bessel_negative",
+      "positive_card_id": "la_v3_bessel",
+      "query": "Bessel inequality holds for every linearly independent family",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ, the one-vector family v₀=2 is independent; x=1 gives coefficient square 4>1."
+    },
+    {
+      "id": "la_v3_complement_antitone_negative",
+      "positive_card_id": "la_v3_complement_antitone",
+      "query": "S≤T implies S⊥≤T⊥",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ, S={0}, T=ℝ give S⊥=ℝ and T⊥={0}."
+    },
+    {
+      "id": "la_v3_double_complement_negative",
+      "positive_card_id": "la_v3_double_complement",
+      "query": "Double orthogonal complement equals S for every nonclosed infinite-dimensional subspace",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The finite-support sequences in ℓ² are dense and proper; their orthogonal complement is zero, so the double complement is all ℓ²."
+    },
+    {
+      "id": "la_v3_complement_sum_negative",
+      "positive_card_id": "la_v3_complement_sum",
+      "query": "(S+T)⊥=S⊥+T⊥",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ² take S=span e₁ and T=span e₂. The left side is zero and the right side is all ℝ²."
+    },
+    {
+      "id": "la_v3_complement_dimension_negative",
+      "positive_card_id": "la_v3_complement_dimension",
+      "query": "dim S=dim S⊥ for every S",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ³ take S=span e₁. The two dimensions are 1 and 2."
+    },
+    {
+      "id": "la_v3_orthogonal_direct_sum_negative",
+      "positive_card_id": "la_v3_orthogonal_direct_sum",
+      "query": "S+T=V implies S∩T={0}",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Taking S=T=ℝ gives sum ℝ but intersection ℝ."
+    },
+    {
+      "id": "la_v3_projection_decomposition_negative",
+      "positive_card_id": "la_v3_projection_decomposition",
+      "query": "x-P_S x always belongs to S",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ², let S=span e₁ and x=e₂. The residual is e₂, outside S."
+    },
+    {
+      "id": "la_v3_projection_unique_negative",
+      "positive_card_id": "la_v3_projection_unique",
+      "query": "y∈S alone implies P_S x=y",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ, S=ℝ, x=0,y=1. Membership holds but the projection is 0. The orthogonal-residual premise is necessary."
+    },
+    {
+      "id": "la_v3_projection_fixed_iff_negative",
+      "positive_card_id": "la_v3_projection_fixed_iff",
+      "query": "P_S x=x iff x∈S⊥",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ with S=ℝ and x=1, x is fixed but does not belong to S⊥={0}."
+    },
+    {
+      "id": "la_v3_projection_idempotent_negative",
+      "positive_card_id": "la_v3_projection_idempotent",
+      "query": "Every linear map is idempotent",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "On ℝ let f(x)=2x. Then f(f(1))=4≠2=f(1)."
+    },
+    {
+      "id": "la_v3_projection_zero_iff_negative",
+      "positive_card_id": "la_v3_projection_zero_iff",
+      "query": "P_S x=0 iff x∈S",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ² with S=span e₁ and x=e₂, the projection is zero but x∉S."
+    },
+    {
+      "id": "la_v3_projection_contractive_negative",
+      "positive_card_id": "la_v3_projection_contractive",
+      "query": "‖P_S x‖<‖x‖ for every nonzero x",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Choose any nonzero x∈S; then P_S x=x and equality holds."
+    },
+    {
+      "id": "la_v3_projection_complement_negative",
+      "positive_card_id": "la_v3_projection_complement",
+      "query": "P_(S⊥) x=P_S x for every S,x",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ² take S=span e₁ and x=e₁. The two projections are 0 and e₁."
+    },
+    {
+      "id": "la_v3_projection_nested_negative",
+      "positive_card_id": "la_v3_projection_nested",
+      "query": "P_S(P_T x)=P_S x without S≤T",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ² take S=span e₁, T=span e₂, x=e₁. The left side is zero and the right side is e₁."
+    },
+    {
+      "id": "la_v3_projection_symmetric_negative",
+      "positive_card_id": "la_v3_projection_symmetric",
+      "query": "Every idempotent real operator is symmetric",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "The matrix [[1,1],[0,0]] is idempotent. For x=e₂,y=e₁, ⟨Px,y⟩=1 whereas ⟨x,Py⟩=0."
+    },
+    {
+      "id": "la_v3_projection_pythagoras_negative",
+      "positive_card_id": "la_v3_projection_pythagoras",
+      "query": "‖x‖=‖P_S x‖+‖P_(S⊥) x‖",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ² take S=span e₁ and x=e₁+e₂. The left side is √2 and the right side is 2."
+    },
+    {
+      "id": "la_v3_projection_norm_equality_negative",
+      "positive_card_id": "la_v3_projection_norm_equality",
+      "query": "‖P_S x‖=‖x‖ for every x",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ² take S=span e₁ and x=e₂. The projected norm is 0 and the original norm is 1."
+    },
+    {
+      "id": "la_v3_projection_best_approximation_negative",
+      "positive_card_id": "la_v3_projection_best_approximation",
+      "query": "‖x-P_S x‖≤‖x-y‖ for arbitrary y∈V",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ with S={0}, take x=y=1. The left side is 1 and the right side is 0; y∈S is essential."
+    },
+    {
+      "id": "la_v3_gram_schmidt_orthogonal_negative",
+      "positive_card_id": "la_v3_gram_schmidt_orthogonal",
+      "query": "GramSchmidt(v) is orthonormal without normalization",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For the one-vector family v₀=2 in ℝ, Gram–Schmidt returns 2, which is not a unit vector."
+    },
+    {
+      "id": "la_v3_gram_schmidt_span_negative",
+      "positive_card_id": "la_v3_gram_schmidt_span",
+      "query": "GramSchmidt(v) spans the ambient space for every v",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ² the one-vector family e₁ and its Gram–Schmidt output both span only a line."
+    },
+    {
+      "id": "la_v3_gram_schmidt_independent_negative",
+      "positive_card_id": "la_v3_gram_schmidt_independent",
+      "query": "GramSchmidt(v) is independent for every input family",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For v₀=v₁=e₁, the second Gram–Schmidt vector is zero."
+    },
+    {
+      "id": "la_v3_gram_schmidt_normalization_negative",
+      "positive_card_id": "la_v3_gram_schmidt_normalization",
+      "query": "Normalized GramSchmidt(v) is orthonormal even for dependent v",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For v₀=v₁=e₁, the second normalized output remains zero and has norm 0, not 1."
+    },
+    {
+      "id": "la_v3_normalized_span_negative",
+      "positive_card_id": "la_v3_normalized_span",
+      "query": "Normalized GramSchmidt(v)=v for all independent v",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For the one-vector family v₀=2 in ℝ, the normalized output is 1, although both families have the same span."
+    },
+    {
+      "id": "la_v3_gram_schmidt_fixed_negative",
+      "positive_card_id": "la_v3_gram_schmidt_fixed",
+      "query": "GramSchmidt(v)=v whenever v is independent",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ², v₀=e₁,v₁=e₁+e₂ are independent. The second output is e₂, not e₁+e₂."
+    },
+    {
+      "id": "la_v3_onbasis_expansion_negative",
+      "positive_card_id": "la_v3_onbasis_expansion",
+      "query": "The orthonormal expansion reconstructs x using an arbitrary orthonormal family",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ² the one-vector family e₁ is orthonormal, but x=e₂ has all its coefficients zero and is not reconstructed."
+    },
+    {
+      "id": "la_v3_parseval_negative",
+      "positive_card_id": "la_v3_parseval",
+      "query": "Parseval equality holds for every orthonormal family, not necessarily spanning",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ² take the one-vector family e₁ and x=e₂. The coefficient-square sum is 0 and ‖x‖²=1."
+    },
+    {
+      "id": "la_v3_onbasis_inner_negative",
+      "positive_card_id": "la_v3_onbasis_inner",
+      "query": "The coefficient dot product equals the inner product for an arbitrary basis",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ take basis vector b₀=2 and x=y=1. The proposed coefficient dot product is 4 but the inner product is 1."
+    },
+    {
+      "id": "la_v3_onbasis_coordinates_negative",
+      "positive_card_id": "la_v3_onbasis_coordinates",
+      "query": "For an arbitrary basis, the coordinate of x is ⟨bᵢ,x⟩",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ take b₀=2 and x=1. Its basis coordinate is 1/2, whereas ⟨2,1⟩=2."
+    },
+    {
+      "id": "la_v3_orthonormal_transition_det_negative",
+      "positive_card_id": "la_v3_orthonormal_transition_det",
+      "query": "Every orthonormal coordinate change has determinant +1",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In ℝ the bases b₀=1 and c₀=-1 are orthonormal; the transition determinant is -1."
+    },
+    {
+      "id": "la_v3_spectral_orthonormal_basis_negative",
+      "positive_card_id": "la_v3_spectral_orthonormal_basis",
+      "query": "Every real finite-dimensional endomorphism has an orthonormal eigenbasis",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "Rotation by 90 degrees on ℝ² has no nonzero real eigenvector. Symmetry is essential; zero vectors do not qualify as eigenvectors."
+    }
+  ]
+}

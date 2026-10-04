@@ -1,0 +1,170 @@
+[
+  {
+    "draft_id": "calculus_supp_v5_difference_quotient_extension",
+    "family_id": "univ.calculus.continuity",
+    "primary_mode": "compute_construct",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v5-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v5_product_converse_counterexample",
+    "family_id": "univ.calculus.derivative-rules",
+    "primary_mode": "counterexample_audit",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v5-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v5_exp_quotient_derivative",
+    "family_id": "univ.calculus.derivative-rules",
+    "primary_mode": "synthesize",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v5-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v5_primitives_constant_difference",
+    "family_id": "univ.calculus.ftc",
+    "primary_mode": "recognize",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v5-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v5_quadratic_unique_minimum",
+    "family_id": "univ.calculus.extrema",
+    "primary_mode": "compute_construct",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v5-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v5_stationary_not_minimum",
+    "family_id": "univ.calculus.extrema",
+    "primary_mode": "counterexample_audit",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v5-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v5_convex_stationary_global_minimum",
+    "family_id": "univ.calculus.extrema",
+    "primary_mode": "synthesize",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v5-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v5_scale_integrability_equivalence",
+    "family_id": "univ.calculus.integration-methods",
+    "primary_mode": "recognize",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v5-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v5_exp_product_ftc",
+    "family_id": "univ.calculus.ftc",
+    "primary_mode": "synthesize",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v5-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v5_exponential_moment_integral",
+    "family_id": "univ.calculus.integration-methods",
+    "primary_mode": "synthesize",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v5-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v5_ftc_point_spike_counterexample",
+    "family_id": "univ.calculus.ftc",
+    "primary_mode": "counterexample_audit",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v5-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v5_mvt_endpoint_counterexample",
+    "family_id": "univ.calculus.mean-value",
+    "primary_mode": "counterexample_audit",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v5-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v5_quadratic_mean_value_point",
+    "family_id": "univ.calculus.mean-value",
+    "primary_mode": "compute_construct",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v5-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v5_mvt_constant_slope_recognition",
+    "family_id": "univ.calculus.mean-value",
+    "primary_mode": "recognize",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v5-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v5_strong_derivative_growth_minimum",
+    "family_id": "univ.calculus.extrema",
+    "primary_mode": "synthesize",
+    "difficulty": "advanced",
+    "authoring_manifest": "docs/calculus-v5-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v3_taylor_at_center",
+    "family_id": "univ.calculus.taylor",
+    "primary_mode": "recognize",
+    "difficulty": "introductory",
+    "authoring_manifest": "docs/calculus-v3-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v3_taylor_uniform_remainder_bound",
+    "family_id": "univ.calculus.taylor",
+    "primary_mode": "synthesize",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v3-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v3_finite_taylor_not_exact",
+    "family_id": "univ.calculus.taylor",
+    "primary_mode": "counterexample_audit",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v3-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v3_harmonic_term_test_counterexample",
+    "family_id": "univ.calculus.series",
+    "primary_mode": "counterexample_audit",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v3-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v3_geometric_majorant_error",
+    "family_id": "univ.calculus.series",
+    "primary_mode": "synthesize",
+    "difficulty": "advanced",
+    "authoring_manifest": "docs/calculus-v3-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v3_power_series_interior_convergence",
+    "family_id": "univ.calculus.power-series",
+    "primary_mode": "recognize",
+    "difficulty": "advanced",
+    "authoring_manifest": "docs/calculus-v3-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v3_weighted_geometric_sum",
+    "family_id": "univ.calculus.power-series",
+    "primary_mode": "compute_construct",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v3-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v3_geometric_boundary_counterexample",
+    "family_id": "univ.calculus.power-series",
+    "primary_mode": "counterexample_audit",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/calculus-v3-supplement-batch.json"
+  },
+  {
+    "draft_id": "calculus_supp_v3_geometric_sum_derivative",
+    "family_id": "univ.calculus.power-series",
+    "primary_mode": "synthesize",
+    "difficulty": "advanced",
+    "authoring_manifest": "docs/calculus-v3-supplement-batch.json"
+  }
+]

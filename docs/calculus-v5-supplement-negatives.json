@@ -1,0 +1,96 @@
+{
+  "schema_version": "pals.calculus-supplement-negatives.v1",
+  "profile_id": "typed-calculus-v5",
+  "cases": [
+    {
+      "id": "calculus_supp_v5_difference_quotient_extension_negative",
+      "positive_card_id": "calculus_supp_v5_difference_quotient_extension",
+      "candidate_question": "Assigning any value v at zero always produces a continuous extension.",
+      "why_invalid": "For f(x)=x and u=1, every nonzero quotient is 1; assigning v≠1 makes the extension discontinuous."
+    },
+    {
+      "id": "calculus_supp_v5_product_converse_counterexample_negative",
+      "positive_card_id": "calculus_supp_v5_product_converse_counterexample",
+      "candidate_question": "A differentiable product necessarily has differentiable factors.",
+      "why_invalid": "The parameterized family in the card has a differentiable squared product and two nondifferentiable absolute-value factors."
+    },
+    {
+      "id": "calculus_supp_v5_exp_quotient_derivative_negative",
+      "positive_card_id": "calculus_supp_v5_exp_quotient_derivative",
+      "candidate_question": "The exponential quotient derivative has a plus sign between the two numerator terms.",
+      "why_invalid": "For f=0 and g(x)=x at a=1 the derivative is -1, whereas the proposed plus sign gives 1."
+    },
+    {
+      "id": "calculus_supp_v5_primitives_constant_difference_negative",
+      "positive_card_id": "calculus_supp_v5_primitives_constant_difference",
+      "candidate_question": "Two primitives of the same function must themselves be equal.",
+      "why_invalid": "The functions f(x)=x and g(x)=x+c, with c≠0, have equal derivatives but unequal values."
+    },
+    {
+      "id": "calculus_supp_v5_quadratic_unique_minimum_negative",
+      "positive_card_id": "calculus_supp_v5_quadratic_unique_minimum",
+      "candidate_question": "The same family has unique minimum d at a even when c≤0.",
+      "why_invalid": "When c=0 every x is a minimizer; when c<0 the values become arbitrarily negative as |x-a| grows."
+    },
+    {
+      "id": "calculus_supp_v5_stationary_not_minimum_negative",
+      "positive_card_id": "calculus_supp_v5_stationary_not_minimum",
+      "candidate_question": "A zero derivative at a point guarantees a local minimum.",
+      "why_invalid": "Every member of -c(x-a)² with c>0 instead has nearby strictly smaller values, as the card constructs."
+    },
+    {
+      "id": "calculus_supp_v5_convex_stationary_global_minimum_negative",
+      "positive_card_id": "calculus_supp_v5_convex_stationary_global_minimum",
+      "candidate_question": "Every stationary point is a global minimizer without convexity.",
+      "why_invalid": "For f(x)=-(x-a)² the derivative at a is zero but every x≠a has a smaller value."
+    },
+    {
+      "id": "calculus_supp_v5_scale_integrability_equivalence_negative",
+      "positive_card_id": "calculus_supp_v5_scale_integrability_equivalence",
+      "candidate_question": "The equivalence holds also for c=0.",
+      "why_invalid": "With a=0,b=1 and f(x)=1/x, the left interval collapses to 0..0 using total division; the right-hand function is not integrable near zero."
+    },
+    {
+      "id": "calculus_supp_v5_exp_product_ftc_negative",
+      "positive_card_id": "calculus_supp_v5_exp_product_ftc",
+      "candidate_question": "The same integral formula holds after omitting the k term.",
+      "why_invalid": "For f=0 and g(x)=x on [0,1], the omitted-term integrand is zero but the endpoint difference is 1."
+    },
+    {
+      "id": "calculus_supp_v5_exponential_moment_integral_negative",
+      "positive_card_id": "calculus_supp_v5_exponential_moment_integral",
+      "candidate_question": "The formula is valid with the correction term -1/c² removed.",
+      "why_invalid": "Differentiating (x/c)exp(cx) produces (x+1/c)exp(cx), including a nonzero unwanted term for c≠0."
+    },
+    {
+      "id": "calculus_supp_v5_ftc_point_spike_counterexample_negative",
+      "positive_card_id": "calculus_supp_v5_ftc_point_spike_counterexample",
+      "candidate_question": "For every integrable f, the derivative of its indefinite integral equals f(a) at every point a.",
+      "why_invalid": "The parameterized nonzero point spike is integrable but has zero integral on every interval, contradicting pointwise equality at its spike."
+    },
+    {
+      "id": "calculus_supp_v5_mvt_endpoint_counterexample_negative",
+      "positive_card_id": "calculus_supp_v5_mvt_endpoint_counterexample",
+      "candidate_question": "The mean value theorem needs differentiability only inside the interval, with no endpoint continuity.",
+      "why_invalid": "The endpoint-spike family on every a<b has interior derivative zero and nonzero endpoint secant slope."
+    },
+    {
+      "id": "calculus_supp_v5_quadratic_mean_value_point_negative",
+      "positive_card_id": "calculus_supp_v5_quadratic_mean_value_point",
+      "candidate_question": "The left endpoint a always supplies the same derivative as the midpoint in this formula.",
+      "why_invalid": "For c≠0 and a<b, the derivative difference between the midpoint and a is c(b-a)≠0."
+    },
+    {
+      "id": "calculus_supp_v5_mvt_constant_slope_recognition_negative",
+      "positive_card_id": "calculus_supp_v5_mvt_constant_slope_recognition",
+      "candidate_question": "The endpoint increment identity follows even if continuity at b is omitted.",
+      "why_invalid": "An endpoint spike equal to 1 at b and zero elsewhere has c=0 throughout (a,b) but endpoint increment 1."
+    },
+    {
+      "id": "calculus_supp_v5_strong_derivative_growth_minimum_negative",
+      "positive_card_id": "calculus_supp_v5_strong_derivative_growth_minimum",
+      "candidate_question": "Mere strict increase of h suffices for the same positive quadratic lower bound c.",
+      "why_invalid": "For f(x)=x⁴ at a=0 the derivative 4x³ is strictly increasing, but x⁴≥c x² fails at sufficiently small nonzero x for any c>0."
+    }
+  ]
+}

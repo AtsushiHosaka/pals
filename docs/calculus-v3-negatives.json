@@ -1,0 +1,274 @@
+{
+  "schema_version": "pals.typed-catalog-expansion-hard-negatives.v1",
+  "profile_id": "typed-calculus-v3",
+  "status": "authored_candidates_not_retrieval_tested",
+  "cases": [
+    {
+      "id": "calculus_v3_negative_unproved_operand_limits",
+      "paired_card_ids": [
+        "calculus_v3_limit_sum",
+        "calculus_v3_limit_product"
+      ],
+      "candidate_question": "If u converges but v is any real sequence, do u+v and u*v necessarily converge?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Both operand limits are required. Taking u(n)=1 and v(n)=(-1)^n makes both the sum and product fail to converge."
+    },
+    {
+      "id": "calculus_v3_negative_quotient_zero_limit",
+      "paired_card_ids": [
+        "calculus_v3_limit_quotient"
+      ],
+      "candidate_question": "If u and v both converge, may the quotient rule be applied when the limit of v is zero?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. u(n)=1 and v(n)=1/(n+1) have limits 1 and 0, while u(n)/v(n)=n+1 diverges."
+    },
+    {
+      "id": "calculus_v3_negative_absolute_limit_converse",
+      "paired_card_ids": [
+        "calculus_v3_limit_absolute_value"
+      ],
+      "candidate_question": "Does convergence of |u(n)| imply convergence of u(n)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "u(n)=(-1)^n has constant absolute value 1 but does not converge."
+    },
+    {
+      "id": "calculus_v3_negative_finite_prefix_unique",
+      "paired_card_ids": [
+        "calculus_v3_limit_unique"
+      ],
+      "candidate_question": "If two sequences agree at every index up to some fixed N, must their limits be equal?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Uniqueness concerns two limits of the same full sequence. Let u be identically 0 and let v be 0 through N and 1 afterward; their limits are 0 and 1."
+    },
+    {
+      "id": "calculus_v3_negative_strict_limit_order",
+      "paired_card_ids": [
+        "calculus_v3_limit_order"
+      ],
+      "candidate_question": "If u(n)<v(n) at every n and both converge, must their limits satisfy a<b?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Strict inequalities can collapse: u(n)=0 and v(n)=1/(n+1) both converge to 0. The card concludes only a≤b."
+    },
+    {
+      "id": "calculus_v3_negative_squeeze_different_limits",
+      "paired_card_ids": [
+        "calculus_v3_squeeze"
+      ],
+      "candidate_question": "If lower and upper bounds converge to different limits, must a sequence between them converge?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The two bounding limits must coincide. The sequence alternating between 0 and 1 lies between constant bounds 0 and 1 but does not converge."
+    },
+    {
+      "id": "calculus_v3_negative_nonfixed_shift",
+      "paired_card_ids": [
+        "calculus_v3_limit_fixed_shift"
+      ],
+      "candidate_question": "Can a fixed tail shift be replaced by any index map without additional hypotheses?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. An index map must tend to infinity for this more general conclusion. The convergent sequence u(n)=1/(n+1), composed with the constant index map n↦0, becomes the constant sequence 1 rather than retaining limit 0."
+    },
+    {
+      "id": "calculus_v3_negative_monotone_unbounded",
+      "paired_card_ids": [
+        "calculus_v3_monotone_bounded_limit"
+      ],
+      "candidate_question": "Does every nondecreasing real sequence have a finite real limit?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "A uniform upper bound is necessary: u(n)=n is nondecreasing and diverges. Boundedness alone is also insufficient, as (-1)^n shows."
+    },
+    {
+      "id": "calculus_v3_negative_geometric_boundary",
+      "paired_card_ids": [
+        "calculus_v3_geometric_limit",
+        "calculus_v3_geometric_sum"
+      ],
+      "candidate_question": "Do geometric decay and the geometric-series sum formula hold whenever |q|≤1?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The strict inequality |q|<1 is required. At q=1 the powers are all 1 and the series diverges; at q=-1 the powers and partial sums oscillate."
+    },
+    {
+      "id": "calculus_v3_negative_varying_numerator",
+      "paired_card_ids": [
+        "calculus_v3_reciprocal_natural_limit"
+      ],
+      "candidate_question": "May the fixed numerator a in a/n be replaced by a(n)=n while preserving the zero limit?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The card quantifies a fixed real numerator. For a(n)=n the quotient is 1 for all n>0, so its limit is 1."
+    },
+    {
+      "id": "calculus_v3_negative_ordered_not_unconditional",
+      "paired_card_ids": [
+        "calculus_v3_has_sum_unique",
+        "calculus_v3_partial_sums_limit"
+      ],
+      "candidate_question": "May convergence of the naturally ordered partial sums of an alternating harmonic series be entered directly as HasSum?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Mathlib HasSum is unconditional. The alternating harmonic series has a convergent ordered partial-sum sequence but its absolute harmonic series diverges, so it is not Summable over the reals. Uniqueness of HasSum and the forward partial-sum theorem do not supply the converse."
+    },
+    {
+      "id": "calculus_v3_negative_series_add_missing_convergence",
+      "paired_card_ids": [
+        "calculus_v3_has_sum_add"
+      ],
+      "candidate_question": "Can HasSum for u+v be obtained by adding formal totalized tsums of arbitrary nonsummable u and v?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Convergent sum witnesses for both inputs are required. Take u(n)=1 and v(n)=-1+1/(2^(n+1)); both are nonsummable and their Mathlib tsums are 0, while u+v is a geometric series with sum 1."
+    },
+    {
+      "id": "calculus_v3_negative_scalar_not_fixed",
+      "paired_card_ids": [
+        "calculus_v3_has_sum_scalar"
+      ],
+      "candidate_question": "May the constant scalar in the series scalar-multiplication rule vary with the index without additional assumptions?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The scalar must be fixed. Let u(n)=1/2^(n+1) and c(n)=2^(n+1); u is summable, but c(n)*u(n)=1 is not."
+    },
+    {
+      "id": "calculus_v3_negative_comparison_without_absolute",
+      "paired_card_ids": [
+        "calculus_v3_absolute_comparison"
+      ],
+      "candidate_question": "If u(n)≤v(n) and v is summable, must u be summable without any lower bound?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. u(n)=-1 and v(n)=0 satisfy u≤v and summability of v, but u is nonsummable. The card requires |u(n)|≤v(n)."
+    },
+    {
+      "id": "calculus_v3_negative_absolute_from_ordered",
+      "paired_card_ids": [
+        "calculus_v3_absolute_convergence"
+      ],
+      "candidate_question": "Does ordered convergence of any real series imply summability of its absolute values?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The alternating harmonic series converges in natural order while the absolute harmonic series diverges. The card assumes absolute summability and concludes Summable, not the reverse of ordered convergence."
+    },
+    {
+      "id": "calculus_v3_negative_zero_terms_converse",
+      "paired_card_ids": [
+        "calculus_v3_summable_terms_zero"
+      ],
+      "candidate_question": "If u(n) tends to zero, must the series of u be summable?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. u(n)=1/(n+1) tends to zero but the harmonic series diverges; zero terms are necessary, not sufficient."
+    },
+    {
+      "id": "calculus_v3_negative_infinite_deletion",
+      "paired_card_ids": [
+        "calculus_v3_summable_tail_iff"
+      ],
+      "candidate_question": "Can the finite-tail equivalence be used to discard infinitely many terms arbitrarily?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Only removal of a fixed finite prefix is covered. A sequence equal to 1 at even indices and 0 at odd indices is nonsummable, but its odd-index subsequence is summable."
+    },
+    {
+      "id": "calculus_v3_negative_exp_missing_factorial",
+      "paired_card_ids": [
+        "calculus_v3_exponential_power_series"
+      ],
+      "candidate_question": "For every real x, is the sum of x^n equal to exp(x) without dividing by n!?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The factorial is essential. At x=2 the terms 2^n do not even tend to zero, while exp(2) is finite."
+    },
+    {
+      "id": "calculus_v3_negative_pseries_endpoint",
+      "paired_card_ids": [
+        "calculus_v3_p_series_criterion"
+      ],
+      "candidate_question": "Is the p-series summable for p≥1, including p=1?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The criterion is strictly p>1. At p=1 the positive-index terms form the divergent harmonic series; totalization at index 0 changes only one term."
+    },
+    {
+      "id": "calculus_v3_negative_signed_bounded_partials",
+      "paired_card_ids": [
+        "calculus_v3_nonnegative_bounded_partial_sums",
+        "calculus_v3_nonnegative_sum_upper_bound"
+      ],
+      "candidate_question": "Are bounded partial sums enough for Mathlib summability and its sum-bound theorem for arbitrary signed terms?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Nonnegativity is required. u(n)=(-1)^n has partial sums 0 or 1 and is not summable. Moreover u(n)=-1 has partial sums ≤0, so a one-sided upper bound alone is especially insufficient."
+    },
+    {
+      "id": "calculus_v3_negative_absolute_sum_equality",
+      "paired_card_ids": [
+        "calculus_v3_absolute_sum_bound"
+      ],
+      "candidate_question": "Does absolute summability imply |∑u|=∑|u|?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Only ≤ is asserted. Let u(0)=1,u(1)=-1 and all other terms be 0: the two sides are 0 and 2."
+    },
+    {
+      "id": "calculus_v3_negative_prefix_cutoff",
+      "paired_card_ids": [
+        "calculus_v3_sum_split_prefix_tail"
+      ],
+      "candidate_question": "In the prefix-tail identity, may the finite prefix include n while the tail still starts at n?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "That double-counts u(n). With u(n)=1 and all other terms 0, the proposed right side is 2 but the full sum is 1. The prefix is range n, ending at n-1."
+    },
+    {
+      "id": "calculus_v3_negative_taylor_exact_function",
+      "paired_card_ids": [
+        "calculus_v3_taylor_finite_expansion"
+      ],
+      "candidate_question": "Does the finite Taylor coefficient formula assert f(x)=its Taylor polynomial of every degree n?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "It identifies the finite polynomial, not the function. For f(x)=x^(n+1), center 0 and x=1, the degree-n polynomial is 0 while f(1)=1, for every natural n including zero."
+    },
+    {
+      "id": "calculus_v3_negative_successor_missing_factorial",
+      "paired_card_ids": [
+        "calculus_v3_taylor_successor"
+      ],
+      "candidate_question": "May the new Taylor coefficient of degree n+1 omit the divisor (n+1)!?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For f(x)=x², center 0, x=1 and n=1, the second derivative is 2. The degree-2 contribution is 2/2!=1; omitting the factorial gives 2."
+    },
+    {
+      "id": "calculus_v3_negative_moving_taylor_center",
+      "paired_card_ids": [
+        "calculus_v3_taylor_polynomial_derivative"
+      ],
+      "candidate_question": "May the evaluation-point derivative formula also differentiate a center c that varies with x without extra chain terms?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The theorem fixes the center and derivative domain. For f(t)=t² and a fixed nondegenerate domain, the first Taylor polynomial centered at c=x and evaluated at x equals x² with derivative 2x. Treating only the displayed evaluation variable while the center moves omits the coefficient dependence; the fixed-center theorem alone does not justify that composition. For a concrete mismatch choose c=2x: the first Taylor polynomial is 0 with derivative 0, whereas its partial derivative in the evaluation argument is 4x."
+    },
+    {
+      "id": "calculus_v3_negative_lagrange_empty_interior",
+      "paired_card_ids": [
+        "calculus_v3_taylor_lagrange_remainder"
+      ],
+      "candidate_question": "May the Lagrange theorem retain a strictly interior point c when a=b?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No real c satisfies a<c<a. The strict endpoint assumption a<b is essential even for the zero function."
+    },
+    {
+      "id": "calculus_v3_negative_lagrange_no_regularity",
+      "paired_card_ids": [
+        "calculus_v3_taylor_lagrange_remainder"
+      ],
+      "candidate_question": "Can the n=0 Lagrange remainder be applied without its smoothness assumption to any real function?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take f(0)=0 and f(x)=1 for x>0, with f(x)=0 for x<0, on [0,1]. Every interior derivative is zero, but f(1)-f(0)=1. Thus no interior derivative realizes the claimed remainder; C¹ on the interval is missing."
+    },
+    {
+      "id": "calculus_v3_negative_integral_kernel",
+      "paired_card_ids": [
+        "calculus_v3_taylor_integral_remainder"
+      ],
+      "candidate_question": "Can the Taylor integral remainder omit its (b-t)^n/n! kernel?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For f(t)=t²,n=1,a=0,b=1, the remainder is 1. The correct integral is ∫₀¹2(1-t)dt=1; omitting the kernel gives ∫₀¹2dt=2."
+    },
+    {
+      "id": "calculus_v3_negative_smooth_not_analytic",
+      "paired_card_ids": [
+        "calculus_v3_taylor_finite_expansion",
+        "calculus_v3_taylor_lagrange_remainder",
+        "calculus_v3_taylor_integral_remainder"
+      ],
+      "candidate_question": "Do these finite remainder formulas prove that every infinitely differentiable function equals its infinite Taylor series?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The smooth function f(x)=exp(-1/x²) for x≠0 and f(0)=0 has all derivatives zero at 0 but is positive elsewhere. A remainder tending to zero needs additional analytic hypotheses; these cards only state each finite-degree identity."
+    }
+  ]
+}

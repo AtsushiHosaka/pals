@@ -1,0 +1,210 @@
+{
+  "schema_version": "pals.typed-catalog-expansion-hard-negatives.v1",
+  "profile_id": "typed-commalg-v3",
+  "status": "authored_counterexamples_not_runtime_evaluated",
+  "cases": [
+    {
+      "id": "commalg_v3_negative_finite_not_noetherian_without_ring_assumption",
+      "paired_card_ids": [
+        "commalg_v3_noetherian_iff_fg",
+        "commalg_v3_noetherian_ring_finite_module"
+      ],
+      "candidate_question": "Is every finitely generated module over every commutative ring Noetherian?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Let R=k[x₁,x₂,…] and M=R. M is cyclic over R, but the strictly ascending ideals (x₁)⊊(x₁,x₂)⊊… show that it is not Noetherian. Finite generation of M cannot replace Noetherianity of R."
+    },
+    {
+      "id": "commalg_v3_negative_quotient_alone_noetherian",
+      "paired_card_ids": [
+        "commalg_v3_noetherian_submodule_quotient",
+        "commalg_v3_noetherian_exact_extension"
+      ],
+      "candidate_question": "If M/U is Noetherian, must M be Noetherian without a condition on U?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take an infinite-dimensional vector space M over a field and U=M. M/U=0 is Noetherian, whereas M is not. The exact pair M→M→0 with identity then zero also shows why the first endpoint assumption cannot be dropped."
+    },
+    {
+      "id": "commalg_v3_negative_quotient_alone_artinian",
+      "paired_card_ids": [
+        "commalg_v3_artinian_submodule_quotient",
+        "commalg_v3_artinian_exact_extension"
+      ],
+      "candidate_question": "If M/U is Artinian, must M be Artinian without a condition on U?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take M=Z as a Z-module and U=M. M/U=0 is Artinian but M has the strictly descending submodules 2ⁿZ. The exact pair Z→Z→0 has Artinian final endpoint but non-Artinian middle module."
+    },
+    {
+      "id": "commalg_v3_negative_infinite_product",
+      "paired_card_ids": [
+        "commalg_v3_noetherian_product",
+        "commalg_v3_artinian_product"
+      ],
+      "candidate_question": "Can the finite-product chain-condition theorems be applied to arbitrary infinite products?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Let V be the product of countably many copies of a field k. The spans of the first n standard basis vectors form a strictly ascending submodule chain. The subspaces of sequences whose first n coordinates vanish form a strictly descending chain. Thus V is neither Noetherian nor Artinian although every factor is both."
+    },
+    {
+      "id": "commalg_v3_negative_hopfian_reversed",
+      "paired_card_ids": [
+        "commalg_v3_noetherian_surjective_endomorphism"
+      ],
+      "candidate_question": "Is every injective endomorphism of a Noetherian module surjective?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Multiplication by 2 on the Noetherian Z-module Z is injective and is not surjective. The card assumes surjectivity and concludes injectivity, in the opposite direction."
+    },
+    {
+      "id": "commalg_v3_negative_hopfian_without_chain_condition",
+      "paired_card_ids": [
+        "commalg_v3_noetherian_surjective_endomorphism"
+      ],
+      "candidate_question": "Is every surjective linear endomorphism of an arbitrary module injective?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "On the direct sum of countably many copies of a field, the left shift sends e₀ to 0 and eₙ₊₁ to eₙ. It is surjective with nonzero kernel. This module is not Noetherian."
+    },
+    {
+      "id": "commalg_v3_negative_cohopfian_without_chain_condition",
+      "paired_card_ids": [
+        "commalg_v3_artinian_injective_endomorphism"
+      ],
+      "candidate_question": "Is every injective endomorphism of an arbitrary module surjective?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Multiplication by 2 on Z is injective and not surjective. Z is not an Artinian Z-module, as the descending chain 2ⁿZ demonstrates."
+    },
+    {
+      "id": "commalg_v3_negative_hom_without_finite_source",
+      "paired_card_ids": [
+        "commalg_v3_noetherian_hom"
+      ],
+      "candidate_question": "If N is Noetherian, is Hom_R(M,N) Noetherian for every M?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Let R=k be a field, N=k and M=⊕ₙk. Then Hom_k(M,k)≅∏ₙk contains arbitrarily large independent finite families of coordinate functionals, so it is infinite-dimensional and not Noetherian. The source M is not finitely generated."
+    },
+    {
+      "id": "commalg_v3_negative_finite_length_one_condition",
+      "paired_card_ids": [
+        "commalg_v3_finite_length_iff_chain_conditions"
+      ],
+      "candidate_question": "Does Noetherianity alone imply finite composition length?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Z as a Z-module is Noetherian, but its strictly descending chain 2ⁿZ means it is not Artinian and has no finite composition series. Both chain conditions are required."
+    },
+    {
+      "id": "commalg_v3_negative_localization_reflects_injectivity",
+      "paired_card_ids": [
+        "commalg_v3_localization_preserves_injective",
+        "commalg_v3_localization_kernel",
+        "commalg_v3_localization_exact"
+      ],
+      "candidate_question": "If S⁻¹f is injective, must f be injective?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take R=Z, S={2ⁿ:n≥0}, M=Z/2Z, N=0 and f=0. Both localized modules are zero, so S⁻¹f is injective, while f has nonzero kernel. Localization preserves injectivity but need not reflect it."
+    },
+    {
+      "id": "commalg_v3_negative_localization_reflects_surjectivity",
+      "paired_card_ids": [
+        "commalg_v3_localization_preserves_surjective",
+        "commalg_v3_localization_range",
+        "commalg_v3_localization_exact"
+      ],
+      "candidate_question": "If S⁻¹f is surjective, must f be surjective?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For R=Z and S={2ⁿ:n≥0}, multiplication by 2 on Z becomes bijective after localization at S, but its original range is 2Z and it is not surjective onto Z."
+    },
+    {
+      "id": "commalg_v3_negative_localization_map_always_injective",
+      "paired_card_ids": [
+        "commalg_v3_localization_naturality",
+        "commalg_v3_localization_composition",
+        "commalg_v3_localization_extreme_submodules"
+      ],
+      "candidate_question": "Are all canonical maps M→S⁻¹M injective, since localization is functorial?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For R=Z, S={2ⁿ:n≥0}, and M=Z/2Z, the localized module is zero. The canonical map kills all of M. Naturality and preservation of composition do not assert injectivity of the canonical map."
+    },
+    {
+      "id": "commalg_v3_negative_localized_submodule_is_image",
+      "paired_card_ids": [
+        "commalg_v3_localization_contains_image",
+        "commalg_v3_localization_ideal_action"
+      ],
+      "candidate_question": "Does the localized submodule S⁻¹U always equal the image of U under M→S⁻¹M?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Let R=M=Z, U=Z, S={2ⁿ:n≥0}. The image is Z inside Z[1/2], whereas the localized submodule is all of Z[1/2], including 1/2. With I=R the ideal-action equality does not remove this distinction."
+    },
+    {
+      "id": "commalg_v3_negative_localization_infinite_intersection",
+      "paired_card_ids": [
+        "commalg_v3_localization_intersection"
+      ],
+      "candidate_question": "Does localization preserve arbitrary infinite intersections of submodules?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take R=M=Z, S={2ⁿ:n≥0} and Uₙ=2ⁿZ. Their intersection is zero and remains zero after localization. Each S⁻¹Uₙ is the whole Z[1/2], so the intersection of the localized submodules is nonzero. The card only asserts preservation of binary intersections."
+    },
+    {
+      "id": "commalg_v3_negative_localized_noetherian_over_base_ring",
+      "paired_card_ids": [
+        "commalg_v3_noetherian_ring_finite_module",
+        "commalg_v3_localization_preserves_surjective"
+      ],
+      "candidate_question": "If M is Noetherian over R, is S⁻¹M necessarily Noetherian as an R-module?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take R=M=Z and S=Z\\{0}. The localization Q contains the strictly ascending Z-submodules Z⊊(1/2)Z⊊(1/4)Z⊊…. Q is Noetherian over its localized ring Q but not over the original ring Z. The profile explicitly regards localized carriers as R-modules."
+    },
+    {
+      "id": "commalg_v3_negative_tensor_right_exact_missing_surjection",
+      "paired_card_ids": [
+        "commalg_v3_tensor_right_exact"
+      ],
+      "candidate_question": "Does tensoring with any X preserve every exact pair M→N→P without assuming the second map surjective?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The pair 0→Z→Z, with the second map multiplication by 2, is exact at the middle Z. Tensor with X=Z/2Z: the resulting pair is 0→Z/2Z→Z/2Z with zero second map. Its middle kernel is all Z/2Z and the first image is zero. Thus it is not exact."
+    },
+    {
+      "id": "commalg_v3_negative_tensor_lift_for_nonlinear_map",
+      "paired_card_ids": [
+        "commalg_v3_tensor_universal_property",
+        "commalg_v3_tensor_lift_naturality"
+      ],
+      "candidate_question": "Does every arbitrary function M×N→P have a linear tensor factorization?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Over R=Z with M=N=P=Z, the constant function b(x,y)=1 cannot arise from any linear map out of M⊗N, because a linear map sends 0⊗0=0 to 0. Bilinearity is essential before the universal property or its naturality applies."
+    },
+    {
+      "id": "commalg_v3_negative_tensor_symmetry_means_literal_identity",
+      "paired_card_ids": [
+        "commalg_v3_tensor_symmetry",
+        "commalg_v3_tensor_associativity"
+      ],
+      "candidate_question": "Can a tensor-factor permutation or reassociation be replaced by a literal identity without transporting carriers?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The canonical symmetry is a map M⊗N→N⊗M, and associativity has source (M⊗N)⊗P and target M⊗(N⊗P). These are different constructed carrier expressions in this typed language. Even when M=N=k², symmetry is not the identity: e₁⊗e₂ and e₂⊗e₁ are distinct basis tensors. Bijectivity does not authorize equating distinct typed carriers."
+    },
+    {
+      "id": "commalg_v3_negative_hom_left_exact_missing_surjection",
+      "paired_card_ids": [
+        "commalg_v3_hom_contravariant_left_exact"
+      ],
+      "candidate_question": "Does contravariant Hom preserve exactness of any exact pair without the terminal map being surjective?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Over Z the pair 0→Z→Z with multiplication by 2 as the second map is exact at the middle term. Applying Hom_Z(-,Z) gives Z→Z→0 with first map multiplication by 2; its image 2Z is strictly smaller than the kernel Z of the zero map. The missing surjectivity is essential."
+    },
+    {
+      "id": "commalg_v3_negative_hom_covariant_right_exact",
+      "paired_card_ids": [
+        "commalg_v3_hom_postcomposition_injective"
+      ],
+      "candidate_question": "Does postcomposition by every surjective map induce a surjection on Hom_R(X,-)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For R=Z, X=Z/2Z and the surjection Z→Z/2Z, Hom_Z(X,Z)=0 whereas Hom_Z(X,Z/2Z) contains the identity. Postcomposition is not surjective. The card preserves injectivity, not arbitrary surjectivity."
+    },
+    {
+      "id": "commalg_v3_negative_hom_precomposition_wrong_hypothesis",
+      "paired_card_ids": [
+        "commalg_v3_hom_precomposition_injective"
+      ],
+      "candidate_question": "If f:M→N is injective, must precomposition Hom_R(N,X)→Hom_R(M,X) be injective?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take M=0, N=X=Z and the inclusion f:0→Z. The induced map Hom_Z(Z,Z)→Hom_Z(0,Z)=0 kills every endomorphism, including the identity. Surjectivity of f is the required assumption."
+    }
+  ]
+}

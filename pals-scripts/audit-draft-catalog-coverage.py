@@ -1097,9 +1097,9 @@ def inventory_local_compose_database(repository_root: Path) -> dict[str, Any]:
             AND to_regclass('public.pfi_catalog_quarantine') IS NOT NULL
             AND to_regclass('public.pfi_catalog_publications') IS NOT NULL,
           'typed_runtime_present',
-            to_regclass('public.typed_catalog_generations') IS NOT NULL
-            AND to_regclass('public.typed_catalog_rows') IS NOT NULL
-            AND to_regclass('public.typed_catalog_active') IS NOT NULL
+            to_regclass('pals_typed_catalog.generations') IS NOT NULL
+            AND to_regclass('pals_typed_catalog.rows') IS NOT NULL
+            AND to_regclass('pals_typed_catalog.active') IS NOT NULL
         )
         """,
     )
@@ -1187,11 +1187,11 @@ def inventory_local_compose_database(repository_root: Path) -> dict[str, Any]:
             repository_root,
             """
             SELECT json_build_object(
-              'active_profile_count', (SELECT count(*) FROM public.typed_catalog_active),
+              'active_profile_count', (SELECT count(*) FROM pals_typed_catalog.active),
               'active_row_count', (
                 SELECT count(*)
-                FROM public.typed_catalog_rows AS r
-                JOIN public.typed_catalog_active AS a
+                FROM pals_typed_catalog.rows AS r
+                JOIN pals_typed_catalog.active AS a
                   ON a.profile_id = r.profile_id AND a.generation_id = r.generation_id
               )
             )

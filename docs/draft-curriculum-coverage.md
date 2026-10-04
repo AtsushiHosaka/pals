@@ -1,5 +1,7 @@
 # Draft curriculum coverage
 
+> この表は旧時点の概観であり、大学初年級の網羅判定には使わない。現在の章・典型問題形式・難易度・証拠水準別の判定は[基礎カリキュラム監査v6](foundation-expansion-v6-20260930.md)を参照する。旧表の `active` は全演習の網羅や本番での型付きDraft利用を意味しない。
+
 This is the operational coverage map for local Draft authoring.  It targets
 Japanese high-school mathematics and the usual mathematics sequence through
 the second year of a science or engineering degree.  A checkmark means that

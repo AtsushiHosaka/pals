@@ -210,6 +210,55 @@ If structuring cannot select exactly one supported profile or the selected runti
 is unavailable, retrieval returns a stable no-match/error classification. It does not search
 another mathematical type system.
 
+Typed model output uses a versioned, profile-aware expression AST with strict provider
+schema output. Fixed-arity operators have named argument slots (for example, equality
+has left/right operands and transpose has one argument); their legal operator sets come
+from the selected validator contract. A variable-arity application cannot accept a
+fixed-arity operator. Binders explicitly carry declarations and a body. Carrier, casts,
+symbol identity and attributes remain explicit model input, never inferred by the codec.
+Sort constructors belong only to a separate declaration-sort schema derived from each
+profile's sort parser; they cannot appear as ordinary expressions. Sort parameters use
+the exact permitted variable and integer-dimension forms. Term and proposition expressions
+retain the existing validator's language rather than introducing new logical restrictions.
+The local decoder independently checks duplicate members, closed fields, legal operators,
+XML characters and byte/node/depth limits, then serializes exactly that tree with standard
+XML escaping. It does not infer any missing
+mathematical node. The selected existing XML canonicalizer and validator remain authoritative;
+registry and admission fingerprints do not change. Raw XML is not accepted as a fallback.
+Schema opt-in leaves generic provider requests unchanged. Refused or incomplete provider
+responses are not accepted as partial trees. Evaluation implementation identity includes the
+codec and provider adapter, so old XML observations cannot certify the new transport.
+The generic-tag v1 diagnostic remains failed evidence: it admitted the structurally legal
+but mathematically invalid tree `eq(transpose(A,B))`. Its XML balance check and 16 example
+roundtrips are not evidence of correct expression generation. The replacement transport
+must cover every fixed-arity symbol in all 16 profiles and reject that malformed shape
+before XML validation; versioned real-input observations must be collected again.
+The v2 real transpose diagnostic also failed: it substituted the sort `Matrix(K,2,2)`
+for the literal matrix value. That failed observation motivates the explicit sort/context
+separation; it must not be counted as a successful structurally or semantically valid query.
+
+The v3 real replay accepted schema-valid zero matrices in place of supplied literals.
+Transport v4 therefore gives matrix and column literals dedicated carrier, dimension and
+entry slots. Entry count must match the explicit dimensions; neither values nor casts are
+filled in by the codec. A separate pre-embedding preservation check for fully explicit
+integer matrix literals compares their dimensions and row-major values with the validated
+XML. Missing, altered or extra numeric literals trigger the same bounded correction path.
+This narrow check is not a theorem-equivalence checker: operation roles, assumptions,
+symbolic entries and unsupported natural-language notation still need semantic review and
+real corpus evaluation. Old v3 observations cannot certify this implementation.
+
+Typed structuring has one bounded repair opportunity only after tree decoding, canonicalization or profile
+validation rejects the first generated tree. The correction receives the unchanged original
+statement, selected registry and grammar, plus bounded prior tree output and validator diagnostics
+marked as untrusted data. It never inserts tags or infers missing mathematical content in
+code. Canonicalization and the complete selected validator run again. Both model calls share
+a monotonic 90-second deadline; expiry prevents an additional call. A provider failure ends
+structuring immediately. Embedding, candidate lookup and reranking are not retried by this
+path. Private evidence records the first validation failure and whether correction was used;
+public projection continues to use the closed existing failure classification. Evaluation
+must use this same runtime limit and implementation identity and must not discard failed
+attempts or reuse observations from the previous implementation as new results.
+
 ## Inventory and reporting
 
 `pals-scripts/audit-draft-catalog-coverage.py` reads the coverage matrix and repository
@@ -228,6 +277,31 @@ short human report with:
 No aggregate total may hide an incomplete required scope or advanced extension.
 
 ## Evaluation and release gates
+
+For typed retrieval, a match means a strategy that can advance a concrete proof step
+for the unchanged query, preserving its assumptions, quantifiers, carriers, dimensions,
+literal values and conclusion. Topic similarity or a strategy that only refutes a nearby
+false equality is insufficient. Generalization, specialization and auxiliary lemmas remain
+allowed; canonical equality is evidence, never a mandatory selection filter. An empty
+selection means no supported proof strategy was identified, not a falsity certificate.
+The typed selector uses its own versioned prompt and SHA-256 in request compatibility;
+the generic relevance selector's pinned contract remains unchanged. Positive evaluation
+requires the expected strategy to be selected, not exact equality of the selected ID set.
+
+The September 30 real twelve-query replay showed that prompt-only proof-support selection
+still matched five of six false literal statements. A conservative retrieval-only filter
+therefore checks the strictly closed fragment `forall K : Field, P`, with K as its sole
+declaration and P a direct equality, inequality or two-sided-inverse predicate. Supported
+literal matrix operations are evaluated exactly over rational numbers, with bounded
+dimensions, tree size, arithmetic operations and integer bit lengths. A false result over
+this particular field supplies a counterexample to the structured universal query and
+suppresses Draft selection. A true result, unsupported expression or resource limit makes
+no universal claim and proceeds through the normal selector. Hypotheses, existential
+quantifiers, other variables and logical combinations are not evaluated by this filter.
+The filter does not certify the translation from natural language, issue a semantic QA
+receipt, change a proof's state or establish proof correctness. Its version and bounded
+reason are recorded in private retrieval evidence; release evaluation still checks exact
+structuring and downstream verified completion independently.
 
 Each changed family supplies exact natural-language queries, reviewed canonical OpenMath,
 expected family/profile, expected positives, and close hard negatives. The release evaluator

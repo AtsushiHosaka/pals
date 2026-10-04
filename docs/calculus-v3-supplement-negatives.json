@@ -1,0 +1,60 @@
+{
+  "schema_version": "pals.calculus-supplement-negatives.v1",
+  "profile_id": "typed-calculus-v3",
+  "cases": [
+    {
+      "id": "calculus_supp_v3_taylor_at_center_negative",
+      "positive_card_id": "calculus_supp_v3_taylor_at_center",
+      "candidate_question": "The Taylor polynomial agrees with f at every evaluation point without a remainder.",
+      "why_invalid": "For f(x)=x^(n+1), center zero and b>0, the degree-n Taylor polynomial is zero at b while f(b)>0."
+    },
+    {
+      "id": "calculus_supp_v3_taylor_uniform_remainder_bound_negative",
+      "positive_card_id": "calculus_supp_v3_taylor_uniform_remainder_bound",
+      "candidate_question": "A bound on f^(n+1) only at the center suffices for the same uniform error estimate with c=0.",
+      "why_invalid": "For f(x)=x^(n+2) centered at zero, this derivative vanishes at zero but the Taylor error at any b>0 is positive."
+    },
+    {
+      "id": "calculus_supp_v3_finite_taylor_not_exact_negative",
+      "positive_card_id": "calculus_supp_v3_finite_taylor_not_exact",
+      "candidate_question": "Every smooth function is exactly equal to each of its finite Taylor truncations.",
+      "why_invalid": "The parameterized monomial of degree n+1 has zero degree-n Taylor polynomial at zero but positive value at b>0."
+    },
+    {
+      "id": "calculus_supp_v3_harmonic_term_test_counterexample_negative",
+      "positive_card_id": "calculus_supp_v3_harmonic_term_test_counterexample",
+      "candidate_question": "If real series terms tend to zero, the series must converge.",
+      "why_invalid": "For any c≠0 the harmonic-scale family c/n has zero term limit and divergent series."
+    },
+    {
+      "id": "calculus_supp_v3_geometric_majorant_error_negative",
+      "positive_card_id": "calculus_supp_v3_geometric_majorant_error",
+      "candidate_question": "The remainder bound c*q^n remains valid after omitting division by 1-q.",
+      "why_invalid": "For u(n)=c*q^n with c>0 and 0<q<1, the actual tail is c*q^n/(1-q), strictly larger than c*q^n."
+    },
+    {
+      "id": "calculus_supp_v3_power_series_interior_convergence_negative",
+      "positive_card_id": "calculus_supp_v3_power_series_interior_convergence",
+      "candidate_question": "Convergence at a implies unconditional summability at every b with |b|≤|a|.",
+      "why_invalid": "At a=1 the alternating harmonic coefficients converge in ordered partial sums but are not absolutely summable; equality b=a already invalidates the unconditional conclusion."
+    },
+    {
+      "id": "calculus_supp_v3_weighted_geometric_sum_negative",
+      "positive_card_id": "calculus_supp_v3_weighted_geometric_sum",
+      "candidate_question": "The weighted geometric sum equals 1/(1-q)² for Σ n*q^n.",
+      "why_invalid": "At q=0 all terms n*q^n are zero, whereas the proposed sum is 1; the required numerator is q."
+    },
+    {
+      "id": "calculus_supp_v3_geometric_boundary_counterexample_negative",
+      "positive_card_id": "calculus_supp_v3_geometric_boundary_counterexample",
+      "candidate_question": "The geometric power series converges for |q|≤1, including both endpoints.",
+      "why_invalid": "At q=1 its terms are all 1; at q=-1 they alternate ±1 and do not even tend to zero."
+    },
+    {
+      "id": "calculus_supp_v3_geometric_sum_derivative_negative",
+      "positive_card_id": "calculus_supp_v3_geometric_sum_derivative",
+      "candidate_question": "The derivative formula extends to q=1 by totalizing the rational expression.",
+      "why_invalid": "For x<1 approaching 1, the geometric sum 1/(1-x) diverges; at x=1 the totalized nonsummable tsum is zero, so it is not even continuous there."
+    }
+  ]
+}

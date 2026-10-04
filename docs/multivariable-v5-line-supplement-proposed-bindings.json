@@ -1,0 +1,30 @@
+[
+  {
+    "draft_id": "mv_line_supp_v5_orientation_law",
+    "family_id": "univ.multivar.line-surface-integrals",
+    "primary_mode": "recognize",
+    "difficulty": "introductory",
+    "authoring_manifest": "docs/multivariable-v5-line-supplement-batch.json"
+  },
+  {
+    "draft_id": "mv_line_supp_v5_split_parameter_interval",
+    "family_id": "univ.multivar.line-surface-integrals",
+    "primary_mode": "justify_prove",
+    "difficulty": "introductory",
+    "authoring_manifest": "docs/multivariable-v5-line-supplement-batch.json"
+  },
+  {
+    "draft_id": "mv_line_supp_v5_orientation_counterexample",
+    "family_id": "univ.multivar.line-surface-integrals",
+    "primary_mode": "counterexample_audit",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/multivariable-v5-line-supplement-batch.json"
+  },
+  {
+    "draft_id": "mv_line_supp_v5_bilinear_curve_integration_by_parts",
+    "family_id": "univ.multivar.line-surface-integrals",
+    "primary_mode": "synthesize",
+    "difficulty": "standard",
+    "authoring_manifest": "docs/multivariable-v5-line-supplement-batch.json"
+  }
+]

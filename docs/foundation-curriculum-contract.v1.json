@@ -1,0 +1,349 @@
+{
+  "schema_version": "pals.foundation-curriculum-contract.v1",
+  "scope_id": "undergraduate-core-v1",
+  "matrix_path": "specs/draft-catalog-expansion/coverage-matrix.v1.json",
+  "description": "Project-defined undergraduate foundation scope, not a universal curriculum standard. Each mode describes a broad problem form, not every exercise subtype. Credits require explicit source bindings; no automatic topic inference.",
+  "chapters": [
+    {
+      "family_id": "univ.linear.systems",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for solvability and uniqueness.",
+        "compute_construct": "Compute or construct solutions of a linear system.",
+        "justify_prove": "Prove under explicit assumptions a consistency or solution-space criterion.",
+        "counterexample_audit": "Construct or explain a counterexample to inconsistent or nonunique systems.",
+        "synthesize": "Combine results involving solution sets and kernel/image."
+      }
+    },
+    {
+      "family_id": "univ.linear.matrices",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for matrix dimensions and operation laws.",
+        "compute_construct": "Compute or construct matrix products, inverses, or powers.",
+        "justify_prove": "Prove under explicit assumptions a matrix operation identity.",
+        "counterexample_audit": "Construct or explain a counterexample to invalid matrix operation laws.",
+        "synthesize": "Combine results involving several matrix operations."
+      }
+    },
+    {
+      "family_id": "univ.linear.subspaces",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for subspace conditions.",
+        "compute_construct": "Compute or construct a subspace sum or intersection.",
+        "justify_prove": "Prove under explicit assumptions closure or an inclusion between subspaces.",
+        "counterexample_audit": "Construct or explain a counterexample to a set failing a subspace condition.",
+        "synthesize": "Combine results involving subspaces and linear maps."
+      }
+    },
+    {
+      "family_id": "univ.linear.span-independence",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for spanning and independence conditions.",
+        "compute_construct": "Compute or construct a span or dependence relation.",
+        "justify_prove": "Prove under explicit assumptions a spanning or independence implication.",
+        "counterexample_audit": "Construct or explain a counterexample to false implications between span and independence.",
+        "synthesize": "Combine results involving spanning, independence, and linear maps."
+      }
+    },
+    {
+      "family_id": "univ.linear.basis-dimension",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for basis and dimension hypotheses.",
+        "compute_construct": "Compute or construct coordinates, a basis, or dimension.",
+        "justify_prove": "Prove under explicit assumptions a basis or dimension theorem.",
+        "counterexample_audit": "Construct or explain a counterexample to a false basis/dimension assertion.",
+        "synthesize": "Combine results involving bases, coordinates, and dimension."
+      }
+    },
+    {
+      "family_id": "univ.linear.maps",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for linearity and compatible domains.",
+        "compute_construct": "Compute or construct a linear map or its composition.",
+        "justify_prove": "Prove under explicit assumptions a linear-map identity.",
+        "counterexample_audit": "Construct or explain a counterexample to a nonlinear map or invalid implication.",
+        "synthesize": "Combine results involving linear maps and coordinate representations."
+      }
+    },
+    {
+      "family_id": "univ.linear.kernel-image-rank",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for kernel, image, rank, and nullity.",
+        "compute_construct": "Compute or construct a kernel, image, rank, or nullity.",
+        "justify_prove": "Prove under explicit assumptions a rank-nullity or image/kernel theorem.",
+        "counterexample_audit": "Construct or explain a counterexample to invalid rank or injectivity claims.",
+        "synthesize": "Combine results involving rank, composition, and solution spaces."
+      }
+    },
+    {
+      "family_id": "univ.linear.determinant",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for determinant and invertibility hypotheses.",
+        "compute_construct": "Compute or construct a determinant or inverse via determinants.",
+        "justify_prove": "Prove under explicit assumptions a determinant identity.",
+        "counterexample_audit": "Construct or explain a counterexample to a false determinant law.",
+        "synthesize": "Combine results involving determinants, invertibility, and linear systems."
+      }
+    },
+    {
+      "family_id": "univ.linear.eigen",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for eigenvalue/eigenvector and diagonalization conditions.",
+        "compute_construct": "Compute or construct an eigenpair or eigenspace.",
+        "justify_prove": "Prove under explicit assumptions an eigenvalue or diagonalization theorem.",
+        "counterexample_audit": "Construct or explain a counterexample to an unjustified diagonalization assertion.",
+        "synthesize": "Combine results involving eigenstructure, polynomials, and matrix powers."
+      }
+    },
+    {
+      "family_id": "univ.linear.inner-product",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for orthogonality and inner-product hypotheses.",
+        "compute_construct": "Compute or construct a projection, norm, or orthogonal decomposition.",
+        "justify_prove": "Prove under explicit assumptions an orthogonality or inner-product identity.",
+        "counterexample_audit": "Construct or explain a counterexample to a false norm/orthogonality claim.",
+        "synthesize": "Combine results involving orthogonality, approximation, and linear maps."
+      }
+    },
+    {
+      "family_id": "univ.calculus.limits",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for limit hypotheses and one-sided conditions.",
+        "compute_construct": "Compute or construct a function limit.",
+        "justify_prove": "Prove under explicit assumptions a function-limit theorem.",
+        "counterexample_audit": "Construct or explain a counterexample to an invalid limit inference.",
+        "synthesize": "Combine results involving limits of sums, products, or compositions."
+      }
+    },
+    {
+      "family_id": "univ.calculus.continuity",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for continuity and domain conditions.",
+        "compute_construct": "Compute or construct a continuous extension or a continuity condition.",
+        "justify_prove": "Prove under explicit assumptions a continuity theorem.",
+        "counterexample_audit": "Construct or explain a counterexample to a false continuity implication.",
+        "synthesize": "Combine results involving continuity, limits, and composition."
+      }
+    },
+    {
+      "family_id": "univ.calculus.derivative-rules",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for derivative hypotheses and domains.",
+        "compute_construct": "Compute or construct a derivative using differentiation rules.",
+        "justify_prove": "Prove under explicit assumptions a differentiation rule.",
+        "counterexample_audit": "Construct or explain a counterexample to a derivative rule with missing assumptions.",
+        "synthesize": "Combine results involving chain, product, and quotient rules."
+      }
+    },
+    {
+      "family_id": "univ.calculus.mean-value",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for Rolle/mean-value theorem hypotheses.",
+        "compute_construct": "Compute or construct a mean-value point or bound.",
+        "justify_prove": "Prove under explicit assumptions a Rolle or mean-value theorem.",
+        "counterexample_audit": "Construct or explain a counterexample to a missing endpoint/interior assumption.",
+        "synthesize": "Combine results involving mean-value bounds and monotonicity."
+      }
+    },
+    {
+      "family_id": "univ.calculus.extrema",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for critical-point and extremum conditions.",
+        "compute_construct": "Compute or construct stationary points or extrema.",
+        "justify_prove": "Prove under explicit assumptions a necessary or sufficient extremum condition.",
+        "counterexample_audit": "Construct or explain a counterexample to an invalid extremum inference.",
+        "synthesize": "Combine results involving derivatives, monotonicity, and optimization."
+      }
+    },
+    {
+      "family_id": "univ.calculus.taylor",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for Taylor order and smoothness assumptions.",
+        "compute_construct": "Compute or construct a Taylor polynomial or remainder bound.",
+        "justify_prove": "Prove under explicit assumptions a finite Taylor formula or remainder theorem.",
+        "counterexample_audit": "Construct or explain a counterexample to a Taylor conclusion without its hypotheses.",
+        "synthesize": "Combine results involving Taylor expansion and an approximation error."
+      }
+    },
+    {
+      "family_id": "univ.calculus.ftc",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for FTC continuity/integrability hypotheses.",
+        "compute_construct": "Compute or construct a definite integral via a primitive.",
+        "justify_prove": "Prove under explicit assumptions a fundamental theorem of calculus.",
+        "counterexample_audit": "Construct or explain a counterexample to an invalid derivative-integral interchange.",
+        "synthesize": "Combine results involving derivatives, primitives, and definite integrals."
+      }
+    },
+    {
+      "family_id": "univ.calculus.integration-methods",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for substitution/integration-by-parts assumptions.",
+        "compute_construct": "Compute or construct an integral by substitution or parts.",
+        "justify_prove": "Prove under explicit assumptions a substitution or parts formula.",
+        "counterexample_audit": "Construct or explain a counterexample to an invalid integral transformation.",
+        "synthesize": "Combine results involving multiple justified integration steps."
+      }
+    },
+    {
+      "family_id": "univ.calculus.series",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for sequence/series convergence hypotheses.",
+        "compute_construct": "Compute or construct a sequence limit or series sum.",
+        "justify_prove": "Prove under explicit assumptions a convergence test or series identity.",
+        "counterexample_audit": "Construct or explain a counterexample to a false convergence implication.",
+        "synthesize": "Combine results involving convergence tests, sums, and remainders."
+      }
+    },
+    {
+      "family_id": "univ.calculus.power-series",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for power-series domain and convergence conditions.",
+        "compute_construct": "Compute or construct a power-series sum or convergence domain.",
+        "justify_prove": "Prove under explicit assumptions a power-series expansion theorem.",
+        "counterexample_audit": "Construct or explain a counterexample to an invalid boundary or termwise inference.",
+        "synthesize": "Combine results involving power series and differentiation/integration."
+      }
+    },
+    {
+      "family_id": "univ.multivar.partials",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for partial/directional derivative hypotheses.",
+        "compute_construct": "Compute or construct a partial or directional derivative.",
+        "justify_prove": "Prove under explicit assumptions a partial/directional derivative identity.",
+        "counterexample_audit": "Construct or explain a counterexample to an invalid partial-to-total differentiability claim.",
+        "synthesize": "Combine results involving directional and total derivatives."
+      }
+    },
+    {
+      "family_id": "univ.multivar.total-jacobian",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for total derivative and Jacobian hypotheses.",
+        "compute_construct": "Compute or construct a total derivative or Jacobian.",
+        "justify_prove": "Prove under explicit assumptions a total-derivative rule.",
+        "counterexample_audit": "Construct or explain a counterexample to an invalid multivariable differentiability inference.",
+        "synthesize": "Combine results involving chain rules and compositions of maps."
+      }
+    },
+    {
+      "family_id": "univ.multivar.gradient",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for gradient and inner-product structure.",
+        "compute_construct": "Compute or construct a gradient or directional derivative.",
+        "justify_prove": "Prove under explicit assumptions a gradient identity.",
+        "counterexample_audit": "Construct or explain a counterexample to an invalid gradient assertion.",
+        "synthesize": "Combine results involving gradients, directions, and chain rules."
+      }
+    },
+    {
+      "family_id": "univ.multivar.hessian-taylor",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for second-derivative/Taylor smoothness hypotheses.",
+        "compute_construct": "Compute or construct a Hessian or second-order approximation.",
+        "justify_prove": "Prove under explicit assumptions a second-derivative or Taylor theorem.",
+        "counterexample_audit": "Construct or explain a counterexample to a second-order claim missing hypotheses.",
+        "synthesize": "Combine results involving second derivatives and approximation errors."
+      }
+    },
+    {
+      "family_id": "univ.multivar.extrema",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for multivariable extremum conditions.",
+        "compute_construct": "Compute or construct critical points or classified extrema.",
+        "justify_prove": "Prove under explicit assumptions a necessary or sufficient extremum condition.",
+        "counterexample_audit": "Construct or explain a counterexample to an invalid stationary-to-extremum implication.",
+        "synthesize": "Combine results involving gradients, second derivatives, and extrema."
+      }
+    },
+    {
+      "family_id": "univ.multivar.lagrange",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for constraint regularity and multiplier conditions.",
+        "compute_construct": "Compute or construct constrained critical points.",
+        "justify_prove": "Prove under explicit assumptions a multiplier condition.",
+        "counterexample_audit": "Construct or explain a counterexample to a constraint-qualification failure.",
+        "synthesize": "Combine results involving constraints, gradients, and optimization."
+      }
+    },
+    {
+      "family_id": "univ.multivar.multiple-integrals",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for multidimensional integrability and Fubini conditions.",
+        "compute_construct": "Compute or construct an iterated/multiple integral.",
+        "justify_prove": "Prove under explicit assumptions an iterated-integral identity.",
+        "counterexample_audit": "Construct or explain a counterexample to an invalid order-of-integration exchange.",
+        "synthesize": "Combine results involving domains, iterated integrals, and integrability."
+      }
+    },
+    {
+      "family_id": "univ.multivar.change-variables",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for Jacobian and change-of-variables hypotheses.",
+        "compute_construct": "Compute or construct a multiple integral after coordinate change.",
+        "justify_prove": "Prove under explicit assumptions a change-of-variables identity.",
+        "counterexample_audit": "Construct or explain a counterexample to a missing Jacobian/injectivity condition.",
+        "synthesize": "Combine results involving coordinate transformations and multiple integrals."
+      }
+    },
+    {
+      "family_id": "univ.multivar.line-surface-integrals",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for curve/surface orientation and integrability.",
+        "compute_construct": "Compute or construct a line or surface integral.",
+        "justify_prove": "Prove under explicit assumptions a parameterized integral identity.",
+        "counterexample_audit": "Construct or explain a counterexample to an invalid orientation/parameterization assertion.",
+        "synthesize": "Combine results involving parameterizations and geometric integrals."
+      }
+    },
+    {
+      "family_id": "univ.multivar.integral-theorems",
+      "problem_forms": {
+        "recognize": "Identify and state the assumptions for Green/Stokes/divergence theorem hypotheses.",
+        "compute_construct": "Compute or construct an integral via a vector-calculus theorem.",
+        "justify_prove": "Prove under explicit assumptions a vector-calculus integral theorem.",
+        "counterexample_audit": "Construct or explain a counterexample to an invalid boundary/regularity assumption.",
+        "synthesize": "Combine results involving boundary geometry and vector-field integrals."
+      }
+    }
+  ],
+  "stage_chapter_counts": {
+    "univ.linear": 10,
+    "univ.calculus": 10,
+    "univ.multivar": 10
+  },
+  "required_modes": [
+    {
+      "id": "recognize",
+      "minimum_distinct_patterns": 1
+    },
+    {
+      "id": "compute_construct",
+      "minimum_distinct_patterns": 1
+    },
+    {
+      "id": "justify_prove",
+      "minimum_distinct_patterns": 1
+    },
+    {
+      "id": "counterexample_audit",
+      "minimum_distinct_patterns": 1
+    },
+    {
+      "id": "synthesize",
+      "minimum_distinct_patterns": 1
+    }
+  ],
+  "required_difficulties": [
+    {
+      "id": "introductory",
+      "minimum_distinct_patterns": 1
+    },
+    {
+      "id": "standard",
+      "minimum_distinct_patterns": 2
+    },
+    {
+      "id": "advanced",
+      "minimum_distinct_patterns": 1
+    }
+  ]
+}

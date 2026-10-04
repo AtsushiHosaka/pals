@@ -1,5 +1,58 @@
 # Lean Recipe Catalog — Specification Loop Ledger
 
+## Implementation evidence update — 2026-09-29
+
+This addendum supersedes the older **implementation** absence claims below; historical
+specification-loop decisions remain intact. Baseline: parent `02801ca`, API `858dd16`,
+agent `ab42335`, and the intentional uncommitted working tree. No production deployment
+or commit is represented by these results.
+
+| Requirement | Current implementation and measured evidence | Current limit |
+|---|---|---|
+| LRC-001–005 | Existing API-owned catalog/admission/alignment paths; `test_lean_recipe_alignment_admission.py` passed on real PostgreSQL. The square gate also admits the reviewed Draft alignment through the actual owner/reviewer boundary. | Local isolated gate, not production release admission. |
+| LRC-006–007 | The learner factory connects its private PFI runtime only with explicit pinned provenance and a valid embedding binding. Natural-language worker now prepares/reuses its real retrieval result before selection and derives exactly one v4 exact-Draft reference plus method. Formal and aligned selected bytes bypass model candidate generation. Agent recipe/client/worker/pipeline/API contract tests pass. | Live application submission remains a separate integration check. |
+| LRC-008–009 | API persists canonical query, complete considered-candidate outcomes and signed result. Owner functions bind decisions to the live generation claim at issuance; a separate claim-fenced link creates immutable no-Recipe attempt evidence. Cross-job, wrong-claim, unbound, expired-claim and concurrent replay tests passed on PostgreSQL. No-Recipe generation waits for durable acknowledgement. | Selected proof-attempt verifier/reviewer settlement is covered separately by RPCS; do not infer it from selection alone. |
+| LRC-010 | Active toolchain, exact-key lookup, ambiguity and negative selection are exercised by the real corpus below; embedding vectors only isolate the unrelated PFI exact-fetch fixture. | No embedding-quality claim. |
+| LRC-011 | Explicit epsilon-delta square body from `PalsX2Verified.lean` was materialized, admitted through real mTLS/pinned Lean, aligned to the five-field `continuous_square` Draft, selected byte-for-byte, and compiled again. Independent semantic approval principal: `pals.principal.v1/reviewer/root-square`. | Corpus transport deployment identity is a local test identity. Live catalog admission requires the actual deployment fingerprint and a fresh real admission. |
+| LRC-012 | Versioned `pals-scripts/fixtures/lean-recipe-corpus.v1.json`; `pals-api/tests/integration/test_lean_recipe_corpus.py`: seven cases passed. Compile 2/2, correct selection 7/7, false selection 0/5, method fidelity 1/1. | These ratios describe this seven-case corpus only. |
+| LRC-013 | Real PostgreSQL candidate-admission tests passed: selected receipt/trace atomic insert, rollback/mismatch/expiry rejection, and retirement serialization. | Full internal candidate API → isolated verifier → independent semantic-review settlement must pass the RPCS integration gate. |
+| RPCS-001–007 | Existing source union, owner candidate transaction, v3 reviewer binding and Recipe-terminal failure code remain implemented. Candidate transaction real-PG tests passed; agent focused suite passed. | The legacy source migration fixture currently needs dedicated-DB correction; full RPCS-T007 integration is in progress. Do not mark the whole RPCS slice complete. |
+
+Reproducible evidence:
+
+- `output/recipe-catalog-validation-20260929/corpus-report.json` binds the corpus SHA-256,
+  exact source SHA-256, pinned Lean/mathlib fingerprint, individual outcomes, and ratios.
+- Sibling `square-authoring-manifest.json`, `square-alignment-manifest.json`, and
+  `square-materialized.lean` retain the exact gate inputs; these are generated local artifacts.
+- `pals-scripts/prepare-square-recipe-witness.py` prepares canonical release inputs from the
+  independently reviewed corpus and an explicitly supplied observed verifier fingerprint.
+  It reports `prepared_not_admitted`, never fabricates a compiler receipt, and refuses to
+  overwrite different release inputs.
+- Selection authentication now compares UTF-8 bytes safely: non-ASCII and malformed credentials
+  are rejected instead of causing HTTP 500. Credential, route and curation unit regressions pass.
+
+Local lifecycle correction discovered during validation:
+
+`app.release.local_legacy_database_release` is an explicit opt-in adapter for the existing
+local `pals` developer database. It validates loopback/Compose identity, PostgreSQL 16,
+exact claim/chat/source-union columns, owner identity and owner-language foreign keys; it
+rejects any production PJR foundation. It applies the same canonical billing/catalog/claim
+SQL under a local lock without creating production-admission evidence. Real dedicated-DB
+checks prove retained proof/chat bytes, idempotent replay, and refusal before writes when the
+owner binding is missing. The production billing foundation guard remains unchanged.
+
+The local Recipe configuration helper persists three independent worker/requester/reviewer
+credentials and two distinct database logins in a mode-0600 file. Rebuilds preserve credentials
+and update only observed toolchain metadata. A third real-PostgreSQL local-release test passes
+`validate_recipe_selection_runtime_logins` using actual, separately authenticated selector and
+five-field PFI-reader logins with one allowed membership each. No live application database
+was changed by these dedicated-database tests.
+
+Catalog replay now recognizes only the canonical, owner/ACL/body/search-path-validated
+candidate-admission extension's additional runtime schema usage; arbitrary runtime catalog
+access remains rejected.
+
+
 ## Iteration record
 
 | Iteration | Spec revision | Code revision | Trigger | Expected verdict-changing delta | New evidence | Findings opened/closed | Routes invoked | Stage/overall budget | Result |

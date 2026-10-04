@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+from uuid import uuid4
+
 import argparse
 import hashlib
 import json
@@ -481,6 +483,8 @@ class PublicApiE2ERunner:
         authenticated: bool = True,
     ) -> tuple[int, Any]:
         headers = {"Accept": "application/json"}
+        if method == "POST" and path == "/v1/proof-jobs":
+            headers["Idempotency-Key"] = uuid4().hex
         if authenticated:
             if self.access_token is None:
                 raise E2EError("authenticated PALS request attempted before Cognito login")

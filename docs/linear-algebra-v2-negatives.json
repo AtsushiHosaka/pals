@@ -1,0 +1,196 @@
+{
+  "schema_version": "pals.authored-hard-negative-queries.v1",
+  "profile_id": "typed-linear-algebra-v2",
+  "status": "authored_counterexamples_not_retrieval_evaluated",
+  "cases": [
+    {
+      "id": "la_v2_rank_nullity_negative",
+      "positive_card_id": "la_v2_rank_nullity",
+      "query": "rank(f)+nullity(f)=dim W",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "f:ℝ→ℝ², f(x)=(x,0) なら左辺1、dim W=2。右辺は定義域の次元である。"
+    },
+    {
+      "id": "la_v2_rank_domain_bound_negative",
+      "positive_card_id": "la_v2_rank_domain_bound",
+      "query": "dim V≤rank(f)",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "f=0:ℝ²→ℝ では dim V=2、rank(f)=0。"
+    },
+    {
+      "id": "la_v2_rank_codomain_bound_negative",
+      "positive_card_id": "la_v2_rank_codomain_bound",
+      "query": "dim W≤rank(f)",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "f=0:ℝ→ℝ² では dim W=2、rank(f)=0。"
+    },
+    {
+      "id": "la_v2_nullity_injectivity_negative",
+      "positive_card_id": "la_v2_nullity_injectivity",
+      "query": "dim(ker f)=1 なら f は単射",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "f:ℝ²→ℝ, f(x,y)=x は核が1次元で単射でない。"
+    },
+    {
+      "id": "la_v2_full_rank_surjectivity_negative",
+      "positive_card_id": "la_v2_full_rank_surjectivity",
+      "query": "rank(f)=dim V なら f は全射",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "包含 f:ℝ→ℝ², f(x)=(x,0) は階数と定義域次元が共に1だが全射でない。"
+    },
+    {
+      "id": "la_v2_injective_dimension_bound_negative",
+      "positive_card_id": "la_v2_injective_dimension_bound",
+      "query": "単射 f:V→W なら dim W≤dim V",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "包含 ℝ→ℝ² は単射だが 2≤1 は偽。"
+    },
+    {
+      "id": "la_v2_surjective_dimension_bound_negative",
+      "positive_card_id": "la_v2_surjective_dimension_bound",
+      "query": "全射 f:V→W なら dim V≤dim W",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "射影 ℝ²→ℝ は全射だが 2≤1 は偽。"
+    },
+    {
+      "id": "la_v2_equal_dimension_injective_surjective_negative",
+      "positive_card_id": "la_v2_equal_dimension_injective_surjective",
+      "query": "無限次元を含め、同じ空間の線形自己写像は単射なら全射",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ[X] 上の f(p)=Xp は単射だが定数1は像に入らない。有限次元性を省略できない。"
+    },
+    {
+      "id": "la_v2_subspace_dimension_bound_negative",
+      "positive_card_id": "la_v2_subspace_dimension_bound",
+      "query": "任意の部分空間 S⊆V で dim V≤dim S",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "V=ℝ²、S=x軸とすると2≤1は偽。"
+    },
+    {
+      "id": "la_v2_zero_dimensional_subspace_negative",
+      "positive_card_id": "la_v2_zero_dimensional_subspace",
+      "query": "dim S=0 なら S は非零部分空間",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "S={0} は次元零で零部分空間そのものである。"
+    },
+    {
+      "id": "la_v2_full_dimensional_subspace_negative",
+      "positive_card_id": "la_v2_full_dimensional_subspace",
+      "query": "有限次元性なしでも finrank S=finrank V なら S=V",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "V=ℝ[X]、S=Xℝ[X] はともに無限次元なので Mathlib の自然数 finrank は0だが、1∉S で S≠V。"
+    },
+    {
+      "id": "la_v2_grassmann_dimension_formula_negative",
+      "positive_card_id": "la_v2_grassmann_dimension_formula",
+      "query": "dim(S+T)=dim S+dim T",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "S=T をℝ²の同じ直線とすると左辺1、右辺2。共通部分の次元補正が必要。"
+    },
+    {
+      "id": "la_v2_contained_equal_dimension_negative",
+      "positive_card_id": "la_v2_contained_equal_dimension",
+      "query": "同じ次元の二つの部分空間は一致する",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ²のx軸とy軸は共に1次元だが異なる。包含条件が欠けている。"
+    },
+    {
+      "id": "la_v2_strict_subspace_dimension_negative",
+      "positive_card_id": "la_v2_strict_subspace_dimension",
+      "query": "S⊆T なら必ず dim S<dim T",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "S=T=ℝ とすれば1<1は偽。真包含が必要。"
+    },
+    {
+      "id": "la_v2_complementary_subspace_dimension_negative",
+      "positive_card_id": "la_v2_complementary_subspace_dimension",
+      "query": "S+T=V だけで dim S+dim T=dim V",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "S=T=V=ℝ なら左辺2、右辺1。共通部分が零という条件が必要。"
+    },
+    {
+      "id": "la_v2_basis_cardinality_negative",
+      "positive_card_id": "la_v2_basis_cardinality",
+      "query": "n 本の生成族があれば dim V=n",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "V=ℝ、族(1,1)は生成するがn=2、dim V=1。基底の独立性が必要。"
+    },
+    {
+      "id": "la_v2_independent_family_cardinality_negative",
+      "positive_card_id": "la_v2_independent_family_cardinality",
+      "query": "任意の n 本のベクトル族で n≤dim V",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "V=ℝ の2本の零ベクトル族では2≤1は偽。一次独立性が必要。"
+    },
+    {
+      "id": "la_v2_spanning_family_cardinality_negative",
+      "positive_card_id": "la_v2_spanning_family_cardinality",
+      "query": "任意の n 本のベクトル族で dim V≤n",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "V=ℝ² の1本のベクトル (1,0) では2≤1は偽。生成性が必要。"
+    },
+    {
+      "id": "la_v2_full_size_independent_spans_negative",
+      "positive_card_id": "la_v2_full_size_independent_spans",
+      "query": "一次独立な族は本数に関係なく全体を生成する",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ²の一本 (1,0) は独立だが (0,1) を生成しない。本数が次元に一致する条件が必要。"
+    },
+    {
+      "id": "la_v2_full_size_spanning_independent_negative",
+      "positive_card_id": "la_v2_full_size_spanning_independent",
+      "query": "生成族は本数に関係なく一次独立である",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ の族(1,1)は生成するが従属している。n=dim Vが必要。"
+    },
+    {
+      "id": "la_v2_eigenspace_as_kernel_negative",
+      "positive_card_id": "la_v2_eigenspace_as_kernel",
+      "query": "a 固有空間は ker(f+a id) に等しい",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "V=ℝ、f=id、a=1 なら固有空間はℝ、ker(2id)=0。正しい符号は減算。"
+    },
+    {
+      "id": "la_v2_distinct_eigenspaces_intersection_negative",
+      "positive_card_id": "la_v2_distinct_eigenspaces_intersection",
+      "query": "固有値が同じでも二つの固有空間の共通部分は零",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "V=ℝ、f=id、a=b=1 なら共通部分はℝ。a≠bが必要。"
+    },
+    {
+      "id": "la_v2_distinct_eigenvectors_independent_negative",
+      "positive_card_id": "la_v2_distinct_eigenvectors_independent",
+      "query": "相異なる固有値の固有方程式を満たせば零ベクトルを許しても一次独立",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ² の f(x,y)=(0,y) に対し固有値0,1を取り、両ベクトルを零にすると方程式は成立するが族は従属。非零性が必要。"
+    },
+    {
+      "id": "la_v2_distinct_full_spectrum_eigenbasis_negative",
+      "positive_card_id": "la_v2_distinct_full_spectrum_eigenbasis",
+      "query": "一本でも非零固有ベクトルが存在すれば常に固有ベクトル基底が存在する",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ² の f(x,y)=(y,0) は固有値0の固有ベクトル(1,0)を持つが固有空間はx軸だけで固有基底を持たない。次元に一致する本数が必要。"
+    },
+    {
+      "id": "la_v2_determinant_zero_kernel_negative",
+      "positive_card_id": "la_v2_determinant_zero_kernel",
+      "query": "det f≠0 と ker f≠0 は同値",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "f=id_ℝ では det f=1≠0 だが ker f=0。"
+    },
+    {
+      "id": "la_v2_determinant_composition_negative",
+      "positive_card_id": "la_v2_determinant_composition",
+      "query": "det(g∘f)=det(g)+det(f)",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "ℝ上でf=g=idなら左辺1、右辺2。行列式は合成を乗法へ送る。"
+    },
+    {
+      "id": "la_v2_determinant_scalar_degree_negative",
+      "positive_card_id": "la_v2_determinant_scalar_degree",
+      "query": "det(a f)=a det(f) は全次元で成立する",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "V=ℝ²、f=id、a=2 なら左辺4、右辺2。指数はdim Vである。"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": "pals.proposed-explicit-curriculum-bindings.v1",
+  "status": "proposed_for_parent_review",
+  "bindings": [
+    {
+      "family_id": "univ.multivar.line-surface-integrals",
+      "draft_id": "vector_v6_constant_curl_circulation",
+      "primary_mode": "compute_construct",
+      "difficulty": "advanced",
+      "authoring_manifest": "docs/vector-calculus-v6-supplement.json",
+      "admission_manifest": null
+    }
+  ]
+}

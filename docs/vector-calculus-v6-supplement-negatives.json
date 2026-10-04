@@ -1,0 +1,14 @@
+{
+  "schema_version": "pals.typed-catalog-expansion-hard-negatives.v1",
+  "profile_id": "typed-vector-calculus-v6",
+  "status": "authored_candidates_not_retrieval_tested",
+  "cases": [
+    {
+      "id": "vector_v6_negative_constant_curl_circulation",
+      "paired_card_ids": ["vector_v6_constant_curl_circulation"],
+      "candidate_question": "Can a constant divergence c replace the constant scalar curl hypothesis when computing counterclockwise circulation as c times area?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The field (P,Q)=(-y,x) has divergence zero but scalar curl ∂xQ−∂yP=2. On every positive rectangle its counterclockwise circulation is twice the area, not zero. Green circulation uses scalar curl and its orientation, whereas Gauss outward flux uses divergence."
+    }
+  ]
+}

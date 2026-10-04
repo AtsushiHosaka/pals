@@ -1,0 +1,176 @@
+{
+  "status": "recommendations_pending_independent_curriculum_binding_review",
+  "bindings": [
+    {
+      "card_id": "la_v6_fredholm_solvability",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.systems",
+      "primary_mode": "recognize",
+      "difficulty": "advanced",
+      "rationale": "可解性を全消去線形汎関数による双対判定へ統合する。単なるrange所属ではなく分離/二重零化空間を用いる。"
+    },
+    {
+      "card_id": "la_v6_kernel_causes_nonunique_solutions",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.systems",
+      "primary_mode": "counterexample_audit",
+      "difficulty": "standard",
+      "rationale": "任意の非零核ベクトルから全可解右辺に別解を構成する。"
+    },
+    {
+      "card_id": "la_v6_left_inverse_detects_injective_action",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.matrices",
+      "primary_mode": "recognize",
+      "difficulty": "standard",
+      "rationale": "任意矩形行列で左逆を一意性の証明書として判定する。"
+    },
+    {
+      "card_id": "la_v6_matrix_units_noncommute",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.matrices",
+      "primary_mode": "counterexample_audit",
+      "difficulty": "standard",
+      "rationale": "任意の異なる添字と非零係数の行列単位で非可換反例を構成する。"
+    },
+    {
+      "card_id": "la_v6_nilpotent_geometric_inverse",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.matrices",
+      "primary_mode": "synthesize",
+      "difficulty": "advanced",
+      "rationale": "任意冪零指数の有限幾何級数と左右の非可換積を統合し逆行列を構成する。"
+    },
+    {
+      "card_id": "la_v6_subspace_sum_membership",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.subspaces",
+      "primary_mode": "recognize",
+      "difficulty": "standard",
+      "rationale": "部分空間和の所属を二つの所属と和の方程式に分解する。"
+    },
+    {
+      "card_id": "la_v6_incomparable_union_not_closed",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.subspaces",
+      "primary_mode": "counterexample_audit",
+      "difficulty": "standard",
+      "rationale": "比較不能な任意二部分空間から和集合の閉性失敗を構成する。"
+    },
+    {
+      "card_id": "la_v6_injective_images_preserve_intersection",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.subspaces",
+      "primary_mode": "synthesize",
+      "difficulty": "standard",
+      "rationale": "像の共通要素の二つの原像を単射性で同一視し両包含を統合する。"
+    },
+    {
+      "card_id": "la_v6_independence_zero_coefficients",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.span-independence",
+      "primary_mode": "recognize",
+      "difficulty": "standard",
+      "rationale": "任意の有限係数関係を用いて独立性を判定する。"
+    },
+    {
+      "card_id": "la_v6_span_construct_coefficients",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.span-independence",
+      "primary_mode": "compute_construct",
+      "difficulty": "standard",
+      "rationale": "任意span要素の係数存在を構成する。数値アルゴリズム/実行性能の証拠ではない。"
+    },
+    {
+      "card_id": "la_v6_repeated_vector_dependence",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.span-independence",
+      "primary_mode": "counterexample_audit",
+      "difficulty": "introductory",
+      "rationale": "異なる添字の同じベクトルが独立性に反することを検出する。"
+    },
+    {
+      "card_id": "la_v6_independence_under_restricted_injection",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.span-independence",
+      "primary_mode": "synthesize",
+      "difficulty": "advanced",
+      "rationale": "spanと核の交わりだけを仮定し、全域単射性なしに像族と元族の独立性を同値化する。"
+    },
+    {
+      "card_id": "la_v6_basis_recognition",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.basis-dimension",
+      "primary_mode": "recognize",
+      "difficulty": "standard",
+      "rationale": "独立性と生成性から同じ添字の基底を構成し逆向きとまとめる。"
+    },
+    {
+      "card_id": "la_v6_zeroing_basis_vector_loses_span",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.basis-dimension",
+      "primary_mode": "counterexample_audit",
+      "difficulty": "standard",
+      "rationale": "任意基底一本の零置換と双対座標を用いて長さだけでは基底にならない反例を構成する。"
+    },
+    {
+      "card_id": "la_v6_nonzero_translation_not_linear",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.maps",
+      "primary_mode": "counterexample_audit",
+      "difficulty": "introductory",
+      "rationale": "任意非零平行移動を零保存則で排除する。"
+    },
+    {
+      "card_id": "la_v6_nonzero_maps_zero_composite",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.kernel-image-rank",
+      "primary_mode": "counterexample_audit",
+      "difficulty": "standard",
+      "rationale": "任意基底の異なる二座標への射影から非零写像の零積を構成する。"
+    },
+    {
+      "card_id": "la_v6_idempotent_kernel_range_decomposition",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.kernel-image-rank",
+      "primary_mode": "synthesize",
+      "difficulty": "advanced",
+      "rationale": "冪等性から核/像への全ベクトル分解、全域生成、交わり零を統合し内部直和を導く。"
+    },
+    {
+      "card_id": "la_v6_rectangular_determinant_transfer",
+      "source": "docs/linear-algebra-v6-batch.json",
+      "profile_id": "typed-linear-algebra-v6",
+      "family_id": "univ.linear.determinant",
+      "primary_mode": "synthesize",
+      "difficulty": "advanced",
+      "rationale": "矩形Sylvester行列式恒等式と可逆性を統合し異なるサイズの方程式に可逆性を転送する。"
+    },
+    {
+      "card_id": "la_v3_nonadditive_norm_family",
+      "source": "docs/linear-algebra-v3-foundation-supplement.json",
+      "profile_id": "typed-linear-algebra-v3",
+      "family_id": "univ.linear.inner-product",
+      "primary_mode": "counterexample_audit",
+      "difficulty": "introductory",
+      "rationale": "任意非零ベクトルと逆ベクトルからnorm加法性の破れを構成する。"
+    }
+  ]
+}

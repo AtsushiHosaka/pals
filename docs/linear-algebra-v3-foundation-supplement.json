@@ -1,0 +1,28 @@
+{
+  "schema_version": "pals.typed-catalog-expansion-batch.v1",
+  "profile_id": "typed-linear-algebra-v3",
+  "cards": [
+    {
+      "id": "la_v3_nonadditive_norm_family",
+      "canonical_statement": "In every finite-dimensional real inner-product space, for each nonzero x the vectors x and −x satisfy ‖x+(−x)‖≠‖x‖+‖−x‖. Norms are not additive in general.",
+      "proof_strategy": "Choose an arbitrary nonzero vector x and its opposite −x.",
+      "sketch_steps": [
+        "Choose an arbitrary nonzero vector x and its opposite −x.",
+        "Their sum is zero, so the norm of that sum is zero.",
+        "Each separate norm equals the strictly positive norm of x.",
+        "The sum of the norms is therefore positive, disproving universal norm additivity in every nonzero inner-product space."
+      ],
+      "openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-linear-algebra:v3\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-linear-algebra:v3\" name=\"type\"></n1:OMS><n1:OMS cd=\"la3\" cdbase=\"urn:pals:openmath:typed-linear-algebra:v3\" name=\"RealInnerProductSpace\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-linear-algebra:v3\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"la3\" cdbase=\"urn:pals:openmath:typed-linear-algebra:v3\" name=\"Vector\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"neq\"></n1:OMS><n1:OMV name=\"v2\"></n1:OMV><n1:OMA><n1:OMS cd=\"la3\" cdbase=\"urn:pals:openmath:typed-linear-algebra:v3\" name=\"vector_zero\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"relation1\" cdbase=\"http://www.openmath.org/cd\" name=\"neq\"></n1:OMS><n1:OMA><n1:OMS cd=\"la3\" cdbase=\"urn:pals:openmath:typed-linear-algebra:v3\" name=\"norm\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"la3\" cdbase=\"urn:pals:openmath:typed-linear-algebra:v3\" name=\"vector_add\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMA><n1:OMS cd=\"la3\" cdbase=\"urn:pals:openmath:typed-linear-algebra:v3\" name=\"vector_sub\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"la3\" cdbase=\"urn:pals:openmath:typed-linear-algebra:v3\" name=\"vector_zero\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"arith1\" cdbase=\"http://www.openmath.org/cd\" name=\"plus\"></n1:OMS><n1:OMA><n1:OMS cd=\"la3\" cdbase=\"urn:pals:openmath:typed-linear-algebra:v3\" name=\"norm\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"la3\" cdbase=\"urn:pals:openmath:typed-linear-algebra:v3\" name=\"norm\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"la3\" cdbase=\"urn:pals:openmath:typed-linear-algebra:v3\" name=\"vector_sub\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"la3\" cdbase=\"urn:pals:openmath:typed-linear-algebra:v3\" name=\"vector_zero\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA><n1:OMV name=\"v2\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "lean_target": "example {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [FiniteDimensional ℝ V] (x : V) (hx : x ≠ 0) : ‖x+(0-x)‖ ≠ ‖x‖+‖(0-x)‖",
+      "lean_witness": "by\n  simp only [zero_sub, add_neg_cancel, norm_zero, norm_neg]\n  have hp : 0 < ‖x‖ := norm_pos_iff.mpr hx\n  linarith"
+    }
+  ],
+  "evidence": {
+    "witness_path": "docs/linear-algebra-v3-foundation-supplement.lean",
+    "witness_sha256": "sha256:134ee1301d41242217e09915e2d4cd96b89833bf5eee75001259bcc07b3239e9",
+    "toolchain": "leanprover/lean4:v4.32.0-rc1",
+    "mathlib_revision": "8b62164d808cd0f23b7d8cc28190a6c1a1bb483a",
+    "validator_sha256": "sha256:d8d2586132efd90ebc1ad660ebb39dbfd1fb77f9ffb9d7b6f394d18577b063bd",
+    "registry_sha256": "sha256:c645197e69163c9647b31ef9b534efe38c0e752c75e1067dfb73bf67d64c1042"
+  }
+}

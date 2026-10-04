@@ -1,0 +1,91 @@
+{
+  "schema_version": "pals.recipe-corpus.v1",
+  "version": "2026-09-29.1",
+  "square_recipe": {
+    "recipe_id": "continuity.square.explicit-epsilon-delta",
+    "revision": 1,
+    "source_author_principal": "pals.principal.v1/author/selection-audit-square",
+    "target_source": "Continuous (fun y : ℝ => y ^ 2)",
+    "proof_body": "by\n  rw [Metric.continuous_iff]\n  intro x ε hε\n  let δ : ℝ := min 1 (ε / (2 * |x| + 1))\n  refine ⟨δ, ?_, ?_⟩\n  · dsimp [δ]\n    have hden : 0 < (2 * |x| + 1 : ℝ) := by\n      positivity\n    exact lt_min (by positivity) (div_pos hε hden)\n  · intro y hy\n    have hy1 : |y - x| < 1 := by\n      exact lt_of_lt_of_le hy (by simp [δ])\n    have hyabs : |y| ≤ |x| + 1 := by\n      have htri : |y| ≤ |y - x| + |x| := by\n        calc\n          |y| = |(y - x) + x| := by ring_nf\n          _ ≤ |y - x| + |x| := abs_add_le _ _\n      linarith\n    have hyplus : |y + x| ≤ 2 * |x| + 1 := by\n      have htri : |y + x| ≤ |y| + |x| := abs_add_le _ _\n      linarith\n    have hfactor : |y ^ 2 - x ^ 2| = |y - x| * |y + x| := by\n      have hpoly : y ^ 2 - x ^ 2 = (y - x) * (y + x) := by ring\n      rw [hpoly, abs_mul]\n    have hbound : |y ^ 2 - x ^ 2| ≤ |y - x| * (2 * |x| + 1) := by\n      rw [hfactor]\n      exact mul_le_mul_of_nonneg_left hyplus (abs_nonneg (y - x))\n    have hδle : δ ≤ ε / (2 * |x| + 1) := by\n      simp [δ]\n    have hposden : 0 < (2 * |x| + 1 : ℝ) := by\n      positivity\n    have hmul : |y - x| * (2 * |x| + 1) < ε := by\n      have hltδ : |y - x| < ε / (2 * |x| + 1) :=\n        lt_of_lt_of_le hy hδle\n      calc\n        |y - x| * (2 * |x| + 1) <\n            (ε / (2 * |x| + 1)) * (2 * |x| + 1) :=\n          mul_lt_mul_of_pos_right hltδ hposden\n        _ = ε := by field_simp\n    have hlt : |y ^ 2 - x ^ 2| < ε := lt_of_le_of_lt hbound hmul\n    simpa [Real.dist_eq] using hlt",
+    "draft": {
+      "id": "continuous_square",
+      "openmath_xml": "<OMOBJ xmlns=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><OMA><OMS cdbase=\"urn:pals:openmath:cd:v1\" cd=\"pals1\" name=\"continuous_on\"/><OMS cd=\"setname1\" name=\"R\"/><OMBIND><OMS cd=\"fns1\" name=\"lambda\"/><OMBVAR><OMV name=\"x\"/></OMBVAR><OMA><OMS cd=\"arith1\" name=\"power\"/><OMV name=\"x\"/><OMI>2</OMI></OMA></OMBIND></OMA></OMOBJ>",
+      "proof_strategy": "Use `Metric.continuous_iff` and an explicit epsilon-delta proof. For ε > 0 at x, choose δ = min 1 (ε / (2 * |x| + 1)); then bound `|y ^ 2 - x ^ 2| = |y - x| * |y + x|`. Do not close the proof with shortcut continuity lemmas such as `continuous_id.pow`.",
+      "sketch_steps": [
+        "Rewrite continuity using `Metric.continuous_iff`.",
+        "Fix x and ε > 0.",
+        "Choose δ = min 1 (ε / (2 * |x| + 1)).",
+        "Use |y - x| < 1 to show |y + x| ≤ 2 * |x| + 1.",
+        "Conclude |y^2 - x^2| = |y - x| * |y + x| < ε."
+      ],
+      "canonical_statement": "Show that the function x ↦ x^2 is continuous on ℝ."
+    },
+    "proof_method_tag": "epsilon_delta",
+    "alignment_review": {
+      "schema_version": "pals.alignment-semantic-review.v1",
+      "reviewer_principal": "pals.principal.v1/reviewer/root-square",
+      "verdict": "exact_target_agrees"
+    }
+  },
+  "cases": [
+    {
+      "id": "exact_formal_target",
+      "expected_selection": "selected",
+      "expected_rejection_codes": [],
+      "expected_verifier_result": "verified",
+      "proof_method_tag": null
+    },
+    {
+      "id": "aligned_draft",
+      "expected_selection": "selected",
+      "expected_rejection_codes": [],
+      "expected_verifier_result": "verified",
+      "proof_method_tag": "epsilon_delta"
+    },
+    {
+      "id": "draft_only_no_recipe",
+      "expected_selection": "not_selected",
+      "expected_rejection_codes": [
+        "alignment_unavailable"
+      ],
+      "expected_verifier_result": "not_run",
+      "proof_method_tag": "epsilon_delta"
+    },
+    {
+      "id": "incompatible_toolchain",
+      "expected_selection": "not_selected",
+      "expected_rejection_codes": [
+        "toolchain_mismatch"
+      ],
+      "expected_verifier_result": "not_run",
+      "proof_method_tag": null
+    },
+    {
+      "id": "alignment_mismatch",
+      "expected_selection": "not_selected",
+      "expected_rejection_codes": [
+        "draft_revision_mismatch"
+      ],
+      "expected_verifier_result": "not_run",
+      "proof_method_tag": "epsilon_delta"
+    },
+    {
+      "id": "ambiguous_candidate",
+      "expected_selection": "not_selected",
+      "expected_rejection_codes": [
+        "ambiguous_recipe"
+      ],
+      "expected_verifier_result": "not_run",
+      "proof_method_tag": null
+    },
+    {
+      "id": "no_recipe",
+      "expected_selection": "not_selected",
+      "expected_rejection_codes": [
+        "formal_target_and_draft_unavailable"
+      ],
+      "expected_verifier_result": "not_run",
+      "proof_method_tag": null
+    }
+  ]
+}

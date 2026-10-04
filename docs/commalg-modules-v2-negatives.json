@@ -1,0 +1,91 @@
+{
+  "schema_version": "pals.typed-catalog-expansion-hard-negatives.v1",
+  "profile_id": "typed-commalg-modules-v2",
+  "status": "authored_counterexamples_not_runtime_evaluated",
+  "cases": [
+    {
+      "id": "modules_v2_negative_nakayama_without_finite_generation",
+      "paired_card_ids": ["commalg_modules_v2_nakayama_local_finite_module", "commalg_modules_v2_nakayama_jacobson_submodule", "commalg_modules_v2_nakayama_local_generators"],
+      "candidate_question": "For every module M over a commutative local ring (R,m), does mM=M imply M=0 without any finite-generation assumption?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take R=Z localized at the prime ideal (2), m=2R, and M=Q. R is local, mM=2Q=Q and M is nonzero. Q is not finitely generated over R. The same example with U=0 refutes the generator conclusion U+mM=M implies U=M without finite generation of M."
+    },
+    {
+      "id": "modules_v2_negative_nakayama_without_locality",
+      "paired_card_ids": ["commalg_modules_v2_nakayama_local_finite_module", "commalg_modules_v2_nakayama_local_generators"],
+      "candidate_question": "If R is any commutative ring, m is a maximal ideal and M is finitely generated with mM=M, must M vanish?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take R=Z, m=(2), M=Z/3Z. M is cyclic and nonzero, but multiplication by 2 is bijective on M, so mM=M. R is not local, and m is not contained in Jac(Z)=0."
+    },
+    {
+      "id": "modules_v2_negative_quotient_projection_injective",
+      "paired_card_ids": ["commalg_modules_v2_quotient_kernel", "commalg_modules_v2_quotient_surjective", "commalg_modules_v2_quotient_exact_sequence"],
+      "candidate_question": "Is the quotient projection M→M/U always injective as well as surjective?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take R=Z, M=Z and U=2Z. The distinct elements 0 and 2 have the same quotient class. Its kernel is U, not zero."
+    },
+    {
+      "id": "modules_v2_negative_factorization_reversed_kernel_inclusion",
+      "paired_card_ids": ["commalg_modules_v2_quotient_factorization", "commalg_modules_v2_quotient_factorization_unique"],
+      "candidate_question": "If ker(f)⊆U, does an R-linear map f:M→N always descend to M/U?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For R=Z, M=N=Z, f=id and U=2Z, ker(f)=0⊆U. Descent is impossible because 0 and 2 represent the same class but f(0)≠f(2). The required inclusion is U⊆ker(f). Uniqueness alone does not provide existence."
+    },
+    {
+      "id": "modules_v2_negative_quotient_correspondence_identity",
+      "paired_card_ids": ["commalg_modules_v2_quotient_submodule_correspondence_pullback", "commalg_modules_v2_quotient_submodule_correspondence_pushforward"],
+      "candidate_question": "For every V⊆M and quotient map π:M→M/U, is π⁻¹(π(V))=V without requiring U⊆V?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For M=Z, U=2Z and V=0, the inverse image of the zero image is 2Z, not zero. The actual formula is U+V. The pushforward identity for submodules of the quotient cannot reverse this direction."
+    },
+    {
+      "id": "modules_v2_negative_first_isomorphism_surjective_codomain",
+      "paired_card_ids": ["commalg_modules_v2_quotient_by_kernel_embedding"],
+      "candidate_question": "For every linear map f:M→N, is the induced map M/ker(f)→N surjective?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take f:Z→Z given by multiplication by 2. Its kernel is zero and its image is 2Z. The induced map is injective but not surjective onto Z."
+    },
+    {
+      "id": "modules_v2_negative_finite_quotient_implies_finite_module",
+      "paired_card_ids": ["commalg_modules_v2_finite_quotient", "commalg_modules_v2_finite_extension_quotient", "commalg_modules_v2_finite_exact_extension"],
+      "candidate_question": "If M/U is finitely generated, does this alone force M to be finitely generated?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Let M be an infinite-dimensional vector space over a field and U=M. Then M/U=0 is finitely generated while M is not. The extension result also needs U to be finitely generated (or a finitely generated module mapping onto the kernel)."
+    },
+    {
+      "id": "modules_v2_negative_finitely_generated_means_finite_set",
+      "paired_card_ids": ["commalg_modules_v2_finite_submodule_carrier_iff_fg", "commalg_modules_v2_finite_surjective_image", "commalg_modules_v2_fg_image", "commalg_modules_v2_fg_submodule_sum"],
+      "candidate_question": "Does finite generation imply that a module, its image or the sum of finitely generated submodules has finitely many elements?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The Z-module Z is generated by 1 but has infinitely many elements. Its identity image and its sum with the zero submodule remain infinite. Module.Finite denotes finite generation, not cardinal finiteness."
+    },
+    {
+      "id": "modules_v2_negative_tensor_one_finite_factor",
+      "paired_card_ids": ["commalg_modules_v2_finite_tensor_product"],
+      "candidate_question": "If M is finitely generated and N is arbitrary, must M⊗_R N be finitely generated?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take a field k, M=k and N an infinite-dimensional k-vector space. Then k⊗_k N is isomorphic to N and is not finitely generated."
+    },
+    {
+      "id": "modules_v2_negative_tensor_injective_without_flatness",
+      "paired_card_ids": ["commalg_modules_v2_flat_tensor_preserves_injections", "commalg_modules_v2_flat_tensor_preserves_exactness"],
+      "candidate_question": "Does tensoring with every finitely generated module preserve injective maps and exact pairs?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Over Z, X=Z/2Z is finitely generated. Tensoring the injective map Z→Z given by multiplication by 2 gives the zero endomorphism of X, which is not injective. The exact pair 0→Z→Z with this second map ceases to be exact at X after tensoring. Flatness, not mere finite generation, is required."
+    },
+    {
+      "id": "modules_v2_negative_tensor_surjectivity_converse",
+      "paired_card_ids": ["commalg_modules_v2_tensor_preserves_surjections"],
+      "candidate_question": "If identity_X⊗f is surjective for one module X, must f be surjective?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take X=0 and a non-surjective map f, such as multiplication by 2 on Z. Both tensor products are zero and the induced tensor map is surjective. The card only proves the forward implication."
+    },
+    {
+      "id": "modules_v2_negative_exact_pair_without_last_surjection",
+      "paired_card_ids": ["commalg_modules_v2_finite_exact_extension"],
+      "candidate_question": "Does exactness at N alone imply that the last map N→L is surjective?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The pair 0→Z→Z², where the second map sends n to (n,0), is exact at Z but its second map is not surjective. The finite-exact-extension card retains the separate last-surjection assumption."
+    }
+  ]
+}

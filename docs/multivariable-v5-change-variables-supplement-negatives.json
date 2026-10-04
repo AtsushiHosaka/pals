@@ -1,0 +1,21 @@
+{
+  "schema_version": "pals.authored-hard-negative-queries.v1",
+  "profile_id": "typed-multivariable-v5",
+  "status": "authored_counterexamples_not_retrieval_evaluated",
+  "cases": [
+    {
+      "id": "mv_v5_constant_map_not_coordinate_change_negative",
+      "positive_card_id": "mv_v5_constant_map_not_coordinate_change",
+      "query": "Every everywhere Fréchet-differentiable map is injective on each measurable region, so its injectivity need not be checked before substitution.",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "For any measurable region containing two distinct points and any target vector c, the constant map to c has zero derivative everywhere but identifies those two points. This refutes the proposed inference of injectivity; it does not claim every formula for a noninjective map is numerically false."
+    },
+    {
+      "id": "mv_v5_successive_coordinate_changes_negative",
+      "positive_card_id": "mv_v5_successive_coordinate_changes",
+      "query": "In two successive substitutions, the second determinant can be evaluated at x rather than f(x).",
+      "expected_result": "must_not_treat_positive_card_as_proof_of_query",
+      "counterexample_or_missing_premise": "In one dimension let s=[1,2], f(x)=2x, g(y)=y² and F=1. The final region is [4,16], with integral 12. The correct weight is 2·2(2x)=8x; evaluating the second derivative at x yields 4x and the incorrect integral 6."
+    }
+  ]
+}

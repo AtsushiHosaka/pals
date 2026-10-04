@@ -1,0 +1,52 @@
+{
+  "schema_version": "pals.typed-catalog-expansion-hard-negatives.v1",
+  "profile_id": "typed-calculus-v4",
+  "status": "authored_candidates_not_retrieval_tested",
+  "cases": [
+    {
+      "id": "mv_foundation_stationary_not_minimum_negative",
+      "paired_card_ids": [
+        "mv_foundation_stationary_not_minimum"
+      ],
+      "candidate_question": "Is a zero gradient sufficient for a local minimum?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Every negative multiple c‖x‖² has gradient zero at the origin, but its value decreases along any nonzero direction. The supplied vector excludes the zero-dimensional exceptional space."
+    },
+    {
+      "id": "mv_foundation_nondifferentiable_minimum_negative",
+      "paired_card_ids": [
+        "mv_foundation_nondifferentiable_minimum"
+      ],
+      "candidate_question": "Does a local minimum guarantee that an actual derivative exists and vanishes?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The norm has a global minimum at zero and is not differentiable there on any nontrivial real inner-product space. Fermat requires differentiability; totalized gradient zero alone does not provide it."
+    },
+    {
+      "id": "mv_foundation_quadratic_minimum_criterion_negative",
+      "paired_card_ids": [
+        "mv_foundation_quadratic_minimum_criterion"
+      ],
+      "candidate_question": "Does the characterization local minimum iff x=0 hold also for c=0?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "On a nontrivial space, c=0 makes the objective constant, so every nonzero point is also a minimum. Strict positivity is needed for the unique-location characterization."
+    },
+    {
+      "id": "mv_foundation_nonnegative_quadratic_minimum_negative",
+      "paired_card_ids": [
+        "mv_foundation_nonnegative_quadratic_minimum"
+      ],
+      "candidate_question": "Can the nonnegative coefficient assumption be dropped from the claim that zero minimizes c‖x‖²?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "If c<0 and a nonzero vector exists, every small nonzero multiple has value below the value at zero. The stationary-not-minimum theorem supplies the formal general refutation."
+    },
+    {
+      "id": "mv_foundation_exact_residual_minimum_negative",
+      "paired_card_ids": [
+        "mv_foundation_exact_residual_minimum"
+      ],
+      "candidate_question": "Does an exact solution of Ax=b have to be the unique minimizer of the squared residual?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. For A=0 and b=0 on a nontrivial domain, every point is an exact solution and minimizer. Injectivity or another uniqueness hypothesis would be necessary; the card deliberately asserts neither."
+    }
+  ]
+}

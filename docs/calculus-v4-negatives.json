@@ -1,0 +1,313 @@
+{
+  "schema_version": "pals.typed-catalog-expansion-hard-negatives.v1",
+  "profile_id": "typed-calculus-v4",
+  "status": "authored_candidates_not_retrieval_tested",
+  "cases": [
+    {
+      "id": "calculus_v4_negative_linear_map",
+      "paired_card_ids": [
+        "calculus_v4_linear_map"
+      ],
+      "candidate_question": "Is the derivative of every continuous map equal to the map itself?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Linearity is essential. On ℝ, f(t)=t² has derivative h↦2xh at x; at x=0 this is the zero map, not the nonlinear function f."
+    },
+    {
+      "id": "calculus_v4_negative_affine_map",
+      "paired_card_ids": [
+        "calculus_v4_affine_map"
+      ],
+      "candidate_question": "Does the translation vector y contribute an additional y to the derivative of A x+y?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "A fixed translation has zero increment. For the constant nonzero map f(x)=y with A=0, the derivative is zero, not y; also a vector is not a linear derivative map."
+    },
+    {
+      "id": "calculus_v4_negative_frechet_sum",
+      "paired_card_ids": [
+        "calculus_v4_frechet_sum"
+      ],
+      "candidate_question": "Can the derivative of f+g be inferred from a derivative of f alone?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Both derivative witnesses are required. Let f=0 and g(t)=|t| at 0; their sum is not differentiable."
+    },
+    {
+      "id": "calculus_v4_negative_frechet_difference",
+      "paired_card_ids": [
+        "calculus_v4_frechet_difference"
+      ],
+      "candidate_question": "Is D(f-g)=Df+Dg?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The second derivative term must be subtracted. For f=g=id on ℝ, f-g is zero, whereas Df+Dg is multiplication by 2."
+    },
+    {
+      "id": "calculus_v4_negative_constant_scalar",
+      "paired_card_ids": [
+        "calculus_v4_constant_scalar"
+      ],
+      "candidate_question": "May c depend on x in D(c•f)=c•Df without another term?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take c(x)=x and f(x)=1 on ℝ. The product is x with derivative 1, whereas the proposed c(x)•Df(x) is zero."
+    },
+    {
+      "id": "calculus_v4_negative_chain_rule",
+      "paired_card_ids": [
+        "calculus_v4_chain_rule"
+      ],
+      "candidate_question": "May the derivative of g∘f be composed in the order Df∘Dg?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The maps generally even have different source and target spaces. For endomorphisms of ℝ² take A=[[1,1],[0,0]] and B=[[0,0],[0,1]]; BA=0 while AB=[[0,1],[0,0]]. For f=A and g=B the derivative is BA."
+    },
+    {
+      "id": "calculus_v4_negative_variable_scalar_product",
+      "paired_card_ids": [
+        "calculus_v4_variable_scalar_product"
+      ],
+      "candidate_question": "Can the B.smulRight(f(x)) term be omitted when differentiating g•f?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Let f be the constant vector 1 and g(x)=x on ℝ. The product has derivative 1, but g(x)•Df is zero."
+    },
+    {
+      "id": "calculus_v4_negative_inner_product_rule",
+      "paired_card_ids": [
+        "calculus_v4_inner_product_rule"
+      ],
+      "candidate_question": "When differentiating ⟨f,g⟩, can only the first argument be differentiated?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take f=g=id on ℝ. The function is x² with derivative 2x; differentiating only one factor gives x."
+    },
+    {
+      "id": "calculus_v4_negative_norm_square_chain",
+      "paired_card_ids": [
+        "calculus_v4_norm_square_chain"
+      ],
+      "candidate_question": "Does the derivative of ‖f‖² omit the factor 2?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For f=id on ℝ at x=1, the directional derivative in direction 1 is 2. The formula without the factor gives 1."
+    },
+    {
+      "id": "calculus_v4_negative_norm_away_zero",
+      "paired_card_ids": [
+        "calculus_v4_norm_away_zero"
+      ],
+      "candidate_question": "Is the norm of every differentiable map differentiable even where the map vanishes?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take f=id on ℝ at 0. The norm is |x| and is not differentiable there. The nonzero-image premise cannot be dropped."
+    },
+    {
+      "id": "calculus_v4_negative_distance_off_diagonal",
+      "paired_card_ids": [
+        "calculus_v4_distance_off_diagonal"
+      ],
+      "candidate_question": "Is the distance between any two differentiable maps differentiable where they agree?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "On ℝ take f(x)=x and g(x)=0. Both are differentiable, but their distance |x| is not differentiable at their coincidence point 0."
+    },
+    {
+      "id": "calculus_v4_negative_frechet_unique",
+      "paired_card_ids": [
+        "calculus_v4_frechet_unique"
+      ],
+      "candidate_question": "Must the derivatives of one function at different points be equal?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Uniqueness fixes both the function and the point. For f(x)=x², the derivatives at 0 and 1 are multiplication by 0 and 2."
+    },
+    {
+      "id": "calculus_v4_negative_frechet_continuity",
+      "paired_card_ids": [
+        "calculus_v4_frechet_continuity"
+      ],
+      "candidate_question": "Does continuity at a point imply Fréchet differentiability there?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The real absolute-value function is continuous at 0 and is not differentiable at 0. The implication cannot be reversed."
+    },
+    {
+      "id": "calculus_v4_negative_frechet_operator_value",
+      "paired_card_ids": [
+        "calculus_v4_frechet_operator_value"
+      ],
+      "candidate_question": "If Mathlib fderiv f x equals zero, does that alone prove an actual zero derivative?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The operator is totalized as zero when f is not differentiable. For f(x)=|x| at 0 it returns zero, while no derivative witness exists."
+    },
+    {
+      "id": "calculus_v4_negative_gradient_riesz_representation",
+      "paired_card_ids": [
+        "calculus_v4_gradient_riesz_representation"
+      ],
+      "candidate_question": "Can a gradient be used as the derivative map without specifying its inner-product identification?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "A gradient is a vector while the derivative is a linear functional. In ℝ² with f(x,y)=x+2y, the gradient is (1,2) and the derivative sends (h,k) to h+2k. Their types differ; the Riesz map supplies the relation."
+    },
+    {
+      "id": "calculus_v4_negative_gradient_unique",
+      "paired_card_ids": [
+        "calculus_v4_gradient_unique"
+      ],
+      "candidate_question": "If f has gradient u at x, must every vector with the same norm also be its gradient?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "In ℝ with f(t)=t the gradient is 1, but -1 has the same norm and is not its gradient."
+    },
+    {
+      "id": "calculus_v4_negative_gradient_continuity",
+      "paired_card_ids": [
+        "calculus_v4_gradient_continuity"
+      ],
+      "candidate_question": "Do existence of all coordinate partial derivatives at a point imply continuity there?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Set f(x,y)=xy/(x²+y²) off the origin and f(0,0)=0. Both coordinate partial derivatives at the origin are zero, but f(t,t)=1/2 for t≠0. A genuine gradient witness, meaning a Fréchet derivative, is stronger than partial-derivative existence."
+    },
+    {
+      "id": "calculus_v4_negative_gradient_linear_functional",
+      "paired_card_ids": [
+        "calculus_v4_gradient_linear_functional"
+      ],
+      "candidate_question": "Is the gradient of y↦⟨u,y⟩ equal to the evaluation point y?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The gradient is the fixed coefficient vector u. In ℝ with u=1 at x=0 the gradient is 1, not 0."
+    },
+    {
+      "id": "calculus_v4_negative_gradient_squared_norm",
+      "paired_card_ids": [
+        "calculus_v4_gradient_squared_norm"
+      ],
+      "candidate_question": "Is the gradient of ‖x‖² a unit vector at every nonzero x?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "It is 2x, whose norm is 2‖x‖. At x=1 in ℝ the gradient is 2 and has norm 2."
+    },
+    {
+      "id": "calculus_v4_negative_minimum_gradient_zero",
+      "paired_card_ids": [
+        "calculus_v4_minimum_gradient_zero"
+      ],
+      "candidate_question": "Does a zero gradient guarantee a local minimum?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "On ℝ², f(x,y)=x²-y² has zero gradient at the origin but increases on one coordinate axis and decreases on the other. The necessary condition is not sufficient. A constrained boundary minimum also need not have zero ambient gradient, e.g. f(t)=t on [0,∞) at 0."
+    },
+    {
+      "id": "calculus_v4_negative_directional_from_frechet",
+      "paired_card_ids": [
+        "calculus_v4_directional_from_frechet"
+      ],
+      "candidate_question": "If every directional derivative exists, is f necessarily Fréchet differentiable?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For f(x,y)=x³/(x²+y²) off 0 and f(0)=0, every line derivative at 0 exists and equals a³/(a²+b²) in direction (a,b), with value 0 at the zero direction. This directional map is not linear: its values at (1,0),(0,1),(1,1) are 1,0,1/2. Thus there is no Fréchet derivative."
+    },
+    {
+      "id": "calculus_v4_negative_curve_chain_rule",
+      "paired_card_ids": [
+        "calculus_v4_curve_chain_rule"
+      ],
+      "candidate_question": "Can the outer derivative be evaluated at the parameter t instead of at c(t)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The outer domain is the curve’s vector space, so the parameter may have the wrong type. Already in ℝ, c(t)=2t and f(x)=x² at t=1 give true derivative 8, while using Df(1)c′(1) gives 4."
+    },
+    {
+      "id": "calculus_v4_negative_gradient_along_curve",
+      "paired_card_ids": [
+        "calculus_v4_gradient_along_curve"
+      ],
+      "candidate_question": "Can the curve velocity be omitted from the gradient chain rule?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For f(x)=x and c(t)=2t on ℝ, the composite derivative is 2 while the gradient is 1. The correct result pairs the gradient with velocity 2."
+    },
+    {
+      "id": "calculus_v4_negative_gradient_direction_bound",
+      "paired_card_ids": [
+        "calculus_v4_gradient_direction_bound"
+      ],
+      "candidate_question": "Is the absolute directional slope always at most the gradient norm for directions of any length?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "A direction norm factor is required. For f(x)=x at 0 and direction 2 in ℝ, the slope is 2 while the gradient norm is 1. The unit-direction version needs a unit-norm hypothesis."
+    },
+    {
+      "id": "calculus_v4_negative_zero_derivative_constant",
+      "paired_card_ids": [
+        "calculus_v4_zero_derivative_constant"
+      ],
+      "candidate_question": "If Df vanishes at one point, is f constant everywhere?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Global zero derivative is required. For f(x)=x² the derivative vanishes at 0 but f(0)=0 and f(1)=1."
+    },
+    {
+      "id": "calculus_v4_negative_bounded_derivative_lipschitz",
+      "paired_card_ids": [
+        "calculus_v4_bounded_derivative_lipschitz"
+      ],
+      "candidate_question": "Does an operator-norm bound for Df at just the two endpoints give the same global Lipschitz estimate between them?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For f(t)=3t²-2t³ on ℝ, Df(0)=Df(1)=0 but f(1)-f(0)=1. An endpoint-only bound c=0 cannot bound the variation; control on the intervening segment is essential."
+    },
+    {
+      "id": "calculus_v4_negative_second_derivative_symmetry",
+      "paired_card_ids": [
+        "calculus_v4_second_derivative_symmetry"
+      ],
+      "candidate_question": "May equality of mixed partials be inferred merely because both mixed partials exist at the point?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. Define f(x,y)=xy(x²-y²)/(x²+y²) off 0 and f(0)=0. At the origin ∂y∂x f=-1 and ∂x∂y f=1. The card assumes differentiability of an actual first Fréchet derivative field, a stronger second-order premise."
+    },
+    {
+      "id": "calculus_v4_negative_smooth_composition",
+      "paired_card_ids": [
+        "calculus_v4_smooth_composition"
+      ],
+      "candidate_question": "Does composing C^n maps automatically give C^(n+1)?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No additional regularity is created in general. For n=0, compose the continuous absolute-value function with the identity; the result is not C¹ at zero."
+    },
+    {
+      "id": "calculus_v4_negative_smooth_squared_norm",
+      "paired_card_ids": [
+        "calculus_v4_smooth_squared_norm"
+      ],
+      "candidate_question": "May squared norm be replaced by norm in the global C^n statement without a nonvanishing premise?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "No. The identity map on ℝ is smooth, its squared norm x² is smooth, but its norm |x| is not differentiable at zero."
+    },
+    {
+      "id": "calculus_v4_negative_smooth_inner_product",
+      "paired_card_ids": [
+        "calculus_v4_smooth_inner_product"
+      ],
+      "candidate_question": "Is C^n regularity of only one factor enough to make the inner product C^n?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "Take f(t)=1 and g(t)=|t| on ℝ. The first factor is smooth but their inner product |t| is not C¹. Both factors need the stated regularity."
+    },
+    {
+      "id": "calculus_v4_negative_local_extremum_derivative_zero",
+      "paired_card_ids": [
+        "calculus_v4_local_extremum_derivative_zero"
+      ],
+      "candidate_question": "Does any constrained boundary extremum force its ambient derivative to be zero?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The theorem is for unconstrained neighborhood extrema. On the constraint [0,∞), f(t)=t has a minimum at 0 but ambient derivative 1."
+    },
+    {
+      "id": "calculus_v4_negative_gradient_sum",
+      "paired_card_ids": [
+        "calculus_v4_gradient_sum"
+      ],
+      "candidate_question": "Is the gradient of f+g equal to the componentwise product of their gradients?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "For f=g=id on ℝ, the sum has gradient 2, while the product of the two gradients is 1. The gradient operation is linear in the scalar functions."
+    },
+    {
+      "id": "calculus_v4_negative_gradient_scalar",
+      "paired_card_ids": [
+        "calculus_v4_gradient_scalar"
+      ],
+      "candidate_question": "Is the gradient of c*f equal to |c| times the gradient of f?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "The sign must be retained. For c=-1 and f(x)=x on ℝ, the gradient is -1, while the proposed absolute-value formula gives +1."
+    },
+    {
+      "id": "calculus_v4_negative_gradient_adjoint_chain",
+      "paired_card_ids": [
+        "calculus_v4_gradient_adjoint_chain"
+      ],
+      "candidate_question": "Can the adjoint A* in the gradient chain rule be replaced by A?",
+      "expected_disposition": "reject_as_unjustified_direct_application",
+      "mathematical_reason": "In different source/target dimensions this is not even well typed. For ℝ² take A=[[1,1],[0,0]] and f(y)=y₁. The gradient of f∘A is (1,1)=Aᵀ(1,0), while A(1,0)=(1,0)."
+    }
+  ]
+}

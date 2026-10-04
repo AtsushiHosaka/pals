@@ -41,7 +41,7 @@ class DraftCatalogCoverageAuditTests(unittest.TestCase):
             scopes["undergraduate-core-v1"]["required_distinct_patterns"], 500
         )
         self.assertEqual(
-            scopes["undergraduate-core-v1"]["filled_distinct_patterns"], 25
+            scopes["undergraduate-core-v1"]["filled_distinct_patterns"], 175
         )
         self.assertEqual(
             scopes["undergraduate-core-v1"]["admitted_distinct_patterns"], 0
@@ -63,17 +63,17 @@ class DraftCatalogCoverageAuditTests(unittest.TestCase):
         self.assertFalse(
             inventory["generic"]["packaged_seed"]["runtime_publication_claim"]
         )
-        self.assertEqual(inventory["typed"]["authoring"]["unique_draft_count"], 222)
-        self.assertEqual(inventory["typed"]["authoring"]["profile_count"], 16)
+        self.assertEqual(inventory["typed"]["authoring"]["unique_draft_count"], 749)
+        self.assertEqual(inventory["typed"]["authoring"]["profile_count"], 30)
         self.assertEqual(
-            inventory["typed"]["loader_supported"]["unique_draft_count"], 163
+            inventory["typed"]["loader_supported"]["unique_draft_count"], 749
         )
-        self.assertEqual(inventory["typed"]["loader_supported"]["profile_count"], 13)
+        self.assertEqual(inventory["typed"]["loader_supported"]["profile_count"], 30)
         self.assertEqual(inventory["database"]["status"], "not_checked")
         self.assertEqual(inventory["runtime"]["status"], "not_checked")
         self.assertFalse(report["overall_comprehensive"])
         self.assertEqual(
-            len(report["findings"]["profiles_without_configured_limits"]), 24
+            len(report["findings"]["profiles_without_configured_limits"]), 38
         )
 
     def test_output_is_deterministic(self) -> None:
@@ -209,7 +209,11 @@ class DraftCatalogCoverageAuditTests(unittest.TestCase):
                 "publication_claim"
             ]
         )
-        self.assertEqual(report["findings"]["database_count_divergences"], [])
+        self.assertEqual(report["findings"]["database_count_divergences"], [{
+            "catalog": "local_typed_authoring",
+            "repository_loader_supported": 749,
+            "database_cards": 163,
+        }])
         self.assertEqual(
             report["repository_inventory"]["database"]["generic_runtime"]["status"],
             "not_present",

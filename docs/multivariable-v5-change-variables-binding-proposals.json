@@ -1,0 +1,32 @@
+{
+  "status": "recommendations_pending_independent_curriculum_binding_review",
+  "bindings": [
+    {
+      "card_id": "mv_v5_differentiable_injective_image_measurable",
+      "source": "docs/multivariable-v5-batch.json",
+      "profile_id": "typed-multivariable-v5",
+      "family_id": "univ.multivar.change-variables",
+      "primary_mode": "justify_prove",
+      "difficulty": "standard",
+      "rationale": "可測領域の微分可能単射による像が可測であることを証明し、変数変換の領域仮定を保証する。既存カードを再利用する。"
+    },
+    {
+      "card_id": "mv_v5_constant_map_not_coordinate_change",
+      "source": "docs/multivariable-v5-change-variables-supplement.json",
+      "profile_id": "typed-multivariable-v5",
+      "family_id": "univ.multivar.change-variables",
+      "primary_mode": "counterexample_audit",
+      "difficulty": "introductory",
+      "rationale": "任意の二点を含む領域で定数写像を構成し、微分可能性から単射性を推論できないことを反証する。"
+    },
+    {
+      "card_id": "mv_v5_successive_coordinate_changes",
+      "source": "docs/multivariable-v5-change-variables-supplement.json",
+      "profile_id": "typed-multivariable-v5",
+      "family_id": "univ.multivar.change-variables",
+      "primary_mode": "synthesize",
+      "difficulty": "standard",
+      "rationale": "中間像の可測性を確保し、二つの座標変換へ既知公式を順に適用して積分可能性と積分値を引き戻す標準演習。"
+    }
+  ]
+}

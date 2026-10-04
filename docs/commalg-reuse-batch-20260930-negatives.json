@@ -1,0 +1,63 @@
+{
+  "schema_version": "pals.typed-catalog-expansion-negatives.v1",
+  "profile_id": "typed-commutative-algebra-v1",
+  "status": "authored_counterexamples_not_runtime_evaluated",
+  "queries": [
+    {
+      "id": "commalg_negative_product_equals_intersection_without_comaximality",
+      "statement": "任意の可換環 R の任意のイデアル I,J について IJ=I∩J であることを証明してください。",
+      "expected_draft_ids": [],
+      "counterexample": "R=Z、I=J=(2) とすると IJ=(4) だが I∩J=(2)。",
+      "rationale": "積と交わりの等式には、今回のカードでは I+J=R が必要。関連するカードがあってもこの依頼の証明にはならない。"
+    },
+    {
+      "id": "commalg_negative_radical_product_is_product_of_radicals",
+      "statement": "任意の可換環 R のイデアル I,J について √(IJ)=√I√J であることを証明してください。",
+      "expected_draft_ids": [],
+      "counterexample": "R=Z、I=J=(2) なら √(IJ)=√(4)=(2) だが √I√J=(4)。",
+      "rationale": "正しい結論は根基の交わりであり、根基の積への置き換えはできない。"
+    },
+    {
+      "id": "commalg_negative_radical_sum_without_outer_radical",
+      "statement": "任意の可換環 R のイデアル I,J について √(I+J)=√I+√J であることを証明してください。",
+      "expected_draft_ids": [],
+      "counterexample": "R=Q[x,y]、I=(x)、J=(x−y²)。I,J は素イデアルなので右辺は (x,y²)。左辺は (x,y) であり y は右辺に属さない。",
+      "rationale": "根基の和が根基イデアルであるとは限らず、和の外側の根基を消してはいけない。"
+    },
+    {
+      "id": "commalg_negative_product_containment_without_prime",
+      "statement": "可換環 R の任意の真イデアル P とイデアル I,J に対し、IJ⊆P なら I⊆P または J⊆P であることを証明してください。",
+      "expected_draft_ids": [],
+      "counterexample": "R=Z、P=(6)、I=(2)、J=(3)。IJ=P だが 2∉P かつ 3∉P。",
+      "rationale": "真イデアルという仮定だけでは足りず、P の素性が不可欠。"
+    },
+    {
+      "id": "commalg_negative_maximal_comaximal_without_distinctness",
+      "statement": "可換環 R の任意の極大イデアル I,J は I+J=R を満たすことを証明してください。",
+      "expected_draft_ids": [],
+      "counterexample": "R=Z、I=J=(2) は極大だが I+J=(2)≠Z。",
+      "rationale": "異なる極大イデアルという条件が必要であり、同じイデアルも許す全称命題は偽。"
+    },
+    {
+      "id": "commalg_negative_modular_identity_without_containment",
+      "statement": "可換環 R の任意のイデアル I,J,K について (I+J)∩K=I+(J∩K) を証明してください。",
+      "expected_draft_ids": [],
+      "counterexample": "R=Z、I=(2)、J=(3)、K=(6)。左辺は (6)、右辺は (2)。",
+      "rationale": "modular law に必要な I⊆K が欠けている。一般の分配法則に読み替えてはならない。"
+    },
+    {
+      "id": "commalg_negative_radical_containment_removed",
+      "statement": "可換環 R のイデアル I,J について I⊆√J なら I⊆J であることを証明してください。",
+      "expected_draft_ids": [],
+      "counterexample": "R=Z、I=(2)、J=(4)。I=√J だが 2∉J。",
+      "rationale": "閉包随伴の結論は √I⊆√J であり、終域 J の根基を消せない。"
+    },
+    {
+      "id": "commalg_negative_sum_product_reduction_without_comaximality",
+      "statement": "可換環 R の任意のイデアル I,J,K について I+JK=I+K を証明してください。",
+      "expected_draft_ids": [],
+      "counterexample": "R=Z、I=(0)、J=(2)、K=(3)。左辺は (6)、右辺は (3)。",
+      "rationale": "今回の和と積の簡約カードには I+J=R が必要。"
+    }
+  ]
+}
