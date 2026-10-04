@@ -10,6 +10,7 @@ on:
         type: choice
         options:
           - runner-check
+          - checkout-check
           - preflight
           - deploy
         default: preflight
@@ -70,7 +71,9 @@ jobs:
       - name: Check the Mac mini deployment controller contract
         run: |
           python3 -m unittest discover -s pals-scripts/tests -p 'test_deploy_macmini.py'
+          python3 -m unittest discover -s pals-scripts/tests -p 'test_checkout_macmini_submodules.py'
           python3 -m py_compile pals-scripts/deploy-macmini.py
+          python3 -m py_compile pals-scripts/checkout-macmini-submodules.py
 
   runner-check:
     name: Mac mini runner connectivity and runtime check
@@ -129,6 +132,37 @@ jobs:
           print("Docker runtime: " + runtime)
           PY
 
+  checkout-check:
+    name: Mac mini parent-pinned checkout check
+    needs: parent-checks
+    if: >-
+      github.repository == 'AtsushiHosaka/pals' &&
+      github.event.repository.private == true &&
+      github.ref == 'refs/heads/main' &&
+      vars.MACMINI_RUNNER_READY == 'true' &&
+      vars.MACMINI_CHECKOUT_AUTH == 'host-gh' &&
+      github.event_name == 'workflow_dispatch' &&
+      inputs.mode == 'checkout-check'
+    runs-on: [self-hosted, macOS, ARM64, pals-macmini]
+    timeout-minutes: 15
+    env:
+      PATH: /usr/bin:/bin:/usr/sbin:/sbin:/Applications/Docker.app/Contents/Resources/bin
+      PALS_DEPLOY_REVISION: ${{ github.sha }}
+    steps:
+      - name: Checkout the exact parent with repository authentication
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ github.sha }}
+          submodules: false
+          persist-credentials: false
+          clean: true
+      - name: Check pinned submodules with the existing host authentication
+        shell: bash
+        run: |
+          set -euo pipefail
+          /usr/bin/python3 pals-scripts/checkout-macmini-submodules.py \
+            --source-dir "$GITHUB_WORKSPACE" --revision "$PALS_DEPLOY_REVISION"
+
   deploy:
     name: Mac mini preflight or deployment
     needs: parent-checks
@@ -157,9 +191,11 @@ jobs:
     environment: macmini
     timeout-minutes: 60
     env:
+      PATH: /usr/bin:/bin:/usr/sbin:/sbin:/Applications/Docker.app/Contents/Resources/bin
       PALS_MACMINI_CONFIG: ${{ vars.MACMINI_DEPLOY_CONFIG }}
       PALS_DEPLOY_REVISION: ${{ github.sha }}
       PALS_MACMINI_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'deploy' }}
+      PALS_MACMINI_CHECKOUT_AUTH: ${{ vars.MACMINI_CHECKOUT_AUTH || 'repository-token' }}
     steps:
       - name: Require private checkout credentials and host configuration
         shell: bash
@@ -167,15 +203,25 @@ jobs:
           PALS_SUBMODULES_READ_TOKEN: ${{ secrets.PALS_SUBMODULES_READ_TOKEN }}
         run: |
           set -euo pipefail
-          if [[ -z "$PALS_SUBMODULES_READ_TOKEN" ]]; then
-            echo 'PALS_SUBMODULES_READ_TOKEN must allow Contents read for the parent and private submodules.' >&2
-            exit 1
-          fi
+          case "$PALS_MACMINI_CHECKOUT_AUTH" in
+            repository-token)
+              if [[ -z "$PALS_SUBMODULES_READ_TOKEN" ]]; then
+                echo 'PALS_SUBMODULES_READ_TOKEN must allow Contents read for the parent and private submodules.' >&2
+                exit 1
+              fi
+              ;;
+            host-gh) ;;
+            *)
+              echo 'MACMINI_CHECKOUT_AUTH must be repository-token or host-gh.' >&2
+              exit 1
+              ;;
+          esac
           if [[ "$PALS_MACMINI_CONFIG" != /* ]] || [[ ! -r "$PALS_MACMINI_CONFIG" ]]; then
             echo 'MACMINI_DEPLOY_CONFIG must name a readable absolute host configuration path.' >&2
             exit 1
           fi
       - name: Checkout the exact parent and pinned submodules
+        if: env.PALS_MACMINI_CHECKOUT_AUTH == 'repository-token'
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           ref: ${{ github.sha }}
@@ -184,6 +230,21 @@ jobs:
           persist-credentials: false
           # This is the runner-owned workspace, never the live server checkout.
           clean: true
+      - name: Checkout the exact parent with repository authentication
+        if: env.PALS_MACMINI_CHECKOUT_AUTH == 'host-gh'
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ github.sha }}
+          submodules: false
+          persist-credentials: false
+          clean: true
+      - name: Checkout pinned submodules with existing host authentication
+        if: env.PALS_MACMINI_CHECKOUT_AUTH == 'host-gh'
+        shell: bash
+        run: |
+          set -euo pipefail
+          /usr/bin/python3 pals-scripts/checkout-macmini-submodules.py \
+            --source-dir "$GITHUB_WORKSPACE" --revision "$PALS_DEPLOY_REVISION"
       - name: Run the host deployment controller contract
         shell: bash
         run: |

@@ -23,7 +23,7 @@ runnerは、GitHub Actionsから仕事を受け取る実行プログラム。親
 1. Miniの既存本番検証を終え、既存DB・volume・サービスの識別情報を確認する。更新プログラムは次節の契約に従って実装・実機検証する。
 2. 親repoの Settings → Actions → Runners から、Mini用のrunnerを登録する。専用ラベルを `pals-macmini` にする。runnerの作業ディレクトリを、本番ソース・秘密設定・DB volumeと分ける。
 3. repository variable `MACMINI_RUNNER_READY=true` を設定し、手動実行のmodeを `runner-check` にする。これはcheckoutやsecretを使わず、MiniのOS・ARM64・Git・Python・Docker接続を読み取り確認する。
-4. private submoduleを読む資格情報を `PALS_SUBMODULES_READ_TOKEN` というrepository secretに登録する。親と必要なsubmoduleのContents readに絞る。親repoの `GITHUB_TOKEN` だけでは別private repoを取得できない。
+4. private submoduleの取得方法を選ぶ。Miniの既存gh認証を使う場合は `MACMINI_CHECKOUT_AUTH=host-gh` を設定し、手動の `checkout-check` で取得と親・submoduleのSHA一致を確認する。専用tokenを使う場合は `repository-token` とし、親と必要なsubmoduleのContents readに絞った `PALS_SUBMODULES_READ_TOKEN` をsecretに登録する。未設定時の方式は `repository-token`。親repoの `GITHUB_TOKEN` だけでは別private repoを取得できない。
 5. Miniに保護されたホスト設定と更新プログラムを設置する。repository variable `MACMINI_DEPLOY_CONFIG` に、設定ファイルの絶対パスを入れる。Environment `macmini` の許可ブランチはmainに限定する。
 6. Actionsからmainを選び、手動実行のmodeを `preflight` にする。これはホスト設定・ソース・Docker・ロックを検査し、サービスを更新しない。
 7. 更新プログラムの実機検証後に `MACMINI_DEPLOY_READY=true` を設定し、modeを `deploy` にして手動実行する。GitHubの成功だけで完了とせず、実認証・質問・保存・利用量・処理中ジョブの扱いも確認する。
@@ -39,6 +39,9 @@ runnerは、GitHub Actionsから仕事を受け取る実行プログラム。親
 | `MACMINI_DEPLOY_READY` | `true`のときだけ更新モードを許可する |
 | `MACMINI_AUTO_DEPLOY` | `true`のときだけpushから更新を実行する |
 | `MACMINI_DEPLOY_CONFIG` | Mini上の保護された設定ファイルの絶対パス |
+| `MACMINI_CHECKOUT_AUTH` | `host-gh` または `repository-token`。取得資格情報を明示する |
+
+`host-gh` は、新たなtokenをGitHubへ保存せず、Miniの既存gh認証をGitの内部通信で使う。ユーザーのglobal Git設定を変更せず、runner専用workspace内だけを更新する。既存認証の失効・active accountの変更・runnerからのKeychainアクセスに依存する。取得に失敗しても、別方式へ自動で切り替えない。
 
 自動更新を止めるときは `MACMINI_AUTO_DEPLOY=false` にする。現在進行中の更新はキャンセルしない。同時実行を防ぐGitHubの `concurrency` とMiniのファイルロックを併用し、ロックファイル自体は削除しない。
 
@@ -50,9 +53,9 @@ runnerは、GitHub Actionsから仕事を受け取る実行プログラム。親
 <controller> --source-dir <checkout> --parent-sha <40文字のSHA> --receipt-file <結果JSONの絶対パス>
 ```
 
-更新プログラムは、指定ソースからAPI・Web・workerをビルドし、既存のホスト・DB・volumeに結び付いた新しいリリースを実KMSで署名する。更新admissionとmigrationを適用し、処理中ジョブを完了させてから、既存の論理サービスを切り替える。既存の本番用デプロイロックとも連携する。初期化用コマンドの再利用、DB/volumeの削除、localモードへの変更、署名検証の省略は含めない。
+更新プログラムは、指定ソースからAPI・Web・workerをビルドし、既存のホスト・DB・volumeに結び付いた新しいリリースを実KMSで署名する。第一版はDB構造と既存のartifact registryを維持する通常コード更新を対象にする。処理中ジョブを完了させ、API・workerなどの書き込み元を停止してから、署名付きの更新admissionを追加し、既存の論理サービスを切り替える。既存の本番用デプロイロックとも連携する。初期化用コマンドの再利用、DB/volumeの削除、localモードへの変更、署名検証の省略は含めない。
 
-この通常更新用プログラムは未接続で、実機検証も未実施。CIMD専用のAPI child配備は別の契約であり、3サービスの継続更新を代用しない。現在の初回署名スクリプトを設定に指定しても、この更新契約を満たさない。
+この通常更新用プログラムは実装中で、実機検証は未実施。DB構造・artifact registryの変更やCIMD childが存在するDBは検査で拒否する。DB移行とchildの再署名は別の更新契約で扱う。CIMD専用のAPI child配備や初回署名スクリプトは、3サービスの継続更新を代用しない。
 
 runnerの取得ソースは一時的な作業領域として扱う。稼働コンテナからbind mountしない。必要な資産はイメージまたはホストの管理領域に収録し、次回checkoutで稼働サービスが変わらないようにする。
 
