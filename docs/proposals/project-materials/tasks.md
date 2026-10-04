@@ -1,6 +1,6 @@
 # プロジェクト資料・利用トークン・設定 — 作業案
 
-WORKING。機能方針D1–D12は回答済み。金額・付与枠・処理資源・削除期限の数値は未確定。設定UIは実装中、資料添付とtoken課金は未実装。既存機能全体の完了宣言には使わない。
+WORKING。機能方針D1–D12は回答済み。金額・付与枠・処理資源・削除期限の数値は未確定。実装済みの資料・OCR・出典の範囲は [specs/project-materials](../../../specs/project-materials/requirements.md)、token課金は [individual-billing](../../../specs/individual-billing/tasks.md) を正本とする（プロジェクトホームの資料UIは2026-10-05に削除）。既存機能全体の完了宣言には使わない。
 
 | Task | 対象 | 完了条件 |
 |---|---|---|

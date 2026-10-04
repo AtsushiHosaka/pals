@@ -9,6 +9,8 @@ Evidence: [USD sandbox verification](../../docs/usd-plans-sandbox-2026-09-30.md)
 - [x] BILL-013: Additive token ledger, quote/hold/permit/receipt/actual settlement and concurrency/idempotency/failure tests on real PostgreSQL.
 - [x] BILL-013: Connect every supported answer/retrieval/QA call and pre-submit maximum display; verify real provider success and failure without fabricated usage.
 - [ ] BILL-013/014: Audit remaining formal proof, clarification, materials and project capability paths before declaring the full new policy complete; keep unsupported paths explicitly unavailable.
+- [ ] BILL-014: Decide paid gating of new Project creation (open question); material additions already require an active Stripe or complimentary entitlement.
+- [ ] BILL-007/012: Decide whether production settings hide the provisional USD catalogue until public Checkout launches.
 
 | ID | Task | Requirements | Verification |
 |---|---|---|---|
