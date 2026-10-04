@@ -30,3 +30,5 @@ The implementation submodules may be empty until initialized. Parent-level plann
 ## Working Tree Safety
 
 - 既存の tracked / untracked 変更はユーザー所有です。明示的な許可なしに reset、clean、stash、overwrite、stage、commit してはいけません。
+- このプロジェクトの各チャットでは、変更を検証したら、そのチャットで行った変更を随時 commit して GitHub に push する。これをユーザーの継続的な許可として扱い、毎回確認しない。
+- 他のチャットの作業が混在する場合は、自分の変更だけを commit する。force push はしない。親リポジトリの submodule 参照は、実装リポジトリへの push が成功してから更新する。
