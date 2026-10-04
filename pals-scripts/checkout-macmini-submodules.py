@@ -14,6 +14,7 @@ import os
 import signal
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 MODULE = importlib.util.spec_from_file_location(
@@ -161,6 +162,162 @@ def require_runner_checkout(source: Path, environment: dict[str, str]) -> None:
         )
 
 
+def require_empty_clone(source: Path, root: Path, environment: dict[str, str]) -> str:
+    """Recognize only an unindexed empty clone in the dedicated runner checkout."""
+    require(
+        source == Path(os.environ.get("GITHUB_WORKSPACE", "")) / "macmini-deploy",
+        "Interrupted clones may only resume in the dedicated runner checkout.",
+    )
+    marker = root / ".git"
+    deployment.trusted_path(marker, directory=marker.is_dir())
+    require(
+        marker.stat().st_uid == os.geteuid(),
+        "Submodule Git metadata must be runner owned.",
+    )
+    git_directory = Path(git(root, environment, "rev-parse", "--absolute-git-dir"))
+    require(
+        deployment.inside(git_directory, source) and git_directory != source,
+        "Interrupted clone metadata escaped the dedicated runner checkout.",
+    )
+    deployment.trusted_path(git_directory, directory=True)
+    require(
+        git_directory.stat().st_uid == os.geteuid()
+        and git(root, environment, "rev-parse", "--show-toplevel") == str(root),
+        "Interrupted clone metadata and worktree must be runner owned and exact.",
+    )
+    head = git(root, environment, "rev-parse", "HEAD")
+    require(
+        deployment.SHA.fullmatch(head) is not None, "Interrupted clone HEAD is invalid."
+    )
+    # Check the actual Git-selected index, including a dangling symlink. An
+    # existing empty index can encode real staged deletions and is never reset.
+    index = Path(git(root, environment, "rev-parse", "--git-path", "index"))
+    if not index.is_absolute():
+        index = root / index
+    require(
+        index == git_directory / "index" and not os.path.lexists(index),
+        "Interrupted clone resume refuses every existing Git index.",
+    )
+    require(
+        all(entry.name == ".git" for entry in root.iterdir())
+        and not git(root, environment, "ls-files", "--stage"),
+        "Interrupted clone resume refuses existing worktree entries or staged files.",
+    )
+    require(
+        not os.path.lexists(index)
+        and all(entry.name == ".git" for entry in root.iterdir()),
+        "Interrupted clone changed during inspection.",
+    )
+    return head
+
+
+def validate_initialized_submodules(source: Path, environment: dict[str, str]) -> None:
+    initialized = git(
+        source,
+        environment,
+        "submodule",
+        "foreach",
+        "--quiet",
+        "--recursive",
+        'printf "%s\\0" "$PWD"',
+    )
+    resumable: list[tuple[Path, str]] = []
+    for value in initialized.split("\0"):
+        if not value:
+            continue
+        root = Path(value)
+        require(
+            deployment.inside(root, source) and root != source,
+            "Submodule escaped the runner checkout.",
+        )
+        deployment.trusted_path(root, directory=True)
+        require(
+            root.stat().st_uid == os.geteuid(),
+            "Submodule must be owned by the runner user.",
+        )
+        validate_git_settings(root, environment)
+        if git(
+            root,
+            environment,
+            "status",
+            "--porcelain=v1",
+            "--untracked-files=all",
+            "--ignore-submodules=all",
+        ):
+            resumable.append((root, require_empty_clone(source, root, environment)))
+    # Validate every initialized component before resuming any partial clone.
+    # Recheck immediately before writing: a diagnostic/fetch may have advanced
+    # the shared dedicated workspace since the first inspection.
+    for root, head in resumable:
+        materialize_empty_clone(source, root, head, environment)
+    git(
+        source,
+        environment,
+        "submodule",
+        "foreach",
+        "--quiet",
+        "--recursive",
+        "source_status=$(/usr/bin/git status --porcelain=v1 --untracked-files=all --ignore-submodules=all) "
+        '&& test -z "$source_status"',
+    )
+
+
+def materialize_empty_clone(
+    source: Path, root: Path, head: str, environment: dict[str, str]
+) -> None:
+    """Resume without replacing an index or forcing any worktree file write."""
+    require(
+        require_empty_clone(source, root, environment) == head,
+        "Interrupted clone changed during validation.",
+    )
+    git_directory = Path(git(root, environment, "rev-parse", "--absolute-git-dir"))
+    index = git_directory / "index"
+    lock = git_directory / "index.lock"
+    # This is Git's own exclusion protocol, not an advisory helper-only lock.
+    try:
+        descriptor = os.open(
+            lock, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600
+        )
+    except FileExistsError:
+        raise CheckoutError("Interrupted clone index is already locked.") from None
+    identity = os.fstat(descriptor)
+    try:
+        with tempfile.TemporaryDirectory(
+            prefix="macmini-index-", dir=git_directory
+        ) as temporary:
+            alternate_index = Path(temporary) / "index"
+            git(
+                root,
+                {**environment, "GIT_INDEX_FILE": str(alternate_index)},
+                "read-tree",
+                head,
+            )
+            require(
+                require_empty_clone(source, root, environment) == head,
+                "Interrupted clone changed while preparing its index.",
+            )
+            # Atomic no-replace publication also protects an index created by a
+            # direct writer that ignores index.lock. Never rename over real state.
+            try:
+                os.link(alternate_index, index)
+            except FileExistsError:
+                raise CheckoutError(
+                    "Interrupted clone index appeared during initialization."
+                ) from None
+            # No --force: a file arriving after the empty check is preserved and
+            # makes checkout fail. On failure our new index remains fail-closed.
+            git(root, environment, "checkout-index", "--all")
+    finally:
+        os.close(descriptor)
+        try:
+            current = lock.lstat()
+        except FileNotFoundError:
+            pass
+        else:
+            if (current.st_dev, current.st_ino) == (identity.st_dev, identity.st_ino):
+                lock.unlink()
+
+
 def validate_parent(source: Path, revision: str, environment: dict[str, str]) -> None:
     require(
         deployment.SHA.fullmatch(revision) is not None, "A full parent SHA is required."
@@ -227,39 +384,7 @@ def validate_parent(source: Path, revision: str, environment: dict[str, str]) ->
         )
     # Reuse initialized repositories, but never discard tracked or untracked
     # changes inside any nested component when changing the parent-pinned set.
-    git(
-        source,
-        environment,
-        "submodule",
-        "foreach",
-        "--quiet",
-        "--recursive",
-        "source_status=$(/usr/bin/git status --porcelain=v1 --untracked-files=all --ignore-submodules=all) "
-        '&& test -z "$source_status"',
-    )
-    initialized = git(
-        source,
-        environment,
-        "submodule",
-        "foreach",
-        "--quiet",
-        "--recursive",
-        'printf "%s\\0" "$PWD"',
-    )
-    for value in initialized.split("\0"):
-        if not value:
-            continue
-        root = Path(value)
-        require(
-            deployment.inside(root, source) and root != source,
-            "Submodule escaped the runner checkout.",
-        )
-        deployment.trusted_path(root, directory=True)
-        require(
-            root.stat().st_uid == os.geteuid(),
-            "Submodule must be owned by the runner user.",
-        )
-        validate_git_settings(root, environment)
+    validate_initialized_submodules(source, environment)
 
 
 def authenticated_git(source: Path) -> list[str]:
@@ -327,11 +452,15 @@ def execute(source: Path, revision: str) -> dict:
             timeout=300,
         )
     except CheckoutError as error:
-        raise CheckoutError("Host-authenticated source fetch failed: " + str(error)) from None
+        raise CheckoutError(
+            "Host-authenticated source fetch failed: " + str(error)
+        ) from None
     try:
         revisions = verify_exact_source(source, revision, environment)
     except CheckoutError as error:
-        raise CheckoutError("Fetched source verification failed: " + str(error)) from None
+        raise CheckoutError(
+            "Fetched source verification failed: " + str(error)
+        ) from None
     return {
         "status": "checkout-passed",
         "parent_sha": revision,

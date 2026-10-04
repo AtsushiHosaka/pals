@@ -262,6 +262,225 @@ class CheckoutGitBoundaryTests(unittest.TestCase):
         with self.assertRaises(checkout.CheckoutError):
             checkout.execute(other, self.sha)
 
+    def interrupted_clone(self, *, separate_git_directory=False):
+        dedicated = self.source / "macmini-deploy"
+        git(self.root, "clone", str(self.parent), str(dedicated))
+        child = dedicated / "pals-agent"
+        arguments = ["clone", "--no-checkout"]
+        if separate_git_directory:
+            modules = dedicated / ".git/modules"
+            modules.mkdir(mode=0o700)
+            arguments.extend(["--separate-git-dir", str(modules / "pals-agent")])
+        git(self.root, *arguments, str(self.origins / "pals-agent.git"), str(child))
+        index = Path(git(child, "rev-parse", "--git-path", "index"))
+        if not index.is_absolute():
+            index = child / index
+        self.assertFalse(index.exists())
+        self.assertEqual(git(child, "ls-files"), "")
+        self.assertEqual([entry.name for entry in child.iterdir()], [".git"])
+        self.assertTrue(git(child, "status", "--porcelain=v1").startswith("D "))
+        return dedicated, child, index
+
+    def test_interrupted_clone_same_head_standard_update_skips_then_helper_resumes(
+        self,
+    ):
+        dedicated, child, index = self.interrupted_clone()
+        environment = checkout.checkout_environment(dict(os.environ))
+        checkout.capture(
+            [
+                *checkout.authenticated_git(dedicated),
+                "submodule",
+                "update",
+                "--init",
+                "--recursive",
+                "--checkout",
+            ],
+            environment,
+            timeout=30,
+        )
+        # Real Git skips checkout when the clone HEAD already equals the pin.
+        self.assertFalse(index.exists())
+        self.assertTrue(git(child, "status", "--porcelain=v1").startswith("D "))
+        result = checkout.execute(dedicated, self.sha)
+        self.assertEqual(result["status"], "checkout-passed")
+        self.assertTrue(index.exists())
+        self.assertEqual(git(child, "status", "--porcelain=v1"), "")
+        self.assertEqual(
+            git(child, "rev-parse", "HEAD"),
+            git(self.parent, "rev-parse", "HEAD:pals-agent"),
+        )
+        self.assertEqual(checkout.execute(dedicated, self.sha), result)
+
+    def test_interrupted_clone_gitfile_metadata_resumes_exactly(self):
+        dedicated, child, index = self.interrupted_clone(separate_git_directory=True)
+        self.assertTrue((child / ".git").is_file())
+        self.assertEqual(
+            checkout.execute(dedicated, self.sha)["status"], "checkout-passed"
+        )
+        self.assertTrue(index.exists())
+        self.assertEqual(git(child, "status", "--porcelain=v1"), "")
+
+    def test_existing_empty_index_is_preserved_and_rejected(self):
+        dedicated, child, index = self.interrupted_clone()
+        git(child, "read-tree", "--empty")
+        self.assertTrue(index.exists())
+        self.assertEqual(git(child, "ls-files"), "")
+        before = index.read_bytes()
+        with self.assertRaises(checkout.CheckoutError):
+            checkout.execute(dedicated, self.sha)
+        self.assertEqual(index.read_bytes(), before)
+        self.assertFalse((child / "component.txt").exists())
+
+    def test_interrupted_clone_untracked_or_ignored_entries_are_preserved(self):
+        dedicated, child, index = self.interrupted_clone()
+        (child / ".git/info/exclude").write_text("ignored-fixture\n")
+        for name in ("user-file", "ignored-fixture"):
+            with self.subTest(name=name):
+                marker = child / name
+                marker.write_text("preserve fixture\n")
+                with self.assertRaises(checkout.CheckoutError):
+                    checkout.execute(dedicated, self.sha)
+                self.assertEqual(marker.read_text(), "preserve fixture\n")
+                self.assertFalse(index.exists())
+                marker.unlink()
+
+    def test_interrupted_clone_git_directory_symlink_is_rejected(self):
+        dedicated, child, _index = self.interrupted_clone()
+        foreign = self.root / "foreign-git"
+        (child / ".git").rename(foreign)
+        (child / ".git").symlink_to(foreign, target_is_directory=True)
+        with self.assertRaises(checkout.CheckoutError):
+            checkout.execute(dedicated, self.sha)
+        self.assertTrue((child / ".git").is_symlink())
+        self.assertFalse((foreign / "index").exists())
+
+    def test_interrupted_clone_original_workspace_is_preserved(self):
+        child = self.source / "pals-agent"
+        git(
+            self.root,
+            "clone",
+            "--no-checkout",
+            str(self.origins / "pals-agent.git"),
+            str(child),
+        )
+        with self.assertRaises(checkout.CheckoutError):
+            checkout.execute(self.source, self.sha)
+        self.assertFalse((child / ".git/index").exists())
+        self.assertFalse((child / "component.txt").exists())
+
+    def test_interrupted_clone_rechecks_index_before_write(self):
+        dedicated, child, index = self.interrupted_clone()
+        inspect = checkout.require_empty_clone
+        calls = []
+
+        def concurrent_index(*arguments):
+            head = inspect(*arguments)
+            calls.append(head)
+            if len(calls) == 1:
+                git(child, "read-tree", "--empty")
+            return head
+
+        with (
+            mock.patch.object(
+                checkout, "require_empty_clone", side_effect=concurrent_index
+            ),
+            self.assertRaises(checkout.CheckoutError),
+        ):
+            checkout.execute(dedicated, self.sha)
+        self.assertTrue(index.exists())
+        self.assertEqual(git(child, "ls-files"), "")
+        self.assertFalse((child / "component.txt").exists())
+
+    def test_final_check_race_other_git_is_blocked_by_real_index_lock(self):
+        dedicated, child, index = self.interrupted_clone()
+        inspect = checkout.require_empty_clone
+        checks = []
+        blocked = []
+
+        def competing_git(*arguments):
+            head = inspect(*arguments)
+            checks.append(head)
+            if len(checks) == 3:
+                self.assertTrue(index.with_name("index.lock").exists())
+                try:
+                    git(child, "read-tree", "--empty")
+                except subprocess.CalledProcessError:
+                    blocked.append(True)
+                else:
+                    self.fail(
+                        "competing Git replaced the index under the real Git lock"
+                    )
+            return head
+
+        with mock.patch.object(
+            checkout, "require_empty_clone", side_effect=competing_git
+        ):
+            result = checkout.execute(dedicated, self.sha)
+        self.assertEqual(result["status"], "checkout-passed")
+        self.assertEqual(blocked, [True])
+        self.assertEqual(git(child, "status", "--porcelain=v1"), "")
+        self.assertFalse(index.with_name("index.lock").exists())
+
+    def test_final_check_direct_index_creation_is_preserved_by_atomic_no_replace(self):
+        dedicated, child, index = self.interrupted_clone()
+        fixture_index = self.root / "fixture-index"
+        with mock.patch.dict(os.environ, {"GIT_INDEX_FILE": str(fixture_index)}):
+            git(child, "read-tree", "--empty")
+        before = fixture_index.read_bytes()
+        inspect = checkout.require_empty_clone
+        checks = []
+
+        def competing_direct_writer(*arguments):
+            head = inspect(*arguments)
+            checks.append(head)
+            if len(checks) == 3:
+                os.link(fixture_index, index)
+            return head
+
+        with (
+            mock.patch.object(
+                checkout, "require_empty_clone", side_effect=competing_direct_writer
+            ),
+            self.assertRaises(checkout.CheckoutError),
+        ):
+            checkout.execute(dedicated, self.sha)
+        self.assertEqual(index.read_bytes(), before)
+        self.assertEqual(git(child, "ls-files"), "")
+        self.assertFalse((child / "component.txt").exists())
+        self.assertFalse(index.with_name("index.lock").exists())
+        self.assertFalse(list(index.parent.glob("macmini-index-*")))
+
+    def test_final_check_worktree_file_creation_is_preserved_without_force(self):
+        dedicated, child, index = self.interrupted_clone()
+        real_git = checkout.git
+        marker = child / "component.txt"
+
+        def competing_file_writer(root, environment, *arguments):
+            if root == child and arguments == ("checkout-index", "--all"):
+                self.assertTrue(index.with_name("index.lock").exists())
+                marker.write_text("preserve racing user content\n")
+            return real_git(root, environment, *arguments)
+
+        with (
+            mock.patch.object(checkout, "git", side_effect=competing_file_writer),
+            self.assertRaises(checkout.CheckoutError),
+        ):
+            checkout.execute(dedicated, self.sha)
+        self.assertEqual(marker.read_text(), "preserve racing user content\n")
+        self.assertTrue(index.exists())
+        self.assertFalse(index.with_name("index.lock").exists())
+        self.assertFalse(list(index.parent.glob("macmini-index-*")))
+
+    def test_existing_git_index_lock_is_preserved_without_resume(self):
+        dedicated, child, index = self.interrupted_clone()
+        lock = index.with_name("index.lock")
+        lock.write_text("another Git owns this lock\n")
+        with self.assertRaises(checkout.CheckoutError):
+            checkout.execute(dedicated, self.sha)
+        self.assertEqual(lock.read_text(), "another Git owns this lock\n")
+        self.assertFalse(index.exists())
+        self.assertFalse((child / "component.txt").exists())
+
     def test_url_specific_tls_bypass_or_headers_in_reused_checkout_rejected(self):
         checkout.execute(self.source, self.sha)
         nested = self.source / "pals-api/nested/library"
