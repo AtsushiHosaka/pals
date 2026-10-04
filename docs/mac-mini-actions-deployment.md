@@ -12,7 +12,11 @@ runnerは、GitHub Actionsから仕事を受け取る実行プログラム。親
 
 登録後、`MACMINI_RUNNER_READY=true` を設定した。[Miniでのrunner-check](https://github.com/AtsushiHosaka/pals/actions/runs/37186033515) は成功し、`Darwin arm64`、Apple Git 2.54.0、Python 3.9.6、Docker `linux aarch64` を確認した。本番更新jobはskip。`MACMINI_DEPLOY_READY` と `MACMINI_AUTO_DEPLOY` は未設定のままである。
 
-ユーザーは自動デプロイのONを許可済み。Miniの既存gh認証ではprivate親・全submoduleを取得できた。Actionsの元のworkspaceにはsubmoduleの削除状態があり、Git検査で停止したため、既存ファイル・indexを保持して専用の固定checkout `macmini-deploy` を使うよう変更した。[再検査](https://github.com/AtsushiHosaka/pals/actions/runs/37200993016) ではソース検査を通過し、ホスト認証による取得で停止した。保存済みgh認証とrunnerの実行環境を切り分けている。ホスト側ではOrbStackへの移行も進行中のため、移行後のcontext・DB・volumeを確認してから実機更新を接続する。
+ユーザーは自動デプロイのONを許可済み。元のworkspaceでは、途中で止まったcloneがindex未作成・作業ファイルなしの状態で、Gitから全ファイル削除と表示されていた。元の領域を保持し、専用の固定checkout `macmini-deploy` だけを使う。初期化の再開は、Gitのindex lockと既存indexを置き換えない作成処理を使い、作業ファイルを強制上書きしない。実Git・競合・認証helper継承・プロセス終了・出力秘匿を含む30テストが成功した。
+
+Miniの手動接続では保存済みgh認証を使えたが、[実runnerでの診断](https://github.com/AtsushiHosaka/pals/actions/runs/37204088395) ではloginとprivate repository accessがともに利用不可だった。runnerのLaunchAgentを保全して `SessionCreate=false` に変更し、idle状態で再起動した。[変更後のcheckout-check](https://github.com/AtsushiHosaka/pals/actions/runs/37205359405) は成功し、保存済み認証と親・全submoduleのSHA一致を実runnerで確認できた。認証情報の抽出や、新しいGitHub secretの作成は行っていない。
+
+MiniはOrbStackへ移行し、回答2件・利用量10行を含む74テーブル、権限、DB識別子、volume・host marker、署名済みimageの一致と公開復帰を確認した。[移行後のrunner-check](https://github.com/AtsushiHosaka/pals/actions/runs/37203849915) も成功した。Actionsは `/Users/hosakaatsushi/.orbstack/bin/docker` とcontext `orbstack` を使う。通常更新のホスト設定とcontrollerへの接続は継続中。
 
 既存のMac用DB初期化は、空のDBへの初回適用と同一署名の再実行に限定される。通常のAPI・Web・workerを新しいコミットへ継続更新するプログラムは、まだこの入口に接続されていない。初回用の `sign-and-apply-production-release.py` や `--apply-mac` を、自動更新の代わりに呼ばない。
 
@@ -81,7 +85,7 @@ runnerの取得ソースは一時的な作業領域として扱う。稼働コ�
 | `state_dir` | 既存の保護された状態保存ディレクトリ。checkoutの外 |
 | `controller` | 実機検証した更新用実行ファイル。checkoutの外 |
 | `controller_sha256` | その実行ファイルの64文字SHA-256 |
-| `docker_context` | 現在の本番Docker context。Miniの保存済み記録では `desktop-linux` |
+| `docker_context` | 現在の本番Docker context。移行後のMiniは `orbstack` |
 | `containers` | `api`、`web`、`worker`それぞれの既存コンテナ名。3つは別名 |
 | `database_identity` | 独立して確認した `database_system_identifier`、`database_volume_id`、`host_binding_sha256` |
 | `health_urls` | `api`と`web`の明示的なHTTP loopback URL。APIは `/health` |
