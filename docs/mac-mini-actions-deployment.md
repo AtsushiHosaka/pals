@@ -2,7 +2,7 @@
 
 更新日: 2026年10月5日。対象はPALSの運用者。最初は「有効化の順序」まで読み、設定や更新プログラムを実装するときに後半の契約を参照する。
 
-## ホスト検証は成功。AWS再ログインと実更新の検証待ち
+## 手動更新は成功。常時運転用の機械認証を準備中
 
 親リポジトリの `.github/workflows/deploy-macmini.yml` が、mainへのpushと手動実行を受け付ける。親のコミットと、そのコミットが参照するsubmoduleを取得し、専用のMac mini runnerで `pals-scripts/deploy-macmini.py` を実行する。
 
@@ -28,9 +28,13 @@ controllerの終了・復旧処理は修正済み。実subprocessでtimeout・SI
 
 [手動の実更新](https://github.com/AtsushiHosaka/pals/actions/runs/37211520009) は親 `fca2dde` の取得を通過したが、配備用Pythonの起動時に停止した。macOSのTCC記録で、同じPython PIDがDocumentsFolderの承認待ちになっていることを確認した。責任主体はrunner起動元の `node`。Miniの画面でも「node」から「書類」へのアクセス許可が表示されており、本人操作を依頼した。検証を中止し、`MACMINI_DEPLOY_READY=false` に戻した。署名・DB更新・サービス切替には未到達だった。
 
-2026年10月5日、本人から「書類」へのアクセスを許可したとの返信を受領した。00:04 UTCの確認では、夜間に既存SSOが再び失効し、brokerの3用途すべてが未ready、旧workerは同じCID・imageのまま停止していた。API・Web・公開edgeは稼働し、DBの現行admissionはsequence1、pending更新はなかった。本人へ同じprofileでの再ログインを依頼した。[親 `cf823eb` の実runner preflight](https://github.com/AtsushiHosaka/pals/actions/runs/37246137103) は成功したが、この検査はnative controllerを起動しない。認証とworkerの復帰後、実runnerからのPython起動と実更新を確認する。`MACMINI_DEPLOY_READY=false`、`MACMINI_AUTO_DEPLOY` は引き続き未設定で、ONの追加承認待ちではない。
+2026年10月5日、本人から「書類」へのアクセスを許可したとの返信を受領した。00:04 UTCの確認では、夜間に既存SSOが再び失効し、brokerの3用途すべてが未ready、旧workerは同じCID・imageのまま停止していた。API・Web・公開edgeは稼働し、DBの現行admissionはsequence1、pending更新はなかった。本人へ同じprofileでの再ログインを依頼した。[親 `cf823eb` の実runner preflight](https://github.com/AtsushiHosaka/pals/actions/runs/37246137103) は成功したが、この検査はnative controllerを起動しない。この時点では `MACMINI_DEPLOY_READY=false`、`MACMINI_AUTO_DEPLOY` は未設定だった。
 
-既存のMac用DB初期化は、空のDBへの初回適用と同一署名の再実行に限定される。通常のAPI・Web・workerを新しいコミットへ継続更新するプログラムは、ホストの入口へ接続済みで、実runnerからの配備検証を残している。初回用の `sign-and-apply-production-release.py` や `--apply-mac` を、自動更新の代わりに呼ばない。
+本人の再ログイン後、同じAWS identityを確認し、旧workerを同じCID・imageで復帰した。`MACMINI_DEPLOY_READY=true` にして再実行した [手動デプロイ](https://github.com/AtsushiHosaka/pals/actions/runs/37247403226) は成功した。実runnerのnative controllerが起動し、親 `ffb84277ddd306092570965260793b059dcd9545` の3image build、実KMS署名、通常v2更新を通過した。MiniではDBのsequence2、3サービスのRunning、pendingなし、同じSHAの `current.json` がhealthyであることを確認した。保存行・権限・署名admission全18項目は独立照合中。
+
+ユーザーは、定期的な人の再ログインに依存する構成を常時運用の解決として認めていない。`MACMINI_AUTO_DEPLOY` は未設定を維持し、[Mini専用の機械認証](mac-mini-machine-auth.md)を準備する。CA・秘密鍵の永続保存は自動承認レビューが拒否したため、保管先・4用途の認証範囲・更新方法を提示して本人の許可を求めた。許可までは秘密鍵の生成とAWS設定の変更を行わない。自動デプロイをONにする許可は引き続き受領済み。
+
+既存のMac用DB初期化は、空のDBへの初回適用と同一署名の再実行に限定される。通常のAPI・Web・workerを新しいコミットへ継続更新するプログラムは、ホストの入口へ接続し、実runnerからの手動配備が成功した。常時運転用の機械認証とpush連動の検証を残している。初回用の `sign-and-apply-production-release.py` や `--apply-mac` を、自動更新の代わりに呼ばない。
 
 関連する制約は [Mac PostgreSQL admission](../specs/domainless-production-bootstrap/mac-postgres-admission.md) と [10月4日の公開準備](macbook-publication-preparation-2026-10-04.md) にある。Miniの「検証 PALS本番起動」チャットでは、本番の起動・復元試験が進行中だった。設定を追加する前に、同チャットの最新状況を確認する。
 
@@ -75,7 +79,7 @@ controllerの終了・復旧処理は修正済み。実subprocessでtimeout・SI
 
 DB移行を伴うv2は、旧署名に一致する23段階のregistryを保持し、`project-materials` と `project-materials-ocr` の追加だけを許可する。追加するmanifest・SQLのdigestを新署名に固定し、旧schemaの一致・処理の完了・権限を検査してから、DDLと更新admissionを同じトランザクションで適用する。既存回答の書き換えや任意migrationの実行は許可しない。CIMD childが存在するDBや、新しいDB・volumeへの移行はこの契約で扱わない。
 
-API側の通常更新とDB移行は [pals-api `ddb0c8d`](https://github.com/AtsushiHosaka/pals-api/commit/ddb0c8d9d8f24bcfb8a67184001bdef76faa1865) でpush済み。最新ソースのv1と、旧23段階から25段階へのv2を隔離した実PostgreSQLで検証し、旧データ・ACLの維持、DDLとadmissionの一括rollback、commit後の通信失敗の再観測を確認した。関連unit 230件も成功した。署名テストは実EC鍵を使うローカル検証であり、Miniの実KMSとサービス切替を通した検証は未実施。CIMD専用のAPI child配備や初回署名スクリプトは、3サービスの継続更新を代用しない。
+API側の通常更新とDB移行は [pals-api `ddb0c8d`](https://github.com/AtsushiHosaka/pals-api/commit/ddb0c8d9d8f24bcfb8a67184001bdef76faa1865) でpush済み。最新ソースのv1と、旧23段階から25段階へのv2を隔離した実PostgreSQLで検証し、旧データ・ACLの維持、DDLとadmissionの一括rollback、commit後の通信失敗の再観測を確認した。関連unit 230件も成功した。隔離試験の署名は実EC鍵を使うローカル検証。10月5日の手動デプロイでは、Miniの実KMSと3サービスの切替も成功した。CIMD専用のAPI child配備や初回署名スクリプトは、3サービスの継続更新を代用しない。
 
 [継続更新の追加試験 `c616968`](https://github.com/AtsushiHosaka/pals-api/commit/c616968bca527ef6ca0b35e58c0a4e6808b5f5be) では、実23段階からv2 seq2へ進み、さらに新しい親・全ソース・3イメージを持つv1 seq3へ更新できた。同ファイルの19試験が成功し、旧データ・ACL、最終admissionの全18項目一致、v1でDDLがないことを確認した。Docker通信はfixtureを使い、DBとEC署名は実処理で検証している。
 
