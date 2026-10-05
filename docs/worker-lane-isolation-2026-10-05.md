@@ -55,7 +55,13 @@ docker compose --project-name pals-local \
   up -d --no-build --no-deps --scale assessment-worker=2 assessment-worker
 ```
 
-これは開発用Composeの操作であり、Miniの署名付き本番controllerに代用しない。Miniの現在の配備契約はAPI・Web・workerの3サービスを管理する。評価workerの追加には、controllerのサービス構成、監視、drain、資格情報、SQS送受信のIAM権限を更新する必要がある。今回、そのホスト設定や署名契約は変更していない。
+これは開発用Composeの操作であり、Miniの署名付き本番controllerに代用しない。Miniの現行配備契約はAPI・Web・workerの3サービスを管理する。評価workerの追加に備え、親リポジトリの配備設定・結果にv2を追加した。v2は4サービスを要求し、両workerの起動確認を必須にする。署名対象のimageは従来の3種類で、評価workerは同じworker imageを使う。旧v1の契約は維持する。
+
+APIの停止確認にも `pals.macmini-update-observation.v2` を追加した。初回追加時は評価workerの名前を `null` とし、追加後はその名前を指定する。DB更新前に、評価workerを含む書き込みプロセスの停止、余分なworkerの不在、署名済みimageとの一致を照合する。
+
+本番SQSの準備用に `pals-infra/scripts/provision-macmini-assessment-queue.py` を追加した。既存の `pals-mini-prod-proof-jobs` は変更せず、評価キューとDLQを作成する。API roleには新キューの送信権限、worker roleには受信・削除・visibility変更・属性取得の権限だけを追加する。適用前にアカウント、既存role、trust、権限、既存キューを照合し、計画のSHAを指定して実行する。既存の機械認証更新とIAMを同時に変更しない。
+
+実機のhost controller、監視、drain、資格情報の共有設定は未更新である。現在の本番launcherは `natural-only` を要求する。実機でLeanがどの経路から動くかを確認し、隔離環境を確かめてから本番のLean構成を判断する。評価worker追加だけを理由にこの制約を解除しない。
 
 ## Lean環境を増やすときはreconcilerも並列化する
 
@@ -82,3 +88,5 @@ SQSは重複配送を前提とする。キューを分けてもclaim・期限・
 証明workerを停止条件付きで待たせ、その間に評価workerが別キューから処理を完了して削除する回帰テストを追加した。APIの送り先、旧設定へのfallback、誤配送時の非削除、drain、LocalStackの再実行、Composeのキュー・隔離設定も検証した。今回の変更だけを適用したAPI・agentソースの検証とローカル起動設定の検証で、計284件が成功した。実DBに接続する既存APIテスト2件は対象から外した。
 
 実機では、長いLean処理中にゲストと認証済みユーザーの質問を送信し、Lean完了より前に評価claimが取得されることを確認する。待ち時間と処理時間を別々に記録し、複数評価workerの処理、停止中の再配送、DLQ回収、メモリ上限も確かめる。今回の分離はLeanの完了待ちをなくすもので、評価workerの全枠使用中やモデルAPIの制限による待ちは残る。
+
+配備契約の追加検証では、親スクリプトの37テストとAPIの177テストが成功した。APIの実PostgreSQL用12テストは専用fixtureがなくskipした。これらは配備境界の検証であり、Miniへの配備完了や実機負荷の証拠ではない。
