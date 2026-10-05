@@ -18,6 +18,7 @@
 ## Frontend flow
 
 - Dashboard の `New chat` と空でない prompt 送信は projectless create API を呼び、成功後 `/chats/{chat_id}` を開く。prompt は chat 作成成功後にのみ送信する。
+- Dashboard の入力例はプランに関係なく数学の問題だけを表示する。問題を選択すると入力欄を更新し、送信や画面遷移は行わない。
 - `/chats/{chat_id}` は Project 非所属 chat の proof timeline、入力、説明、clarification を通常 chat と同じ安全な表示・再試行境界で表示する。
 - sidebar は Project 非所属 chat を `Chats` として表示し、リンクは `/chats/{chat_id}` を使う。Project 作成 action は独立して dialog を開く。
 - create/list/send の失敗は入力と既知の表示を保持し、retry を提示する。認証 subject が変わると取得中・保持中の chat state を破棄する。
@@ -26,5 +27,5 @@
 
 - API/service/HTTP tests は projectless create/list/get、所有者境界、language snapshot、proof create と project mismatch を検証する。
 - PostgreSQL migration tests は fresh install と v2-to-v3 upgrade、legacy rows の保存、owner index を検証する。
-- frontend tests は `New chat`、dashboard prompt、project modal 境界、projectless navigation、失敗時入力保持を検証する。
+- frontend tests は `New chat`、dashboard prompt、無料・有料プランでの数学の入力例、project modal 境界、projectless navigation、失敗時入力保持を検証する。
 - local browser smoke は Project 非所属 chat 作成から proof request submit までを実 API・PostgreSQL で確認する。

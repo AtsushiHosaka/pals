@@ -7,3 +7,4 @@
 - [x] PCS-T005 Change dashboard/sidebar/new-chat flows to create and navigate projectless chats without opening project creation.
 - [x] PCS-T006 Add the projectless chat screen, proof interaction, error recovery, and frontend behavior tests.
 - [x] PCS-T007 Execute API, frontend, migration, and local browser smoke verification; update these tasks from evidence. (2026-08-14: local authenticated browser QA confirmed New chat creates a projectless chat, proof submission returns 201 with `project_id: null`, chat selection/reload preserves the queued proof, and the explicit project dialog remains separate.)
+- [x] PCS-T008 Replace dashboard project and paid-plan suggestions with mathematical questions; verify that free and paid users can select a question without opening settings or project creation. (2026-10-05: related frontend tests passed, including both plan types; TypeScript and targeted ESLint passed.)
