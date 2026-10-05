@@ -2,10 +2,9 @@
 
 ## Scope and traceability
 
-This design implements `LRC-001`–`LRC-013`. It adds a `pals-api` internal-only catalog service
+This design implements `LRC-001`–`LRC-018`. LRC-001–LRC-013 preserve the existing formal proof-job selector; LRC-014–LRC-018 add Recipe-first natural-request reuse. It adds a `pals-api` internal-only catalog service
 backed by isolated local PostgreSQL schemas. `pals-agent` calls that service through a private
-RecipeSelection port; it does not connect to the database. The public API, generic Draft tables,
-PFI, and typed-Draft catalog are unchanged.
+RecipeSelection port; it does not connect to the database. The generic Draft tables, PFI and typed-Draft catalog are unchanged. Proof-request answer evidence uses the separate PFR contract.
 
 ## Architecture
 
@@ -28,7 +27,7 @@ flowchart LR
   V --> T
 ```
 
-Draft resolution and Recipe selection are separate operations. An alignment is an admissibility
+Draft resolution and formal Recipe selection are separate operations. Natural proof-request retrieval goes directly to Recipe reuse entries before any DSP stage. An alignment is an admissibility
 constraint and provenance edge, not a shared mutable field. The service is `pals-api`, which owns a
 dedicated internal request/response contract and no agent-side database driver.
 
@@ -452,6 +451,64 @@ candidate outcomes, chosen DTO digest, AttemptSource variant, exact bytes digest
 and semantic-review source digest. It is append-only and can prove whether a source came from a
 Recipe or a model.
 
+## Direct Recipe search and stored-answer reuse (LRC-014–LRC-018)
+
+This path is owned by the proof-request aggregate and does not invoke the formal proof-job selector. It adds source-bound immutable reuse entries to the Recipe catalog by release migration. The API retains dedicated catalog-owner/reader grants; the agent has neither a database connection nor admission authority. No alignment foreign key is required for an entry. Old admitted Recipes without an entry remain usable by the existing formal selector but are not natural-request answer candidates.
+
+### Immutable reuse entry and authoring boundary
+
+One entry language variant contains exactly one Recipe revision/source/target binding and a mathematical description: `statement`, `domain`, `assumptions[]`, `quantifiers[]`, `conclusion`, `proof_method_tag` (nullable). The source-grounded description is authored from the compiled mathematical theorem, not copied from a learner question. `domain` includes the objects/types to which the statement applies; quantifier descriptions preserve scope and dependencies. `proof_method_tag` uses the existing lower-snake-case identifier convention, with no dependence on alignment metadata.
+
+The entry also stores `output_language` (`en`, `ja`, `zh-Hans`, `zh-Hant`), exact `answer`, `answer_sha256`, and independent admission reviews of description/source correspondence and answer/source fidelity. Each sealed review binds the exact description, target, materialized source and answer digests, author/reviewer principals and review rationale. Reviewer principals differ from `source_author_principal`; generated review text without the sealed bindings is insufficient. All strings are nonblank bounded scalar Unicode with no NUL/unpaired surrogate. Unknown members, conflicting revisions, duplicate keys and altered canonical payloads are rejected.
+
+A sealed canonical release manifest binds the immutable entry, exact Recipe revision/source and independent reviews. The API computes `entry_sha256` over RFC 8785 bytes of the closed entry preimage (description, English `search_text`, method, language, exact answer/answer digest and Recipe/source/target bindings), excluding review evidence that itself references `entry_sha256`. The sealed manifest separately binds the preimage and immutable review/artifact digests, so no digest construction is circular. The API never trusts a caller-supplied digest. Exact replay is idempotent; description, method, answer or review changes require a new Recipe revision, with a new immutable entry per revision/language. Entries are append-only; Recipe lifecycle retirement excludes their future reuse and historical readback preserves the original source. Runtime workers and learner credentials cannot create, revise or approve entries. Language variants may be admitted individually; this slice does not require all four variants at once. Missing requested-language evidence selects no reuse entry, rather than triggering runtime translation.
+
+### Proof-request candidate port
+
+`POST /v1/internal/proof-requests/{id}/recipe-search` uses the existing internal proof-worker authentication and exact current claim/revision fencing. Request body is closed:
+
+```text
+claim_id: canonical UUID
+query: bounded nonblank English search text
+output_language: en | ja | zh-Hans | zh-Hant
+limit: integer 1..8
+```
+
+The worker creates the English query from the explicit mathematical request context for retrieval only. It does not add assumptions, assert a target correspondence, or send learner conversation into persistent catalog metadata. The API verifies the claimed owned request and `output_language` against the request before searching. The DB uses indexed English full-text retrieval against the admitted description, filters the current toolchain and requested language, and breaks ranking ties by immutable identity. It neither calls an embedding provider nor accesses Draft DB. Log/store bounded actual retrieval evidence (exact query, `pals.recipe-search.english-or-ts-rank-cd.v1` profile, immutable candidate identity and returned order); a ranking match is never mathematical equality.
+
+Response root contains `recipes` with at most `limit` entries. Each closed candidate has exactly:
+
+```text
+recipe_id, recipe_revision, entry_sha256,
+statement, domain, assumptions[], quantifiers[], conclusion,
+proof_method_tag, answer, answer_sha256, output_language,
+target_source, lean_code, lean_sha256,
+compiler_receipt_sha256, toolchain_sha256
+```
+
+`lean_sha256` is SHA-256 of the exact UTF-8 `lean_code` bytes and equals the existing admitted materialized-source digest. `answer_sha256` is SHA-256 of exact UTF-8 `answer`. `target_source` is the admitted canonical target; `toolchain_sha256` and `compiler_receipt_sha256` bind the admission evidence already stored by the Recipe service. Digests use 64 lowercase hex characters; Recipe revision uses the existing integer range. Single Lean source is at most 200,000 UTF-8 bytes; answer at most 60,000 characters; the entire candidate aggregate, including descriptions/answers, is at most 2 MiB. The API measures the exact serialized `recipes` envelope and removes whole candidates from the ranked tail until it fits 2 MiB. It never truncates Lean, answer or description bytes; malformed individual candidates fail the read. The agent verifies local source and answer hashes before using a candidate.
+
+A correctly configured empty eligible catalog returns an empty candidate list. Unconfigured catalog, database error or malformed immutable evidence is an unavailable/integrity outcome. An entry retired or bound to an inactive toolchain is ineligible. A search miss or ineligible intact entry leads to DSP; immutable tampering is never reported as successful empty retrieval.
+
+### Request correspondence and settlement
+
+The first assessment compares the pre-extracted request signature to each candidate's full description and actual source. It distinguishes same statement from a consequence, generalization or substitution. A second stateless session independently reviews the exact original request/confirmed premises, selected source and stored answer; it cannot rely only on the first assessor's verdict. An explicit method request must agree with the entry and Lean; an unspecified method imposes no extra constraint. Unknown or conflicting dimensions are not `same`.
+
+Closed correspondence evidence contains exactly:
+
+```text
+schema_version: pals.recipe-correspondence.v1,
+request_id, claim_id, request_revision, request_context_sha256,
+entry_sha256, lean_sha256, answer_sha256,
+reviewer_session_id, assessment_session_id, approved, rationale
+```
+
+`approved` must be true for reuse. Both session IDs are canonical UUIDs and unequal; `rationale` is nonblank and at most 2,000 characters; the actual worker provider-session identities are recorded and fenced by its provider usage evidence. `request_context_sha256` hashes RFC 8785 bytes of the API's exact original `statement`, ordered `context_turns`, and `output_language`; it is recomputed by the API, not derived from the candidate. The entry/source/answer digests bind this review to the candidate. The request's separate exact-answer QA also binds the stored answer digest, existing permitted model/session usage and present request context. An admission answer review cannot stand in for either present-request review.
+
+`catalog_reuse` settlement carries `answer.lean.entry_sha256` and `answer.lean.answer_sha256` alongside Recipe/source/target/toolchain/compiler-receipt identity and the closed correspondence evidence. In one claim-fenced API transaction, resolve the live Recipe/entry, recompute all canonical and byte digests, re-read the exact stored answer, verify active toolchain and independent review bindings, and persist only those DB-stored answer/source bytes. Use the existing lifecycle lock so retirement cannot race with answer settlement. No Draft revalidation, generator call, linked job or compiler call occurs. Valid different/uncertain reviews or intact ineligible entries may use `formal(dsp)`; forged evidence or altered immutable source/answer/receipt fails explicitly.
+
+Owner-authenticated `GET /v1/proof-requests/{id}/lean-source` resolves only that answered request's stored source binding. It cannot read an arbitrary Recipe or another owner's source. The closed response has `request_id`, `chat_id`, `recipe_id`, `recipe_revision`, `entry_sha256`, `lean_code`, `lean_sha256`, `compiler_receipt_sha256`, `toolchain_sha256`. Catalog source keeps its original admission evidence; saved answers remain historical if entries later retire.
+
 ## Failure handling
 
 | Condition | Behavior |
@@ -489,8 +546,7 @@ target selection modes; it does not claim that current learner traffic already h
   provisioned via `PALS_TEST_POSTGRES_URL`; tests assert schema ownership, role restrictions,
   lifecycle-lock serialization, endpoint authentication, and the absence of direct agent DB
   configuration.
-- The Recipe v1 path has no vector extension or embedding-provider dependency. A future similarity
-  profile must add its own binding, egress policy, and false-selection evaluation before use.
+- The existing formal Recipe v1 selector has no vector extension or embedding-provider dependency. Natural-request candidate ranking is a separate bounded read-only profile and must retain its actual algorithm/version, bounded query, immutable identities and order. Floating-point `ts_rank_cd` scores are not persisted. Any embedding profile must bind its fingerprint and egress policy; approximate ranking never establishes correspondence.
 
 ## Evaluation design
 
@@ -510,3 +566,9 @@ expected verifier result, and expected method tag. Metrics are calculated as fol
 The gate requires the expected square Recipe to compile, zero false selections, 100% correct
 selection in expected-select fixtures, and 100% method fidelity. The suite uses a real isolated
 PostgreSQL service and pinned Lean verifier. Existing Draft/PFI corpora run unchanged as regressions.
+
+## Raw-source admission for DSP candidates (LRC-019)
+
+`pals.raw-recipe-authoring.v1` is a distinct release authoring policy. It carries `recipe_id`, `recipe_revision`, `source_author_principal`, `toolchain_id`, exact `toolchain_fingerprint`, `lean_code`, `lean_sha256`, canonical `target_source` and `target_sha256`. The exact UTF-8 source is preserved: changing a named theorem into an `example`, renaming binders, wrapping or normalizing source is forbidden. The isolated admission verifier receives these exact bytes and the current pinned fingerprint and must return a valid real compiler receipt. The admission event and immutable `raw_recipe_admissions` sidecar bind the raw-policy manifest SHA-256; they never claim `RecipeMaterializerV1` generated these bytes.
+
+The initial raw policy accepts one parameterless-header `example`, `theorem` or `lemma`, `import Mathlib` and explicit `open`/`open scoped` lines. Declaration parameters, ambient `variable`, additional definitions, unsafe constructs, multiple target declarations and unsupported environments remain pending candidates with a concrete admission failure. Such candidates are never rewritten to fit the policy. Ordinary generated parameterless named theorems can be admitted after independent review of the actual Lean target. Syntactic extraction does not certify absence of auto-implicit binders; admission review must reject hidden premises. The legacy formal selector explicitly skips raw-policy revisions through a fixed-search-path, read-only boolean policy function; raw revisions become directly searchable only after independently signed source/target/answer review and complete candidate publication. Source-only raw admission must not make an unapproved candidate selectable.

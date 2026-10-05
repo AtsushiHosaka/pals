@@ -1,126 +1,96 @@
-# Lean検証をすべての回答の核に戻す
+# Recipe を最初に検索し、新しい Lean が必要なときだけ DSP を使う
 
-## 背景
+2026-10-05 のユーザー承認に基づく、ローカル実装と検証の計画。対象読者は API・agent・画面の実装者とカタログ運用者。現在の契約は `specs/proof-request-reuse`、`specs/lean-recipe-catalog`、`specs/draft-addition-candidates` に置く。以下は目標と検証項目であり、実行済みの証跡ではない。
 
-2026-10-04 の同期コミット（webfront `0750588`）以降、送信は「AI回答」の経路（`/v1/chats/{id}/proof-requests`）しか使っていない。agent の `pals_agent/proof_reuse.py` は Lean を一切実行しない（`evidence_kind: llm_assessed`）。
+## 回答の経路は二つ
 
-本来の Lean パイプラインは API・agent・画面に残っているが、送信からは呼ばれていない。中身は Draft 検索 → Recipe 再利用 → DSP（draft/sketch/prove）→ コンパイル → 修復 → 独立レビュー → 自然言語の説明 → 追加質問。
+最初に検索するのは、コンパイル済み Lean とレビュー済み回答を持つ Recipe Catalog。質問の数学的内容と一致し、そのまま提示できる組が見つかれば、保存した Lean と回答を返す。コード生成・回答生成・コンパイル・Draft 検索は行わない。
 
-仕様も同じようにずれた。CORE-012 は「回答の採用条件にしない・選ばせない」としか書いていないのに、PFR-002 と proof-request-reuse の設計に「Lean を呼ばない」と書かれていた。
+一致を確認できないときは、新しい Lean を作る DSP の経路に入る。DSP は Draft・Sketch・Prove を含む。Draft DB を読むのは、この経路の Draft 段階だけとする。生成した Lean がコンパイルと独立レビューに通り、自然言語の説明もレビューに通った場合に回答を提示する。
 
-ユーザー（2026-10-05）：Lean 検証はプロダクトの核で、絶対に残す。本来の流れは次の4段階。
-1. Draft DB で似た証明を探し、候補を LLM で判定する。
-2. 全く同じなら、見つかった Lean と回答を返す（**コンパイルしない**）。
-3. 同じでなければ DSP で Lean を作ってコンパイルし、通ったら LLM で自然言語にして提示する。
-4. 追加質問がなければ Draft DB に追加する。
+```mermaid
+flowchart TD
+  Q[質問と確認済みの前提] --> P{重要な前提が足りるか}
+  P -->|足りない| I[前提を質問し、同じ要求を再開]
+  I --> P
+  P -->|足りる| R[Recipe Catalog を直接検索]
+  R --> M{数学的内容・証明方法・証跡が一致し、保存済み回答をそのまま使えるか}
+  M -->|独立レビューも通る| C[保存済み Lean と回答を返す]
+  M -->|一致しない・不明・候補なし| D[DSP Draft：必要に応じて Draft DB を検索]
+  D --> S[Sketch・Prove：新しい Lean を作る]
+  S --> V[コンパイル・修復・独立レビュー]
+  V -->|成功| A[自然言語の説明を生成・レビューして提示]
+  V -->|失敗| F[回答を出さず、失敗と再試行を表示]
+  A --> N[会話文を含めない追加候補]
+  N --> H{24時間、追加質問なし}
+  H -->|条件を満たす| O[運用者の承認]
+  O --> B[Recipe・検索説明・回答と Draft を登録]
+  B --> R
+```
 
-この会話で決まったこと：
-- 修復しても Lean が通らない → **回答は出さない**。「Leanで検証できませんでした」と再試行を表示する。
-- Draft DB への追加 → **候補として登録**（会話文は含めない）し、**運用者が承認**してから追加する。
-- 完全一致 → コンパイルなしで再利用。一般定理の**特殊化** → 代入版だけをコンパイルする。
-- **ゲストチャット（/try）も最初から Lean 必須**。
+一般定理への代入やラッパー定理の作成も、新しい Lean に当たる。新しい証明要求では、特殊化も最初から DSP に渡して生成・コンパイルする。一般定理を見つけたことだけを理由に、代入版を未検証で返さない。
 
-## 目標の流れ（前提確認・課金・ゲスト・履歴は維持）
+## 完全一致は、質問文の文字列一致ではない
 
-送信先は今と同じ proof request とし、これが自分で回答を作る代わりに Lean を指揮する。
+比較するのは、対象・定義域・前提・量化の構造・結論・指定された証明方法。言い換えや束縛変数名の違いは許容する。一方、実数と複素数、追加の前提、量化の順序、異なる結論、一般定理の特殊化は、同じ証明として扱わない。
 
-1. **前提確認**：今の `needs_input` 質問をそのまま使う（PFR-004）。
-2. **Draft 検索と LLM 判定**：既存の Draft 検索（上位8件）と `proof_reuse.py` の判定（`direct` / `instantiate` / `derive` / `none`）を使う。
-3. **カタログ再利用**：`direct` で、その Draft に登録済みの Recipe が紐付き、toolchain が現行と一致する場合。
-   - 状態は `answered`、証拠区分は `lean_catalog`（Recipe ID・source の SHA-256・登録時のコンパイル記録）。
-   - 回答文はその Lean source に基づく自然言語の証明で、既存の独立 QA（CORE-006）を通す。
-   - 要求と Recipe の命題の対応も、別セッションの LLM が独立レビューする（CORE-002）。コンパイルはしない。
-4. **代入版の検証**：`instantiate` で Recipe が紐付く場合、Lean ジョブを起こす。一般定理に代入を適用するラッパー定理を作ってコンパイルし、失敗したら同じジョブで DSP に移る。
-5. **新規証明**：それ以外（`derive` / `none` / `uncertain` / Recipe のない `direct`）は、既存の DSP パイプラインをそのまま使う Lean ジョブを起こす。
-6. **成功**：ジョブが `verified` になり説明がレビューを通ったら、要求は `answered`（証拠区分 `lean_verified`、ジョブへのリンク付き）。追加質問は既存の説明への質問機能を使う。
-7. **失敗**：ジョブが失敗したら要求は `failed`（`lean_verification_failed`）とし、回答は出さない。再試行は既存の上限内で新しいジョブを起こす。
-8. **AI だけの最終回答（`llm_assessed`）は作らない**。保存済みの過去の回答はそのまま読める。
+検索のスコアは、候補を絞るために使う。検索前に質問の数学的内容を整理し、候補の検索用説明と実際の Lean source を照合する。その後、別セッションの LLM が、元の質問・確認済みの前提・候補の Lean・保存済み回答を独立に確認する。確認できなければ DSP に進む。候補の命題を検索条件にコピーして、その一致を質問との一致の証拠にしない。
 
-## フェーズ（各フェーズでテスト→コミット→push。本番は Phase 7 まで変えない）
+保存済み回答にも、今回の質問に対する独立 QA を行う。回答文は書き換えず、保存したバイト列と SHA-256 を保持する。指定言語のレビュー済み回答がない場合や、回答の加工が必要な場合は再利用しない。
 
-### Phase 0 — 仕様（sdd-update-spec）
-- `pals-product-core`：
-  - CORE-002：登録時に同じ toolchain でコンパイル済みの Recipe と完全一致し、独立レビューに通った場合も `verified` とする。
-  - CORE-012/013：全回答を Lean 検証済みにする。Lean モードやボタンは出さない。AI だけの回答は出さない。
-- `proof-request-reuse`：PFR-002 の「Lean を呼ばない」を上の流れに置き換え、再利用・代入版コンパイル・Lean ジョブ・失敗時の扱いに新しい ID を振る。
-- `public-guest-chat`（GUEST-002）：Lean 必須にする。
-- `individual-billing`：要求の利用枠で、紐付く Lean ジョブまで賄う。Lean 経路の利用トークン計測（BILL-013）を追加する。
-- `lean-recipe-catalog`：toolchain が一致する場合の再コンパイルなし再利用を追加する。
-- 新規 `draft-addition-candidates`：候補の登録、24時間追加質問がなければ承認対象、運用者の承認。
+## Recipe の検索用説明と回答を、検証済み source に束縛する
 
-### Phase 1 — ローカルの Lean 実行環境
-- 期限24時間のローカル証明書が切れて reconciler が起動に失敗している（`ReconcilerTlsMaterialError`）。verifier は一度も起動していない。
-- `pals-scripts/bootstrap-local-verifier-tls.py` で証明書を作り直し（`tests/e2e/run-local.sh` と同じ手順）、verifier と reconciler を起動する。
-- コードを変える前に、既存の Lean ジョブが1件、`verified` と説明まで到達することを確認する。
+既存 Recipe は、形式命題・Lean source・コンパイル証跡・toolchain を保持する。ここに独立した不変の検索・回答エントリを加える。エントリには、Recipe ID/revision、source と target の SHA-256、数学的な命題説明、証明方法、回答の言語・本文・SHA-256、独立レビューの証跡を持たせる。
 
-### Phase 2 — API（`pals-api`）
-- **migration** `app/db/migrations/proof_requests/002_lean_flow.sql`：
-  - 状態 `verifying`、`formal_job_id`、証拠区分 `lean_catalog` / `lean_verified`、新しいエラーコードを追加する。
-  - manifest と各リリース登録（`proof_requests_migration.py` / `production_database_release.py` / `mac_production_database_migrations.py`）に入れ、fingerprint テストを更新する。
-- **確定処理**（`proof_requests.py`、`proof_request_contract.py`）：
-  - 新しい結果 `catalog_reuse` と `formal(plan)` を追加する。
-  - `formal` は同じトランザクションで Lean ジョブを作る。`_create_with_outbox` の挿入処理を流用し、**利用枠の二重予約はしない**（要求の仮押さえやトークン操作で賄う）。
-  - ジョブには `proof_request_id`、確定した前提、代入計画を持たせる。
-- **ジョブから要求への反映**：
-  - ジョブの終了と説明レビュー完了（`proof_jobs.py`、説明サービス）で、要求を `answered` / `failed` にする。
-  - 既存の確定・解放処理（`billing_admission.py`、`token_accounting.py`）で、利用枠をちょうど1回だけ消費または解放する。
-- **カタログ再利用の権限**：
-  - Draft に紐付く登録済み Recipe を返す worker 用エンドポイントを作る。`proof_request_sources.py` の照会と、`lean_recipe_selection` の現行 toolchain fingerprint を流用する。
-  - 確定時に source の SHA・登録時のコンパイル記録・fingerprint を再照合する。
-- **ゲスト**（`guest_chat.py`）：同じ結果を扱う。ゲストの読取りに Lean の進捗・検証済み Lean・レビュー済み説明を含める。ゲストは説明への追加質問ができない。新しい質問は1日3回の枠に数える。
+説明や回答を改訂する場合は新しい Recipe revision に不変のエントリを登録する。同じ Recipe revision と言語の組は上書きしない。worker や agent は登録権限を持たない。運用者の登録手順で、実際にコンパイル済みの Lean と説明・回答の対応を確認する。学習者の質問文・会話・アカウント・Project 情報は入れない。
 
-### Phase 3 — agent（`pals-agent`）
-- `proof_reuse.py`：AI だけの最終回答をやめ、判定を `catalog_reuse` / `formal(instantiate|dsp)` に対応させる。再利用時の自然言語の回答は Recipe の source から作り、既存の QA を通す。
-- `proof_request_worker.py`：新しい結果を確定させる。
-- `worker.py`：要求に紐付くジョブでは、`pipeline.run_statement` の前に代入版の検証を行う（`_submit_selected_recipe_candidate` と recipe planner を流用）。確定した前提を文脈として渡す。
-- トークン制プラン：紐付くジョブの各 LLM 呼び出しに、要求のトークン操作から許可を取り記録する（`token_meter.py` を流用）。有料ユーザーを止めない。
+自然言語の要求は、このエントリを API の非公開境界から直接検索する。候補は最大8件とし、コード・説明・回答の大きさも制限する。現在の toolchain、登録済み状態、各 digest を確認する。Draft や alignment がなくても検索・再利用できるため、既存 Draft DB の形式変更は着手条件にならない。
 
-### Phase 4 — 画面（`pals-webfront`）
-- `lib/api/proofRequests.ts`：`verifying`、`lean_catalog`、`lean_verified` と失敗コードを読む。
-- `ProofRequestThread.tsx`：
-  - 要求ごとに Lean の進捗を出す。
-  - 検証済みとカタログ再利用は「Lean検証済み」、Lean source、説明スレッドを出す。
-  - 失敗は回答本文を出さず、「Leanで検証できませんでした」と再試行を出す。
-- `ProjectDetailScreen.tsx` / `LegacyChatArchive.tsx`：紐付くジョブを、既存の `useProofJobEvents` / `useProofExplanation` / `useProofClarifications` と `ProofExplanationThread` で表示する。
-- `GuestChat.tsx`、`lib/api/guestChat.ts`：ゲストにも Lean の進捗・Lean source・説明を出す。
-- 4言語の文言（`uiMessages`、`learnerCopy`、`guestMessages`、`publicMessages`）：LP と FAQ を「回答は Lean で検証済み」と正しい内容に戻す。
-- 別セッションの「選択して質問」（`SelectableProofAnswer`）を壊さないよう、push 前に rebase する。
+既存の形式目標 selector は維持する。その whitespace 正規化による target digest は、自然言語の質問との一致を証明するものではない。証明ジョブで Recipe source を検証器に送る既存経路も維持する。
 
-### Phase 5 — Draft 追加候補
-- API 側に新しいテーブルとリリース migration を追加する。DSP で検証された証明1件ごとに候補を1件作る（カタログ再利用は対象外）。
-- 候補に入れるのは、形式命題・Lean source とコンパイル記録のハッシュ・レビュー済みの説明だけ。**会話文とアカウントIDは含めない**（RCP-003 と同じ最小化）。
-- 24時間追加質問がなければ承認対象にする。
-- 運用者用 CLI（`python -m app.release.draft_candidates list|approve|reject`、`recipe_curation_proposals` を手本にする）を作る。承認すると、既存の Draft 登録と `lean-recipe-catalog-admit` / `lean-recipe-alignment-admit` で DB に入れる。
+## 確定時にも API が証跡を確認する
 
-### Phase 6 — ローカルでの通し確認
-実際のローカル環境と実 provider で、Project 配下・Project なし・ゲストのそれぞれについて確認する。
-- (a) カタログ再利用（`continuous_square`）
-- (b) n=2 の特殊化の代入版コンパイル
-- (c) DSP による新しい定理
-- (d) 失敗時に回答が出ないこと
-- (e) 追加質問
-- (f) 候補の承認で Draft が増えること
-- 利用枠（回数制・トークン制・ゲスト）の消費
+proof request は `queued → assessing → needs_input | verifying | answered | failed` を使う。
 
-あわせてスマホ・タブレット・PC で画面を撮影して確認する。
+| worker の結果 | API の処理 |
+|---|---|
+| `needs_input` | 質問を保存し、仮押さえを解放する。回答後に同じ要求を再開する。 |
+| `catalog_reuse` | Recipe・検索/回答エントリ・source・compiler receipt・toolchain・回答・独立レビューの束縛を再確認し、`lean_catalog` として保存する。Lean ジョブは作らない。 |
+| `formal(dsp)` | 同じトランザクションで1件の Lean ジョブと dispatch outbox を作り、`verifying` にする。 |
+| `failed` | 安全な失敗証跡を保存し、回答本文を保存・表示しない。 |
 
-### Phase 7 — 本番反映（別途承認）
-Mac mini の verifier と reconciler（相互TLS、runbook どおり）、署名付き migration のリリース、デプロイ、本番での実確認。
+worker の claim と request revision は、既存の期限・競合防止条件を使う。検索から確定までに Recipe が退役したり toolchain が変わったりした場合、古い証跡で回答しない。改ざんや provider/catalog の利用不能は、候補なしと偽って処理しない。
 
-## 検証
-- **API**：単体テストと実 PostgreSQL の結合テスト。
-  - migration の新規適用と既存からのアップグレード
-  - 確定処理の各結果
-  - 二重予約がないこと
-  - 利用枠の消費・解放がちょうど1回であること
-  - ゲストの分離
-  - カタログ記録の改ざんを拒否すること
-- **agent**：判定の対応付け、代入ラッパー、AI だけの回答が出ないこと、トークン許可の単体テスト。
-- **画面**：新しい各状態の4言語の単体・ストーリーテスト。型チェック、lint、ビルド。
-- **通し確認**：Phase 6 の実環境での確認。証跡は `docs/` に記録する。
+利用枠は要求の1回分で、評価と紐付く Lean ジョブを賄う。ジョブ作成で二重予約せず、レビュー済み回答の確定で1回だけ消費し、失敗時は1回だけ解放する。トークン制では、各 provider 呼び出しの許可と利用記録を元の要求に紐付ける。ゲストも同じ Lean 必須経路を使い、既存の回数制限を保つ。過去の `llm_assessed` 回答は、その当時の証跡のまま読める。
 
-## リスクと注意
-- **規模**：数セッションかかる。各フェーズは単独で取り込めるようにし、送信を新しい流れに切り替えるのは Phase 2〜4 がそろった時点とする。
-- **待ち時間**：DSP とコンパイルは数分かかる。画面には実際のジョブ段階を表示する（既存の SSE）。
-- **ゲストの費用と verifier 負荷**：ゲスト全体の1日上限は維持する。verifier の同時実行枠は全員で共有する。
-- **他セッションとの調整**：別セッションが外部 Lean 連携（`specs/external-lean-integration`、CIMD・external tools）を作業中なので、そのファイルは触らない。
+## 成功した新規証明は、承認してから両方のカタログへ入れる
+
+新規 Lean が検証され、説明が独立レビューを通ったら候補を1件作る。カタログ再利用の回答からは候補を作らない。同じ source と形式命題の候補を重複させない。
+
+通常 verifier の実成功 receipt と、その source に結び付く説明レビューから候補を作る。過去の移行監査記録には依存しない。同じ source・verifier image・verifier digest・言語・回答は候補を統合する。各元ジョブを紐付けた時点から24時間以内に追加質問があれば、承認対象から外す。すべての元ジョブで質問がなく24時間経過した候補だけを運用者へ示す。承認操作では、検証済み source に基づく検索用説明・証明方法・回答を Recipe の登録手順に渡し、証明方針を Draft DB に登録する。Recipe の実登録、Draft の実 embedding と登録、検索・回答エントリの公開の順に進める。最後の公開と承認確定は同じ transaction とし、途中失敗は receipt を残して再開する。元の署名付き Draft データは変えず、承認済み追加分を別の view から検索する。alignment は必要に応じて別途登録するが、次回の Recipe 再利用の前提にはしない。
+
+登録先ごとに不変の結果を記録する。一部だけ成功した場合は、その状態を正しく報告し、未完了の登録だけを再開する。Draft DB の形式が合わない場合、共有 schema を暗黙に変えず、失敗した段階を明示する。Recipe と検索/回答エントリ、Draft のすべてが登録されて初めて「両方に追加済み」とする。
+
+## 実装順と完了条件
+
+1. **仕様と契約を更新する。** PFR-002/009/010–015、LRC-014–018、DAC-002/005/006 の requirements・design・tasks をそろえる。実装用 DTO・保存形式・失敗とフォールバックの境界を確定する。
+2. **API に検索・回答エントリを追加する。** 加算型 migration、リリース登録、専用 role、運用者の登録コマンド、worker の直接検索、確定時の再照合を実装する。既存 Draft schema は変えない。
+3. **agent を Recipe-first にする。** 前提確認後に Recipe を検索し、数学的照合と独立レビュー、保存済み回答の QA を行う。検索ミス・不一致なら紐付く DSP ジョブを作る。Draft 呼び出しを DSP Draft に限定する。
+4. **画面と課金の接続を確認する。** Project 配下・Project なし・ゲストで、再利用、Lean の進捗、成功、失敗、追加質問、再読込みを表示する。4言語と所有者の分離を保つ。
+5. **新規証明の登録を完成させる。** 24時間条件、運用者専用操作、登録先ごとの結果・再開を確認する。承認した証明を次の質問で直接再利用する。
+6. **実環境で通しの確認を行う。** 実 PostgreSQL、登録時の実 Lean コンパイル、可能なら実 provider を使う。実行できない項目は NOT VERIFIED と記録する。
+
+検証する境界は次のとおり。
+
+| ケース | 必須の証跡 |
+|---|---|
+| 平方関数の言い換え・変数名変更 | 同じ source と回答のバイト列、Draft・生成・コンパイル呼び出し0回、`lean_catalog` |
+| Draft 未接続・alignment なし | Recipe の直接再利用が成立する |
+| 定義域・前提・量化・結論・方法の変更 | 再利用せず、新しい Lean を検証する |
+| 一般定理の特殊化 | 新しい代入版 source のコンパイル記録 |
+| DSP の新規証明 | Draft DB を DSP Draft だけで読み、生成 source が検証・説明レビューを通る |
+| Lean 失敗 | 最終回答なし、仮押さえ解放、再試行が上限内 |
+| 改ざん・退役・toolchain 変更・再送 | 古い証跡や二重確定を拒否する |
+| 候補の承認 | プライバシー・24時間条件・登録完了状態・次回の直接再利用 |
+
+各実装リポジトリは、その変更だけを検証・commit・push してから親の submodule 参照を更新する。本番の migration、カタログ公開、デプロイは別途承認の段階とする。検証中は既存アプリ・DB・verifier を使い回し、不要に複製しない。
