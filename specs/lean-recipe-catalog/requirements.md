@@ -102,5 +102,12 @@ Lean Recipe Catalog は、数学的な主張・方針・説明を保持する Dr
 
 ## Open questions
 
-None for the initial exact-target local slice. Template parameters, vector retrieval, and production
-publication are explicitly deferred non-goals rather than unresolved v1 behavior.
+Template parameters, vector retrieval, and production publication are explicitly deferred non-goals
+rather than unresolved v1 behavior.
+
+- **Toolchain upgrades (found 2026-10-05).** `recipe_evidence.materialized_source_sha256` is unique
+  across all revisions, so a Recipe whose materialized source is unchanged cannot be admitted again
+  under a new toolchain fingerprint. After a Lean or Mathlib upgrade every admitted Recipe stops
+  being selectable (LRC-010, LRC-014) and cannot be restored without changing its source. Decide
+  whether re-admission keys evidence by (source, toolchain) instead. Evidence:
+  [lean-required-flow-evidence-2026-10-05](../../docs/lean-required-flow-evidence-2026-10-05.md).

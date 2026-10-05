@@ -8,8 +8,9 @@ The proof-request aggregate is what the ordinary Send action creates in project,
 
 The worker settles a claimed revision with one of:
 
-- `needs_input`: premise question (unchanged).
+- `needs_input`: premise question, including a suspected counterexample or an unstated choice that changes the claim's truth (PFR-014). The assessment output carries `premise_check` (`counterexample`, `truth_depends_on`, `assumed_defaults`), stored only as private evidence. A counterexample comes from the model and is worded tentatively; Lean-checked refutation is a separate, later step.
 - `catalog_reuse`: the decision was `direct` and the identical Draft has an aligned admitted Recipe. The settlement carries the Recipe id/revision and materialized-source SHA-256, the independent correspondence review, the natural-language proof generated from that source and its independent answer QA. The API re-reads the Recipe through the selector role and checks source SHA-256, admission compile receipt and the active toolchain fingerprint before storing `answered` with evidence `lean_catalog`; any mismatch is stored as `formal` instead.
+- `formal` with plan `refute` (PFR-015): after a clarification turn, when the assessment still reports a counterexample. The plan carries the claim, the suspected counterexample and a negation statement in the output language; its linked job proves the negation with the ordinary DSP pipeline. A verified refutation is answered with `verdict: refuted`. A failed refutation is followed, in the same request, by a `dsp` job for the claim at the next revision.
 - `formal`: everything else. The settlement carries the plan (`instantiate` with Recipe binding and substitutions, or `dsp`) and the confirmed premises. In the same transaction the API creates one linked proof job (statement plus confirmed context, `context.proof_request_id`, `context.lean_plan`), its event and dispatch outbox, without a second billing reservation, and sets the request to `verifying` with `formal_job_id`.
 - `failed`: provider/catalog/integrity failures and unsupported requests (no answer text).
 
