@@ -490,8 +490,14 @@ def verify_containers(config: dict, receipt: dict, revisions: dict[str, str]) ->
             "Production container is not running the controller-reported image.",
         )
         if config["schema_version"] == CONFIG_V2 and component == "worker":
+            state = container.get("State", {})
             require(
-                container.get("State", {}).get("Health", {}).get("Status") == "healthy",
+                state.get("Status") == "running"
+                and all(
+                    state.get(flag) is False
+                    for flag in ("Paused", "Restarting", "Dead")
+                )
+                and state.get("Health", {}).get("Status") == "healthy",
                 "Both production workers must report healthy readiness.",
             )
         labels = (

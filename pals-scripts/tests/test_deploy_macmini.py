@@ -251,9 +251,15 @@ class HostBoundaryTests(unittest.TestCase):
             {"Image": receipt["images"]["worker"], "State": {"Running": True}}
         ]
         for service in ("worker", "assessment-worker"):
-            observations[(*prefix, self.config["containers"][service])][0]["State"][
-                "Health"
-            ] = {"Status": "healthy"}
+            observations[(*prefix, self.config["containers"][service])][0][
+                "State"
+            ].update(
+                Status="running",
+                Paused=False,
+                Restarting=False,
+                Dead=False,
+                Health={"Status": "healthy"},
+            )
         return revisions, receipt, observations
 
     def test_v2_receipt_reuses_three_signed_images(self):
@@ -280,6 +286,10 @@ class HostBoundaryTests(unittest.TestCase):
                 "starting",
                 "unhealthy",
                 "missing-health",
+                "Paused",
+                "Restarting",
+                "Dead",
+                "wrong-status",
             ):
                 with self.subTest(service=service, mutation=mutation):
                     invalid = copy.deepcopy(observations)
@@ -298,6 +308,10 @@ class HostBoundaryTests(unittest.TestCase):
                         item["State"]["Running"] = False
                     elif mutation == "missing-health":
                         del item["State"]["Health"]
+                    elif mutation in ("Paused", "Restarting", "Dead"):
+                        item["State"][mutation] = True
+                    elif mutation == "wrong-status":
+                        item["State"]["Status"] = "exited"
                     else:
                         item["State"]["Health"]["Status"] = mutation
                     with self.assertRaises(deploy.DeploymentError):
