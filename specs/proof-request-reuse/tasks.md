@@ -40,3 +40,12 @@ The user directed that every new answer is Lean-verified (PFR-002, PFR-006, PFR-
 - [x] Real local journeys: DSP, failure (semantic review rejected a weakened statement; no answer, hold released), follow-up, guest, phone/tablet/PC. Evidence: `docs/lean-required-flow-evidence-2026-10-05.md`.
 - [ ] Real local journeys: catalog reuse and specialization. Blocked locally: the local Draft table has no PFI catalog for alignment admission, and PFR-011 is not implemented.
 - [ ] Production prerequisite: proof-request assessment must not wait behind Lean jobs. Run a `natural-only` worker for proof requests beside the `full` Lean worker (one worker processes one SQS message at a time).
+
+## 2026-10-05 Ask before proving (PFR-014)
+
+The user approved asking back first when a request is likely false or its truth depends on an unstated choice.
+
+- [x] PFR-014 agent: `premise_check` in the assessment schema and prompt; validation and private evidence; localized fallback question; unit tests (`test_premise_check.py`, agent `4bc1433`).
+- [x] PFR-014 evaluation: a fixed 26-case real-provider set (`pals-scripts/premise-check-eval.py`): 19/26 before, 26/26 in two runs after. Evidence: `docs/premise-check-evaluation-2026-10-05.md`.
+- [ ] PFR-014 real local journey: a false claim is asked about before any Lean job; choosing the corrected claim proves it with Lean; keeping the statement as written is not asked again.
+- [ ] PFR-014 next: check a suspected counterexample with Lean before presenting it, and after a failed proof try the negation so a false claim is reported as Lean-refuted.
