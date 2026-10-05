@@ -37,6 +37,7 @@ The user directed that every new answer is Lean-verified (PFR-002, PFR-006, PFR-
 - [ ] PFR-011 agent: request-linked jobs compile the specialization wrapper before DSP.
 - [ ] PFR-006 agent/API: linked-job provider calls use the request's token operation permits.
 - [x] PFR-007 webfront: Lean progress, verified answer with source/explanation/follow-ups, failure without answer text; project, projectless and guest; four languages (`proof-request-lean-flow.test.tsx`).
+- [x] PFR-007 / CORE-008 webfront: localize live request preparation, Lean verification and explanation preparation in the UI language; reuse the accessible processing animation, preserve reduced motion and verify language changes without changing saved content or restarting polling. (2026-10-05: 78 related frontend tests, TypeScript and targeted ESLint passed; a real-component browser fixture confirmed running text/dot animations, mobile reflow and static reduced-motion display.)
 - [x] Real local journeys: DSP, failure (semantic review rejected a weakened statement; no answer, hold released), follow-up, guest, phone/tablet/PC. Evidence: `docs/lean-required-flow-evidence-2026-10-05.md`.
 - [ ] Real local journeys: catalog reuse and specialization. Blocked locally: the local Draft table has no PFI catalog for alignment admission, and PFR-011 is not implemented.
 - [ ] Production prerequisite: proof-request assessment must not wait behind Lean jobs. Run a `natural-only` worker for proof requests beside the `full` Lean worker (one worker processes one SQS message at a time).
