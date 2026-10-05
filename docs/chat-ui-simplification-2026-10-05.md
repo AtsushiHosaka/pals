@@ -8,9 +8,9 @@ The live [ChatGPT interface](https://chatgpt.com/) was visually inspected, inclu
 
 ## Delivered behavior
 
-Frontend commit: `5d6fbef` in `pals-webfront`, branch `codex/simplify-chat-ui`. [Frontend draft PR](https://github.com/AtsushiHosaka/pals-webfront/pull/2).
+Frontend commit: `5b1a516` in `pals-webfront`, branch `codex/simplify-chat-ui`. [Frontend draft PR](https://github.com/AtsushiHosaka/pals-webfront/pull/2).
 
-Completed answers show their text without a Lean badge or large combined action. Applied assumptions use a collapsed disclosure with provenance. Clarification choices remain next to the question, with a short notice when a choice is saved. Settings open through the account menu on desktop and the account menu within mobile navigation. The composer is capped at 760px and aligns with the conversation. Legacy-only proof archives keep their existing history selection without a “New proof” entry. Current request conversations omit that selector.
+Completed answers show their text without a Lean badge or large combined action. Applied assumptions use a collapsed disclosure with provenance at the start of the proof answer, immediately before its text. Clarification choices remain next to the question, with a short notice when a choice is saved. Settings open through the account menu on desktop and the account menu within mobile navigation. The composer is capped at 760px and aligns with the conversation. Legacy-only proof archives keep their existing history selection without a “New proof” entry. Current request conversations omit that selector.
 
 The existing topbar code icon opens verified Lean sources in the existing source panel. Older answers can be selected inside that panel, including when the latest answer has no source. Long chat names ellipsize so controls remain available on mobile. Source retrieval preserves job/chat/project binding, stale response suppression, aborts, and retry behavior. Verification progress and failures retain their existing meaning; no proof generation feature was added.
 
@@ -24,3 +24,5 @@ Dependencies installed from the unchanged `package-lock.json` with `npm ci --ign
 Desktop 1440×960 and mobile 390×844 browser checks used real production components with temporary display fixtures. Composer width, question choices, horizontal overflow, account-to-settings navigation, and uncaught page errors were checked. The temporary route was removed before the successful production build. This is UI evidence, not a live backend integration result.
 
 Local screenshots remain in ignored `pals-webfront/output/playwright/`: `chat-desktop.png`, `question-desktop.png`, `question-mobile.png`, `chat-mobile.png`, `account-menu-desktop.png`, and `settings-desktop.png`. Generated output and environment files are not committed.
+
+Follow-up placement change: move the disclosure above proof text in member and guest chats; retain the closed default and pending-request metadata. Existing affected tests passed (50 total), along with TypeScript, focused ESLint, and diff checks.
