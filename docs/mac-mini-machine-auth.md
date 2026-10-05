@@ -31,6 +31,8 @@ AWS IAM Roles Anywhereに専用のCAを登録し、Miniが証明書と秘密鍵�
 
 保管先は `/Users/hosakaatsushi/pals-mini-deploy/machine-auth`。directoryは所有UID 501・mode `0700`、秘密鍵は `0600`。Git、Actions出力、ログ、コンテナへ秘密鍵を渡さない。既存の用途別短期sessionを渡す方式と、workerの独立role policyを維持する。signerはnative配備処理だけが900秒以内のsessionをメモリで扱う。
 
+設置中の検証では、専用CAと4用途のleafをこの領域に生成した。CAの期限は2036年10月5日、leafは2026年11月4日。実OpenSSLによるpair・chain・権限の検査と、更新失敗時の旧世代保持を含む15テストが通過した。常駐プロセスによる実AWS認証と自然更新は検証を残している。
+
 CAのCNは `pals-macmini-machine-ca`。leafは `pals-macmini-api`、`pals-macmini-worker`、`pals-macmini-backup-writer`、`pals-macmini-release-signer` の4つに分ける。CA鍵を読めるホストユーザーは4用途すべてを認証できるため、同じUID内での権限分離は保証しない。Miniホストを信頼境界とし、AWS側では4roleの権限に限定する。
 
 ## 証明書の更新と一時障害からの復帰も自動化する

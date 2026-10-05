@@ -36,6 +36,10 @@ controllerの終了・復旧処理は修正済み。実subprocessでtimeout・SI
 
 既存のMac用DB初期化は、空のDBへの初回適用と同一署名の再実行に限定される。通常のAPI・Web・workerを新しいコミットへ継続更新するプログラムは、ホストの入口へ接続し、実runnerからの手動配備が成功した。常時運転用の機械認証とpush連動の検証を残している。初回用の `sign-and-apply-production-release.py` や `--apply-mac` を、自動更新の代わりに呼ばない。
 
+親 [`adb0784`](https://github.com/AtsushiHosaka/pals/commit/adb0784d58d6c077b0463f675c21052fe80eecac) では、controller開始直前にGitHubの最新mainと照合する処理を追加した。古いrequested SHAは置き換えずにskipし、APIの確認に失敗したら配備しない。host-ghとrepository-tokenの両方式を12テストで確認した。変更前のworkflowを使う古いrunの再実行も拒否するため、Mini側の入口にも同じ検査を設置する。
+
+並行して入ったLean用API更新は、既存の本番DB検査を緩めていた。[API `3ae9ed6`](https://github.com/AtsushiHosaka/pals-api/commit/3ae9ed6eae045585476828fbe100d399cc17867c) で、本番readiness・通常更新・prod起動に旧契約との厳密なfingerprint照合を維持した。ローカルLean経路と本番25step registryは保持し、関連28テストが通過した。親 [`5596322`](https://github.com/AtsushiHosaka/pals/commit/559632233b9c0abc24d0529018fc6bb38545fb5a) にこの参照を反映し、hosted検査も成功した。Miniの稼働版は、機械認証による次の実配備まで親 `ffb8427` のまま。
+
 関連する制約は [Mac PostgreSQL admission](../specs/domainless-production-bootstrap/mac-postgres-admission.md) と [10月4日の公開準備](macbook-publication-preparation-2026-10-04.md) にある。Miniの「検証 PALS本番起動」チャットでは、本番の起動・復元試験が進行中だった。設定を追加する前に、同チャットの最新状況を確認する。
 
 この文書はユーザーの自動デプロイ依頼に基づくWORKING契約であり、既存の署名・DB制約を変更しない。今回追加した入口の検証と、実KMS・migration・稼働サービスの更新検証は別に記録する。
