@@ -1,6 +1,6 @@
 # Miniの常時運転を人のSSOから切り離す
 
-更新日: 2026年10月5日。対象はPALSの運用者。現状と変更案の確認用。機械認証は未設置で、AWS設定と秘密鍵の新設は本人の許可待ち。
+更新日: 2026年10月5日。対象はPALSの運用者。現状と変更案の確認用。本人からこの構成の設置許可を受領し、機械認証の導入と実機検証を進めている。
 
 ## SSOの期限延長では常時運転にならない
 
@@ -23,11 +23,15 @@ AWS IAM Roles Anywhereに専用のCAを登録し、Miniが証明書と秘密鍵�
 
 同accountの全roleを読み取り監査する。他roleにanchor未限定のRoles Anywhere trustがあれば、4用途限定とは判断せず、設置を止める。[accountの信頼境界](https://docs.aws.amazon.com/rolesanywhere/latest/userguide/introduction.html)
 
+設置前の読み取り監査では、既存anchorとprofileは各0件。account全10roleにRoles Anywhere trustやwildcardのAllow principalはなかった。既存4roleはすべて1時間上限で、attached policy・permissions boundaryはない。APIには、SQS用policyに加えて既存CIMDのCognito読み取り検査policyがある。この既存policyも保持する。
+
 [読み取り専用の計画コード](https://github.com/AtsushiHosaka/pals-infra/commit/e5c9bcc77278879bc6e953305e8df1b378c8a284)はpush済み。既存RoleId、roleの1時間上限、runtime profileの3600秒・signerの900秒、用途分離、既存trustの保全、同時変更の拒否を検査する。21テストと独立レビューが成功した。AWS変更や鍵作成の機能は持たない。CA・profile設定のhashは変更検出のための値であり、実issuer・CN属性の対応や全account監査、実認証を証明するものではない。
 
 ## 秘密鍵はMiniの専用領域に保管する
 
 保管先は `/Users/hosakaatsushi/pals-mini-deploy/machine-auth`。directoryは所有UID 501・mode `0700`、秘密鍵は `0600`。Git、Actions出力、ログ、コンテナへ秘密鍵を渡さない。既存の用途別短期sessionを渡す方式と、workerの独立role policyを維持する。signerはnative配備処理だけが900秒以内のsessionをメモリで扱う。
+
+設置中の検証では、専用CAと4用途のleafをこの領域に生成した。CAの期限は2036年10月5日、leafは2026年11月4日。実OpenSSLによるpair・chain・権限の検査と、更新失敗時の旧世代保持を含む15テストが通過した。常駐プロセスによる実AWS認証と自然更新は検証を残している。
 
 CAのCNは `pals-macmini-machine-ca`。leafは `pals-macmini-api`、`pals-macmini-worker`、`pals-macmini-backup-writer`、`pals-macmini-release-signer` の4つに分ける。CA鍵を読めるホストユーザーは4用途すべてを認証できるため、同じUID内での権限分離は保証しない。Miniホストを信頼境界とし、AWS側では4roleの権限に限定する。
 
