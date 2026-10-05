@@ -214,6 +214,7 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-test}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-test}
       PALS_SQS_PROOF_JOBS_QUEUE_URL: http://localstack:4566/000000000000/${PALS_PROOF_JOBS_QUEUE_NAME:-pals-local-proof-jobs}
+      PALS_SQS_PROOF_REQUESTS_QUEUE_URL: http://localstack:4566/000000000000/${PALS_PROOF_REQUESTS_QUEUE_NAME:-pals-local-proof-requests}
       PALS_S3_ARTIFACT_BUCKET: ${PALS_ARTIFACTS_BUCKET:-pals-local-artifacts}
       # Resolve on the e2e network so the source matches the reconciler's API peer.
       PALS_CANDIDATE_RECONCILER_URL: http://pals-reconciler:18118
@@ -259,7 +260,9 @@ services:
         ipv4_address: 172.30.0.20
     restart: unless-stopped
 
-  worker:
+  # During migration, consume old assessment receipts still in the formal queue.
+  # New requests go only to the dedicated queue. Set lane=proof once old receipts drain.
+  worker: &proof-worker
     image: pals-agent-worker:local
     pull_policy: never
     # Trusted local startup installs namespace-only egress rules, then drops
@@ -267,7 +270,7 @@ services:
     user: "0:0"
     entrypoint: [python, -m, pals_agent.local_worker_boundary]
     stop_grace_period: 65m
-    command: [pals-agent, worker, --ready-file, /tmp/pals-worker-ready]
+    command: [pals-agent, worker, --lane, "${PALS_PROOF_WORKER_LANE:-all}", --ready-file, /tmp/pals-worker-ready]
     build:
       context: ./pals-agent
       dockerfile: Dockerfile.local
@@ -285,7 +288,7 @@ services:
       - no-new-privileges:true
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=128m
-    environment:
+    environment: &worker-environment
       PALS_ENV: local
       PALS_LOCAL_WORKER_NETWORK_GUARD: "1"
       PALS_TOKEN_ACCOUNTING_ENABLED: ${PALS_TOKEN_ACCOUNTING_ENABLED:-false}
@@ -295,6 +298,7 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-test}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-test}
       PALS_SQS_PROOF_JOBS_QUEUE_URL: http://localstack:4566/000000000000/${PALS_PROOF_JOBS_QUEUE_NAME:-pals-local-proof-jobs}
+      PALS_SQS_PROOF_REQUESTS_QUEUE_URL: http://localstack:4566/000000000000/${PALS_PROOF_REQUESTS_QUEUE_NAME:-pals-local-proof-requests}
       PALS_S3_ARTIFACT_BUCKET: ${PALS_ARTIFACTS_BUCKET:-pals-local-artifacts}
       PALS_API_BASE_URL: http://api:8000
       PALS_TYPED_CATALOG_ENABLED: "true"
@@ -324,6 +328,25 @@ services:
       e2e:
         ipv4_address: 172.30.0.30
     restart: unless-stopped
+
+  assessment-worker:
+    <<: *proof-worker
+    # Reuse the same image, API and database. Each replica consumes only assessments.
+    command: [pals-agent, worker, --lane, assessment, --ready-file, /tmp/pals-worker-ready]
+    environment:
+      <<: *worker-environment
+      PALS_PROOF_CAPABILITY: natural-only
+    cpus: ${PALS_ASSESSMENT_WORKER_CPUS:-1.0}
+    mem_limit: ${PALS_ASSESSMENT_WORKER_MEMORY:-1g}
+    memswap_limit: ${PALS_ASSESSMENT_WORKER_MEMORY:-1g}
+    pids_limit: 64
+    depends_on:
+      api:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+    networks:
+      e2e: {}
 
   recipe-reviewer:
     image: pals-agent-worker:local
