@@ -30,7 +30,7 @@ One hold (count policy) or one token operation (token policy) per request revisi
 
 ## Frontend
 
-All composers create proof requests. The thread shows premise questions, live Lean stages of the linked job (existing proof-job events), the Lean-verified answer with its Lean source, natural-language proof and follow-up questions (existing explanation and clarification components), and on failure a notice with retry and no answer text. Saved `llm_assessed` answers keep their existing display. Polling and event streams are scoped to the owner and chat, use abort on change and refuse mismatched response identities.
+All composers create proof requests. The thread shows premise questions, live Lean stages of the linked job (existing proof-job events), the Lean-verified answer with its Lean source, natural-language proof and follow-up questions, and on failure a notice with retry and no answer text. Selected-proof follow-ups retain quotations and update only the selected part of one displayed proof, with saved question/reply turns below it; see [proof-canvas-revisions](../proof-canvas-revisions/requirements.md). Saved `llm_assessed` answers keep their existing display. Polling and event streams are scoped to the owner and chat, use abort on change and refuse mismatched response identities.
 
 ## Existing Draft catalog integration (runtime finding, 2026-09-30)
 
