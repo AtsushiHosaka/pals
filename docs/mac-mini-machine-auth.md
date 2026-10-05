@@ -19,9 +19,13 @@ AWS IAM Roles Anywhereに専用のCAを登録し、Miniが証明書と秘密鍵�
 | `pals-macmini-runtime` | `pals-mini-prod-api`、`pals-mini-prod-worker`、`pals-mini-prod-backup-writer` |
 | `pals-macmini-release-signer` | `pals-mini-prod-release-signer` |
 
-4roleはすべて `/pals-mini-prod/` 配下。ARN・RoleId・既存permissions・boundaryを維持する。trustに専用anchor ARN、account、CAのissuer CN、用途別leaf CN、既存の固定RoleSessionNameを要求するstatementだけを追加する。既存のSSO statementを保持し、同時変更を検出したら適用を止める。両profileで `acceptRoleSessionName=true` とし、毎回session名を明示する。[AWS trust model](https://docs.aws.amazon.com/rolesanywhere/latest/userguide/trust-model.html)
+4roleはすべて `/pals-mini-prod/` 配下。ARN・RoleId・既存permissions・boundaryを維持する。専用anchor ARN、account、CAのissuer CN、用途別leaf CNを各trust文で要求する。`AssumeRole` には既存の固定RoleSessionNameを要求し、`TagSession` と `SetSourceIdentity` は別の文に分ける。後者には `CN=pals-macmini-<用途>` の固定SourceIdentityも要求する。AWS公式例もセッション名の条件を `AssumeRole` に限定している。[AWS構成例](https://docs.aws.amazon.com/eks/latest/userguide/hybrid-nodes-creds.html)、[SourceIdentityの規則](https://docs.aws.amazon.com/rolesanywhere/latest/userguide/trust-model.html#source-identity-rules)
+
+既存のSSO statementを保持し、同時変更を検出したら適用を止める。両profileで `acceptRoleSessionName=true` とし、毎回session名を明示する。
 
 同accountの全roleを読み取り監査する。他roleにanchor未限定のRoles Anywhere trustがあれば、4用途限定とは判断せず、設置を止める。[accountの信頼境界](https://docs.aws.amazon.com/rolesanywhere/latest/userguide/introduction.html)
+
+初回anchor作成時、AWSが `AWSServiceRoleForRolesAnywhere` を自動作成した。専用の予約path・実RoleId・trust・AWS管理policyを照合し、このサービス用roleだけを監査上の例外にする。全11roleを監査し、2profileの対象は既存4roleだけであることを確認した。[AWSサービス用role](https://docs.aws.amazon.com/rolesanywhere/latest/userguide/using-service-linked-roles.html)
 
 設置前の読み取り監査では、既存anchorとprofileは各0件。account全10roleにRoles Anywhere trustやwildcardのAllow principalはなかった。既存4roleはすべて1時間上限で、attached policy・permissions boundaryはない。APIには、SQS用policyに加えて既存CIMDのCognito読み取り検査policyがある。この既存policyも保持する。
 
@@ -32,6 +36,8 @@ AWS IAM Roles Anywhereに専用のCAを登録し、Miniが証明書と秘密鍵�
 保管先は `/Users/hosakaatsushi/pals-mini-deploy/machine-auth`。directoryは所有UID 501・mode `0700`、秘密鍵は `0600`。Git、Actions出力、ログ、コンテナへ秘密鍵を渡さない。既存の用途別短期sessionを渡す方式と、workerの独立role policyを維持する。signerはnative配備処理だけが900秒以内のsessionをメモリで扱う。
 
 設置中の検証では、専用CAと4用途のleafをこの領域に生成した。CAの期限は2036年10月5日、leafは2026年11月4日。実OpenSSLによるpair・chain・権限の検査と、更新失敗時の旧世代保持を含む15テストが通過した。常駐プロセスによる実AWS認証と自然更新は検証を残している。
+
+CAとleafは、公式helperが扱える名前付きEC曲線で生成した。4roleの分割trustは適用と読み戻しを完了し、旧SSOと権限を保持した。APIはSSO設定・cacheを利用しない実AWS認証に成功し、予定のRoleIdとsession名で1時間のsessionを取得した。残り3用途と常駐brokerへの切り替えは検証中。
 
 CAのCNは `pals-macmini-machine-ca`。leafは `pals-macmini-api`、`pals-macmini-worker`、`pals-macmini-backup-writer`、`pals-macmini-release-signer` の4つに分ける。CA鍵を読めるホストユーザーは4用途すべてを認証できるため、同じUID内での権限分離は保証しない。Miniホストを信頼境界とし、AWS側では4roleの権限に限定する。
 
