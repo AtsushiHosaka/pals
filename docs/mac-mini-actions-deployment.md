@@ -2,7 +2,7 @@
 
 更新日: 2026年10月5日。対象はPALSの運用者。最初は「有効化の順序」まで読み、設定や更新プログラムを実装するときに後半の契約を参照する。
 
-## 機械認証の常駐化を確認。push連動を検証中
+## 機械認証で常時運転し、mainへのpushを配備する
 
 親リポジトリの `.github/workflows/deploy-macmini.yml` が、mainへのpushと手動実行を受け付ける。親のコミットと、そのコミットが参照するsubmoduleを取得し、専用のMac mini runnerで `pals-scripts/deploy-macmini.py` を実行する。
 
@@ -32,9 +32,9 @@ controllerの終了・復旧処理は修正済み。実subprocessでtimeout・SI
 
 本人の再ログイン後、同じAWS identityを確認し、旧workerを同じCID・imageで復帰した。`MACMINI_DEPLOY_READY=true` にして再実行した [手動デプロイ](https://github.com/AtsushiHosaka/pals/actions/runs/37247403226) は成功した。実runnerのnative controllerが起動し、親 `ffb84277ddd306092570965260793b059dcd9545` の3image build、実KMS署名、通常v2更新を通過した。MiniではDBのsequence2、3サービスのRunning、pendingなし、同じSHAの `current.json` がhealthyであることを確認した。09:35 JSTの独立照合では、署名admission全18項目、source7・image3、旧73テーブルの全行、旧権限1032項目、回答2件・利用量10行の維持を確認した。worker readyと公開応答200・200・匿名401も通過した。
 
-ユーザーは、定期的な人の再ログインに依存する構成を常時運用の解決として認めていない。`MACMINI_AUTO_DEPLOY` は未設定を維持し、[Mini専用の機械認証](mac-mini-machine-auth.md)を導入する。CA・秘密鍵の永続保存は自動承認レビューが一度拒否したため、保管先・4用途の認証範囲・更新方法を提示した。本人から「設置して良い」と明示許可を受領し、設置と30分周期の実AWS自然更新を確認した。自動デプロイをONにする許可も受領済み。
+ユーザーは、定期的な人の再ログインに依存する構成を常時運用の解決として認めていない。手動検証中は `MACMINI_AUTO_DEPLOY` を未設定とし、[Mini専用の機械認証](mac-mini-machine-auth.md)を導入した。CA・秘密鍵の永続保存は自動承認レビューが一度拒否したため、保管先・4用途の認証範囲・更新方法を提示した。本人から「設置して良い」と明示許可を受領し、設置と30分周期の実AWS自然更新を確認した。自動デプロイをONにする許可も受領済み。
 
-既存のMac用DB初期化は、空のDBへの初回適用と同一署名の再実行に限定される。通常のAPI・Web・workerを新しいコミットへ継続更新するプログラムは、ホストの入口へ接続し、実runnerからの手動配備が成功した。機械認証の常駐化は確認済みで、最後の手動Actionsとpush連動の検証を残している。初回用の `sign-and-apply-production-release.py` や `--apply-mac` を、自動更新の代わりに呼ばない。
+既存のMac用DB初期化は、空のDBへの初回適用と同一署名の再実行に限定される。通常のAPI・Web・workerを新しいコミットへ継続更新するプログラムは、ホストの入口へ接続し、実runnerからの手動配備が成功した。機械認証の常駐化と手動Actionsの検証を終え、親mainのpushを通常配備へ接続した。初回用の `sign-and-apply-production-release.py` や `--apply-mac` を、自動更新の代わりに呼ばない。
 
 親 [`adb0784`](https://github.com/AtsushiHosaka/pals/commit/adb0784d58d6c077b0463f675c21052fe80eecac) では、controller開始直前にGitHubの最新mainと照合する処理を追加した。古いrequested SHAは置き換えずにskipし、APIの確認に失敗したら配備しない。host-ghとrepository-tokenの両方式を12テストで確認した。変更前のworkflowを使う古いrunの再実行も拒否するため、Mini側の入口にも同じ検査を設置する。
 
@@ -42,9 +42,13 @@ controllerの終了・復旧処理は修正済み。実subprocessでtimeout・SI
 
 常駐処理とhost更新用コードは [infra `c2d8014`](https://github.com/AtsushiHosaka/pals-infra/commit/c2d801408e0e026832fbbfc04b8d071a371549ea) に統合した。独立レビューでは常駐処理の28試験とhost/controllerの46試験が成功し、実APIのvalidatorでv3 planとfixtureの完全一致を確認した。親 [`7142501`](https://github.com/AtsushiHosaka/pals/commit/7142501b3d461918b9d1e4b6051ffbd1bf7c6a71) は並行更新のAPI・Web・worker参照を保持し、infra参照だけを更新した。Mini上のcontroller・authority・設定に機械認証と新しいread-only保存先を接続し、設置時点ではsequence2と旧サービスを維持した。[新設定の実runner preflight](https://github.com/AtsushiHosaka/pals/actions/runs/37260802592) は成功し、親コミットと全submoduleの一致を確認した。実配備はこの検査とは別に判定する。
 
-[機械認証による初回Actions](https://github.com/AtsushiHosaka/pals/actions/runs/37261202355) は親 `7142501` のv3更新を既存DBへ適用したが、既存Cloudflare connectorが停止していたため公開確認で失敗した。再試行も失敗し、DBのsequence3は維持した。connector復帰後に現行候補への復旧処理を実行し、pendingなし・worker ready・公開応答200・200・匿名401を確認した。04:10 UTCの独立照合では、前後の実KMS署名、全18項目、source7・image・OCI label、同じDB/volumeとtrust、旧79テーブルの全行・権限1075項目、回答2件・利用量10行の保持が一致した。復旧の成功をActionsの成功と混同せず、別の手動Actionsで再検証する。
+[機械認証による初回Actions](https://github.com/AtsushiHosaka/pals/actions/runs/37261202355) は親 `7142501` のv3更新を既存DBへ適用したが、既存Cloudflare connectorが停止していたため公開確認で失敗した。再試行も失敗し、DBのsequence3は維持した。connector復帰後に現行候補への復旧処理を実行し、pendingなし・worker ready・公開応答200・200・匿名401を確認した。04:10 UTCの独立照合では、前後の実KMS署名、全18項目、source7・image・OCI label、同じDB/volumeとtrust、旧79テーブルの全行・権限1075項目、回答2件・利用量10行の保持が一致した。この復旧の成功をActionsの成功と混同せず、以下の別runで手動Actionsを再検証した。
 
 既存Tunnelを常駐させる [infra `bff2e777`](https://github.com/AtsushiHosaka/pals-infra/commit/bff2e777bd6c1003cfb4b2923e6c89c8c13dc94f) は独立レビューと7試験が通過した。既存tokenを保護された専用領域へ保持し、固定の `~/Library/LaunchAgents/site.pals.existing-cloudflare-connector.plist` で起動する。Tunnel・DNS・routeを新設せず、tokenをargvや環境変数へ渡さない。Mini上で既存の一時connectorから切り替え、SIGKILL後のKeepAlive復帰と公開応答を確認した。Documentsへのアクセス権に依存しない。
+
+[機械認証による手動Actions 37263966083](https://github.com/AtsushiHosaka/pals/actions/runs/37263966083) は、親 `8f9bf5b` の通常v1更新で成功した。04:34 UTCの独立照合ではsequence4の実KMS署名・全18項目・source7・3image/OCI label、旧79テーブルの全行・権限1075項目・回答2件・利用量10行を確認した。同じDB/volume、worker ready、用途別read-only mount、公開応答200・200・匿名401、current/receipt一致・pendingなしも通過した。旧SSO producerは正常終了済みで、稼働コンテナは旧保存先を参照しない。
+
+手動検証の成功を受けて `MACMINI_AUTO_DEPLOY=true` を設定した。以後は親mainへのpushでMiniの通常更新を実行する。各pushの反映はActionsのdeploy jobと実機のparent SHA・current・署名admission・公開応答で確認する。GitHub認証失敗時は配備せず、AWSの定期的な人の再ログインは必要としない。runner・OrbStack・broker・connectorにはMiniのユーザーセッションが必要で、OS再起動後のFileVault解除前の動作は検証対象に含めていない。
 
 関連する制約は [Mac PostgreSQL admission](../specs/domainless-production-bootstrap/mac-postgres-admission.md) と [10月4日の公開準備](macbook-publication-preparation-2026-10-04.md) にある。Miniの「検証 PALS本番起動」チャットでは、本番の起動・復元試験が進行中だった。設定を追加する前に、同チャットの最新状況を確認する。
 

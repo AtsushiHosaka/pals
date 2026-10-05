@@ -1,10 +1,10 @@
 # Miniの常時運転を人のSSOから切り離す
 
-更新日: 2026年10月5日。対象はPALSの運用者。現状と変更案の確認用。本人からこの構成の設置許可を受領し、機械認証の導入と実機検証を進めている。
+更新日: 2026年10月5日。対象はPALSの運用者。本人の設置許可に基づき、機械認証の設置・自然更新・実Actionsからの配備を検証した。
 
 ## SSOの期限延長では常時運転にならない
 
-現在のMiniは、人の `pals-prod-member` SSOから用途別のSTS sessionを取得する。既存brokerは1時間のsessionを30分ごとに更新するが、元のSSOが失効すると更新できない。10月4日と5日に失効し、workerが停止した。5日の本人再ログイン後、同じworkerのCID・imageでRunningとreadyへ復帰した。復旧時にはDB更新や新しい権限の付与を行っていない。
+導入前のMiniは、人の `pals-prod-member` SSOから用途別のSTS sessionを取得していた。既存brokerは1時間のsessionを30分ごとに更新するが、元のSSOが失効すると更新できない。10月4日と5日に失効し、workerが停止した。5日の本人再ログイン後、同じworkerのCID・imageでRunningとreadyへ復帰した。復旧時にはDB更新や新しい権限の付与を行っていない。
 
 人の再ログインを運転条件にしたまま、自動デプロイを完成と判定しない。[配備状況](mac-mini-actions-deployment.md)に実行結果を記録する。
 
@@ -57,6 +57,8 @@ brokerは期限前にSTSを更新し、一時的な失敗では再試行する�
 
 その後、既存DB・保存行・権限を維持した手動デプロイと、親mainのpushによるデプロイを通す。コードの成功、Actionsの成功、無人認証の成功を区別し、未検証の部分は完了と記録しない。
 
-2026年10月5日04:10 UTCの稼働版照合では、機械認証によるv3更新後の署名・全18項目・source7・imageと、旧79テーブルの全行・権限1075項目・同じDB/volumeを確認した。初回のActionsは既存Cloudflare connector停止による公開確認失敗で終了したため、Actions成功とは記録しない。connectorの復旧と常駐化後、公開応答200・200・匿名401、worker ready、pendingなしを確認した。新しい手動Actionsとpush連動の検証は残っている。
+2026年10月5日04:10 UTCの稼働版照合では、機械認証によるv3更新後の署名・全18項目・source7・imageと、旧79テーブルの全行・権限1075項目・同じDB/volumeを確認した。初回のActionsは既存Cloudflare connector停止による公開確認失敗で終了したため、Actions成功とは記録しない。connectorの復旧と常駐化後、公開応答200・200・匿名401、worker ready、pendingなしを確認した。その後の手動Actionsによる成功は、以下に別記する。
 
 runner・OrbStack・brokerはMiniのユーザーセッション内で動く。AWSへの定期的な人のログインは不要だが、FileVault解除前やユーザーのログイン前から動く構成は検証していない。
+
+[手動Actions 37263966083](https://github.com/AtsushiHosaka/pals/actions/runs/37263966083) は親 `8f9bf5b` の通常v1更新で成功した。2026年10月5日04:34 UTCの独立照合では、実KMS署名・sequence4の全18項目・source7・image/OCI label、同じDB/volume、旧79テーブルの全行・権限1075項目・回答2件・利用量10行の保持が一致した。worker ready、用途別read-only mount、公開応答200・200・匿名401、current/receipt一致・pendingなしも確認した。これを受けて `MACMINI_AUTO_DEPLOY=true` とし、親mainのpushから機械認証で配備する。pushごとの成功は、該当Actionsと実機の反映結果で判定する。
