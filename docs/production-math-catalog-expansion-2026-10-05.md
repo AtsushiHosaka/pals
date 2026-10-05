@@ -4,7 +4,9 @@
 
 本番DBの既存Lean Recipeは **0→923件**。923件すべてについて、登録直後に対象命題・証明本文・materialized source・toolchain・receipt・admission event を読み戻して既存の厳密一致検査に通した。コミット後の新しいread-only接続でも923件の全bundleを再照合した。既存自然文Draftは **433→433件**、sealed releaseとの厳密一致を登録前後に確認した。APIの `/health` は `status=ok`、`environment=prod`。
 
-新しいtyped Draft **652件・21 profile** はローカル準備済み。本番typed行は現在0件、active profileも0件。embedding生成の外部送信が自動承認レビューに拒否され、明示許可の回答を待っている。承認リストに記載された既存の継続許可を再提示したが、審査はファイルの許可記録を直接のユーザー許可として認めなかった。未送信のDraftを「本番追加済み」や「公開済み」とは数えない。
+新しいtyped Draft **652件・21 profile** を本番DBに追加し、typed行は **0→652件**。全件に実際の384次元embeddingを付与し、本文・OpenMath・証明方針・Sketch・ベクトルの読戻し一致を確認した。世代は署名なし・独立レビュー待ちのinactive状態で、active profileは0件。通常の検索で利用できる公開済みDraftとしては数えない。
+
+外部送信について、ユーザーはこのチャットで確認した652件の版情報・profile ID・数式XMLの送信に対して「送信していいよー」と直接許可した。許可後に `https://api.openai.com/v1/embeddings`、`text-embedding-3-small`、384次元で実行し、652件すべての有限値・非零・次元を検査した。自然文、Leanコード、会話、秘密情報は送信していない。
 
 | Recipeの主な範囲 | 本番追加件数 |
 | --- | ---: |
@@ -64,3 +66,34 @@ DB構成のDDL変更は行わない。既存433件の自然文カタログは im
 - 公理内訳: 基礎公理なし15件、`propext`のみ39件、`propext`と`Quot.sound`の87件、許可した3公理の782件。
 
 実行したコンパイラhelperのbytesも証拠directoryに固定する。初回helperにはreceiptのファイル名を監査用定理名で上書きする変数名の不具合があったため、実際のreceipt内容を変えずに探索用・最終用の名前へコピーし、今後のhelperでは変数名を修正した。コンパイラ入力・出力・終了コード・各hash・実行されたhelperのfingerprintを再照合してからDBへ登録した。
+
+## Draft登録と再実行の検証
+
+Draft登録前のモデル検査でgeneration UUIDがv4必須という条件を確認し、v4 IDを作成して `prepared-layouts.json` に登録前から固定した。前段のv5 IDによる試行はDB接続前に停止しており、本番DBの変更を伴わない。保存済みID・内容が変わった再実行は拒否し、同じ内容の再実行は既存世代を全件照合する。実際の再実行ではRecipe・Draftとも新規INSERT 0件で、件数は923件・652件のまま維持された。
+
+embedding artifact SHA-256: `4284854f805fd99dfc7377a62ea8dd1b1dcb50d635f04af32ad8b0705c9f0f4a`。本番DBの初回登録receiptは `database-drafts-initial-receipt.json`、コミット後のread-only全件再照合は `database-readback.json`、重複追加されない再実行結果は `database-replay-receipt.json` に保存した。
+
+| typed profile | 新規Draft件数 |
+| --- | ---: |
+| `typed-real-analysis-v1` | 29 |
+| `typed-calculus-v2` | 28 |
+| `typed-calculus-v3` | 40 |
+| `typed-calculus-v4` | 39 |
+| `typed-calculus-v5` | 58 |
+| `typed-commalg-modules-v2` | 22 |
+| `typed-commutative-algebra-v1` | 29 |
+| `typed-commalg-v3` | 31 |
+| `typed-commalg-v4` | 33 |
+| `typed-commutative-algebra-modules-v1` | 48 |
+| `typed-linear-algebra-v2` | 27 |
+| `typed-linear-algebra-v3` | 37 |
+| `typed-linear-algebra-v4` | 34 |
+| `typed-linear-algebra-v5` | 39 |
+| `typed-linear-algebra-v6` | 17 |
+| `typed-multivariable-v5` | 45 |
+| `typed-commutative-algebra-chain-dimension-v1` | 17 |
+| `typed-commutative-algebra-integral-v1` | 20 |
+| `typed-number-theory-v1` | 47 |
+| `typed-probability-v1` | 6 |
+| `typed-vector-calculus-v6` | 6 |
+| 合計 | 652 |

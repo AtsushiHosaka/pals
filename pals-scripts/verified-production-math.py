@@ -19,7 +19,7 @@ from pathlib import Path
 import re
 import sys
 import textwrap
-from uuid import NAMESPACE_URL, uuid4, uuid5
+from uuid import uuid4
 
 
 def sha(raw: bytes) -> str:
@@ -333,11 +333,23 @@ def apply_database(args) -> None:
         if card['draft'] and not args.recipes_only:
             groups.setdefault(card['profile_id'],[]).append(value)
     layouts=[]
+    prepared_path=args.evidence/'prepared-layouts.json'
+    prepared={}
+    if groups and prepared_path.exists():
+        prepared_layouts=[TypedLayout.model_validate(x) for x in json.loads(prepared_path.read_text())]
+        prepared={x.binding.profile_id:x for x in prepared_layouts}
+        if len(prepared)!=len(prepared_layouts) or set(prepared)!=set(groups):
+            raise ValueError('prepared Draft generation set changed')
     for profile,values in groups.items():
-        generation=str(uuid5(NAMESPACE_URL, 'pals.verified-math-20261005/' + profile + '/' + sha(rfc8785.dumps([v['card'] for v in values]))))
+        generation=prepared[profile].generation_id if profile in prepared else str(uuid4())
         rows=[{**v['card']['draft'],'embedding':embeddings[v['card']['id']]} for v in values]
         layout=TypedLayout.model_validate(dict(schema_version='pals.typed-catalog-layout.v1',generation_id=generation,binding=values[0]['card']['binding'],author_id='pals.math-catalog-20261005',source_manifest_sha256=sha(rfc8785.dumps([v['card'] for v in values])),coverage_families=[profile+'.verified-20261005'],rows=rows))
+        if profile in prepared and layout.model_dump()!=prepared[profile].model_dump():
+            raise ValueError('prepared immutable Draft content changed')
         layouts.append(layout)
+    if layouts and not prepared:
+        # Freeze real v4 identities before DB mutation so retries cannot duplicate rows.
+        save(prepared_path,[x.model_dump() for x in layouts])
     with psycopg.connect(host=args.db_host,dbname='pals',user='postgres',password=args.secret_file.read_text().strip(),connect_timeout=10) as connection:
         connection.execute("SET LOCAL lock_timeout='10s'")
         connection.execute("SET LOCAL statement_timeout='120s'")
