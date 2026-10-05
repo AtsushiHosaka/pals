@@ -7,7 +7,8 @@
 ## Learner-facing behavior
 
 - [pals-product-core](pals-product-core/requirements.md) — 証明要求、回答、検証状態、出力言語、チャット。
-- [proof-request-reuse](proof-request-reuse/requirements.md) — 通常送信による AI 回答、前提確認、カタログ再利用。
+- [proof-request-reuse](proof-request-reuse/requirements.md) — 通常送信、前提確認、カタログ再利用と Lean 検証の流れ。
+- [draft-addition-candidates](draft-addition-candidates/requirements.md) — 検証済み証明の Draft DB 追加候補と運用者承認。
 - [projectless-chat-start](projectless-chat-start/requirements.md) — Project に属さないチャット。
 - [chat-navigation](chat-navigation/requirements.md) — チャット検索と新着回答の表示。
 - [chat-sharing](chat-sharing/requirements.md) — 固定スナップショットの公開リンク。

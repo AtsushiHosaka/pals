@@ -1,5 +1,7 @@
 # Natural-only production capability (WORKING addendum)
 
+**Superseded for ordinary Send on 2026-10-05.** Every new answer now requires Lean (PFR-010–PFR-013). A `natural-only` deployment cannot serve ordinary Send: requests that need Lean must fail explicitly there (PFR-013), and production must run with `PALS_PROOF_CAPABILITY=full` and its verifier/reconciler. The contract below remains only as the description of the existing capability switch.
+
 The October 2 direct correction requires ordinary Send → AI assessment → answer, with no mandatory Lean and no new Lean action. This bounded operator capability implements PFR-002/005/006/007/008 and CORE-003/006/012 without changing proof verification, owner checks, independent exact-answer QA, model roles, token caps/receipts or signed database admission.
 
 | ID | Contract |

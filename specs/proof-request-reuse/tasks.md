@@ -23,3 +23,17 @@ October 2 execution stops feature expansion at 06:00 JST under the user’s expl
 - [x] PFR-005/006: reject JSONB-incompatible provider Unicode before evidence retention and QA/hash binding; preserve safe durable failure and receipts. Agent parser regressions and actual PostgreSQL HTTP/settlement regressions pass. Real ordinary-send retesting remains governed by the unchecked October 2 acceptance items above.
 
 October 2 local acceptance evidence: four consecutive ordinary Mac Chrome core answers with exact-answer independent QA; same-image restart of six application services preserving dependency data; saved answer/receipt/accounting equality; new postrestart Mac Chrome square answer. Additional determinant, rank-nullity, radical-product and inclusion-exclusion real HTTP integration cases also exact-QA bound. Subsequent UI checks unavailable after execution-context switch; production source/release/deployment remains separately unaccepted. Runbook: docs/2026年10月2日.md.
+
+## 2026-10-05 Lean-required flow
+
+The user directed that every new answer is Lean-verified (PFR-002, PFR-006, PFR-007, PFR-010–PFR-013). Plan: `docs/lean-required-flow-plan-2026-10-05.md`. Items are checked only with executed evidence.
+
+- [ ] Local Lean runtime: refresh the expired local verifier/reconciler TLS material, start the verifier and verify one existing proof job end to end.
+- [ ] PFR-010/012 API: `002` proof-request migration (`verifying`, `formal_job_id`, `lean_catalog`/`lean_verified`), registered in every release registry with fingerprint tests.
+- [ ] PFR-006/012 API: `catalog_reuse` and `formal` settlements, linked job creation without a second reservation, job/explanation terminal propagation with exactly-once consume/release; real PostgreSQL tests.
+- [ ] PFR-010 API: worker Recipe lookup and settlement re-verification of source SHA-256, admission receipt and active toolchain fingerprint; tamper tests.
+- [ ] PFR-002/010/013 agent: decision → `catalog_reuse` / `formal(instantiate|dsp)`; no LLM-only answers; reuse answer from Recipe source with independent review.
+- [ ] PFR-011 agent: request-linked jobs compile the specialization wrapper before DSP.
+- [ ] PFR-006 agent/API: linked-job provider calls use the request's token operation permits.
+- [ ] PFR-007 webfront: Lean progress, verified answer with source/explanation/follow-ups, failure without answer text; project, projectless and guest; four languages.
+- [ ] Real local journeys: catalog reuse, specialization, DSP, failure, follow-up, guest; phone/tablet/PC.
