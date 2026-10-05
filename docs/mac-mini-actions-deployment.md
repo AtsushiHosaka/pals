@@ -2,7 +2,7 @@
 
 更新日: 2026年10月5日。対象はPALSの運用者。最初は「有効化の順序」まで読み、設定や更新プログラムを実装するときに後半の契約を参照する。
 
-## ホスト検証は成功。実runnerのmacOS許可待ち
+## ホスト検証は成功。AWS再ログインと実更新の検証待ち
 
 親リポジトリの `.github/workflows/deploy-macmini.yml` が、mainへのpushと手動実行を受け付ける。親のコミットと、そのコミットが参照するsubmoduleを取得し、専用のMac mini runnerで `pals-scripts/deploy-macmini.py` を実行する。
 
@@ -26,7 +26,9 @@ controllerの終了・復旧処理は修正済み。実subprocessでtimeout・SI
 
 稼働API用roleはKMSのGetPublicKeyを許可していないため、配備専用のnative処理には既存release-signerの900秒STS sessionを使う。認証情報はメモリと専用プロセスの環境変数で扱い、保存・ログ出力・稼働コンテナへの受け渡しをしない。IAMは変更していない。設置controllerのSHA256は `8034a5349376cf7eeed1b74aeebae3e20c94e5000a5a998521e3982a1908807a`、authorityは `99d14e0776db294006cf042f8e0c5718d49b172e6fc32114723d7a3e111b0053`。関連32テストと、既存KMSでの公開鍵取得・旧署名検証が成功した。
 
-[手動の実更新](https://github.com/AtsushiHosaka/pals/actions/runs/37211520009) は親 `fca2dde` の取得を通過したが、配備用Pythonの起動時に停止した。macOSのTCC記録で、同じPython PIDがDocumentsFolderの承認待ちになっていることを確認した。責任主体はrunner起動元の `node`。Miniの画面でも「node」から「書類」へのアクセス許可が表示されており、本人操作を依頼した。検証を中止し、`MACMINI_DEPLOY_READY=false` に戻した。署名・DB更新・サービス切替には未到達で、現行admissionはsequence1、旧サービスは稼働している。`MACMINI_AUTO_DEPLOY` は引き続き未設定。許可後に実更新を再検証する。ONの追加承認待ちではない。
+[手動の実更新](https://github.com/AtsushiHosaka/pals/actions/runs/37211520009) は親 `fca2dde` の取得を通過したが、配備用Pythonの起動時に停止した。macOSのTCC記録で、同じPython PIDがDocumentsFolderの承認待ちになっていることを確認した。責任主体はrunner起動元の `node`。Miniの画面でも「node」から「書類」へのアクセス許可が表示されており、本人操作を依頼した。検証を中止し、`MACMINI_DEPLOY_READY=false` に戻した。署名・DB更新・サービス切替には未到達だった。
+
+2026年10月5日、本人から「書類」へのアクセスを許可したとの返信を受領した。00:04 UTCの確認では、夜間に既存SSOが再び失効し、brokerの3用途すべてが未ready、旧workerは同じCID・imageのまま停止していた。API・Web・公開edgeは稼働し、DBの現行admissionはsequence1、pending更新はなかった。本人へ同じprofileでの再ログインを依頼した。[親 `cf823eb` の実runner preflight](https://github.com/AtsushiHosaka/pals/actions/runs/37246137103) は成功したが、この検査はnative controllerを起動しない。認証とworkerの復帰後、実runnerからのPython起動と実更新を確認する。`MACMINI_DEPLOY_READY=false`、`MACMINI_AUTO_DEPLOY` は引き続き未設定で、ONの追加承認待ちではない。
 
 既存のMac用DB初期化は、空のDBへの初回適用と同一署名の再実行に限定される。通常のAPI・Web・workerを新しいコミットへ継続更新するプログラムは、ホストの入口へ接続済みで、実runnerからの配備検証を残している。初回用の `sign-and-apply-production-release.py` や `--apply-mac` を、自動更新の代わりに呼ばない。
 
