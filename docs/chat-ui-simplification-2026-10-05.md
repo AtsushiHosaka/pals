@@ -8,7 +8,7 @@ The live [ChatGPT interface](https://chatgpt.com/) was visually inspected, inclu
 
 ## Delivered behavior
 
-Frontend commit: `5b1a516` in `pals-webfront`, branch `codex/simplify-chat-ui`. [Frontend draft PR](https://github.com/AtsushiHosaka/pals-webfront/pull/2).
+Frontend commit: `5b1a516` in `pals-webfront`, merged into `main` at `5989752`. [Frontend PR](https://github.com/AtsushiHosaka/pals-webfront/pull/2).
 
 Completed answers show their text without a Lean badge or large combined action. Applied assumptions use a collapsed disclosure with provenance at the start of the proof answer, immediately before its text. Clarification choices remain next to the question, with a short notice when a choice is saved. Settings open through the account menu on desktop and the account menu within mobile navigation. The composer is capped at 760px and aligns with the conversation. Legacy-only proof archives keep their existing history selection without a “New proof” entry. Current request conversations omit that selector.
 
