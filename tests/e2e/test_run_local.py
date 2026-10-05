@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 class LocalRunnerMigrationTest(unittest.TestCase):
-    def run_runner(self, *, fail_migration, fail_guard=False):
+    def run_runner(self, *, fail_migration, fail_guard=False, fail_queue=False):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             runner = root / "tests/e2e/run-local.sh"
@@ -39,6 +39,7 @@ exit 0
             docker.write_text("""#!/bin/sh
 printf '%s\\n' "$*" >> "$CALL_LOG"
 case "$*" in
+ *"sh /etc/localstack/init/ready.d/10-pals-resources.sh"*) exit "$QUEUE_EXIT" ;;
  *"image inspect"*) printf 'sha256:%064d\\n' 0 ;;
  *"run --rm --no-deps schema-release"*) exit "$MIGRATION_EXIT" ;;
 esac
@@ -82,6 +83,7 @@ esac
                 "CALL_LOG": str(log),
                 "MIGRATION_EXIT": "7" if fail_migration else "0",
                 "GUARD_EXIT": "8" if fail_guard else "0",
+                "QUEUE_EXIT": "9" if fail_queue else "0",
                 "PALS_E2E_RELEASE_ENV_FILE": str(release),
                 "PALS_E2E_REFRESH_RELEASE": "0",
             }
@@ -113,16 +115,26 @@ esac
         self.assertEqual(len(migrations), 1)
         self.assertLess(database, migrations[0])
         guard = calls.index("database-authentication-guard")
+        provision = next(i for i, call in enumerate(calls)
+                         if call.endswith("sh /etc/localstack/init/ready.d/10-pals-resources.sh"))
+        self.assertLess(database, provision)
+        self.assertLess(provision, guard)
         self.assertLess(database, guard)
         self.assertLess(guard, migrations[0])
         self.assertLess(migrations[0], serving)
         stopped = next(i for i, call in enumerate(calls)
-                       if call.endswith("stop worker recipe-reviewer api reconciler"))
+                       if call.endswith("stop worker assessment-worker recipe-reviewer api reconciler"))
         self.assertLess(stopped, migrations[0])
 
     def test_migration_failure_prevents_serving(self):
         result, calls = self.run_runner(fail_migration=True)
         self.assertEqual(result.returncode, 7)
+        self.assertFalse(any(call.endswith("up -d --wait") for call in calls))
+
+    def test_queue_provision_failure_prevents_migration_and_serving(self):
+        result, calls = self.run_runner(fail_migration=False, fail_queue=True)
+        self.assertEqual(result.returncode, 9)
+        self.assertFalse(any("schema-release" in call for call in calls))
         self.assertFalse(any(call.endswith("up -d --wait") for call in calls))
 
     def test_database_guard_failure_prevents_migration_and_serving(self):

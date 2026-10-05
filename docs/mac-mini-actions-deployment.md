@@ -83,6 +83,8 @@ controllerの終了・復旧処理は修正済み。実subprocessでtimeout・SI
 
 DB移行を伴うv2は、旧署名に一致する23段階のregistryを保持し、`project-materials` と `project-materials-ocr` の追加だけを許可する。追加するmanifest・SQLのdigestを新署名に固定し、旧schemaの一致・処理の完了・権限を検査してから、DDLと更新admissionを同じトランザクションで適用する。既存回答の書き換えや任意migrationの実行は許可しない。CIMD childが存在するDBや、新しいDB・volumeへの移行はこの契約で扱わない。
 
+APIの並行更新で、Lean Recipeの検証ソースに対する一意制約が、ソース単独から「ソース・ツールチェーン」の組へ変わった。この変更はv1・v2の許可範囲に含めない。専用v3の契約を準備し、旧25段階registry `54b0cc58…` から新25段階 `612a7ef8…` への移行だけに限定する。既存のcatalog manifestの差分と `002_toolchain_scoped_source.sql` のdigestを署名へ固定し、旧構造・全行・権限の一致を検査する。SQLとadmissionは同じトランザクションで適用する。Miniでの実配備は、隔離DBでの検証と独立レビュー後に行う。
+
 API側の通常更新とDB移行は [pals-api `ddb0c8d`](https://github.com/AtsushiHosaka/pals-api/commit/ddb0c8d9d8f24bcfb8a67184001bdef76faa1865) でpush済み。最新ソースのv1と、旧23段階から25段階へのv2を隔離した実PostgreSQLで検証し、旧データ・ACLの維持、DDLとadmissionの一括rollback、commit後の通信失敗の再観測を確認した。関連unit 230件も成功した。隔離試験の署名は実EC鍵を使うローカル検証。10月5日の手動デプロイでは、Miniの実KMSと3サービスの切替も成功した。CIMD専用のAPI child配備や初回署名スクリプトは、3サービスの継続更新を代用しない。
 
 [継続更新の追加試験 `c616968`](https://github.com/AtsushiHosaka/pals-api/commit/c616968bca527ef6ca0b35e58c0a4e6808b5f5be) では、実23段階からv2 seq2へ進み、さらに新しい親・全ソース・3イメージを持つv1 seq3へ更新できた。同ファイルの19試験が成功し、旧データ・ACL、最終admissionの全18項目一致、v1でDDLがないことを確認した。Docker通信はfixtureを使い、DBとEC署名は実処理で検証している。
