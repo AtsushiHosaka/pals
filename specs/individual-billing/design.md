@@ -131,9 +131,11 @@ subscription ID; `invoice.paid|payment_failed` use nonempty `data.object.subscri
 nonempty `data.object.subscription` to trigger subscription retrieval. Missing, malformed, or mismatched fields are
 recorded `ignored` and have no entitlement effect. For an extracted subscription ID, the API retrieves the current Stripe
 subscription and projects that response only if its customer metadata maps exactly to one existing owner. Thus a late or
-equal-second event cannot overwrite a later subscription state. A failed retrieval marks the event
-`reconciliation_pending` and keeps the affected entitlement non-granting until a later verified
-event/reconciliation retrieves an `active` subscription.
+equal-second event cannot overwrite a later subscription state. A temporary retrieval failure (transport failure,
+HTTP 408/429 or 5xx, or an unreadable JSON response) propagates as HTTP 503 and rolls back the whole event transaction, including any event-ledger
+insertion or binding changes. The previous entitlement remains valid only until its existing period end; no extension
+or new grant is inferred. Stripe can redeliver the same event and it is deduplicated only after a successful commit.
+Permanent subscription/binding/price validation failures retain the existing non-granting reconciliation behavior.
 Accepted lifecycle types are `customer.subscription.created`, `customer.subscription.updated`,
 `customer.subscription.deleted`, `invoice.paid`, `invoice.payment_failed`, and binding-only
 `checkout.session.completed`. `active` is the sole granting state;
@@ -142,6 +144,16 @@ Accepted lifecycle types are `customer.subscription.created`, `customer.subscrip
 unsupported type is recorded as ignored after signature verification and has no entitlement effect. The
 `checkout.session.completed` event can bind the customer but never activates entitlement itself without a subsequent
 retrieval of an `active` subscription.
+
+Project creation uses the same account advisory lock and entitlement resolver as material admission inside the project
+transaction. Resolve against the database clock before inserting the Project, accepting active paid tiers, legacy Pro
+and valid complimentary grants. Reject Free, expired or revoked access with `project_plan_required` (403) and no writes.
+Existing reads remain owner-scoped and do not require a paid entitlement. The frontend uses the billing summary to
+direct Free accounts to plan settings and prevent creation while entitlement is unknown; the API remains authoritative.
+
+Public pages publish the approved Plus USD 10, Pro USD 20 and Research USD 100 monthly prices. Account settings retain
+the API-owned catalogue and distinguish published prices from `checkout_enabled`. When Checkout is disabled, describe
+purchase preparation without implying that prices are undecided. Keep catalogue/version and token-policy launch gates.
 
 Local sandbox verification uses an explicit `PALS_ENV=local` configuration file, separate from production's injected
 JSON. The mode-0600 regular file must belong to the effective runtime user; symlinks, oversized inputs and simultaneous
