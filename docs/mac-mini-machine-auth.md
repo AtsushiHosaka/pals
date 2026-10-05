@@ -35,15 +35,17 @@ AWS IAM Roles Anywhereに専用のCAを登録し、Miniが証明書と秘密鍵�
 
 保管先は `/Users/hosakaatsushi/pals-mini-deploy/machine-auth`。directoryは所有UID 501・mode `0700`、秘密鍵は `0600`。Git、Actions出力、ログ、コンテナへ秘密鍵を渡さない。既存の用途別短期sessionを渡す方式と、workerの独立role policyを維持する。signerはnative配備処理だけが900秒以内のsessionをメモリで扱う。
 
-設置中の検証では、専用CAと4用途のleafをこの領域に生成した。CAの期限は2036年10月5日、leafは2026年11月4日。実OpenSSLによるpair・chain・権限の検査と、更新失敗時の旧世代保持を含む15テストが通過した。常駐プロセスによる実AWS認証と自然更新は検証を残している。
+設置中の検証では、専用CAと4用途のleafをこの領域に生成した。CAの期限は2036年10月5日、leafは2026年11月4日。実OpenSSLによるpair・chain・権限の検査と、更新失敗時の旧世代保持を含む15テストが通過した。常駐プロセスによる自然更新と稼働サービスへの切り替えは検証を残している。
 
-CAとleafは、公式helperが扱える名前付きEC曲線で生成した。4roleの分割trustは適用と読み戻しを完了し、旧SSOと権限を保持した。APIはSSO設定・cacheを利用しない実AWS認証に成功し、予定のRoleIdとsession名で1時間のsessionを取得した。残り3用途と常駐brokerへの切り替えは検証中。
+CAとleafは、公式helperが扱える名前付きEC曲線で生成した。4roleの分割trustは適用と読み戻しを完了し、旧SSOと権限を保持した。全4用途で、SSO設定・cacheを利用しない実AWS認証を2回確認した。予定のRoleIdとsession名で、runtimeは1時間、signerは900秒のsessionを取得した。worker証明書で別roleを使う要求、session名違い、runtimeとsignerのprofile取り違えも、実AWSが拒否した。workerの新leafは実認証後に有効世代へ切り替わり、一時的な更新失敗では、有効な旧leafを再認証して保持した。
+
+LaunchAgentからの全4用途の認証も成功した。ただし、Documents配下の旧session保存先への書き込みはmacOSのアクセス制御で拒否された。新しい保存先を `/Users/hosakaatsushi/pals-mini-deploy/runtime-sessions` に移し、用途別ディレクトリとコンテナのread-only mountを保つ。旧brokerは、候補サービスとDBの独立照合が完了するまで旧保存先を更新し、旧サービスへの復旧に備える。新brokerの自然更新と実配備は検証中。
 
 CAのCNは `pals-macmini-machine-ca`。leafは `pals-macmini-api`、`pals-macmini-worker`、`pals-macmini-backup-writer`、`pals-macmini-release-signer` の4つに分ける。CA鍵を読めるホストユーザーは4用途すべてを認証できるため、同じUID内での権限分離は保証しない。Miniホストを信頼境界とし、AWS側では4roleの権限に限定する。
 
 ## 証明書の更新と一時障害からの復帰も自動化する
 
-CAは10年、leafは30日の有効期間とし、leafの期限7日前から更新する案。broker起動時とSTS更新前にも期限を検査し、長期停止後の失効したleafも、有効なCAから再発行する。新しいkey・certificateを同じ世代directoryに作り、pair・chain・CN・期限と実AWS identityを検査してから原子的に切り替える。
+CAは10年、leafは30日の有効期間とし、leafの期限7日前から更新する。broker起動時とSTS更新前にも期限を検査し、長期停止後の失効したleafも、有効なCAから再発行する。新しいkey・certificateを同じ世代directoryに作り、pair・chain・CN・期限と実AWS identityを検査してから原子的に切り替える。
 
 CA自体の交換は事前保守として扱う。leafの自動更新だけで、登録anchorとCAも無期限に更新できるとは説明しない。CAの失効前に交換する手順と監視を設置する。CA鍵が漏洩した場合は、専用anchorを無効化する。
 
