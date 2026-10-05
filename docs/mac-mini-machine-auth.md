@@ -1,6 +1,6 @@
 # Miniの常時運転を人のSSOから切り離す
 
-更新日: 2026年10月5日。対象はPALSの運用者。現状と変更案の確認用。機械認証は未設置で、AWS設定と秘密鍵の新設は本人の許可待ち。
+更新日: 2026年10月5日。対象はPALSの運用者。現状と変更案の確認用。本人からこの構成の設置許可を受領し、機械認証の導入と実機検証を進めている。
 
 ## SSOの期限延長では常時運転にならない
 
@@ -22,6 +22,8 @@ AWS IAM Roles Anywhereに専用のCAを登録し、Miniが証明書と秘密鍵�
 4roleはすべて `/pals-mini-prod/` 配下。ARN・RoleId・既存permissions・boundaryを維持する。trustに専用anchor ARN、account、CAのissuer CN、用途別leaf CN、既存の固定RoleSessionNameを要求するstatementだけを追加する。既存のSSO statementを保持し、同時変更を検出したら適用を止める。両profileで `acceptRoleSessionName=true` とし、毎回session名を明示する。[AWS trust model](https://docs.aws.amazon.com/rolesanywhere/latest/userguide/trust-model.html)
 
 同accountの全roleを読み取り監査する。他roleにanchor未限定のRoles Anywhere trustがあれば、4用途限定とは判断せず、設置を止める。[accountの信頼境界](https://docs.aws.amazon.com/rolesanywhere/latest/userguide/introduction.html)
+
+設置前の読み取り監査では、既存anchorとprofileは各0件。account全10roleにRoles Anywhere trustやwildcardのAllow principalはなかった。既存4roleはすべて1時間上限で、attached policy・permissions boundaryはない。APIには、SQS用policyに加えて既存CIMDのCognito読み取り検査policyがある。この既存policyも保持する。
 
 [読み取り専用の計画コード](https://github.com/AtsushiHosaka/pals-infra/commit/e5c9bcc77278879bc6e953305e8df1b378c8a284)はpush済み。既存RoleId、roleの1時間上限、runtime profileの3600秒・signerの900秒、用途分離、既存trustの保全、同時変更の拒否を検査する。21テストと独立レビューが成功した。AWS変更や鍵作成の機能は持たない。CA・profile設定のhashは変更検出のための値であり、実issuer・CN属性の対応や全account監査、実認証を証明するものではない。
 

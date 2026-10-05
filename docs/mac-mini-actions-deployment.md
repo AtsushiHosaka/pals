@@ -30,9 +30,9 @@ controllerの終了・復旧処理は修正済み。実subprocessでtimeout・SI
 
 2026年10月5日、本人から「書類」へのアクセスを許可したとの返信を受領した。00:04 UTCの確認では、夜間に既存SSOが再び失効し、brokerの3用途すべてが未ready、旧workerは同じCID・imageのまま停止していた。API・Web・公開edgeは稼働し、DBの現行admissionはsequence1、pending更新はなかった。本人へ同じprofileでの再ログインを依頼した。[親 `cf823eb` の実runner preflight](https://github.com/AtsushiHosaka/pals/actions/runs/37246137103) は成功したが、この検査はnative controllerを起動しない。この時点では `MACMINI_DEPLOY_READY=false`、`MACMINI_AUTO_DEPLOY` は未設定だった。
 
-本人の再ログイン後、同じAWS identityを確認し、旧workerを同じCID・imageで復帰した。`MACMINI_DEPLOY_READY=true` にして再実行した [手動デプロイ](https://github.com/AtsushiHosaka/pals/actions/runs/37247403226) は成功した。実runnerのnative controllerが起動し、親 `ffb84277ddd306092570965260793b059dcd9545` の3image build、実KMS署名、通常v2更新を通過した。MiniではDBのsequence2、3サービスのRunning、pendingなし、同じSHAの `current.json` がhealthyであることを確認した。保存行・権限・署名admission全18項目は独立照合中。
+本人の再ログイン後、同じAWS identityを確認し、旧workerを同じCID・imageで復帰した。`MACMINI_DEPLOY_READY=true` にして再実行した [手動デプロイ](https://github.com/AtsushiHosaka/pals/actions/runs/37247403226) は成功した。実runnerのnative controllerが起動し、親 `ffb84277ddd306092570965260793b059dcd9545` の3image build、実KMS署名、通常v2更新を通過した。MiniではDBのsequence2、3サービスのRunning、pendingなし、同じSHAの `current.json` がhealthyであることを確認した。09:35 JSTの独立照合では、署名admission全18項目、source7・image3、旧73テーブルの全行、旧権限1032項目、回答2件・利用量10行の維持を確認した。worker readyと公開応答200・200・匿名401も通過した。
 
-ユーザーは、定期的な人の再ログインに依存する構成を常時運用の解決として認めていない。`MACMINI_AUTO_DEPLOY` は未設定を維持し、[Mini専用の機械認証](mac-mini-machine-auth.md)を準備する。CA・秘密鍵の永続保存は自動承認レビューが拒否したため、保管先・4用途の認証範囲・更新方法を提示して本人の許可を求めた。許可までは秘密鍵の生成とAWS設定の変更を行わない。自動デプロイをONにする許可は引き続き受領済み。
+ユーザーは、定期的な人の再ログインに依存する構成を常時運用の解決として認めていない。`MACMINI_AUTO_DEPLOY` は未設定を維持し、[Mini専用の機械認証](mac-mini-machine-auth.md)を導入する。CA・秘密鍵の永続保存は自動承認レビューが一度拒否したため、保管先・4用途の認証範囲・更新方法を提示した。本人から「設置して良い」と明示許可を受領し、設置と実機検証を進めている。自動デプロイをONにする許可も受領済み。
 
 既存のMac用DB初期化は、空のDBへの初回適用と同一署名の再実行に限定される。通常のAPI・Web・workerを新しいコミットへ継続更新するプログラムは、ホストの入口へ接続し、実runnerからの手動配備が成功した。常時運転用の機械認証とpush連動の検証を残している。初回用の `sign-and-apply-production-release.py` や `--apply-mac` を、自動更新の代わりに呼ばない。
 
