@@ -7,4 +7,5 @@ WORKING checklist. Evidence: [initial rollout](../../docs/public-guest-chat-impl
 - [x] GUEST-003: Three daily messages per session and network including clarification replies, global cap, JST reset, replay without consumption; real PostgreSQL concurrency/upgrade tests.
 - [x] GUEST-005: Origin, cookie, cache/index/referrer and trusted client-IP boundaries.
 - [ ] GUEST-002: A successful real-provider guest answer after the three-message change (the 2026-10-04 run ended `proof_reuse_provider_unavailable`; the earlier one-message rollout answered successfully).
+- [ ] GUEST-002 (2026-10-05): Lean-required guest flow — guest reads expose linked-job stage, verified Lean source and reviewed explanation; no answer on Lean failure; real local guest journey.
 - [ ] GUEST-005/007: Production ingress with the admitted Cloudflare client-IP header and exact proxy addresses.
