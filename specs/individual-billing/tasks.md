@@ -11,7 +11,8 @@ Evidence: [USD sandbox verification](../../docs/usd-plans-sandbox-2026-09-30.md)
 - [ ] BILL-013/014: Audit remaining formal proof, clarification, materials and project capability paths before declaring the full new policy complete; keep unsupported paths explicitly unavailable.
 - [x] BILL-014: Enforce paid Project creation under the account lock; verify Free/expired/revoked denial, paid/complimentary acceptance, no writes on denial, retained reads and UI upgrade paths.
 - [x] BILL-007/012: Publish decided monthly USD 10/20/100 prices in public pages and settings; distinguish Checkout preparation from price availability in all four languages.
-- [ ] BILL-015: Request-linked Lean jobs share the request hold/token operation; exactly-once consume/release on real PostgreSQL; linked-job token permits.
+- [x] BILL-015: Request-linked Lean jobs share the request hold/token operation with no second reservation; exactly-once consume/release on real PostgreSQL (`test_proof_request_lean_flow.py`); local journey consumed the successful hold and released the failed one. Evidence: `docs/lean-required-flow-evidence-2026-10-05.md`.
+- [ ] BILL-015: Linked-job provider calls obtain permits and receipts against the request's token operation (today only assessment-stage usage is settled).
 - [x] BILL-005: Return 503 and roll back temporary Stripe lookup failures; verify preserved entitlement, no processed-event record and exactly-once success on redelivery. Signed-route tests pass against real PostgreSQL.
 
 | ID | Task | Requirements | Verification |
