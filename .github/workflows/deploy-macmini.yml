@@ -72,8 +72,10 @@ jobs:
         run: |
           python3 -m unittest discover -s pals-scripts/tests -p 'test_deploy_macmini.py'
           python3 -m unittest discover -s pals-scripts/tests -p 'test_checkout_macmini_submodules.py'
+          python3 -m unittest discover -s pals-scripts/tests -p 'test_check_macmini_main.py'
           python3 -m py_compile pals-scripts/deploy-macmini.py
           python3 -m py_compile pals-scripts/checkout-macmini-submodules.py
+          python3 -m py_compile pals-scripts/check-macmini-main.py
 
   runner-check:
     name: Mac mini runner connectivity and runtime check
@@ -272,7 +274,32 @@ jobs:
           set -euo pipefail
           /usr/bin/python3 pals-scripts/checkout-macmini-submodules.py \
             --source-dir "$GITHUB_WORKSPACE/macmini-deploy" --revision "$PALS_DEPLOY_REVISION"
+      - name: Skip a parent revision superseded by main
+        id: main-head
+        if: env.PALS_MACMINI_MODE == 'deploy'
+        working-directory: macmini-deploy
+        shell: bash
+        env:
+          PALS_MAIN_READ_TOKEN: ${{ env.PALS_MACMINI_CHECKOUT_AUTH == 'repository-token' && github.token || '' }}
+        run: |
+          set -euo pipefail
+          status="$(/usr/bin/python3 pals-scripts/check-macmini-main.py --revision "$PALS_DEPLOY_REVISION" --auth "$PALS_MACMINI_CHECKOUT_AUTH")"
+          case "$status" in
+            current)
+              printf 'deploy=true\n' >> "$GITHUB_OUTPUT"
+              ;;
+            superseded)
+              printf 'deploy=false\n' >> "$GITHUB_OUTPUT"
+              echo 'Deployment skipped: the requested parent revision was superseded by main.'
+              printf 'Deployment skipped: superseded parent revision. No controller was started.\n' >> "$GITHUB_STEP_SUMMARY"
+              ;;
+            *)
+              echo 'The current main revision could not be verified; deployment is blocked.' >&2
+              exit 1
+              ;;
+          esac
       - name: Run the host deployment controller contract
+        if: env.PALS_MACMINI_MODE != 'deploy' || steps.main-head.outputs.deploy == 'true'
         working-directory: macmini-deploy
         shell: bash
         run: |
