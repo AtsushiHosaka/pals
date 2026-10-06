@@ -2,6 +2,8 @@
 
 更新日: 2026年10月5日。対象はPALSの運用者。本人の設置許可に基づき、機械認証の設置・自然更新・実Actionsからの配備を検証した。
 
+10月6日のAWS失効通知に対する現行証明書の照合と、用途別の更新手順は[11月4日の期限前確認](machine-auth-certificate-expiry-2026-10-06.md)に記録する。API・worker・backup-writerは常駐broker、release-signerは署名用sessionの取得時に期限を確認する。
+
 ## SSOの期限延長では常時運転にならない
 
 導入前のMiniは、人の `pals-prod-member` SSOから用途別のSTS sessionを取得していた。既存brokerは1時間のsessionを30分ごとに更新するが、元のSSOが失効すると更新できない。10月4日と5日に失効し、workerが停止した。5日の本人再ログイン後、同じworkerのCID・imageでRunningとreadyへ復帰した。復旧時にはDB更新や新しい権限の付与を行っていない。
