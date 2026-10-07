@@ -51,7 +51,7 @@ infraのhost単体試験51件、Caddy 2.10.2の構文検証、実HTTPの経路�
 
 ユーザーは、サブエージェントによるレビュー後のmainマージを明示的に許可した。最終レビューで、infraのv5許可設定が明示的に検査されていないP2を認めた。`8aa5700`で、新規plan・再利用・実行・署名の前にv5の許可を要求し、鍵の差異も署名前に拒否するよう修正した。追加5件を含むhost単体56件とdiff検査が成功し、修正後の再レビューを依頼した。APIの独立再レビューでは289件が成功し、マージ前の修正事項はなかった。
 
-mainへの取り込みと本番反映は、このレビューが完了してから行う。公開画面は入口修復後の503を利用不可の案内として表示し、入力欄と質問例はまだ無効。Miniでは保護された鍵を用意し、現行25→guest26のplan検査が成功したが、署名・DB更新・ゲスト有効化は未実施。
+この段階では、mainへの取り込みと本番反映をレビュー完了まで保留した。公開画面は入口修復後の503を利用不可の案内として表示し、入力欄と質問例は無効だった。Miniでは保護された鍵を用意し、現行25→guest26のplan検査に成功した。
 
 本番側では、Miniの現行Caddy設定、API起動設定、ゲストschemaの状態を読み取りで照合してから、必要な差分を確定する。必要なゲスト経路は次の範囲に限定する。
 
@@ -74,3 +74,21 @@ APIの有効化には、既存のschemaとhash keyの一致、guest service、�
 完了条件は、公開ゲスト経路のOPTIONSが正しいOriginを許可し、`/try`でセッション開始後に入力欄と質問例が利用できること。開始時の一時失敗後は、未送信入力と既存の操作キーを保った再接続で復帰することも確認する。許可しないOriginとprivate経路は引き続き拒否される必要がある。
 
 質問の送信・回答生成は、開始状態の確認とは分けて結果を記録する。ローカルのUI単体試験を、公開経路や本番DBでの合格の代用にしない。
+
+## 公開ゲスト開始の復旧を確認した
+
+API・infra・Web・親の最終サブエージェントレビューはすべてPASS。infraのP2は修正後の再レビューで解消を確認し、親の参照更新も再確認した。その後、API PR5、infra PR3、Web PR5、親PR7をmainへマージした。親の配備revisionは`7c45dbb7769e042ea909f21b5fd5b25f6c918a01`。GitHubのDeploy Mac mini run `37581604284`で、親の検査と本番更新が成功した。
+
+Miniの観測では署名付きv5が適用され、配備番号は9から10になった。pendingはなく、DB・volume・host identityが一致し、API・Web・workerとedgeが稼働した。保護鍵・v5許可・source hashを照合した後にゲスト設定を有効化した。鍵の値と認証情報はこの記録に含めない。
+
+06:43〜06:45 UTCに、このチャットから公開ChromeとHTTPを独立確認した。`https://palschat.site/try`で実セッションが開始され、入力欄と3つの質問例が有効になった。接続エラーの表示はない。公開HTTPの結果は次のとおり。
+
+| 確認 | 結果 |
+| --- | --- |
+| 許可Originからのsession OPTIONS | 200、許可Originとcredentialsのヘッダーあり |
+| 非許可Originからのsession OPTIONS | 400、許可Originヘッダーなし |
+| Cookieなしのsession GET | 401 `guest_session_required` |
+| session DELETEと余分なパス | 404 |
+| 実在するinternal worker-input経路への公開GET | 404 |
+
+Mini側も実session POST 200とCookie付きGET 200、Secure/HttpOnly Cookie、残数3、非許可OriginのPOST 403を確認した。ブラウザ証跡は追跡対象外の`outputs/guest-entry-repair/20261007/public-session-ready.png`。質問と補足回答は送信しておらず、回答生成の動作確認はこの修復完了判定に含めない。
