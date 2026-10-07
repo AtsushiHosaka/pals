@@ -6,6 +6,8 @@ Status: WORKING — implementation baseline authorized by the user's 2026-09-30 
 
 Share a frozen copy of one owned chat through an unguessable public link. Both Project and projectless chats, including existing proof conversations, are in scope. Editing, collaboration, importing a shared chat, automatic publication of later messages, and search discovery are out of scope.
 
+The 2026-10-07 image-sharing delta is defined by [chat-experience](../chat-experience/requirements.md), CHAT-005: owner preview and frozen publication include chat attachment images. Image storage/deletion contracts and implementation remain pending; this does not authorize publication of Project materials.
+
 | ID | Observable requirement |
 |---|---|
 | SHARE-001 | The owner can open Share from an existing chat and review the complete content that will be published before creating a link. An empty chat cannot be published. A chat that changes after preview requires a refreshed preview before publication. |

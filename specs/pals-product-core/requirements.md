@@ -27,6 +27,8 @@ PALS の最小体験は、数学の問いを送信し、Lean による形式検�
 
 詳細と実装中の作業契約は [proof-request-reuse](../proof-request-reuse/requirements.md) を参照する。
 
+チャットに入力した数式の表示と画像添付・画面改修は[chat-experience](../chat-experience/requirements.md)が定義する。証明以外への回答範囲は同仕様の未決事項であり、CORE-012を緩める決定ではない。
+
 ## Acceptance Criteria
 
 - 自然言語の数学問題と形式的な命題のいずれも、通常の送信だけで証明要求を開始できる。Project 配下、Project 非所属、ゲストのいずれでも、提示する回答はすべて CORE-002 を満たす Lean 検証済みの証明であり、Lean 検証の選択や同意を学習者に求めない。Lean が通らなかった要求には回答本文を表示せず、検証できなかったことと再試行を示す。

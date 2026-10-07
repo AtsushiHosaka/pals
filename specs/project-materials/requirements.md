@@ -17,7 +17,7 @@ Status: WORKING. PDF添付は必須機能であり、添付UIの復旧が未完�
 | MAT-007 | 資料から問題文を補う場合、抽出した命題全文を提示して学習者の確認を得るまで証明生成を始めない。 | Implemented |
 | MAT-008 | 削除後は原本・ページ画像を返さず、処理中の結果も公開しない。過去の回答本文は書き換えない。 | Implemented (API) |
 | MAT-012 | 資料の追加は API 側で現在有効な有料資格（Stripe の active 契約または無償 Pro 付与）を要求する。資格が切れても既存資料・回答は閲覧できる。新規 Project 作成の有料化は未実装（individual-billing の未決事項）。 | Partially implemented |
-| MAT-011 | チャットへの画像の直接添付。 | Not implemented |
+| MAT-011 | チャットへの画像の直接添付。会員・ゲストの操作、履歴、実画像入力、共有は[chat-experience](../chat-experience/requirements.md)が定義する。Project資料へ自動追加しない。 | Not implemented |
 | MAT-016 | 質問の受付時、ファイル名で明示されていない資料のうち読取りに失敗したものは対象から外し、他の質問を妨げない。明示された資料が失敗または処理中なら受け付けずに理由を示す。処理中の資料がある場合は、完了まで受け付けずに理由を示す。 | Implemented 2026-10-05 |
 
 ## Non-goals
