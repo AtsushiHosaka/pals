@@ -1,5 +1,13 @@
 # Individual Billing Tasks
 
+## 2026-10-07 model tariffs and complete utilization accounting
+
+- [ ] BILL-016: Add immutable standard tariffs for selected Luna/Sol/Terra and a distinct new-policy version; validate cached/write/ordinary input, the per-call context threshold (including two short calls whose cumulative input exceeds 272,000), tier/region, safe integer bounds and operation-level rounding. Keep all historical snapshots and old-policy replay calculations unchanged.
+- [ ] BILL-016: Version provider parsing, receipt contracts and additive storage for all applicable tariff categories; missing or ambiguous provider usage stays unresolved. Verify actual adapter-to-API serialization and provider metadata without fabricating missing counts.
+- [ ] BILL-013/015/016: Meter request-linked Lean generation, repairs, reviews and explanations with the same operation and per-call actual model prices; verify complete success/failure/retry accounting on real PostgreSQL. Assessment-only totals do not satisfy this task.
+- [ ] BILL-016 / PFR-001: Bind model and price/role versions into quote, persistence, idempotency and workers; reject mismatched quotes, unsupported/unavailable models and unauthorized reviewer identities. Keep fixed reviewer policy distinct from selected generation and include both in actual accounting.
+- [ ] BILL-007/016: Show actual settled utilization, active reservations and remaining allowance; verify price-change stability, model switches, replay, original-period settlement and failure zero consumption. Run a bounded real-provider journey for each supported model and inspect persisted usage from every stage.
+
 ## USD catalogue and utilization-token sandbox rollout
 
 Evidence: [USD sandbox verification](../../docs/usd-plans-sandbox-2026-09-30.md). Checked items are limited to the supported natural-answer route; this is not full-policy or production completion.
@@ -31,6 +39,6 @@ Evidence: [USD sandbox verification](../../docs/usd-plans-sandbox-2026-09-30.md)
 
 ## Completion gate
 
-The release is complete only after BILL-T001 through BILL-T009 pass. Unit tests, a Stripe success redirect, or a
+The earlier billing release is complete only after BILL-T001 through BILL-T009 pass; the new tariff policy additionally requires the unchecked BILL-016 tasks above. Unit tests, a Stripe success redirect, or a
 frontend-only price screen do not prove entitlement enforcement. Public production Checkout additionally requires the
 tax/legal launch inputs stated in the requirements.
