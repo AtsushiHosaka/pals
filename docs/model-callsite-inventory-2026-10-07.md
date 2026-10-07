@@ -95,3 +95,13 @@ pipelineはworker内で再利用され、explainerとQA clientも起動時に作
 ユーザーが連携を指示した別チャット「チャット機能を拡張」と`generation_model`の名称と接続方針を共有した。そちらの新しい意図判定は固定、通常説明の生成は選択モデル、独立QAは固定とする。今回のソース調査は新しい意図判定の実装済みを意味しない。
 
 調査結果はPFR-001とBILL-016のrequirements・design・未完了tasksへ反映した。今回完了したのは利用箇所の調査と仕様整理。selector、各工程の実績計測、新原価精算の実装・実動作検証は未実施。
+
+## 追加調査：後段の検証にはlinked LeanのDB権限整合も必要
+
+2026-10-07 JST、連携先からagent `1006f2c`、webfront `e62dd15`のpushと、API統合中の報告を受けた。モデルの保存・受け渡し、通常説明の選択生成、固定のintent判定・QAは連携先が実装したと報告している。以下はその後の追加調査であり、冒頭の参照commitを対象とした調査とは区別する。
+
+API `aa8b12c`のproduction registryは26段階で、`proof_request_lean`を含まない。連携先の作業中のregistryには`proof-request-lean`と`chat-experience`の2段階が追加されていた。これは作業中の変更を確認した結果であり、本番適用済みを意味しない。
+
+同じAPIのcanonical migrationでは、`pals_api_runtime`に対する`proof_jobs`のSELECT/UPDATE権限は`generation_claim_id`と`generation_claim_expires_at`に限定される（`api/app/db/migrations/canonical/001_proof_job_runtime.sql:1522`）。一方、linked Leanの受付は`_insert_proof_job`で行を追加し、後続処理はstateやLeanコードなどを直接SELECTする（連携先の作業ツリーの`api/app/infrastructure/repositories/proof_request_lean.py:76`、`:159`、`postgres.py:6638`）。許可された列と必要な操作が一致していない。上記2段階の登録だけでは、この権限不整合の解消を確認できない。
+
+後段の生成モデル選択、usage permit/receipt、精算の検証では、実際の制限されたAPI権限でlinked jobを作成・実行・完了できることも確認する。強いDB権限で成功したテストだけでは、この前提を満たしたと判断しない。連携先はチャット削除用の限定的なscrub関数を追加中で、既存Leanの権限境界全体の修正範囲はユーザーに確認中と報告している。このチャットでは権限変更やDB実動作検証を行っていない。実環境の接続ロールと追加の権限設定も未確認であり、上記はソース上の不整合を示す。
