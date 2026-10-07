@@ -10,6 +10,8 @@ The user approved monthly Plus USD10, Pro USD20 and Research USD100, followed by
 
 The USD rollout supersedes the single-plan exclusion only for the new catalogue. Mid-period upgrades/proration and automatic contract migration are not part of this rollout; an active subscription is managed through Portal and cannot open a duplicate subscription. Unimplemented token-operation capabilities must fail closed and be reported as incomplete, never silently fall back to 100 requests.
 
+For accepted corrections during processing, [PFR-020](../proof-request-reuse/requirements.md) governs the same request's accounting lineage: count accounting consumes at most one completed-answer unit; successful token settlement includes actual usage from superseded generations, with new fingerprint-bound permits/quotes inside the displayed cumulative cap. Supersession is not final failure. Previously settled records remain immutable; a continuation after an old publication settles only its eligible unsettled delta. Existing final-failure release and historical-scope rules still apply. Saving a correction at insufficient allowance does not authorize another paid call or increase the cap.
+
 ## 2026-09-30 approved token-policy change
 
 新制度は固定回数から、全依頼の処理負荷を換算した「利用トークン」へ移行する。生成・内部修復・検索・独立QA・説明までを対象とし、送信前に表示した最大量を予約する。独立QA済み説明の提供成功で実績だけを確定し、失敗では消費しない。画像の読取り量も反映し、設定・アカウントメニューで実残量を示す。有料資格はProject新規作成・資料追加にも必要で、解約後の既存閲覧は維持する。

@@ -1,5 +1,9 @@
 # Individual Billing Design
 
+## Correction accounting
+
+The request/input-generation/intake boundaries are defined in [proof-request-reuse design](../proof-request-reuse/design.md#additions-during-processing). Keep one logical count settlement per request and immutable token call/generation records. Supersession fences old result settlement, but permits already admitted under the old snapshot still accept exact late usage receipts. New interpretation and continuation calls need permits. Revised fingerprints require new quotes against the cumulative remaining cap; transferring reservations cannot double-hold allowance or reset usage. Unknown usage prevents successful settlement. If the old answer was already published/settled, retain its records and settle only the continuation delta. A final failure releases unsettled allowance under BILL-013/015 and does not reverse historical successful settlement. At exhaustion, intake remains durable and publication is held, while paid work awaits explicit resume with valid allowance and quote. This is an unimplemented extension, not evidence that all linked Lean calls are metered.
+
 ## USD sandbox rollout (2026-09-30)
 
 Use an API-owned `usd-monthly-test-2026-09-30` catalogue for plus/pro/research. A closed runtime v2 maps these IDs to distinct Stripe Prices and optionally retains the legacy JPY Pro Price. Add product identity to Stripe operations/subscriptions; preserve the existing Free/Pro entitlement classification for legacy callers and expose the actual product separately in summary v2. Only local test keys may activate the provisional token policy.

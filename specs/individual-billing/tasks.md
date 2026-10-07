@@ -31,6 +31,8 @@ Evidence: [USD sandbox verification](../../docs/usd-plans-sandbox-2026-09-30.md)
 
 ## Completion gate
 
+- [ ] BILL-013/015 + PFR-020 correction accounting: implement logical count settlement, immutable generation/call usage and continuation deltas; permit interpretation and every linked Lean call; preserve cumulative cap with revised-fingerprint quotes and atomic reservation transfer. Real PostgreSQL checks must cover supersession, old settlement racing intake, late/unknown receipts, successor-hold isolation, final failure, period changes and explicit resume at exhaustion. Existing billing evidence does not verify this extension.
+
 The release is complete only after BILL-T001 through BILL-T009 pass. Unit tests, a Stripe success redirect, or a
 frontend-only price screen do not prove entitlement enforcement. Public production Checkout additionally requires the
 tax/legal launch inputs stated in the requirements.
