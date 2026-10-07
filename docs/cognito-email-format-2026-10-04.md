@@ -1,5 +1,7 @@
 # Cognitoメールの表示改善
 
+追記：2026年10月8日に、公開登録画面と本番Poolの不一致を修正し、新規登録を許可した。[変更内容と設定保持の確認](cognito-public-signup-repair-2026-10-08.md)。以下の「管理者招待限定」は10月4日時点の記録。
+
 2026年10月4日、既存の本番Cognitoプール `pals-mini-prod`
 （`ap-northeast-1_CnwrhavzI`）に、招待・確認メールの日本語件名とHTML本文を反映した。
 
