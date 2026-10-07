@@ -1,12 +1,21 @@
 # Implementation tasks
 
+## 2026-10-07 selectable GPT models
+
+- [x] PFR-001 scope decision: Luna/Sol/Terra for answer and Lean production; fixed server policy for Draft suitability and other judgment/QA calls. The user directed a complete call-site audit before implementation; the audit is recorded separately and does not prove working selection.
+- [x] PFR-001 call-site audit: trace actual factory/client/worker wiring at the parent-pinned revisions, classify generation/judgment/operational uses, identify shared bindings and missing usage, and agree `generation_model` with the chat-experience chat. Evidence: [model inventory](../../docs/model-callsite-inventory-2026-10-07.md).
+- [ ] PFR-001: Split mixed assessment/answer, generation/repair-route and explanation/QA clients according to the confirmed role policy. Preserve fixed assessment escalation and request-scoped concurrent isolation.
+- [ ] PFR-001: Add an API-owned closed model catalogue, immutable request selection, quote/idempotency bindings and worker transport. Verify defaults, unsupported/unavailable models, changed-model conflicts, reload and exact replay on real PostgreSQL.
+- [ ] PFR-001/007: Add the composer selector and accepted-model display in the existing four languages; verify project/projectless flows, retained input and concurrency isolation. Guest availability must remain within existing guest budgets.
+- [ ] PFR-001 / BILL-016: Construct request-scoped provider clients with valid per-model Responses parameters; preserve Lean/independent-review requirements and meter every role using its actual model identity. Real-provider success and failure evidence is required for each exposed choice.
+
 Current scope: this file tracks the Lean-required branch. CHAT-007/008 add high-performance intent classification and a separate ordinary explanation under [chat-experience](../chat-experience/tasks.md); historical checked items do not verify that new route.
 
 - [ ] PFR-001/007/013 and CHAT-007/008: preserve Lean-only proof settlement while adding the distinct reviewed-explanation contract, route-bound durable evidence, billing settlement, member/guest rendering and real-provider/DB acceptance.
 
 Working baseline: requirements and design in this directory, user approval 2026-09-30 plus the explicit ordinary-send/no-required-Lean correction on 2026-10-02 JST. Existing uncommitted work is preserved. Budget 120 minutes for this implementation pass, commands normally ≤60 seconds, two transient retries maximum; root owns cancellation and final cleanup.
 
-- [x] PFR-001: Luna/Terra bindings, Responses parameters, usage and price registration; targeted model and price tests.
+- [x] PFR-001 historical baseline: Luna/Terra bindings, Responses parameters, usage and price registration; targeted model and price tests. This does not satisfy the 2026-10-07 selectable-model delta.
 - [x] PFR-002/003/008: real catalog/LLM reuse and instantiation, bounded escalation, application evidence, worker queue integration; mathematical rejection and no-Lean tests.
 - [x] PFR-004/005/006: durable PostgreSQL request/answer/lease/outbox/usage/quota API and release migrations; actual DB integration checks.
 - [x] PFR-007: project and projectless UI, premise answers, reload/polling/owner isolation and safe rendering; interaction tests and typecheck.
