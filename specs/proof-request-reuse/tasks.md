@@ -4,10 +4,12 @@
 
 - [x] PFR-001 scope decision: Luna/Sol/Terra for answer and Lean production; fixed server policy for Draft suitability and other judgment/QA calls. The user directed a complete call-site audit before implementation; the audit is recorded separately and does not prove working selection.
 - [x] PFR-001 call-site audit: trace actual factory/client/worker wiring at the parent-pinned revisions, classify generation/judgment/operational uses, identify shared bindings and missing usage, and agree `generation_model` with the chat-experience chat. Evidence: [model inventory](../../docs/model-callsite-inventory-2026-10-07.md).
-- [ ] PFR-001: Split mixed assessment/answer, generation/repair-route and explanation/QA clients according to the confirmed role policy. Preserve fixed assessment escalation and request-scoped concurrent isolation.
+- [x] PFR-001 implementation boundary: Split mixed assessment/answer, generation/repair-route and explanation/QA clients according to the confirmed role policy. Fixed assessment escalation, request-scoped concurrent isolation and DSP/Recipe stage transitions pass isolated client/worker regressions. Connected Lean acceptance remains below.
 - [ ] PFR-001: Add an API-owned closed model catalogue, immutable request selection, quote/idempotency bindings and worker transport. Verify defaults, unsupported/unavailable models, changed-model conflicts, reload and exact replay on real PostgreSQL.
-- [ ] PFR-001/007: Add the composer selector and accepted-model display in the existing four languages; verify project/projectless flows, retained input and concurrency isolation. Guest availability must remain within existing guest budgets.
+- [x] PFR-001/007 UI boundary: Add the composer selector and accepted-model display in the existing four languages; verify project/projectless flows, retained input, concurrent selections and existing guest-budget behavior in transport/component/story tests. Production build passes with Webpack; connected API/browser acceptance remains below.
 - [ ] PFR-001 / BILL-016: Construct request-scoped provider clients with valid per-model Responses parameters; preserve Lean/independent-review requirements and meter every role using its actual model identity. Real-provider success and failure evidence is required for each exposed choice.
+
+Implementation and scoped verification: [2026-10-07 evidence](../../docs/gpt-model-selection-implementation-evidence-2026-10-07.md). Checked implementation boundaries do not complete the unchecked DB/provider/Lean acceptance obligations.
 
 Current scope: this file tracks the Lean-required branch. CHAT-007/008 add high-performance intent classification and a separate ordinary explanation under [chat-experience](../chat-experience/tasks.md); historical checked items do not verify that new route.
 
