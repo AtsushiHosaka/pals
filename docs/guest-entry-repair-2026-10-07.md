@@ -81,6 +81,8 @@ API・infra・Web・親の最終サブエージェントレビューはすべて
 
 Miniの観測では署名付きv5が適用され、配備番号は9から10になった。pendingはなく、DB・volume・host identityが一致し、API・Web・workerとedgeが稼働した。保護鍵・v5許可・source hashを照合した後にゲスト設定を有効化した。鍵の値と認証情報はこの記録に含めない。
 
+有効化時のMini証跡では、同じ署名済みAPIイメージとadmissionを維持し、元の資格情報guardと回数を限ったDB起動時検査を通過した。実プロセスに`--no-proxy-headers`があり、`UVICORN_PROXY_HEADERS=false`、信頼する直前peerは`172.25.0.5`、許可Originは`https://palschat.site`だった。鍵はメモリ内だけで受け渡し、Docker Config Envや引数に含めていない。schemaの鍵一致とruntime権限も検査に合格した。
+
 06:43〜06:45 UTCに、このチャットから公開ChromeとHTTPを独立確認した。`https://palschat.site/try`で実セッションが開始され、入力欄と3つの質問例が有効になった。接続エラーの表示はない。公開HTTPの結果は次のとおり。
 
 | 確認 | 結果 |
@@ -92,3 +94,5 @@ Miniの観測では署名付きv5が適用され、配備番号は9から10に�
 | 実在するinternal worker-input経路への公開GET | 404 |
 
 Mini側も実session POST 200とCookie付きGET 200、Secure/HttpOnly Cookie、残数3、非許可OriginのPOST 403を確認した。ブラウザ証跡は追跡対象外の`outputs/guest-entry-repair/20261007/public-session-ready.png`。質問と補足回答は送信しておらず、回答生成の動作確認はこの修復完了判定に含めない。
+
+文章検査のTTRには情報レベルの指摘がある。署名・鍵・ゲストなどの技術語を繰り返す必要があるため、意味を曖昧にする言い換えは行わなかった。
