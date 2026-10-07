@@ -59,7 +59,7 @@ The user approved asking back first when a request is likely false or its truth 
 
 ## Additions during processing (approved 2026-10-07)
 
-Design/specification only is complete; all implementation and runtime checks below remain unexecuted.
+Implementation and scoped behavioral checks were added on 2026-10-07. Evidence: `docs/chat-input-implementation-2026-10-07.md`. The checkboxes remain open where the complete task includes real queue/Lean/browser acceptance; implementation-only evidence does not close those gates.
 
 - [ ] CORE-013 + PFR-005/016/018/019 API: additive input-generation/intake/ordered-chat-queue schema and migration; closed owner/session-bound intake with idempotency; atomic receipt/publication hold, interpretation and mixed-input admission; intent/allowance waits and explicit resume. Verify on real PostgreSQL both receipt/publication commit orders, replay, cross-tab conflicts, reload and other-owner denial.
 - [ ] PFR-017/019 API/agent: snapshot-bound assessment and obsolete linked-job detachment; gate settlement/reconciliation/explanation/QA/source/event publication and retries by current input generation. Verify delayed old assessment and Lean completion, pending-input holds that release for independent questions, and no obsolete job revival.
