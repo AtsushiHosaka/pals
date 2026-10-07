@@ -1,6 +1,6 @@
 # Proof request design
 
-The proof-request aggregate is what the ordinary Send action creates in project, projectless and guest chats. It owns premise clarification, catalog retrieval and the decision of how the request is Lean-verified. The existing proof-job aggregate remains the Lean engine (DSP generation, isolated verifier, repair, semantic review, explanation, follow-up questions). There is no learner-facing Lean mode selector or consent step.
+The request aggregate is what the ordinary Send action creates in project, projectless and guest chats. Before proof-specific assessment, CHAT-007 classifies intent. This file defines the Lean-required branch: premise clarification, catalog retrieval and how the request is verified. CHAT-008 defines the separately reviewed ordinary-explanation branch. The existing proof-job aggregate remains the Lean engine (DSP generation, isolated verifier, repair, semantic review, explanation, follow-up questions). There is no learner-facing Lean mode selector or consent step.
 
 ## States and outcomes
 
@@ -14,7 +14,7 @@ The worker settles a claimed revision with one of:
 - `formal`: everything else. The settlement carries the plan (`instantiate` with Recipe binding and substitutions, or `dsp`) and the confirmed premises. In the same transaction the API creates one linked proof job (statement plus confirmed context, `context.proof_request_id`, `context.lean_plan`), its event and dispatch outbox, without a second billing reservation, and sets the request to `verifying` with `formal_job_id`.
 - `failed`: provider/catalog/integrity failures and unsupported requests (no answer text).
 
-LLM-only `answer` settlements are rejected for new revisions.
+LLM-only proof `answer` settlements remain rejected for new revisions. The CHAT-008 explanation delta requires a distinct persisted response kind and review binding; the current rejection cannot simply be removed or the Lean-flow flag disabled. Explanation creation, rendering, shared snapshots and billing settlement must agree on that distinction. This new route is not yet implemented.
 
 ## Linked Lean job
 

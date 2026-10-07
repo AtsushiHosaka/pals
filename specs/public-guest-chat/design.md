@@ -5,6 +5,8 @@ API contract, release command and configuration are owned by
 
 ## API and persistence
 
+The CHAT-007/008 delta classifies guest requests before proof assessment and permits independently reviewed ordinary explanations. Existing proof settlements continue to require Lean. Image-only requests and PNG/JPEG attachments under CHAT-009/010 require a new bounded attachment contract; the current text-only schema below is the implementation baseline, not verification of those features.
+
 - `POST/GET /v1/guest/session`, `POST /v1/guest/proof-requests`, `GET /v1/guest/proof-requests/{id}`, `POST /v1/guest/proof-requests/{id}/answers`. Statement 1–2000 characters; output language `en|ja|zh-Hans|zh-Hant`; idempotency key `[A-Za-z0-9_-]{32,128}`. Queries, duplicate credential headers, duplicate JSON members and bodies over 32 KiB are rejected.
 - The `pals_guest` cookie is an opaque 256-bit token (HttpOnly, SameSite=Lax, path `/v1/guest`, Secure in prod, 48 h). Only its SHA-256 digest is stored. Mutations require an exact allowed `Origin`.
 - `pals_guest_chat` schema stores sessions, chat bindings, initial and continuation admissions and daily budgets. One globally serialized PostgreSQL transaction checks the session, network and global budgets, inserts the admission and enqueues the ordinary proof-request outbox. Network identity is an HMAC of the IPv4 /32 or IPv6 /64; production uses `cf-connecting-ip` only from exact trusted proxy addresses. Session creation is also rate-limited per network and globally.

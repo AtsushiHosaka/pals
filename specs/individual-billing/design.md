@@ -1,5 +1,7 @@
 # Individual Billing Design
 
+The 2026-10-07 CHAT-007/008 delta adds intent classification and independently reviewed ordinary explanations to BILL-015. A member request's hold/operation covers classification, the selected answer route and independent review; the ordinary route settles on its reviewed explanation without requiring a nonexistent Lean job. Proof settlement keeps its Lean evidence gate. Under token policy, classification, image and explanation usage require bounded permits/receipts. Guests retain their separate daily admission counts. No new token-policy capability is enabled by this spec update alone.
+
 ## USD sandbox rollout (2026-09-30)
 
 Use an API-owned `usd-monthly-test-2026-09-30` catalogue for plus/pro/research. A closed runtime v2 maps these IDs to distinct Stripe Prices and optionally retains the legacy JPY Pro Price. Add product identity to Stripe operations/subscriptions; preserve the existing Free/Pro entitlement classification for legacy callers and expose the actual product separately in summary v2. Only local test keys may activate the provisional token policy.

@@ -1,5 +1,9 @@
 # Implementation tasks
 
+Current scope: this file tracks the Lean-required branch. CHAT-007/008 add high-performance intent classification and a separate ordinary explanation under [chat-experience](../chat-experience/tasks.md); historical checked items do not verify that new route.
+
+- [ ] PFR-001/007/013 and CHAT-007/008: preserve Lean-only proof settlement while adding the distinct reviewed-explanation contract, route-bound durable evidence, billing settlement, member/guest rendering and real-provider/DB acceptance.
+
 Working baseline: requirements and design in this directory, user approval 2026-09-30 plus the explicit ordinary-send/no-required-Lean correction on 2026-10-02 JST. Existing uncommitted work is preserved. Budget 120 minutes for this implementation pass, commands normally ≤60 seconds, two transient retries maximum; root owns cancellation and final cleanup.
 
 - [x] PFR-001: Luna/Terra bindings, Responses parameters, usage and price registration; targeted model and price tests.

@@ -1,5 +1,7 @@
 # Individual Billing Tasks
 
+- [ ] BILL-013/015 and CHAT-007/008: bind high-performance intent classification and ordinary explanation/review usage to the request operation; settle reviewed explanations without weakening Lean proof settlement. Verify exactly-once hold/settlement/release, bound QA receipts, guest-budget separation and model price identities on real PostgreSQL/provider calls.
+
 ## USD catalogue and utilization-token sandbox rollout
 
 Evidence: [USD sandbox verification](../../docs/usd-plans-sandbox-2026-09-30.md). Checked items are limited to the supported natural-answer route; this is not full-policy or production completion.
