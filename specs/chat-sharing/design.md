@@ -31,3 +31,7 @@ The existing project and projectless chat headers open one reusable sharing dial
 ## Verification and operations
 
 Use the existing PALS local services and test database fixture; do not create duplicate stacks. Real PostgreSQL integration proves durable publication and isolation. Real Cognito/API/browser testing proves anonymous route behavior, publication, reload, and revocation. Unit checks cover projection/parser and UI failure states but do not replace real integration. Production deployment is outside this local implementation request; document the release command and verify its restricted-runtime grants.
+
+## Image and chat deletion delta
+
+CHAT-005/011 adds ordered image manifests to the same preview digest and frozen publication. Binary payloads are stored separately from bounded snapshot JSON. Owner preview uses authorized private reads; public image reads require an active share and its exact manifest. Chat deletion atomically revokes the share and fences all source/image reads before payload cleanup. Revoked or deleted content cannot be reactivated. Normal-store image erasure and expired guest cleanup have a 24-hour ceiling; backup retention is at most 30 days. Restore must reapply deletion markers before serving data.

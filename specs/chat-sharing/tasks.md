@@ -7,3 +7,5 @@ This is a WORKING implementation checklist, not a production release declaration
 - [x] SHARE-001/003/005/006: Add sharing entry points, preview/publish/copy/revoke dialog, and anonymous read-only page using shared rendering and four-language copy.
 - [x] SHARE-001–007: Run focused unit/static checks and real PostgreSQL cases; independently review trust, transaction, auth, async state, and public rendering boundaries.
 - [x] SHARE-001–007: Run the real local owner → anonymous reader → revoke browser journey; document migration command, current evidence, residual gaps, and final changed-file revisions.
+
+- [ ] SHARE-001/002/003/005/007 + CHAT-005/011: Bind image manifests to preview/publication, serve fixed images with active authority, and revoke public content atomically on chat deletion; verify payload cleanup and retention.
