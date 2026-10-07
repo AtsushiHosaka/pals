@@ -95,4 +95,6 @@ Miniの観測では署名付きv5が適用され、配備番号は9から10に�
 
 Mini側も実session POST 200とCookie付きGET 200、Secure/HttpOnly Cookie、残数3、非許可OriginのPOST 403を確認した。ブラウザ証跡は追跡対象外の`outputs/guest-entry-repair/20261007/public-session-ready.png`。質問と補足回答は送信しておらず、回答生成の動作確認はこの修復完了判定に含めない。
 
+Miniの最終照合では、既存80表の行digestと設定変更前後1107件のACLが一致し、workerがready、pendingなしだった。Cloudflare上書き値の直接比較は未実施。通常ヘッダーの到達と、偽装を試みた公開リクエストの403は確認した。
+
 文章検査のTTRには情報レベルの指摘がある。署名・鍵・ゲストなどの技術語を繰り返す必要があるため、意味を曖昧にする言い換えは行わなかった。
