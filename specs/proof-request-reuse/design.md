@@ -1,6 +1,6 @@
 # Proof request design
 
-The proof-request aggregate is what the ordinary Send action creates in project, projectless and guest chats. It owns premise clarification, catalog retrieval and the decision of how the request is Lean-verified. The existing proof-job aggregate remains the Lean engine (DSP generation, isolated verifier, repair, semantic review, explanation, follow-up questions). There is no learner-facing Lean mode selector or consent step.
+The request aggregate is what the ordinary Send action creates in project, projectless and guest chats. Before proof-specific assessment, CHAT-007 classifies intent. This file defines the Lean-required branch: premise clarification, catalog retrieval and how the request is verified. CHAT-008 defines the separately reviewed ordinary-explanation branch. The existing proof-job aggregate remains the Lean engine (DSP generation, isolated verifier, repair, semantic review, explanation, follow-up questions). There is no learner-facing Lean mode selector or consent step.
 
 ## States and outcomes
 
@@ -14,7 +14,7 @@ The worker settles a claimed revision with one of:
 - `formal`: everything else. The settlement carries the plan (`instantiate` with Recipe binding and substitutions, or `dsp`) and the confirmed premises. In the same transaction the API creates one linked proof job (statement plus confirmed context, `context.proof_request_id`, `context.lean_plan`), its event and dispatch outbox, without a second billing reservation, and sets the request to `verifying` with `formal_job_id`.
 - `failed`: provider/catalog/integrity failures and unsupported requests (no answer text).
 
-LLM-only `answer` settlements are rejected for new revisions.
+LLM-only proof `answer` settlements remain rejected for new revisions. The CHAT-008 explanation delta requires a distinct persisted response kind and review binding; the current rejection cannot simply be removed or the Lean-flow flag disabled. Explanation creation, rendering, shared snapshots and billing settlement must agree on that distinction. This new route is not yet implemented.
 
 ## Linked Lean job
 
@@ -28,7 +28,7 @@ The formal worker runs a request-linked job like any proof job. For `instantiate
 
 PFR-001 now permits Luna, Sol and Terra for generation; fixed assessment retains its own server policy. The API owns a closed catalogue of the exact three IDs and their availability. The shared DTO name is `generation_model`, agreed with the concurrent chat-experience implementation. Composers submit that exact ID with the request and quote; accepted request/response, worker claim and linked Lean context carry it. The selection is durable request metadata, included in the canonical idempotency fingerprint; accepted work never reads a mutable account setting to determine its model. Continuation, retry and exact replay preserve the admitted generation model. Changing an unsent selection invalidates its previous quote. Omitted selection preserves the existing Luna default; historical requests retain their recorded identities and are not relabelled.
 
-The agent constructs request-scoped clients from the accepted selection and pinned role policy; it must not mutate shared worker clients across concurrent requests. UI reload and idempotency replay show the accepted selection. Model unavailability produces an explicit failure and preserves the input. Independent review, Lean verification and allowance limits remain mandatory for every selectable model. Guest selection, when supported by the deployed catalogue, remains constrained by the existing guest budgets.
+The agent constructs request-scoped clients from the accepted selection and pinned role policy; it must not mutate shared worker clients across concurrent requests. UI reload and idempotency replay show the accepted selection. Model unavailability produces an explicit failure and preserves the input. Independent review and allowance limits remain mandatory for every selectable model; the Lean-required branch keeps its Lean verification gate, while ordinary explanations follow CHAT-008. Guest selection, when supported by the deployed catalogue, remains constrained by the existing guest budgets.
 
 The user has approved the three choices and cost-derived utilization accounting, and directed a complete call-site inventory before implementation. Selection affects production of answers, DSP drafts/sketches/Lean proofs, regenerated Lean after repair, explanation and follow-up answers. Assessment, counterexample/premise checks, Draft/Recipe correspondence and source decisions, repair-route decisions, OpenMath/search conversion, embeddings/reranking, proof semantic review and answer/output QA retain their existing server-owned fixed role policy. Bounded Terra escalation belongs to that fixed assessment policy, not a silent override of selected generation. Background ingestion/evaluation/admin tools do not inherit the chat selection.
 

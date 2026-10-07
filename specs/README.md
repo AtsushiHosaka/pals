@@ -13,6 +13,7 @@
 - [projectless-chat-start](projectless-chat-start/requirements.md) — Project に属さないチャット。
 - [chat-navigation](chat-navigation/requirements.md) — チャット検索と新着回答の表示。
 - [chat-sharing](chat-sharing/requirements.md) — 固定スナップショットの公開リンク。
+- [chat-experience](chat-experience/requirements.md) — チャットへの画像添付、入力した数式の表示、入力欄と会話表示の改修。
 - [project-materials](project-materials/requirements.md) — Project 資料・OCR・回答の出典。
 - [public-guest-chat](public-guest-chat/requirements.md) — 公開LPとログイン不要のゲストチャット。
 - [individual-billing](individual-billing/requirements.md) — 無料枠、有料プラン、利用トークン、課金安全境界。

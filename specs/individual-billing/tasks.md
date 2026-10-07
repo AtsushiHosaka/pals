@@ -8,6 +8,8 @@
 - [ ] BILL-016 / PFR-001: Bind model and price/role versions into quote, persistence, idempotency and workers; reject mismatched quotes, unsupported/unavailable models and unauthorized reviewer identities. Keep fixed reviewer policy distinct from selected generation and include both in actual accounting.
 - [ ] BILL-007/016: Show actual settled utilization, active reservations and remaining allowance; verify price-change stability, model switches, replay, original-period settlement and failure zero consumption. Run a bounded real-provider journey for each supported model and inspect persisted usage from every stage.
 
+- [ ] BILL-013/015 and CHAT-007/008: bind high-performance intent classification and ordinary explanation/review usage to the request operation; settle reviewed explanations without weakening Lean proof settlement. Verify exactly-once hold/settlement/release, bound QA receipts, guest-budget separation and model price identities on real PostgreSQL/provider calls.
+
 ## USD catalogue and utilization-token sandbox rollout
 
 Evidence: [USD sandbox verification](../../docs/usd-plans-sandbox-2026-09-30.md). Checked items are limited to the supported natural-answer route; this is not full-policy or production completion.
