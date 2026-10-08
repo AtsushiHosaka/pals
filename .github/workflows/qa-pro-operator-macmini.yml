@@ -6,7 +6,7 @@ on:
       mode:
         description: Inspect the host, install the reviewed v6 authority, or grant permanent QA Pro
         type: choice
-        options: [inspect, install, grant]
+        options: [inspect]
         default: inspect
         required: true
       subject:
@@ -69,7 +69,7 @@ jobs:
           from pathlib import Path
 
           mode = os.environ['PALS_OPERATOR_MODE']
-          if mode not in {'inspect', 'install', 'grant'}:
+          if mode != 'inspect':
               raise SystemExit('Unsupported operator mode.')
           source = Path.cwd().resolve()
           args = [
