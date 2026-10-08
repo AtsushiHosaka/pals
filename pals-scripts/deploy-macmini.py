@@ -161,6 +161,18 @@ def read_config(path: Path, source: Path) -> dict:
         == config["controller_sha256"],
         "Release controller fingerprint does not match.",
     )
+    header = controller.read_bytes().split(b"\n", 1)[0]
+    if header.startswith(b"#!"):
+        try:
+            interpreter = Path(header[2:].decode("utf-8").strip().split()[0])
+        except (UnicodeDecodeError, IndexError):
+            raise DeploymentError("Release controller interpreter is invalid.") from None
+        require(
+            interpreter.is_absolute()
+            and interpreter.is_file()
+            and os.access(interpreter, os.X_OK),
+            "Release controller interpreter is unavailable.",
+        )
     require(
         isinstance(config["docker_context"], str)
         and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}", config["docker_context"])
