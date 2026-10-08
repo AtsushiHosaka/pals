@@ -213,6 +213,110 @@ class HostBoundaryTests(unittest.TestCase):
     def test_protected_config_accepted(self):
         self.assertEqual(deploy.read_config(self.config_path, self.source), self.config)
 
+    def enable_assessment(self):
+        self.config["schema_version"] = deploy.CONFIG_V2
+        self.config["containers"]["assessment-worker"] = "pals-assessment-prod"
+        self.write_config()
+
+    def test_v2_requires_exact_four_distinct_containers(self):
+        self.enable_assessment()
+        self.assertEqual(deploy.read_config(self.config_path, self.source), self.config)
+        valid = copy.deepcopy(self.config)
+        for mutation in ("missing", "duplicate", "extra", "old-schema", "bad-schema"):
+            with self.subTest(mutation=mutation):
+                self.config = copy.deepcopy(valid)
+                if mutation == "missing":
+                    del self.config["containers"]["assessment-worker"]
+                elif mutation == "duplicate":
+                    self.config["containers"]["assessment-worker"] = self.config[
+                        "containers"
+                    ]["worker"]
+                elif mutation == "extra":
+                    self.config["containers"]["unexpected"] = "other"
+                elif mutation == "old-schema":
+                    self.config["schema_version"] = deploy.CONFIG_V1
+                else:
+                    self.config["schema_version"] = []
+                self.write_config()
+                with self.assertRaises(deploy.DeploymentError):
+                    deploy.read_config(self.config_path, self.source)
+
+    def assessment_fixture(self):
+        revisions, receipt = self.release_fixture()
+        observations = self.docker_observations(revisions, receipt)
+        self.enable_assessment()
+        receipt["schema_version"] = "pals.macmini-deploy-result.v2"
+        prefix = ("docker", "--context", self.config["docker_context"], "inspect")
+        observations[(*prefix, self.config["containers"]["assessment-worker"])] = [
+            {"Image": receipt["images"]["worker"], "State": {"Running": True}}
+        ]
+        for service in ("worker", "assessment-worker"):
+            observations[(*prefix, self.config["containers"][service])][0][
+                "State"
+            ].update(
+                Status="running",
+                Paused=False,
+                Restarting=False,
+                Dead=False,
+                Health={"Status": "healthy"},
+            )
+        return revisions, receipt, observations
+
+    def test_v2_receipt_reuses_three_signed_images(self):
+        revisions, receipt, _ = self.assessment_fixture()
+        deploy.validate_receipt(receipt, revisions, self.config)
+        for mutation in ("old-schema", "extra-image"):
+            with self.subTest(mutation=mutation):
+                invalid = copy.deepcopy(receipt)
+                if mutation == "old-schema":
+                    invalid["schema_version"] = "pals.macmini-deploy-result.v1"
+                else:
+                    invalid["images"]["assessment-worker"] = receipt["images"]["worker"]
+                with self.assertRaises(deploy.DeploymentError):
+                    deploy.validate_receipt(invalid, revisions, self.config)
+
+    def test_v2_assessment_matches_signed_worker_and_both_are_ready(self):
+        revisions, receipt, observations = self.assessment_fixture()
+        capture = self.verify_docker_observations(revisions, receipt, observations)
+        self.assertEqual(capture.call_count, 8)
+        for service in ("worker", "assessment-worker"):
+            for mutation in (
+                "image",
+                "stopped",
+                "starting",
+                "unhealthy",
+                "missing-health",
+                "Paused",
+                "Restarting",
+                "Dead",
+                "wrong-status",
+            ):
+                with self.subTest(service=service, mutation=mutation):
+                    invalid = copy.deepcopy(observations)
+                    item = invalid[
+                        (
+                            "docker",
+                            "--context",
+                            self.config["docker_context"],
+                            "inspect",
+                            self.config["containers"][service],
+                        )
+                    ][0]
+                    if mutation == "image":
+                        item["Image"] = "sha256:" + "f" * 64
+                    elif mutation == "stopped":
+                        item["State"]["Running"] = False
+                    elif mutation == "missing-health":
+                        del item["State"]["Health"]
+                    elif mutation in ("Paused", "Restarting", "Dead"):
+                        item["State"][mutation] = True
+                    elif mutation == "wrong-status":
+                        item["State"]["Status"] = "exited"
+                    else:
+                        item["State"]["Health"]["Status"] = mutation
+                    with self.assertRaises(deploy.DeploymentError):
+                        self.verify_docker_observations(revisions, receipt, invalid)
+
     def test_config_permissions_rejected(self):
         self.config_path.chmod(0o644)
         with self.assertRaises(deploy.DeploymentError):

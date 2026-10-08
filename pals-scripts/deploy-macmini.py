@@ -37,6 +37,13 @@ SHA = re.compile(r"[0-9a-f]{40}")
 DIGEST = re.compile(r"[0-9a-f]{64}")
 IMAGE = re.compile(r"sha256:[0-9a-f]{64}")
 SERVICES = {"api", "web", "worker"}
+ASSESSMENT_SERVICE = "assessment-worker"
+CONFIG_V1 = "pals.macmini-deploy-config.v1"
+CONFIG_V2 = "pals.macmini-deploy-config.v2"
+
+
+def container_services(schema: str) -> set[str]:
+    return SERVICES | ({ASSESSMENT_SERVICE} if schema == CONFIG_V2 else set())
 
 
 class DeploymentError(Exception):
@@ -131,7 +138,8 @@ def read_config(path: Path, source: Path) -> dict:
     }
     require(
         set(config) == required
-        and config["schema_version"] == "pals.macmini-deploy-config.v1",
+        and isinstance(config["schema_version"], str)
+        and config["schema_version"] in {CONFIG_V1, CONFIG_V2},
         "Mac mini configuration does not match the deployment contract.",
     )
     for name in ("state_dir", "controller"):
@@ -160,16 +168,17 @@ def read_config(path: Path, source: Path) -> dict:
         "Docker context is invalid.",
     )
     containers = config["containers"]
+    expected_services = container_services(config["schema_version"])
     require(
         isinstance(containers, dict)
-        and set(containers) == SERVICES
+        and set(containers) == expected_services
         and all(
             isinstance(name, str)
             and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", name)
             for name in containers.values()
         )
-        and len(set(containers.values())) == 3,
-        "Configure three distinct existing production containers.",
+        and len(set(containers.values())) == len(expected_services),
+        "Configure the exact distinct production containers required by this schema.",
     )
     identity = config["database_identity"]
     require(
@@ -424,6 +433,11 @@ def signal_controller_group(group: int, signum: int) -> None:
 
 
 def validate_receipt(receipt: dict, revisions: dict[str, str], config: dict) -> None:
+    expected_schema = (
+        "pals.macmini-deploy-result.v2"
+        if config["schema_version"] == CONFIG_V2
+        else "pals.macmini-deploy-result.v1"
+    )
     require(
         set(receipt)
         == {
@@ -435,7 +449,7 @@ def validate_receipt(receipt: dict, revisions: dict[str, str], config: dict) -> 
             "images",
             "database_identity",
         }
-        and receipt["schema_version"] == "pals.macmini-deploy-result.v1"
+        and receipt["schema_version"] == expected_schema
         and receipt["status"] == "applied"
         and receipt["parent_sha"] == revisions["pals"]
         and receipt["source_commits"] == revisions
@@ -461,6 +475,7 @@ def validate_receipt(receipt: dict, revisions: dict[str, str], config: dict) -> 
 
 def verify_containers(config: dict, receipt: dict, revisions: dict[str, str]) -> None:
     for service, name in config["containers"].items():
+        component = "worker" if service == ASSESSMENT_SERVICE else service
         value = json.loads(
             capture(["docker", "--context", config["docker_context"], "inspect", name])
         )
@@ -471,9 +486,20 @@ def verify_containers(config: dict, receipt: dict, revisions: dict[str, str]) ->
         container = value[0]
         require(
             container.get("State", {}).get("Running") is True
-            and container.get("Image") == receipt["images"][service],
+            and container.get("Image") == receipt["images"][component],
             "Production container is not running the controller-reported image.",
         )
+        if config["schema_version"] == CONFIG_V2 and component == "worker":
+            state = container.get("State", {})
+            require(
+                state.get("Status") == "running"
+                and all(
+                    state.get(flag) is False
+                    for flag in ("Paused", "Restarting", "Dead")
+                )
+                and state.get("Health", {}).get("Status") == "healthy",
+                "Both production workers must report healthy readiness.",
+            )
         labels = (
             json.loads(
                 capture(
@@ -483,7 +509,7 @@ def verify_containers(config: dict, receipt: dict, revisions: dict[str, str]) ->
                         config["docker_context"],
                         "image",
                         "inspect",
-                        receipt["images"][service],
+                        receipt["images"][component],
                     ]
                 )
             )[0]
@@ -492,7 +518,7 @@ def verify_containers(config: dict, receipt: dict, revisions: dict[str, str]) ->
             or {}
         )
         owner = {"api": "pals-api", "web": "pals-webfront", "worker": "pals-agent"}[
-            service
+            component
         ]
         require(
             labels.get("org.opencontainers.image.revision") == revisions[owner]

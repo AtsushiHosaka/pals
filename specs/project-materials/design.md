@@ -16,4 +16,8 @@ At proof-request admission the project lock is taken and the materials are selec
 
 ## Frontend
 
-There is no learner-facing materials UI: neither a project-home panel nor answer citations are rendered. `MaterialCitations` and its read-only `MaterialPreview` page dialog remain in the codebase unused; reintroducing them requires a new placement decision. Submission errors for unready materials are still shown in the chat language.
+MAT-003 requires a materials panel on the project home. It lists filename, size, processing state and errors, and uses the existing materials API for PDF/PNG/JPEG upload, cancellation, extraction retry, confirmed deletion, original download and server-rendered page previews. PDF attachment must be usable from this screen; retaining only the API does not satisfy the requirement. Preserve the existing four locales, keyboard access, progress notifications and responsive layout. Check paid entitlement for new uploads, and keep existing materials readable after entitlement expires.
+
+Keep the answer-side OCR text and citation panel hidden. Opening an original page from the project materials list is a separate user action and remains available. Do not restore the unwanted answer panel when restoring attachment management. Submission errors for unready materials remain in the chat language, and stored citations remain bound and validated as described above.
+
+Implementation gap: webfront `fc3a0b5` removed the project-home materials panel. Restore that entry point and its operations without reverting unrelated landing-page or answer-selection changes. This design update does not establish that the UI has been restored.

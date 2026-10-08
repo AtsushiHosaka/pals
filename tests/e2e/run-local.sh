@@ -97,6 +97,7 @@ compose build --provenance=false api verifier worker webfront
 
 # Secrets Manager must be ready before a real certificate generation can be created.
 compose up -d --wait postgres localstack cognito-local
+compose exec -T localstack sh /etc/localstack/init/ready.d/10-pals-resources.sh
 "$project_root/pals-agent/.venv/bin/python" \
   "$project_root/pals-scripts/harden-local-postgres-access.py" --apply
 
@@ -198,7 +199,7 @@ compose_runtime() {
 
 # Quiesce mutations before the release job; it has no API ports or fixed IP.
 # Failure stops startup and preserves the database for diagnosis.
-compose_runtime stop worker recipe-reviewer api reconciler
+compose_runtime stop worker assessment-worker recipe-reviewer api reconciler
 compose_runtime run --rm --no-deps schema-release
 compose_runtime up -d --wait
 
