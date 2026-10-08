@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import contextlib
 import copy
 import hashlib
 import importlib.util
+import io
 import json
 import os
 import signal
@@ -768,6 +770,30 @@ class HostBoundaryTests(unittest.TestCase):
                 self.assertRaises(deploy.DeploymentError),
             ):
                 deploy.signal_controller_group(123, signal.SIGKILL)
+
+
+class MainFailureTests(unittest.TestCase):
+    def run_failed_main(self, error):
+        output = io.StringIO()
+        with (
+            mock.patch.object(sys, "argv", ["deploy-macmini.py", "--config", "/fixed/config.json", "--revision", "a" * 40]),
+            mock.patch.dict(os.environ, {"GITHUB_ACTIONS": "true"}),
+            mock.patch.object(deploy, "execute", side_effect=error),
+            mock.patch.object(deploy.signal, "signal"),
+            contextlib.redirect_stderr(output),
+        ):
+            self.assertEqual(deploy.main(), 2)
+        return output.getvalue()
+
+    def test_closed_deployment_error_is_retained_as_github_annotation(self):
+        message = "Another deployment holds the Mac mini lock."
+        output = self.run_failed_main(deploy.DeploymentError(message))
+        self.assertIn("::error title=PALS Mac mini deployment::" + message, output)
+
+    def test_sdk_or_os_failure_never_exposes_private_exception_in_annotation(self):
+        output = self.run_failed_main(OSError("private-database-password"))
+        self.assertNotIn("private-database-password", output)
+        self.assertIn("::error title=PALS Mac mini deployment::Deployment input or local operation failed.", output)
 
 
 class HealthBoundaryTests(unittest.TestCase):
