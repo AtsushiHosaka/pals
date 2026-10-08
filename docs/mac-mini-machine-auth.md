@@ -47,6 +47,8 @@ CAのCNは `pals-macmini-machine-ca`。leafは `pals-macmini-api`、`pals-macmin
 
 CAは10年、leafは30日の有効期間とし、leafの期限7日前から更新する。broker起動時とSTS更新前にも期限を検査し、長期停止後の失効したleafも、有効なCAから再発行する。新しいkey・certificateを同じ世代directoryに作り、pair・chain・CN・期限と実AWS identityを検査してから原子的に切り替える。
 
+2026年10月8日、AWSの用途別証明書の警告を既定の45日前から3日前へ変更し、読み戻しで確認した。30日leafが発行直後から毎日の警告対象になる状態を解消するための変更である。警告は有効のまま、CAの45日前警告も保持した。設置・再構築時も、期限7日前に更新し、更新が進まない場合は3日前から警告する設定を照合する。[変更と検証の記録](machine-auth-notification-repair-2026-10-08.md)に、認証処理自体が停止した場合の監視上の制約を記した。
+
 CA自体の交換は事前保守として扱う。leafの自動更新だけで、登録anchorとCAも無期限に更新できるとは説明しない。CA失効前の交換を保守作業に含める。CA鍵が漏洩した場合は、専用anchorを無効化する。
 
 brokerは期限前にSTSを更新し、一時的な失敗では再試行する。実workerのアプリ終了後に、同じコンテナが `unless-stopped` で自動復帰した。明示的な `docker stop` 後は、brokerの再起動と実AWS更新が行われても停止を維持した。試験後は同じコンテナを起動し、readyを確認した。失効したbackup-writerのleafを使う試験では、新leafの発行と実AWS認証が成功した。
