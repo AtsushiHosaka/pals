@@ -120,5 +120,9 @@ jobs:
                   results[key.replace('_available', '_starts')] = probe.returncode == 0 and probe.stdout == b'pals-interpreter-ready\n'
               except (OSError, subprocess.TimeoutExpired):
                   results[key.replace('_available', '_starts')] = False
+          root = Path('/Users/hosakaatsushi/pals-mini-deploy')
+          config = json.loads((root / 'deploy-config.json').read_bytes())
+          policy = json.loads((root / 'controller-policy.json').read_bytes())
+          results['deployment_state_matches_host_state'] = Path(config['state_dir']) == Path(policy['state_dir'])
           print(json.dumps(results))
           PYHOST
