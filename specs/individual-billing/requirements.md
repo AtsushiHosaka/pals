@@ -1,5 +1,13 @@
 # Individual Billing Requirements
 
+## 2026-10-08 permanent QA Pro delta
+
+The user requested a named, existing public PALS account receive payment-free Pro with no expiry. BILL-016 adds an operator-managed token entitlement alongside the finite, legacy-count grants in BILL-011. It does not enable public Checkout or change other accounts automatically.
+
+- BILL-016: A trusted, distinct billing operator may grant or revoke permanent complimentary token Pro for an existing enabled Cognito subject. Require an immutable grant ID, verified pool binding and audit reason. Runtime, workers and learners cannot grant or revoke. The account receives the existing Pro limits of 3,000,000 utilization tokens per UTC calendar month and 300,000 per request. Its entitlement has no expiry; its budget has a finite month-end. Grant replay and revoke/regrant in the same month preserve consumption and holds. Paid Stripe entitlement takes precedence without combining allowances. Revocation affects new admission; existing accepted work settles in its original scope, history remains and existing Free fallback applies. Active legacy and permanent complimentary grants may not overlap.
+- Keep the v2 summary closed: permanent token Pro is exactly `billing_source=complimentary`, `billing_product_id=pro`, `usage_unit=utilization_tokens`, `price=null`, null legacy Pro counts, the ordinary Pro token limits and a finite monthly `period_end`. The UI identifies indefinite payment-free access and budget refresh separately; it offers neither Stripe Portal nor duplicate purchase while this grant is active. All four languages preserve the same meaning.
+- Release only through the signed, exact PostgreSQL migration and Mac update path. Preserve earlier SQL/manifest bytes, old schema checks, database identity, existing rows and ACLs. Test operator/runtime separation, cap and concurrency, month rollover, replay, revoke/late settlement, Stripe precedence, invalid catalog/signature rejection and rollback on real PostgreSQL. Browser evidence must verify the specified public account after the actual grant; code tests alone do not prove account provisioning.
+
 ## 2026-09-30 approved USD plan change (sandbox rollout)
 
 The user approved monthly Plus USD10, Pro USD20 and Research USD100, followed by these provisional utilization-token limits: Plus 1,000,000 per period / 100,000 per request; Pro 3,000,000 / 300,000; Research 15,000,000 / 1,500,000. These are customer utilization tokens, not raw provider tokens or request counts. Apply them only in the local Stripe sandbox until whole-operation cost and correctness evidence supports release. Free's existing allowance and existing legacy/complimentary grants are unchanged by this delta. Preserve historic usage and JPY contracts.
