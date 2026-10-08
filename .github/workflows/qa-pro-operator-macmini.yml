@@ -6,7 +6,7 @@ on:
       mode:
         description: Inspect the host, install the reviewed v6 authority, or grant permanent QA Pro
         type: choice
-        options: [inspect]
+        options: [inspect, install, grant]
         default: inspect
         required: true
       subject:
@@ -39,8 +39,6 @@ jobs:
     env:
       PATH: /usr/bin:/bin:/usr/sbin:/sbin:/Users/hosakaatsushi/.orbstack/bin
       PALS_OPERATOR_MODE: ${{ inputs.mode }}
-      PALS_OPERATOR_SUBJECT: ${{ inputs.subject }}
-      PALS_OPERATOR_GRANT_ID: ${{ inputs.grant_id }}
       PALS_DEPLOY_REVISION: ${{ github.sha }}
     steps:
       - name: Checkout the exact parent
@@ -65,12 +63,27 @@ jobs:
           set -euo pipefail
           /usr/bin/python3 -B - <<'PY'
           import os
+          import json
           import subprocess
           from pathlib import Path
+          from uuid import UUID
 
           mode = os.environ['PALS_OPERATOR_MODE']
-          if mode != 'inspect':
+          if mode not in {'inspect', 'install', 'grant'}:
               raise SystemExit('Unsupported operator mode.')
+          event = json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text())
+          subject = event.get('inputs', {}).get('subject', '')
+          grant_id = event.get('inputs', {}).get('grant_id', '')
+          if mode == 'grant':
+              try:
+                  valid = str(UUID(subject)) == subject and str(UUID(grant_id)) == grant_id and UUID(grant_id).version == 4
+              except (ValueError, TypeError, AttributeError):
+                  valid = False
+              if not valid:
+                  raise SystemExit('Canonical subject and grant UUIDs are required.')
+              print('::add-mask::' + subject, flush=True)
+          elif subject or grant_id:
+              raise SystemExit('Account identifiers are only accepted in grant mode.')
           source = Path.cwd().resolve()
           args = [
               '/Users/hosakaatsushi/pals-mini-deploy/auto-recovery/runtime/bin/python',
@@ -80,14 +93,10 @@ jobs:
           ]
           if mode == 'grant':
               args += [
-                  '--subject', os.environ['PALS_OPERATOR_SUBJECT'],
-                  '--grant-id', os.environ['PALS_OPERATOR_GRANT_ID'],
+                  '--subject', subject,
+                  '--grant-id', grant_id,
                   '--reason', 'Permanent complimentary Pro for authorized QA',
               ]
-          elif os.environ['PALS_OPERATOR_SUBJECT'] or os.environ['PALS_OPERATOR_GRANT_ID']:
-              raise SystemExit('Account identifiers are only accepted in grant mode.')
           environment = dict(os.environ)
-          for key in ('PALS_OPERATOR_SUBJECT', 'PALS_OPERATOR_GRANT_ID'):
-              environment.pop(key, None)
           raise SystemExit(subprocess.run(args, env=environment, check=False).returncode)
           PY

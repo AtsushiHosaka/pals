@@ -2,11 +2,13 @@
 
 ## Permanent complimentary token Pro (BILL-016)
 
-- [ ] Add immutable operator-only permanent grant/revocation storage and CLI, subject verification, account/month scope, shared entitlement resolution and token accounting.
-- [ ] Verify real PostgreSQL caps/concurrency, month rollover, replay/regrant, revoke and late settlement, paid precedence, runtime ACL denial and catalog drift rejection.
-- [ ] Accept and display the closed permanent token Pro summary in all four languages; preserve finite legacy grants and Stripe subscriptions.
-- [ ] Verify the exact signed Mac v6 migration, invalid artifact rejection, rollback, old row/ACL preservation and v6 replay followed by ordinary v1 updates.
+- [x] Add immutable operator-only permanent grant/revocation storage and CLI, subject verification, account/month scope, shared entitlement resolution and token accounting.
+- [x] Verify real PostgreSQL caps/concurrency, month rollover, replay/regrant, revoke and late settlement, paid precedence, runtime ACL denial and catalog drift rejection.
+- [x] Accept and display the closed permanent token Pro summary in all four languages; preserve finite legacy grants and Stripe subscriptions.
+- [x] Verify the exact signed Mac v6 migration, invalid artifact rejection, rollback, old row/ACL preservation and v6 replay followed by ordinary v1 updates.
 - [ ] Install the trusted host update capability, release to the existing Mini database and grant the requested public subject. Confirm Pro, indefinite access, monthly budget and paid-feature navigation in the existing browser; retain sanitized evidence only.
+
+Evidence and live status: [permanent QA Pro verification](../../docs/permanent-pro-qa-2026-10-08.md). Code and isolated database checks do not establish actual account provisioning.
 
 ## USD catalogue and utilization-token sandbox rollout
 
