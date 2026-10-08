@@ -30,7 +30,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout the triggering parent commit
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
           submodules: false
@@ -50,7 +50,7 @@ jobs:
           fi
           printf 'revision=%s\n' "$agent_revision" >> "$GITHUB_OUTPUT"
       - name: Checkout the pinned public agent for its package boundary check
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: AtsushiHosaka/pals-agent
           ref: ${{ steps.public-agent.outputs.revision }}
@@ -153,7 +153,7 @@ jobs:
       PALS_DEPLOY_REVISION: ${{ github.sha }}
     steps:
       - name: Checkout the exact parent with repository authentication
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
           path: macmini-deploy
@@ -249,7 +249,7 @@ jobs:
           fi
       - name: Checkout the exact parent and pinned submodules
         if: env.PALS_MACMINI_CHECKOUT_AUTH == 'repository-token'
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
           path: macmini-deploy
@@ -260,7 +260,7 @@ jobs:
           clean: true
       - name: Checkout the exact parent with repository authentication
         if: env.PALS_MACMINI_CHECKOUT_AUTH == 'host-gh'
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
           path: macmini-deploy
