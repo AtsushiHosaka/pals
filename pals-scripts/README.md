@@ -13,6 +13,14 @@ It does not enforce Spec hashes, approval status, repository ownership tables,
 release promotion, or Docker proof-runtime orchestration.
 Component-specific development and tests belong to the owning repository.
 
+## Diagnostic exports
+
+Fetch helpers create unique private output directories (`0700`) and stream raw
+responses directly into the redactor. Only successfully redacted files are
+published (`0600`); provider errors, redaction failures, and handled interrupts
+discard the temporary output. Fetch commands still print the export directory
+on success and include a manifest describing redaction status.
+
 ## Local reviewer account
 
 From the parent repository, prepare the ignored `.env.local` file and run:

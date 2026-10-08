@@ -67,16 +67,23 @@ load_env() {
   export PALS_LLM_PROVIDER="${PALS_LLM_PROVIDER:-${default_llm_provider}}"
 }
 
-make_output_dir() {
+make_output_dir() (
+  umask 077
   local name="$1"
   local stamp
-  stamp="$(date -u +%Y%m%dT%H%M%SZ)"
-  local out_dir="${PALS_SCRIPTS_DIR}/outputs/${PALS_ENV}/${stamp}-${name}"
-  mkdir -p "${out_dir}"
-  printf '%s\n' "${out_dir}"
-}
+  local output_root="${PALS_SCRIPTS_DIR}/outputs"
+  local env_dir="${output_root}/${PALS_ENV}"
+  if [[ -L "${output_root}" || -L "${env_dir}" ]]; then
+    printf 'error: diagnostic output parents must not be symlinks\n' >&2
+    return 64
+  fi
+  stamp="$(date -u +%Y%m%dT%H%M%SZ)" || return "$?"
+  mkdir -p "${env_dir}" || return "$?"
+  mktemp -d "${env_dir}/${stamp}-${name}.XXXXXX"
+)
 
-write_manifest() {
+write_manifest() (
+  umask 077
   local out_dir="$1"
   local command_name="$2"
   local all_artifacts_redacted="true"
@@ -113,4 +120,4 @@ write_manifest() {
   "redacted": ${redacted}
 }
 EOF
-}
+)

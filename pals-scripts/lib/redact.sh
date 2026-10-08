@@ -167,6 +167,30 @@ sys.stdout.buffer.write(output.encode("utf-8"))
 '
 }
 
+# Capture diagnostics without ever storing the raw response on disk. Publish
+# only after both the producer and redactor succeed, and retain failure status.
+fetch_redacted_file() {
+  local file="$1"
+  shift
+  local output_dir
+  output_dir="$(cd "$(dirname "${file}")" && pwd)" || return "$?"
+  local canonical_file="${output_dir}/${file##*/}"
+  local tmp_file
+
+  (
+    set -o pipefail
+    umask 077
+    tmp_file="$(mktemp "${output_dir}/.fetch.XXXXXX")" || exit "$?"
+    trap 'rm -f -- "${tmp_file}"' EXIT
+    trap 'exit 130' INT
+    trap 'exit 143' TERM
+    "$@" | redact_stream > "${tmp_file}" || exit "$?"
+    mv -f -- "${tmp_file}" "${canonical_file}" || exit "$?"
+  ) || return "$?"
+
+  PALS_REDACTED_OUTPUT_FILES+=("${canonical_file}")
+}
+
 redact_file_in_place() {
   local file="$1"
   local canonical_file

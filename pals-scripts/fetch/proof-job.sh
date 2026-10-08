@@ -34,11 +34,8 @@ fi
 
 out_dir="$(make_output_dir proof-job)"
 
-curl -fsS \
+fetch_redacted_file "${out_dir}/proof-job.json" curl -fsS \
   -H "Authorization: Bearer ${PALS_ACCESS_TOKEN}" \
-  "${PALS_API_BASE_URL}/v1/proof-jobs/${proof_job_id}" \
-  > "${out_dir}/proof-job.json"
-
-redact_file_in_place "${out_dir}/proof-job.json"
+  "${PALS_API_BASE_URL}/v1/proof-jobs/${proof_job_id}"
 write_manifest "${out_dir}" "proof-job"
 echo "${out_dir}"
