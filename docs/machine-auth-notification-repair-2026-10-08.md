@@ -43,7 +43,17 @@ aws rolesanywhere put-notification-settings \
 
 用途別証明書のAWS Health警告は、直近1日で認証に使用した証明書だけを対象にする。認証処理自体が完全停止した場合は、この期限警告だけでは検知できない。CloudWatchの `DaysToExpiry` もCA用なので、用途別証明書の期限監視には流用しない。
 
-追加作業前のTokyo regionのCloudWatch alarmとSNS topicは0件だった。その後、ユーザーの許可でMac miniの既存チャット「検証 PALS本番起動」に、実機の最終確認と更新停止監視の整備を依頼した。12:51 JSTの `check-all` は4用途すべての実AWS認証に成功し、証明書世代は不変、更新延期もなかった。用途別の停滞検知と安全な復旧の整備結果は、引き続き確認する。
+追加作業前のTokyo regionのCloudWatch alarmとSNS topicは0件だった。その後、ユーザーの許可でMac miniの既存チャット「検証 PALS本番起動」に、実機の最終確認と更新停止監視の整備を依頼した。12:51 JSTの `check-all` は4用途すべての実AWS認証に成功し、証明書世代は不変、更新延期もなかった。12:57 JSTにもbrokerが通常の周期でSTSを更新した。
+
+MiniにLaunchAgent `site.pals.machine-auth-monitor` を設置した。毎分、用途別の状態・35分の鮮度・STS期限・証明書hash・更新延期を検査する。API・worker・backup-writerの診断認証は追加せず、署名用途だけはruntime3用途が正常な時に1時間ごとに確認する。署名用途の15分STSが自然失効したことは障害と扱わない。初回の常駐実行は正常終了し、runtime3用途が正常、backgroundからの署名用途の認証も成功した。正常時の通知は0件だった。
+
+復旧先は既存brokerのLaunchAgentに限定し、保守による明示停止と別publisherを尊重する。通常の再試行を妨げないよう、更新予定から2分の遅延では強制再起動せず、35分の鮮度基準で停滞を判定する。復旧要求は10分間隔・1時間3回まで。未解消の異常と復旧はMac通知へ送り、記録は保護されたローカル領域に残す。Mac通知の送信失敗は通知済みと記録せず、60秒間隔・10分で最大3回再試行する。Mac通知の要求成功は、画面への表示や本人の既読を証明するものではない。
+
+監視コードの40試験とruffがPASSした。独立レビューで通常の再試行を中断する条件と通知失敗時の再試行不足を見つけ、両修正と回帰試験を再レビューした。実装と実機証跡は[pals-infraのcommit db1b546](https://github.com/AtsushiHosaka/pals-infra/commit/db1b546f25d7540e22b5995445e1ccf72db7ca7b)までpush済み。
+
+13:21:49 JST、既存brokerの停止を検知し、設置監視の復旧関数から固定LaunchAgentへ要求した結果、PIDが58397から77205へ変わり、runtime3用途すべてが新しいSTSでreadyに戻った。試験中は監視lockを保持して復旧関数を直接呼んだため、毎分tickからの自然な復旧遷移や、launchdのKeepAliveと独立した因果関係を実測したものではない。判定遷移は回帰試験、復旧機構は実機試験として区別する。
+
+13:30:45–46 JST、復旧後の新しい認証情報がAPI・worker・backup-writerのconsumer guardで受け入れられたことを確認した。API・workerのCID・image・RestartCountは不変で、worker ready、公開URLの200・200・匿名401も確認した。毎分監視は11回正常終了し、正常時の通知は0件だった。4証明書の世代と既存認証コードは不変で、再設置では監視lockのinodeが保持された。実機の復旧試験と、その後のconsumer受入・サービス継続を独立レビューでも確認した。
 
 ## Miniが停止してもAWS側で認証欠測を検知する
 
