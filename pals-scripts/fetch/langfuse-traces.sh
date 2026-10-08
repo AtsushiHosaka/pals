@@ -29,12 +29,8 @@ fi
 
 out_dir="$(make_output_dir langfuse-traces)"
 
-curl -fsS \
+fetch_redacted_file "${out_dir}/langfuse-trace.json" curl -fsS \
   -u "${LANGFUSE_PUBLIC_KEY}:${LANGFUSE_SECRET_KEY}" \
-  "${LANGFUSE_HOST}/api/public/traces/${trace_id}" \
-  > "${out_dir}/langfuse-trace.json"
-
-redact_file_in_place "${out_dir}/langfuse-trace.json"
+  "${LANGFUSE_HOST}/api/public/traces/${trace_id}"
 write_manifest "${out_dir}" "langfuse-traces"
 echo "${out_dir}"
-

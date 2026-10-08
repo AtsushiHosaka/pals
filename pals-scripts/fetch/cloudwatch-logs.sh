@@ -43,15 +43,13 @@ for log_group in "${log_groups[@]}"; do
   fi
 
   safe_name="$(echo "${log_group}" | tr '/:' '__')"
-  aws logs filter-log-events \
+  fetch_redacted_file "${out_dir}/${safe_name}.json" aws logs filter-log-events \
     --profile "${AWS_PROFILE}" \
     --region "${AWS_REGION}" \
     --log-group-name "${log_group}" \
     --filter-pattern "\"${query}\"" \
-    --output json > "${out_dir}/${safe_name}.json"
-  redact_file_in_place "${out_dir}/${safe_name}.json"
+    --output json
 done
 
 write_manifest "${out_dir}" "cloudwatch-logs"
 echo "${out_dir}"
-
