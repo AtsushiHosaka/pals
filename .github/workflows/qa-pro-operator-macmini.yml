@@ -1,0 +1,93 @@
+name: QA Pro operator on Mac mini
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Inspect the host, install the reviewed v6 authority, or grant permanent QA Pro
+        type: choice
+        options: [inspect, install, grant]
+        default: inspect
+        required: true
+      subject:
+        description: Cognito subject UUID (grant only; never enter an email or password)
+        type: string
+        default: ''
+      grant_id:
+        description: Stable grant UUID for idempotent replay (grant only)
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-macmini
+  cancel-in-progress: false
+
+jobs:
+  operator:
+    if: >-
+      github.repository == 'AtsushiHosaka/pals' &&
+      github.event.repository.private == true &&
+      github.ref == 'refs/heads/main' &&
+      vars.MACMINI_RUNNER_READY == 'true' &&
+      vars.MACMINI_CHECKOUT_AUTH == 'host-gh'
+    runs-on: [self-hosted, macOS, ARM64, pals-macmini]
+    environment: macmini
+    timeout-minutes: 15
+    env:
+      PATH: /usr/bin:/bin:/usr/sbin:/sbin:/Users/hosakaatsushi/.orbstack/bin
+      PALS_OPERATOR_MODE: ${{ inputs.mode }}
+      PALS_OPERATOR_SUBJECT: ${{ inputs.subject }}
+      PALS_OPERATOR_GRANT_ID: ${{ inputs.grant_id }}
+      PALS_DEPLOY_REVISION: ${{ github.sha }}
+    steps:
+      - name: Checkout the exact parent
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ github.sha }}
+          path: macmini-deploy
+          submodules: false
+          persist-credentials: false
+          clean: true
+      - name: Checkout pinned submodules with the existing host authentication
+        working-directory: macmini-deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          /usr/bin/python3 -B pals-scripts/checkout-macmini-submodules.py \
+            --source-dir "$GITHUB_WORKSPACE/macmini-deploy" --revision "$PALS_DEPLOY_REVISION"
+      - name: Run the guarded host operator
+        working-directory: macmini-deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          /usr/bin/python3 -B - <<'PY'
+          import os
+          import subprocess
+          from pathlib import Path
+
+          mode = os.environ['PALS_OPERATOR_MODE']
+          if mode not in {'inspect', 'install', 'grant'}:
+              raise SystemExit('Unsupported operator mode.')
+          source = Path.cwd().resolve()
+          args = [
+              '/Users/hosakaatsushi/pals-mini-deploy/auto-recovery/runtime/bin/python',
+              '-B', str(source / 'pals-infra/host/macmini-deploy/qa_pro_operator.py'),
+              '--mode', mode, '--source-dir', str(source),
+              '--expected-parent', os.environ['PALS_DEPLOY_REVISION'],
+          ]
+          if mode == 'grant':
+              args += [
+                  '--subject', os.environ['PALS_OPERATOR_SUBJECT'],
+                  '--grant-id', os.environ['PALS_OPERATOR_GRANT_ID'],
+                  '--reason', 'Permanent complimentary Pro for authorized QA',
+              ]
+          elif os.environ['PALS_OPERATOR_SUBJECT'] or os.environ['PALS_OPERATOR_GRANT_ID']:
+              raise SystemExit('Account identifiers are only accepted in grant mode.')
+          environment = dict(os.environ)
+          for key in ('PALS_OPERATOR_SUBJECT', 'PALS_OPERATOR_GRANT_ID'):
+              environment.pop(key, None)
+          raise SystemExit(subprocess.run(args, env=environment, check=False).returncode)
+          PY

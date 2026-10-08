@@ -1,5 +1,15 @@
 # Individual Billing Design
 
+## Permanent complimentary token Pro (BILL-016)
+
+Store immutable permanent grants and revocations separately from finite legacy-count grants. Reuse the existing distinct billing operator authority, enabled Cognito subject verification and account advisory lock. Do not create Stripe records or encode permanence as a distant future date. Active Stripe entitlement remains authoritative; otherwise one unrevoked permanent grant selects token Pro. Grant creation rejects overlapping legacy/permanent complimentary qualifications.
+
+Monthly scope belongs to the account and UTC calendar month, independently of grant identity. Repeating or replacing a grant cannot reset the same-month token balance. Use the existing token quote, permit, receipt, reservation and settlement paths with Pro limits. Preserve accepted operations and settle them against their original month after revocation or rollover.
+
+Keep the existing v2 fields. For permanent grants, `period_end` means the current monthly budget end and `price` is null. Accept only the exact complimentary token Pro shape; finite complimentary `legacy_pro` retains its previous expiry meaning. Show indefinite access, current usage and budget refresh in settings/account menus, with no billing renewal or Portal action. Backend and frontend both reject duplicate purchases while permanent Pro is active.
+
+Append a dedicated migration to the production registry. The Mac v6 transition must pin the exact previously admitted 27-step registry and the reviewed 28-step target. Validate SQL, manifest, schema catalog and operator/runtime ACLs without weakening any existing signed carrier. Host authority/controller capability and their trusted installation must be updated before production release. If the live predecessor differs, stop and resolve the exact migration sequence.
+
 ## USD sandbox rollout (2026-09-30)
 
 Use an API-owned `usd-monthly-test-2026-09-30` catalogue for plus/pro/research. A closed runtime v2 maps these IDs to distinct Stripe Prices and optionally retains the legacy JPY Pro Price. Add product identity to Stripe operations/subscriptions; preserve the existing Free/Pro entitlement classification for legacy callers and expose the actual product separately in summary v2. Only local test keys may activate the provisional token policy.
