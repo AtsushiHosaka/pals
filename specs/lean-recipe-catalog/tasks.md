@@ -12,7 +12,7 @@
 | LRC-T006 | Integrate the selected Recipe path into the planner and API proof candidate as a discriminated terminal source kind. Send only the exact selected materialized Lean source bytes to the existing verifier and independent proof-review path, while forwarding the selected DTO binding fields unchanged to the v2 candidate contract; update preflight so the exact materialized Recipe source is accepted only after target/digest validation. Preserve the current no-Recipe generation path as a separate attempt. | LRC-007–LRC-009 | Integration tests prove selected source == admitted source == verifier source == semantic-review source; Recipe traces/candidates contain no LLM provenance fields; model/generator/repair calls are zero for a selected Recipe; Recipe failure is terminal; no-Recipe retains the prior route and trace. |
 | LRC-T007 | Author/admit `continuous_square_explicit_eps_delta@1` and its separate `continuous_square` alignment using a real DraftRevisionReference. Add its pinned workspace witness and source-receipt fixture. | LRC-004, LRC-005, LRC-011 | Run both selection modes against the pinned Lean workspace; assert local `δ` binding and absence of `continuous_id.pow`; verify the alignment and exact source provenance. |
 | LRC-T008 | Add the versioned evaluation manifest, metric calculator, structural method oracle, and CI gate. Run existing Draft/PFI regressions unchanged beside it. | LRC-012 | Use real PostgreSQL and Lean; verify each fixture's expected selection/rejection/verifier/method outcome. Fail for any false selection, failed square direct verification, incorrect expected selection, or failed fidelity. |
-| LRC-T009 | Document private authoring, independent alignment review, lifecycle retirement, selection-receipt diagnostics, and the v1 no-template/no-vector/no-production boundary. | LRC-001–LRC-013 | Documentation review maps every runtime state/error to DTO or trace fields; secret scan and `git diff --check` pass. |
+| LRC-T009 | Document private authoring, independent alignment review, lifecycle retirement, selection-receipt diagnostics, and the formal v1 selector versus natural-request reuse boundary, with no automatic template expansion or production publication. | LRC-001–LRC-013 | Documentation review maps every runtime state/error to DTO or trace fields; secret scan and `git diff --check` pass. |
 
 ## Completion gate
 
@@ -20,3 +20,22 @@ The slice is complete only when `LRC-T001`–`LRC-T009` have executable evidence
 PostgreSQL instance and the pinned Lean workspace. Unit-only checks, fake compiler receipts, mocked
 catalog selections, or fixed embeddings do not prove catalog admission or runtime selection. No
 production API publication or remote catalog is included in this gate.
+
+## Recipe-first natural requests (2026-10-05 approved change)
+
+- [ ] LRC-T010 / LRC-014–LRC-017: Add immutable reuse-entry migration/registry/role grants and source/target-bound closed admission manifest. Store mathematical description, method, language, exact reviewed answer and independent admission review; reject author-equal reviewer, altered digests, Unicode errors and lifecycle edits. Real PostgreSQL role/append-only tests.
+- [ ] LRC-T011 / LRC-016: Add authenticated direct candidate retrieval, max eight with source and aggregate bounds, deterministic ranking evidence and active toolchain/integrity filtering. No Draft/alignment dependency; test genuine empty catalog versus unavailable/invalid data.
+- [ ] LRC-T012 / LRC-014/018: Add request correspondence, exact stored-answer QA and authoritative settlement binding checks under the lifecycle lock. Paraphrase/binder rename positives; domain/hypothesis/quantifier/conclusion/method/specialization negatives; race/retirement/tamper tests.
+- [ ] LRC-T013 / LRC-014–LRC-018: Admit source-bound search description and reviewed Japanese square-continuity answer for an existing real Lean-compiled Recipe without altering Draft DB. Run bounded real-provider/real-PostgreSQL journey proving exact source/answer equality and zero generator/verifier/Draft calls. Record missing provider or runtime evidence as NOT VERIFIED.
+
+The Recipe-first completion gate adds LRC-T010–LRC-T013 to the existing gate. Unit doubles may test local parsers and zero-call assertions, but they cannot replace real catalog/admission/provider/runtime evidence. Existing exact formal-target and aligned-Draft selector suites continue unchanged.
+
+- [ ] **LRC-019 raw-source admission:** keep closed named theorem bytes unchanged, compile through the actual pinned mTLS admission verifier, bind a distinct raw authoring manifest/event, reject unsupported environments explicitly, and prove unapproved raw revisions cannot be selected.
+## 2026-10-05 Recipe-first implementation slice
+
+Executed evidence and remaining gates: `docs/recipe-first-implementation-2026-10-05.md`. Checked boundaries below do not certify the broader provider/deployment acceptance tasks.
+
+- [x] LRC-015–018: closed signed search/answer entry, source/answer/compiler/toolchain binding, deterministic bounded direct retrieval and atomic reuse revalidation; real PostgreSQL positive, tamper, lifecycle, ownership and release-gate tests.
+- [x] LRC-019: actual mTLS Lean raw-source admission preserves exact bytes and replay identity; historical selector excludes the new raw policy.
+- [x] Registration producers: existing-key stateless Recipe and Draft provider-review CLIs, actual response-ID binding, no-overwrite output and cross-repository consumer contract tests.
+- [ ] Live provider mathematical review, complete operator publication/resume and production release acceptance.
