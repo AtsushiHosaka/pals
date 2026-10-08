@@ -100,3 +100,17 @@ jobs:
           environment = dict(os.environ)
           raise SystemExit(subprocess.run(args, env=environment, check=False).returncode)
           PY
+      - name: Inspect fixed host interpreter availability
+        if: inputs.mode == 'inspect'
+        shell: bash
+        run: |
+          /usr/bin/python3 -B - <<'PYHOST'
+          import json
+          import os
+          from pathlib import Path
+          candidates = {
+              'review_controller_interpreter_available': Path('/Users/hosakaatsushi/Documents/Codex/2026-10-02/task-3/.venv-review/bin/python'),
+              'operating_interpreter_available': Path('/Users/hosakaatsushi/pals-mini-deploy/auto-recovery/runtime/bin/python'),
+          }
+          print(json.dumps({key: path.is_file() and os.access(path, os.X_OK) for key, path in candidates.items()}))
+          PYHOST
