@@ -660,6 +660,9 @@ def main() -> int:
             else "Deployment input or local operation failed."
         )
         print(message, file=sys.stderr)
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            annotation = message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+            print("::error title=PALS Mac mini deployment::" + annotation, file=sys.stderr)
         return 2
     print(json.dumps(result, sort_keys=True))
     return 0
