@@ -1,6 +1,6 @@
 # Implementation tasks
 
-Working baseline: requirements and design in this directory, user approval 2026-09-30 plus the explicit ordinary-send/no-required-Lean correction on 2026-10-02 JST. Existing uncommitted work is preserved. Budget 120 minutes for this implementation pass, commands normally ≤60 seconds, two transient retries maximum; root owns cancellation and final cleanup.
+Working baseline: requirements and design in this directory, user approval 2026-09-30 plus the 2026-10-05 Lean-required and Recipe-first correction. Earlier checked items describe executed historical slices; they do not certify the new flow. Existing uncommitted work is preserved. Budget 120 minutes for this implementation pass, commands normally ≤60 seconds, two transient retries maximum; root owns cancellation and final cleanup.
 
 - [x] PFR-001: Luna/Terra bindings, Responses parameters, usage and price registration; targeted model and price tests.
 - [x] PFR-002/003/008: real catalog/LLM reuse and instantiation, bounded escalation, application evidence, worker queue integration; mathematical rejection and no-Lean tests.
@@ -41,6 +41,25 @@ The user directed that every new answer is Lean-verified (PFR-002, PFR-006, PFR-
 - [ ] Real local journeys: catalog reuse and specialization. Blocked locally: the local Draft table has no PFI catalog for alignment admission, and PFR-011 is not implemented.
 - [ ] Production prerequisite: proof-request assessment must not wait behind Lean jobs. Run a `natural-only` worker for proof requests beside the `full` Lean worker (one worker processes one SQS message at a time).
 
+## 2026-10-08 Recipe-first acceptance
+
+The following items cover the current Recipe-first path. The preceding October 5 section retains its executed historical evidence. The user directed that every new answer is Lean-verified and that direct Recipe search precedes DSP/Draft reuse after the premise/refutation checks (PFR-002, PFR-006, PFR-007, PFR-009–PFR-017). Plan: `docs/lean-required-flow-plan-2026-10-05.md`. Items are checked only with executed evidence.
+
+- [ ] PFR-006/012 API: `catalog_reuse` and `formal` settlements, linked job creation without a second reservation, job/explanation terminal propagation with exactly-once consume/release; real PostgreSQL tests.
+- [ ] PFR-010/017/016 API: direct bounded Recipe retrieval independent of Draft/alignment; immutable source/description/answer review entries; admission/operator command and final transaction revalidation; source/answer/review/toolchain tamper, retirement and replay tests.
+- [ ] PFR-002/009/010/013/017 agent: Recipe-first signature extraction, candidate assessment, independent request/source correspondence and exact stored-answer QA; `catalog_reuse` versus `formal(dsp)`; no explanation generation on reuse and no Draft call outside DSP Draft.
+- [ ] PFR-011 agent: new request-linked jobs enter full DSP for specialization and compile their new source; preserve the separately traced legacy ordinary-job specialization behavior.
+- [ ] PFR-006 agent/API: linked-job provider calls use the request's token operation permits.
+- [x] PFR-007 webfront: Lean progress, verified answer with source/explanation/follow-ups, failure without answer text; project, projectless and guest; four languages (`proof-request-lean-flow.test.tsx`).
+- [x] Real local journeys: DSP, failure (semantic review rejected a weakened statement; no answer, hold released), follow-up, guest, phone/tablet/PC. Evidence: `docs/lean-required-flow-evidence-2026-10-05.md`.
+- [ ] Real local journeys: catalog reuse and specialization. Blocked locally: the local Draft table has no PFI catalog for alignment admission, and PFR-011 is not implemented.
+- [ ] Production prerequisite: proof-request assessment must not wait behind Lean jobs. Run a `natural-only` worker for proof requests beside the `full` Lean worker (one worker processes one SQS message at a time).
+
+- [ ] PFR-017 negative matrix: a nontrivial real admitted source accepts paraphrase/binder renaming; rejects domain, missing/extra premise, quantifier-order/scope, changed conclusion and requested method mismatches; specialization compiles. Independent disagreement/uncertainty falls through, provider/integrity failures fail explicitly.
+- [ ] PFR-010/017 zero-call witness: reuse with legacy Draft reader unavailable and no alignment still returns admitted source and stored reviewed answer byte-for-byte; verifier, generators, Draft client and linked-job count remain zero. Admission uses real Lean; runtime witness uses real PostgreSQL and a bounded real provider check when credentials permit.
+- [ ] PFR-016 race/compatibility: retirement/toolchain change between retrieval and settlement cannot produce stale reuse; retries settle once; old `llm_assessed` history and old exact-target selector remain readable/valid unchanged.
+
+
 ## 2026-10-05 Ask before proving (PFR-014)
 
 The user approved asking back first when a request is likely false or its truth depends on an unstated choice.
@@ -49,6 +68,15 @@ The user approved asking back first when a request is likely false or its truth 
 - [x] PFR-014 evaluation: a fixed 26-case real-provider set (`pals-scripts/premise-check-eval.py`): 19/26 before, 26/26 in two runs after. Evidence: `docs/premise-check-evaluation-2026-10-05.md`.
 - [ ] PFR-014 real local journey: a false claim is asked about before any Lean job; choosing the corrected claim proves it with Lean; keeping the statement as written is not asked again.
 - [ ] PFR-014 next: check a suspected counterexample with Lean before presenting it, and after a failed proof try the negation so a false claim is reported as Lean-refuted.
+
+## 2026-10-05 Recipe-first implementation slice
+
+Executed evidence and remaining gates: `docs/recipe-first-implementation-2026-10-05.md`. The broad acceptance items above remain unchecked when they include unexecuted provider or deployed journeys.
+
+- [x] PFR-017/016 API: immutable direct-search entry admission, alignment-free retrieval, locked settlement, exact stored-answer persistence, owner/guest source readback, retirement/tamper/replay and release-gate PostgreSQL checks.
+- [x] PFR-009/013/017 agent: Recipe-first assessment, independent correspondence and stored-answer QA, full-DSP fallback, DSP-only Draft retrieval and zero-generation/compile unit witnesses; affected transport and token-meter regressions.
+- [x] PFR-007 source viewer: exact nine-field DTO/digest validation, cancellation/retry, four-language strings, and legacy history compatibility; unit tests, TypeScript and ESLint.
+- [ ] PFR-010/017 actual-provider reuse witness and deployed project/projectless/guest acceptance: opt-in runtime test is implemented; external-send consent remains pending.
 
 ## 2026-10-05 Lean refutation (PFR-015)
 
