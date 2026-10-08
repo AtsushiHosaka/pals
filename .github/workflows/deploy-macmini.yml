@@ -73,6 +73,7 @@ jobs:
           python3 -m unittest discover -s pals-scripts/tests -p 'test_deploy_macmini.py'
           python3 -m unittest discover -s pals-scripts/tests -p 'test_checkout_macmini_submodules.py'
           python3 -m unittest discover -s pals-scripts/tests -p 'test_check_macmini_main.py'
+          python3 -m unittest discover -s pals-scripts/tests -p 'test_qa_pro_operator_workflow.py'
           python3 -m py_compile pals-scripts/deploy-macmini.py
           python3 -m py_compile pals-scripts/checkout-macmini-submodules.py
           python3 -m py_compile pals-scripts/check-macmini-main.py
