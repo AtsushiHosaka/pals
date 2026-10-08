@@ -107,10 +107,22 @@ jobs:
           /usr/bin/python3 -B - <<'PYHOST'
           import json
           import os
+          import subprocess
           from pathlib import Path
           candidates = {
               'review_controller_interpreter_available': Path('/Users/hosakaatsushi/Documents/Codex/2026-10-02/task-3/.venv-review/bin/python'),
               'operating_interpreter_available': Path('/Users/hosakaatsushi/pals-mini-deploy/auto-recovery/runtime/bin/python'),
           }
-          print(json.dumps({key: path.is_file() and os.access(path, os.X_OK) for key, path in candidates.items()}))
+          results = {key: path.is_file() and os.access(path, os.X_OK) for key, path in candidates.items()}
+          for key, path in candidates.items():
+              try:
+                  probe = subprocess.run([str(path), '-I', '-c', 'print("pals-interpreter-ready")'], capture_output=True, timeout=5, check=False)
+                  results[key.replace('_available', '_starts')] = probe.returncode == 0 and probe.stdout == b'pals-interpreter-ready\n'
+              except (OSError, subprocess.TimeoutExpired):
+                  results[key.replace('_available', '_starts')] = False
+          root = Path('/Users/hosakaatsushi/pals-mini-deploy')
+          config = json.loads((root / 'deploy-config.json').read_bytes())
+          policy = json.loads((root / 'controller-policy.json').read_bytes())
+          results['deployment_state_matches_host_state'] = Path(config['state_dir']) == Path(policy['state_dir'])
+          print(json.dumps(results))
           PYHOST

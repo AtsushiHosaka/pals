@@ -349,6 +349,19 @@ class HostBoundaryTests(unittest.TestCase):
         with self.assertRaises(deploy.DeploymentError):
             deploy.read_config(self.config_path, self.source)
 
+    def test_missing_or_nonexecutable_controller_interpreter_rejected(self):
+        interpreter = self.root / "missing-python"
+        for mode in (None, 0o600):
+            with self.subTest(mode=mode):
+                if mode is not None:
+                    interpreter.write_text("unexecutable interpreter")
+                    interpreter.chmod(mode)
+                self.controller.write_text(f"#!{interpreter}\nprint('never run')\n")
+                self.config["controller_sha256"] = hashlib.sha256(self.controller.read_bytes()).hexdigest()
+                self.write_config()
+                with self.assertRaisesRegex(deploy.DeploymentError, "interpreter is unavailable"):
+                    deploy.read_config(self.config_path, self.source)
+
     def test_controller_symlink_rejected(self):
         link = self.root / "controller-link"
         link.symlink_to(self.controller)
