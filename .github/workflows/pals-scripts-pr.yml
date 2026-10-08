@@ -17,4 +17,13 @@ jobs:
           submodules: false
           persist-credentials: false
       - run: bash pals-scripts/check-secrets.sh
+      - name: Check out the pinned public agent
+        run: |
+          git -c url."https://github.com/".insteadOf=git@github.com: \
+            submodule update --init --depth 1 -- pals-agent
+      - name: Prepare an isolated wheel builder
+        run: |
+          python3 -m venv "${RUNNER_TEMP}/pals-boundary-build"
+          "${RUNNER_TEMP}/pals-boundary-build/bin/python" -m pip install build
+          echo "${RUNNER_TEMP}/pals-boundary-build/bin" >> "${GITHUB_PATH}"
       - run: bash pals-scripts/check-public-agent-boundary.sh

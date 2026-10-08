@@ -49,3 +49,10 @@ The user approved asking back first when a request is likely false or its truth 
 - [x] PFR-014 evaluation: a fixed 26-case real-provider set (`pals-scripts/premise-check-eval.py`): 19/26 before, 26/26 in two runs after. Evidence: `docs/premise-check-evaluation-2026-10-05.md`.
 - [ ] PFR-014 real local journey: a false claim is asked about before any Lean job; choosing the corrected claim proves it with Lean; keeping the statement as written is not asked again.
 - [ ] PFR-014 next: check a suspected counterexample with Lean before presenting it, and after a failed proof try the negation so a false claim is reported as Lean-refuted.
+
+## 2026-10-05 Lean refutation (PFR-015)
+
+- [x] PFR-015 API: `refute` plan, `verdict: refuted` answers, a failed refutation followed by a DSP job for the claim; shared snapshots say the claim is false; real PostgreSQL tests (api `03ecaa5`).
+- [x] PFR-015 agent: refute plan after a clarification when a counterexample is still reported; localized negation statement; unit tests (agent `e8d3467`).
+- [x] PFR-015 webfront: "Lean-refuted" label for project, projectless and guest answers in four languages (webfront `e19606c`).
+- [x] PFR-015 real local journey: "n² + n is odd" kept as written was refuted by Lean (`¬ ∀ n, 0 < n → Odd (n² + n)`) and shown as "Leanで反証済み：この主張は偽です" with the counterexample n = 1. Evidence: `docs/math-conventions-evidence-2026-10-05.md`.

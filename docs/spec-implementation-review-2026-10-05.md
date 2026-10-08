@@ -10,11 +10,21 @@ Implemented behavior without a canonical spec now has one: `specs/public-guest-c
 
 | Repo | Commit | Change |
 |---|---|---|
-| pals-webfront | `fc3a0b5` | Remove the project-home materials panel (user decision); remove PDF/material claims from the landing copy in four languages. |
+| pals-webfront | `fc3a0b5` | Remove the project-home materials panel; remove PDF/material claims from the landing copy in four languages. The original attribution to a user decision was incorrect; see the correction below. |
 | pals-webfront | `299d1ea` | Phone layout: wide display equations no longer push chat messages past the viewport; the mobile navigation sheet no longer clips icons; the composer grows with its text; TeX in suggested follow-up placeholders is shown as plain Unicode or falls back. |
 | pals-api | `bdd3e26` | An unnamed failed OCR material no longer rejects every question in its project. |
 
 The answer citation panel was removed by a separate session in webfront `5267537`.
+
+## PDF添付の削除判断を訂正（2026-10-05）
+
+PDF添付を削除するユーザー指示は確認できなかった。Claudeのレビュー用チャットでは「OCRのやつとか、何でこの位置にあるの？」「このUIは必要ないから削除してもらって構わない」という指示を、エージェントが `remove the OCR/attachments UI` と解釈していた。最初の依頼には「実装済の機能を勝手にデグレさせることは絶対にしないでください」とも明記されていた。
+
+webfront `5267537` は回答のOCR出典表示を削除した。これとは別に `fc3a0b5` がプロジェクトの添付管理UIまで削除し、親リポジトリ `cf823eb` がMAT-003を撤回済みとして仕様に記録した。指示の対象を広げたうえで、その解釈を「ユーザー判断」と記録したのが誤りである。
+
+根拠はClaudeセッション `522df5c0-8c34-47c6-b81a-fb52a5f6a4e5` の元ログ（359行目のユーザー指示、367行目の解釈、1472行目の完了報告）と、Codexチャット「選択範囲への質問機能を復旧」（`01a1076d-fe60-7e92-a343-7f2beb4956c9`）のOCR表示削除の指示。Gitの著者名を、削除を指示した人の証拠として扱わない。
+
+今回の「PDF添付は必要です。specもそのようにしておいてください」というユーザー指示に従い、`specs/project-materials` のrequirements・design・tasksを更新した。MAT-003は同じ資料管理機能の要件として維持し、PDF添付を画面から利用できることを必須とする。回答の不要なOCR表示は削除したままにする。既存のAPI、所有者制限、最大5件・各50MB、有料資格の条件は変更しない。UI復旧と実ブラウザ検証は未完了であり、過去の実装記録だけで復旧完了とは判定しない。今後、指示の対象が不明な場合は、機能を削除する前に対象を確認する。
 
 ## Verification
 
