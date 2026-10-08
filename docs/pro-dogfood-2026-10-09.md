@@ -108,3 +108,18 @@ Budget arithmetic is consistent and reservations are zero after terminal jobs. C
 All synthetic artifacts were retained as evidence: one new Project, its empty Project chat, one standalone empty chat, the Home proof chat, and additional turns in an existing QA Project chat. Original preferences restored; no deletion performed. No active requests remain. Existing unrelated Git changes were preserved.
 
 Raw journal, prompts, DOM and 47 screenshots are local; screenshot filenames 30/34/39/40 do not guarantee that the lower final answer is visible. For Japanese recovery use screenshot 45 and full saved DOM; screenshot 30 is not used as Preparing evidence. Console 404 query returned no captured errors and supplies no per-request network diagnosis. No overall application PASS is claimed.
+
+## GitHub follow-up
+
+At the user's explicit request, six separate issues were created and two matching existing issues received the fresh Pro evidence. Each published body/comment was read back and matched to its prepared text. Issues are tracked in the parent repository while implementation ownership/root causes remain unknown. Raw account screenshots were not uploaded.
+
+| Finding / coverage gap | GitHub issue | Action |
+|---|---|---|
+| ISSUE-001: Mathematics settings | [#12](https://github.com/AtsushiHosaka/pals/issues/12#issuecomment-6063618859) | Existing issue updated with 2/2 Pro failures |
+| ISSUE-002: Sharing preview | [#36](https://github.com/AtsushiHosaka/pals/issues/36) | Created |
+| ISSUE-003: Formal-proof failure | [#37](https://github.com/AtsushiHosaka/pals/issues/37) | Created |
+| ISSUE-004: Intermittent Home review rejection | [#38](https://github.com/AtsushiHosaka/pals/issues/38) | Created; recovery and unknown cause preserved |
+| ISSUE-005: Prior-theorem clarification | [#39](https://github.com/AtsushiHosaka/pals/issues/39) | Created |
+| ISSUE-006: Clarification label language | [#40](https://github.com/AtsushiHosaka/pals/issues/40) | Created |
+| PDF/PNG materials and OCR access | [#41](https://github.com/AtsushiHosaka/pals/issues/41) | Created as an availability investigation |
+| Model-switch access | [#16](https://github.com/AtsushiHosaka/pals/issues/16#issuecomment-6063620303) | Existing issue updated with Pro access checks |
