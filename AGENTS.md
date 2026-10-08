@@ -32,3 +32,9 @@ The implementation submodules may be empty until initialized. Parent-level plann
 - 既存の tracked / untracked 変更はユーザー所有です。明示的な許可なしに reset、clean、stash、overwrite、stage、commit してはいけません。
 - このプロジェクトの各チャットでは、変更を検証したら、そのチャットで行った変更を随時 commit して GitHub に push する。これをユーザーの継続的な許可として扱い、毎回確認しない。
 - 他のチャットの作業が混在する場合は、自分の変更だけを commit する。force push はしない。親リポジトリの submodule 参照は、実装リポジトリへの push が成功してから更新する。
+
+## 数学のテスト題材
+
+- 平方展開 `(x+y)^2=x^2+2xy+y^2` の証明問題は、今後のテスト、描画プレビュー、デモ、dogfood では使わない。ユーザーが簡単すぎる題材として使用を禁止したため。
+- 数学の代表的なテスト題材には、仮定を明示し、実質的な数学的推論が必要な証明問題を選ぶ。単純な計算や恒等式の展開だけで完了する問題は選ばない。
+- 過去の Issue、スクリーンショット、検証記録に残る入力は、当時の証拠として保持する。新しいテストの題材には再利用しない。
