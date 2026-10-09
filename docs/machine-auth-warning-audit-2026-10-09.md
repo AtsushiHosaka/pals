@@ -73,7 +73,22 @@ unobserved. Describing the entire issue as resolved was premature. Natural leaf
 renewal around October 28 remains unverified; successful STS refresh today does
 not prove that future leaf renewal will succeed.
 
-## AWS support-case draft (not submitted)
+## AWS Support request
+
+The user authorized submission on October 9. The complete evidence, including
+explicit serials and expiry timestamps, was sent to the AWS Support console's
+Support interaction:
+[0ca2efe0-55c4-40b4-8533-f821697986e5](https://support.console.aws.amazon.com/support/home?interactionId=0ca2efe0-55c4-40b4-8533-f821697986e5#/).
+The case draft was saved there. This is an interaction ID, not a case ID or proof
+of human review.
+
+Technical case creation is blocked. The account's console reports Basic Support;
+selecting Technical returns "Technical case type is not available for your support
+plan." The Support API also returned `SubscriptionRequiredException` stating that
+a Premium Support subscription is required. No technical case ID was issued.
+No paid Support plan or trial was activated. Observation: October 9, 11:05 JST.
+
+The request below is retained for submission if technical support becomes available.
 
 Subject: Roles Anywhere AWS Health end-entity expiry notification at 26 days despite custom 3-day threshold
 
@@ -84,7 +99,13 @@ END_ENTITY_CERTIFICATE_EXPIRY to enabled=true, threshold=3, channel=ALL at
 confirm the custom setting. CA expiry remains at 45 days. There is one anchor in
 this regional listing. Nevertheless, notification a01m4ezd339j9wh6cffa4h6f2gv was
 created at 2026-10-09T00:00:59.497Z, source start 00:00:53Z, aggregation NONE,
-listing the four serials above at 26 days remaining. All four still authenticate.
+listing these serials at 26 days remaining, expiring November 4, 2026:
+`0fafd51ec01d8cc81fe0bf07f8a2c1a0396e3f` (API),
+`12ea7e6203739b5404a139d640454b1023d52c` (worker),
+`0b33d797c2ed0da095b10218f2e18d9730bd33` (backup-writer), and
+`008ad08dec8f7dda9fcefdfb8ec5fb9c67763398` (release-signer).
+All four still authenticate. Documentation:
+https://docs.aws.amazon.com/rolesanywhere/latest/userguide/customize-notification-settings.html
 Please explain which threshold generated this notification, whether propagation
 or an existing certificate record affects evaluation, and how to make the enabled
 custom threshold govern AWS Health without disabling expiry warnings.
