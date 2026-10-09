@@ -1,6 +1,8 @@
 # Certificate warning continued after the threshold change
 
-Status: warning suppression remains unresolved. Current AWS authentication succeeds.
+Status at audit time: warning suppression remained unresolved; AWS authentication succeeded.
+Later on October 9, [replacement monitoring and warning cutover](machine-auth-external-monitor-2026-10-09.md)
+were deployed and verified. The next daily email result remains unobserved.
 Read-only audit on October 9, 2026, following the new AWS Health email.
 
 ## Verified AWS state
