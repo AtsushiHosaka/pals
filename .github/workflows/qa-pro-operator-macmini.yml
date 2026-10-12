@@ -128,3 +128,4 @@ jobs:
           results['deployment_state_matches_host_state'] = Path(config['state_dir']) == Path(policy['state_dir'])
           print(json.dumps(results))
           PYHOST
+          /usr/bin/python3 -B macmini-deploy/pals-scripts/inspect-macmini-lock.py
