@@ -18,13 +18,13 @@ GRANT = '11111111-2222-4333-8444-555555555555'
 
 
 class OperatorWorkflowTests(unittest.TestCase):
-    def invoke(self, mode, subject='', grant_id=''):
+    def invoke(self, mode, subject='', grant_id='', stage_plan=''):
         content = WORKFLOW.read_text()
         adapter = textwrap.dedent(content.split("<<'PY'\n", 1)[1].split('\n          PY', 1)[0])
         output = io.StringIO()
         with tempfile.TemporaryDirectory() as temporary:
             event = Path(temporary) / 'event.json'
-            event.write_text(json.dumps({'inputs': {'subject': subject, 'grant_id': grant_id}}))
+            event.write_text(json.dumps({'inputs': {'subject': subject, 'grant_id': grant_id, 'stage_plan_sha256': stage_plan}}))
             environment = {
                 'PALS_OPERATOR_MODE': mode,
                 'PALS_DEPLOY_REVISION': 'a' * 40,
@@ -60,6 +60,29 @@ class OperatorWorkflowTests(unittest.TestCase):
             self.assertEqual(code, 0)
             self.assertTrue(run.call_args.args[0][2].endswith('/pals-infra/host/macmini-edge/chat_attachments_operator.py'))
             self.assertEqual(output, '')
+
+    def test_lean_modes_use_guarded_entrypoint_and_exact_plan(self):
+        for mode, expected, plan in (('inspect-lean', 'plan', ''),
+                                      ('stage-lean-worker', 'stage-worker', 'b' * 64)):
+            code, run, output = self.invoke(mode, stage_plan=plan)
+            self.assertEqual(code, 0)
+            args = run.call_args.args[0]
+            self.assertTrue(args[2].endswith('/pals-infra/host/macmini-deploy/full_runtime_operator.py'))
+            self.assertEqual(args[args.index('--mode') + 1], expected)
+            self.assertEqual('--expected-stage-plan-sha256' in args, bool(plan))
+            self.assertNotIn('--aws-profile', args)
+            self.assertEqual(output, '')
+
+    def test_invalid_stage_plan_never_reaches_host(self):
+        for mode, plan in (('stage-lean-worker', ''), ('stage-lean-worker', 'B' * 64),
+                           ('stage-lean-worker', '$(id)'), ('inspect-lean', 'b' * 64),
+                           ('grant', 'b' * 64)):
+            code, run, output = self.invoke(mode, stage_plan=plan)
+            self.assertIsInstance(code, str)
+            run.assert_not_called()
+            self.assertEqual(output, '')
+            if plan:
+                self.assertNotIn(plan, code)
 
     def test_lock_diagnostics_run_after_a_failed_inspection_only(self):
         step = WORKFLOW.read_text().split('      - name: Inspect fixed host interpreter availability\n', 1)[1]

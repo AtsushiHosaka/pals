@@ -319,6 +319,147 @@ class HostBoundaryTests(unittest.TestCase):
                     with self.assertRaises(deploy.DeploymentError):
                         self.verify_docker_observations(revisions, receipt, invalid)
 
+    def lean_fixture(self):
+        revisions, receipt, observations = self.assessment_fixture()
+        self.config["schema_version"] = deploy.CONFIG_V3
+        self.config["containers"].update(
+            verifier="pals-verifier", reconciler="pals-reconciler"
+        )
+        self.write_config()
+        receipt["schema_version"] = "pals.macmini-deploy-result.v3"
+        receipt["images"]["verifier"] = "sha256:" + "e" * 64
+        prefix = ("docker", "--context", self.config["docker_context"])
+        for service in deploy.READY_FILES:
+            name = self.config["containers"][service]
+            component = {"assessment-worker": "worker", "reconciler": "api"}.get(
+                service, service
+            )
+            observations[(*prefix, "inspect", name)] = [{
+                "Image": receipt["images"][component],
+                "State": {
+                    "Running": True, "Status": "running", "Paused": False,
+                    "Restarting": False, "Dead": False,
+                },
+            }]
+            observations[(*prefix, "exec", name, "test", "-f", deploy.READY_FILES[service])] = ""
+        verifier = observations[(*prefix, "inspect", "pals-verifier")][0]
+        verifier["Config"] = {"User": "65532:65532"}
+        verifier["HostConfig"] = {
+            "ReadonlyRootfs": True, "Privileged": False, "CapDrop": ["ALL"],
+            "CapAdd": None, "SecurityOpt": ["no-new-privileges:true"],
+            "PortBindings": {}, "NetworkMode": "pals-private", "IpcMode": "private",
+        }
+        return revisions, receipt, observations
+
+    def test_v3_requires_exact_six_distinct_containers(self):
+        self.lean_fixture()
+        self.assertEqual(deploy.read_config(self.config_path, self.source), self.config)
+        valid = copy.deepcopy(self.config)
+        for mutation in ("missing-verifier", "missing-reconciler", "duplicate", "extra", "v2"):
+            with self.subTest(mutation=mutation):
+                self.config = copy.deepcopy(valid)
+                if mutation.startswith("missing-"):
+                    del self.config["containers"][mutation.removeprefix("missing-")]
+                elif mutation == "duplicate":
+                    self.config["containers"]["reconciler"] = self.config["containers"]["api"]
+                elif mutation == "extra":
+                    self.config["containers"]["other"] = "pals-other"
+                else:
+                    self.config["schema_version"] = deploy.CONFIG_V2
+                self.write_config()
+                with self.assertRaises(deploy.DeploymentError):
+                    deploy.read_config(self.config_path, self.source)
+
+    def test_v3_receipt_requires_four_images_and_existing_database(self):
+        revisions, receipt, _ = self.lean_fixture()
+        deploy.validate_receipt(receipt, revisions, self.config)
+        for mutation in ("v2", "missing-verifier", "mutable-verifier", "extra-role", "database"):
+            with self.subTest(mutation=mutation):
+                invalid = copy.deepcopy(receipt)
+                if mutation == "v2":
+                    invalid["schema_version"] = "pals.macmini-deploy-result.v2"
+                elif mutation == "missing-verifier":
+                    del invalid["images"]["verifier"]
+                elif mutation == "mutable-verifier":
+                    invalid["images"]["verifier"] = "pals-verifier:latest"
+                elif mutation == "extra-role":
+                    invalid["images"]["reconciler"] = receipt["images"]["api"]
+                else:
+                    invalid["database_identity"]["database_system_identifier"] = "987654321"
+                with self.assertRaises(deploy.DeploymentError):
+                    deploy.validate_receipt(invalid, revisions, self.config)
+
+    def test_v3_maps_shared_images_checks_markers_and_preserves_signed_verifier(self):
+        revisions, receipt, observations = self.lean_fixture()
+        capture = self.verify_docker_observations(revisions, receipt, observations)
+        self.assertEqual(capture.call_count, 15)
+        for role, marker in deploy.READY_FILES.items():
+            capture.assert_any_call([
+                "docker", "--context", self.config["docker_context"], "exec",
+                self.config["containers"][role], "test", "-f", marker,
+            ], timeout=5)
+        # No source-label rewrite or current-agent comparison is allowed for
+        # the verifier image that the signed authority preserves unchanged.
+        self.assertNotIn(
+            ("docker", "--context", self.config["docker_context"], "image", "inspect",
+             receipt["images"]["verifier"]),
+            {tuple(call.args[0]) for call in capture.call_args_list},
+        )
+
+    def test_v3_rejects_missing_readiness_markers(self):
+        revisions, receipt, observations = self.lean_fixture()
+        for role in deploy.READY_FILES:
+            with self.subTest(role=role):
+                name = self.config["containers"][role]
+
+                def missing_marker(args, _name=name, **kwargs):
+                    if "exec" in args and _name in args:
+                        raise deploy.DeploymentError("Readiness marker is unavailable.")
+                    return json.dumps(observations[tuple(args)])
+
+                with (
+                    mock.patch.object(deploy, "capture", side_effect=missing_marker),
+                    self.assertRaises(deploy.DeploymentError),
+                ):
+                    deploy.verify_containers(self.config, receipt, revisions)
+
+    def test_v3_rejects_inactive_roles_and_unsigned_image_substitutions(self):
+        revisions, receipt, observations = self.lean_fixture()
+        for role in deploy.READY_FILES:
+            for mutation in ("image", "running", "status", "paused", "restarting", "dead", "health"):
+                with self.subTest(role=role, mutation=mutation):
+                    invalid = copy.deepcopy(observations)
+                    item = invalid[("docker", "--context", self.config["docker_context"],
+                                    "inspect", self.config["containers"][role])][0]
+                    if mutation == "image":
+                        item["Image"] = "sha256:" + "f" * 64
+                    elif mutation == "running":
+                        item["State"]["Running"] = False
+                    elif mutation == "status":
+                        item["State"]["Status"] = "exited"
+                    elif mutation == "health":
+                        item["State"]["Health"] = {"Status": "unhealthy"}
+                    else:
+                        item["State"][mutation.capitalize()] = True
+                    with self.assertRaises(deploy.DeploymentError):
+                        self.verify_docker_observations(revisions, receipt, invalid)
+
+    def test_v3_rejects_verifier_sandbox_escape_configuration(self):
+        revisions, receipt, observations = self.lean_fixture()
+        for key, value in (
+            ("ReadonlyRootfs", False), ("Privileged", True), ("CapDrop", []),
+            ("CapAdd", ["SYS_ADMIN"]), ("SecurityOpt", []),
+            ("PortBindings", {"18117/tcp": [{"HostIp": "0.0.0.0", "HostPort": "18117"}]}),
+            ("NetworkMode", "host"), ("IpcMode", "host"), ("PidMode", "host"),
+            ("Devices", [{"PathOnHost": "/dev/synthetic"}]),
+        ):
+            with self.subTest(key=key):
+                invalid = copy.deepcopy(observations)
+                invalid[("docker", "--context", self.config["docker_context"],
+                         "inspect", "pals-verifier")][0]["HostConfig"][key] = value
+                with self.assertRaises(deploy.DeploymentError):
+                    self.verify_docker_observations(revisions, receipt, invalid)
+
     def test_config_permissions_rejected(self):
         self.config_path.chmod(0o644)
         with self.assertRaises(deploy.DeploymentError):
@@ -585,7 +726,7 @@ class HostBoundaryTests(unittest.TestCase):
         with mock.patch.object(
             deploy,
             "capture",
-            side_effect=lambda args: json.dumps(observations[tuple(args)]),
+            side_effect=lambda args, **kwargs: json.dumps(observations[tuple(args)]),
         ) as capture:
             deploy.verify_containers(self.config, receipt, revisions)
         return capture
