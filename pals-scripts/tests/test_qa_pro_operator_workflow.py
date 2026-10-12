@@ -61,6 +61,29 @@ class OperatorWorkflowTests(unittest.TestCase):
             self.assertTrue(run.call_args.args[0][2].endswith('/pals-infra/host/macmini-edge/chat_attachments_operator.py'))
             self.assertEqual(output, '')
 
+    def test_natural_capability_plan_has_no_apply_or_mutation_arguments(self):
+        code, run, output = self.invoke('plan-natural-capability')
+        self.assertEqual(code, 0)
+        args = run.call_args.args[0]
+        self.assertTrue(args[2].endswith('/natural_capability_operator.py'))
+        self.assertEqual(args[args.index('--mode') + 1], 'plan')
+        self.assertNotIn('--expected-plan-sha256', args)
+        self.assertNotIn('--subject', args)
+        self.assertEqual(output, '')
+        code, run, _ = self.invoke('apply-natural-capability')
+        self.assertIsInstance(code, str)
+        run.assert_not_called()
+
+    def test_natural_plan_cannot_consume_another_operation_authorization(self):
+        for extra in ({'stage_plan': 'a' * 64}, {'runtime_plan': 'a' * 64},
+                      {'edge_plan': 'a' * 64}, {'verified_job': GRANT},
+                      {'subject': SUBJECT}, {'grant_id': GRANT}):
+            with self.subTest(extra=extra):
+                code, run, output = self.invoke('plan-natural-capability', **extra)
+                self.assertIsInstance(code, str)
+                run.assert_not_called()
+                self.assertEqual(output, '')
+
     def test_lean_modes_use_guarded_entrypoint_and_exact_plan(self):
         for mode, expected, plan in (('inspect-lean', 'plan', ''),
                                       ('stage-lean-worker', 'stage-worker', 'b' * 64),
