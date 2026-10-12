@@ -4,11 +4,15 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Inspect, install reviewed authority or edge routes, recover a signed pending update, or grant QA Pro
+        description: Inspect Lean prerequisites, stage reviewed worker support, maintain authority or edge routes, or grant QA Pro
         type: choice
-        options: [inspect, inspect-edge, install-edge, install, install-chat, recover, grant]
+        options: [inspect, inspect-lean, stage-lean-worker, inspect-edge, install-edge, install, install-chat, recover, grant]
         default: inspect
         required: true
+      stage_plan_sha256:
+        description: Exact reviewed SHA256 returned by inspect-lean (stage-lean-worker only)
+        type: string
+        default: ''
       subject:
         description: Cognito subject UUID (grant only; never enter an email or password)
         type: string
@@ -65,14 +69,21 @@ jobs:
           /usr/bin/python3 -B - <<'PY'
           import os
           import json
+          import re
           import subprocess
           from pathlib import Path
           from uuid import UUID
 
           mode = os.environ['PALS_OPERATOR_MODE']
-          if mode not in {'inspect', 'inspect-edge', 'install-edge', 'install', 'install-chat', 'recover', 'grant'}:
+          if mode not in {'inspect', 'inspect-lean', 'stage-lean-worker', 'inspect-edge', 'install-edge', 'install', 'install-chat', 'recover', 'grant'}:
               raise SystemExit('Unsupported operator mode.')
           event = json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text())
+          stage_plan = event.get('inputs', {}).get('stage_plan_sha256', '')
+          if mode == 'stage-lean-worker':
+              if not isinstance(stage_plan, str) or re.fullmatch(r'[0-9a-f]{64}', stage_plan) is None:
+                  raise SystemExit('An exact reviewed stage plan SHA256 is required.')
+          elif stage_plan:
+              raise SystemExit('A stage plan is only accepted in stage-lean-worker mode.')
           subject = event.get('inputs', {}).get('subject', '')
           grant_id = event.get('inputs', {}).get('grant_id', '')
           if mode == 'grant':
@@ -86,14 +97,19 @@ jobs:
           elif subject or grant_id:
               raise SystemExit('Account identifiers are only accepted in grant mode.')
           source = Path.cwd().resolve()
-          script = ('pals-infra/host/macmini-edge/chat_attachments_operator.py'
+          script = ('pals-infra/host/macmini-deploy/full_runtime_operator.py'
+                    if mode in {'inspect-lean', 'stage-lean-worker'} else
+                    'pals-infra/host/macmini-edge/chat_attachments_operator.py'
                     if mode in {'inspect-edge', 'install-edge'} else 'pals-infra/host/macmini-deploy/qa_pro_operator.py')
           args = [
               '/Users/hosakaatsushi/pals-mini-deploy/auto-recovery/runtime/bin/python',
               '-B', str(source / script),
-              '--mode', mode, '--source-dir', str(source),
+              '--mode', {'inspect-lean': 'plan', 'stage-lean-worker': 'stage-worker'}.get(mode, mode),
+              '--source-dir', str(source),
               '--expected-parent', os.environ['PALS_DEPLOY_REVISION'],
           ]
+          if mode == 'stage-lean-worker':
+              args += ['--expected-stage-plan-sha256', stage_plan]
           if mode == 'grant':
               args += [
                   '--subject', subject,

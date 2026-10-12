@@ -40,9 +40,19 @@ SERVICES = {"api", "web", "worker"}
 ASSESSMENT_SERVICE = "assessment-worker"
 CONFIG_V1 = "pals.macmini-deploy-config.v1"
 CONFIG_V2 = "pals.macmini-deploy-config.v2"
+CONFIG_V3 = "pals.macmini-deploy-config.v3"
+LEAN_SERVICES = {"verifier", "reconciler"}
+READY_FILES = {
+    "worker": "/tmp/worker.ready",
+    ASSESSMENT_SERVICE: "/tmp/worker.ready",
+    "verifier": "/run/pals-verifier-requests/verifier-ready",
+    "reconciler": "/run/pals-reconciler-ready",
+}
 
 
 def container_services(schema: str) -> set[str]:
+    if schema == CONFIG_V3:
+        return SERVICES | {ASSESSMENT_SERVICE} | LEAN_SERVICES
     return SERVICES | ({ASSESSMENT_SERVICE} if schema == CONFIG_V2 else set())
 
 
@@ -139,7 +149,7 @@ def read_config(path: Path, source: Path) -> dict:
     require(
         set(config) == required
         and isinstance(config["schema_version"], str)
-        and config["schema_version"] in {CONFIG_V1, CONFIG_V2},
+        and config["schema_version"] in {CONFIG_V1, CONFIG_V2, CONFIG_V3},
         "Mac mini configuration does not match the deployment contract.",
     )
     for name in ("state_dir", "controller"):
@@ -445,11 +455,11 @@ def signal_controller_group(group: int, signum: int) -> None:
 
 
 def validate_receipt(receipt: dict, revisions: dict[str, str], config: dict) -> None:
-    expected_schema = (
-        "pals.macmini-deploy-result.v2"
-        if config["schema_version"] == CONFIG_V2
-        else "pals.macmini-deploy-result.v1"
-    )
+    expected_schema = {
+        CONFIG_V1: "pals.macmini-deploy-result.v1",
+        CONFIG_V2: "pals.macmini-deploy-result.v2",
+        CONFIG_V3: "pals.macmini-deploy-result.v3",
+    }[config["schema_version"]]
     require(
         set(receipt)
         == {
@@ -476,7 +486,9 @@ def validate_receipt(receipt: dict, revisions: dict[str, str], config: dict) -> 
     images = receipt["images"]
     require(
         isinstance(images, dict)
-        and set(images) == SERVICES
+        and set(images) == SERVICES | (
+            {"verifier"} if config["schema_version"] == CONFIG_V3 else set()
+        )
         and all(
             isinstance(value, str) and IMAGE.fullmatch(value)
             for value in images.values()
@@ -487,7 +499,7 @@ def validate_receipt(receipt: dict, revisions: dict[str, str], config: dict) -> 
 
 def verify_containers(config: dict, receipt: dict, revisions: dict[str, str]) -> None:
     for service, name in config["containers"].items():
-        component = "worker" if service == ASSESSMENT_SERVICE else service
+        component = {ASSESSMENT_SERVICE: "worker", "reconciler": "api"}.get(service, service)
         value = json.loads(
             capture(["docker", "--context", config["docker_context"], "inspect", name])
         )
@@ -512,6 +524,42 @@ def verify_containers(config: dict, receipt: dict, revisions: dict[str, str]) ->
                 and state.get("Health", {}).get("Status") == "healthy",
                 "Both production workers must report healthy readiness.",
             )
+        if config["schema_version"] == CONFIG_V3 and service in READY_FILES:
+            state = container.get("State", {})
+            require(
+                state.get("Status") == "running"
+                and all(state.get(flag) is False for flag in ("Paused", "Restarting", "Dead")),
+                "Production proof runtime must remain running and ready.",
+            )
+            require(
+                "Health" not in state or state["Health"].get("Status") == "healthy",
+                "Configured production proof runtime health check must be healthy.",
+            )
+            capture([
+                "docker", "--context", config["docker_context"], "exec", name,
+                "test", "-f", READY_FILES[service],
+            ], timeout=5)
+        if config["schema_version"] == CONFIG_V3 and service == "verifier":
+            host = container.get("HostConfig", {})
+            require(
+                host.get("ReadonlyRootfs") is True
+                and host.get("Privileged") is False
+                and host.get("CapDrop") == ["ALL"]
+                and not host.get("CapAdd")
+                and host.get("SecurityOpt") == ["no-new-privileges:true"]
+                and not host.get("PortBindings")
+                and host.get("NetworkMode") not in (None, "", "host", "none")
+                and host.get("IpcMode") == "private"
+                and all(not host.get(key) for key in (
+                    "PidMode", "UTSMode", "UsernsMode", "Devices", "DeviceRequests",
+                    "DeviceCgroupRules", "GroupAdd", "Sysctls", "ExtraHosts",
+                ))
+                and container.get("Config", {}).get("User") == "65532:65532",
+                "Isolated verifier privilege and publication boundaries are required.",
+            )
+            # Its immutable image is preserved by the signed host manifest. It
+            # has its own historical source revision, not this worker revision.
+            continue
         labels = (
             json.loads(
                 capture(
