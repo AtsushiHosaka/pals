@@ -70,5 +70,15 @@ contains the definition metadata, tooltip, continuity glossary, and typed fixed
 declaration code, with no underline trigger marker. Final public JavaScript
 hashes include `b8af8571dd871d2aee0ec8c6af702917bc25839c377c6f643f21b16378567976`
 and `930e2be426d67ef9ae41904af8c85c2d7203f3c3854e20412d20d6e899e7b5e1`.
-These are release/distribution checks; authenticated tooltip behavior and the
-separate attachment/settings routing checks require their own runtime evidence.
+These are release/distribution checks. The authorized authenticated continuity
+walkthrough also opened the `continuous` glossary tooltip in the actual deployed
+chat, with the exact continuity definition and no underline. Its screenshot
+remains local in the recording chat's ignored output directory; no unrelated
+private conversation was opened for this check.
+
+Answer generation in that walkthrough failed with the UI message
+"Lean verification is not available right now, so no answer can be shown."
+Consequently, contextual variable hovers inside a generated answer and stored
+source behavior are not claimed as live-verified. Their local test evidence is
+separate from this glossary interaction. Attachment/settings routing and Lean
+availability require their own operational acceptance.
