@@ -17,3 +17,11 @@ Validation before host mutation:
 - 17 edge inspection tests and four workflow adapter checks pass. Independent review identified capture-bound and evidence-wording defects; both were repaired and retested.
 
 Infrastructure prerequisite: [PR #21](https://github.com/AtsushiHosaka/pals-infra/pull/21). This parent update exposes only closed, account-free install-chat/inspect-edge modes while retaining existing modes and the shared lifecycle/concurrency locks. Live installation/deployment and browser verification are still pending at this checkpoint.
+
+## Guarded production attempts
+
+The first installation attempt stopped on the lifecycle lock without changing host files. The guarded retry [38214287450](https://github.com/AtsushiHosaka/pals/actions/runs/38214287450) succeeded at parent `51836b8b9bcf2e022f2ee002b0f9822a0c18f1da`: exact new controller/authority hashes and supports_signed_v7=true were read back; database_applied=false and services_switched=false. Live inspection still reports the 32-step registry and sequence20.
+
+The subsequent standard [deployment 38214457795](https://github.com/AtsushiHosaka/pals/actions/runs/38214457795) stopped at the distinct outer deploy.lock before building or service switching. [Inspection 38214697340](https://github.com/AtsushiHosaka/pals/actions/runs/38214697340) confirms the installed controller starts on both approved paths and admission remains unchanged. The lock is preserved; a read-only lsof/ps diagnostic reports only open-file process IDs, parent/group IDs, elapsed time, and claimed deploy-command metadata. It never exposes raw arguments/configuration, acquires/removes the lock, or signals a process. A command-line mention is not executing-process identity or cancellation authority.
+
+[Edge discovery 38214132058](https://github.com/AtsushiHosaka/pals/actions/runs/38214132058) confirms a directory-mounted Caddyfile with matching host/container bytes, one API Host context, one upstream and final404. No attachment matcher names were present. Strict route installation is being prepared separately; it will preserve existing routing and protected runtime state. No completed production release or live keyboard is claimed yet.
