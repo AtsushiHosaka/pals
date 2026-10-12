@@ -10,7 +10,7 @@ Archive cleanup requires a newly created, attested, delivered `lean_verified` pr
 
 Validation before deployment: 343 host tests passed with one existing dedicated signed32 PostgreSQL fixture skipped; 24 recovery, 15 assessment-queue helper and 10 workflow-adapter tests passed. Independent source review found and verified repairs for interrupted probe cleanup, TLS reuse and archive identity races. An additional smoke check executed the actual new read-only SQL against isolated PostgreSQL16 with synthetic persisted records: unchanged snapshots were preserved, matching fresh delivery passed, and wrong answer hashes and old jobs were rejected. Its task-owned container was removed and no persistent volume was created. This SQL check does not prove Lean compilation. These tests do not establish live AWS permissions, Docker routing, mTLS, compiler execution or public answer delivery.
 
-Infrastructure PRs #33 and #34 and parent integration PR #67 were explicitly approved and merged. Parent main is `cf82eddaa7504d436f444fc618fd61445f4b5dfb`, with infrastructure main `d2b3f90aca741ee5ff6edbfe83dc57b30f8b16fe`. Parent checks passed before merging.
+Infrastructure PRs #33 and #34 and parent integration PR #67 were explicitly approved and merged. Their initial integration checkpoint is parent `cf82eddaa7504d436f444fc618fd61445f4b5dfb`, with infrastructure `d2b3f90aca741ee5ff6edbfe83dc57b30f8b16fe`. Parent checks passed before merging.
 
 The fresh production inspection (run `38259071743`) completed after the merge. It still reports the three-service predecessor, missing full-worker admission, and unavailable native AWS authentication at `sts get-caller-identity`. Infrastructure #35 and parent #68 added bounded unexpected-exception diagnostics. Inspection `38260777064` then located a `DeploymentError` at the outer deployment-lock context. Read-only lock inspection `38261004140` observed no remaining openers or pending update; the next Lean inspection `38261222190` passed.
 
@@ -18,4 +18,16 @@ The exact-parent staging comparison (`38261222190` versus `38261510550`, parent 
 
 The mount-order correction passed the complete 356-test host suite (355 passed and the existing dedicated signed32 PostgreSQL fixture skipped), including reorder acceptance, full-field and unknown-field drift rejection, duplicate/canonical-destination rejection and standalone recovery comparison. Independent review found no concrete defect. The Mac mini's native AWS sign-in remains unavailable and must be restored before the guarded queue preparation can finish.
 
-Production services have not been switched by this chat. Completion requires staging, signed full-worker deployment, any necessary queue preparation, six-service enablement, actual browser proof/source verification and final owned-resource cleanup.
+Infrastructure #36 and parent #69 integrated the verified mount-order correction. Production staging [38263033687](https://github.com/AtsushiHosaka/pals/actions/runs/38263033687) installed the exact reviewed support under plan `403ea0dd670630feb96185de8ee51f0411da2442e8ff3ce1bff4aef35e5c3472`, with `runtime_switched=false`, `database_changed=false` and `queue_permissions_changed=false`. This resolves the observed staging rejection without removing any mount field from the guard.
+
+The first ordinary signed deployment stopped on lock contention before service changes. The guarded retry [38263610687](https://github.com/AtsushiHosaka/pals/actions/runs/38263610687) finished healthy at parent `ecbe7d6519292754a7227a9df0aa56c4782b966a`, infrastructure `3cda492df7759316ac507026cb3a7f68178151e6`, admission sequence23, manifest `ac0bc10fe468edd59c8169dc132fdb244652fd489af8492209f082438003c5af`. Its v1 receipt verifies source pins, actual three-service images, database identity and API/Web health. Independent public `/try` and API `/health` requests returned200. This deployment admits the full worker package while retaining the existing natural-only configuration.
+
+The fresh six-service activation plan [38264047435](https://github.com/AtsushiHosaka/pals/actions/runs/38264047435) has only two blockers: `assessment_queue_not_ready` and `host_memory_capacity_insufficient`. Its queue observation requires the unavailable native AWS administrative sign-in. Docker reports `8393605120` available bytes (7.82GiB); the preserved service limits, verifier allocation and reserve require `9261023232` bytes (8.63GiB). Raise the Mac mini's OrbStack/Docker VM memory to at least10GiB if physical capacity permits; retain the verifier and existing service limits.
+
+The operator profile uses this protected public configuration on the Mac mini:
+
+```sh
+AWS_CONFIG_FILE=/Users/hosakaatsushi/Documents/Codex/2026-10-02/task-2/mini-build-20261002/secure-handoff/aws-public-config aws sso login --profile pals-prod-member
+```
+
+The user has been asked to complete that sign-in and adjust the VM allocation. No six-service switch, queue mutation or fresh Lean proof has been performed. Once both prerequisites are ready, obtain fresh queue/runtime plans, apply any reviewed queue changes, enable the guarded six-service runtime, verify actual browser proof/source delivery and finalize owned archives. Current public Lean success remains unconfirmed.
