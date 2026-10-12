@@ -8,7 +8,7 @@ Parent base: `3f09f328dae3553d6ac057cdbfdc1b85e2f8435e`. Current geometric brand
 
 | Repository | Pushed source |
 |---|---|
-| pals-webfront | `445718e9ac025e18baefd7f8b0eb3d1bbf3b0e97` |
+| pals-webfront | `d205efbcf319fff5c30e42be1412d8128fc59441` |
 | pals-api | `b0b5bdda3566d073bda1d24a7b3013322efd9b70` |
 | pals-agent | `021758e4222544a1a1f3350eef2a7f6d2e4856ad` |
 | pals-infra | `4299b56cae5f6ecfce9275da9d5693c7e3c3afa0` |
@@ -36,6 +36,10 @@ Worker: 400 affected tests initially passed; 129 affected tests passed after the
 Infrastructure: 149 host tests passed with one real PostgreSQL test skipped, plus two edge-route checks. Root inspected the closed v7 capability and immutable byte pins. The cached Caddy 2.10.2 binary successfully adapted and validated the attachment snippet in a network-disabled command container; this verifies syntax, not installed public routing.
 
 UI Pocket reference: [ChatGPT mobile gallery, October 2024](https://www.ui-pocket.com/mobile/apps/chatgpt/2024-10). The user signed in and the file-upload flow was located. Its screenshots require Pro, so screenshot-level comparison was unavailable.
+
+## Composer disclosure follow-up
+
+The user requested removal of the OpenAI data-policy disclosure beneath the composer. Removed the disclosure and its CSS. Attachment behavior is unchanged. The focused attachment/keyboard suites passed all 24 tests, and TypeScript passed. Earlier preview screenshots predate this text removal.
 
 ## Remaining release checks
 
