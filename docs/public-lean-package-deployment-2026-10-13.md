@@ -16,10 +16,18 @@ Fresh public edge inspection38279456554 confirmed config SHA256 `ef9ad86b089f7d3
 
 The new edge plan/install covers four pinned fragments and13 exact method/path matcher families. It retains authentication, ownership, entitlement, body caps and every existing adapted route/handler. Unknown Caddyfile grammar, pending updates, changed image/config/mounts or plan hashes block installation. Failed activation restores exact prior owned bytes, including when the same edge container stopped during restart. Actual full Caddy adaptation/validation and authenticated product operations still require public installation evidence.
 
+The first materials plan38284873827 stopped with `materials_source_geometry_unsupported`: the actual Caddy adaptation proves a final unconditional404, but the source falls outside the literal-only handler grammar. [Infra PR38](https://github.com/AtsushiHosaka/pals-infra/pull/38), merged as `9e95be56b05600311fa4dcc5f55d03f680530eef`, preserves the opaque final handler bytes. Its alternative insertion point requires a unique unconditional tail handle and full actual Caddy adaptation bound to the current source SHA256. Conditional, nonfinal, ambiguous, stale or foreign-host evidence is rejected. Twenty-seven focused helper tests and107 edge tests passed, with11 explicit isolated Caddy fixtures skipped; independent review passed. A fresh host plan and actual full candidate validation remain required.
+
+## Installed support and package attempt
+
+[Parent PR71](https://github.com/AtsushiHosaka/pals/pull/71) merged as `211c956e7ec149f33d187825adcc0795e0e5d237`. Support plan38284773832 returned ready SHA256 `b3c7314b7ebb31dbc550d92e363dd1cd9fa8f39bea71f2a3cd06e78f031c97fe`. Support refresh38285219104 installed all11 exact reviewed sources at17:35:56UTC, including the package helper SHA256 above. Its receipt explicitly reports no runtime switch, database change or queue permission change.
+
+The signed package deployment38285792301 failed in the host controller at17:48:11UTC. This attempt does not establish a new public verifier admission or successful activation. The failure must be diagnosed before a retry.
+
 ## Remaining runtime boundary
 
 The fresh queue check38282129134 failed at17:07:54UTC with the fixed code `queue_aws_authentication_unavailable`. The last runtime plan also reported Docker capacity7.82GiB against8.63GiB required. The Mac mini needs its configured AWS session refreshed and sufficient Docker memory before a fresh queue/runtime plan can authorize activation. No old or blocked plan hash is applied.
 
-Sequence after the new parent is merged: inspect and refresh support with its exact reviewed digest; deploy the signed verifier package; inspect/install the edge candidate with its exact reviewed digest; inspect/prepare queue as necessary; inspect/enable runtime only with a fresh ready digest; verify actual public continuity answer/source/attestation; finalize that newly verified job and record the public walkthrough.
+Remaining sequence: resolve the package deployment failure; inspect/install the edge candidate with its exact reviewed digest; inspect/prepare queue as necessary; inspect/enable runtime only with a fresh ready digest; verify actual public continuity answer/source/attestation; finalize that newly verified job and record the public walkthrough.
 
 Validation before source publication:75 API package/readiness/signature tests;375 host tests with one existing dedicated PostgreSQL fixture skipped;104 edge tests with11 isolated Caddy fixtures skipped;11 workflow adapter tests and cross-namespace hash rejection checks. Independent source reviews passed. Actual local continuity video capture also passed full H264 decoding; it is local evidence and does not replace the requested public walkthrough.
