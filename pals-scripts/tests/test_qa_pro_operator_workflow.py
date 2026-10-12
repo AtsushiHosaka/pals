@@ -18,13 +18,13 @@ GRANT = '11111111-2222-4333-8444-555555555555'
 
 
 class OperatorWorkflowTests(unittest.TestCase):
-    def invoke(self, mode, subject='', grant_id='', stage_plan='', runtime_plan='', verified_job=''):
+    def invoke(self, mode, subject='', grant_id='', stage_plan='', runtime_plan='', verified_job='', edge_plan=''):
         content = WORKFLOW.read_text()
         adapter = textwrap.dedent(content.split("<<'PY'\n", 1)[1].split('\n          PY', 1)[0])
         output = io.StringIO()
         with tempfile.TemporaryDirectory() as temporary:
             event = Path(temporary) / 'event.json'
-            event.write_text(json.dumps({'inputs': {'subject': subject, 'grant_id': grant_id, 'stage_plan_sha256': stage_plan, 'runtime_plan_sha256': runtime_plan, 'verified_job_id': verified_job}}))
+            event.write_text(json.dumps({'inputs': {'subject': subject, 'grant_id': grant_id, 'stage_plan_sha256': stage_plan, 'runtime_plan_sha256': runtime_plan, 'verified_job_id': verified_job, 'edge_plan_sha256': edge_plan}}))
             environment = {
                 'PALS_OPERATOR_MODE': mode,
                 'PALS_DEPLOY_REVISION': 'a' * 40,
@@ -63,7 +63,9 @@ class OperatorWorkflowTests(unittest.TestCase):
 
     def test_lean_modes_use_guarded_entrypoint_and_exact_plan(self):
         for mode, expected, plan in (('inspect-lean', 'plan', ''),
-                                      ('stage-lean-worker', 'stage-worker', 'b' * 64)):
+                                      ('stage-lean-worker', 'stage-worker', 'b' * 64),
+                                      ('inspect-lean-support', 'plan-support', ''),
+                                      ('refresh-lean-support', 'refresh-support', 'c' * 64)):
             code, run, output = self.invoke(mode, stage_plan=plan)
             self.assertEqual(code, 0)
             args = run.call_args.args[0]
@@ -73,9 +75,29 @@ class OperatorWorkflowTests(unittest.TestCase):
             self.assertNotIn('--aws-profile', args)
             self.assertEqual(output, '')
 
+    def test_materials_edge_apply_requires_its_own_exact_plan(self):
+        for mode, plan in (('plan-materials-edge', ''), ('install-materials-edge', 'd' * 64)):
+            code, run, output = self.invoke(mode, edge_plan=plan)
+            self.assertEqual(code, 0)
+            args = run.call_args.args[0]
+            self.assertTrue(args[2].endswith('/project_materials_operator.py'))
+            self.assertEqual(args[args.index('--mode') + 1], mode)
+            self.assertEqual('--expected-plan-sha256' in args, bool(plan))
+            if plan:
+                self.assertEqual(args[args.index('--expected-plan-sha256') + 1], plan)
+            self.assertEqual(output, '')
+        for mode, plan in (('install-materials-edge', ''), ('install-materials-edge', 'D' * 64),
+                           ('install-materials-edge', '$(id)'), ('plan-materials-edge', 'd' * 64),
+                           ('install-edge', 'd' * 64), ('enable-lean-runtime', 'd' * 64)):
+            code, run, _ = self.invoke(mode, edge_plan=plan)
+            self.assertIsInstance(code, str)
+            run.assert_not_called()
+
     def test_invalid_stage_plan_never_reaches_host(self):
         for mode, plan in (('stage-lean-worker', ''), ('stage-lean-worker', 'B' * 64),
                            ('stage-lean-worker', '$(id)'), ('inspect-lean', 'b' * 64),
+                           ('refresh-lean-support', ''), ('refresh-lean-support', 'C' * 64),
+                           ('refresh-lean-support', '$(id)'), ('inspect-lean-support', 'c' * 64),
                            ('grant', 'b' * 64)):
             code, run, output = self.invoke(mode, stage_plan=plan)
             self.assertIsInstance(code, str)
