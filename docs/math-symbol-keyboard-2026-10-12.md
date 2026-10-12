@@ -1,0 +1,30 @@
+# Math symbol keyboard — 2026-10-12
+
+PALS now has a Σ toggle immediately beside the file + button in the shared composer. The keyboard starts closed. Clicking its toggle opens or closes it; Escape or the close button closes it. Existing attachment, model selection, and submission controls remain available.
+
+The palette follows Wolfram Alpha's grouped symbol/template pattern, adapted to PALS's ordinary-text composer. Official reference: [Math Input](https://www.wolframalpha.com/math/math-input). The symbol inventory is a PALS selection, not a complete copy of Wolfram Alpha's keyboard.
+
+| Group | Keys |
+| --- | --- |
+| Common | Fraction, power, subscript, root; + − × ÷ ± = ≠ < > ≤ ≥ ≈ · ∞ π and brackets |
+| Calculus | ∑ ∏ ∫ ∬ ∮ ∂ ∇ → ′ ″ lim sin cos tan log ln |
+| Logic & sets | ∀ ∃ ¬ ∧ ∨ ⇒ ⇔ ∈ ∉ ⊂ ⊆ ⊃ ⊇ ∪ ∩ ∅ ℕ ℤ ℚ ℝ ℂ and braces |
+| Greek | Lowercase Greek letters and common uppercase Greek letters |
+
+Keys insert at the saved cursor or replace selected text. Templates place the cursor inside an editable slot. Power/subscript shortcuts wrap a selected base in parentheses, preserving the grouping of composite expressions. These are text shortcuts; the composer remains a textarea. Length-limit overflow is rejected atomically. Disabled, uploading, pending, and active IME composition states block symbol insertion. All four UI locales have translated control labels.
+
+Frontend authoring commit: `32b1826b0c8c7f6a01f6c36ab7e37d2191dc5006`. Implementation PR (now merged after independent review): [pals-webfront #19](https://github.com/AtsushiHosaka/pals-webfront/pull/19).
+
+Validation: 58 focused tests, TypeScript, focused ESLint, and diff checks pass after integrating frontend main. Browser checks confirm selection replacement and caret focus, toggling, Escape, desktop layout, and 390px mobile width without horizontal overflow. Mobile keys scroll within a 194px area. The guest layout used a temporary local session fixture, and no proof request was submitted. Production deployment, provider processing, and authenticated backend outcomes are not claimed.
+
+The requested visual follow-up renders every palette key with KaTeX, including stacked fractions, superscripts, subscripts, and square roots. The cursor helper sentence and its translations are removed. A strict KaTeX rendering test checks every category; 50 focused keyboard/composer/attachment tests, TypeScript, and focused ESLint pass. Desktop and mobile browser captures confirm KaTeX labels, no helper text, and no horizontal overflow.
+
+Local visual evidence (outside Git):
+
+- Desktop: `/Users/atsushi/.codex/visualizations/2026/10/12/01a12eaa-c882-7512-9921-59ff93d92203/math-keyboard-katex-desktop.jpg`
+- Mobile: `/Users/atsushi/.codex/visualizations/2026/10/12/01a12eaa-c882-7512-9921-59ff93d92203/math-keyboard-katex-mobile.jpg`
+- Collapsed: `/Users/atsushi/.codex/visualizations/2026/10/12/01a12eaa-c882-7512-9921-59ff93d92203/math-keyboard-chat-collapsed.jpg`
+
+This integration preserves the existing attachment work from [parent PR #47](https://github.com/AtsushiHosaka/pals/pull/47). Its inherited API/agent/infra pins belong to that prerequisite; the keyboard changes are frontend-only. The parent pointer was updated after the frontend push succeeded. At the authoring checkpoint, no PR had been merged and no deployment had been performed. The current review reconciles this branch with all merged child repairs; current evidence is in [the integration review](pr-review-integration-2026-10-12.md). Deployment remains outside this request.
+
+Final review: the author's latest KaTeX changes and an explicit IME regression were reviewed together. The merged frontend main is `7aabcd48e23aec7eb124912ab23d1603b66073e6`. All 1,639 tests, lint, TypeScript, and the production build pass. Actual desktop/mobile checks confirm 24 visible keys all render with KaTeX, selection and caret behavior, Escape focus restoration, retained composer alignment, and no horizontal overflow at 390px. No deployment is claimed.
