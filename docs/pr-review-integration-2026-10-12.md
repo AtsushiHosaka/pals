@@ -1,6 +1,6 @@
 # PALS PR review and integration — 2026-10-12
 
-The user requested review, repair, and merge of all open PALS pull requests. The initial inventory contained 24 PRs across the parent and its implementation repositories. Three additional focused repair PRs address defects found during review. Deployment is outside this request; the live `MACMINI_AUTO_DEPLOY` variable was verified as `false` and left unchanged.
+The user requested review, repair, and merge of all open PALS pull requests. The initial inventory contained 24 PRs across the parent and its implementation repositories. Three additional focused repair PRs address defects found during review. The final inventory then found frontend #19 and parent #51 for a collapsible math keyboard; they are included in the same review and merge scope, bringing the total to 29 PRs. Deployment is outside this request; the live `MACMINI_AUTO_DEPLOY` variable was verified as `false` and left unchanged.
 
 | Repository | Initial PRs | Review repairs |
 |---|---|---|
@@ -16,7 +16,7 @@ The datasets and observability repositories had no open PRs. `pals-draft-admin` 
 
 Independent local reviewers examined the changes and rechecked the integrated revisions. Automatic approval review rejected CodeRabbit CLI uploads of private API/frontend source because external disclosure was not authorized. Those uploads were not retried or bypassed. Existing CodeRabbit SUCCESS statuses, including draft-review skips, were not treated as evidence of independent review.
 
-- Frontend: 1,613 tests pass, with lint, TypeScript, and production build passing. Actual shared composer checks at 1280×900 and 390×844 cover wrapped Japanese placeholders, typed English, and mobile overflow. Temporary QA pages and browser/server resources were removed.
+- Frontend: 1,639 tests pass, with lint, TypeScript, and production build passing. Actual shared composer checks at 1280×900 and 390×844 cover wrapped Japanese placeholders, typed English, and mobile overflow. The late math-keyboard review also covers selection replacement, caret/focus restoration, Escape, blocked IME actions, strict KaTeX labels, and a bounded mobile palette. Temporary QA pages and task-owned browser/server resources were removed; an unrelated existing browser session was left intact.
 - API: 2,094 unit tests pass and one is skipped. The final repair has 118 related PostgreSQL/contract checks passing, including image-only catalog fallback, immutable original input, idempotent settlement, and rejection of route/receipt/preflight tampering. OpenAPI freshness, scoped Ruff, and strict mypy pass. PostgreSQL used an isolated temporary test environment that was removed.
 - Agent: 271 relevant proof/chat/image/PDF/history/client/meter/worker checks pass after the source-binding repair; scoped Ruff passes. The independent reviewer verified API-compatible receipt hashes and complete historical source input. The public wheel boundary gate passes.
 - Infrastructure: 149 host checks pass with one dedicated signed-predecessor PostgreSQL fixture skipped; edge and attachment HTTP checks pass using real Caddy fixtures. The machine-auth monitor has 16 Node and 42 Python checks passing. Temporary Caddy resources were removed.
