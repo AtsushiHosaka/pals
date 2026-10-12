@@ -60,6 +60,10 @@ completed successfully for parent `e24047817f60e3d27e44b2f31090ee0641751a05`,
 which pins frontend `c21907b33cf5c6658de57dd6e666803aba4d1fb1` and reviewed infra
 `850b916906d3fe3fcdf70b3656d0b36f7567f0df`. The merged frontend tree exactly
 matches the tested follow-up tree `529f4696ca2bcfdcbc17accf4063652f4c6a6e79`.
+The deployment owner confirmed a healthy signed receipt with manifest hash
+`4fedef0234dbcbbfd97e303636de2d701b13e824df464354ee62a4d2c70cacb2`;
+[read-only host inspection 38223029221](https://github.com/AtsushiHosaka/pals/actions/runs/38223029221)
+also completed successfully.
 
 Public site and API health probes returned HTTP 200. The actual `/try` asset graph
 contains the definition metadata, tooltip, continuity glossary, and typed fixed
