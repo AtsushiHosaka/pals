@@ -32,3 +32,9 @@ Real local checks verified UID 65532 server-key access, refusal of client-key ac
 ## Outstanding evidence
 
 Initial host preparation and the six-service switch must be read back through the guarded operator. Then verify a meaningful proof over explicit assumptions through the public application, with the linked job, actual compiler attestation, independent semantic/output reviews and the exact accepted Lean source. The original guest session's daily allowance must be respected; no quota reset or alternate identity is authorized by this repair.
+
+## Initial transition diagnostics
+
+[Read-only initial plan 38241022191](https://github.com/AtsushiHosaka/pals/actions/runs/38241022191) verified the signed sequence-22 predecessor and produced a guarded code-staging plan. It also reported an unverified assessment-queue observation and an API peer-address mismatch against the fixed production reconciler contract.
+
+[Code-stage attempt 38241410834](https://github.com/AtsushiHosaka/pals/actions/runs/38241410834) refused `stage_plan_changed_since_review` before installing files. The precise hash guard remains required. Separate component hashes and closed queue/network diagnostics were added to identify the differing input; this refusal is not restoration evidence.
