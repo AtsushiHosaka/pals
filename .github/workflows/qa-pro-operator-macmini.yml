@@ -6,11 +6,11 @@ on:
       mode:
         description: Inspect Lean prerequisites, stage reviewed worker support, maintain authority or edge routes, or grant QA Pro
         type: choice
-        options: [inspect, inspect-lean, stage-lean-worker, inspect-lean-runtime, enable-lean-runtime, recover-lean-runtime, finalize-lean-runtime, inspect-lean-queue, prepare-lean-queue, inspect-edge, install-edge, install, install-chat, recover, grant]
+        options: [inspect, inspect-lean, stage-lean-worker, inspect-lean-support, refresh-lean-support, inspect-lean-runtime, enable-lean-runtime, recover-lean-runtime, finalize-lean-runtime, inspect-lean-queue, prepare-lean-queue, inspect-edge, install-edge, plan-materials-edge, install-materials-edge, install, install-chat, recover, grant]
         default: inspect
         required: true
       stage_plan_sha256:
-        description: Exact reviewed SHA256 returned by inspect-lean (stage-lean-worker only)
+        description: Exact reviewed support plan SHA256 (stage-lean-worker or refresh-lean-support only)
         type: string
         default: ''
       runtime_plan_sha256:
@@ -19,6 +19,10 @@ on:
         default: ''
       verified_job_id:
         description: Exact newly verified and delivered proof job UUID (finalize-lean-runtime only)
+        type: string
+        default: ''
+      edge_plan_sha256:
+        description: Exact reviewed current-config edge plan SHA256 (install-materials-edge only)
         type: string
         default: ''
       subject:
@@ -83,21 +87,27 @@ jobs:
           from uuid import UUID
 
           mode = os.environ['PALS_OPERATOR_MODE']
-          if mode not in {'inspect', 'inspect-lean', 'stage-lean-worker', 'inspect-lean-runtime', 'enable-lean-runtime', 'recover-lean-runtime', 'finalize-lean-runtime', 'inspect-lean-queue', 'prepare-lean-queue', 'inspect-edge', 'install-edge', 'install', 'install-chat', 'recover', 'grant'}:
+          if mode not in {'inspect', 'inspect-lean', 'stage-lean-worker', 'inspect-lean-support', 'refresh-lean-support', 'inspect-lean-runtime', 'enable-lean-runtime', 'recover-lean-runtime', 'finalize-lean-runtime', 'inspect-lean-queue', 'prepare-lean-queue', 'inspect-edge', 'install-edge', 'plan-materials-edge', 'install-materials-edge', 'install', 'install-chat', 'recover', 'grant'}:
               raise SystemExit('Unsupported operator mode.')
           event = json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text())
           stage_plan = event.get('inputs', {}).get('stage_plan_sha256', '')
-          if mode == 'stage-lean-worker':
+          if mode in {'stage-lean-worker', 'refresh-lean-support'}:
               if not isinstance(stage_plan, str) or re.fullmatch(r'[0-9a-f]{64}', stage_plan) is None:
                   raise SystemExit('An exact reviewed stage plan SHA256 is required.')
           elif stage_plan:
-              raise SystemExit('A stage plan is only accepted in stage-lean-worker mode.')
+              raise SystemExit('A stage plan is only accepted in a support apply mode.')
           runtime_plan = event.get('inputs', {}).get('runtime_plan_sha256', '')
           if mode in {'enable-lean-runtime', 'prepare-lean-queue'}:
               if not isinstance(runtime_plan, str) or re.fullmatch(r'[0-9a-f]{64}', runtime_plan) is None:
                   raise SystemExit('An exact reviewed runtime or queue plan SHA256 is required.')
           elif runtime_plan:
               raise SystemExit('A runtime or queue plan is only accepted in its apply mode.')
+          edge_plan = event.get('inputs', {}).get('edge_plan_sha256', '')
+          if mode == 'install-materials-edge':
+              if not isinstance(edge_plan, str) or re.fullmatch(r'[0-9a-f]{64}', edge_plan) is None:
+                  raise SystemExit('An exact reviewed edge plan SHA256 is required.')
+          elif edge_plan:
+              raise SystemExit('An edge plan is only accepted in install-materials-edge mode.')
           verified_job = event.get('inputs', {}).get('verified_job_id', '')
           if mode == 'finalize-lean-runtime':
               if not isinstance(verified_job, str) or re.fullmatch(r'[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}', verified_job) is None:
@@ -118,27 +128,32 @@ jobs:
               raise SystemExit('Account identifiers are only accepted in grant mode.')
           source = Path.cwd().resolve()
           script = ('pals-infra/host/macmini-deploy/full_runtime_operator.py'
-                    if mode in {'inspect-lean', 'stage-lean-worker'} else
+                    if mode in {'inspect-lean', 'stage-lean-worker', 'inspect-lean-support', 'refresh-lean-support'} else
                     'pals-infra/host/macmini-deploy/initial_full_runtime_operator.py'
                     if mode in {'inspect-lean-runtime', 'enable-lean-runtime', 'recover-lean-runtime', 'finalize-lean-runtime'} else
                     'pals-infra/host/macmini-deploy/assessment_queue_operator.py'
                     if mode in {'inspect-lean-queue', 'prepare-lean-queue'} else
                     'pals-infra/host/macmini-edge/chat_attachments_operator.py'
-                    if mode in {'inspect-edge', 'install-edge'} else 'pals-infra/host/macmini-deploy/qa_pro_operator.py')
+                    if mode in {'inspect-edge', 'install-edge'} else
+                    'pals-infra/host/macmini-edge/project_materials_operator.py'
+                    if mode in {'plan-materials-edge', 'install-materials-edge'} else 'pals-infra/host/macmini-deploy/qa_pro_operator.py')
           args = [
               '/Users/hosakaatsushi/pals-mini-deploy/auto-recovery/runtime/bin/python',
               '-B', str(source / script),
               '--mode', {'inspect-lean': 'plan', 'stage-lean-worker': 'stage-worker',
+                         'inspect-lean-support': 'plan-support', 'refresh-lean-support': 'refresh-support',
                          'inspect-lean-runtime': 'plan', 'enable-lean-runtime': 'apply',
                          'recover-lean-runtime': 'recover', 'finalize-lean-runtime': 'finalize', 'inspect-lean-queue': 'plan',
                          'prepare-lean-queue': 'apply'}.get(mode, mode),
               '--source-dir', str(source),
               '--expected-parent', os.environ['PALS_DEPLOY_REVISION'],
           ]
-          if mode == 'stage-lean-worker':
+          if mode in {'stage-lean-worker', 'refresh-lean-support'}:
               args += ['--expected-stage-plan-sha256', stage_plan]
           if mode in {'enable-lean-runtime', 'prepare-lean-queue'}:
               args += ['--expected-plan-sha256', runtime_plan]
+          if mode == 'install-materials-edge':
+              args += ['--expected-plan-sha256', edge_plan]
           if mode == 'finalize-lean-runtime':
               args += ['--verified-job-id', verified_job]
           if mode == 'grant':
