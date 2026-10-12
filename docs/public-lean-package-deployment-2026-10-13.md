@@ -24,6 +24,8 @@ The first materials plan38284873827 stopped with `materials_source_geometry_unsu
 
 The signed package deployment38285792301 failed in the host controller at17:48:11UTC. This attempt does not establish a new public verifier admission or successful activation. The failure must be diagnosed before a retry.
 
+Fresh read-only inspection38287206033 confirms signed sequence24 remains current with the same manifest SHA256 above and no pending deployment transition. The closed failure is `scoped_host_subprocess_failed_private_log_retained`, which does not identify the subprocess. [Infra PR39](https://github.com/AtsushiHosaka/pals-infra/pull/39) adds fixed phase-artifact presence and bounded build-log categories to the existing read-only inspector. It returns no matched log text, private paths or arbitrary error payloads, and performs no Docker/build/admission/runtime operation. Seventy-nine QA operator tests, Ruff/diff checks and independent review passed. Installed controller, authority, helper and support pins remain unchanged.
+
 ## Remaining runtime boundary
 
 The fresh queue check38282129134 failed at17:07:54UTC with the fixed code `queue_aws_authentication_unavailable`. The last runtime plan also reported Docker capacity7.82GiB against8.63GiB required. The Mac mini needs its configured AWS session refreshed and sufficient Docker memory before a fresh queue/runtime plan can authorize activation. No old or blocked plan hash is applied.
