@@ -6,7 +6,7 @@ on:
       mode:
         description: Inspect Lean prerequisites, stage reviewed worker support, maintain authority or edge routes, or grant QA Pro
         type: choice
-        options: [inspect, inspect-lean, stage-lean-worker, inspect-lean-support, refresh-lean-support, inspect-lean-runtime, enable-lean-runtime, recover-lean-runtime, finalize-lean-runtime, inspect-lean-queue, prepare-lean-queue, inspect-edge, install-edge, plan-materials-edge, install-materials-edge, install, install-chat, recover, grant]
+        options: [inspect, inspect-lean, stage-lean-worker, inspect-lean-support, refresh-lean-support, inspect-lean-runtime, enable-lean-runtime, recover-lean-runtime, finalize-lean-runtime, inspect-lean-queue, prepare-lean-queue, inspect-edge, install-edge, plan-materials-edge, install-materials-edge, plan-natural-capability, install, install-chat, recover, grant]
         default: inspect
         required: true
       stage_plan_sha256:
@@ -87,7 +87,7 @@ jobs:
           from uuid import UUID
 
           mode = os.environ['PALS_OPERATOR_MODE']
-          if mode not in {'inspect', 'inspect-lean', 'stage-lean-worker', 'inspect-lean-support', 'refresh-lean-support', 'inspect-lean-runtime', 'enable-lean-runtime', 'recover-lean-runtime', 'finalize-lean-runtime', 'inspect-lean-queue', 'prepare-lean-queue', 'inspect-edge', 'install-edge', 'plan-materials-edge', 'install-materials-edge', 'install', 'install-chat', 'recover', 'grant'}:
+          if mode not in {'inspect', 'inspect-lean', 'stage-lean-worker', 'inspect-lean-support', 'refresh-lean-support', 'inspect-lean-runtime', 'enable-lean-runtime', 'recover-lean-runtime', 'finalize-lean-runtime', 'inspect-lean-queue', 'prepare-lean-queue', 'inspect-edge', 'install-edge', 'plan-materials-edge', 'install-materials-edge', 'plan-natural-capability', 'install', 'install-chat', 'recover', 'grant'}:
               raise SystemExit('Unsupported operator mode.')
           event = json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text())
           stage_plan = event.get('inputs', {}).get('stage_plan_sha256', '')
@@ -136,7 +136,9 @@ jobs:
                     'pals-infra/host/macmini-edge/chat_attachments_operator.py'
                     if mode in {'inspect-edge', 'install-edge'} else
                     'pals-infra/host/macmini-edge/project_materials_operator.py'
-                    if mode in {'plan-materials-edge', 'install-materials-edge'} else 'pals-infra/host/macmini-deploy/qa_pro_operator.py')
+                    if mode in {'plan-materials-edge', 'install-materials-edge'} else
+                    'pals-infra/host/macmini-deploy/natural_capability_operator.py'
+                    if mode == 'plan-natural-capability' else 'pals-infra/host/macmini-deploy/qa_pro_operator.py')
           args = [
               '/Users/hosakaatsushi/pals-mini-deploy/auto-recovery/runtime/bin/python',
               '-B', str(source / script),
@@ -144,7 +146,7 @@ jobs:
                          'inspect-lean-support': 'plan-support', 'refresh-lean-support': 'refresh-support',
                          'inspect-lean-runtime': 'plan', 'enable-lean-runtime': 'apply',
                          'recover-lean-runtime': 'recover', 'finalize-lean-runtime': 'finalize', 'inspect-lean-queue': 'plan',
-                         'prepare-lean-queue': 'apply'}.get(mode, mode),
+                         'prepare-lean-queue': 'apply', 'plan-natural-capability': 'plan'}.get(mode, mode),
               '--source-dir', str(source),
               '--expected-parent', os.environ['PALS_DEPLOY_REVISION'],
           ]
