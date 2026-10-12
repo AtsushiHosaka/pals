@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Inspect, install reviewed authority, recover a signed pending update, or grant QA Pro
+        description: Inspect, install reviewed QA or chat authority, recover a signed pending update, or grant QA Pro
         type: choice
-        options: [inspect, install, recover, grant]
+        options: [inspect, inspect-edge, install, install-chat, recover, grant]
         default: inspect
         required: true
       subject:
@@ -69,7 +69,7 @@ jobs:
           from uuid import UUID
 
           mode = os.environ['PALS_OPERATOR_MODE']
-          if mode not in {'inspect', 'install', 'recover', 'grant'}:
+          if mode not in {'inspect', 'inspect-edge', 'install', 'install-chat', 'recover', 'grant'}:
               raise SystemExit('Unsupported operator mode.')
           event = json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text())
           subject = event.get('inputs', {}).get('subject', '')
@@ -85,9 +85,11 @@ jobs:
           elif subject or grant_id:
               raise SystemExit('Account identifiers are only accepted in grant mode.')
           source = Path.cwd().resolve()
+          script = ('pals-infra/host/macmini-edge/chat_attachments_operator.py'
+                    if mode == 'inspect-edge' else 'pals-infra/host/macmini-deploy/qa_pro_operator.py')
           args = [
               '/Users/hosakaatsushi/pals-mini-deploy/auto-recovery/runtime/bin/python',
-              '-B', str(source / 'pals-infra/host/macmini-deploy/qa_pro_operator.py'),
+              '-B', str(source / script),
               '--mode', mode, '--source-dir', str(source),
               '--expected-parent', os.environ['PALS_DEPLOY_REVISION'],
           ]

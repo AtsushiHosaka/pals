@@ -48,11 +48,17 @@ class OperatorWorkflowTests(unittest.TestCase):
         self.assertNotIn('shell', run.call_args.kwargs)
 
     def test_inspect_install_and_recovery_do_not_pass_an_account(self):
-        for mode in ('inspect', 'install', 'recover'):
+        for mode in ('inspect', 'inspect-edge', 'install', 'install-chat', 'recover'):
             code, run, output = self.invoke(mode)
             self.assertEqual(code, 0)
             self.assertNotIn('--subject', run.call_args.args[0])
             self.assertEqual(output, '')
+
+    def test_edge_inspection_uses_only_the_read_only_edge_entrypoint(self):
+        code, run, output = self.invoke('inspect-edge')
+        self.assertEqual(code, 0)
+        self.assertTrue(run.call_args.args[0][2].endswith('/pals-infra/host/macmini-edge/chat_attachments_operator.py'))
+        self.assertEqual(output, '')
 
     def test_invalid_inputs_never_reach_host_or_render_identifier(self):
         for mode, subject, grant in (
@@ -61,6 +67,8 @@ class OperatorWorkflowTests(unittest.TestCase):
             ('grant', SUBJECT, SUBJECT),
             ('inspect', SUBJECT, ''),
             ('install', '', GRANT),
+            ('install-chat', SUBJECT, ''),
+            ('inspect-edge', '', GRANT),
             ('recover', SUBJECT, ''),
             ('unrecognized', SUBJECT, GRANT),
         ):
