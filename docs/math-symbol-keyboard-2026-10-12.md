@@ -23,4 +23,4 @@ Local visual evidence (outside Git):
 - Mobile: `/Users/atsushi/.codex/visualizations/2026/10/12/01a12eaa-c882-7512-9921-59ff93d92203/math-keyboard-chat-mobile.jpg`
 - Collapsed: `/Users/atsushi/.codex/visualizations/2026/10/12/01a12eaa-c882-7512-9921-59ff93d92203/math-keyboard-chat-collapsed.jpg`
 
-This integration preserves the existing attachment work from [parent PR #47](https://github.com/AtsushiHosaka/pals/pull/47). Its inherited API/agent/infra pins belong to that prerequisite; the keyboard changes are frontend-only. The parent pointer was updated after the frontend push succeeded. No merge or deployment was performed.
+This integration preserves the existing attachment work from [parent PR #47](https://github.com/AtsushiHosaka/pals/pull/47). Its inherited API/agent/infra pins belong to that prerequisite; the keyboard changes are frontend-only. The parent pointer was updated after the frontend push succeeded. No PR was merged and no deployment was performed.
