@@ -8,7 +8,7 @@ Parent base: `3f09f328dae3553d6ac057cdbfdc1b85e2f8435e`. Current geometric brand
 
 | Repository | Pushed source |
 |---|---|
-| pals-webfront | `d205efbcf319fff5c30e42be1412d8128fc59441` |
+| pals-webfront | `39a40b4fed0f3389f6e562c07348b3b6521f2ce7` |
 | pals-api | `b0b5bdda3566d073bda1d24a7b3013322efd9b70` |
 | pals-agent | `021758e4222544a1a1f3350eef2a7f6d2e4856ad` |
 | pals-infra | `4299b56cae5f6ecfce9275da9d5693c7e3c3afa0` |
@@ -40,6 +40,8 @@ UI Pocket reference: [ChatGPT mobile gallery, October 2024](https://www.ui-pocke
 ## Composer disclosure follow-up
 
 The user requested removal of the OpenAI data-policy disclosure beneath the composer. Removed the disclosure and its CSS. Attachment behavior is unchanged. The focused attachment/keyboard suites passed all 24 tests, and TypeScript passed. Earlier preview screenshots predate this text removal.
+
+The next visual follow-up moves the attachment button down by 4px and removes the visible PNG/JPEG/PDF format hint. The selected-file count remains available. Real guest-chat rendering confirms a 4px offset from the send button, no format hint and no provider-policy disclosure. All 24 focused tests and TypeScript passed. Read-only production checks distinguish the preview issue: session preflight accepts the production website origin with HTTP 200, but rejects the local preview origin with HTTP 400. Production health returns HTTP 200; this does not prove guest-session creation or provider processing.
 
 ## Remaining release checks
 
