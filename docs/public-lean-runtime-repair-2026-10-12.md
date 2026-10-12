@@ -1,0 +1,13 @@
+# Public Lean runtime repair — 2026-10-12
+
+The public `/try` request fails because the production three-service runtime is still `natural-only`. The 20:31 JST inspection reports missing full-worker admission and configuration; the 20:35 support-staging operation refuses a changed live plan. These are deployment failures before fresh Lean verification, rather than evidence that the requested theorem is false.
+
+The repair adds a guarded transition to six services: API, Web, assessment worker, proof worker, verifier and reconciler. It preserves the existing application entry points, database, signed admission and purpose credentials. The API retains its existing networks and gains a separate fixed private trigger attachment. The verifier remains isolated on an internal network with separate admission-bound server/client TLS storage.
+
+The operator stages reviewed support under an exact plan hash. A separate plan gates the named assessment SQS queue and its grants. Actual image settings, TLS and worker credential readiness are checked in named, bounded offline probes before ingress closes. The transition captures existing rows, restores exact originals on interruption, and publishes the six-service receipt only after health and image/template checks pass. Immutable preparation records remain recoverable across sealing. Probe recovery retains pending state when cleanup cannot be proved; rollback removes only newly owned sealed PKI resources and unused owned networks.
+
+Archive cleanup requires a newly created, attested, delivered `lean_verified` proof, matching source/job/hash references, and the healthy six-service receipt. It removes only verified stopped original container IDs. Application volumes and stored records remain intact.
+
+Validation before deployment: 343 host tests passed with one existing dedicated signed32 PostgreSQL fixture skipped; 24 recovery, 15 assessment-queue helper and 10 workflow-adapter tests passed. Independent source review found and verified repairs for interrupted probe cleanup, TLS reuse and archive identity races. These tests do not establish live AWS permissions, Docker routing, mTLS, compiler execution or public answer delivery.
+
+The diagnostic infrastructure PR #33 was explicitly approved and merged. The remaining runtime and parent integration changes require explicit merge/deployment approval after automatic approval review rejected the earlier default-branch merge under the general request to fix Lean. Production services have not been switched by this chat. Completion requires current guarded production inspection, staging, signed full-worker deployment, any necessary queue preparation, six-service enablement, actual browser proof/source verification and final owned-resource cleanup.

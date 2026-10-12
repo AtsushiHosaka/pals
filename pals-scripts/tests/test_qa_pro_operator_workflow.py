@@ -18,13 +18,13 @@ GRANT = '11111111-2222-4333-8444-555555555555'
 
 
 class OperatorWorkflowTests(unittest.TestCase):
-    def invoke(self, mode, subject='', grant_id='', stage_plan=''):
+    def invoke(self, mode, subject='', grant_id='', stage_plan='', runtime_plan='', verified_job=''):
         content = WORKFLOW.read_text()
         adapter = textwrap.dedent(content.split("<<'PY'\n", 1)[1].split('\n          PY', 1)[0])
         output = io.StringIO()
         with tempfile.TemporaryDirectory() as temporary:
             event = Path(temporary) / 'event.json'
-            event.write_text(json.dumps({'inputs': {'subject': subject, 'grant_id': grant_id, 'stage_plan_sha256': stage_plan}}))
+            event.write_text(json.dumps({'inputs': {'subject': subject, 'grant_id': grant_id, 'stage_plan_sha256': stage_plan, 'runtime_plan_sha256': runtime_plan, 'verified_job_id': verified_job}}))
             environment = {
                 'PALS_OPERATOR_MODE': mode,
                 'PALS_DEPLOY_REVISION': 'a' * 40,
@@ -83,6 +83,50 @@ class OperatorWorkflowTests(unittest.TestCase):
             self.assertEqual(output, '')
             if plan:
                 self.assertNotIn(plan, code)
+
+    def test_initial_runtime_and_queue_modes_are_distinct_and_plan_bound(self):
+        for mode, filename, command, plan in (
+            ('inspect-lean-runtime', 'initial_full_runtime_operator.py', 'plan', ''),
+            ('enable-lean-runtime', 'initial_full_runtime_operator.py', 'apply', 'b' * 64),
+            ('recover-lean-runtime', 'initial_full_runtime_operator.py', 'recover', ''),
+            ('inspect-lean-queue', 'assessment_queue_operator.py', 'plan', ''),
+            ('prepare-lean-queue', 'assessment_queue_operator.py', 'apply', 'c' * 64),
+        ):
+            with self.subTest(mode=mode):
+                code, run, output = self.invoke(mode, runtime_plan=plan)
+                self.assertEqual(code, 0)
+                args = run.call_args.args[0]
+                self.assertTrue(args[2].endswith('/' + filename))
+                self.assertEqual(args[args.index('--mode') + 1], command)
+                self.assertEqual('--expected-plan-sha256' in args, bool(plan))
+                self.assertEqual(output, '')
+
+    def test_runtime_or_queue_hash_cannot_cross_operation_boundaries(self):
+        for mode, plan in (('enable-lean-runtime', ''), ('prepare-lean-queue', ''),
+                           ('enable-lean-runtime', '$(id)'), ('prepare-lean-queue', 'B' * 64),
+                           ('recover-lean-runtime', 'b' * 64), ('inspect-lean-runtime', 'b' * 64),
+                           ('inspect-lean-queue', 'b' * 64), ('stage-lean-worker', 'b' * 64)):
+            with self.subTest(mode=mode):
+                code, run, _ = self.invoke(mode, runtime_plan=plan)
+                self.assertIsInstance(code, str)
+                run.assert_not_called()
+
+    def test_finalization_requires_canonical_job_and_never_crosses_modes(self):
+        code, run, output = self.invoke('finalize-lean-runtime', verified_job=GRANT)
+        self.assertEqual(code, 0)
+        args = run.call_args.args[0]
+        self.assertTrue(args[2].endswith('/initial_full_runtime_operator.py'))
+        self.assertEqual(args[args.index('--mode') + 1], 'finalize')
+        self.assertEqual(args[args.index('--verified-job-id') + 1], GRANT)
+        self.assertEqual(output, '')
+        for mode, job in (('finalize-lean-runtime', ''), ('finalize-lean-runtime', '$(id)'),
+                          ('finalize-lean-runtime', SUBJECT), ('inspect-lean-runtime', GRANT),
+                          ('enable-lean-runtime', GRANT), ('grant', GRANT)):
+            with self.subTest(mode=mode, job=job):
+                code, run, output = self.invoke(mode, verified_job=job)
+                self.assertIsInstance(code, str)
+                run.assert_not_called()
+                self.assertEqual(output, '')
 
     def test_lock_diagnostics_run_after_a_failed_inspection_only(self):
         step = WORKFLOW.read_text().split('      - name: Inspect fixed host interpreter availability\n', 1)[1]
