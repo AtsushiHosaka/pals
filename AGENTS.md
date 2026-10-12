@@ -33,6 +33,14 @@ The implementation submodules may be empty until initialized. Parent-level plann
 - このプロジェクトの各チャットでは、変更を検証したら、そのチャットで行った変更を随時 commit して GitHub に push する。これをユーザーの継続的な許可として扱い、毎回確認しない。
 - 他のチャットの作業が混在する場合は、自分の変更だけを commit する。force push はしない。親リポジトリの submodule 参照は、実装リポジトリへの push が成功してから更新する。
 
+## Existing Feature Preservation
+
+- Obtain the user's explicit approval before removing, disabling, hiding, or making an existing user-facing feature inaccessible. This applies to the parent repository and every implementation submodule.
+- Requests to simplify, clean up, restyle, refactor, merge, or deploy do not authorize feature removal. Preserve existing capabilities and their entry points unless the user explicitly approves their removal.
+- Before proposing removal, identify the exact feature and affected screens, explain the impact, and ask the user. An approval to remove one feature does not extend to other features.
+- During review and release, check for unintended loss of existing capabilities. If a change would remove a feature without approval, preserve it or stop that part of the change and ask the user.
+- See [the feature preservation policy](docs/feature-preservation-policy.md) for examples.
+
 ## 数学のテスト題材
 
 - 平方展開 `(x+y)^2=x^2+2xy+y^2` の証明問題は、今後のテスト、描画プレビュー、デモ、dogfood では使わない。ユーザーが簡単すぎる題材として使用を禁止したため。
