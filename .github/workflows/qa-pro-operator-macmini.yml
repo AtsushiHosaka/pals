@@ -6,11 +6,19 @@ on:
       mode:
         description: Inspect Lean prerequisites, stage reviewed worker support, maintain authority or edge routes, or grant QA Pro
         type: choice
-        options: [inspect, inspect-lean, stage-lean-worker, inspect-edge, install-edge, install, install-chat, recover, grant]
+        options: [inspect, inspect-lean, stage-lean-worker, inspect-lean-runtime, enable-lean-runtime, recover-lean-runtime, finalize-lean-runtime, inspect-lean-queue, prepare-lean-queue, inspect-edge, install-edge, install, install-chat, recover, grant]
         default: inspect
         required: true
       stage_plan_sha256:
         description: Exact reviewed SHA256 returned by inspect-lean (stage-lean-worker only)
+        type: string
+        default: ''
+      runtime_plan_sha256:
+        description: Exact reviewed runtime or queue plan SHA256 (enable-lean-runtime or prepare-lean-queue only)
+        type: string
+        default: ''
+      verified_job_id:
+        description: Exact newly verified and delivered proof job UUID (finalize-lean-runtime only)
         type: string
         default: ''
       subject:
@@ -75,7 +83,7 @@ jobs:
           from uuid import UUID
 
           mode = os.environ['PALS_OPERATOR_MODE']
-          if mode not in {'inspect', 'inspect-lean', 'stage-lean-worker', 'inspect-edge', 'install-edge', 'install', 'install-chat', 'recover', 'grant'}:
+          if mode not in {'inspect', 'inspect-lean', 'stage-lean-worker', 'inspect-lean-runtime', 'enable-lean-runtime', 'recover-lean-runtime', 'finalize-lean-runtime', 'inspect-lean-queue', 'prepare-lean-queue', 'inspect-edge', 'install-edge', 'install', 'install-chat', 'recover', 'grant'}:
               raise SystemExit('Unsupported operator mode.')
           event = json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text())
           stage_plan = event.get('inputs', {}).get('stage_plan_sha256', '')
@@ -84,6 +92,18 @@ jobs:
                   raise SystemExit('An exact reviewed stage plan SHA256 is required.')
           elif stage_plan:
               raise SystemExit('A stage plan is only accepted in stage-lean-worker mode.')
+          runtime_plan = event.get('inputs', {}).get('runtime_plan_sha256', '')
+          if mode in {'enable-lean-runtime', 'prepare-lean-queue'}:
+              if not isinstance(runtime_plan, str) or re.fullmatch(r'[0-9a-f]{64}', runtime_plan) is None:
+                  raise SystemExit('An exact reviewed runtime or queue plan SHA256 is required.')
+          elif runtime_plan:
+              raise SystemExit('A runtime or queue plan is only accepted in its apply mode.')
+          verified_job = event.get('inputs', {}).get('verified_job_id', '')
+          if mode == 'finalize-lean-runtime':
+              if not isinstance(verified_job, str) or re.fullmatch(r'[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}', verified_job) is None:
+                  raise SystemExit('A canonical UUID4 newly verified proof job is required.')
+          elif verified_job:
+              raise SystemExit('A verified job is only accepted in finalize-lean-runtime mode.')
           subject = event.get('inputs', {}).get('subject', '')
           grant_id = event.get('inputs', {}).get('grant_id', '')
           if mode == 'grant':
@@ -99,17 +119,28 @@ jobs:
           source = Path.cwd().resolve()
           script = ('pals-infra/host/macmini-deploy/full_runtime_operator.py'
                     if mode in {'inspect-lean', 'stage-lean-worker'} else
+                    'pals-infra/host/macmini-deploy/initial_full_runtime_operator.py'
+                    if mode in {'inspect-lean-runtime', 'enable-lean-runtime', 'recover-lean-runtime', 'finalize-lean-runtime'} else
+                    'pals-infra/host/macmini-deploy/assessment_queue_operator.py'
+                    if mode in {'inspect-lean-queue', 'prepare-lean-queue'} else
                     'pals-infra/host/macmini-edge/chat_attachments_operator.py'
                     if mode in {'inspect-edge', 'install-edge'} else 'pals-infra/host/macmini-deploy/qa_pro_operator.py')
           args = [
               '/Users/hosakaatsushi/pals-mini-deploy/auto-recovery/runtime/bin/python',
               '-B', str(source / script),
-              '--mode', {'inspect-lean': 'plan', 'stage-lean-worker': 'stage-worker'}.get(mode, mode),
+              '--mode', {'inspect-lean': 'plan', 'stage-lean-worker': 'stage-worker',
+                         'inspect-lean-runtime': 'plan', 'enable-lean-runtime': 'apply',
+                         'recover-lean-runtime': 'recover', 'finalize-lean-runtime': 'finalize', 'inspect-lean-queue': 'plan',
+                         'prepare-lean-queue': 'apply'}.get(mode, mode),
               '--source-dir', str(source),
               '--expected-parent', os.environ['PALS_DEPLOY_REVISION'],
           ]
           if mode == 'stage-lean-worker':
               args += ['--expected-stage-plan-sha256', stage_plan]
+          if mode in {'enable-lean-runtime', 'prepare-lean-queue'}:
+              args += ['--expected-plan-sha256', runtime_plan]
+          if mode == 'finalize-lean-runtime':
+              args += ['--verified-job-id', verified_job]
           if mode == 'grant':
               args += [
                   '--subject', subject,
