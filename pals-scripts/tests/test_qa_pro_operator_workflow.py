@@ -48,17 +48,24 @@ class OperatorWorkflowTests(unittest.TestCase):
         self.assertNotIn('shell', run.call_args.kwargs)
 
     def test_inspect_install_and_recovery_do_not_pass_an_account(self):
-        for mode in ('inspect', 'inspect-edge', 'install', 'install-chat', 'recover'):
+        for mode in ('inspect', 'inspect-edge', 'install-edge', 'install', 'install-chat', 'recover'):
             code, run, output = self.invoke(mode)
             self.assertEqual(code, 0)
             self.assertNotIn('--subject', run.call_args.args[0])
             self.assertEqual(output, '')
 
-    def test_edge_inspection_uses_only_the_read_only_edge_entrypoint(self):
-        code, run, output = self.invoke('inspect-edge')
-        self.assertEqual(code, 0)
-        self.assertTrue(run.call_args.args[0][2].endswith('/pals-infra/host/macmini-edge/chat_attachments_operator.py'))
-        self.assertEqual(output, '')
+    def test_edge_modes_use_the_separate_edge_entrypoint(self):
+        for mode in ('inspect-edge', 'install-edge'):
+            code, run, output = self.invoke(mode)
+            self.assertEqual(code, 0)
+            self.assertTrue(run.call_args.args[0][2].endswith('/pals-infra/host/macmini-edge/chat_attachments_operator.py'))
+            self.assertEqual(output, '')
+
+    def test_lock_diagnostics_run_after_a_failed_inspection_only(self):
+        step = WORKFLOW.read_text().split('      - name: Inspect fixed host interpreter availability\n', 1)[1]
+        self.assertIn("if: always() && inputs.mode == 'inspect' && steps.parent-checkout.outcome == 'success'", step)
+        self.assertIn('      - name: Checkout the exact parent\n        id: parent-checkout\n', WORKFLOW.read_text())
+        self.assertIn('/usr/bin/python3 -B macmini-deploy/pals-scripts/inspect-macmini-lock.py', step)
 
     def test_invalid_inputs_never_reach_host_or_render_identifier(self):
         for mode, subject, grant in (
@@ -69,6 +76,7 @@ class OperatorWorkflowTests(unittest.TestCase):
             ('install', '', GRANT),
             ('install-chat', SUBJECT, ''),
             ('inspect-edge', '', GRANT),
+            ('install-edge', SUBJECT, ''),
             ('recover', SUBJECT, ''),
             ('unrecognized', SUBJECT, GRANT),
         ):
