@@ -18,13 +18,13 @@ GRANT = '11111111-2222-4333-8444-555555555555'
 
 
 class OperatorWorkflowTests(unittest.TestCase):
-    def invoke(self, mode, subject='', grant_id='', stage_plan='', runtime_plan='', verified_job='', edge_plan='', natural_plan=''):
+    def invoke(self, mode, subject='', grant_id='', stage_plan='', runtime_plan='', verified_job='', edge_plan='', natural_plan='', network_plan=''):
         content = WORKFLOW.read_text()
         adapter = textwrap.dedent(content.split("<<'PY'\n", 1)[1].split('\n          PY', 1)[0])
         output = io.StringIO()
         with tempfile.TemporaryDirectory() as temporary:
             event = Path(temporary) / 'event.json'
-            event.write_text(json.dumps({'inputs': {'subject': subject, 'grant_id': grant_id, 'stage_plan_sha256': stage_plan, 'runtime_plan_sha256': runtime_plan, 'verified_job_id': verified_job, 'edge_plan_sha256': edge_plan, 'natural_capability_plan_sha256': natural_plan}}))
+            event.write_text(json.dumps({'inputs': {'subject': subject, 'grant_id': grant_id, 'stage_plan_sha256': stage_plan, 'runtime_plan_sha256': runtime_plan, 'verified_job_id': verified_job, 'edge_plan_sha256': edge_plan, 'natural_capability_plan_sha256': natural_plan, 'network_recovery_plan_sha256': network_plan}}))
             environment = {
                 'PALS_OPERATOR_MODE': mode,
                 'PALS_DEPLOY_REVISION': 'a' * 40,
@@ -120,6 +120,35 @@ class OperatorWorkflowTests(unittest.TestCase):
                           {'edge_plan': 'a' * 64}, {'verified_job': GRANT},
                           {'subject': SUBJECT}, {'grant_id': GRANT}):
                 code, run, _ = self.invoke(mode, natural_plan='' if 'plan-' in mode else 'e' * 64, **extra)
+                self.assertIsInstance(code, str)
+                run.assert_not_called()
+
+    def test_sealed_network_recovery_has_a_separate_plan_and_fixed_entrypoint(self):
+        for mode, internal, plan in (('plan-network-baseline-recovery', 'plan', ''),
+                                    ('recover-network-baseline', 'recover', 'f' * 64)):
+            code, run, output = self.invoke(mode, network_plan=plan)
+            self.assertEqual(code, 0)
+            args = run.call_args.args[0]
+            self.assertTrue(args[2].endswith('/network_baseline_recovery.py'))
+            self.assertEqual(args[args.index('--mode') + 1], internal)
+            self.assertEqual('--expected-plan-sha256' in args, bool(plan))
+            if plan:
+                self.assertEqual(args[args.index('--expected-plan-sha256') + 1], plan)
+            self.assertEqual(output, '')
+        for plan in ('', 'F' * 64, '$(id)'):
+            code, run, _ = self.invoke('recover-network-baseline', network_plan=plan)
+            self.assertIsInstance(code, str)
+            run.assert_not_called()
+        for mode in ('inspect', 'plan-network-baseline-recovery', 'recover-natural-capability',
+                     'apply-natural-capability', 'prepare-lean-queue'):
+            code, run, _ = self.invoke(mode, network_plan='f' * 64)
+            self.assertIsInstance(code, str)
+            run.assert_not_called()
+        for mode in ('plan-network-baseline-recovery', 'recover-network-baseline'):
+            for extra in ({'natural_plan': 'e' * 64}, {'stage_plan': 'b' * 64},
+                          {'runtime_plan': 'c' * 64}, {'edge_plan': 'd' * 64},
+                          {'subject': SUBJECT}, {'grant_id': GRANT}, {'verified_job': GRANT}):
+                code, run, _ = self.invoke(mode, network_plan='' if mode.startswith('plan-') else 'f' * 64, **extra)
                 self.assertIsInstance(code, str)
                 run.assert_not_called()
 
