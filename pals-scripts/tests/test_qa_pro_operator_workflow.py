@@ -54,6 +54,23 @@ class OperatorWorkflowTests(unittest.TestCase):
             self.assertNotIn('--subject', run.call_args.args[0])
             self.assertEqual(output, '')
 
+    def test_material_ocr_inspection_has_no_mutation_or_identifier_inputs(self):
+        code, run, output = self.invoke('inspect-material-ocr')
+        self.assertEqual(code, 0)
+        args = run.call_args.args[0]
+        self.assertTrue(args[2].endswith('/qa_pro_operator.py'))
+        self.assertEqual(args[args.index('--mode') + 1], 'inspect-material-ocr')
+        self.assertNotIn('--subject', args)
+        self.assertNotIn('--expected-plan-sha256', args)
+        self.assertEqual(output, '')
+        for extra in ({'stage_plan': 'a' * 64}, {'runtime_plan': 'a' * 64},
+                      {'edge_plan': 'a' * 64}, {'natural_plan': 'a' * 64},
+                      {'verified_job': GRANT}, {'subject': SUBJECT}, {'grant_id': GRANT}):
+            code, run, output = self.invoke('inspect-material-ocr', **extra)
+            self.assertIsInstance(code, str)
+            run.assert_not_called()
+            self.assertEqual(output, '')
+
     def test_edge_modes_use_the_separate_edge_entrypoint(self):
         for mode in ('inspect-edge', 'install-edge'):
             code, run, output = self.invoke(mode)
