@@ -6,7 +6,7 @@ on:
       mode:
         description: Inspect Lean prerequisites, stage reviewed worker support, maintain authority or edge routes, or grant QA Pro
         type: choice
-        options: [inspect, inspect-material-ocr, inspect-lean, stage-lean-worker, inspect-lean-support, refresh-lean-support, inspect-lean-runtime, enable-lean-runtime, recover-lean-runtime, finalize-lean-runtime, inspect-lean-queue, prepare-lean-queue, inspect-edge, install-edge, plan-materials-edge, install-materials-edge, plan-natural-capability, plan-natural-capability-apply, apply-natural-capability, recover-natural-capability, install, install-chat, recover, grant]
+        options: [inspect, inspect-material-ocr, inspect-lean, stage-lean-worker, inspect-lean-support, refresh-lean-support, inspect-lean-runtime, enable-lean-runtime, recover-lean-runtime, finalize-lean-runtime, inspect-lean-queue, prepare-lean-queue, inspect-edge, install-edge, plan-materials-edge, install-materials-edge, plan-natural-capability, plan-natural-capability-apply, apply-natural-capability, recover-natural-capability, plan-network-baseline-recovery, recover-network-baseline, install, install-chat, recover, grant]
         default: inspect
         required: true
       stage_plan_sha256:
@@ -27,6 +27,10 @@ on:
         default: ''
       natural_capability_plan_sha256:
         description: Exact separate API declaration apply plan SHA256 (apply/recover-natural-capability only)
+        type: string
+        default: ''
+      network_recovery_plan_sha256:
+        description: Exact separate sealed network baseline recovery plan SHA256 (recover-network-baseline only)
         type: string
         default: ''
       subject:
@@ -91,7 +95,7 @@ jobs:
           from uuid import UUID
 
           mode = os.environ['PALS_OPERATOR_MODE']
-          if mode not in {'inspect', 'inspect-material-ocr', 'inspect-lean', 'stage-lean-worker', 'inspect-lean-support', 'refresh-lean-support', 'inspect-lean-runtime', 'enable-lean-runtime', 'recover-lean-runtime', 'finalize-lean-runtime', 'inspect-lean-queue', 'prepare-lean-queue', 'inspect-edge', 'install-edge', 'plan-materials-edge', 'install-materials-edge', 'plan-natural-capability', 'plan-natural-capability-apply', 'apply-natural-capability', 'recover-natural-capability', 'install', 'install-chat', 'recover', 'grant'}:
+          if mode not in {'inspect', 'inspect-material-ocr', 'inspect-lean', 'stage-lean-worker', 'inspect-lean-support', 'refresh-lean-support', 'inspect-lean-runtime', 'enable-lean-runtime', 'recover-lean-runtime', 'finalize-lean-runtime', 'inspect-lean-queue', 'prepare-lean-queue', 'inspect-edge', 'install-edge', 'plan-materials-edge', 'install-materials-edge', 'plan-natural-capability', 'plan-natural-capability-apply', 'apply-natural-capability', 'recover-natural-capability', 'plan-network-baseline-recovery', 'recover-network-baseline', 'install', 'install-chat', 'recover', 'grant'}:
               raise SystemExit('Unsupported operator mode.')
           event = json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text())
           stage_plan = event.get('inputs', {}).get('stage_plan_sha256', '')
@@ -118,6 +122,12 @@ jobs:
                   raise SystemExit('An exact separate natural capability apply plan SHA256 is required.')
           elif natural_plan:
               raise SystemExit('A natural capability plan is only accepted in its apply or recover mode.')
+          network_plan = event.get('inputs', {}).get('network_recovery_plan_sha256', '')
+          if mode == 'recover-network-baseline':
+              if not isinstance(network_plan, str) or re.fullmatch(r'[0-9a-f]{64}', network_plan) is None:
+                  raise SystemExit('An exact separate network recovery plan SHA256 is required.')
+          elif network_plan:
+              raise SystemExit('A network recovery plan is only accepted in its recover mode.')
           verified_job = event.get('inputs', {}).get('verified_job_id', '')
           if mode == 'finalize-lean-runtime':
               if not isinstance(verified_job, str) or re.fullmatch(r'[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}', verified_job) is None:
@@ -137,7 +147,8 @@ jobs:
           elif subject or grant_id:
               raise SystemExit('Account identifiers are only accepted in grant mode.')
           source = Path.cwd().resolve()
-          script = ('pals-infra/host/macmini-deploy/full_runtime_operator.py'
+          script = ('pals-infra/host/macmini-deploy/network_baseline_recovery.py'
+                    if mode in {'plan-network-baseline-recovery', 'recover-network-baseline'} else 'pals-infra/host/macmini-deploy/full_runtime_operator.py'
                     if mode in {'inspect-lean', 'stage-lean-worker', 'inspect-lean-support', 'refresh-lean-support'} else
                     'pals-infra/host/macmini-deploy/initial_full_runtime_operator.py'
                     if mode in {'inspect-lean-runtime', 'enable-lean-runtime', 'recover-lean-runtime', 'finalize-lean-runtime'} else
@@ -158,7 +169,8 @@ jobs:
                          'recover-lean-runtime': 'recover', 'finalize-lean-runtime': 'finalize', 'inspect-lean-queue': 'plan',
                          'prepare-lean-queue': 'apply', 'plan-natural-capability': 'plan',
                          'plan-natural-capability-apply': 'plan-apply', 'apply-natural-capability': 'apply',
-                         'recover-natural-capability': 'recover'}.get(mode, mode),
+                         'recover-natural-capability': 'recover', 'plan-network-baseline-recovery': 'plan',
+                         'recover-network-baseline': 'recover'}.get(mode, mode),
               '--source-dir', str(source),
               '--expected-parent', os.environ['PALS_DEPLOY_REVISION'],
           ]
@@ -170,6 +182,8 @@ jobs:
               args += ['--expected-plan-sha256', edge_plan]
           if mode in {'apply-natural-capability', 'recover-natural-capability'}:
               args += ['--expected-plan-sha256', natural_plan]
+          if mode == 'recover-network-baseline':
+              args += ['--expected-plan-sha256', network_plan]
           if mode == 'finalize-lean-runtime':
               args += ['--verified-job-id', verified_job]
           if mode == 'grant':
