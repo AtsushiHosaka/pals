@@ -18,13 +18,13 @@ GRANT = '11111111-2222-4333-8444-555555555555'
 
 
 class OperatorWorkflowTests(unittest.TestCase):
-    def invoke(self, mode, subject='', grant_id='', stage_plan='', runtime_plan='', verified_job='', edge_plan=''):
+    def invoke(self, mode, subject='', grant_id='', stage_plan='', runtime_plan='', verified_job='', edge_plan='', natural_plan=''):
         content = WORKFLOW.read_text()
         adapter = textwrap.dedent(content.split("<<'PY'\n", 1)[1].split('\n          PY', 1)[0])
         output = io.StringIO()
         with tempfile.TemporaryDirectory() as temporary:
             event = Path(temporary) / 'event.json'
-            event.write_text(json.dumps({'inputs': {'subject': subject, 'grant_id': grant_id, 'stage_plan_sha256': stage_plan, 'runtime_plan_sha256': runtime_plan, 'verified_job_id': verified_job, 'edge_plan_sha256': edge_plan}}))
+            event.write_text(json.dumps({'inputs': {'subject': subject, 'grant_id': grant_id, 'stage_plan_sha256': stage_plan, 'runtime_plan_sha256': runtime_plan, 'verified_job_id': verified_job, 'edge_plan_sha256': edge_plan, 'natural_capability_plan_sha256': natural_plan}}))
             environment = {
                 'PALS_OPERATOR_MODE': mode,
                 'PALS_DEPLOY_REVISION': 'a' * 40,
@@ -73,6 +73,38 @@ class OperatorWorkflowTests(unittest.TestCase):
         code, run, _ = self.invoke('apply-natural-capability')
         self.assertIsInstance(code, str)
         run.assert_not_called()
+
+    def test_separate_natural_apply_plan_and_recovery_namespace(self):
+        for mode, internal, plan in (('plan-natural-capability-apply', 'plan-apply', ''),
+                                    ('apply-natural-capability', 'apply', 'e' * 64),
+                                    ('recover-natural-capability', 'recover', 'e' * 64)):
+            with self.subTest(mode=mode):
+                code, run, output = self.invoke(mode, natural_plan=plan)
+                self.assertEqual(code, 0)
+                args = run.call_args.args[0]
+                self.assertTrue(args[2].endswith('/natural_capability_operator.py'))
+                self.assertEqual(args[args.index('--mode') + 1], internal)
+                self.assertEqual('--expected-plan-sha256' in args, bool(plan))
+                if plan:
+                    self.assertEqual(args[args.index('--expected-plan-sha256') + 1], plan)
+                self.assertEqual(output, '')
+        for mode in ('apply-natural-capability', 'recover-natural-capability'):
+            for plan in ('', 'bad', 'A' * 64):
+                code, run, _ = self.invoke(mode, natural_plan=plan)
+                self.assertIsInstance(code, str)
+                run.assert_not_called()
+        for mode in ('inspect', 'plan-natural-capability', 'plan-natural-capability-apply',
+                     'prepare-lean-queue', 'enable-lean-runtime', 'install-materials-edge'):
+            code, run, _ = self.invoke(mode, natural_plan='e' * 64)
+            self.assertIsInstance(code, str)
+            run.assert_not_called()
+        for mode in ('plan-natural-capability-apply', 'apply-natural-capability', 'recover-natural-capability'):
+            for extra in ({'stage_plan': 'a' * 64}, {'runtime_plan': 'a' * 64},
+                          {'edge_plan': 'a' * 64}, {'verified_job': GRANT},
+                          {'subject': SUBJECT}, {'grant_id': GRANT}):
+                code, run, _ = self.invoke(mode, natural_plan='' if 'plan-' in mode else 'e' * 64, **extra)
+                self.assertIsInstance(code, str)
+                run.assert_not_called()
 
     def test_natural_plan_cannot_consume_another_operation_authorization(self):
         for extra in ({'stage_plan': 'a' * 64}, {'runtime_plan': 'a' * 64},
