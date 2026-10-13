@@ -6,7 +6,7 @@ on:
       mode:
         description: Inspect Lean prerequisites, stage reviewed worker support, maintain authority or edge routes, or grant QA Pro
         type: choice
-        options: [inspect, inspect-lean, stage-lean-worker, inspect-lean-support, refresh-lean-support, inspect-lean-runtime, enable-lean-runtime, recover-lean-runtime, finalize-lean-runtime, inspect-lean-queue, prepare-lean-queue, inspect-edge, install-edge, plan-materials-edge, install-materials-edge, plan-natural-capability, plan-natural-capability-apply, apply-natural-capability, recover-natural-capability, install, install-chat, recover, grant]
+        options: [inspect, inspect-material-ocr, inspect-lean, stage-lean-worker, inspect-lean-support, refresh-lean-support, inspect-lean-runtime, enable-lean-runtime, recover-lean-runtime, finalize-lean-runtime, inspect-lean-queue, prepare-lean-queue, inspect-edge, install-edge, plan-materials-edge, install-materials-edge, plan-natural-capability, plan-natural-capability-apply, apply-natural-capability, recover-natural-capability, install, install-chat, recover, grant]
         default: inspect
         required: true
       stage_plan_sha256:
@@ -91,7 +91,7 @@ jobs:
           from uuid import UUID
 
           mode = os.environ['PALS_OPERATOR_MODE']
-          if mode not in {'inspect', 'inspect-lean', 'stage-lean-worker', 'inspect-lean-support', 'refresh-lean-support', 'inspect-lean-runtime', 'enable-lean-runtime', 'recover-lean-runtime', 'finalize-lean-runtime', 'inspect-lean-queue', 'prepare-lean-queue', 'inspect-edge', 'install-edge', 'plan-materials-edge', 'install-materials-edge', 'plan-natural-capability', 'plan-natural-capability-apply', 'apply-natural-capability', 'recover-natural-capability', 'install', 'install-chat', 'recover', 'grant'}:
+          if mode not in {'inspect', 'inspect-material-ocr', 'inspect-lean', 'stage-lean-worker', 'inspect-lean-support', 'refresh-lean-support', 'inspect-lean-runtime', 'enable-lean-runtime', 'recover-lean-runtime', 'finalize-lean-runtime', 'inspect-lean-queue', 'prepare-lean-queue', 'inspect-edge', 'install-edge', 'plan-materials-edge', 'install-materials-edge', 'plan-natural-capability', 'plan-natural-capability-apply', 'apply-natural-capability', 'recover-natural-capability', 'install', 'install-chat', 'recover', 'grant'}:
               raise SystemExit('Unsupported operator mode.')
           event = json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text())
           stage_plan = event.get('inputs', {}).get('stage_plan_sha256', '')
