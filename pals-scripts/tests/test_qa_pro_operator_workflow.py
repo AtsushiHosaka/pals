@@ -18,13 +18,13 @@ GRANT = '11111111-2222-4333-8444-555555555555'
 
 
 class OperatorWorkflowTests(unittest.TestCase):
-    def invoke(self, mode, subject='', grant_id='', stage_plan='', runtime_plan='', verified_job='', edge_plan='', natural_plan='', network_plan=''):
+    def invoke(self, mode, subject='', grant_id='', stage_plan='', runtime_plan='', verified_job='', edge_plan='', natural_plan='', network_plan='', network_finalization_plan=''):
         content = WORKFLOW.read_text()
         adapter = textwrap.dedent(content.split("<<'PY'\n", 1)[1].split('\n          PY', 1)[0])
         output = io.StringIO()
         with tempfile.TemporaryDirectory() as temporary:
             event = Path(temporary) / 'event.json'
-            event.write_text(json.dumps({'inputs': {'subject': subject, 'grant_id': grant_id, 'stage_plan_sha256': stage_plan, 'runtime_plan_sha256': runtime_plan, 'verified_job_id': verified_job, 'edge_plan_sha256': edge_plan, 'natural_capability_plan_sha256': natural_plan, 'network_recovery_plan_sha256': network_plan}}))
+            event.write_text(json.dumps({'inputs': {'subject': subject, 'grant_id': grant_id, 'stage_plan_sha256': stage_plan, 'runtime_plan_sha256': runtime_plan, 'verified_job_id': verified_job, 'edge_plan_sha256': edge_plan, 'natural_capability_plan_sha256': natural_plan, 'network_recovery_plan_sha256': network_plan, 'network_finalization_plan_sha256': network_finalization_plan}}))
             environment = {
                 'PALS_OPERATOR_MODE': mode,
                 'PALS_DEPLOY_REVISION': 'a' * 40,
@@ -151,6 +151,35 @@ class OperatorWorkflowTests(unittest.TestCase):
                 code, run, _ = self.invoke(mode, network_plan='' if mode.startswith('plan-') else 'f' * 64, **extra)
                 self.assertIsInstance(code, str)
                 run.assert_not_called()
+
+    def test_finalization_plan_is_separate_and_cannot_restart_recovery(self):
+        for mode, internal, plan in (('plan-network-baseline-finalization', 'plan', ''),
+                                    ('finalize-network-baseline', 'finalize', 'a' * 64)):
+            code, run, output = self.invoke(mode, network_finalization_plan=plan)
+            self.assertEqual(code, 0)
+            args = run.call_args.args[0]
+            self.assertTrue(args[2].endswith('/network_baseline_finalize.py'))
+            self.assertEqual(args[args.index('--mode') + 1], internal)
+            self.assertEqual('--expected-plan-sha256' in args, bool(plan))
+            if plan:
+                self.assertEqual(args[args.index('--expected-plan-sha256') + 1], plan)
+            self.assertEqual(output, '')
+            for extra in ({'network_plan': 'f' * 64}, {'natural_plan': 'e' * 64},
+                          {'runtime_plan': 'b' * 64}, {'stage_plan': 'c' * 64},
+                          {'edge_plan': 'd' * 64}, {'verified_job': GRANT},
+                          {'subject': SUBJECT}, {'grant_id': GRANT}):
+                code, run, _ = self.invoke(mode, network_finalization_plan=plan, **extra)
+                self.assertIsInstance(code, str)
+                run.assert_not_called()
+        for plan in ('', 'A' * 64, '$(id)'):
+            code, run, _ = self.invoke('finalize-network-baseline', network_finalization_plan=plan)
+            self.assertIsInstance(code, str)
+            run.assert_not_called()
+        for mode in ('inspect', 'inspect-material-ocr', 'plan-network-baseline-finalization',
+                     'recover-network-baseline', 'recover-natural-capability', 'prepare-lean-queue'):
+            code, run, _ = self.invoke(mode, network_finalization_plan='a' * 64)
+            self.assertIsInstance(code, str)
+            run.assert_not_called()
 
     def test_natural_plan_cannot_consume_another_operation_authorization(self):
         for extra in ({'stage_plan': 'a' * 64}, {'runtime_plan': 'a' * 64},
