@@ -21,3 +21,7 @@ The new regression failed before the repair. Sixty-one focused frontend tests, T
 ## Remaining verification
 
 After the Mac mini operator authentication is restored, obtain fresh queue/runtime plans, activate only a ready exact plan, and prove a newly generated Lean job, delivered answer and learner-opened source. Continue the saved document proposition confirmation through the final answer and its material citations. Finalize predecessor containers only with the newly verified delivered job. Do not weaken admission, TLS, ownership, resource or exact-plan checks. This work is partial until those formal-proof boundaries pass; project creation, chat persistence and OCR do not establish full project proof functionality.
+
+## Completed follow-up — 2026-10-15 JST
+
+The historical remaining Lean work above is complete. Normal Chrome authentication, actual fresh compiler/semantic/output review, answer delivery, exact browser source, guarded finalization and subsequent signed full-runtime releases passed. Authenticated QA also repaired sharing routes, explanation generation and the Activity panel's project-bound source read. Original download, project page preview/provenance, excerpt follow-up, search, settings and usage display pass. The current presentation preserves OCR provenance without mounting its citation panel in proof prose; visible citations are not claimed. See [the complete recovery and production QA evidence](lean-production-recovery-2026-10-14.md) for exact jobs, hashes, releases, tests and the retained failure history.
