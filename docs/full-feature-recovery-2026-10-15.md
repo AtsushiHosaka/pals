@@ -1,6 +1,6 @@
 # Production feature recovery — 2026-10-15
 
-Work in progress. Guest chat is not yet restored and this record does not certify all features.
+Guest chat is restored in production. The signed deployment and the representative feature walkthrough below completed successfully.
 
 ## Reproduced outage
 
@@ -8,7 +8,7 @@ The public `/try` page cannot initialize its session and disables the composer.
 An actual POST to `https://api.palschat.site/v1/guest/session` with the public web Origin returns HTTP503 and `guest_network_unavailable`.
 The running API trusts only `172.25.0.5`, while the actual existing public edge is `172.25.0.6` on their shared application network. The assessment worker occupies the old address. Uvicorn proxy rewriting remains disabled. The ordinary health endpoint and running containers do not detect this functional failure.
 
-## Proposed correction
+## Deployed correction
 
 The normal signed update authority snapshots the existing named edge before draining, binds its exact identity and shared network, replaces the stale API peer with only that edge's IPv4 address, and verifies the same identity/address after restart. Public guest session creation must succeed before the release can be declared healthy. Authentication, cookie/Origin validation, admission, signatures, lifecycle locks and ownership checks remain in place.
 
@@ -24,7 +24,7 @@ The existing user-approved Pro test account was recovered from the prior chat an
 
 | Flow | Current result |
 | --- | --- |
-| Guest chat | Reproduced503; repair not yet deployed |
+| Guest chat | Reproduced503 before repair; after deployment, actual UI submission returned a Lean-verified Japanese answer and matching Lean source |
 | Fresh login | Successful |
 | New project | Created private project `e8a800af-6fd2-427f-953d-f58af9539797`; name/description retained when navigating back |
 | Project chat and proof | New chat `b6292f4f-83c1-4e5d-963d-94a550bb60a9`; prime-divides-product theorem submitted and answered |
@@ -41,4 +41,14 @@ The existing user-approved Pro test account was recovered from the prior chat an
 
 Stripe remains excluded under the user's prior instruction. No payment, password change or user-data deletion has been performed. Generated documents, screenshots, private diagnostics and credentials stay outside Git.
 
-The implementation and regressions are pushed in [draft infra PR71](https://github.com/AtsushiHosaka/pals-infra/pull/71), commit `7565910`. Hash-pin integration is validated in commit `19931fe`; the approved production rollout is in progress.
+## Production rollout and post-deploy checks
+
+The user explicitly authorized immediate production deployment. [Infra PR71](https://github.com/AtsushiHosaka/pals-infra/pull/71) and [parent PR109](https://github.com/AtsushiHosaka/pals/pull/109) are merged. Parent release `0d575bd300e591be541d50296c21de196bc21f3e` pins infra `7cb51d886e76470dd99006871c1cdce3b8d282a5`.
+
+The authority digest `5130f05ed837709078903d9722c11c30af31672cc2e6d531a94ed19afd6b0285` was installed under existing lifecycle/admission locks, with predecessor signature validation and unchanged admission/service identity checks. The [signed deployment run](https://github.com/AtsushiHosaka/pals/actions/runs/38740474085) succeeded. Its forward-health evidence reports signin200, health200, anonymous401, guest_session200 and preserved previous table data.
+
+A fresh browser guest submission asked for coprime divisibility over natural numbers, including zero: gcd(a,b)=1 and a divides b*c imply a divides c. Request `7139948e-fd9d-4890-92f5-5521ff796d99` completed with `lean_verified`; job `e6691287-77dc-445a-9dac-6dca7ada89fc` is verified with approved semantic review and completed explanation. Compiler attestation, answer and actual UI-displayed Lean code agree on SHA256 `657f4200c8012d2bd35d0aca689bd31b1bc9f5d374ac8ea0b823661a2b88b7a6`. The Japanese answer and source both render successfully.
+
+After deployment, fresh logout/login returned to the existing private proof with its content intact. Project `900f48b4-6d56-49bd-9d59-98df6a5f3621` (本番復旧後QA 2026-10-15) was newly created with its description retained.
+
+These checks cover the observed public outage and the listed application flows; they are not a claim that every possible input or third-party outage has been exhaustively tested. Previously excluded Stripe and credential-changing flows were not executed.
