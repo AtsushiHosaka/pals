@@ -14,7 +14,7 @@ The normal signed update authority snapshots the existing named edge before drai
 
 Five regression tests cover the stale-worker-IP bug, wrong identity/network, invalid address, proxy rewriting and restart/address substitution. The stale-IP regression fails against untouched source and passes after the correction. The combined authority/full-runtime/guest tests pass all108 checks.
 
-The complete host suite currently has678 passing tests, one existing dedicated PostgreSQL fixture skipped and one hash-pin consistency failure. Updating that exact version pin is pending explicit approval: automatic approval review rejected the source allowlist update as a security-boundary change. No production update has occurred in this chat.
+The complete host suite passes: 680 tests run, 679 successful and one existing dedicated PostgreSQL fixture skipped. The user explicitly approved the exact authority hash registration and immediate production rollout after the original automatic-review rejection.
 
 Frontend source at `ee35e1f92012c5a02b7bcf6e804da5d500194729` passes all1691 tests across138 files using a lock-identical dependency cache.
 
@@ -41,4 +41,4 @@ The existing user-approved Pro test account was recovered from the prior chat an
 
 Stripe remains excluded under the user's prior instruction. No payment, password change or user-data deletion has been performed. Generated documents, screenshots, private diagnostics and credentials stay outside Git.
 
-The implementation and regressions are pushed in [draft infra PR71](https://github.com/AtsushiHosaka/pals-infra/pull/71), commit `7565910`. Hash-pin integration and production rollout remain pending approval.
+The implementation and regressions are pushed in [draft infra PR71](https://github.com/AtsushiHosaka/pals-infra/pull/71), commit `7565910`. Hash-pin integration is validated in commit `19931fe`; the approved production rollout is in progress.
