@@ -33,6 +33,12 @@ The existing user-approved Pro test account was recovered from the prior chat an
 | PDF upload/OCR | Two-page image-only QA PDF uploaded to the new project; ready with2 pages; page2 preview renders |
 | General and mathematics settings | Loaded successfully; all mathematics convention controls present |
 | Usage/plans | Permanent complimentary Pro and consistent used/reserved/available counters loaded |
-| Source UI, sharing preview, search, keyboard, logout/relogin | Pending current-run walkthrough |
+| Private/public Lean source | Displayed code matches the actual compiled source hash |
+| Sharing | Preview, create, copy, separate-page view, source expansion and revocation succeeded; reloaded revoked link is unavailable |
+| Search | Finds the new prime-divisibility chat with its correct project |
+| Mathematical keyboard | Opens and inserts ≤ into the composer; test draft cleared without submission |
+| Logout/relogin | Returns to sign-in; fresh successful login returns to the same project chat and retained proof |
 
 Stripe remains excluded under the user's prior instruction. No payment, password change or user-data deletion has been performed. Generated documents, screenshots, private diagnostics and credentials stay outside Git.
+
+The implementation and regressions are pushed in [draft infra PR71](https://github.com/AtsushiHosaka/pals-infra/pull/71), commit `7565910`. Hash-pin integration and production rollout remain pending approval.
