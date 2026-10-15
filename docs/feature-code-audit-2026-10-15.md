@@ -52,3 +52,7 @@
 未確認: 実際のトークン自然失効をまたぐ利用、複数タブ競合、ゲスト日次上限/48時間失効、OCR失敗後の再試行、資料上限付近の負荷、外部サービス停止時の復帰、長時間実行/多数利用者。本番でパスワード変更や実データ削除は行っていない。Stripeは以前の指定に従い対象外。
 
 推奨順は公開ルート欠落、通信失敗からの復帰、プロジェクト作成の重複防止と時間上限、機能監視。今回の記録は修正完了報告ではない。
+
+## Follow-up: items1 and5
+
+The requested route fixes and an independent credential-free functional observer were deployed. See [rollout evidence](source-routes-functional-monitor-2026-10-15.md) for exact scope, tests, production identity and monitoring exclusions. Items2–4 remain unchanged. This does not convert the original audit into a guarantee that every feature works.
