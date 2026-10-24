@@ -32,9 +32,11 @@ an answer. No API/schema changes or verification bypasses are introduced.
   and informal Draft prompts on seven cases, including Japanese calculation and
   classification inputs, with a separate semantic judge. It reads only an
   existing `OPENAI_API_KEY` environment variable and makes at most 21 calls.
-- Live provider evaluation was not run because that variable is absent. The tool
-  does not evaluate routing, formalization, Lean compilation or deployed behavior.
-  No production accuracy improvement or deployment is claimed.
+- The initial implementation checks did not run live evaluation because that
+  variable was absent from the process environment. A subsequent explicit runtime
+  test reused the existing primary checkout's local test configuration. See the
+  [runtime test report](math-task-runtime-test-2026-10-25.md) for actual provider
+  results and Lean failures. No deployed behavior is claimed.
 
 Run the bounded prompt evaluation from an agent environment with the provider key
 already set:
