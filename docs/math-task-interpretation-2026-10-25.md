@@ -35,7 +35,7 @@ an answer. No API/schema changes or verification bypasses are introduced.
 - The initial implementation checks did not run live evaluation because that
   variable was absent from the process environment. A subsequent explicit runtime
   test reused the existing primary checkout's local test configuration. See the
-  [runtime test report](math-task-runtime-test-2026-10-25.md) for actual provider
+  [runtime test report](math-request-runtime-test-2026-10-25.md) for actual provider
   results and Lean failures. No deployed behavior is claimed.
 
 Run the bounded prompt evaluation from an agent environment with the provider key

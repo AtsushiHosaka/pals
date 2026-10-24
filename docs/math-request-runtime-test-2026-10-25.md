@@ -1,4 +1,4 @@
-# Math task interpretation runtime test
+# Math request interpretation runtime test
 
 The task-interpretation prompts passed the tested real-provider interpretation
 checks. Both unseen local DSP/Lean cases failed (0/2 completed). These are
