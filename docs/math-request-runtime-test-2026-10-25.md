@@ -74,6 +74,33 @@ task interpretation. The tests do not establish that prompt tuning alone solves
 the complete calculation path, nor do they measure the full production repair
 budget or deployed behavior.
 
+## Additional user-supplied limit example
+
+Input: `f(x)=0 (x>0), 1(x=0)という関数でx->0の極限を求めよ`.
+
+The real router selects `lean`. Preflight returns `ready` and explicitly resolves
+the domain to the nonnegative reals, with the limit taken within that domain
+(the right-hand limit). It does not ask a clarification question. The generated
+Draft obtains limit 0 using delta=1 for every positive epsilon; the point value
+f(0)=1 does not affect this punctured limit.
+
+This example completes the local test: generated Lean compiles after two repairs,
+independent semantic review approves the right-limit target, and the final
+Japanese explanation passes independent output review. Its generated conclusion
+is: `したがって、定義域内で $x\to0$ としたときの極限は $0$ である。`
+Evidence: `user-limit-question.json` and `user_limit-lean.json` in the temporary
+directory below. This is one observed local run, not a deployed UI result or a
+guarantee that every stochastic generation succeeds.
+
+The temporary test wrapper initially passed the unnormalized original question
+to the explainer. That produced a conflicting two-sided-limit explanation, which
+was retained separately as `user_limit-original-wording-explanation.json`.
+Source tracing confirms the actual API/worker passes the resolved linked-job
+statement instead. Explanation and output review were rerun using that statement
+and the same already verified Lean source; those corrected outputs are the
+reported result. The wrapper was also corrected to pass both required deadline
+arguments and to treat a returned ProofOutputReview as approval.
+
 ## Reproduction and evidence
 
 The checked-in provider evaluator can be run from an agent environment with
