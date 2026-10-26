@@ -1,0 +1,54 @@
+{
+  "schema_version": "pals.math-question-catalog-proposals.v1",
+  "status": "proposed_not_admitted",
+  "entries": [
+    {
+      "recipe_id": "real.quadratic.minimum-and-minimizer",
+      "runtime_case_id": "heldout_minimum",
+      "metadata": {
+        "statement": "実数 x に対して x^2-6*x+13 の最小値と、その最小値をとる x をすべて求めよ。",
+        "domain": "Real numbers",
+        "assumptions": [],
+        "quantifiers": ["For every real x"],
+        "conclusion": "The minimum is 4, attained exactly at x=3.",
+        "search_text": "Determine the global minimum and every minimizer over the real numbers of x squared minus six x plus thirteen. Verify the global bound, attainment, and uniqueness.",
+        "output_language": "ja",
+        "question_variants": [
+          "実数 x に対する x^2-6*x+13 の最小値は 4 で、それをとる x は 3 だけかどうか判定せよ。"
+        ]
+      }
+    },
+    {
+      "recipe_id": "real.absolute-value.complete-solutions",
+      "runtime_case_id": "heldout_absolute",
+      "metadata": {
+        "statement": "実数 x について |x-2|+|x+1|=5 の解をすべて求めよ。",
+        "domain": "Real numbers",
+        "assumptions": [],
+        "quantifiers": ["For every real x"],
+        "conclusion": "The equation holds if and only if x=-2 or x=3.",
+        "search_text": "Find all real solutions of absolute value of x minus two plus absolute value of x plus one equals five. Prove equivalence with x equals minus two or three, including completeness.",
+        "output_language": "ja",
+        "question_variants": [
+          "実数 x に対して、|x-2|+|x+1|=5 の解が x=-2 と x=3 だけかどうか判定せよ。"
+        ]
+      }
+    },
+    {
+      "recipe_id": "real.quadratic.universal-bound-refutation",
+      "runtime_case_id": "whether_bound",
+      "metadata": {
+        "statement": "実数 x に対して x^2-6*x+13 は常に 5 以上になるかどうか判定せよ。",
+        "domain": "Real numbers",
+        "assumptions": [],
+        "quantifiers": ["Decide the proposed universal claim over real x"],
+        "conclusion": "No: the universal bound is false; x=3 gives 4<5.",
+        "search_text": "Determine whether x squared minus six x plus thirteen is at least five for every real x. Refute the universal bound with a verified counterexample at three.",
+        "output_language": "ja",
+        "question_variants": [
+          "すべての実数 x に対して x^2-6*x+13>=5 が成り立つか。"
+        ]
+      }
+    }
+  ]
+}
