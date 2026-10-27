@@ -32,8 +32,12 @@ letters/digits/spaces and `_^{}()+-=,./:|` plus a finite command allowlist:
 `alpha beta gamma delta epsilon theta lambda mu pi rho sigma tau phi psi omega
 Gamma Delta Theta Lambda Pi Sigma Phi Psi Omega mathbb mathrm mathcal operatorname
 bar overline hat tilde prime circ times otimes oplus infty partial nabla`.
-No dollar signs, percent, ampersand, newline, arbitrary commands, paths, styles,
+No dollar signs, percent, ampersand, newline, `^^` TeX escapes, arbitrary commands, paths, styles,
 imports, HTML, SVG, URLs, TeX documents or raw code are accepted.
+
+Owner-scoped `GET /v1/proof-jobs/{job}/explanation/diagrams/{id}/source` returns
+`{diagram_id,source,source_sha256}` independently of the worker, retaining TikZ
+copy/download on render failure.
 
 Owner-scoped `GET /v1/proof-jobs/{job}/explanation/diagrams/{id}/render` renders
 only a persisted diagram from a completed accessible explanation. Response is
@@ -44,7 +48,8 @@ saved as .tex. Failures return 503; existing prose/source controls remain usable
 Frontend shows “Illustration; rendering does not verify mathematical claims.”
 Evidence references remain inspectable, without a verified badge.
 
-The API calls a dedicated configured render service; it does not run TeX or
+The API calls a dedicated loopback-only configured render service (literal
+127.0.0.1 or ::1 origin, no credentials/query/fragment, redirects or proxies); it does not run TeX or
 receive a Docker socket. The trusted supervisor accepts declarative JSON, builds
 source itself, and runs one credential-free pinned image without host mounts,
 network, shell escape or privilege; bounded stdin/stdout/deadline/memory/CPU/PIDs,
