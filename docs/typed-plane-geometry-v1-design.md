@@ -86,3 +86,10 @@ The initial sealed proposal deliberately contains only direct Lean matches:
 These are a narrow parser/evidence slice, not a claim that the profile already
 covers general line construction, circumcircle existence, locus solving, or
 reflection theorems.  Those need separate semantic admission review.
+
+## Adjacent checked synthetic-geometry domain
+
+The separate [T2 first-slice implementation](mathematics-roadmap-2026-10-28/geometry-implementation.md)
+adds an opt-in caller-structured isosceles-midpoint theorem, checked step trace and
+prepared diagram content in the agent. It does not admit this authoring profile,
+change its symbol vocabulary or promote its candidates into the runtime catalog.
