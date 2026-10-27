@@ -13,7 +13,7 @@ shared design bytes SHA256
 
 - Refreshed parent base: `ca84e6fe1a87fa019368f16e4af8c7cbec759a82`.
 - Refreshed agent base: `4703690c4125eed18fcce9269ce4f1dbc6ff577d`.
-- Agent implementation: `fd8b4caae17604d8a935953ed6476c1b0cde7740`,
+- Agent implementation: `80ea019b2b7c8e8dbbf5cdb4481ad4bd01d8d924`,
   [draft review PR #18](https://github.com/AtsushiHosaka/pals-agent/pull/18).
 - Branch in each repository: `codex/synthetic-geometry-20261028`.
 - Lean: `leanprover/lean4:v4.32.0-rc1`; Mathlib:
@@ -138,6 +138,9 @@ geometry-to-chat flow, persistence/reload/mobile/browser evidence are missing.
 5. Independent source/unit/generic-architecture review found two input defects
    (malformed nested metadata and multibyte proposition length); both were fixed
    and regression-tested. Follow-up reported no remaining P0–P2 findings.
+6. Final CLI deep-JSON correction: six source/CLI unit tests passed, including
+   the new recursion-limit failure case; Ruff and diff checks passed. The
+   substantive proof/source digest and compiler/audit path were unchanged.
 
 Real CLI fixture bindings: input SHA256
 `7d3f60e544a389dc5aea40e5223b4acad8f55d0cdfa66fa5bc582c54a3d59af5`,
