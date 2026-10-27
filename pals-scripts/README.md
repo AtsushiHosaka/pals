@@ -41,6 +41,14 @@ and additionally scans child commits referenced by current and historical parent
 gitlinks. Missing objects and shallow repositories fail. The command does not
 fetch: before publication, fetch all remote branches, tags, and PR heads for
 each repository, and recover any historical pinned commits that are missing.
+Removed historical submodules also need a checkout at their original path. PALS
+history includes the retired `pals-lean-verifier` repository, so an all-history
+audit additionally needs this ignored, read-only checkout:
+
+```bash
+git clone git@github.com:AtsushiHosaka/pals-lean-verifier.git pals-lean-verifier
+```
+
 For each repository, run:
 
 ```bash

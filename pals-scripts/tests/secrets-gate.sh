@@ -268,6 +268,19 @@ other_oid="$(git -C "${removed_module_fixture}/other" rev-parse HEAD)"
 git -C "${removed_module_fixture}" update-index --add --cacheinfo "160000,${other_oid},other"
 git -C "${removed_module_fixture}" add .gitmodules
 git -C "${removed_module_fixture}" commit -qm 'Replace mapped module'
+# An initialized retired module is scanned when history is requested.
+expect_result 0 "${removed_module_fixture}" --history
+printf 'github_token = "%s"\n' "${history_token}" >"${removed_module_fixture}/pals-api/retired-settings.txt"
+git -C "${removed_module_fixture}/pals-api" add retired-settings.txt
+git -C "${removed_module_fixture}/pals-api" commit -qm 'Secret in retired module'
+git -C "${removed_module_fixture}/pals-api" rm -q retired-settings.txt
+git -C "${removed_module_fixture}/pals-api" commit -qm 'Delete retired module secret'
+expect_result 0 "${removed_module_fixture}"
+expect_result 1 "${removed_module_fixture}" --history
+# A missing or escaped retired checkout cannot count as successful coverage.
+rm -rf "${removed_module_fixture}/pals-api"
+expect_result 2 "${removed_module_fixture}" --history
+ln -s "${valid_fixture}/pals-api" "${removed_module_fixture}/pals-api"
 expect_result 2 "${removed_module_fixture}" --history
 
 # Merge-result-only content is absent from both parent commits. Default git log

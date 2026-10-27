@@ -120,7 +120,12 @@ declared_paths=()
 # Pins in the parent can remain fetchable even after their child branch is
 # deleted. Keep them as additional revision roots without changing child refs.
 record_gitlink() {
-  local path="$1" oid="$2" index=0 matched=false
+  local path="$1" oid="$2" origin="${3:-current}" index=0 matched=false
+  # Removed modules are still part of publication history. Only accept paths
+  # contained by the parent; canonical containment is also checked at scan time.
+  case "${path}" in
+    ''|/*|.|..|../*|*/../*|*/..|./*|*/./*|*/.) add_incomplete; return ;;
+  esac
   if ! [[ "${oid}" =~ ^([0-9a-f]{40}|[0-9a-f]{64})$ ]]; then
     add_incomplete
     return
@@ -137,7 +142,15 @@ record_gitlink() {
     fi
     index=$((index + 1))
   done
-  [ "${matched}" = true ] || add_incomplete
+  if [ "${matched}" != true ]; then
+    if [ "${origin}" = historical ]; then
+      declared_paths+=("${path}")
+      repository_paths+=("${ROOT_DIR}/${path}")
+      printf '%s\n' "${oid}" >>"${TMP_DIR}/pins-${index}"
+    else
+      add_incomplete
+    fi
+  fi
 }
 if [ "${scope}" = all ]; then
   if [ ! -f "${ROOT_DIR}/.gitmodules" ] || ! git config --file "${ROOT_DIR}/.gitmodules" --null --get-regexp '^submodule\..*\.path$' >"${TMP_DIR}/modules" 2>/dev/null; then
@@ -201,8 +214,8 @@ if [ "${scope}" = all ]; then
           :*)
             if ! IFS= read -r -d '' repository; then add_incomplete; break; fi
             read -r old_mode new_mode old_oid new_oid change <<<"${metadata}"
-            [ "${old_mode}" != ':160000' ] || record_gitlink "${repository}" "${old_oid}"
-            [ "${new_mode}" != 160000 ] || record_gitlink "${repository}" "${new_oid}"
+            [ "${old_mode}" != ':160000' ] || record_gitlink "${repository}" "${old_oid}" historical
+            [ "${new_mode}" != 160000 ] || record_gitlink "${repository}" "${new_oid}" historical
             ;;
           '') ;;
           *) add_incomplete ;;
@@ -225,7 +238,7 @@ fi
 
 path_is_sensitive() {
   local lower_path base_name
-  lower_path="$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')"
+  lower_path="$1"
   base_name="${lower_path##*/}"
   case "${base_name}" in
     *.example.tfvars|*.example.tfvars.json|*.template.tfvars|*.template.tfvars.json) return 1 ;;
@@ -239,9 +252,15 @@ path_is_sensitive() {
 
 scan_paths() {
   local paths_file="$1" tracked_path
+  # Lowercase the NUL-delimited inventory once, rather than launching tr for
+  # every historical filename. Preserve incomplete status if conversion fails.
+  if ! tr '[:upper:]' '[:lower:]' <"${paths_file}" >"${TMP_DIR}/lowercase-paths"; then
+    add_incomplete
+    return
+  fi
   while IFS= read -r -d '' tracked_path; do
     if path_is_sensitive "${tracked_path}"; then add_violation; fi
-  done <"${paths_file}"
+  done <"${TMP_DIR}/lowercase-paths"
 }
 
 repository_counter=0

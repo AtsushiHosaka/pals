@@ -45,6 +45,26 @@ branches, tags, and PR head refs were fetched. The initial PR-head inventory was
 | pals-observability | 1 | 0 |
 | pals-agent | 17 | 0 |
 
+Those initial findings also include unpublished local refs in the shared object
+stores. The final GitHub-history audit used an isolated ref snapshot containing
+fetched remote branches, tags and PR heads, plus the proposed hardening commits.
+It reused the existing Git object stores without importing unrelated local
+branches. The all-repository gate returned:
+
+```text
+secrets: PASS scope=all history=true
+```
+
+The proposed hardening files and the final checker refinements were included in
+verification. Refresh and check the release revisions again after review or
+merge. The parent history scan found no unsuppressed candidates in the new
+hardening commit.
+
+Historical parent commits also reference the retired `pals-lean-verifier`
+repository at `3fd15a84be62`. A read-only checkout recovered that exact commit;
+its entire one-commit history contains only `.gitignore` and passed the filename
+and Gitleaks checks. It remains outside the proposed visibility changes.
+
 The 50 fingerprints represent 29 reviewed source findings and 21 additional
 merge-result occurrences of byte-identical reviewed source lines. Categories:
 
@@ -86,6 +106,19 @@ The strict `--all` local-history check must report incomplete in that shared
 checkout. Audit the fetched GitHub refs and the proposed hardening commits in an
 isolated ref snapshot, preserving the unrelated local branch. Before that branch
 is pushed later, recover its child objects or deliberately correct its pins.
+
+## Verification
+
+- Real-Gitleaks regression fixtures passed, including secrets deleted at HEAD,
+  other branches/tags, merge-only secrets, parent-pinned orphan commits, retired
+  repositories, missing tools/objects, shallow history, and symlink escapes.
+- Parent sensitive-artifact ignore cases and example preservation passed.
+- Deployment workflow regression tests: 46 passed; operator workflow tests:
+  17 passed. These use temporary fixtures and do not deploy production.
+- Observability fixture changes: 41 targeted tests passed; fixture values and
+  normalized syntax trees were verified equivalent.
+- Shell syntax and whitespace checks passed. The pinned scanner installer was
+  exercised against the real official release and returned version 8.30.1.
 
 ## Limits and release order
 
