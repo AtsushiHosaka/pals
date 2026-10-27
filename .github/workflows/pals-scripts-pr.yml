@@ -15,8 +15,18 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: false
+          fetch-depth: 0
           persist-credentials: false
-      - run: bash pals-scripts/check-secrets.sh
+      - name: Install the checksum-pinned history scanner
+        run: |
+          bash pals-scripts/install-gitleaks.sh "$RUNNER_TEMP/pals-gitleaks"
+          echo "$RUNNER_TEMP/pals-gitleaks" >> "$GITHUB_PATH"
+      - name: Check parent secrets including available history
+        run: bash pals-scripts/check-secrets.sh --scope parent --history
+      - name: Verify secret gate regression cases
+        run: |
+          bash pals-scripts/tests/secret-ignore.sh
+          bash pals-scripts/tests/secrets-gate.sh
       - name: Check operator input and log boundaries
         run: python3 -m unittest discover -s pals-scripts/tests -p 'test_qa_pro_operator_workflow.py'
       - name: Check out the pinned public agent
