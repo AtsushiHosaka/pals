@@ -33,7 +33,7 @@ the mathematics roadmap done.
 | [pals-infra #28](https://github.com/AtsushiHosaka/pals-infra/pull/28) | Merged | Bounded qualified-site/final-route grammar preserves existing guards and routing behavior. |
 | [pals-infra #57](https://github.com/AtsushiHosaka/pals-infra/pull/57) | Held, draft | Incident-specific sealed recovery helper; current-main overlay checks returned seven passes and one failure. No current production incident plan/apply authority or acceptance established. |
 
-## Integrated source revisions
+## Deployed d0ef source revisions
 
 The deployment's six source commits match the exact parent gitlinks below.
 Datasets and observability retain their existing pins; they were not changed by
