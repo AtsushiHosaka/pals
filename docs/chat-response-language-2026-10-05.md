@@ -1,27 +1,21 @@
 # Chat response language
 
-The approved response-language priority is an explicit language request, the
-learner's own message language, then the previous response language or the chat's
-initial account/guest default. UI locale and account preferences remain separate.
-The API selects and stores language before generation, for authenticated and guest
-requests, premise continuations, direct proof jobs and clarification questions.
+## Current behavior (updated 2026-10-26)
 
-The selector accepts only the learner's text. Project OCR and material context are
-bound separately and never passed into it. It removes quoted text, fenced/inline
-code and delimited mathematical notation. Formulas and short confirmations retain
-the preceding language. The implementation uses conservative rules for the four
-supported output languages and adds no provider call. Unsupported or ambiguous
-prose falls back; Han-only labels cannot reliably distinguish Japanese from Chinese.
-Directly pasted source prose without quotation delimiters has no reliable source
-boundary, unlike attached project materials.
+New answers use the account's selected output language. The language of the
+learner's question does not override that setting. An explicit request for another
+answer language takes priority. This applies to new requests in existing chats,
+material confirmations and new explanation follow-ups. Guest requests use the
+selected guest output language. UI locale remains independent.
 
-Each proof request and linked Lean job keeps its selected language. Clarification
-language is stored in a nullable new column: existing NULL rows retain the original
-proof language and are never reclassified. A child's ambiguous question inherits
-its parent's saved language. Retry retains the request's saved selection. The
-frontend uses clarification language for content, preparation/failure copy and
-accessible completion announcements, including after reload. Language switches do
-not rewrite prior answers or Lean source.
+Already queued work, retries and saved answers retain their captured language;
+changing a preference does not translate historical answers. Material/OCR text
+never changes the answer language. The previous automatic input-language selection
+was superseded after production QA showed Japanese answers while English was
+selected in settings.
+
+The sections below record the earlier migration and its historical validation;
+they do not establish deployment of the 2026-10-26 correction.
 
 ## Database release
 
