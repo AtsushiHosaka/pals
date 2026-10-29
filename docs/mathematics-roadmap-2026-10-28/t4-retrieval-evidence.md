@@ -12,8 +12,8 @@ is incomplete. No merge, deployment, catalog admission or caller activation.
   `16c3fbdd8b925b168d534343fb85abb385a843fc6f2236fb667cad971bdacf9c`.
   Design SHA256: `625091412f449802c39bc885910988fdb7682d969242865264eb1df0055ba99e`.
   Tasks SHA256: `00b493a2f0b79f01cdb65d950d8a7d8824480779f7767aba44a30b6c84cc20e5`.
-- Refreshed API base: `25a5faf81753b14a85a13ab0a254708790de9b94`.
-  Implemented API head: `9678606e4bbb8f273c78983088e9a7740ab376da`.
+- Refreshed backend base: `25a5faf81753b14a85a13ab0a254708790de9b94`.
+  Implemented backend head: `9678606e4bbb8f273c78983088e9a7740ab376da`.
   [Draft API review PR #27](https://github.com/AtsushiHosaka/pals-api/pull/27).
 - Agent base inspected: `4703690c4125eed18fcce9269ce4f1dbc6ff577d`; no agent,
   compiler, cache or agent database-credential change. No prior isolated search
