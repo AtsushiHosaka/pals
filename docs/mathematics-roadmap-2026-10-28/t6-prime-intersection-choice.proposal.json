@@ -1,0 +1,28 @@
+{
+  "schema_version": "pals.typed-catalog-expansion-batch.v1",
+  "profile_id": "typed-commutative-algebra-v1",
+  "cards": [
+    {
+      "id": "mrd_t6_prime_intersection_choice",
+      "canonical_statement": "If P is a prime ideal and I intersection J is contained in P, then I is contained in P or J is contained in P.",
+      "proof_strategy": "Choose elements outside the prime ideal and apply absorption and primality.",
+      "sketch_steps": [
+        "Assume neither ideal is contained in P.",
+        "Choose x in I outside P and y in J outside P.",
+        "Ideal absorption puts xy in both I and J, hence in P.",
+        "Primality forces x or y into P, contradicting their choices."
+      ],
+      "openmath_xml": "<n1:OMOBJ xmlns:n1=\"http://www.openmath.org/OpenMath\" version=\"2.0\"><n1:OMBIND><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"forall\"></n1:OMS><n1:OMBVAR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"CommRing\"></n1:OMS></n1:OMATP><n1:OMV name=\"v1\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v2\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v3\"></n1:OMV></n1:OMATTR><n1:OMATTR><n1:OMATP><n1:OMS cd=\"typed1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"type\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"Ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV></n1:OMA></n1:OMATP><n1:OMV name=\"v4\"></n1:OMV></n1:OMATTR></n1:OMBVAR><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"implies\"></n1:OMS><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"and\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"is_prime_ideal\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_inf\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV></n1:OMA><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMA><n1:OMA><n1:OMS cd=\"logic1\" cdbase=\"http://www.openmath.org/cd\" name=\"or\"></n1:OMS><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v2\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA><n1:OMA><n1:OMS cd=\"commalg1\" cdbase=\"urn:pals:openmath:typed-commutative-algebra:v1\" name=\"ideal_le\"></n1:OMS><n1:OMV name=\"v1\"></n1:OMV><n1:OMV name=\"v3\"></n1:OMV><n1:OMV name=\"v4\"></n1:OMV></n1:OMA></n1:OMA></n1:OMA></n1:OMBIND></n1:OMOBJ>",
+      "lean_target": "example {R : Type*} [CommRing R]\n    (I J P : Ideal R) (hp : P.IsPrime) (h : I ⊓ J ≤ P) :\n    I ≤ P ∨ J ≤ P",
+      "lean_witness": "by\n  classical\n  by_contra hn\n  have hI : ¬ I ≤ P := fun hi => hn (Or.inl hi)\n  have hJ : ¬ J ≤ P := fun hj => hn (Or.inr hj)\n  obtain ⟨x, hxI, hxP⟩ := SetLike.not_le_iff_exists.mp hI\n  obtain ⟨y, hyJ, hyP⟩ := SetLike.not_le_iff_exists.mp hJ\n  have hxy : x * y ∈ I ⊓ J := by\n    constructor\n    · exact I.mul_mem_right y hxI\n    · exact J.mul_mem_left x hyJ\n  rcases hp.mem_or_mem (h hxy) with hx | hy\n  · exact hxP hx\n  · exact hyP hy"
+    }
+  ],
+  "evidence": {
+    "witness_path": "docs/mathematics-roadmap-2026-10-28/t6-prime-intersection-choice.lean",
+    "witness_sha256": "sha256:9198fcc1ede347c52c705509960cd113be82fe001e8f0135056353de3d323c12",
+    "toolchain": "leanprover/lean4:v4.32.0-rc1",
+    "mathlib_revision": "8b62164d808cd0f23b7d8cc28190a6c1a1bb483a",
+    "validator_sha256": "sha256:1240ad67501c3d443ea1c71d3bd46c59508a3d49dad721990730e98bb945bdb1",
+    "registry_sha256": "sha256:43ff3a01fa9b719f3c738cb6e8e32bb6b230a4b591aec1b0e4c99dabec74fee5"
+  }
+}
