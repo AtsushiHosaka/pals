@@ -12,6 +12,8 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 | 現行の公開サービス | 実施済み | WebとAPI healthのGETが200、未認証projectsが401。DNSはCloudflare経由 |
 | AWS資源の棚卸し | 実施済み | 開始時点のCognito・S3・SQS・署名KMS・state bucketを特定。移行先EC2・Aurora・ECRは後続の基盤作成で追加 |
 | 移行元への接続 | 練習用バックアップ取得済み | 同一snapshotのdump・schema・metadataと既存の配備署名資料を非公開S3へ転送。作業端末で6ファイルのハッシュを照合し、既存配備記録のKMS署名と固定公開鍵の検証に成功 |
+| 基準環境への復元 | 実施済み | 移行元と同じimageで全108テーブル・6,390行のCOPY内容、role・membership・取得済みACL、schema構文木とsequenceを比較して一致 |
+| Aurora互換性試験 | 分離cluster作成済み・検証中 | private検証clusterとTLS空DBを確認。roleの自動membershipが想定と異なり、復元前の能力検証で停止。本番用clusterは空のまま保持 |
 | ACM証明書 | 発行済み | 現在のWebとAPIを対象に申請。Web/APIの検証に成功し、AWS ACMのISSUEDを確認 |
 | private network実装 | 基盤作成済み・検証中 | 8 subnet、NAT、S3 endpoint、ALB、Auroraを作成。ALBログ書込みと経路を読み戻し済み。未使用legacy SGからのDB許可を除去し、controlだけに限定 |
 | 既存資源の再利用 | 基盤で確認済み | 現在のCognito・S3・SQS・署名KMSを読み取り参照する経路を実装・試験済み。実planの独立照合中 |
@@ -22,10 +24,13 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 | Lean単体の測定 | 実施済み | largeで48件の実コンパイルに成功。必要なimportとLake環境再利用で中央値0.805秒。アプリ全体の遅延は未測定 |
 | DB移送と署名付き受理 | 練習用snapshot取得済み・復元未実施 | 専用の署名付き復元CLIとruntime検査を実装・試験。実Auroraでtyped SSM接続と空DBの読み取り検査を確認。互換性の復元比較、最終snapshotと移行受理は未実施 |
 | AWS runtimeと容量モード | アプリ未配備 | x86 runtime、別ホストmTLS、pool配送、drain、通常・大会モードの実配備は未実施 |
+| runtimeイメージ | ECR準備済み | 固定sourceのAPI・Web・workerをbuild・pushし、digestを読み戻した。非root importとWebの主要5画面は確認。本番起動・実ログインは未実施 |
 | DNS切り替え | 未実施 | 現行Cloudflare originとMac miniを維持 |
 | 移行後の受け入れ | 未実施 | ログイン、履歴、資料、生成、共有、ゲスト、負荷試験が必要 |
 
 移行元はpgvector 0.8.7、作成したAuroraの提供版は0.8.2です。locale名と並べ替えライブラリの版も異なります。ユーザーはAuroraで先に互換性を検証し、データ・権限・検索結果を確認できた場合だけ採用する方針を選択しました。元のDBは変更せず、この差を解消するまで本番復元・受理を進めません。[AWSの対応拡張一覧](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraPostgreSQLReleaseNotes/AuroraPostgreSQL.Extensions.html)も確認しています。
+
+10月31日までのバックアップ、基準環境の復元、分離Auroraとイメージ準備の実行結果は、[検証記録](aws-migration-verification-2026-10-31.md)にまとめています。Auroraへの実復元と検索比較はまだ通過していません。
 
 上流のpgvector 0.8.7にはIVFFlat index作成時の脆弱性修正が含まれます。Auroraの管理版に同じ修正が取り込まれているかは未確認です。版番号だけで安全性を判断せず、AWSの該当buildについて根拠を確認します。[上流の修正情報](https://github.com/pgvector/pgvector/issues/1036)を、採用前の確認対象に加えています。
 
