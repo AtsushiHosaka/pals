@@ -16,6 +16,7 @@ Mac miniのサービスを稼働させたまま、同じexported snapshotからd
 | 基準環境の検証receipt | `053eaf5c1ed17eb7a13678354d51855f43b16a326a88fbd5fe75f5bfa923fc6d` |
 | 分離Auroraの復元・比較receipt | `427ae344600bc6d63e5bc02f6be001d2e49eea384403785f3f9090e339e0fd8f` |
 | 追加の検索・照合順序比較 | `d235f4b3ebfbddcd2e83e2c728796f6c7de930b78cd91b0774835abc637c158b` |
+| 実アプリと文字変換・全文検索成分の比較 | `2d761f3412bf91dda29386749be86ff2ae391ca654a4c5ffe2ec89d64d6607f5` |
 
 既存配備資料は、正式な`verify_predecessor`でAWS KMS Verify、固定した公開鍵SPKI、ローカルP-256署名を検証しました。履歴の署名が正しいことと、最終切り替えの受理は別の確認です。今回のsnapshotは書き込み停止を要求しておらず、本番切り替えにはdrain後の最終取得が必要です。
 
@@ -73,6 +74,14 @@ role能力試験では、operatorの属性は想定どおりでした。一方�
 
 一方、default collationによる並び順は、`canonical_statement`、`proof_strategy`、`sketch_step`の3項目で不一致でした。`id`と`openmath_xml`は一致し、5項目とも件数は同じです。比較処理はこの不一致で失敗として終了しました。データ消失とは判定していませんが、アプリの検索・ページ境界・case変換への影響を調べる必要があります。この差を無視して互換性を通過扱いにはしません。
 
+続く調査では、3項目を直接並べ替えるアプリ処理は見つかりませんでした。実際の`PostgresProjectRepository._list_page`と`PostgresChatRepository._search`を、同じAPI実装と制限付きLOGINで呼び出しました。全16所有者・11 projects・53 chatsについて、page size 1・2・10、8種類の検索入力の結果、型とcursorが一致しました。両方の接続でread-onlyを実確認しています。各repository呼び出しが別のstatement snapshotになる範囲も記録し、共通のexported snapshotを使ったとは扱っていません。
+
+既存のproject名・説明、問題文、資料名・page本文、Draftの全項目とstepsを対象に、3,828行の入力、NFKC・大小文字変換、simple/englishの全文検索成分も一致しました。資料contextの実methodは`FOR UPDATE`を含むため呼び出しておらず、ここで確認したのは文字変換と全文検索の成分です。全HTTP機能や資料の選択・抜粋の結果まで通過したとは扱いません。
+
+公開文字だけの追加試験330組では、不一致が残りました。チャット検索で使う`strpos(lower(normalize(value,NFKC)),term)>0`に、値`Ა`（U+1C90）とquery`ა`（U+10D0）を与えると、基準環境はtrue、Auroraはfalseでした。queryの大小文字を変えた重複ケースを含む2行で同じ差を確認しています。既存データの比較が通っても、将来の検索条件の差は解消していません。比較処理はこの差を保持して失敗として終了しました。
+
+復元commit後の独立した読み取りでも、24 roleと18 edgeが計画どおりであることを再確認しました。receiptのSHA256は`e08c1aefe8da97d17ab14607a6553ee39e1789e8674d9954e0d6b1c195669e6c`です。
+
 sourceのpgvector 0.8.7に対し、このAuroraの提供版は0.8.2です。公式SQLで実測したAuroraの版は`16.15.1`でした。localeとlibcも異なります。さらに、[上流の0.8.7修正](https://github.com/pgvector/pgvector/issues/1036)が[対応するAWS管理版](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraPostgreSQLReleaseNotes/AuroraPostgreSQL.Extensions.html)へ取り込まれている根拠は未確認です。版番号だけで管理版の安全性を断定しません。機能比較が通っても、この確認の代わりにはなりません。[問い合わせ文案](aws-aurora-pgvector-security-inquiry-2026-10-31.md)を用意し、送信の許可を待っています。
 
 ## runtimeイメージの準備
@@ -100,4 +109,4 @@ APIとworkerは、資格情報なし・非root・networkなしで正式モジュ
 
 AWS native workerのimport試験も未完了です。ホストへ資格情報を残す可能性があるECRログインは自動承認レビューに拒否され、既存認証の再利用も認証設定がなく実行できませんでした。`/run`のtmpfs内に短期tokenだけを一時保存して終了時に削除する実行案を用意し、その利用許可を待っています。
 
-次は文字列の照合順序の差がアプリへ及ぼす影響を検証します。採用できる場合も、別の署名付き復元profile、最終snapshot、実runtime、全機能、容量制御、DNSと復旧の確認が必要です。[移行手順書](aws-migration-runbook-2026-10-30.md)で実施状況を更新します。
+この結果を踏まえ、[現行と同じDBイメージをprivate EC2で運用する代替案](aws-postgresql-ec2-alternative-2026-10-31.md)も用意しました。DB方式の選択を依頼しており、採用・追加配備はしていません。どちらを選ぶ場合も、別の署名付き復元profile、最終snapshot、実runtime、全機能、容量制御、DNSと復旧の確認が必要です。[移行手順書](aws-migration-runbook-2026-10-30.md)で実施状況を更新します。

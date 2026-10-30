@@ -32,8 +32,13 @@ the proposed data, authority and search replay. A separately isolated rehearsal
 has restored and compared all 108 tables and 6,390 rows, roles, authority,
 sequences and vector values. All 433 captured vector queries matched their top
 eight results and persisted distances. Default-collation order differs for
-three existing text fields; application-path replay and managed-build security
-evidence remain unresolved. See the [execution evidence](../../docs/aws-migration-verification-2026-10-31.md).
+three existing text fields. Actual project/chat repositories matched captured
+pagination/search results for all 16 owners; 3,828 existing text/FTS component
+rows also matched. A public Unicode search-predicate fixture differs, and
+managed-build security evidence remains unresolved. Adoption is pending a DB
+approach decision; the [EC2 alternative](../../docs/aws-postgresql-ec2-alternative-2026-10-31.md)
+is a proposal, not an approved replacement of this profile. See the
+[execution evidence](../../docs/aws-migration-verification-2026-10-31.md).
 Use a distinct private rehearsal cluster because application roles are
 cluster-wide. The current final-restore v1 rejects these version/locale
 differences and remains unchanged; any future supported profile requires its

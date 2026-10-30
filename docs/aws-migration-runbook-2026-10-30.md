@@ -13,7 +13,7 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 | AWS資源の棚卸し | 実施済み | 開始時点のCognito・S3・SQS・署名KMS・state bucketを特定。移行先EC2・Aurora・ECRは後続の基盤作成で追加 |
 | 移行元への接続 | 練習用バックアップ取得済み | 同一snapshotのdump・schema・metadataと既存の配備署名資料を非公開S3へ転送。作業端末で6ファイルのハッシュを照合し、既存配備記録のKMS署名と固定公開鍵の検証に成功 |
 | 基準環境への復元 | 実施済み | 移行元と同じimageで全108テーブル・6,390行のCOPY内容、role・membership・取得済みACL、schema構文木とsequenceを比較して一致 |
-| Aurora互換性試験 | 復元・全行・権限比較は通過、照合順序は不一致 | 全108テーブル・6,390行、全24 role・18 edge、ACL・schema・sequence・vectorを照合。全433件のvector検索も一致したが、3種類の既存文字列の並び順に差があり、アプリへの影響を調査中。本番用clusterは空のまま保持 |
+| Aurora互換性試験 | 既存データの実アプリ比較は通過、追加の文字検索は不一致 | 全108テーブル・6,390行、全24 role・18 edge、ACL・schema・sequence・vectorと全433件のvector検索が一致。実一覧・検索・ページ送りと3,828行の文字変換/FTS成分も一致したが、default照合順序と公開Unicode文字の検索条件に差が残る。本番用clusterは空のまま保持 |
 | ACM証明書 | 発行済み | 現在のWebとAPIを対象に申請。Web/APIの検証に成功し、AWS ACMのISSUEDを確認 |
 | private network実装 | 基盤作成済み・検証中 | 8 subnet、NAT、S3 endpoint、ALB、Auroraを作成。ALBログ書込みと経路を読み戻し済み。未使用legacy SGからのDB許可を除去し、controlだけに限定 |
 | 既存資源の再利用 | 基盤で確認済み | 現在のCognito・S3・SQS・署名KMSを読み取り参照する経路を実装・試験済み。実planの独立照合中 |
@@ -31,7 +31,7 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 
 移行元はpgvector 0.8.7、作成したAuroraの提供版は0.8.2です。locale名と並べ替えライブラリの版も異なります。ユーザーはAuroraで先に互換性を検証し、データ・権限・検索結果を確認できた場合だけ採用する方針を選択しました。元のDBは変更せず、この差を解消するまで本番復元・受理を進めません。[AWSの対応拡張一覧](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraPostgreSQLReleaseNotes/AuroraPostgreSQL.Extensions.html)も確認しています。
 
-10月31日までのバックアップ、基準環境と分離Auroraの復元、検索比較とイメージ準備の実行結果は、[検証記録](aws-migration-verification-2026-10-31.md)にまとめています。vector検索は通過しましたが、文字列の照合順序と管理版の修正状況が未解決のため、Auroraの採用は確定していません。
+10月31日までのバックアップ、基準環境と分離Auroraの復元、検索比較とイメージ準備の実行結果は、[検証記録](aws-migration-verification-2026-10-31.md)にまとめています。既存データの実アプリ比較は通過しましたが、追加Unicode文字の検索条件と管理版の修正状況が未解決のため、Auroraの採用は確定していません。[同じDBイメージをprivate EC2で運用する代替案](aws-postgresql-ec2-alternative-2026-10-31.md)も用意し、方式の選択を待っています。
 
 上流のpgvector 0.8.7にはIVFFlat index作成時の脆弱性修正が含まれます。Auroraの管理版に同じ修正が取り込まれているかは未確認です。公式SQLで実測したAuroraの版は16.15.1でした。版番号だけで安全性を判断せず、AWSの該当buildについて根拠を確認します。[上流の修正情報](https://github.com/pgvector/pgvector/issues/1036)を採用前の確認対象に加え、[具体的な問い合わせ文案](aws-aurora-pgvector-security-inquiry-2026-10-31.md)の送信許可を待っています。
 
@@ -91,7 +91,7 @@ sourceの実DB/host/volume identity、現在のKMS署名付きadmission、dump d
 
 移行先Auroraは本番と同じengine系統、非公開接続、TLSとCA検証で照合します。AWSのcluster/resource identityと実PostgreSQLの観測を結び付けます。RDSの管理roleはMacのtrue SUPERUSERと同じではないため、所有者・ACL・role mappingの差を明示して検証します。superuser向けglobalsを無条件にrestoreしません。
 
-現在は本番受理の前に、互換性の検証を行います。roleはcluster全体に存在するため、本番用に確保した空DBとは別のprivate検証clusterを使います。同じsnapshotを移行元と同等のPG16環境とAuroraへ復元し、全table・sequence・large object・所有者・ACL・制限付きroleを照合しました。vectorの値と距離、検索順位も一致しました。文字列検索、ページ境界と資料の抽出結果の比較は残っており、default collationの実測差がアプリへ及ぼす影響を調査しています。[API側の検証計画](../pals-api/docs/aurora-compatibility-review.md)に対象を記録しています。
+現在は本番受理の前に、互換性の検証を行います。roleはcluster全体に存在するため、本番用に確保した空DBとは別のprivate検証clusterを使います。同じsnapshotを移行元と同等のPG16環境とAuroraへ復元し、全table・sequence・large object・所有者・ACL・制限付きroleを照合しました。vectorの値と距離、検索順位、既存データの実一覧・検索・ページ送りも一致しました。追加Unicode文字では検索条件の差が実測され、資料の選択・抜粋を含む残りの機能比較も未完了です。[API側の検証計画](../pals-api/docs/aurora-compatibility-review.md)に対象を記録しています。
 
 現在の本番復元v1はextensionとlocaleの一致を要求しており、観測した組み合わせを拒否します。互換性の検証で通過しても、この検査や元の署名情報を書き換えません。採用する場合は、証拠に基づく別の復元profileを実装・審査し、最後に書き込みを停止したsnapshotで本番復元を行います。
 
