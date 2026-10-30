@@ -69,6 +69,106 @@ def test_failure_diagnostic_never_formats_exception_or_untrusted_phase(monkeypat
         helper.mark_phase("private-credential-path")
 
 
+@pytest.mark.parametrize("code", list(helper._PUBLIC_GUARDS))
+def test_only_exact_known_guard_codes_can_leave_diagnostics(code):
+    helper.mark_phase("aws_identity")
+    assert helper.failure_diagnostic(helper.RehearsalError(code)) == (
+        "Rehearsal export failed (phase=aws_identity; category=guard_rejected; "
+        f"guard={code}); no payload or credential values were emitted."
+    )
+
+
+@pytest.mark.parametrize(
+    "args",
+    [
+        ("wrong_aws_account_private_secret",),
+        ("private_secret_wrong_aws_account",),
+        ("command_failed_or_output_unbounded_private_secret",),
+        ("bucket_acl_not_owner_private\nprivate_secret",),
+        ("private_lowercase_credential_secret",),
+        ({"wrong_aws_account": "private_secret"},),
+        ("wrong_aws_account", "private_secret"),
+        (),
+    ],
+)
+def test_guard_lookalikes_and_arbitrary_exception_args_are_never_printed(args):
+    helper.mark_phase("bucket_acl")
+    assert helper.failure_diagnostic(helper.RehearsalError(*args)) == (
+        "Rehearsal export failed (phase=bucket_acl; category=guard_rejected); "
+        "no payload or credential values were emitted."
+    )
+
+
+def test_known_guard_does_not_format_exception_subclasses_or_string_subclasses():
+    class PrivateError(helper.RehearsalError):
+        def __str__(self):
+            raise AssertionError("must not format exception")
+
+    class PrivateString(str):
+        def __str__(self):
+            raise AssertionError("must not format argument")
+
+    helper.mark_phase("bucket_acl")
+    for error in (
+        PrivateError("wrong_aws_account"),
+        helper.RehearsalError(PrivateString("wrong_aws_account")),
+    ):
+        assert "guard=" not in helper.failure_diagnostic(error)
+
+
+@pytest.mark.parametrize(
+    "operation,phase",
+    [
+        ("ambient", "bucket_ambient_override"),
+        ("get-caller-identity", "aws_identity"),
+        ("head-bucket", "bucket_head"),
+        ("get-public-access-block", "bucket_public_access"),
+        ("get-bucket-acl", "bucket_acl"),
+    ],
+)
+def test_bucket_failure_reports_exact_subphase_without_external_calls(
+    monkeypatch, operation, phase
+):
+    monkeypatch.setattr(
+        helper.os,
+        "environ",
+        {"AWS_CA_BUNDLE": "private_secret"} if operation == "ambient" else {},
+    )
+
+    def aws(_service, command, *_arguments):
+        assert operation != "ambient"
+        if command == operation:
+            raise helper.RehearsalError("command_failed_or_output_unbounded")
+        if command == "get-caller-identity":
+            return {"Account": helper.ACCOUNT}
+        if command == "get-public-access-block":
+            return {
+                "PublicAccessBlockConfiguration": dict.fromkeys(
+                    (
+                        "BlockPublicAcls",
+                        "IgnorePublicAcls",
+                        "BlockPublicPolicy",
+                        "RestrictPublicBuckets",
+                    ),
+                    True,
+                )
+            }
+        return {}
+
+    monkeypatch.setattr(helper, "aws", aws)
+    with pytest.raises(helper.RehearsalError) as failure:
+        helper.require_private_bucket()
+    code = (
+        "ambient_aws_endpoint_or_ca_override"
+        if operation == "ambient"
+        else "command_failed_or_output_unbounded"
+    )
+    assert helper.failure_diagnostic(failure.value) == (
+        f"Rehearsal export failed (phase={phase}; category=guard_rejected; guard={code}); "
+        "no payload or credential values were emitted."
+    )
+
+
 @pytest.mark.parametrize(
     "stage,phase,category",
     [

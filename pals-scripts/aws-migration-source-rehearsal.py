@@ -4,7 +4,7 @@
 Only stdlib, Docker's existing PostgreSQL tools, and the existing AWS CLI/profile
 are used. No source writes, drain, service control, bootstrap, or credential copy.
 All command stderr and payload stdout remain private; console output is status only.
-Failures report only closed static phase/category labels, never exception contents.
+Failures report only closed static phase/category/known-guard labels, never arbitrary exception contents.
 
 Private config schema pals.live-rehearsal.config.v1 requires explicit database_name,
 database_user, postgres_socket_directory, postgres_port, existing deployment_lock_file,
@@ -73,6 +73,11 @@ _PHASES = frozenset(
         "source_lock",
         "controller_binding_check",
         "private_bucket_check",
+        "bucket_ambient_override",
+        "aws_identity",
+        "bucket_head",
+        "bucket_public_access",
+        "bucket_acl",
         "reference_open",
         "reference_document_check",
         "source_container_inspect",
@@ -97,6 +102,13 @@ _PHASES = frozenset(
         "manifest_upload",
     }
 )
+_PUBLIC_GUARDS = {
+    "ambient_aws_endpoint_or_ca_override": "ambient_aws_endpoint_or_ca_override",
+    "wrong_aws_account": "wrong_aws_account",
+    "bucket_public_access_not_blocked": "bucket_public_access_not_blocked",
+    "bucket_acl_not_owner_private": "bucket_acl_not_owner_private",
+    "command_failed_or_output_unbounded": "command_failed_or_output_unbounded",
+}
 REFERENCE_ARTIFACTS = {
     "admission_manifest": "admission-manifest.jcs",
     "admission_signature": "admission-signature.der",
@@ -144,7 +156,15 @@ def failure_diagnostic(error: Exception) -> str:
             category = label
             break
     phase = _PHASE if _PHASE in _PHASES else "initialization"
-    return f"Rehearsal export failed (phase={phase}; category={category}); no payload or credential values were emitted."
+    guard = ""
+    if (
+        type(error) is RehearsalError
+        and len(error.args) == 1
+        and type(error.args[0]) is str
+        and error.args[0] in _PUBLIC_GUARDS
+    ):
+        guard = "; guard=" + _PUBLIC_GUARDS[error.args[0]]
+    return f"Rehearsal export failed (phase={phase}; category={category}{guard}); no payload or credential values were emitted."
 
 
 def canonical(value: object) -> bytes:
@@ -695,16 +715,20 @@ def aws(
 
 
 def require_private_bucket() -> None:
+    mark_phase("bucket_ambient_override")
     if any(
         name.startswith("AWS_ENDPOINT_URL")
         or name in {"AWS_CA_BUNDLE", "REQUESTS_CA_BUNDLE"}
         for name in os.environ
     ):
         raise RehearsalError("ambient_aws_endpoint_or_ca_override")
+    mark_phase("aws_identity")
     if aws("sts", "get-caller-identity").get("Account") != ACCOUNT:
         raise RehearsalError("wrong_aws_account")
     base = ("--bucket", BUCKET, "--expected-bucket-owner", ACCOUNT)
+    mark_phase("bucket_head")
     aws("s3api", "head-bucket", *base)
+    mark_phase("bucket_public_access")
     block = aws("s3api", "get-public-access-block", *base).get(
         "PublicAccessBlockConfiguration", {}
     )
@@ -718,6 +742,7 @@ def require_private_bucket() -> None:
         )
     ):
         raise RehearsalError("bucket_public_access_not_blocked")
+    mark_phase("bucket_acl")
     acl = aws("s3api", "get-bucket-acl", *base)
     owner = acl.get("Owner", {}).get("ID")
     if (
