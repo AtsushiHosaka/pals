@@ -18,6 +18,7 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 | private control接続 | 実施済み | t4g.mediumを公開IPなしで起動。SSM Online、cloud-init完了、PG16.15 client、アプリ未起動markerを確認 |
 | private compute接続 | 実施済み | r8a.largeを公開IPなしで起動。SSM Online、cloud-init完了、native x86 DockerとAMD EPYC 9R45、起動時のアプリ未配備markerを確認 |
 | 短期AWS資格情報 | 実機検証済み | API/workerと各host supervisorの4 roleを分離。実STS認証とtimerによる更新、API image内のread-only mountからの資格情報検査に成功。parameter・master・署名権限なし |
+| AWS料金アラート | 設定済み | 本番アカウント全体の月額予算をUSD650へ更新。実費USD20・50・100・650、月末予測USD520超過の5通知とメール宛先をAWSから読み戻して照合。自動停止actionなし |
 | Lean単体の測定 | 実施済み | largeで48件の実コンパイルに成功。必要なimportとLake環境再利用で中央値0.805秒。アプリ全体の遅延は未測定 |
 | DB移送と署名付き受理 | 実装済み・実移送未完了 | 専用の署名付き復元CLIとruntime検査を実装・試験。実Auroraでtyped SSM接続と空DBの読み取り検査を確認。移行元snapshotと実復元・受理は未実施 |
 | AWS runtimeと容量モード | アプリ未配備 | x86 runtime、別ホストmTLS、pool配送、drain、通常・大会モードの実配備は未実施 |
@@ -51,6 +52,10 @@ raw dump、DB接続先、鍵、provider token、Terraform plan/state、SSO cache
 外部LLMへの通信が必要なため、private workloadの外向きHTTPSにはNATを使います。S3はgateway endpointを使います。初期のNATは1台で、AZをまたぐ通信と単一障害点を含む費用・可用性の選択です。EC2にはSSHを開かずSSMで管理します。verifierはさらにコンテナ単位で外向き通信を遮断し、DB・AWS・provider資格情報を持たせません。
 
 通常のEC2本体約2.6万円に、NAT・ALB・Aurora最低容量などが加わります。2026年10月30日のAWS Price List APIで、東京のZonal NATは$0.062/時、ALBは$0.0243/時、Aurora PostgreSQL Standard Serverless v2は$0.15/ACU時と確認しました。月730時間、Aurora平均0.5 ACU、public IPv4最低3個を$0.005/IP時、1ドル150円と置くと、本体とこれらの合計は約4.5万円です。mediumとlargeは準備用として起動済みで、金額は通常構成の月額見積もりです。ストレージ、I/O、LCU、NAT処理量、通信、ログ、税、LLM利用料と移行中の重複稼働は別途かかります。[VPC料金](https://aws.amazon.com/vpc/pricing/)、[ALB料金](https://aws.amazon.com/elasticloadbalancing/pricing/)、[Aurora料金](https://aws.amazon.com/rds/aurora/pricing/)を参照します。
+
+料金アラートは、既存の`pals-prod-monthly-cost`を再利用しています。private構成の月額予算はUSD650で、実費がUSD650を超えた場合と、月末の予測費用がUSD520を超えた場合に`hosaka2917+pals@gmail.com`へ通知します。設計時の固定換算1ドル150円では、それぞれ約9.75万円・7.8万円です。為替への自動追従や円建ての支出制限は行いません。既存の実費USD20・50・100の通知と、別管理の旧予算は保持しました。
+
+対象は本番AWSアカウント全体で、外部LLM providerからの直接請求は含みません。AWSの請求集計には遅れがあり、予測通知は利用履歴にも依存します。料金による自動停止actionは設定していません。5件すべての閾値とメール宛先を実際のAWSから読み戻して確認しましたが、メールの実配信試験は行っていません。[AWS Budgetsの更新と通知の説明](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-best-practices.html)を参照します。
 
 ## 実施手順
 
@@ -141,3 +146,5 @@ IAM分離のplanは新規11件、既存2 hostのinstance profile更新だけで�
 続いて両hostのtimerが実際に短期資格情報を更新したことを確認しました。API imageは固定digestで取得し、networkなし・read-only root・権限削除の一時コンテナで、別々にread-only mountしたpolicyと資格情報を既存readerが受理しました。アプリは起動しておらず、DB接続や生成処理の成功を示す試験ではありません。
 
 private computeの初回起動helperは、AL2023のDocker25に合わせたimage検査、actorからhostへのINPUT通信制限、起動期限後にもSIGTERMを送る処理を修正しました。独立レビューで追加の指摘はなく、rootによる再実行も171件通過しました。これらはコードと隔離した試験の結果で、実機のfirewall・mTLS・queue drainは未検証です。起動helperの本番実行も行っていません。
+
+料金通知のplanは予算1件の更新、新規・削除0件でした。既存3通知が保持され、予算額と2通知の追加以外に差分がないことを保存済みplanから独立に照合して適用しました。適用後も予算額・全通知・全宛先・自動停止actionなしをAWSから確認しました。Terraform validateと既存production試験13件は通過しています。
