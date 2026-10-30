@@ -11,16 +11,17 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 | 対象と接続 | 実施済み | pals-prod-memberのSSOをユーザーが更新し、本番アカウントとの一致をSTSで確認 |
 | 現行の公開サービス | 実施済み | WebとAPI healthのGETが200、未認証projectsが401。DNSはCloudflare経由 |
 | AWS資源の棚卸し | 実施済み | Cognito・S3・SQS・署名KMS・state bucketあり。EC2・Aurora・ECRはまだなく、state bucketは空 |
-| 移行元への接続 | 一部実施済み | Parsec接続とDocker一覧を確認。リモート入力で修飾文字が欠落するため、バックアップ操作はまだ実行していない |
+| 移行元への接続 | 一部実施済み | Parsecと読み取りスクリプトを確認。再接続後の新SSO認証待ちで、バックアップはまだ取得していない |
 | ACM証明書 | 発行済み | 現在のWebとAPIを対象に申請。Web/APIの検証に成功し、AWS ACMのISSUEDを確認 |
-| private network実装 | 配備中 | 保存planは新規74件、既存資源の更新・削除0件。独立照合後にapply開始。完了後の読み戻しが必要 |
-| 既存資源の再利用 | 作業中 | 現在のCognito・S3・SQS・署名KMSを読み取り参照する経路を実装・試験済み。実planの独立照合中 |
+| private network実装 | 基盤作成済み・検証中 | 8 subnet、NAT、S3 endpoint、ALB、Auroraを作成。ALBログ書込みと経路を読み戻し済み。未使用legacy SGからのDB許可を除去し、controlだけに限定 |
+| 既存資源の再利用 | 基盤で確認済み | 現在のCognito・S3・SQS・署名KMSを読み取り参照する経路を実装・試験済み。実planの独立照合中 |
+| private control接続 | 実施済み | t4g.mediumを公開IPなしで起動。SSM Online、cloud-init完了、PG16.15 client、アプリ未起動markerを確認 |
 | DB移送と署名付き受理 | 未完了 | 現行Macの署名を別ホストへそのまま流用できない。専用の移送証拠とAWS側の受理が必要 |
-| AWS runtimeと容量モード | 未配備 | x86 runtime、別ホストmTLS、pool配送、drain、通常・大会モードの実配備は未実施 |
+| AWS runtimeと容量モード | アプリ未配備 | x86 runtime、別ホストmTLS、pool配送、drain、通常・大会モードの実配備は未実施 |
 | DNS切り替え | 未実施 | 現行Cloudflare originとMac miniを維持 |
 | 移行後の受け入れ | 未実施 | ログイン、履歴、資料、生成、共有、ゲスト、負荷試験が必要 |
 
-移行先ALB用のACM証明書を発行し、AWS基盤の作成を開始しました。Cloudflareには証明書検証用CNAMEを1件追加しました。ACMの申請は配信先を変更しません。追加資源を作成した場合は、この表と秘密値を含まない実行記録を更新します。
+移行先ALB用のACM証明書、VPC・subnet・NAT・ALB・Aurora・ECR・必要なIAMと専用ALBログbucketを作成しました。Web/APIや計算runtimeはまだ起動していません。Cloudflareには証明書検証用CNAMEを1件追加しました。ACMの申請は配信先を変更しません。追加資源を作成した場合は、この表と秘密値を含まない実行記録を更新します。
 
 ## 移行する対象と保持する情報
 
@@ -103,3 +104,19 @@ Cloudflareの既存Web/APIレコードのoriginだけをALBへ向け、既存NS�
 ## 完了判定
 
 移行完了は、AWS上の実runtime、移送データと認証、公開DNS、実際のLean回答、既存機能、復旧と監視を確認した状態です。手順書、Terraform test、図、準備用CLIだけが完成しても移行完了とはしません。残った作業はこの表に残し、未実行・未配備を明記します。
+
+## 基盤適用の記録
+
+2026年10月30日、初回planは新規74件、既存資源の更新・削除0件でした。Auroraなどの作成後、ALBのログ保存先の権限チェックで一部適用が失敗しました。ALB自体はactiveで同じARNと確認できたため、Terraformの交換マークだけを解除して保持しました。
+
+ログ配送のSourceArn条件をAWS公式の同一リージョン・アカウント範囲へ修正しました。修復planはlistener新規2件、作成済みALBと専用ログbucketポリシーの更新2件、削除・交換0件です。適用後、access_logs=trueと、ELBAccessLogTestFileの実保存・AES256を確認しました。初回planや失敗したplanを再利用していません。
+
+Aurora 16.15はavailable、暗号化・削除保護・7日バックアップ・0.5〜2 ACUと読み戻しました。VPCの8 subnetはいずれもpublic IP自動付与なしで、DBのroute tableにdefault routeはありません。private computeからDBへの許可もありません。続くoperator用planで未使用legacy host SGからのDB許可を除去し、実際の5432 ingressをcontrol SGだけに限定しました。
+
+東京のStandard On-Demand上限は16 vCPUでした。大会用xlarge 4台とmediumには18 vCPU、最大8台の切り替え中併存には34 vCPUが必要なため、40 vCPUへの増枠を申請しました。申請はPENDINGであり、上限の承認や大会容量の準備完了とは扱いません。
+
+private controlのoperator用planは新規5件、DB SG更新1件、削除・交換0件で適用しました。mediumは公開IPなし、暗号化40GiB gp3、IMDSv2必須・hop1、SSM通信5操作だけのinstance profileです。SSM実行でcloud-init完了、アプリ未起動・ALB未登録marker、PG16.15 clientを確認しました。
+
+実Auroraへの読み取り試験は、SSM転送とAWS公式CA、元のRDS hostnameを使うverify-fullで成功しました。TLS1.3、palsadminは非SUPERUSERでCREATEROLE/CREATEDBあり、空のpublic schema、UTF8/en_US.UTF-8/provider cを観測しました。このローカル転送試験は、正式なrestore CLIの通信契約やmigration admissionを検証したものではありません。移行元のlocaleとの一致、実復元、署名付き受理と全機能の試験は残っています。
+
+Lean childのファイル隔離には、verifierのTLS秘密鍵を読める可能性があるため、実鍵を使わないLinux canaryで確認して修正します。verifierのAWS本番起動前に解消します。
