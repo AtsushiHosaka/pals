@@ -31,6 +31,9 @@ def main() -> None:
         "config_shape": shape(json.loads((root / "deploy-config.json").read_text())),
         "state_filenames": sorted(item.name for item in (root / "state").iterdir()),
     }
+    if len(sys.argv) == 2 and sys.argv[1] == "config":
+        print(json.dumps(report, indent=2, ensure_ascii=True))
+        return
     names = command(["docker", "ps", "--format", "{{.Names}}"]).splitlines()
     names = [name for name in names if name.startswith("pals-") and "geekten" not in name]
     containers = json.loads(command(["docker", "inspect", *names])) if names else []
@@ -49,6 +52,9 @@ def main() -> None:
             entry["pg_dump_version"] = command(["docker", "exec", name, "pg_dump", "--version"]).strip()
         public.append(entry)
     report["containers"] = public
+    if len(sys.argv) == 2:
+        public = [entry for entry in public if sys.argv[1] in str(entry["name"])]
+        report = {"containers": public}
     print(json.dumps(report, indent=2, ensure_ascii=True))
 
 
