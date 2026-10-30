@@ -70,7 +70,7 @@ flowchart TD
 
 東京リージョンにWeb・API・DB・Leanを置き、Mac miniが停止しても利用できる構成にします。画像・資料・図などの既存機能と、その生成処理も移行対象です。外部LLM APIは当初継続します。LLM推論自体までAWS内に移す場合は、利用可能なモデルと証明品質を別途比較します。
 
-通常時はWeb・API・LLM用workerを小型の汎用EC2に置き、Leanを`r8a.large`または`m8a.xlarge`へ分離します。運用方法はまず既存のDocker on EC2を引き継ぎ、ホスト増設に合わせてECS on EC2とAuto Scalingへ移行する案です。EKSの導入は初期構成に含めません。大会向けに障害時の継続も必要なら、APIを2台とALBへ拡張し、DBの復旧時間を含めて別途確認します。
+通常時はWeb・API・LLM用workerを`t4g.medium`の4GiB構成から測定し、Leanを`r8a.large`または`m8a.xlarge`へ分離します。Web・API側に8GiBが必要という実測はありません。2GiBで収まる場合は`t4g.small`まで縮小します。運用方法はまず既存のDocker on EC2を引き継ぎ、ホスト増設に合わせてECS on EC2とAuto Scalingへ移行する案です。EKSの導入は初期構成に含めません。大会向けに障害時の継続も必要なら、APIを2台とALBへ拡張し、DBの復旧時間を含めて別途確認します。
 
 Auroraは継続利用し、低遅延で提供する時間帯は自動停止させません。まず最小0.5〜1 ACUを比較し、実際の検索・同時接続負荷から下限と上限を決めます。0 ACUからの復帰には約15秒を許容する必要があり、今回の目標と合いません。[AWSの自動停止と復帰の説明](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless-v2-auto-pause.html)
 
@@ -93,7 +93,19 @@ M8aznは最大5GHzのAMD EPYCを使い、東京で提供されています。最
 
 価格はAWS公開料金データの2026年10月29日17:56:34 UTC版を参照しました。税、OS追加ライセンス、EBS、通信、DB、ほかのAWSサービス、LLM利用料は含みません。[AWS東京Linux料金データ](https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/Asia%20Pacific%20%28Tokyo%29/Linux/index.json)
 
-比較用に1ドル150円と仮定すると、Leanホストの`r8a.large`は月約2.1万円、`m8a.xlarge`は約3.4万円です。Web・API用`m8g.large`は同じ料金データで月$84.64、約1.3万円です。2台の本体合計は、最小案で約3.4万円、CPUに余裕を持たせる案で約4.7万円になります。DB・ストレージ・通信・LLM利用料を含む総額は、利用量を入れて見積もります。Armの`m8g.large`とx86のLeanホストは、それぞれネイティブのイメージを用意します。
+Web・API側は次の小型候補を比較します。いずれもArmです。Lean、DB、LLM推論の計算資源を別に置くため、Web・API側の候補はLeanホストより小さくできます。ただし、Web・APIと同居するworker、reconciler、OSを含む合計使用量は測定が必要です。
+
+WebはNext.jsのNodeサーバーとして常駐します。現行配備定義の上限はAPI 896MiB、Web 512MiB、Caddy 128MiBで、合計1.5GiBです。これは実測使用量ではありませんが、2GiBへまとめる際はOSとworkerなどの余裕も確認する必要があります。4GiB案も全サービスが必ず収まるという保証ではなく、worker・reviewer・reconcilerの配置と、OCRを含む最大負荷を測って決めます。イメージのビルドは配信ホストの外で実施します。[Webの起動方式](https://github.com/AtsushiHosaka/pals-webfront/blob/89daac472e89ac9800563b81f360d43e73cc7665/Dockerfile#L36-L50)、[APIとworkerの上限](https://github.com/AtsushiHosaka/pals-infra/blob/d70b12555f71cf0e4403ef13d616b5f802326e5c/terraform/production/templates/host-user-data.sh.tftpl#L586-L612)
+
+| Web・API用候補 | vCPU | メモリ | 東京Linux On-Demand | 月730時間 | 用途 |
+| --- | ---: | ---: | ---: | ---: | --- |
+| t4g.small | 2 | 2GiB | $0.02160/時 | $15.77 | 常駐サービス全体が2GiBで収まる場合の縮小候補 |
+| t4g.medium | 2 | 4GiB | $0.04320/時 | $31.54 | 通常時の第一測定候補 |
+| m8g.medium | 1 | 4GiB | $0.05797/時 | $42.32 | CPUクレジットを使わない比較候補 |
+
+T4gのsmallとmediumはどちらもCPUクレジットによるバースト型で、持続利用の基準は各vCPUの20%です。mediumへの変更で増えるのはメモリで、基準CPU容量は同じです。クレジット不足時はStandardモードで速度が制限され、Unlimitedモードでは平均利用量に応じて追加料金が発生します。CPUクレジットと応答時間を監視し、継続的にCPUを使う場合はM系と比較します。[AWSのCPUクレジット仕様](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-credits-baseline-concepts.html)
+
+比較用に1ドル150円と仮定すると、Leanホストの`r8a.large`は月約2.1万円、Web・API用`t4g.medium`は約4,730円です。2台の本体合計は月約2.6万円です。Web・API側が`t4g.small`で収まれば約2.35万円になります。DB・ストレージ・通信・CPUクレジット・LLM利用料・税を含む総額は、利用量を入れて見積もります。ArmのWeb・APIホストとx86のLeanホストは、それぞれネイティブのイメージを用意します。画像・資料・図の重い変換処理を分ける場合も機能は維持し、そのworkerの必要資源を別に見積もります。
 
 `m8azn.3xlarge`の常時稼働は1台で月約17.5万円です。一方、2台を大会用にそれぞれ24時間使う場合、本体の合計は約$76.81、同じ仮定で約1.15万円です。大会前に起動してtoolchainとページキャッシュを温め、動作確認を終えておきます。大会中の待ち時間対策として、インスタンスの起動完了を待つ構成にはしません。
 
