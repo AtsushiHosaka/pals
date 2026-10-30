@@ -1,160 +1,202 @@
-# PALSのAWS移行と回答高速化の構成案
+# PALSのAWS構成と通常モード 大会モードの設計
 
-作成日 2026年10月30日。構成検討の段階であり、AWS資源の作成や本番設定の変更は含みません。
+更新日 2026年10月30日。Web・APIは`t4g.medium`、通常時の計算ノードは`r8a.large`とするユーザーの選択に基づく設計です。大会時は同じR8a系の`r8a.xlarge`へ切り替えます。本書は実装前の設計であり、記載した操作コマンドや自動制御はまだ存在しません。AWS資源の作成や本番設定の変更は行っていません。
 
-通常時はLeanを1件ずつ処理し、16GiBの専用ホストへ小型化します。最小候補は`r8a.large`、CPUに余裕を持たせる比較候補は`m8a.xlarge`です。速度比較と大会時の増強には`m8azn.3xlarge`を提案します。Web・API・LLM呼び出し用workerと、Leanを実行するホストを分け、大会前に必要な実行枠を起動しておきます。
+通常は小さな構成を常時起動し、処理待ちが増えたときだけ計算ノードを増やします。大会前には、手動操作でxlargeの容量を先に準備します。大型化と複数台化は同時処理の能力を増やす手段であり、単一の証明を同じ比率で速くする保証ではありません。
 
-AWS移行によって計算資源と同時実行数を増やせます。ただし、現行の回答経路には複数回の直列LLM呼び出しがあります。簡単な未知の問題を1秒で解く目標には、Leanの高速化と回答経路の短縮を両方進める必要があります。
+## 決定事項と目標
 
-## 目標と待ち時間
+| 項目 | 設計の前提 |
+| --- | --- |
+| Web・API | t4g.medium、2 vCPU・4GiB、通常時は1台 |
+| 通常の計算ノード | r8a.large、2 vCPU・16GiB、初期1台・Lean 1枠 |
+| 大会用の計算ノード | r8a.xlarge、4 vCPU・32GiB、初期案は1台につき独立したLean 2枠 |
+| 利用目標 | 簡単な単発問題は検証済み回答の完成まで1秒、30件の同時送信では最後の回答まで10秒を目指す |
+| 最適化 | Lean常駐化、import・型推論・tactic探索の削減、重いtacticのネイティブ事前コンパイルを進める |
+| 移行範囲 | Mac miniへの依存をなくし、Web・API・worker・Lean・資料・履歴・認証をAWS上で運用する |
+| 維持する振る舞い | 既存機能と入口、前提確認、Lean検証、独立レビュー、保存済み回答と出典の結び付けを保つ |
 
-ユーザーの指定は、30人が同時に問題を送信し、最後の人の回答も10秒以内に完成することです。FIFOで順番に処理する方針は採用できます。「簡単な問題は1秒」の測定範囲は確認中のため、この案では厳しい側の目標として、待ち行列が空の単発時に、受付からLeanの検証と必要なレビューを終えた回答が画面に表示されるまでを扱います。最初の文字や進捗表示までの時間も別に測定します。
+1秒は、待ち行列が空のときの受付から、検証と必要なレビューを終えた回答が画面に表示されるまでを検討対象とします。最初の文字と進捗表示までの時間は別に測ります。既存証明の再利用と初見の簡単な問題を分け、長い証明や修復が必要な問題も継続して処理します。未知の任意の問題まで1秒や10秒で解けるという保証はありません。
 
-同じ処理時間`s`の30件が、空の待ち行列に同時到着する単純な場合、`c`枠での最後の回答完了は`ceil(30 / c) × s`です。通信・DB・再試行などの追加時間がない理想値であり、Leanだけの時間を`s`に代入して回答全体の性能とは呼びません。
+台数、枠数、制御の閾値は以下に示す検証用の提案値です。配備時は実測した容量と費用上限を設定ファイルに固定します。
 
-| 1件の回答処理時間 | 1枠 | 4枠 | 8枠 |
-| --- | ---: | ---: | ---: |
-| 1秒 | 30秒 | 8秒 | 4秒 |
-| 2秒 | 60秒 | 16秒 | 8秒 |
-| 5秒 | 150秒 | 40秒 | 20秒 |
-
-1件1秒なら3枠、2秒なら6枠で理論上10秒ですが、余裕がありません。まず4枠と8枠を比較します。処理段階を分けて並行させる実装では、各段階の処理能力と依存関係から全体時間を測り直します。30件を10秒で完了するには、全体として少なくとも毎秒3件を完了する能力に加え、最初の回答ができるまでの時間も短くする必要があります。
-
-「簡単」は既存証明の再利用だけに限定しません。完全一致で再利用できる問題、初見の簡単な問題、長い推論や修復が必要な問題を分けて測ります。未知の任意の問題まで10秒以内に解けるという根拠は現時点でありません。混在した30件でも測定し、長い問題がほかの利用者を待たせる時間を確認します。
-
-## 現行コードと測定結果
-
-親リポジトリ`8ef0e0b5ff32a52508ea631c7decec72adf28d9d`が参照するagent `6581588`、API `8bb38aa`、infra `d70b125`を調査対象にしました。本番で現在有効な設定や実機性能は別途確認が必要です。
-
-通常チャットの既存Recipe再利用にも、少なくとも5回のLLM呼び出しが直列にあります。チャット種別の判定後に、前提確認、入力の構造化、対象範囲の評価、独立した対応関係と保存済み回答のレビューを行います。コンパイルが不要な再利用でも、この経路は残ります。[チャット振り分け](https://github.com/AtsushiHosaka/pals-agent/blob/6581588b1d292549e3e7a5c07a4a4896b8ff3cdd/pals_agent/chat_runtime.py#L115-L179)、[証明再利用](https://github.com/AtsushiHosaka/pals-agent/blob/6581588b1d292549e3e7a5c07a4a4896b8ff3cdd/pals_agent/proof_reuse.py#L805-L1004)
-
-LLMクライアントは`service_tier="default"`を指定し、応答全文を待ちます。AWSのCPUを強化しても、この外部推論の計算時間は短くなりません。[LLMクライアント](https://github.com/AtsushiHosaka/pals-agent/blob/6581588b1d292549e3e7a5c07a4a4896b8ff3cdd/pals_agent/openai.py#L70-L109)
-
-Lean verifierは1環境につき同時1件で、コンパイラの設定は`--threads=1`です。workerも1件ずつ処理し、コンパイル完了の観測に1秒間隔の問い合わせを使います。インスタンスを大型化するだけでは、この制限は変わりません。[verifierの上限](https://github.com/AtsushiHosaka/pals-agent/blob/6581588b1d292549e3e7a5c07a4a4896b8ff3cdd/pals_agent/lean_verifier/http_server.py#L177-L194)、[コンパイラ起動](https://github.com/AtsushiHosaka/pals-agent/blob/6581588b1d292549e3e7a5c07a4a4896b8ff3cdd/pals_agent/lean.py#L440-L467)、[完了観測](https://github.com/AtsushiHosaka/pals-agent/blob/6581588b1d292549e3e7a5c07a4a4896b8ff3cdd/pals_agent/worker.py#L1070-L1103)
-
-10月28日のローカル測定は次のとおりです。Mac上の4種類の証明による少数標本で、AWSや回答全体の速度を示すものではありません。実行順序とOSのファイルキャッシュも統制されていません。[測定記録](lean-acceleration-2026-10-28.md)
-
-| Lean検証の条件 | 中央値 | p95 |
-| --- | ---: | ---: |
-| 広いMathlib import | 7.836秒 | 8.499秒 |
-| 必要なimportを明示 | 3.676秒 | 4.783秒 |
-| 必要なimportを明示しLake環境を再利用 | 1.354秒 | 2.147秒 |
-
-Lake環境再利用のコードは現在の参照先に存在します。既定値は無効で、本番での有効化は確認していません。これは環境設定の再利用であり、Leanプロセスや読み込み済みMathlibを常駐させる仕組みではありません。[実装と有効化条件](https://github.com/AtsushiHosaka/pals-agent/blob/6581588b1d292549e3e7a5c07a4a4896b8ff3cdd/pals_agent/lean_verifier/http_runtime.py#L73-L180)
-
-同じ測定の子プロセス最大RSSは約5.08GiBでした。実行モード別・同時実行時の値ではありませんが、従来のローカル構成の4GiB境界で動くとは判断できません。新構成では1枠8GiBを初期の検証用割り当てとし、Linuxで実測して確定します。
-
-## 提案するAWS構成
+## 全体構成と処理の配置
 
 ```mermaid
 flowchart TD
-  U[利用者] --> E[Route 53 と HTTPS入口]
-  E --> A[Web と API]
-  A --> D[(Aurora PostgreSQL)]
-  A --> Q1[評価用SQS]
-  A --> Q2[証明用SQS]
-  Q1 --> W1[評価worker]
-  Q2 --> W2[証明生成worker]
-  W1 --> L[外部LLM API]
-  W2 --> L
-  W1 --> A
-  W2 --> A
-  A --> R[候補の永続化とreconciler]
-  R --> V[別EC2の隔離Lean実行枠]
+  U[利用者] --> E[Route 53 と HTTPS]
+  E --> C[固定のt4g.medium Web API Caddy]
+  C --> DB[(Aurora PostgreSQL)]
+  C --> S3[S3 資料と成果物]
+  C --> QA[評価用SQS]
+  C --> QP[証明用SQS]
+  QA --> W[計算ノードの評価 証明worker]
+  QP --> W
+  W --> L[外部LLM API]
+  W --> C
+  C --> R[APIホストのreconciler]
+  R --> V[計算ノードの隔離Lean実行枠]
   V --> R
-  R --> D
-  A --> S[S3の資料と成果物]
-  A --> N[確定結果と進捗の通知]
-  N --> U
+  O[運用CLI] --> M[容量モードの管理]
+  M --> A[EC2 Auto Scaling]
+  A --> W
+  A --> V
+  CW[待ち件数 待ち時間 準備済み枠] --> A
 ```
 
-東京リージョンにWeb・API・DB・Leanを置き、Mac miniが停止しても利用できる構成にします。画像・資料・図などの既存機能と、その生成処理も移行対象です。外部LLM APIは当初継続します。LLM推論自体までAWS内に移す場合は、利用可能なモデルと証明品質を別途比較します。
+| 配置先 | 実行するもの | 初期の資源割り当てと確認事項 |
+| --- | --- | --- |
+| Web・APIホスト | Next.js、FastAPI、Caddy、API所有のreconciler、既存の直列OCR | API 2GiB、Web 512MiB、Caddy 128MiB、reconciler 384MiBを測定案とし、OSなどに約1GiBを残す。OCR中の応答時間も測る |
+| 通常の計算ノード | 評価worker、証明worker、Recipe reviewer、隔離Lean 1枠 | Lean 8GiBを測定案とし、worker約2.5GiBとOS・キャッシュ用の余裕を残す。2 CPUの競合も測る |
+| 大会の計算ノード | 同じ役割と隔離Lean 2枠 | Leanは各8GiB、worker側の同時処理も対応させる。単にコンテナ数だけを増やさない |
+| Aurora | アプリ状態、履歴、認可、候補と実行先の記録 | PostgreSQLとpgvectorを維持。提供時間中は0 ACUにせず、最小0.5〜1 ACUと上限を負荷測定で決める |
+| S3・ECR・Cognito・SSM | 資料、成果物、イメージ、認証、運用設定 | 既存データと認証を引き継ぎ、immutable imageとリリース照合を維持する |
 
-通常時はWeb・API・LLM用workerを`t4g.medium`の4GiB構成から測定し、Leanを`r8a.large`または`m8a.xlarge`へ分離します。Web・API側に8GiBが必要という実測はありません。2GiBで収まる場合は`t4g.small`まで縮小します。運用方法はまず既存のDocker on EC2を引き継ぎ、ホスト増設に合わせてECS on EC2とAuto Scalingへ移行する案です。EKSの導入は初期構成に含めません。大会向けに障害時の継続も必要なら、APIを2台とALBへ拡張し、DBの復旧時間を含めて別途確認します。
+この計算ノードはLeanだけの専用ホストではありません。信頼済みworkerと、資格情報を持たないverifierを別コンテナに分けます。Dockerはホストのカーネルを共有するため、別VMによる隔離とは区別します。外部LLM推論は当初継続し、計算ノード内にLLMを常駐させません。
 
-Auroraは継続利用し、低遅延で提供する時間帯は自動停止させません。まず最小0.5〜1 ACUを比較し、実際の検索・同時接続負荷から下限と上限を決めます。0 ACUからの復帰には約15秒を許容する必要があり、今回の目標と合いません。[AWSの自動停止と復帰の説明](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless-v2-auto-pause.html)
+Web・APIホストは1台のため、その故障時には受付と画面表示が止まります。計算ノードの自動回復でWeb・APIの障害まで解消する構成ではありません。入口の常時多重化は、この費用を抑えた初期案の範囲外です。
 
-S3・ECR・Cognito・SSM・既存の署名付きリリース契約を維持します。LeanにはDBやLLMの資格情報を渡さず、読み取り専用のtoolchain、要求ごとの書き込み領域、通信制限、CPU・メモリ・PID・時間上限を維持します。Fargateは現行verifierが要求するtmpfsや`dockerSecurityOptions`をそのまま扱えないため、Leanの初期移行先はEC2とします。[Fargateの制約](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-tasks-services.html)
+4GiBのAPIホストで全負荷に耐えられるかは未測定です。現行のOCRはAPIから起動し、子プロセスの仮想メモリ上限が1.5GBあります。旧API上限896MiBのまま収まるとは扱いません。まず直列OCRを保って測定し、応答時間やメモリが不足する場合は、機能を残したままOCRを別の制限付きworkerへ分離します。その分の資源と費用も計上します。図の描画を統合する場合も専用sandboxを使い、APIやverifier内でTeXを実行しません。[OCRの実装](https://github.com/AtsushiHosaka/pals-api/blob/8bb38aa27e4670b4195c334210e414029c2fcebe/app/infrastructure/material_ocr.py#L146-L154)
 
-現行AWS定義はARM64の単一`t4g.medium`と0 ACUのAuroraを前提とします。x86への変更にはAMI、Linux x86用のLean・Mathlib・ネイティブ依存、OCIイメージ、署名・リリース照合の更新が必要です。インスタンス型だけは変更しません。[現在のAMIとイメージ契約](https://github.com/AtsushiHosaka/pals-infra/blob/d70b12555f71cf0e4403ef13d616b5f802326e5c/terraform/production/variables.tf#L118-L209)
+## 通常モードと大会モード
 
-## インスタンス候補と費用
+| モード | 型 | 最小台数 | 起動目標 | 自動拡張の上限 | 検証用のLean枠数 |
+| --- | --- | ---: | ---: | ---: | --- |
+| normal | r8a.large | 1 | 1 | 4 | 1〜4 |
+| event | r8a.xlarge | 4 | 4 | 4 | 8 |
 
-M8aznは最大5GHzのAMD EPYCを使い、東京で提供されています。最大周波数は全コアの動作周波数やLeanの性能保証ではありません。M8aとM8aznは1コア1スレッドであり、表のvCPU数をSMTの2スレッドで割る必要はありません。[AWSの製品説明](https://aws.amazon.com/ec2/instance-types/m8a/)、[CPU仕様](https://docs.aws.amazon.com/ec2/latest/instancetypes/gp.html)、[東京での提供開始](https://aws.amazon.com/about-aws/whats-new/2026/02/aws-m8azn-instances-generally-available/)
+通常はlargeを1台で稼働させます。自動制御は同じ型の台数を1〜4台の範囲で変え、インスタンス型を勝手に変更しません。大会モードは30件の同時送信に備える比較構成としてxlargeを4台、各2枠の計8枠を事前に用意します。event中は待ち行列が空でも4台を維持し、大会開始前に縮小されないようにします。終了後にnormalへ戻すと、余分なノードを順に停止します。
 
-| 候補 | vCPU | メモリ | 東京Linux On-Demand | 月730時間 | 用途 |
-| --- | ---: | ---: | ---: | ---: | --- |
-| r8a.large | 2 | 16GiB | $0.19272/時 | $140.69 | 通常時の最小候補、Lean 1枠 |
-| m8a.xlarge | 4 | 16GiB | $0.31444/時 | $229.54 | 通常時にCPUの余裕を持たせる候補 |
-| m8a.2xlarge | 8 | 32GiB | $0.62888/時 | $459.08 | 通常時にも複数枠や追加メモリが必要な場合 |
-| m8azn.xlarge | 4 | 16GiB | $0.53338/時 | $389.37 | 少数枠で単体速度を比較 |
-| m8azn.3xlarge | 12 | 48GiB | $1.60014/時 | $1,168.10 | 単体速度の第一比較候補と大会時の増強 |
-| r8a.2xlarge | 8 | 64GiB | $0.77088/時 | $562.74 | 常駐化でメモリが不足した場合の比較候補 |
+型だけを1台のlargeから1台のxlargeへ替える操作も指定可能にします。eventの計画で1台を明示した場合は最小・起動目標を1台、上限を4台とします。その場合は2枠を検証する小規模構成であり、30件・10秒の容量とは呼びません。台数は運用者が計画結果を確認できるようにします。
 
-価格はAWS公開料金データの2026年10月29日17:56:34 UTC版を参照しました。税、OS追加ライセンス、EBS、通信、DB、ほかのAWSサービス、LLM利用料は含みません。[AWS東京Linux料金データ](https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/Asia%20Pacific%20%28Tokyo%29/Linux/index.json)
+同じ処理時間`s`の30件が空の待ち行列へ到着すると、`c`個の回答処理枠での最後の完了は、追加時間なしの理想値で`ceil(30 / c) × s`です。
 
-Web・API側は次の小型候補を比較します。いずれもArmです。Lean、DB、LLM推論の計算資源を別に置くため、Web・API側の候補はLeanホストより小さくできます。ただし、Web・APIと同居するworker、reconciler、OSを含む合計使用量は測定が必要です。
+| 回答全体の処理時間 | 1枠 | 2枠 | 8枠 |
+| --- | ---: | ---: | ---: |
+| 1秒 | 30秒 | 15秒 | 4秒 |
+| 2秒 | 60秒 | 30秒 | 8秒 |
 
-WebはNext.jsのNodeサーバーとして常駐します。現行配備定義の上限はAPI 896MiB、Web 512MiB、Caddy 128MiBで、合計1.5GiBです。これは実測使用量ではありませんが、2GiBへまとめる際はOSとworkerなどの余裕も確認する必要があります。4GiB案も全サービスが必ず収まるという保証ではなく、worker・reviewer・reconcilerの配置と、OCRを含む最大負荷を測って決めます。イメージのビルドは配信ホストの外で実施します。[Webの起動方式](https://github.com/AtsushiHosaka/pals-webfront/blob/89daac472e89ac9800563b81f360d43e73cc7665/Dockerfile#L36-L50)、[APIとworkerの上限](https://github.com/AtsushiHosaka/pals-infra/blob/d70b12555f71cf0e4403ef13d616b5f802326e5c/terraform/production/templates/host-user-data.sh.tftpl#L586-L612)
+Lean枠と回答処理枠は同じではありません。LLM、検索、reconciler、レビュー、DB、画面通知も並行処理できて初めて、この完了時間に近づきます。8つのLeanコンテナを起動しただけでは30件・10秒を達成したことになりません。
 
-| Web・API用候補 | vCPU | メモリ | 東京Linux On-Demand | 月730時間 | 用途 |
-| --- | ---: | ---: | ---: | ---: | --- |
-| t4g.small | 2 | 2GiB | $0.02160/時 | $15.77 | 常駐サービス全体が2GiBで収まる場合の縮小候補 |
-| t4g.medium | 2 | 4GiB | $0.04320/時 | $31.54 | 通常時の第一測定候補 |
-| m8g.medium | 1 | 4GiB | $0.05797/時 | $42.32 | CPUクレジットを使わない比較候補 |
+## 手動切り替えの操作と状態
 
-T4gのsmallとmediumはどちらもCPUクレジットによるバースト型で、持続利用の基準は各vCPUの20%です。mediumへの変更で増えるのはメモリで、基準CPU容量は同じです。クレジット不足時はStandardモードで速度が制限され、Unlimitedモードでは平均利用量に応じて追加料金が発生します。CPUクレジットと応答時間を監視し、継続的にCPUを使う場合はM系と比較します。[AWSのCPUクレジット仕様](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-credits-baseline-concepts.html)
+運用CLIで次の操作を提供します。以下は実装するインターフェースの案です。
 
-比較用に1ドル150円と仮定すると、Leanホストの`r8a.large`は月約2.1万円、Web・API用`t4g.medium`は約4,730円です。2台の本体合計は月約2.6万円です。Web・API側が`t4g.small`で収まれば約2.35万円になります。DB・ストレージ・通信・CPUクレジット・LLM利用料・税を含む総額は、利用量を入れて見積もります。ArmのWeb・APIホストとx86のLeanホストは、それぞれネイティブのイメージを用意します。画像・資料・図の重い変換処理を分ける場合も機能は維持し、そのworkerの必要資源を別に見積もります。
+```text
+pals-capacity status
+pals-capacity plan --mode event --nodes 4
+pals-capacity apply --plan <保存した計画ファイル>
+pals-capacity plan --mode normal --nodes 1
+pals-capacity apply --plan <保存した計画ファイル>
+```
 
-`m8azn.3xlarge`の常時稼働は1台で月約17.5万円です。一方、2台を大会用にそれぞれ24時間使う場合、本体の合計は約$76.81、同じ仮定で約1.15万円です。大会前に起動してtoolchainとページキャッシュを温め、動作確認を終えておきます。大会中の待ち時間対策として、インスタンスの起動完了を待つ構成にはしません。
+`plan`はAWSを変更せず、現在と変更後の型・台数・枠数、対象account/region、リリース、単価、移行中の一時的な増加、最大台数を表示します。`apply`はその計画のdigestと有効期限を検証して操作を開始します。`status`は要求されたモードと実際の構成を別々に表示し、起動中・準備済み・処理中・draining・失敗の台数、実行枠、待ち件数、操作IDを返します。運用UIの新設は初期範囲に含めません。
 
-通常時は16GiBホストに8GiBのLean枠を1つ設け、残りをOS、常駐方式の親プロセス、ファイルキャッシュなどに使う測定条件とします。2コアへの小型化が単体の検証時間へ与える影響も、4コア構成と比較します。メモリを8GiBまで減らすと余裕が小さいため、初期案には含めません。常駐化後のコンテナ全体の最大使用量を測り、16GiBで収まらなければ32GiBへ増やします。
+直接のEC2サイズ変更は停止が必要です。処理中のインスタンスを停止して変更する方式は使わず、Auto Scaling GroupのLaunch Template更新とrolling instance refreshで置き換えます。[AWSのサイズ変更の条件](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/change-instance-type-of-ebs-backed-instance.html)、[instance refresh](https://docs.aws.amazon.com/autoscaling/ec2/userguide/instance-refresh-overview.html)
 
-この通常構成には30件を10秒で処理する容量を見込みません。大会ホストは1台4枠を初期案とし、2台で8枠に増やします。これは測定用の割り当て案で、回答処理全体が1〜2秒になる保証ではありません。C8aなども比較できますが、今回の主な制約は単体速度とメモリなので、まずこの候補に絞ります。購入前には対象AZの提供状況・実容量・クォータを確認します。
+切り替えは次の順序です。
 
-## FIFOと同時実行の設計
+1. 対象環境の操作leaseを取得し、現在の設定、ノード、処理中の要求を記録します。
+2. 対象型の新しいノードを、旧ノードを残したまま起動します。
+3. 署名付きリリースとtoolchain、ネットワーク制限、mTLSを照合し、Leanの読み込みと代表的な検証を実行します。
+4. 準備が完了した実行枠だけを登録して配送対象にします。
+5. 旧ノードをdrainingにし、SQSの新規受信と新規Lean配送を止めます。
+6. 処理中のモデル呼び出し、Lean、結果の永続確定、claim解放と必要なackを終え、旧ノードを終了します。
+7. 実際の構成と計画が一致したことを確認し、モード変更を完了します。
 
-同じ会話内の順序は守り、別の会話は空いた枠で実行します。SQS FIFOを使うなら`MessageGroupId`を会話単位に分けます。全利用者を1グループにすると順番は厳密に守れますが、長い問題で全員が待つため、30件10秒の目標には不利です。会話間で到着順と完了順が一致することまでは求めません。[SQS FIFOのグループごとの順序](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html)
+状態は`planning → preparing → replacing → draining → completed`を基本とし、失敗時は`failed`または`rolling_back`を記録します。起動やreadinessに失敗した場合は旧ノードを残します。一部だけ置き換わった場合は型が混在している実態を表示し、完了と偽らず、同じ操作IDで再開または以前の設定への再切り替えを行います。再切り替えでも現在の処理を完了させます。
 
-現在のSQSはそのままで厳密なFIFOを保証する定義ではありません。FIFO移行では既存キューの残件、deduplication ID、visibility、再配送、claim、永続確定後の削除を合わせて設計します。FIFOを採用しても業務処理の冪等性は残します。評価用と証明用のキューを分離し、必要なら長時間の証明に別枠を設け、長い問題を処理する機能も維持します。
+容量操作はSSM Automationのrunbookを呼ぶCLIと、同じ状態を扱う容量管理処理に集約します。runbookは作成・監視・再試行をAWS側に記録し、運用者の端末切断で処理を失わないようにします。Auroraの専用運用テーブルに操作lease、計画digest、望ましいモード、操作結果を保存します。ASGの実際の構成と一致しなければ、新しい操作前に再照合します。AWS API成功後・DB更新前に停止する場合も含め、同じ操作の再実行で余分な起動や終了を発生させません。[SSM Automation](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-automation.html)
 
-Leanは隔離された1件用実行枠を複数用意し、空き枠へreconcilerが配送します。consumerとendpoint選択も並列化し、1つのverifier内のsemaphoreを緩めるだけの変更は避けます。実行IDと担当ノードを共有の永続記録で結び、別ノードへの問い合わせで結果が見つからなくなる問題を防ぎます。
+runbookはAWS APIの呼び出しと状態待ちを短いstepに分け、再試行回数と待ち時間の上限を設けます。Auroraへの記録は、SSM Run Commandから呼ぶAPIホスト上の固定の運用helperが、専用の最小権限DBログインで行います。CLIやrunbook引数にDB資格情報を渡さず、通常のWeb・APIコンテナへASGの管理権限を渡しません。plan/statusはAWSの読み取りAPIと監視情報だけで成立させ、Run Commandを開始しません。操作leaseを更新しながら進め、lease失効時も未確定のAWS操作を再照合するまで別の変更を始めません。
 
-1秒間隔のコンパイル完了問い合わせは、永続記録を先に確定する完了通知へ変更します。通知欠落時は既存の再配送や再照合で回復します。SQSの20秒long pollingはメッセージ到着時に返るため、それ自体が固定20秒の遅延ではありません。[SQS long polling](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-short-and-long-polling.html)
+切り替え中は動的な容量変更を一時無効にし、操作完了後に対象モードの設定で再開します。故障ノードの回復まで止める設定にはしません。型の変更はこのrunbookだけが行い、台数の自動制御は有効モードのmin/max内に限定します。ASGはminimum healthy 100%、maximum healthy 200%を初期案とし、旧ノードを残して新ノードを起動できるようにします。通常の最大4台に対して移行中は最大8台まで重なる提案値を計画に表示し、型と台数の許可範囲を配備時に固定します。ASGの操作制限とは別に、費用通知を設定します。
 
-## Lean自体を速くする方法
+## 自動拡張の判断
 
-10月30日のユーザーの追加指示により、読み込み済みLean環境の常駐化、証明処理の削減、重いtacticのネイティブ事前コンパイルの3方式を、進める最適化方針とします。実装完了や本番採用を示す決定ではありません。基準値を測り、証明処理の削減と既存ネイティブ成果物の調査を進め、常駐方式を隔離した検証環境で試作する順で進めます。
+接続人数は監視用に使い、拡張の主条件にはしません。30人が画面を開いているだけの場合と、30人が同時に証明を要求する場合では必要な容量が異なるためです。
 
-`.olean`は読み込んだ宣言を作り直す手間を省きます。それでも、importの読み込みと初期化、入力の型や暗黙引数の推論、tacticの実行、カーネルによる証明の検査は残ります。これらを分けて測定すれば、コンパイラを改造する前にも改善余地を調べられます。[Leanの処理段階](https://lean-lang.org/doc/reference/latest/Elaboration-and-Compilation/)
+自動制御は、評価・証明生成・Lean検証のそれぞれで`待機ジョブ数 / 準備済みの段階別実行枠数`と最古の待ち時間を使います。各段階が必要とする台数の最大値を起動目標とし、有効モードの上限内に収めます。評価や生成のworkerが埋まり、Lean候補待ちがまだ0件の場合にも拡張できます。分母は現在配送できるbusyとidleを合わせた枠数で、起動中・draining・不健全な枠は含めません。0枠なら割り算を行わず、準備中の容量を含む必要最小台数の回復と起動失敗の通知へ進みます。目標値は許容する段階ごとの順番待ち時間を、実測した平均処理時間で割って設定します。[AWSのSQSに基づく拡張方法](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-using-sqs-queue.html)
 
-まずM8aとM8aznを同じLinux x86イメージと証明集合で比較します。Macの基準値はネイティブarm64環境で測定し、OSとアーキテクチャの違いを明示します。高クロックCPUがどの段階を短縮するかを調べ、1ジョブを1・2・4スレッドで実行する場合と、1スレッドのジョブを複数実行する場合を比較します。多数のコアを1つの証明に割り当てても、証明探索や依存関係が同じ比率で並列化されるとは限りません。CPU quotaによる待ちも測定します。
+最初の検証では30秒集計を使い、目標超過が2窓続くか、最古の待ち時間が提案値5秒を2窓超えた場合に拡張します。新ノードの起動中は同じ需要を重複して数えず、準備中容量と上限を考慮します。縮小は各段階の待ちが10分間なく、対象ノードに処理中の要求がない場合に限定します。これらの時間と閾値は負荷測定で調整します。
 
-続いて、必要なimport、明示的な型・引数、直接の補題適用、対象を絞った`simp`などを比較します。探索の多いtacticを短い証明へ置き換えられれば、実際の証明処理を減らせます。ただし、元の問題との対応関係と検証基準は維持します。再利用する重いtacticのネイティブ事前コンパイルも候補ですが、既に生成済みのネイティブ成果物を確認し、追加の効果がある箇所だけを対象にします。Leanは`precompileModules`を提供していますが、効果は処理内容によって異なります。[ネイティブ事前コンパイルの説明](https://lean-lang.org/doc/reference/latest/Elaboration-and-Compilation/#elaboration-results)
+生成用の拡張はproviderの利用可能な同時処理数とRPM/TPMの範囲内で行います。モデルAPIの429など、provider側の制限が原因の場合は、その制限を超えるworkerの増設を抑えます。モデル待ちによってローカルworker枠が埋まった場合の拡張とは区別します。検索、DB、CPU credit、OOMも分けて確認します。計測が欠けた場合は縮小を止め、CPU使用率だけを根拠に増設し続けないようにします。
 
-Mathlibを読み込み済みのLeanを常駐させる方式も試作します。最初は信頼済みimportと同じ証明の反復処理に範囲を絞り、読み込み時間の削減量、メモリ増加、終了・再起動を測ります。コミュニティのREPLは環境を指定して次の入力を処理できます。ただし、現行verifierと同等の安全性や証明受理を保証するものではありません。[Lean REPL](https://github.com/leanprover-community/repl)
+この自動制御は継続的な負荷増加に対応するものです。起動・イメージ読み込み・Lean初期化には時間がかかるため、最初の30件を10秒以内に処理する容量は大会前に起動しておきます。停止したwarm poolは読み込み済みLeanのRAMを保つ方式ではないため、初期構成には追加しません。開始時刻から自動準備する場合は、同じ切り替えrunbookを事前実行します。ASGのscheduled actionだけでは型を切り替えません。[warm pool](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-warm-pools.html)、[scheduled scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-scheduled-scaling.html)
 
-常駐プロセスでは、環境を前の状態に戻すだけでは、IO、グローバル状態、バックグラウンド処理を取り消せません。要求間の状態混入を防ぐ設計、強制終了、再起動、メモリ回収を検証してから採用します。tacticモードで残りゴールがなくなったことだけを最終証拠にせず、完全な宣言の検査と元の問題・ソース・toolchainの結び付けを保ちます。`sorry`や未承認の追加公理への依存も拒否します。スレッドを持つLeanからの単純なforkは、実装可能性の確認前には採用しません。
+## 実行先の管理と終了時の回復
 
-GPUは現行Lean検証の第一候補に含めません。現行の処理経路にはGPUを使う検証処理がなく、GPUインスタンスを選んでも自動で高速化しません。自前LLM推論に移る場合は、GPUとモデルの評価を別に行います。
+APIが計算ノードと実行枠のregistryを管理します。ノードID、起動ごとのgeneration、private endpoint、リリース・image・toolchain identity、slot ID、readiness、heartbeat、draining状態を保存します。起動時の照合と実際の検証に成功した枠だけを有効にし、heartbeatが途絶えた枠は新規配送から外します。
 
-## 回答生成経路の短縮
+reconcilerは候補を永続化した後、準備済みの空き枠をclaimし、候補ID・attempt・node generation・slotの対応を保存してから処理します。結果の照合は同じ実行先へ行い、別ノードへランダムに問い合わせません。候補のclaimと更新世代で古い結果を拒否し、正しい結果だけを一度確定します。ノードの登録申告だけでverifierを信用せず、許可されたASG、リリースとmTLSのidentityをAPI側で再確認します。
 
-最初に各LLM呼び出しの待ち時間、出力トークン数、再試行、利用モデルと品質を測ります。前提確認や構造化など、同じ判断主体で実施できる処理の統合を検討します。独立した意味レビューと回答レビューは残し、判定者の独立性を統合によって失わないようにします。既存の仕様に定めた処理を変える場合は、仕様変更と品質比較を先に行います。
+同じ会話内の順序を保ち、別会話は空いた枠で処理します。SQS FIFOを使う場合のMessageGroupIdは会話単位とします。全会話を1グループにすると並行処理できません。FIFOへの移行自体には送信側、残件、deduplication ID、visibility、DLQの変更が必要です。キューを替えてもclaim、再配送、永続確定後のackを維持します。[FIFOの順序](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-understanding-logic.html)
 
-高速なモデルと現在のモデル、利用可能ならPriority処理を、同じ問題で比較します。プロンプト共通部分のキャッシュ、出力の簡潔化、独立処理の並列化も対象です。速度のために数学的な前提確認、証明、レビューを省略しません。出力トークンや直列要求の削減はOpenAIの高速化ガイドにも挙げられています。[OpenAIのレイテンシ最適化](https://developers.openai.com/api/docs/guides/latency-optimization)
+通常の縮小では処理中ノードをscale-in protectionで保護し、終了hookでdrainを行います。モード切り替えのinstance refreshには`ScaleInProtectedInstances=Refresh`を明示し、保護中のノードも終了hook内で新規受信停止とdrainを完了させます。既定のWaitによる1時間の待ち切れや、Ignoreによる旧型ノードの残存に依存しません。[AWSのrefreshの既定動作](https://docs.aws.amazon.com/autoscaling/ec2/userguide/understand-instance-refresh-default-values.html)
 
-既存Recipeの高速再利用では、認可済みの同一問題・同一ソース・同一toolchainと保存済み回答を使います。現行仕様は要求ごとの独立した対応関係レビューと回答QAを要求します。単なる文字列キャッシュでこの手続きを置き換えません。初見の簡単な問題は別に計測し、キャッシュヒット率の上昇で初見問題の遅さを隠さないようにします。[再利用の要件](../specs/proof-request-reuse/requirements.md)
+drainの期限はリリースで定めた処理期限と猶予から算出し、現行のworker停止待ち3900秒を無検証で短縮しません。hookのheartbeat timeoutは検証用に600秒、heartbeat送信は60秒間隔とし、heartbeatで延長できる全体上限とrunbookの処理期限がdrain期限を上回ることを配備前に照合します。終了通知が欠落した場合やhook期限切れ、ホスト故障でも、SQSの再配送とDBのlease・冪等確定で回復します。hookだけでは処理の完了やexactly-onceを保証しません。[AWSのlifecycle hookの限界](https://docs.aws.amazon.com/autoscaling/ec2/userguide/lifecycle-hooks.html)
 
-進捗はSSEなどで早く通知できますが、未検証の証明本文を表示する案は含めません。既存仕様は検証失敗時に回答本文を返さないため、検証・レビュー済みの回答完成と、進捗の表示を分けて扱います。
+## 通信 資格情報 リリースの境界
 
-## 実施順序と採用条件
+外部公開はWeb・APIホストのHTTPSだけとし、SSH、計算ノードのアプリ用公開ポート、Auroraの公開を行いません。計算ノードがECR・SQS・外部LLM・SSMへ接続するため、初期案ではpublic subnetのpublic IPv4から外向き通信を行い、security groupで外部からの着信を拒否します。ノード間はprivate IPで接続します。NAT Gateway、常設ALB、EKSは初期案に含めません。public IPv4の料金は本体費用と分けて計上します。
 
-1. 現在の公開環境で1件の経路を追い、キュー、LLM、検索、Lean、レビュー、永続化、画面表示の時間を分けます。Macの型番と負荷、現在のフラグ、LLMクォータも確認します。
-2. 同じtoolchainのLinuxイメージを用意し、M8a・M8aznで起動・import・elaboration・tactic・検査の時間とRSSを比較します。キャッシュ状態と実行順序をそろえ、証明の成功率も比較します。
-3. DBを常時利用可能にし、完了通知と複数verifierへの配送を実装します。LLM呼び出しの統合案は独立レビューと品質比較を経て実装します。
-4. 既存機能を含めてAWS上で確認します。元環境の履歴・資料・認証・図・ゲスト・継続質問を確認し、移行前の環境に戻せる手順を用意します。
-5. 4枠と8枠で30件の同時送信を繰り返します。再利用、初見の簡単な問題、長時間問題の混在を分けて、受付から検証済み回答表示までのp50・p95・p99と30件目の完了時間を記録します。失敗・OOM・再試行も集計に含めます。
+APIとreconcilerの通知は今の同一ホスト内に残し、reconcilerからverifierへの接続だけをVPC内のmTLSへ変更します。ホスト内Docker aliasを別ホストの名前解決に流用しません。mTLSのSPIFFE/SPKIとrelease・image・toolchainの結び付けを保ち、各ノードのサーバー鍵とreconcilerのクライアント鍵を分離します。登録と証明書更新も署名付きリリースに結び付けます。
 
-最小構成の採用条件は、対象問題での品質維持、必要な隔離、実測メモリ内での安定動作です。1秒と30件10秒は測定で判定する目標であり、インスタンスの仕様だけで達成済みとはしません。大会では反応を見て起動する拡張に頼らず、測定で必要となった容量とLLMのレート上限を事前に確保します。
+workerには必要なキュー・成果物・provider・APIの権限だけを渡し、DB資格情報を渡しません。verifierにはDB、AWS、LLM、worker資格情報を一切渡しません。IMDS・DBへの到達制限、verifierの外向き通信遮断、読み取り専用toolchain、tmpfs、PID・ファイル・時間上限を、枠ごとに起動前検証します。Docker socketをworkerへ渡しません。新ノード・新コンテナの通信制限を適用してからreadinessを通します。
+
+現在のagentにはverifier上限として2 CPU・4GiBを固定する検証があります。そのまま8GiBを割り当てると起動検証に失敗します。8GiB案は契約の改訂、限度を保持した起動時照合、Linuxの実行試験までを含む変更として扱います。上限検査の削除で対応しません。[現行の資源境界](https://github.com/AtsushiHosaka/pals-agent/blob/6581588b1d292549e3e7a5c07a4a4896b8ff3cdd/pals_agent/lean_verifier/boundary.py#L9-L12)
+
+Web・APIはLinux arm64、計算ノードはLinux x86のネイティブイメージを使います。Macの成果物をそのまま配布せず、同じLean・Mathlib revisionに基づく署名済みLinux成果物を作ります。全ノードで同一DBへ通常起動する際にmigrationを実行せず、リリース用の処理を一度だけ通します。バックアップと復旧試験を維持します。
+
+## Leanと回答生成の高速化
+
+過去のローカル測定では、広いMathlib importで中央値7.836秒、必要なimportを明示すると3.676秒、Lake環境再利用を加えると1.354秒でした。最後のp95は2.147秒、子プロセス最大RSSは約5.08GiBでした。少数標本・Macの結果であり、Linuxや常駐化後の性能保証ではありません。[測定記録](lean-acceleration-2026-10-28.md)
+
+まず同じ問題とtoolchainで基準値を測り、次の3方式を比較します。カーネル検査、元の数学的主張との対応、独立レビューは維持します。
+
+| 最適化 | 実装の方向 | 採用前に確認すること |
+| --- | --- | --- |
+| 読み込み済みLeanの常駐化 | 信頼済みimportを保持した実行方式を試作し、毎回の初期化を減らす | 要求間のIO・可変状態・バックグラウンド処理の混入、強制終了、再起動、メモリ回収を確認する |
+| 証明処理の削減 | import、型・引数、直接の補題適用、simpの対象を整理する | 同じ問題を証明すること、成功率、実行順序を交互にした速度比較を確認する |
+| tacticのネイティブ事前コンパイル | 既存native成果物を調べ、未対応で重いtacticを対象にする | オフラインの準備時間と実行時の短縮を分け、toolchainと成果物のidentityを固定する |
+
+常駐方式のREPLで残りゴールがなくなることだけを最終証拠にせず、完全な宣言の検査、sorryと未承認の追加公理の拒否、対象・ソース・toolchainへの結び付けを維持します。単純な環境巻き戻しや、スレッドを持つプロセスからのforkだけで隔離できるとは判断しません。[Lean REPL](https://github.com/leanprover-community/repl)、[Leanの処理と事前コンパイル](https://lean-lang.org/doc/reference/latest/Elaboration-and-Compilation/)
+
+現行の通常チャットは既存証明再利用でも少なくとも5回の直列LLM呼び出しがあり、Lean完了の観測にも1秒間隔の問い合わせがあります。CPUの大型化だけではこれらは短縮できません。各段階を計測し、同じ判定主体で実施できる処理の統合と、永続確定を先に行う完了通知を実装します。独立した対応関係・回答レビューは残します。再利用で対象やソースが変われば、既存要件どおり新規DSPとLean検証を行います。未検証本文の先行表示で1秒を達成したとは扱いません。[チャット経路](https://github.com/AtsushiHosaka/pals-agent/blob/6581588b1d292549e3e7a5c07a4a4896b8ff3cdd/pals_agent/chat_runtime.py#L115-L179)、[再利用経路](https://github.com/AtsushiHosaka/pals-agent/blob/6581588b1d292549e3e7a5c07a4a4896b8ff3cdd/pals_agent/proof_reuse.py#L805-L1004)、[再利用要件](../specs/proof-request-reuse/requirements.md)
+
+## 費用と運用上限
+
+東京Linux On-Demand、月730時間、比較用に1ドル150円と仮定した本体費用です。税、public IPv4、EBS、通信、Aurora、S3、CloudWatch、SSM Automation、CPU credit、LLM利用料は含みません。AWS公開料金データの2026年10月29日17:56:34 UTC版を参照しています。[AWS東京料金データ](https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/Asia%20Pacific%20%28Tokyo%29/Linux/index.json)
+
+| 構成 | 時間単価 | 月額換算または大会期間の本体費用 |
+| --- | ---: | ---: |
+| t4g.medium 1台 | $0.04320 | 月約4,730円 |
+| r8a.large 1台 | $0.19272 | 月約21,103円 |
+| 通常の2台合計 | $0.23592 | 月約25,833円 |
+| r8a.xlarge 1台 | $0.38544 | 月約42,206円 |
+| 大会のxlarge 4台 | $1.54176 | 24時間で約5,550円、72時間で約16,651円 |
+
+大会中もWeb・APIホストの費用は継続します。大会構成の金額は計算ノード本体の総額であり、通常構成との差額ではありません。large 1台をxlarge 1台へ72時間だけ置き換える場合の本体差額は約2,081円です。切り替え中に旧ノードを残す時間と、drainが長引く時間も課金されます。
+
+通常モードのlargeが4台で1か月動くと、Web・APIと合わせて本体だけで約8.9万円になります。自動拡張があるから常時費用が約2.6万円で固定されるわけではありません。型と台数の上限、モード、時間当たりの本体概算をstatusに表示し、AWS Budgetsと費用監視も更新します。T4gはCPU creditの超過料金と応答時間を監視します。[T4gのクレジット仕様](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-credits-baseline-concepts.html)
+
+## 実装の順序と担当
+
+この設計は旧来の単一ARM64ホスト・0 ACU中心の本番要件を置き換える提案です。現行仕様や実装がすでに移行済みとは扱いません。実装開始時にDPB-001、003、008、009、010、012、014、015の運用・リリース・通信・費用契約をこの設計と照合して更新します。配備操作は引き続き対象と計画を照合する境界を通します。
+
+| 順序 | 主担当 | 変更と完了条件 |
+| --- | --- | --- |
+| 1 | parent、全実装repo | 新旧の契約差分を確定し、基準のLLM・Lean・キュー・DB・OCR時間と最大メモリを実測する |
+| 2 | pals-agent | 資源境界を改訂し、Lean常駐化・証明短縮・native化を実測。隔離と正しい失敗を確認する |
+| 3 | pals-api、pals-agent | pool registry、空き枠配送、同時reconciler、完了通知、drainを実装。claimと古い結果の拒否を確認する |
+| 4 | pals-infra | arm64/x86リリース、2ホスト構成、mTLS、ASG、hook、SSM Automation、容量CLIのplan/status/applyを実装する |
+| 5 | pals-infra、pals-observability | normal/eventの手動切り替え、上限付き自動拡張、監視、操作競合と再開・回復を確認する |
+| 6 | 全実装repo | AWS上で全フローを確認し、データ・認証・資料・ゲスト・履歴・共有・継続質問を移行。旧環境へ戻す手順も確認する |
+
+## 受け入れ条件
+
+単発では再利用と初見を分けてp50・p95・p99を記録します。30件の同時送信は複数回行い、30件目の検証済み回答表示時刻、失敗、再試行、OOM、LLM制限、DB待ちを含めて判定します。Leanだけの時間を回答全体の時間に置き換えません。長時間問題とOCR・資料操作を混ぜた場合も測ります。
+
+モード切り替えは実際のlargeとxlargeで検証します。処理中の切り替え、同時操作、readiness失敗、途中中断と再開、モデル呼び出し中と1時間超の処理中のdrain、ノード故障、hook期限切れ、再配送、重複・古い結果の拒否、上限到達、監視欠落を確認します。評価・生成待ちだけが増えた場合の拡張と、provider制限による拡張抑制も確認します。台数だけでなく、有効な実行枠と証明受理の正しさを確認します。
+
+自動制御は、未準備の容量を利用可能と数えず、処理中の要求を通常の縮小で切断せず、設定上限を守ることを確認します。大会前に必要な容量が準備済みであることをstatusと実際の試験で照合します。1秒と30件・10秒は、この測定で達成範囲を決める目標です。現時点では実装・AWS実行・移行・目標達成は未検証です。
