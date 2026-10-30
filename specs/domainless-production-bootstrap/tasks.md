@@ -1,5 +1,10 @@
 # Cost-Conscious Production Bootstrap Tasks
 
+Private AWS migration execution is tracked separately in the
+[migration runbook](../../docs/aws-migration-runbook-2026-10-30.md), against the
+[approved profile](private-aws-migration.md). Completed tasks below are historical
+evidence for the original path and do not imply private deployment is complete.
+
 - [x] DPB-T001 Create the guarded backend bootstrap and non-mutating plan entry point.
   - Covers: DPB-001, DPB-007
 

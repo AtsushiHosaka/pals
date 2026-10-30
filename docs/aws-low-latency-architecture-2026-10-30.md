@@ -1,6 +1,6 @@
 # PALSのAWS構成と通常モード 大会モードの設計
 
-更新日 2026年10月30日。Web・APIは`t4g.medium`、通常時の計算ノードは`r8a.large`とするユーザーの選択に基づく設計です。大会時は同じR8a系の`r8a.xlarge`へ切り替えます。本書は実装前の設計であり、記載した操作コマンドや自動制御はまだ存在しません。AWS資源の作成や本番設定の変更は行っていません。
+更新日 2026年10月30日。Web・APIは`t4g.medium`、通常時の計算ノードは`r8a.large`とするユーザーの選択に基づく設計です。大会時は同じR8a系の`r8a.xlarge`へ切り替えます。移行の実行指示を受け、private subnetを使う構成へ更新しました。容量切り替えと自動制御はまだ未実装です。実配備とDNSの進捗は[移行手順書](aws-migration-runbook-2026-10-30.md)に記録します。
 
 通常は小さな構成を常時起動し、処理待ちが増えたときだけ計算ノードを増やします。大会前には、手動操作でxlargeの容量を先に準備します。大型化と複数台化は同時処理の能力を増やす手段であり、単一の証明を同じ比率で速くする保証ではありません。
 
@@ -24,8 +24,9 @@
 
 ```mermaid
 flowchart TD
-  U[利用者] --> E[Route 53 と HTTPS]
-  E --> C[固定のt4g.medium Web API Caddy]
+  U[利用者] --> E[Cloudflare DNS と HTTPS]
+  E --> ALB[public ALB と ACM]
+  ALB --> C[private t4g.medium Web API Caddy]
   C --> DB[(Aurora PostgreSQL)]
   C --> S3[S3 資料と成果物]
   C --> QA[評価用SQS]
@@ -138,7 +139,9 @@ drainの期限はリリースで定めた処理期限と猶予から算出し、
 
 ## 通信 資格情報 リリースの境界
 
-外部公開はWeb・APIホストのHTTPSだけとし、SSH、計算ノードのアプリ用公開ポート、Auroraの公開を行いません。計算ノードがECR・SQS・外部LLM・SSMへ接続するため、初期案ではpublic subnetのpublic IPv4から外向き通信を行い、security groupで外部からの着信を拒否します。ノード間はprivate IPで接続します。NAT Gateway、常設ALB、EKSは初期案に含めません。public IPv4の料金は本体費用と分けて計上します。
+外部公開は2つのpublic subnetに置くALBのHTTPSとし、ACMでTLSを終端します。Web・APIと計算ノードにはpublic IPを付けず、private control/compute subnetに配置します。ALBからcontrolへ443、controlからverifierへ18117、controlからAuroraへ5432だけをsecurity group間で許可します。AuroraのDB subnetにはインターネット向けdefault routeを設けません。
+
+外部LLM・ECR・SQS・SSMへの通信には1台のNAT Gatewayを使い、S3はgateway endpointへ送ります。SSHは開けず、SSMで管理します。NATの単一障害点とAZ間通信、ALB・NAT・public IPv4・ログの料金を本体費用に加えて計上します。Cloudflareの現在のネームサーバーは維持します。具体的なsubnet、通信と単一障害点は[draw.io図](diagrams/pals-aws-private-target.drawio)に示します。
 
 APIとreconcilerの通知は今の同一ホスト内に残し、reconcilerからverifierへの接続だけをVPC内のmTLSへ変更します。ホスト内Docker aliasを別ホストの名前解決に流用しません。mTLSのSPIFFE/SPKIとrelease・image・toolchainの結び付けを保ち、各ノードのサーバー鍵とreconcilerのクライアント鍵を分離します。登録と証明書更新も署名付きリリースに結び付けます。
 
@@ -166,7 +169,7 @@ Web・APIはLinux arm64、計算ノードはLinux x86のネイティブイメー
 
 ## 費用と運用上限
 
-東京Linux On-Demand、月730時間、比較用に1ドル150円と仮定した本体費用です。税、public IPv4、EBS、通信、Aurora、S3、CloudWatch、SSM Automation、CPU credit、LLM利用料は含みません。AWS公開料金データの2026年10月29日17:56:34 UTC版を参照しています。[AWS東京料金データ](https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/Asia%20Pacific%20%28Tokyo%29/Linux/index.json)
+東京Linux On-Demand、月730時間、比較用に1ドル150円と仮定した本体費用です。税、ALB、NAT Gateway、public IPv4、EBS、通信、Aurora、S3、CloudWatch、SSM Automation、CPU credit、LLM利用料は含みません。AWS公開料金データの2026年10月29日17:56:34 UTC版を参照しています。[AWS東京料金データ](https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/Asia%20Pacific%20%28Tokyo%29/Linux/index.json)
 
 | 構成 | 時間単価 | 月額換算または大会期間の本体費用 |
 | --- | ---: | ---: |
@@ -182,7 +185,7 @@ Web・APIはLinux arm64、計算ノードはLinux x86のネイティブイメー
 
 ## 実装の順序と担当
 
-この設計は旧来の単一ARM64ホスト・0 ACU中心の本番要件を置き換える提案です。現行仕様や実装がすでに移行済みとは扱いません。実装開始時にDPB-001、003、008、009、010、012、014、015の運用・リリース・通信・費用契約をこの設計と照合して更新します。配備操作は引き続き対象と計画を照合する境界を通します。
+この設計は旧来の単一ARM64ホスト・0 ACU中心の本番要件を置き換える、ユーザー承認済みの移行方針です。現行仕様や実装がすでに移行済みとは扱いません。実装開始時にDPB-001、003、008、009、010、012、014、015の運用・リリース・通信・費用契約をこの設計と照合して更新します。配備操作は引き続き対象と計画を照合する境界を通します。
 
 | 順序 | 主担当 | 変更と完了条件 |
 | --- | --- | --- |

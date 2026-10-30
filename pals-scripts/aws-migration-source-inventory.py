@@ -57,6 +57,17 @@ def main() -> None:
         }
         if name.endswith("-db"):
             entry["pg_dump_version"] = command(["docker", "exec", name, "pg_dump", "--version"]).strip()
+            environment = dict(env.partition("=")[::2] for env in cfg.get("Env", []))
+            if environment.get("POSTGRES_USER") and environment.get("POSTGRES_DB"):
+                sql = """BEGIN READ ONLY;
+SELECT json_build_object(
+ 'database', (SELECT json_build_object('name', datname, 'encoding', pg_encoding_to_char(encoding), 'collation', datcollate, 'ctype', datctype, 'provider', datlocprovider) FROM pg_database WHERE datname=current_database()),
+ 'roles', (SELECT json_agg(json_build_object('name',rolname,'superuser',rolsuper,'inherit',rolinherit,'createrole',rolcreaterole,'createdb',rolcreatedb,'login',rolcanlogin,'replication',rolreplication,'bypassrls',rolbypassrls) ORDER BY rolname) FROM pg_roles WHERE rolname NOT LIKE 'pg_%'),
+ 'relation_owners', (SELECT json_agg(json_build_object('owner',owner,'count',n) ORDER BY owner) FROM (SELECT pg_get_userbyid(c.relowner) AS owner,count(*) AS n FROM pg_class c JOIN pg_namespace s ON s.oid=c.relnamespace WHERE s.nspname NOT IN ('pg_catalog','information_schema') AND s.nspname NOT LIKE 'pg_toast%' GROUP BY c.relowner) x),
+ 'extensions', (SELECT json_agg(json_build_object('name',extname,'version',extversion) ORDER BY extname) FROM pg_extension)
+); ROLLBACK;"""
+                output = command(["docker", "exec", "--user", "postgres", name, "psql", "-X", "-A", "-t", "-q", "-v", "ON_ERROR_STOP=1", "-U", environment["POSTGRES_USER"], "-d", environment["POSTGRES_DB"], "-c", sql])
+                entry["database_metadata_not_migration_evidence"] = json.loads(output)
         public.append(entry)
     report["containers"] = public
     if sys.argv[1:] == ["upload-inventory"]:

@@ -1,5 +1,10 @@
 # Cost-Conscious Production Bootstrap Requirements
 
+The 2026-10-30 private AWS migration uses the approved
+[private migration profile](private-aws-migration.md), which supersedes the
+network, architecture, capacity and migration choices identified there. The
+requirements below continue to describe the original default deployment path.
+
 ## Purpose
 
 `palschat.site` の初期公開を、将来の PostgreSQL/pgvector 利用を維持しながら低い固定費で

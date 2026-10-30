@@ -1,5 +1,9 @@
 # Cost-Conscious Production Bootstrap Design
 
+For the authorized 2026-10-30 migration, apply the
+[private AWS migration profile](private-aws-migration.md) and its linked design/runbook.
+The design below is retained for the original default path.
+
 ## Approved change
 
 Change ID: `SPEC-CHG-2026-08-19-COST-HYBRID`
