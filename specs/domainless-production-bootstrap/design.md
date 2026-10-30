@@ -4,6 +4,13 @@ For the authorized 2026-10-30 migration, apply the
 [private AWS migration profile](private-aws-migration.md) and its linked design/runbook.
 The design below is retained for the original default path.
 
+For PAM-010, rehearse against a separate private Aurora cluster with no production
+queue consumers or external writers. Preserve the final database and source
+evidence, compare the captured data/authority and exact application searches,
+and resolve the observed extension/collation and managed security-fix differences
+before proposing a supported final restore profile. A separate database on the
+same cluster does not isolate application roles.
+
 ## Approved change
 
 Change ID: `SPEC-CHG-2026-08-19-COST-HYBRID`

@@ -2,8 +2,11 @@
 
 The 2026-10-30 private AWS migration uses the approved
 [private migration profile](private-aws-migration.md), which supersedes the
-network, architecture, capacity and migration choices identified there. The
-requirements below continue to describe the original default deployment path.
+network, architecture, capacity and migration choices identified there.
+The Aurora adoption condition is PAM-010: isolated data, authority, search and
+managed-build security verification must precede adoption. Rehearsal evidence
+does not authorize production admission.
+The requirements below continue to describe the original default deployment path.
 
 ## Purpose
 

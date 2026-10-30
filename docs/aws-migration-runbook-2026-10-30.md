@@ -17,7 +17,7 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 | 既存資源の再利用 | 基盤で確認済み | 現在のCognito・S3・SQS・署名KMSを読み取り参照する経路を実装・試験済み。実planの独立照合中 |
 | private control接続 | 実施済み | t4g.mediumを公開IPなしで起動。SSM Online、cloud-init完了、PG16.15 client、アプリ未起動markerを確認 |
 | private compute接続 | 実施済み | r8a.largeを公開IPなしで起動。SSM Online、cloud-init完了、native x86 DockerとAMD EPYC 9R45、起動時のアプリ未配備markerを確認 |
-| 短期AWS資格情報 | 実機検証済み | API/workerと各host supervisorの4 roleを分離。既存2 hostのprofileだけ更新。実STS認証と更新timer起動を確認。parameter・master・署名権限なし |
+| 短期AWS資格情報 | 実機検証済み | API/workerと各host supervisorの4 roleを分離。実STS認証とtimerによる更新、API image内のread-only mountからの資格情報検査に成功。parameter・master・署名権限なし |
 | Lean単体の測定 | 実施済み | largeで48件の実コンパイルに成功。必要なimportとLake環境再利用で中央値0.805秒。アプリ全体の遅延は未測定 |
 | DB移送と署名付き受理 | 実装済み・実移送未完了 | 専用の署名付き復元CLIとruntime検査を実装・試験。実Auroraでtyped SSM接続と空DBの読み取り検査を確認。移行元snapshotと実復元・受理は未実施 |
 | AWS runtimeと容量モード | アプリ未配備 | x86 runtime、別ホストmTLS、pool配送、drain、通常・大会モードの実配備は未実施 |
@@ -25,6 +25,8 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 | 移行後の受け入れ | 未実施 | ログイン、履歴、資料、生成、共有、ゲスト、負荷試験が必要 |
 
 移行元はpgvector 0.8.7、作成したAuroraの提供版は0.8.2です。locale名と並べ替えライブラリの版も異なります。ユーザーはAuroraで先に互換性を検証し、データ・権限・検索結果を確認できた場合だけ採用する方針を選択しました。元のDBは変更せず、この差を解消するまで本番復元・受理を進めません。[AWSの対応拡張一覧](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraPostgreSQLReleaseNotes/AuroraPostgreSQL.Extensions.html)も確認しています。
+
+上流のpgvector 0.8.7にはIVFFlat index作成時の脆弱性修正が含まれます。Auroraの管理版に同じ修正が取り込まれているかは未確認です。版番号だけで安全性を判断せず、AWSの該当buildについて根拠を確認します。[上流の修正情報](https://github.com/pgvector/pgvector/issues/1036)を、採用前の確認対象に加えています。
 
 移行先ALB用のACM証明書、VPC・subnet・NAT・ALB・Aurora・ECR・必要なIAMと専用ALBログbucketを作成しました。Web/APIや計算runtimeはまだ起動していません。Cloudflareには証明書検証用CNAMEを1件追加しました。ACMの申請は配信先を変更しません。追加資源を作成した場合は、この表と秘密値を含まない実行記録を更新します。
 
@@ -77,6 +79,10 @@ sourceの実DB/host/volume identity、現在のKMS署名付きadmission、dump d
 ### 4 Auroraへの復元と受理
 
 移行先Auroraは本番と同じengine系統、非公開接続、TLSとCA検証で照合します。AWSのcluster/resource identityと実PostgreSQLの観測を結び付けます。RDSの管理roleはMacのtrue SUPERUSERと同じではないため、所有者・ACL・role mappingの差を明示して検証します。superuser向けglobalsを無条件にrestoreしません。
+
+現在は本番受理の前に、互換性の検証を行います。roleはcluster全体に存在するため、本番用に確保した空DBとは別のprivate検証clusterを使います。同じsnapshotを移行元と同等のPG16環境とAuroraへ復元し、全table・sequence・large object・所有者・ACL・制限付きroleを照合します。vectorの値と距離、検索順位、文字列検索、ページ境界と資料の抽出結果も比較します。[API側の検証計画](../pals-api/docs/aurora-compatibility-review.md)に対象を記録しています。この復元・比較はまだ実施していません。
+
+現在の本番復元v1はextensionとlocaleの一致を要求しており、観測した組み合わせを拒否します。互換性の検証で通過しても、この検査や元の署名情報を書き換えません。採用する場合は、証拠に基づく別の復元profileを実装・審査し、最後に書き込みを停止したsnapshotで本番復元を行います。
 
 復元は検証対象の空の移行先へ行い、元のDBを上書きしません。行・sequence・catalog・資料原本・参照・権限を比較し、署名付きのsource→target移行admissionを専用経路で確定します。prepared_not_admittedの計画だけでは、復元・受理・本番readyの証拠になりません。旧Mac用bootstrapや更新validatorの同一host検査を外す変更では対応しません。
 
@@ -131,3 +137,7 @@ Lean childのファイル隔離は、verifierのTLS秘密鍵へ到達する可�
 その後、同じ修正を含むx86 imageをbuildして非公開ECRへpushし、large自身のECR権限で取得しました。アプリと資格情報を渡さない隔離コンテナで48件の実Lean測定に成功しました。実cgroupと隔離検査、標本・cache状態・メモリの限界は[測定記録](aws-native-lean-benchmark-2026-10-30.md)に残しています。HTTP/mTLSの本番runtime起動は別途確認します。
 
 IAM分離のplanは新規11件、既存2 hostのinstance profile更新だけで適用しました。4 roleのtrustと全inline policyを読み戻し、host ID、非公開IP、parameter読み取り0件を照合しました。controlからAPI、computeからworkerの専用STS sessionを実際に発行し、各5分の更新timer起動を確認しました。これは資格情報更新の確認であり、アプリやpoolの稼働確認ではありません。
+
+続いて両hostのtimerが実際に短期資格情報を更新したことを確認しました。API imageは固定digestで取得し、networkなし・read-only root・権限削除の一時コンテナで、別々にread-only mountしたpolicyと資格情報を既存readerが受理しました。アプリは起動しておらず、DB接続や生成処理の成功を示す試験ではありません。
+
+private computeの初回起動helperは、AL2023のDocker25に合わせたimage検査、actorからhostへのINPUT通信制限、起動期限後にもSIGTERMを送る処理を修正しました。独立レビューで追加の指摘はなく、rootによる再実行も171件通過しました。これらはコードと隔離した試験の結果で、実機のfirewall・mTLS・queue drainは未検証です。起動helperの本番実行も行っていません。

@@ -5,6 +5,13 @@ Private AWS migration execution is tracked separately in the
 [approved profile](private-aws-migration.md). Completed tasks below are historical
 evidence for the original path and do not imply private deployment is complete.
 
+- [ ] PAM-T010 Receive and verify the protected live rehearsal bundle, restore the
+  same snapshot into an isolated source-equivalent baseline and private Aurora
+  rehearsal cluster, compare all data/authority and applicable search behavior,
+  and verify the managed build's security-fix status. Record failures without
+  changing the source or final target; design any necessary final-restore profile
+  separately. This is not final admission. Covers: PAM-005, PAM-008, PAM-010.
+
 - [x] DPB-T001 Create the guarded backend bootstrap and non-mutating plan entry point.
   - Covers: DPB-001, DPB-007
 

@@ -17,9 +17,19 @@ default path remains supported; its evidence does not prove private deployment.
 | PAM-007 | Start normal capacity with t4g.medium control and one r8a.large compute node. Event uses r8a.xlarge. Prepare new slots before routing, drain old work before termination, reject stale/duplicate results, and bound auto scaling by queues and ready slots. An empty ASG is not working capacity. |
 | PAM-008 | Preserve Cognito identities/callbacks, external resources, guest-key fingerprint, histories, documents, sharing, continuation, quotas and all existing entry points. Fence source writers before the final snapshot and allow one writing environment at cutover. After target writes, DNS rollback alone is insufficient. |
 | PAM-009 | Extend DPB-014/015 with private runtime readback, real model/Lean checks, recovery and cost reporting including NAT/ALB/IPv4/DB. Keep existing USD100 notifications initially; these are alerts, not the user's spending cap. Treat 1-second answers and 30 submissions within 10 seconds as measured targets. |
+| PAM-010 | The user's 2026-10-30 compatibility-first decision permits Aurora adoption only after a separately isolated rehearsal verifies every source row, sequence, large object, owner/ACL/role restriction and applicable search behavior. Record the actual extension and collation-provider differences; obtain authoritative security-fix evidence for the managed build. Keep the final target empty and source serving during rehearsal. An ordinary live snapshot or compatibility report cannot authorize final admission, alter signed source evidence, weaken the existing strict restore profile, or replace the final drained capture. |
 
 Design and execution evidence live in the [architecture document](../../docs/aws-low-latency-architecture-2026-10-30.md),
 [runbook](../../docs/aws-migration-runbook-2026-10-30.md), and
 [editable diagram](../../docs/diagrams/pals-aws-private-target.drawio).
 The runbook records implementation, local verification, deployment and acceptance
 separately. This document does not mark these requirements complete.
+
+The observed source uses vector0.8.7 and libc2.36; the reserved Aurora16.15
+offers vector0.8.2 and reports libc2.26-59.amzn2. The
+[owning API review](../../pals-api/docs/aurora-compatibility-review.md) defines
+the proposed data, authority and search replay. None of that replay has run.
+Use a distinct private rehearsal cluster because application roles are
+cluster-wide. The current final-restore v1 rejects these version/locale
+differences and remains unchanged; any future supported profile requires its
+own reviewed implementation and evidence.
