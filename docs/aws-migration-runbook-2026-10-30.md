@@ -13,7 +13,7 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 | AWS資源の棚卸し | 実施済み | 開始時点のCognito・S3・SQS・署名KMS・state bucketを特定。移行先EC2・Aurora・ECRは後続の基盤作成で追加 |
 | 移行元への接続 | 練習用バックアップ取得済み | 同一snapshotのdump・schema・metadataと既存の配備署名資料を非公開S3へ転送。作業端末で6ファイルのハッシュを照合し、既存配備記録のKMS署名と固定公開鍵の検証に成功 |
 | 基準環境への復元 | 実施済み | 移行元と同じimageで全108テーブル・6,390行のCOPY内容、role・membership・取得済みACL、schema構文木とsequenceを比較して一致 |
-| Aurora互換性試験 | 分離cluster作成済み・検証中 | private検証clusterとTLS空DBを確認。roleの自動membershipが想定と異なり、復元前の能力検証で停止。本番用clusterは空のまま保持 |
+| Aurora互換性試験 | 復元・全行・権限比較は通過、照合順序は不一致 | 全108テーブル・6,390行、全24 role・18 edge、ACL・schema・sequence・vectorを照合。全433件のvector検索も一致したが、3種類の既存文字列の並び順に差があり、アプリへの影響を調査中。本番用clusterは空のまま保持 |
 | ACM証明書 | 発行済み | 現在のWebとAPIを対象に申請。Web/APIの検証に成功し、AWS ACMのISSUEDを確認 |
 | private network実装 | 基盤作成済み・検証中 | 8 subnet、NAT、S3 endpoint、ALB、Auroraを作成。ALBログ書込みと経路を読み戻し済み。未使用legacy SGからのDB許可を除去し、controlだけに限定 |
 | 既存資源の再利用 | 基盤で確認済み | 現在のCognito・S3・SQS・署名KMSを読み取り参照する経路を実装・試験済み。実planの独立照合中 |
@@ -22,17 +22,18 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 | 短期AWS資格情報 | 実機検証済み | API/workerと各host supervisorの4 roleを分離。実STS認証とtimerによる更新、API image内のread-only mountからの資格情報検査に成功。parameter・master・署名権限なし |
 | AWS料金アラート | 設定済み | 本番アカウント全体の月額予算をUSD650へ更新。実費USD20・50・100・650、月末予測USD520超過の5通知とメール宛先をAWSから読み戻して照合。自動停止actionなし |
 | Lean単体の測定 | 実施済み | largeで48件の実コンパイルに成功。必要なimportとLake環境再利用で中央値0.805秒。アプリ全体の遅延は未測定 |
-| DB移送と署名付き受理 | 練習用snapshot取得済み・復元未実施 | 専用の署名付き復元CLIとruntime検査を実装・試験。実Auroraでtyped SSM接続と空DBの読み取り検査を確認。互換性の復元比較、最終snapshotと移行受理は未実施 |
+| DB移送と署名付き受理 | 練習用復元済み・本番受理は未実施 | 分離したAuroraに検証専用profileで復元し、実際の5 LOGINと制限付きreaderを確認。最終snapshot・本番用DBへの復元・署名付き移行受理は未実施 |
 | AWS runtimeと容量モード | アプリ未配備 | x86 runtime、別ホストmTLS、pool配送、drain、通常・大会モードの実配備は未実施 |
 | runtimeイメージ | ECR準備済み | 固定sourceのAPI・Web・workerをbuild・pushし、digestを読み戻した。非root importとWebの主要5画面は確認。本番起動・実ログインは未実施 |
+| runtime秘密値の引き継ぎ | Miniで計画確認済み・承認待ち | 5件を同アカウント・東京のSSM SecureStringへコピーするhelperと22試験を準備し、実Miniの読み取り専用planも通過。具体的な秘密値と宛先への許可が必要として自動承認レビューが実行前に拒否。コピーは未実施 |
 | DNS切り替え | 未実施 | 現行Cloudflare originとMac miniを維持 |
 | 移行後の受け入れ | 未実施 | ログイン、履歴、資料、生成、共有、ゲスト、負荷試験が必要 |
 
 移行元はpgvector 0.8.7、作成したAuroraの提供版は0.8.2です。locale名と並べ替えライブラリの版も異なります。ユーザーはAuroraで先に互換性を検証し、データ・権限・検索結果を確認できた場合だけ採用する方針を選択しました。元のDBは変更せず、この差を解消するまで本番復元・受理を進めません。[AWSの対応拡張一覧](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraPostgreSQLReleaseNotes/AuroraPostgreSQL.Extensions.html)も確認しています。
 
-10月31日までのバックアップ、基準環境の復元、分離Auroraとイメージ準備の実行結果は、[検証記録](aws-migration-verification-2026-10-31.md)にまとめています。Auroraへの実復元と検索比較はまだ通過していません。
+10月31日までのバックアップ、基準環境と分離Auroraの復元、検索比較とイメージ準備の実行結果は、[検証記録](aws-migration-verification-2026-10-31.md)にまとめています。vector検索は通過しましたが、文字列の照合順序と管理版の修正状況が未解決のため、Auroraの採用は確定していません。
 
-上流のpgvector 0.8.7にはIVFFlat index作成時の脆弱性修正が含まれます。Auroraの管理版に同じ修正が取り込まれているかは未確認です。版番号だけで安全性を判断せず、AWSの該当buildについて根拠を確認します。[上流の修正情報](https://github.com/pgvector/pgvector/issues/1036)を、採用前の確認対象に加えています。
+上流のpgvector 0.8.7にはIVFFlat index作成時の脆弱性修正が含まれます。Auroraの管理版に同じ修正が取り込まれているかは未確認です。公式SQLで実測したAuroraの版は16.15.1でした。版番号だけで安全性を判断せず、AWSの該当buildについて根拠を確認します。[上流の修正情報](https://github.com/pgvector/pgvector/issues/1036)を採用前の確認対象に加え、[具体的な問い合わせ文案](aws-aurora-pgvector-security-inquiry-2026-10-31.md)の送信許可を待っています。
 
 移行先ALB用のACM証明書、VPC・subnet・NAT・ALB・Aurora・ECR・必要なIAMと専用ALBログbucketを作成しました。Web/APIや計算runtimeはまだ起動していません。Cloudflareには証明書検証用CNAMEを1件追加しました。ACMの申請は配信先を変更しません。追加資源を作成した場合は、この表と秘密値を含まない実行記録を更新します。
 
@@ -90,7 +91,7 @@ sourceの実DB/host/volume identity、現在のKMS署名付きadmission、dump d
 
 移行先Auroraは本番と同じengine系統、非公開接続、TLSとCA検証で照合します。AWSのcluster/resource identityと実PostgreSQLの観測を結び付けます。RDSの管理roleはMacのtrue SUPERUSERと同じではないため、所有者・ACL・role mappingの差を明示して検証します。superuser向けglobalsを無条件にrestoreしません。
 
-現在は本番受理の前に、互換性の検証を行います。roleはcluster全体に存在するため、本番用に確保した空DBとは別のprivate検証clusterを使います。同じsnapshotを移行元と同等のPG16環境とAuroraへ復元し、全table・sequence・large object・所有者・ACL・制限付きroleを照合します。vectorの値と距離、検索順位、文字列検索、ページ境界と資料の抽出結果も比較します。[API側の検証計画](../pals-api/docs/aurora-compatibility-review.md)に対象を記録しています。この復元・比較はまだ実施していません。
+現在は本番受理の前に、互換性の検証を行います。roleはcluster全体に存在するため、本番用に確保した空DBとは別のprivate検証clusterを使います。同じsnapshotを移行元と同等のPG16環境とAuroraへ復元し、全table・sequence・large object・所有者・ACL・制限付きroleを照合しました。vectorの値と距離、検索順位も一致しました。文字列検索、ページ境界と資料の抽出結果の比較は残っており、default collationの実測差がアプリへ及ぼす影響を調査しています。[API側の検証計画](../pals-api/docs/aurora-compatibility-review.md)に対象を記録しています。
 
 現在の本番復元v1はextensionとlocaleの一致を要求しており、観測した組み合わせを拒否します。互換性の検証で通過しても、この検査や元の署名情報を書き換えません。採用する場合は、証拠に基づく別の復元profileを実装・審査し、最後に書き込みを停止したsnapshotで本番復元を行います。
 
@@ -144,7 +145,7 @@ private controlのoperator用planは新規5件、DB SG更新1件、削除・交�
 
 compute用planは新規5件、既存資源の更新・削除・交換0件で適用しました。largeはprivate compute subnetに置き、暗号化80GiB gp3、IMDSv2必須・hop1、SSM通信5操作だけのinstance profileです。実機のcloud-init完了、Docker linux/x86_64と2 CPU、AMD EPYC 9R45、アプリとbenchmarkが未実施であるmarkerをSSMで確認しました。
 
-実Auroraへの読み取り試験は、SSM転送とAWS公式CA、元のRDS hostnameを使うverify-fullで成功しました。続いて正式なAPIのtyped transportとAurora・空DB検査でも成功しました。TLS1.3、palsadminは非SUPERUSERでCREATEROLE/CREATEDBあり、UTF8/en_US.UTF-8/provider c、collationの記録値と実値は2.26-59.amzn2でした。移行元のlocaleとの互換性、role mappingの実能力試験、実復元、署名付き受理と全機能の試験は残っています。
+実Auroraへの読み取り試験は、SSM転送とAWS公式CA、元のRDS hostnameを使うverify-fullで成功しました。続いて正式なAPIのtyped transportとAurora・空DB検査でも成功しました。TLS1.3、palsadminは非SUPERUSERでCREATEROLE/CREATEDBあり、UTF8/en_US.UTF-8/provider c、collationの記録値と実値は2.26-59.amzn2でした。この初期試験の時点では、localeの互換性、role mappingの実能力、実復元、署名付き受理と全機能は未確認でした。後続の分離clusterでの結果は、上記の実行状況と[検証記録](aws-migration-verification-2026-10-31.md)へ記載しています。
 
 Lean childのファイル隔離は、verifierのTLS秘密鍵へ到達する可能性がある規則を修正しました。実鍵を使わないLinux canary、実Lean・Mathlib、Elan/nativeとsymlink拒否の試験が通過し、独立したLinux再実行13件も通過しました。[agent PR #22](https://github.com/AtsushiHosaka/pals-agent/pull/22)はdraftで、本番verifierサービスの起動はまだです。
 

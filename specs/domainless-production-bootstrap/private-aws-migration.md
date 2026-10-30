@@ -28,7 +28,12 @@ separately. This document does not mark these requirements complete.
 The observed source uses vector0.8.7 and libc2.36; the reserved Aurora16.15
 offers vector0.8.2 and reports libc2.26-59.amzn2. The
 [owning API review](../../pals-api/docs/aurora-compatibility-review.md) defines
-the proposed data, authority and search replay. None of that replay has run.
+the proposed data, authority and search replay. A separately isolated rehearsal
+has restored and compared all 108 tables and 6,390 rows, roles, authority,
+sequences and vector values. All 433 captured vector queries matched their top
+eight results and persisted distances. Default-collation order differs for
+three existing text fields; application-path replay and managed-build security
+evidence remain unresolved. See the [execution evidence](../../docs/aws-migration-verification-2026-10-31.md).
 Use a distinct private rehearsal cluster because application roles are
 cluster-wide. The current final-restore v1 rejects these version/locale
 differences and remains unchanged; any future supported profile requires its
