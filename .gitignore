@@ -27,6 +27,7 @@ id_ed25519
 # Codex/local outputs
 .local/e2e/
 .local/e2e-runs/
+.local/aws-migration/
 .agents/
 .claude/*
 !.claude/commands/
