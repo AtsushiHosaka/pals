@@ -51,6 +51,10 @@ SSM転送、実RDS hostname、公式CAのverify-full、TLS1.3で空DBを確認�
 
 role能力試験では、operatorの属性は想定どおりでした。一方、NOLOGIN roleを1個作った直後の自動membershipは0件でした。現行の本番復元profileは自動membershipの存在を要求するため、そこで停止しています。診断用roleはrollbackされ、アプリroleが0件へ戻ったことを確認しました。元のvalidatorや署名資料を書き換えず、実際のGRANT、SET ROLE、所有者変更と解除の能力を別の試験で確認します。
 
+続く3 roleのrollback試験では、GRANT、SET ROLE、schema・tableの所有者変更とtable ACLの付与・解除が実行できました。operatorによるrole付与のgrantorは`rdsadmin`として記録され、アプリroleによる委譲とself-grantorの別edgeも保持されました。このため、source operatorの14 edgeとアプリgrantorの4 edgeを分けて比較する必要があります。
+
+一時SET edgeの解除では、`GRANTED BY compatadmin`はSQLが成功してもedgeを残しました。`GRANTED BY rdsadmin`は権限エラーとなり、通常の`REVOKE ... RESTRICT`で実際のedge消失を確認しました。SQLの終了コードだけで解除成功と判定しません。いずれの診断も最後にrollbackし、role・schema・tableが残っていないことを確認しています。全24 roleと18 edgeを扱う検証専用profileへの組み込み、実復元と比較は未完了です。
+
 sourceのpgvector 0.8.7に対し、このAuroraの提供版は0.8.2です。localeとlibcも異なります。さらに、[上流の0.8.7修正](https://github.com/pgvector/pgvector/issues/1036)が[対応するAWS管理版](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraPostgreSQLReleaseNotes/AuroraPostgreSQL.Extensions.html)へ取り込まれている根拠は未確認です。版番号だけで管理版の安全性を断定しません。機能比較が通っても、この確認の代わりにはなりません。
 
 ## runtimeイメージの準備
@@ -67,5 +71,7 @@ sourceのpgvector 0.8.7に対し、このAuroraの提供版は0.8.2です。loca
 Webはnetworkなし・公開portなしの短命コンテナで起動し、トップ、サインイン、登録、password再設定、ゲスト入口の5画面でHTTP200を確認しました。既存Cognitoのpool/client、callbackとlogoutを使っています。実ログインとAWS公開経路の確認は残っています。
 
 APIとworkerは、資格情報なし・非root・networkなしで正式モジュールのimportが通過しました。workerの試験はMac上のamd64実行で、AWS native実機の確認は未完了です。これらの準備は、アプリの本番起動やqueue処理の確認には含めません。
+
+東京のStandard On-Demand上限は、実際のService Quotasで40 vCPUへ増えたことを確認しました。想定する大会用xlarge 4台とmediumの18 vCPU、切り替え中の最大8台とmediumの34 vCPUを収容できる枠です。ASGやready slotの実配備・負荷試験は未完了です。
 
 次はAuroraの権限・データ・検索の比較を行います。採用できる場合も、別の署名付き復元profile、最終snapshot、実runtime、全機能、容量制御、DNSと復旧の確認が必要です。[移行手順書](aws-migration-runbook-2026-10-30.md)で実施状況を更新します。

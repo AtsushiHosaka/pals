@@ -18,6 +18,7 @@ network; it is not evidence that the runtime or DNS cutover is complete.
 - [Editable draw.io diagram](docs/diagrams/pals-aws-private-target.drawio)
 - [Capacity and performance design](docs/aws-low-latency-architecture-2026-10-30.md)
 - [Native Lean measurements on the private large instance](docs/aws-native-lean-benchmark-2026-10-30.md)
+- [Restore, Aurora rehearsal, and image preparation evidence](docs/aws-migration-verification-2026-10-31.md)
 
 ## Repository Layout
 

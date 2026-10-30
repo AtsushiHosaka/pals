@@ -138,7 +138,7 @@ Cloudflareの既存Web/APIレコードのoriginだけをALBへ向け、既存NS�
 
 Aurora 16.15はavailable、暗号化・削除保護・7日バックアップ・0.5〜2 ACUと読み戻しました。VPCの8 subnetはいずれもpublic IP自動付与なしで、DBのroute tableにdefault routeはありません。private computeからDBへの許可もありません。続くoperator用planで未使用legacy host SGからのDB許可を除去し、実際の5432 ingressをcontrol SGだけに限定しました。
 
-東京のStandard On-Demand上限は16 vCPUでした。大会用xlarge 4台とmediumには18 vCPU、最大8台の切り替え中併存には34 vCPUが必要なため、40 vCPUへの増枠を申請しました。申請はCASE_OPENEDであり、上限の承認や大会容量の準備完了とは扱いません。
+東京のStandard On-Demand上限は16 vCPUでした。大会用xlarge 4台とmediumには18 vCPU、最大8台の切り替え中併存には34 vCPUが必要なため、40 vCPUへの増枠を申請しました。申請直後はCASE_OPENEDでしたが、10月31日に実際のService Quotasから40 vCPUへ増えたことを読み戻しました。上限の確保は、計算poolの配備や大会の負荷試験の完了には含めません。
 
 private controlのoperator用planは新規5件、DB SG更新1件、削除・交換0件で適用しました。mediumは公開IPなし、暗号化40GiB gp3、IMDSv2必須・hop1、SSM通信5操作だけのinstance profileです。SSM実行でcloud-init完了、アプリ未起動・ALB未登録marker、PG16.15 clientを確認しました。
 
