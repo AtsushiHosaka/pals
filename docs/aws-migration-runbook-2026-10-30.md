@@ -11,16 +11,20 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 | 対象と接続 | 実施済み | pals-prod-memberのSSOをユーザーが更新し、本番アカウントとの一致をSTSで確認 |
 | 現行の公開サービス | 実施済み | WebとAPI healthのGETが200、未認証projectsが401。DNSはCloudflare経由 |
 | AWS資源の棚卸し | 実施済み | 開始時点のCognito・S3・SQS・署名KMS・state bucketを特定。移行先EC2・Aurora・ECRは後続の基盤作成で追加 |
-| 移行元への接続 | 一部実施済み | Mac mini用SSOの認証成功を確認。Parsec経由の入力が安定しないため、棚卸し転送の1行だけ手動実行を依頼。バックアップはまだ取得していない |
+| 移行元への接続 | 棚卸し完了 | Mac mini用SSO認証と、ハッシュ付きの非公開S3転送に成功。DB、locale、role、extensionと配備情報を観測。DBバックアップの転送は手動実行を依頼中 |
 | ACM証明書 | 発行済み | 現在のWebとAPIを対象に申請。Web/APIの検証に成功し、AWS ACMのISSUEDを確認 |
 | private network実装 | 基盤作成済み・検証中 | 8 subnet、NAT、S3 endpoint、ALB、Auroraを作成。ALBログ書込みと経路を読み戻し済み。未使用legacy SGからのDB許可を除去し、controlだけに限定 |
 | 既存資源の再利用 | 基盤で確認済み | 現在のCognito・S3・SQS・署名KMSを読み取り参照する経路を実装・試験済み。実planの独立照合中 |
 | private control接続 | 実施済み | t4g.mediumを公開IPなしで起動。SSM Online、cloud-init完了、PG16.15 client、アプリ未起動markerを確認 |
-| private compute接続 | 実施済み | r8a.largeを公開IPなしで起動。SSM Online、cloud-init完了、native x86 DockerとAMD EPYC 9R45、アプリ・benchmark未実施markerを確認 |
+| private compute接続 | 実施済み | r8a.largeを公開IPなしで起動。SSM Online、cloud-init完了、native x86 DockerとAMD EPYC 9R45、起動時のアプリ未配備markerを確認 |
+| 短期AWS資格情報 | 実機検証済み | API/workerと各host supervisorの4 roleを分離。既存2 hostのprofileだけ更新。実STS認証と更新timer起動を確認。parameter・master・署名権限なし |
+| Lean単体の測定 | 実施済み | largeで48件の実コンパイルに成功。必要なimportとLake環境再利用で中央値0.805秒。アプリ全体の遅延は未測定 |
 | DB移送と署名付き受理 | 実装済み・実移送未完了 | 専用の署名付き復元CLIとruntime検査を実装・試験。実Auroraでtyped SSM接続と空DBの読み取り検査を確認。移行元snapshotと実復元・受理は未実施 |
 | AWS runtimeと容量モード | アプリ未配備 | x86 runtime、別ホストmTLS、pool配送、drain、通常・大会モードの実配備は未実施 |
 | DNS切り替え | 未実施 | 現行Cloudflare originとMac miniを維持 |
 | 移行後の受け入れ | 未実施 | ログイン、履歴、資料、生成、共有、ゲスト、負荷試験が必要 |
+
+移行元はpgvector 0.8.7、作成したAuroraの提供版は0.8.2です。locale名と並べ替えライブラリの版も異なります。ユーザーはAuroraで先に互換性を検証し、データ・権限・検索結果を確認できた場合だけ採用する方針を選択しました。元のDBは変更せず、この差を解消するまで本番復元・受理を進めません。[AWSの対応拡張一覧](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraPostgreSQLReleaseNotes/AuroraPostgreSQL.Extensions.html)も確認しています。
 
 移行先ALB用のACM証明書、VPC・subnet・NAT・ALB・Aurora・ECR・必要なIAMと専用ALBログbucketを作成しました。Web/APIや計算runtimeはまだ起動していません。Cloudflareには証明書検証用CNAMEを1件追加しました。ACMの申請は配信先を変更しません。追加資源を作成した場合は、この表と秘密値を含まない実行記録を更新します。
 
@@ -122,4 +126,8 @@ compute用planは新規5件、既存資源の更新・削除・交換0件で適�
 
 実Auroraへの読み取り試験は、SSM転送とAWS公式CA、元のRDS hostnameを使うverify-fullで成功しました。続いて正式なAPIのtyped transportとAurora・空DB検査でも成功しました。TLS1.3、palsadminは非SUPERUSERでCREATEROLE/CREATEDBあり、UTF8/en_US.UTF-8/provider c、collationの記録値と実値は2.26-59.amzn2でした。移行元のlocaleとの互換性、role mappingの実能力試験、実復元、署名付き受理と全機能の試験は残っています。
 
-Lean childのファイル隔離は、verifierのTLS秘密鍵へ到達する可能性がある規則を修正しました。実鍵を使わないLinux canary、実Lean・Mathlib、Elan/nativeとsymlink拒否の試験が通過し、独立したLinux再実行13件も通過しました。[agent PR #22](https://github.com/AtsushiHosaka/pals-agent/pull/22)はdraftで、AWS本番のx86イメージへの配備・確認はまだです。
+Lean childのファイル隔離は、verifierのTLS秘密鍵へ到達する可能性がある規則を修正しました。実鍵を使わないLinux canary、実Lean・Mathlib、Elan/nativeとsymlink拒否の試験が通過し、独立したLinux再実行13件も通過しました。[agent PR #22](https://github.com/AtsushiHosaka/pals-agent/pull/22)はdraftで、本番verifierサービスの起動はまだです。
+
+その後、同じ修正を含むx86 imageをbuildして非公開ECRへpushし、large自身のECR権限で取得しました。アプリと資格情報を渡さない隔離コンテナで48件の実Lean測定に成功しました。実cgroupと隔離検査、標本・cache状態・メモリの限界は[測定記録](aws-native-lean-benchmark-2026-10-30.md)に残しています。HTTP/mTLSの本番runtime起動は別途確認します。
+
+IAM分離のplanは新規11件、既存2 hostのinstance profile更新だけで適用しました。4 roleのtrustと全inline policyを読み戻し、host ID、非公開IP、parameter読み取り0件を照合しました。controlからAPI、computeからworkerの専用STS sessionを実際に発行し、各5分の更新timer起動を確認しました。これは資格情報更新の確認であり、アプリやpoolの稼働確認ではありません。
