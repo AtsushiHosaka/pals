@@ -21,6 +21,96 @@ helper = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(helper)
 
 
+def role_row(name="pals_fixture_runtime", *, rolconfig=None):
+    return [name, False, False, False, False, True, False, -1, None, False, rolconfig]
+
+
+def test_metadata_v2_accepts_only_observed_complete_null_role_configuration():
+    rows = [role_row("postgres"), role_row()]
+    original = json.loads(json.dumps(rows))
+    helper.validate_role_inventory(rows, metadata_schema=helper.METADATA_SCHEMA)
+    assert helper.METADATA_SCHEMA == "pals.live-rehearsal.metadata.v2"
+    assert rows == original and all(len(row) == 11 and row[10] is None for row in rows)
+
+
+@pytest.mark.parametrize(
+    "rolconfig",
+    [[], ["search_path=private_secret"], ["private_secret=value", "timezone=UTC"]],
+)
+def test_observed_nonnull_role_configuration_fails_closed_without_value_output(
+    rolconfig,
+):
+    helper.mark_phase("role_inventory_validation")
+    for name in ("postgres", "pals_fixture_runtime"):
+        with pytest.raises(helper.RehearsalError) as failure:
+            helper.validate_role_inventory(
+                [role_row(name, rolconfig=rolconfig)],
+                metadata_schema=helper.METADATA_SCHEMA,
+            )
+        assert helper.failure_diagnostic(failure.value) == (
+            "Rehearsal export failed (phase=role_inventory_validation; category=guard_rejected; "
+            "guard=source_role_configuration_unsupported); no payload or credential values were emitted."
+        )
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        "missing-config",
+        "extra",
+        "duplicate",
+        "empty",
+        "not-list",
+        "name",
+        "boolean",
+        "connection-limit-bool",
+        "connection-limit-range",
+        "finite-expiry",
+        "config-type",
+        "config-element",
+    ],
+)
+def test_role_inventory_closed_shape_types_uniqueness_and_no_padding(change):
+    rows = [role_row()]
+    if change == "missing-config":
+        rows[0].pop()
+    elif change == "extra":
+        rows[0].append(None)
+    elif change == "duplicate":
+        rows.append(role_row())
+    elif change == "empty":
+        rows = []
+    elif change == "not-list":
+        rows = {"private_secret": "not-a-role-array"}
+    elif change == "name":
+        rows[0][0] = "private secret"
+    elif change == "boolean":
+        rows[0][2] = 0
+    elif change == "connection-limit-bool":
+        rows[0][7] = True
+    elif change == "connection-limit-range":
+        rows[0][7] = -2
+    elif change == "finite-expiry":
+        rows[0][8] = "2099-01-01"
+    elif change == "config-type":
+        rows[0][10] = "private_secret=value"
+    else:
+        rows[0][10] = [{"private_secret": "value"}]
+    original = json.loads(json.dumps(rows))
+    with pytest.raises(helper.RehearsalError, match="^source_role_inventory_invalid$"):
+        helper.validate_role_inventory(rows, metadata_schema=helper.METADATA_SCHEMA)
+    assert rows == original
+
+
+@pytest.mark.parametrize(
+    "schema",
+    [None, 2, "pals.live-rehearsal.metadata.v1", "pals.live-rehearsal.metadata.v3"],
+)
+def test_role_inventory_cannot_relabel_old_or_unknown_metadata(schema):
+    with pytest.raises(helper.RehearsalError, match="^source_role_inventory_invalid$"):
+        helper.validate_role_inventory([role_row()], metadata_schema=schema)
+
+
 @pytest.mark.parametrize("selection", ["bare-policy", "explicit-policy", "config"])
 def test_cli_policy_path_is_optional_only_after_explicit_flag(
     tmp_path, monkeypatch, capsys, selection
@@ -522,7 +612,14 @@ def test_bucket_must_be_same_account_owner_private_and_block_public(
 
 @pytest.mark.parametrize(
     "bad_role",
-    [None, "admission_manifest", "admission_signature", "historical_registry"],
+    [
+        None,
+        "admission_manifest",
+        "admission_signature",
+        "historical_registry",
+        "missing-role-field",
+        "role-settings",
+    ],
 )
 def test_execute_binds_artifacts_and_uploads_manifest_last(
     tmp_path, monkeypatch, bad_role
@@ -567,7 +664,7 @@ def test_execute_binds_artifacts_and_uploads_manifest_last(
         path.write_bytes(documents[role])
         path.chmod(0o600)
         references[role] = str(path)
-    if bad_role is not None:
+    if bad_role in references:
         Path(references[bad_role]).write_bytes(b"not-a-public-deployment-document")
     source = {
         "id": "1" * 64,
@@ -641,10 +738,16 @@ def test_execute_binds_artifacts_and_uploads_manifest_last(
                     }
                 ).encode()
             if query == helper.METADATA:
+                roles = [role_row("observed_admin"), role_row()]
+                if bad_role == "missing-role-field":
+                    roles[0].pop()
+                elif bad_role == "role-settings":
+                    roles[0][10] = ["application_name=private_secret"]
                 return json.dumps(
                     {
                         "latest_admission": {"manifest_sha256": manifest_sha},
                         "database": {"actual_collation_version": "2.36"},
+                        "roles": roles,
                     }
                 ).encode()
             return b"1"
@@ -682,6 +785,7 @@ def test_execute_binds_artifacts_and_uploads_manifest_last(
         with pytest.raises((ValueError, helper.RehearsalError)):
             helper.execute(config, root)
         assert uploaded == []
+        assert dumps == []
         return
     helper.execute(config, root)
     assert uploaded == [
@@ -697,6 +801,16 @@ def test_execute_binds_artifacts_and_uploads_manifest_last(
     )
     assert manifest["admission_eligible"] is False
     assert manifest["status"] == "rehearsal_export_complete_not_admission"
+    report = json.loads(
+        (Path(config["output_directory"]) / "metadata.json").read_bytes()
+    )
+    assert report["schema_version"] == helper.METADATA_SCHEMA
+    assert report["admission_eligible"] is False
+    assert report["cryptographic_trust_verified"] is False
+    assert all(
+        len(row) == 11 and row[10] is None
+        for row in report["database_metadata"]["roles"]
+    )
     assert set(manifest["artifacts"]) == {
         "source.dump",
         "schema.sql",
@@ -887,6 +1001,13 @@ def test_actual_psql_snapshot_binds_both_dumps_and_metadata(tmp_path_factory):
                         "UPDATE proof_runtime_release_admissions SET release_sequence=2"
                     )
                 metadata = json.loads(keeper.query(helper.METADATA))
+                helper.validate_role_inventory(
+                    metadata["roles"], metadata_schema=helper.METADATA_SCHEMA
+                )
+                observed = next(
+                    row for row in metadata["roles"] if row[0] == "postgres"
+                )
+                assert len(observed) == 11 and observed[10] is None
                 assert metadata["latest_admission"]["release_sequence"] == 1
                 assert "recorded_collation_version" in metadata["database"]
                 for filename, option in (
@@ -934,6 +1055,36 @@ def test_actual_psql_snapshot_binds_both_dumps_and_metadata(tmp_path_factory):
                     assert restored.execute(
                         "SELECT release_sequence FROM proof_runtime_release_admissions"
                     ).fetchone() == (1,)
+                # Observe the real PG16 array instead of inventing an absent GUC.
+                # This fixture owns its entire isolated cluster and never runs on Mini.
+                with psycopg.connect(url) as writer:
+                    writer.execute("CREATE ROLE pals_fixture_role_config")
+                    writer.execute(
+                        "ALTER ROLE pals_fixture_role_config SET work_mem='4MB'"
+                    )
+                configured_keeper = helper.Snapshot(
+                    helper.docker_command(
+                        source, tools, config, "psql", interactive=True
+                    )
+                )
+                try:
+                    configured_keeper.query(helper.START)
+                    configured = json.loads(configured_keeper.query(helper.METADATA))
+                    observed_config = next(
+                        row
+                        for row in configured["roles"]
+                        if row[0] == "pals_fixture_role_config"
+                    )
+                    assert observed_config[10] == ["work_mem=4MB"]
+                    with pytest.raises(
+                        helper.RehearsalError,
+                        match="^source_role_configuration_unsupported$",
+                    ):
+                        helper.validate_role_inventory(
+                            configured["roles"], metadata_schema=helper.METADATA_SCHEMA
+                        )
+                finally:
+                    configured_keeper.close()
             finally:
                 keeper.close()
                 output.close()

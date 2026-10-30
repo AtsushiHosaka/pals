@@ -21,6 +21,7 @@ Omit its path argument to select exactly ~/pals-mini-deploy/controller-policy.js
 Each child command is bounded to at most 240 seconds; files are limited to 5 GiB.
 Partial protected exports/uploads may remain after failure without a final remote
 manifest marker. This helper cannot generate final signed source evidence.
+Metadata v2 includes observed role configuration; non-NULL role settings fail closed.
 """
 
 from __future__ import annotations
@@ -52,6 +53,7 @@ PREFIX = "aws-migration-20261030/rehearsal/"
 CONTAINER = "pals-mini-prod-webfix-20261004-db"
 MAX_FILE = 5 * 1024**3
 MAX_METADATA = 4 * 1024**2
+METADATA_SCHEMA = "pals.live-rehearsal.metadata.v2"
 _HEX = re.compile(r"[0-9a-f]{64}")
 _IMAGE = re.compile(r"sha256:[0-9a-f]{64}")
 _LOCK_FD: int | None = None
@@ -89,6 +91,7 @@ _PHASES = frozenset(
         "snapshot_open",
         "snapshot_identity",
         "snapshot_metadata",
+        "role_inventory_validation",
         "custom_dump",
         "schema_dump",
         "snapshot_close",
@@ -109,6 +112,8 @@ _PUBLIC_GUARDS = {
     "bucket_public_access_not_blocked": "bucket_public_access_not_blocked",
     "bucket_acl_not_owner_private": "bucket_acl_not_owner_private",
     "command_failed_or_output_unbounded": "command_failed_or_output_unbounded",
+    "source_role_inventory_invalid": "source_role_inventory_invalid",
+    "source_role_configuration_unsupported": "source_role_configuration_unsupported",
 }
 REFERENCE_ARTIFACTS = {
     "admission_manifest": "admission-manifest.jcs",
@@ -172,6 +177,39 @@ def canonical(value: object) -> bytes:
     return json.dumps(
         value, sort_keys=True, separators=(",", ":"), ensure_ascii=True
     ).encode()
+
+
+def validate_role_inventory(rows: object, *, metadata_schema: object) -> None:
+    """Validate observed PG16 role rows; never synthesize missing attributes."""
+    if (
+        type(metadata_schema) is not str
+        or metadata_schema != METADATA_SCHEMA
+        or not isinstance(rows, list)
+        or not 1 <= len(rows) <= 129
+    ):
+        raise RehearsalError("source_role_inventory_invalid")
+    names: set[str] = set()
+    for row in rows:
+        if (
+            not isinstance(row, list)
+            or len(row) != 11
+            or not isinstance(row[0], str)
+            or re.fullmatch(r"[A-Za-z_][A-Za-z0-9_$-]{0,62}", row[0]) is None
+            or row[0] in names
+            or any(type(row[index]) is not bool for index in (1, 2, 3, 4, 5, 6, 9))
+            or type(row[7]) is not int
+            or not -1 <= row[7] <= 1_000_000
+            or row[8] not in (None, "infinity")
+            or row[10] is not None
+            and (
+                not isinstance(row[10], list)
+                or not all(isinstance(setting, str) for setting in row[10])
+            )
+        ):
+            raise RehearsalError("source_role_inventory_invalid")
+        names.add(row[0])
+        if row[10] is not None:
+            raise RehearsalError("source_role_configuration_unsupported")
 
 
 def _pairs(items: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -645,7 +683,7 @@ FROM pg_database WHERE datname=current_database()),
 'postgresql_build',version(),
 'icu_actual_versions',(SELECT json_agg(DISTINCT pg_collation_actual_version(oid)) FROM pg_collation WHERE collprovider='i'),
 'roles',(SELECT json_agg(json_build_array(rolname,rolsuper,rolinherit,rolcreaterole,rolcreatedb,
-rolcanlogin,rolreplication,rolconnlimit,rolvaliduntil::text,rolbypassrls) ORDER BY rolname)
+rolcanlogin,rolreplication,rolconnlimit,rolvaliduntil::text,rolbypassrls,rolconfig) ORDER BY rolname)
 FROM pg_roles WHERE rolname !~ '^pg_'),
 'memberships',(SELECT json_agg(json_build_array(pg_get_userbyid(roleid),pg_get_userbyid(member),
 pg_get_userbyid(grantor),admin_option,inherit_option,set_option) ORDER BY roleid,member,grantor) FROM pg_auth_members),
@@ -1217,6 +1255,11 @@ def execute(config: dict[str, Any], root: Path) -> None:
                 raise RehearsalError("source_sql_policy_identity_differs")
             mark_phase("snapshot_metadata")
             metadata = json.loads(snapshot.query(METADATA))
+            mark_phase("role_inventory_validation")
+            validate_role_inventory(
+                metadata.get("roles"), metadata_schema=METADATA_SCHEMA
+            )
+            mark_phase("snapshot_metadata")
             if (
                 metadata.get("latest_admission", {}).get("manifest_sha256")
                 != references["admission_manifest"][2]["sha256"]
@@ -1321,7 +1364,7 @@ def execute(config: dict[str, Any], root: Path) -> None:
             verify_lock()
             output.verify()
             report = {
-                "schema_version": "pals.live-rehearsal.metadata.v1",
+                "schema_version": METADATA_SCHEMA,
                 "admission_eligible": False,
                 "source_quiescence": "not_requested_not_verified",
                 "snapshot": start,
