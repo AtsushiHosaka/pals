@@ -10,13 +10,14 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 | --- | --- | --- |
 | 対象と接続 | 実施済み | pals-prod-memberのSSOをユーザーが更新し、本番アカウントとの一致をSTSで確認 |
 | 現行の公開サービス | 実施済み | WebとAPI healthのGETが200、未認証projectsが401。DNSはCloudflare経由 |
-| AWS資源の棚卸し | 実施済み | Cognito・S3・SQS・署名KMS・state bucketあり。EC2・Aurora・ECRはまだなく、state bucketは空 |
-| 移行元への接続 | 一部実施済み | Parsecと読み取りスクリプトを確認。再接続後の新SSO認証待ちで、バックアップはまだ取得していない |
+| AWS資源の棚卸し | 実施済み | 開始時点のCognito・S3・SQS・署名KMS・state bucketを特定。移行先EC2・Aurora・ECRは後続の基盤作成で追加 |
+| 移行元への接続 | 一部実施済み | Mac mini用SSOの認証成功を確認。Parsec経由の入力が安定しないため、棚卸し転送の1行だけ手動実行を依頼。バックアップはまだ取得していない |
 | ACM証明書 | 発行済み | 現在のWebとAPIを対象に申請。Web/APIの検証に成功し、AWS ACMのISSUEDを確認 |
 | private network実装 | 基盤作成済み・検証中 | 8 subnet、NAT、S3 endpoint、ALB、Auroraを作成。ALBログ書込みと経路を読み戻し済み。未使用legacy SGからのDB許可を除去し、controlだけに限定 |
 | 既存資源の再利用 | 基盤で確認済み | 現在のCognito・S3・SQS・署名KMSを読み取り参照する経路を実装・試験済み。実planの独立照合中 |
 | private control接続 | 実施済み | t4g.mediumを公開IPなしで起動。SSM Online、cloud-init完了、PG16.15 client、アプリ未起動markerを確認 |
-| DB移送と署名付き受理 | 未完了 | 現行Macの署名を別ホストへそのまま流用できない。専用の移送証拠とAWS側の受理が必要 |
+| private compute接続 | 実施済み | r8a.largeを公開IPなしで起動。SSM Online、cloud-init完了、native x86 DockerとAMD EPYC 9R45、アプリ・benchmark未実施markerを確認 |
+| DB移送と署名付き受理 | 実装済み・実移送未完了 | 専用の署名付き復元CLIとruntime検査を実装・試験。実Auroraでtyped SSM接続と空DBの読み取り検査を確認。移行元snapshotと実復元・受理は未実施 |
 | AWS runtimeと容量モード | アプリ未配備 | x86 runtime、別ホストmTLS、pool配送、drain、通常・大会モードの実配備は未実施 |
 | DNS切り替え | 未実施 | 現行Cloudflare originとMac miniを維持 |
 | 移行後の受け入れ | 未実施 | ログイン、履歴、資料、生成、共有、ゲスト、負荷試験が必要 |
@@ -37,13 +38,13 @@ raw dump、DB接続先、鍵、provider token、Terraform plan/state、SSO cache
 
 ![AWS移行先の設計図](diagrams/pals-aws-private-target.png)
 
-[draw.io元ファイル](diagrams/pals-aws-private-target.drawio)は編集可能で、PNGは実際のdraw.ioで出力しています。図に記載したCIDRはTerraformの設計値であり、配備結果ではありません。
+[draw.io元ファイル](diagrams/pals-aws-private-target.drawio)は編集可能で、PNGは実際のdraw.ioで出力しています。図の8 subnetとCIDRは基盤作成後に読み戻して照合しました。アプリ、計算poolと容量制御を含む図全体は、引き続き移行先の設計図です。
 
 公開ALBは2つのpublic subnetに置き、ACMでTLSを終端してprivate controlのHTTPSだけへ接続します。Web・APIと計算ノードにはpublic IPを付けません。Auroraはインターネット向けdefault routeのないDB subnetへ置き、controlのsecurity groupからの5432だけを許可します。
 
 外部LLMへの通信が必要なため、private workloadの外向きHTTPSにはNATを使います。S3はgateway endpointを使います。初期のNATは1台で、AZをまたぐ通信と単一障害点を含む費用・可用性の選択です。EC2にはSSHを開かずSSMで管理します。verifierはさらにコンテナ単位で外向き通信を遮断し、DB・AWS・provider資格情報を持たせません。
 
-通常のEC2本体約2.6万円に、NAT・ALB・Aurora最低容量などが加わります。2026年10月30日のAWS Price List APIで、東京のZonal NATは$0.062/時、ALBは$0.0243/時、Aurora PostgreSQL Standard Serverless v2は$0.15/ACU時と確認しました。月730時間、Aurora平均0.5 ACU、public IPv4最低3個を$0.005/IP時、1ドル150円と置くと、本体とこれらの合計は約4.5万円です。EC2はまだ未配備で、これは通常構成の見積もりです。ストレージ、I/O、LCU、NAT処理量、通信、ログ、税、LLM利用料と移行中の重複稼働は別途かかります。[VPC料金](https://aws.amazon.com/vpc/pricing/)、[ALB料金](https://aws.amazon.com/elasticloadbalancing/pricing/)、[Aurora料金](https://aws.amazon.com/rds/aurora/pricing/)を参照します。
+通常のEC2本体約2.6万円に、NAT・ALB・Aurora最低容量などが加わります。2026年10月30日のAWS Price List APIで、東京のZonal NATは$0.062/時、ALBは$0.0243/時、Aurora PostgreSQL Standard Serverless v2は$0.15/ACU時と確認しました。月730時間、Aurora平均0.5 ACU、public IPv4最低3個を$0.005/IP時、1ドル150円と置くと、本体とこれらの合計は約4.5万円です。mediumとlargeは準備用として起動済みで、金額は通常構成の月額見積もりです。ストレージ、I/O、LCU、NAT処理量、通信、ログ、税、LLM利用料と移行中の重複稼働は別途かかります。[VPC料金](https://aws.amazon.com/vpc/pricing/)、[ALB料金](https://aws.amazon.com/elasticloadbalancing/pricing/)、[Aurora料金](https://aws.amazon.com/rds/aurora/pricing/)を参照します。
 
 ## 実施手順
 
@@ -113,10 +114,12 @@ Cloudflareの既存Web/APIレコードのoriginだけをALBへ向け、既存NS�
 
 Aurora 16.15はavailable、暗号化・削除保護・7日バックアップ・0.5〜2 ACUと読み戻しました。VPCの8 subnetはいずれもpublic IP自動付与なしで、DBのroute tableにdefault routeはありません。private computeからDBへの許可もありません。続くoperator用planで未使用legacy host SGからのDB許可を除去し、実際の5432 ingressをcontrol SGだけに限定しました。
 
-東京のStandard On-Demand上限は16 vCPUでした。大会用xlarge 4台とmediumには18 vCPU、最大8台の切り替え中併存には34 vCPUが必要なため、40 vCPUへの増枠を申請しました。申請はPENDINGであり、上限の承認や大会容量の準備完了とは扱いません。
+東京のStandard On-Demand上限は16 vCPUでした。大会用xlarge 4台とmediumには18 vCPU、最大8台の切り替え中併存には34 vCPUが必要なため、40 vCPUへの増枠を申請しました。申請はCASE_OPENEDであり、上限の承認や大会容量の準備完了とは扱いません。
 
 private controlのoperator用planは新規5件、DB SG更新1件、削除・交換0件で適用しました。mediumは公開IPなし、暗号化40GiB gp3、IMDSv2必須・hop1、SSM通信5操作だけのinstance profileです。SSM実行でcloud-init完了、アプリ未起動・ALB未登録marker、PG16.15 clientを確認しました。
 
-実Auroraへの読み取り試験は、SSM転送とAWS公式CA、元のRDS hostnameを使うverify-fullで成功しました。TLS1.3、palsadminは非SUPERUSERでCREATEROLE/CREATEDBあり、空のpublic schema、UTF8/en_US.UTF-8/provider cを観測しました。このローカル転送試験は、正式なrestore CLIの通信契約やmigration admissionを検証したものではありません。移行元のlocaleとの一致、実復元、署名付き受理と全機能の試験は残っています。
+compute用planは新規5件、既存資源の更新・削除・交換0件で適用しました。largeはprivate compute subnetに置き、暗号化80GiB gp3、IMDSv2必須・hop1、SSM通信5操作だけのinstance profileです。実機のcloud-init完了、Docker linux/x86_64と2 CPU、AMD EPYC 9R45、アプリとbenchmarkが未実施であるmarkerをSSMで確認しました。
 
-Lean childのファイル隔離には、verifierのTLS秘密鍵を読める可能性があるため、実鍵を使わないLinux canaryで確認して修正します。verifierのAWS本番起動前に解消します。
+実Auroraへの読み取り試験は、SSM転送とAWS公式CA、元のRDS hostnameを使うverify-fullで成功しました。続いて正式なAPIのtyped transportとAurora・空DB検査でも成功しました。TLS1.3、palsadminは非SUPERUSERでCREATEROLE/CREATEDBあり、UTF8/en_US.UTF-8/provider c、collationの記録値と実値は2.26-59.amzn2でした。移行元のlocaleとの互換性、role mappingの実能力試験、実復元、署名付き受理と全機能の試験は残っています。
+
+Lean childのファイル隔離は、verifierのTLS秘密鍵へ到達する可能性がある規則を修正しました。実鍵を使わないLinux canary、実Lean・Mathlib、Elan/nativeとsymlink拒否の試験が通過し、独立したLinux再実行13件も通過しました。[agent PR #22](https://github.com/AtsushiHosaka/pals-agent/pull/22)はdraftで、AWS本番のx86イメージへの配備・確認はまだです。
