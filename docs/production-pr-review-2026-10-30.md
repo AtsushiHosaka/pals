@@ -1,7 +1,7 @@
 # PALS PR review and production walkthrough handoff
 
 Status snapshot: 2026-10-30 JST. GitHub metadata was checked for all 19 PRs below.
-All 15 approved PRs are confirmed merged, and four remain held. The signed
+All 15 approved PRs in the original 19-PR batch are confirmed merged, and four remain held. The signed
 production deployment completed with status **healthy** for the reviewed parent.
 The complete production screen recording is **PENDING**.
 
@@ -148,9 +148,13 @@ usage-conversion disclosure. Frontend [#27](https://github.com/AtsushiHosaka/pal
 adds native `summary` controls to the shared modal focusable selector. The
 regression failed against the old implementation; 73 affected tests, typecheck
 and lint passed. Independently reviewed head `304ba6df2fbcad369c550e74ff140493afa625e3`
-merged as `89daac472e89ac9800563b81f360d43e73cc7665`. This follow-up parent pins
-that merged frontend; the healthy deployment evidence above applies to the
-preceding release until the follow-up is deployed and read back.
+merged as `89daac472e89ac9800563b81f360d43e73cc7665`. Parent
+[#122](https://github.com/AtsushiHosaka/pals/pull/122) passed repository-safety
+and merged as `8ef0e0b5ff32a52508ea631c7decec72adf28d9d`, pinning that frontend.
+The exact clean Mini checkout passed preflight and its signed deployment completed
+with status `healthy`, matching parent `8ef0e0b5ff32a52508ea631c7decec72adf28d9d`
+and frontend `89daac472e89ac9800563b81f360d43e73cc7665`. Its safe manifest fingerprint
+is `df973621f302790d66756ad61c1f26e173fad283f05b6b140e556f18653b49c0`.
 
 Production account sign-in succeeded through the normal saved-credential form.
 Existing saved mathematical proof/follow-up data loaded. General settings,
@@ -160,3 +164,29 @@ visited during native recording. Both language controls were restored to their
 original English selection. Complete coverage and final video verification
 remain pending. No purchase, deletion, public sharing, password change or
 mathematics-convention change was executed.
+
+## Production proof incident and repair
+
+Recording was interrupted to prioritize the user's urgent proof-failure report.
+Two recent guest requests ended with `lean_verification_failed`; their linked
+jobs ended with `pals.theorem_alignment_failed`. The newest had an earlier
+candidate with `verifier_compile_failed`, while the older had no candidate.
+Read-only source inspection found two top-level theorems in each preserved final
+generation (36 and 60 lines), so neither met the existing single-target contract.
+No source, prompts, account identifiers or database identifiers are recorded here.
+
+Live container inspection found API, web, worker, assessment worker, verifier and
+reconciler running, no OOM kills and zero restarts. Worker/verifier/reconciler
+readiness markers were present. Those observations do not establish successful
+proof compilation or answer delivery.
+
+Agent [#21](https://github.com/AtsushiHosaka/pals-agent/pull/21) moves the existing
+single-target check into API pipeline preflight, where ambiguity receives bounded
+repair feedback. The final worker gate, compiler and independent semantic review
+remain intact; local multi-declaration tooling retains its existing contract.
+Reviewed head `3b81adcf4508a877d830475da6cb8e069580e3b2` merged as
+`d79363236de42dbc0075500363a296ef942b4836`. Nine new regressions and 329 affected
+pipeline/worker tests passed, with Ruff and scoped strict mypy passing. Two source
+reviews found no blocking defect. CodeRabbit was still pending at the normal
+merge; no repository-required merge check was bypassed. This parent pins the
+merged fix. Deployment and fresh production proof delivery remain pending.
