@@ -4,6 +4,7 @@
 Only stdlib, Docker's existing PostgreSQL tools, and the existing AWS CLI/profile
 are used. No source writes, drain, service control, bootstrap, or credential copy.
 All command stderr and payload stdout remain private; console output is status only.
+Failures report only closed static phase/category labels, never exception contents.
 
 Private config schema pals.live-rehearsal.config.v1 requires explicit database_name,
 database_user, postgres_socket_directory, postgres_port, existing deployment_lock_file,
@@ -53,6 +54,49 @@ MAX_METADATA = 4 * 1024**2
 _HEX = re.compile(r"[0-9a-f]{64}")
 _IMAGE = re.compile(r"sha256:[0-9a-f]{64}")
 _LOCK_FD: int | None = None
+_PHASE = "initialization"
+_PHASES = frozenset(
+    {
+        "initialization",
+        "deployment_root",
+        "controller_policy_read",
+        "controller_state_select",
+        "controller_state_read",
+        "controller_identity_check",
+        "controller_reference_select",
+        "controller_config_build",
+        "controller_config_validate",
+        "controller_lock_check",
+        "config_output_parent_check",
+        "config_output_write",
+        "config_load",
+        "source_lock",
+        "controller_binding_check",
+        "private_bucket_check",
+        "reference_open",
+        "reference_document_check",
+        "source_container_inspect",
+        "runtime_image_inventory",
+        "source_tool_inventory",
+        "source_tool_version",
+        "export_directory_create",
+        "snapshot_open",
+        "snapshot_identity",
+        "snapshot_metadata",
+        "custom_dump",
+        "schema_dump",
+        "snapshot_close",
+        "provider_library_observation",
+        "tool_hash_observation",
+        "runtime_recheck",
+        "reference_recheck",
+        "reference_copy",
+        "metadata_write",
+        "manifest_prepare",
+        "artifact_upload",
+        "manifest_upload",
+    }
+)
 REFERENCE_ARTIFACTS = {
     "admission_manifest": "admission-manifest.jcs",
     "admission_signature": "admission-signature.der",
@@ -62,6 +106,45 @@ REFERENCE_ARTIFACTS = {
 
 class RehearsalError(RuntimeError):
     pass
+
+
+def mark_phase(value: str) -> None:
+    global _PHASE
+    if value not in _PHASES:
+        raise ValueError("invalid_static_phase")
+    _PHASE = value
+
+
+def failure_diagnostic(error: Exception) -> str:
+    """Closed labels only: never format an exception, path, key or class name."""
+    category = "unexpected_failure"
+    for kind, label in (
+        (RehearsalError, "guard_rejected"),
+        (FileNotFoundError, "missing_path"),
+        (FileExistsError, "existing_path"),
+        (PermissionError, "permission_denied"),
+        (BlockingIOError, "lock_or_io_busy"),
+        (NotADirectoryError, "not_a_directory"),
+        (IsADirectoryError, "not_a_file"),
+        (BrokenPipeError, "broken_pipe"),
+        (json.JSONDecodeError, "invalid_json"),
+        (UnicodeError, "invalid_text_encoding"),
+        (KeyError, "required_member_missing"),
+        (IndexError, "invalid_sequence"),
+        (AttributeError, "unexpected_attribute"),
+        (TypeError, "unexpected_type"),
+        (OverflowError, "numeric_overflow"),
+        (subprocess.TimeoutExpired, "command_timeout"),
+        (subprocess.SubprocessError, "command_failure"),
+        (OSError, "operating_system_failure"),
+        (ValueError, "invalid_value"),
+        (RuntimeError, "runtime_failure"),
+    ):
+        if isinstance(error, kind):
+            category = label
+            break
+    phase = _PHASE if _PHASE in _PHASES else "initialization"
+    return f"Rehearsal export failed (phase={phase}; category={category}); no payload or credential values were emitted."
 
 
 def canonical(value: object) -> bytes:
@@ -813,12 +896,16 @@ def private_json(path: Path) -> tuple[dict[str, Any], str]:
 
 
 def prepare_from_policy(path: Path, root: Path) -> Path:
+    mark_phase("controller_policy_read")
     if path != root / "controller-policy.json":
         raise RehearsalError("explicit_controller_policy_path_differs")
     policy, policy_sha = private_json(path)
+    mark_phase("controller_state_select")
     state = checked_path(policy["state_dir"], root)
     current_path = state / "current.json"
+    mark_phase("controller_state_read")
     current, current_sha = private_json(current_path)
+    mark_phase("controller_identity_check")
     identity = policy["database_identity"]
     if (
         policy.get("database_container") != CONTAINER
@@ -827,6 +914,7 @@ def prepare_from_policy(path: Path, root: Path) -> Path:
         or not _HEX.fullmatch(current.get("manifest_sha256", ""))
     ):
         raise RehearsalError("controller_current_database_identity_differs")
+    mark_phase("controller_reference_select")
     refs = {
         role: policy[key]
         for role, key in (
@@ -836,6 +924,7 @@ def prepare_from_policy(path: Path, root: Path) -> Path:
         )
     }
     session = uuid4().hex
+    mark_phase("controller_config_build")
     config = {
         "schema_version": "pals.live-rehearsal.config.v1",
         "database_name": "pals",
@@ -867,12 +956,16 @@ def prepare_from_policy(path: Path, root: Path) -> Path:
             "database_identity": identity,
         },
     }
+    mark_phase("controller_config_validate")
     validate_config(config, root)
+    mark_phase("controller_lock_check")
     with existing_lock(Path(config["deployment_lock_file"])):
         verify_controller_binding(config, root)
+    mark_phase("config_output_parent_check")
     directory = root / "aws-migration-20261030"
     if directory.resolve(strict=True) != directory or directory.stat().st_mode & 0o077:
         raise RehearsalError("migration_directory_not_private")
+    mark_phase("config_output_write")
     parent = os.open(directory, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
     try:
         name = "rehearsal-config-" + session + ".json"
@@ -1002,23 +1095,29 @@ def validate_reference_documents(
 
 
 def execute(config: dict[str, Any], root: Path) -> None:
+    mark_phase("deployment_root")
     if root.resolve(strict=True) != root or root.is_symlink():
         raise RehearsalError("unsafe_deployment_root")
     references: dict[str, tuple[Path, int, dict[str, Any]]] = {}
     output = None
     snapshot = None
+    mark_phase("source_lock")
     with existing_lock(
         checked_path(config["deployment_lock_file"], root)
     ) as verify_lock:
         try:
+            mark_phase("controller_binding_check")
             verify_controller_binding(config, root)
+            mark_phase("private_bucket_check")
             require_private_bucket()
+            mark_phase("reference_open")
             for role, value in config["referenced_files"].items():
                 path = checked_path(value, root)
                 fd = trusted_file(path, maximum=16 * 1024**2)
                 references[role] = (path, fd, file_hash(fd))
                 if os.fstat(fd).st_size == 0:
                     raise RehearsalError("referenced_file_empty")
+            mark_phase("reference_document_check")
             validate_reference_documents(references, config)
             if (
                 config.get("controller_binding", {}).get(
@@ -1027,14 +1126,18 @@ def execute(config: dict[str, Any], root: Path) -> None:
                 != references["admission_manifest"][2]["sha256"]
             ):
                 raise RehearsalError("controller_manifest_reference_differs")
+            mark_phase("source_container_inspect")
             source = inspect_source(
                 config["database_name"],
                 config["database_user"],
                 config.get("docker_prefix"),
             )
             source["_runtime_containers"] = config["runtime_containers"]
+            mark_phase("runtime_image_inventory")
             images = runtime_images(source)
+            mark_phase("source_tool_inventory")
             tools = container_tools(source)
+            mark_phase("source_tool_version")
             version = command(
                 [
                     *source.get("_docker", ["docker"]),
@@ -1057,10 +1160,13 @@ def execute(config: dict[str, Any], root: Path) -> None:
                 is None
             ):
                 raise RehearsalError("source_pg_dump_not_pg16")
+            mark_phase("export_directory_create")
             output = Output(Path(config["output_directory"]), root)
+            mark_phase("snapshot_open")
             snapshot = Snapshot(
                 docker_command(source, tools, config, "psql", interactive=True)
             )
+            mark_phase("snapshot_identity")
             start = json.loads(snapshot.query(START))
             if (
                 start.get("database") != source["database"]
@@ -1083,6 +1189,7 @@ def execute(config: dict[str, Any], root: Path) -> None:
                 or start["database"] != expected["database_name"]
             ):
                 raise RehearsalError("source_sql_policy_identity_differs")
+            mark_phase("snapshot_metadata")
             metadata = json.loads(snapshot.query(METADATA))
             if (
                 metadata.get("latest_admission", {}).get("manifest_sha256")
@@ -1093,6 +1200,7 @@ def execute(config: dict[str, Any], root: Path) -> None:
                 ("source.dump", "--format=custom"),
                 ("schema.sql", "--schema-only"),
             ):
+                mark_phase("custom_dump" if name == "source.dump" else "schema_dump")
                 fd = output.create(name)
                 dump(
                     docker_command(source, tools, config, "pg_dump")
@@ -1111,8 +1219,10 @@ def execute(config: dict[str, Any], root: Path) -> None:
                         raise RehearsalError("schema_dump_format_differs")
                 if snapshot.query("SELECT 1;") != b"1":
                     raise RehearsalError("snapshot_session_lost")
+            mark_phase("snapshot_close")
             snapshot.close()
             snapshot = None
+            mark_phase("provider_library_observation")
             libc = (
                 command(
                     [
@@ -1134,6 +1244,7 @@ def execute(config: dict[str, Any], root: Path) -> None:
             )
             if re.fullmatch(r"glibc [0-9]+\.[0-9]+", libc) is None:
                 raise RehearsalError("provider_library_evidence_unavailable")
+            mark_phase("tool_hash_observation")
             tool_hash = (
                 command(
                     [
@@ -1155,6 +1266,7 @@ def execute(config: dict[str, Any], root: Path) -> None:
                 not _HEX.fullmatch(line.split()[0]) for line in tool_hash
             ):
                 raise RehearsalError("tool_hash_evidence_unavailable")
+            mark_phase("runtime_recheck")
             if {
                 **inspect_source(
                     config["database_name"],
@@ -1164,10 +1276,12 @@ def execute(config: dict[str, Any], root: Path) -> None:
                 "_runtime_containers": config["runtime_containers"],
             } != source or runtime_images(source) != images:
                 raise RehearsalError("runtime_changed_during_export")
+            mark_phase("reference_recheck")
             for path, fd, details in references.values():
                 if not same_inode(path, fd) or file_hash(fd) != details:
                     raise RehearsalError("referenced_file_changed")
             verify_controller_binding(config, root)
+            mark_phase("reference_copy")
             for role, (_path, fd, details) in references.items():
                 target = output.create(REFERENCE_ARTIFACTS[role])
                 os.lseek(fd, 0, os.SEEK_SET)
@@ -1218,7 +1332,9 @@ def execute(config: dict[str, Any], root: Path) -> None:
                     for role, (path, _fd, details) in references.items()
                 },
             }
+            mark_phase("metadata_write")
             output.create("metadata.json", canonical(report))
+            mark_phase("manifest_prepare")
             session = uuid4().hex
             artifacts = {
                 name: {**file_hash(fd), "s3_key": PREFIX + session + "/" + name}
@@ -1236,6 +1352,7 @@ def execute(config: dict[str, Any], root: Path) -> None:
                 "manifest_key": PREFIX + session + "/manifest.json",
             }
             output.create("manifest.json", canonical(manifest))
+            mark_phase("artifact_upload")
             for name, details in artifacts.items():
                 verify_lock()
                 output.verify()
@@ -1246,6 +1363,7 @@ def execute(config: dict[str, Any], root: Path) -> None:
                     raise RehearsalError("artifact_changed_during_upload")
             verify_lock()
             output.verify()
+            mark_phase("manifest_upload")
             upload(
                 output,
                 "manifest.json",
@@ -1262,6 +1380,7 @@ def execute(config: dict[str, Any], root: Path) -> None:
 
 
 def main(arguments: list[str] | None = None) -> int:
+    mark_phase("initialization")
     parser = argparse.ArgumentParser(description=__doc__)
     selection = parser.add_mutually_exclusive_group(required=True)
     selection.add_argument("--config", type=Path)
@@ -1276,22 +1395,14 @@ def main(arguments: list[str] | None = None) -> int:
     previous_alarm = signal.signal(signal.SIGALRM, interrupted)
     timer = signal.setitimer(signal.ITIMER_REAL, 1200)
     try:
+        mark_phase("deployment_root")
         root = Path.home() / "pals-mini-deploy"
         config_path = args.config or prepare_from_policy(
             args.prepare_from_controller_policy, root
         )
-        execute(load_config(config_path, root), root)
-    except RehearsalError as exc:
-        code = str(exc)
-        if re.fullmatch(r"[a-z_]{1,80}", code) is None:
-            code = "operation_failed"
-        print(
-            "Rehearsal export failed ("
-            + code
-            + "); no payload or credential values were emitted.",
-            file=__import__("sys").stderr,
-        )
-        return 2
+        mark_phase("config_load")
+        config = load_config(config_path, root)
+        execute(config, root)
     except (
         OSError,
         ValueError,
@@ -1299,11 +1410,12 @@ def main(arguments: list[str] | None = None) -> int:
         KeyError,
         IndexError,
         AttributeError,
+        OverflowError,
         RuntimeError,
         subprocess.SubprocessError,
-    ):
+    ) as error:
         print(
-            "Rehearsal export failed; no payload or credential values were emitted.",
+            failure_diagnostic(error),
             file=__import__("sys").stderr,
         )
         return 2

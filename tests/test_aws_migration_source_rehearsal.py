@@ -21,6 +21,104 @@ helper = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(helper)
 
 
+@pytest.mark.parametrize(
+    "error,category",
+    [
+        (
+            FileNotFoundError(2, "private-message", "/private/credential-path"),
+            "missing_path",
+        ),
+        (PermissionError("private-message"), "permission_denied"),
+        (BlockingIOError("private-message"), "lock_or_io_busy"),
+        (KeyError("private-credential-member"), "required_member_missing"),
+        (TypeError("private-message"), "unexpected_type"),
+        (RuntimeError("private-message"), "runtime_failure"),
+        (helper.RehearsalError("private_guard_message"), "guard_rejected"),
+        (json.JSONDecodeError("private-message", "private-payload", 0), "invalid_json"),
+        (
+            subprocess.TimeoutExpired(["private-command", "private-secret"], 1),
+            "command_timeout",
+        ),
+        (
+            subprocess.CalledProcessError(
+                3, ["private-command"], stderr=b"private-secret"
+            ),
+            "command_failure",
+        ),
+    ],
+)
+def test_failure_diagnostic_emits_only_closed_phase_and_category(error, category):
+    helper.mark_phase("controller_policy_read")
+    assert helper.failure_diagnostic(error) == (
+        f"Rehearsal export failed (phase=controller_policy_read; category={category}); "
+        "no payload or credential values were emitted."
+    )
+
+
+def test_failure_diagnostic_never_formats_exception_or_untrusted_phase(monkeypatch):
+    class PrivateExceptionClassName(RuntimeError):
+        def __str__(self):
+            raise AssertionError("exception formatting must not run")
+
+    monkeypatch.setattr(helper, "_PHASE", "private-credential-path")
+    assert helper.failure_diagnostic(PrivateExceptionClassName()) == (
+        "Rehearsal export failed (phase=initialization; category=runtime_failure); "
+        "no payload or credential values were emitted."
+    )
+    with pytest.raises(ValueError, match="^invalid_static_phase$"):
+        helper.mark_phase("private-credential-path")
+
+
+@pytest.mark.parametrize(
+    "stage,phase,category",
+    [
+        ("policy-missing", "controller_policy_read", "missing_path"),
+        ("policy-member", "controller_state_select", "required_member_missing"),
+        ("config-missing", "config_load", "missing_path"),
+        ("dump-type", "custom_dump", "unexpected_type"),
+    ],
+)
+def test_main_classifies_real_preparation_and_export_boundaries_without_leakage(
+    tmp_path, monkeypatch, capsys, stage, phase, category
+):
+    monkeypatch.setattr(helper.Path, "home", staticmethod(lambda: tmp_path))
+    root = tmp_path / "pals-mini-deploy"
+
+    def missing(*_args):
+        raise FileNotFoundError(2, "private-payload", "/private/credential-path")
+
+    if stage.startswith("policy"):
+        monkeypatch.setattr(
+            helper,
+            "private_json",
+            missing if stage == "policy-missing" else lambda *_args: ({}, "a" * 64),
+        )
+        args = [
+            "--prepare-from-controller-policy",
+            str(root / "controller-policy.json"),
+        ]
+    else:
+        args = ["--config", str(root / "private-config.json")]
+        if stage == "config-missing":
+            monkeypatch.setattr(helper, "load_config", missing)
+        else:
+            monkeypatch.setattr(helper, "load_config", lambda *_args: {})
+
+            def fail_dump(*_args):
+                helper.mark_phase("custom_dump")
+                raise TypeError("private-payload credential-secret")
+
+            monkeypatch.setattr(helper, "execute", fail_dump)
+    assert helper.main(args) == 2
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == (
+        f"Rehearsal export failed (phase={phase}; category={category}); "
+        "no payload or credential values were emitted.\n"
+    )
+    assert str(tmp_path) not in captured.err
+
+
 def container():
     return {
         "Id": "1" * 64,
