@@ -17,6 +17,7 @@ signature verification remains an independent root step; trust is not asserted.
 Use --prepare-from-controller-policy ABSOLUTE_CONTROLLER_POLICY for a one-command
 protected config preparation and export using named policy references, current.json,
 the existing host-update.lock and the policy's exact Docker context/actor names.
+Omit its path argument to select exactly ~/pals-mini-deploy/controller-policy.json.
 Each child command is bounded to at most 240 seconds; files are limited to 5 GiB.
 Partial protected exports/uploads may remain after failure without a final remote
 manifest marker. This helper cannot generate final signed source evidence.
@@ -1409,7 +1410,12 @@ def main(arguments: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     selection = parser.add_mutually_exclusive_group(required=True)
     selection.add_argument("--config", type=Path)
-    selection.add_argument("--prepare-from-controller-policy", type=Path)
+    selection.add_argument(
+        "--prepare-from-controller-policy",
+        type=Path,
+        nargs="?",
+        const=Path.home() / "pals-mini-deploy" / "controller-policy.json",
+    )
     args = parser.parse_args(arguments)
 
     def interrupted(_signal: int, _frame: object) -> None:

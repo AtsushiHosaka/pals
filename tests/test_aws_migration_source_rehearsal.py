@@ -21,6 +21,66 @@ helper = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(helper)
 
 
+@pytest.mark.parametrize("selection", ["bare-policy", "explicit-policy", "config"])
+def test_cli_policy_path_is_optional_only_after_explicit_flag(
+    tmp_path, monkeypatch, capsys, selection
+):
+    monkeypatch.setattr(helper.Path, "home", staticmethod(lambda: tmp_path))
+    root = tmp_path / "pals-mini-deploy"
+    policy = root / "controller-policy.json"
+    config = root / "existing-config.json"
+    prepared, loaded, executed = [], [], []
+
+    def prepare(path, selected_root):
+        prepared.append((path, selected_root))
+        return config
+
+    def load(path, selected_root):
+        loaded.append((path, selected_root))
+        return {"unit_only": True}
+
+    monkeypatch.setattr(helper, "prepare_from_policy", prepare)
+    monkeypatch.setattr(helper, "load_config", load)
+    monkeypatch.setattr(
+        helper,
+        "execute",
+        lambda value, selected_root: executed.append((value, selected_root)),
+    )
+    arguments = (
+        ["--config", str(config)]
+        if selection == "config"
+        else ["--prepare-from-controller-policy", str(policy)]
+        if selection == "explicit-policy"
+        else ["--prepare-from-controller-policy"]
+    )
+    assert helper.main(arguments) == 0
+    assert prepared == ([] if selection == "config" else [(policy, root)])
+    assert loaded == [(config, root)]
+    assert executed == [({"unit_only": True}, root)]
+    assert capsys.readouterr().err == ""
+
+
+@pytest.mark.parametrize(
+    "arguments",
+    [[], ["--config", "/explicit/config", "--prepare-from-controller-policy"]],
+)
+def test_cli_still_requires_one_explicit_mutually_exclusive_selection(
+    arguments, monkeypatch, capsys
+):
+    monkeypatch.setattr(
+        helper,
+        "prepare_from_policy",
+        lambda *_args: pytest.fail("unexpected preparation"),
+    )
+    monkeypatch.setattr(
+        helper, "load_config", lambda *_args: pytest.fail("unexpected config read")
+    )
+    with pytest.raises(SystemExit) as failure:
+        helper.main(arguments)
+    assert failure.value.code == 2
+    capsys.readouterr()
+
+
 @pytest.mark.parametrize(
     "error,category",
     [
