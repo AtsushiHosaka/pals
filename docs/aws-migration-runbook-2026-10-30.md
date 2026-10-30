@@ -11,7 +11,7 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 | 対象と接続 | 実施済み | pals-prod-memberのSSOをユーザーが更新し、本番アカウントとの一致をSTSで確認 |
 | 現行の公開サービス | 実施済み | WebとAPI healthのGETが200、未認証projectsが401。DNSはCloudflare経由 |
 | AWS資源の棚卸し | 実施済み | 開始時点のCognito・S3・SQS・署名KMS・state bucketを特定。移行先EC2・Aurora・ECRは後続の基盤作成で追加 |
-| 移行元への接続 | 棚卸し完了 | Mac mini用SSO認証と、ハッシュ付きの非公開S3転送に成功。DB、locale、role、extensionと配備情報を観測。DBバックアップの転送は手動実行を依頼中 |
+| 移行元への接続 | 練習用バックアップ取得済み | 同一snapshotのdump・schema・metadataと既存の配備署名資料を非公開S3へ転送。作業端末で6ファイルのハッシュを照合し、既存配備記録のKMS署名と固定公開鍵の検証に成功 |
 | ACM証明書 | 発行済み | 現在のWebとAPIを対象に申請。Web/APIの検証に成功し、AWS ACMのISSUEDを確認 |
 | private network実装 | 基盤作成済み・検証中 | 8 subnet、NAT、S3 endpoint、ALB、Auroraを作成。ALBログ書込みと経路を読み戻し済み。未使用legacy SGからのDB許可を除去し、controlだけに限定 |
 | 既存資源の再利用 | 基盤で確認済み | 現在のCognito・S3・SQS・署名KMSを読み取り参照する経路を実装・試験済み。実planの独立照合中 |
@@ -20,7 +20,7 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 | 短期AWS資格情報 | 実機検証済み | API/workerと各host supervisorの4 roleを分離。実STS認証とtimerによる更新、API image内のread-only mountからの資格情報検査に成功。parameter・master・署名権限なし |
 | AWS料金アラート | 設定済み | 本番アカウント全体の月額予算をUSD650へ更新。実費USD20・50・100・650、月末予測USD520超過の5通知とメール宛先をAWSから読み戻して照合。自動停止actionなし |
 | Lean単体の測定 | 実施済み | largeで48件の実コンパイルに成功。必要なimportとLake環境再利用で中央値0.805秒。アプリ全体の遅延は未測定 |
-| DB移送と署名付き受理 | 実装済み・実移送未完了 | 専用の署名付き復元CLIとruntime検査を実装・試験。実Auroraでtyped SSM接続と空DBの読み取り検査を確認。移行元snapshotと実復元・受理は未実施 |
+| DB移送と署名付き受理 | 練習用snapshot取得済み・復元未実施 | 専用の署名付き復元CLIとruntime検査を実装・試験。実Auroraでtyped SSM接続と空DBの読み取り検査を確認。互換性の復元比較、最終snapshotと移行受理は未実施 |
 | AWS runtimeと容量モード | アプリ未配備 | x86 runtime、別ホストmTLS、pool配送、drain、通常・大会モードの実配備は未実施 |
 | DNS切り替え | 未実施 | 現行Cloudflare originとMac miniを維持 |
 | 移行後の受け入れ | 未実施 | ログイン、履歴、資料、生成、共有、ゲスト、負荷試験が必要 |
@@ -37,7 +37,7 @@ Webの公開名は`palschat.site`、APIは`api.palschat.site`です。既存ロ�
 
 アプリDBの全schema・行・sequence・所有者・ACL・署名付きadmission履歴を移送対象とします。資料の原本にはPostgreSQLのbyteaもあるため、S3だけを移せば完了するわけではありません。既存S3の成果物と参照、SQSのジョブ、ゲスト用hash key、provider接続、課金・利用枠・共有・継続質問の状態も維持します。
 
-既存バックアップbucketには10月4日のphysical base backupが3件あります。10月30日の移行に使える最新の論理バックアップとは扱いません。新しい一貫したsnapshotに基づくpg_dumpと、復元試験を作ります。
+既存バックアップbucketには10月4日のphysical base backupが3件あります。10月30日には、新しい一貫したsnapshotに基づく練習用pg_dumpを取得しました。次に復元試験を行い、本番切り替え用には書き込み停止後のsnapshotを改めて取得します。
 
 raw dump、DB接続先、鍵、provider token、Terraform plan/state、SSO cacheはGitに含めません。ローカルの作業記録はignoredの`.local/aws-migration/`に置き、ディレクトリ0700・機密ファイル0600を使います。クラウド上は既存の非公開backup bucketの専用prefixへ暗号化して保存し、許可した移送roleだけが取得します。
 
@@ -122,6 +122,10 @@ Cloudflareの既存Web/APIレコードのoriginだけをALBへ向け、既存NS�
 移行完了は、AWS上の実runtime、移送データと認証、公開DNS、実際のLean回答、既存機能、復旧と監視を確認した状態です。手順書、Terraform test、図、準備用CLIだけが完成しても移行完了とはしません。残った作業はこの表に残し、未実行・未配備を明記します。
 
 ## 基盤適用の記録
+
+2026年10月30日23時24分ごろ、Mac miniから練習用バックアップの転送が完了しました。private S3の7 objectを確認し、移送manifestに指定した6ファイルをVersionIdで固定して取得しました。S3のAES256暗号化、サイズ、SHA256 checksumとmetadata、ローカルのSHA256を照合しました。dumpは4,353,802 bytesで、SHA256は`8ce5ae7517b1c843117d99a67be118eb055dd7e200d8aca69145c69859a38539`です。DBや旧サービスの停止・変更は行っていません。
+
+23時36分、既存の配備manifest・DER署名・履歴registryを、APIの正式な`verify_predecessor`で検証しました。AWS KMS Verify、独立して固定した公開鍵SPKIとローカルP-256署名検証が通過しました。配備manifestのSHA256は`6718ad3f1d8fcc17cc463759bd7673f2438db3624a65c84bd7696ab2824921c3`です。この結果は履歴資料の署名検証であり、最終移送の受理や稼働中DBの書き込み停止を証明するものではありません。取得・検証receiptとraw資料はignoredの保護領域に保存しています。
 
 2026年10月30日、初回planは新規74件、既存資源の更新・削除0件でした。Auroraなどの作成後、ALBのログ保存先の権限チェックで一部適用が失敗しました。ALB自体はactiveで同じARNと確認できたため、Terraformの交換マークだけを解除して保持しました。
 
