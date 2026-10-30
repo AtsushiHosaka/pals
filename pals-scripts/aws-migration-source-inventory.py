@@ -27,20 +27,40 @@ def shape(value: object) -> object:
     return type(value).__name__
 
 
+def path_metadata(value: object) -> object:
+    """Retain only named deployment artifact paths, never file/secret contents."""
+    if isinstance(value, dict):
+        result = {}
+        for key, item in value.items():
+            is_artifact = any(word in key.lower() for word in ("manifest", "signature", "registry", "directory", "state_dir", "controller", "lock"))
+            if is_artifact and isinstance(item, str) and item.startswith("/") and "\n" not in item:
+                result[key] = item
+            else:
+                result[key] = path_metadata(item)
+        return result
+    if isinstance(value, list):
+        return {"type": "array", "length": len(value)}
+    return type(value).__name__
+
+
 def main() -> None:
     if sys.argv[1:] == ["configure-sso"]:
         configure_sso()
         return
     root = pathlib.Path.home() / "pals-mini-deploy"
+    config = json.loads((root / "deploy-config.json").read_text())
     report: dict[str, object] = {
         "report_kind": "read_only_inventory_not_backup",
         "deployment_directory": str(root),
-        "config_shape": shape(json.loads((root / "deploy-config.json").read_text())),
+        "config_shape": shape(config),
+        "deployment_paths": {key: config[key] for key in ("controller", "state_dir", "docker_context") if key in config},
+        "database_identity_not_migration_evidence": config.get("database_identity"),
     }
     if len(sys.argv) == 2 and sys.argv[1] == "config":
         print(json.dumps(report, indent=2, ensure_ascii=True))
         return
     report["state_filenames"] = sorted(item.name for item in (root / "state").iterdir())
+    report["current_state_metadata"] = path_metadata(json.loads((root / "state" / "current.json").read_text()))
     names = command(["docker", "ps", "--format", "{{.Names}}"]).splitlines()
     names = [name for name in names if name.startswith("pals-") and "geekten" not in name]
     containers = json.loads(command(["docker", "inspect", *names])) if names else []
@@ -58,15 +78,22 @@ def main() -> None:
         if name.endswith("-db"):
             entry["pg_dump_version"] = command(["docker", "exec", name, "pg_dump", "--version"]).strip()
             environment = dict(env.partition("=")[::2] for env in cfg.get("Env", []))
-            if environment.get("POSTGRES_USER") and environment.get("POSTGRES_DB"):
+            if name == "pals-mini-prod-webfix-20261004-db" and environment.get("POSTGRES_DB"):
+                # The checked-in Mini host controller's query contract explicitly
+                # selects postgres/pals. This read-only probe observes that role;
+                # it does not infer authority or authorize backup/admission.
+                user = environment.get("POSTGRES_USER", "postgres")
                 sql = """BEGIN READ ONLY;
 SELECT json_build_object(
- 'database', (SELECT json_build_object('name', datname, 'encoding', pg_encoding_to_char(encoding), 'collation', datcollate, 'ctype', datctype, 'provider', datlocprovider) FROM pg_database WHERE datname=current_database()),
+ 'connected_user',current_user,
+ 'socket_directories',current_setting('unix_socket_directories'),
+ 'port',current_setting('port'),
+ 'database', (SELECT json_build_object('name', datname, 'owner',pg_get_userbyid(datdba),'encoding', pg_encoding_to_char(encoding), 'collation', datcollate, 'ctype', datctype, 'provider', datlocprovider,'icu_locale',daticulocale,'recorded_collation_version',datcollversion,'actual_collation_version',pg_database_collation_actual_version(oid)) FROM pg_database WHERE datname=current_database()),
  'roles', (SELECT json_agg(json_build_object('name',rolname,'superuser',rolsuper,'inherit',rolinherit,'createrole',rolcreaterole,'createdb',rolcreatedb,'login',rolcanlogin,'replication',rolreplication,'bypassrls',rolbypassrls) ORDER BY rolname) FROM pg_roles WHERE rolname NOT LIKE 'pg_%'),
  'relation_owners', (SELECT json_agg(json_build_object('owner',owner,'count',n) ORDER BY owner) FROM (SELECT pg_get_userbyid(c.relowner) AS owner,count(*) AS n FROM pg_class c JOIN pg_namespace s ON s.oid=c.relnamespace WHERE s.nspname NOT IN ('pg_catalog','information_schema') AND s.nspname NOT LIKE 'pg_toast%' GROUP BY c.relowner) x),
  'extensions', (SELECT json_agg(json_build_object('name',extname,'version',extversion) ORDER BY extname) FROM pg_extension)
 ); ROLLBACK;"""
-                output = command(["docker", "exec", "--user", "postgres", name, "psql", "-X", "-A", "-t", "-q", "-v", "ON_ERROR_STOP=1", "-U", environment["POSTGRES_USER"], "-d", environment["POSTGRES_DB"], "-c", sql])
+                output = command(["docker", "exec", "--user", "postgres", name, "psql", "-X", "-A", "-t", "-q", "-v", "ON_ERROR_STOP=1", "-U", user, "-d", environment["POSTGRES_DB"], "-c", sql])
                 entry["database_metadata_not_migration_evidence"] = json.loads(output)
         public.append(entry)
     report["containers"] = public
