@@ -66,6 +66,7 @@ MAX_OUTPUT = 4 * 1024 * 1024
 JOURNAL = "runtime-secrets-receipt.json"
 DEADLINE = 0.0
 LOCK_FD = None
+LOCK_WAIT_SECONDS = 30.0
 PHASE = "initialization"
 SAFE_FAILURE_CODES = frozenset({
     "guard_rejected", "unsafe_path", "unsafe_parent", "not_private",
@@ -213,16 +214,30 @@ def lock(path):
     global LOCK_FD
     fd = protected(path)
     try:
-        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        LOCK_FD = fd
+        original = os.fstat(fd)
 
         def verify():
             opened, named = os.fstat(fd), path.lstat()
-            require((opened.st_dev, opened.st_ino) ==
-                    (named.st_dev, named.st_ino), "lock_changed")
-            require(path.resolve(strict=True) == path and
-                    not named.st_mode & 0o077 and named.st_nlink == 1)
+            require(path.resolve(strict=True) == path and all(
+                stat.S_ISREG(info.st_mode) and info.st_uid == os.geteuid()
+                and not info.st_mode & 0o077 and info.st_nlink == 1
+                and (info.st_dev,info.st_ino)==(original.st_dev,original.st_ino)
+                for info in (opened,named)), "lock_changed")
 
+        require(0 < LOCK_WAIT_SECONDS <= 30)
+        until = min(DEADLINE, time.monotonic()+LOCK_WAIT_SECONDS)
+        while True:
+            verify()
+            now = time.monotonic()
+            require(now < DEADLINE, "total_timeout")
+            if now >= until:
+                raise BlockingIOError(errno.EAGAIN, "source_lock_busy")
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                time.sleep(min(0.1,max(0,until-time.monotonic())))
+        LOCK_FD = fd
         verify()
         yield verify
         verify()

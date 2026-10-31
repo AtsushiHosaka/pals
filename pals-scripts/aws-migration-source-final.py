@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import base64
 import configparser
+import errno
 import fcntl
 import hashlib
 import json
@@ -53,6 +54,7 @@ IMAGE = re.compile(r"sha256:[0-9a-f]{64}")
 PHASE = "initialization"
 DEADLINE = 0.0
 LOCK_FD = None
+LOCK_WAIT_SECONDS = 30.0
 ENVELOPE = "pals.cloud-restore.signed-evidence.v1"
 FENCE = "pals.cloud-restore.ec2-source-fence.v1"
 # Exact owning mac_production_database_update._DRAIN_CHECKS. Verify this list
@@ -166,16 +168,32 @@ def existing_lock(path):
     fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
     previous = LOCK_FD
     try:
-        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
         original = os.fstat(fd)
-        LOCK_FD = fd
 
         def verify():
+            opened = os.fstat(fd)
             current = path.lstat()
             require(path.resolve(strict=True) == path and current.st_nlink == 1
                     and not current.st_mode & 0o077 and
-                    (current.st_dev, current.st_ino) == (original.st_dev, original.st_ino),
+                    all(stat.S_ISREG(info.st_mode) and info.st_nlink == 1
+                        and info.st_uid in (0, os.geteuid()) and not info.st_mode & 0o077
+                        and (info.st_dev,info.st_ino)==(original.st_dev,original.st_ino)
+                        for info in (opened,current)),
                     "source_lock_changed")
+        require(0 < LOCK_WAIT_SECONDS <= 30)
+        until = min(DEADLINE, time.monotonic()+LOCK_WAIT_SECONDS)
+        while True:
+            verify()
+            now = time.monotonic()
+            require(now < DEADLINE, "total_timeout")
+            if now >= until:
+                raise BlockingIOError(errno.EAGAIN, "source_lock_busy")
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                time.sleep(min(0.1, max(0, until-time.monotonic())))
+        LOCK_FD = fd
         verify()
         yield verify
         verify()

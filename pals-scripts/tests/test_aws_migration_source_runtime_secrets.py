@@ -7,6 +7,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import unittest
 from contextlib import redirect_stdout
@@ -498,8 +499,55 @@ class CommandTests(unittest.TestCase):
         self.assertLess(time.monotonic()-began, 2)
 
 
+class NativeLockWaitTests(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        self.path=Path(self.temp.name).resolve()/'host-update.lock';self.path.write_bytes(b'');self.path.chmod(0o600)
+        m.DEADLINE=time.monotonic()+5
+
+    def holder(self,seconds):
+        code="import fcntl,sys,time; f=open(sys.argv[1],'rb');fcntl.flock(f,fcntl.LOCK_EX);print('held',flush=True);time.sleep(float(sys.argv[2]))"
+        process=subprocess.Popen([sys.executable,'-I','-c',code,str(self.path),str(seconds)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        self.addCleanup(process.stderr.close);self.addCleanup(process.stdout.close)
+        self.addCleanup(process.wait,timeout=2)
+        self.assertEqual(process.stdout.readline(),b'held\n')
+        return process
+
+    def test_real_competing_process_release_then_parent_acquires_same_inode(self):
+        import fcntl
+        inode=self.path.stat().st_ino;process=self.holder(0.25)
+        with m.lock(self.path) as verify:
+            process.wait(timeout=2);verify()
+            fd=os.open(self.path,os.O_RDONLY)
+            try:
+                with self.assertRaises(BlockingIOError):fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
+            finally:os.close(fd)
+            self.assertIsNotNone(m.LOCK_FD)
+        self.assertEqual(self.path.stat().st_ino,inode);self.assertIsNone(m.LOCK_FD)
+
+    def test_real_persistent_contention_hits_wait_bound_without_mutating_lock(self):
+        self.holder(0.35);inode=self.path.stat().st_ino;began=time.monotonic()
+        with patch.object(m,'LOCK_WAIT_SECONDS',0.08),self.assertRaises(BlockingIOError),m.lock(self.path):pass
+        self.assertLess(time.monotonic()-began,0.3)
+        self.assertEqual(self.path.stat().st_ino,inode);self.assertIsNone(m.LOCK_FD)
+
+    def test_total_deadline_caps_real_contention_wait(self):
+        self.holder(0.35);m.DEADLINE=time.monotonic()+0.08;began=time.monotonic()
+        with self.assertRaisesRegex(m.GuardError,'total_timeout'),m.lock(self.path):pass
+        self.assertLess(time.monotonic()-began,0.3);self.assertIsNone(m.LOCK_FD)
+
+    def test_inode_replacement_during_real_contention_is_rejected(self):
+        self.holder(0.35)
+        def replace():
+            time.sleep(0.04);replacement=self.path.with_name('replacement');replacement.write_bytes(b'');replacement.chmod(0o600);os.replace(replacement,self.path)
+        changed=threading.Thread(target=replace);changed.start();self.addCleanup(changed.join,1)
+        with self.assertRaisesRegex(m.GuardError,'lock_changed'),m.lock(self.path):pass
+        self.assertIsNone(m.LOCK_FD)
+
+
 class ControllerTests(unittest.TestCase):
     def setUp(self):
+        m.DEADLINE=time.monotonic()+5
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name).resolve() / "pals-mini-deploy"
