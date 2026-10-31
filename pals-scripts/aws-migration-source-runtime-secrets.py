@@ -90,12 +90,16 @@ def failure_summary(error):
         code = error.args[0] if len(error.args) == 1 and isinstance(
             error.args[0], str
         ) and error.args[0] in SAFE_FAILURE_CODES else "guard_rejected"
+    elif isinstance(error, BlockingIOError):
+        code = "source_lock_busy"
     elif isinstance(error, FileNotFoundError):
         code = "required_path_absent"
     elif isinstance(error, PermissionError):
         code = "permission_denied"
     elif isinstance(error, json.JSONDecodeError):
         code = "invalid_json"
+    elif isinstance(error, KeyError):
+        code = "required_field_absent"
     return {"status": "runtime_secret_transfer_failed", "phase": PHASE,
             "code": code,
             "action": "inspect_protected_receipt_and_explicitly_reconcile_before_retry"}

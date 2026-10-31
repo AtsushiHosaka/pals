@@ -47,6 +47,11 @@ class Store:
 
 
 class FailureDiagnosticTests(unittest.TestCase):
+    def test_active_source_lock_is_distinguished_without_raw_error(self):
+        result = m.failure_summary(BlockingIOError(SECRET))
+        self.assertEqual(result["code"], "source_lock_busy")
+        self.assertNotIn(SECRET, json.dumps(result))
+
     def test_fixed_guard_label_is_actionable_without_exception_text(self):
         self.assertEqual(m.failure_summary(m.GuardError("not_private"))["code"],
                          "not_private")
