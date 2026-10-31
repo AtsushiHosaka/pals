@@ -278,19 +278,24 @@ def sequence(args,root,report):
     report['source_tool_docker_image_id']=loaded['source_docker_image_id']
     common=['--tool-image',loaded['source_docker_image_id'],'--tool-api-commit',L.COMMIT,'--host-native-locks']
     sdk_common=['--sdk-tool-image',loaded['source_docker_image_id'],'--sdk-tool-api-commit',L.COMMIT]
-    sdk=B.document(step('sdk_read_only_probe','secrets',['--probe-sdk-transport',*sdk_common]))
-    B.require(sdk=={'status':'sdk_probe_verified','account_verified':True,'endpoint_verified':True,
-                   'metadata_read_verified':True,'service_write_attempted':False})
-    report['sdk_probe_verified']=True
-    if args.apply_runtime_secrets:
-        result=B.document(step('runtime_secrets_reconcile','secrets',['--reconcile',*sdk_common]))
-        B.require(set(result)=={'status','verified_parameter_count','admission_eligible'}
-                  and result['admission_eligible'] is False and type(result['verified_parameter_count']) is int
-                  and 0<=result['verified_parameter_count']<=5)
-        if result['status']=='reconciled_absent' and result['verified_parameter_count']<5:
-            result=B.document(step('runtime_secrets_apply','secrets',['--apply',*sdk_common]))
-        B.require(result=={'status':'verified','verified_parameter_count':5,'admission_eligible':False})
-        report['verified_runtime_parameter_count']=5
+    if not resume:
+        sdk=B.document(step('sdk_read_only_probe','secrets',['--probe-sdk-transport',*sdk_common]))
+        B.require(sdk=={'status':'sdk_probe_verified','account_verified':True,'endpoint_verified':True,
+                       'metadata_read_verified':True,'service_write_attempted':False})
+        report['sdk_probe_verified']=True
+        if args.apply_runtime_secrets:
+            result=B.document(step('runtime_secrets_reconcile','secrets',['--reconcile',*sdk_common]))
+            B.require(set(result)=={'status','verified_parameter_count','admission_eligible'}
+                      and result['admission_eligible'] is False and type(result['verified_parameter_count']) is int
+                      and 0<=result['verified_parameter_count']<=5)
+            if result['status']=='reconciled_absent' and result['verified_parameter_count']<5:
+                result=B.document(step('runtime_secrets_apply','secrets',['--apply',*sdk_common]))
+            B.require(result=={'status':'verified','verified_parameter_count':5,'admission_eligible':False})
+            report['verified_runtime_parameter_count']=5
+    else:
+        # Secrets were transferred before the recorded writer stop. Capture
+        # uses the native AWS CLI, not this running-actor-only SDK transport.
+        report['runtime_secret_transfer_skipped_for_resume']=True
     observed=B.document(step('native_container_lock_probe','final',common+['--probe-lock-propagation']))
     B.require(observed=={'status':'independent_native_guest_lock_domains_observed','admission_eligible':False})
     if args.smoke:
@@ -359,7 +364,8 @@ def main(arguments=None):
     B.require(not args.inspect_lock_owner_only or not (args.apply_runtime_secrets or args.smoke or args.final_migration or args.resume_final_migration or args.inspect_final_state_only),'invalid_arguments')
     B.require(not args.inspect_final_state_only or not (args.apply_runtime_secrets or args.smoke or args.final_migration or args.resume_final_migration),'invalid_arguments')
     B.require(not args.resume_final_migration or not args.smoke,'invalid_arguments')
-    if args.final_migration or args.resume_final_migration:
+    B.require(not args.resume_final_migration or not args.apply_runtime_secrets,'invalid_arguments')
+    if args.final_migration:
         args.apply_runtime_secrets=True
     root=Path.home()/'pals-mini-deploy';parent=root/'aws-migration-20261030/source-preparation'
     for path in (parent.parent,parent):

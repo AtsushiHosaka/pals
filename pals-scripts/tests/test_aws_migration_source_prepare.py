@@ -278,7 +278,7 @@ class PreparationTests(unittest.TestCase):
                 with self.assertRaises(m.B.Refusal):
                     m.sequence(SimpleNamespace(apply_runtime_secrets=True,smoke=True,final_migration=True),Path('/source'),self.report)
             else:
-                m.sequence(SimpleNamespace(apply_runtime_secrets=True,smoke=not resume,final_migration=not resume,
+                m.sequence(SimpleNamespace(apply_runtime_secrets=not resume,smoke=not resume,final_migration=not resume,
                                            resume_final_migration=resume),Path('/source'),self.report)
         return events
 
@@ -286,6 +286,9 @@ class PreparationTests(unittest.TestCase):
         events=self.final_sequence(resume=True)
         self.assertEqual(events[0],'maintenance');self.assertEqual(events[-1],'final')
         self.assertFalse(any('--smoke' in args or '--final' in args for _,args in self.calls))
+        self.assertFalse(any(role=='secrets' for role,_ in self.calls))
+        self.assertTrue(self.report['runtime_secret_transfer_skipped_for_resume'])
+        self.assertNotIn('verified_runtime_parameter_count',self.report)
         self.assertEqual(self.report['status'],'final_uploaded_source_fenced_not_admitted')
 
     def test_resume_refuses_wrong_source_state_before_any_preparation(self):
