@@ -24,8 +24,93 @@ ARCHIVE_KEY = "aws-migration-20261030/tools/api-7027478-arm64.tar.gz"
 SIZE = 149928497
 ARCHIVE_SHA = "450e684cfa1ca25e752ea19925de9117e98d864efd2ecd9a23878efdf3884c40"
 VERSION = "1MfCzRK8zYelAFqgiGxO1fgChCMnHC8v"
+STAGE = "argument_validation"
 KEYS = {"admission_eligible", "bucket", "bytes", "docker_inspect_config_json_sha256", "image_tag", "key",
         "platform", "rootfs_diff_ids", "schema_version", "sha256", "source_commit", "version_id"}
+
+
+def failure(error):
+    """Only fixed labels/known field names; never exception text or raw output."""
+    code = "unexpected_failure"
+    field = None
+    if isinstance(error, b.Refusal):
+        allowed = {"guard_rejected", "unsafe_path", "unsafe_parent", "unsafe_file", "duplicate_member",
+                   "total_timeout", "command_timeout", "command_failed", "output_too_large",
+                   "artifact_too_large", "source_transition_pending", "invalid_arguments"}
+        code = error.args[0] if len(error.args) == 1 and error.args[0] in allowed else "guard_rejected"
+    elif isinstance(error, KeyError):
+        code = "required_field_absent"
+        known = {"database_container", "edge_container", "kms_public_key_sha256", "state_dir", "containers",
+                 "docker_binary", "docker_config", "docker_context", "database_identity", "status", "images",
+                 "schema_version", "manifest_sha256", "Account", "RootFS", "Layers", "Config", "Labels", "Id"}
+        if len(error.args) == 1 and error.args[0] in known:
+            field = error.args[0]
+    elif isinstance(error, BlockingIOError):
+        code = "source_lock_busy"
+    elif isinstance(error, FileNotFoundError):
+        code = "required_path_absent"
+    elif isinstance(error, PermissionError):
+        code = "permission_denied"
+    elif isinstance(error, (ValueError, UnicodeError)):
+        code = "invalid_json_or_format"
+    result = {"status": "tool_load_failed_closed", "stage": STAGE, "code": code,
+              "action": "inspect_protected_files_and_image_before_retry"}
+    if field:
+        result["known_field"] = field
+    return result
+
+
+def public_inspection(root):
+    """Public metadata only. Does not execute installed code, Docker, or AWS."""
+    report = {"status": "tool_loader_public_controller_inspection", "admission_eligible": False}
+    documents = {}
+    files = {}
+    for label, path, private_mode in (
+            ("policy", root/"controller-policy.json", True), ("config", root/"deploy-config.json", True),
+            ("watchdog", root/"auto-recovery/auto_recovery.py", False), ("controller", root/"controller.py", False)):
+        entry = {"path": str(path), "exists": path.exists() or path.is_symlink()}
+        try:
+            raw = b.private(path, private_mode=private_mode)
+            entry.update(sha256=b.sha(raw), mode=oct(path.stat().st_mode & 0o777), owned=path.stat().st_uid == os.geteuid())
+            if label in ("policy", "config"):
+                documents[label] = b.document(raw)
+        except (OSError, ValueError, b.Refusal):
+            entry["read_status"] = "unavailable_or_untrusted"
+        files[label] = entry
+    report["files"] = files
+    policy = documents.get("policy", {})
+    config = documents.get("config", {})
+    fields = {}
+    for name in ("database_container", "edge_container", "kms_public_key_sha256", "state_dir",
+                 "runtime_profile", "containers", "docker_binary", "docker_config", "docker_context"):
+        value = policy.get(name)
+        fields[name] = {"present": name in policy, "type": type(value).__name__}
+    fields["database_container"]["matches_fixed_source"] = policy.get("database_container") == b.DATABASE
+    edge = policy.get("edge_container")
+    fields["edge_container"]["valid_container_name"] = isinstance(edge, str) and bool(b.re.fullmatch(r"pals[A-Za-z0-9_.-]{1,120}", edge))
+    pin = policy.get("kms_public_key_sha256")
+    fields["kms_public_key_sha256"]["valid_sha256"] = isinstance(pin, str) and bool(b.HEX.fullmatch(pin))
+    fields["containers"]["matches_fixed_source"] = policy.get("containers") == b.ACTORS
+    fields["runtime_profile"]["matches_required"] = policy.get("runtime_profile") == "isolated-lean-v1"
+    report["policy_fields"] = fields
+    report["config_matches_policy"] = {key: key in policy and key in config and policy[key] == config[key]
+                                        for key in ("containers", "state_dir", "docker_context", "database_identity")}
+    state = policy.get("state_dir")
+    locks = {}
+    if isinstance(state, str) and Path(state).is_absolute() and root in Path(state).parents:
+        fields["state_dir"]["path"] = state
+        for name in ("host-update.lock", "deploy.lock"):
+            path = Path(state)/name
+            entry = {"path": str(path), "exists": path.exists() or path.is_symlink()}
+            try:
+                b.private(path, 1024)
+                info = path.stat()
+                entry.update(owned=info.st_uid == os.geteuid(), mode=oct(info.st_mode & 0o777), size=info.st_size)
+            except (OSError, ValueError, b.Refusal):
+                entry["read_status"] = "unavailable_or_untrusted"
+            locks[name] = entry
+    report["locks"] = locks
+    return report
 
 
 def metadata(raw, expected):
@@ -107,28 +192,39 @@ def verify_image(docker, expected):
 
 
 def execute(root, args, policy, docker, binding, verify):
+    global STAGE
     if not args.apply:
         return {"status": "tool_image_load_read_only_plan", "admission_eligible": False}
+    STAGE = "aws_cli_config"
     aws_config = configparser.ConfigParser(interpolation=None)
     aws_config.read_string(b.private(Path.home()/".aws/config").decode())
     b.require(aws_config.has_section("profile "+b.PROFILE))
     for section in aws_config.sections():
         b.require(aws_config[section].get("cli_history", "disabled").strip().lower() == "disabled" and
                   "ca_bundle" not in aws_config[section] and (section != "plugins" or not aws_config[section]))
+    STAGE = "aws_identity"
     b.require(b.cli("sts", "get-caller-identity")["Account"] == b.ACCOUNT)
     folder = directory(root)
+    STAGE = "metadata_download"
     manifest = download(folder, args.manifest_sha256+".json", MANIFEST_KEY, 65536, args.manifest_sha256)
+    STAGE = "metadata_validation"
     expected = metadata(b.private(manifest, 65536), args.manifest_sha256)
+    STAGE = "existing_image"
     present = b.run(docker+["image", "ls", "--quiet", "--no-trunc", TAG])[1].decode().strip()
     if present:
         image_id = verify_image(docker, expected)  # Conflicting existing tag is never overwritten.
     else:
+        STAGE = "archive_download"
         archive = download(folder, ARCHIVE_SHA+".tar.gz", ARCHIVE_KEY, SIZE, ARCHIVE_SHA, VERSION)
+        STAGE = "archive_contract"
         archive_contract(archive)
         verify(); b.require(b.controller(root)[3] == binding)
         b.require(not b.run(docker+["image", "ls", "--quiet", "--no-trunc", TAG])[1].strip())
+        STAGE = "image_load"
         b.run(docker+["image", "load", "--input", str(archive)], timeout=180)
+        STAGE = "loaded_image_validation"
         image_id = verify_image(docker, expected)
+    STAGE = "receipt_write"
     receipt = b.encoded({"schema_version": "pals.migration-tool-load.v1", "manifest_sha256": args.manifest_sha256,
                          "source_docker_image_id": image_id, "admission_eligible": False})
     receipt_path = folder/(args.manifest_sha256+"-loaded.json")
@@ -140,14 +236,23 @@ def execute(root, args, policy, docker, binding, verify):
 
 
 def main(arguments=None):
+    global STAGE
+    STAGE = "argument_validation"
     b.DEADLINE = time.monotonic()+300
     parser = b.Parser(description=__doc__)
-    parser.add_argument("--manifest-sha256", required=True)
+    parser.add_argument("--manifest-sha256")
     parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--inspect-controller", action="store_true")
     args = parser.parse_args(arguments)
-    b.require(b.HEX.fullmatch(args.manifest_sha256))
     root = Path.home()/"pals-mini-deploy"
+    if args.inspect_controller:
+        b.require(not args.apply and args.manifest_sha256 is None, "invalid_arguments")
+        print(json.dumps(public_inspection(root), sort_keys=True))
+        return 0
+    b.require(isinstance(args.manifest_sha256, str) and b.HEX.fullmatch(args.manifest_sha256), "invalid_arguments")
+    STAGE = "controller_read"
     policy, _current, docker, binding = b.controller(root)
+    STAGE = "source_lock"
     with b.existing_lock(Path(policy["state_dir"])/"host-update.lock") as verify:
         verify(); b.require(b.controller(root)[3] == binding)
         print(json.dumps(execute(root, args, policy, docker, binding, verify), sort_keys=True))
@@ -159,6 +264,6 @@ if __name__ == "__main__":
         sys.exit(main())
     except SystemExit:
         raise
-    except BaseException:  # noqa: BLE001 -- no AWS/Docker diagnostic disclosure
-        print('{"status":"tool_load_failed_closed","action":"inspect_protected_files_and_image_before_retry"}', file=sys.stderr)
+    except BaseException as error:  # noqa: BLE001 -- no AWS/Docker diagnostic disclosure
+        print(json.dumps(failure(error), sort_keys=True), file=sys.stderr)
         sys.exit(2)

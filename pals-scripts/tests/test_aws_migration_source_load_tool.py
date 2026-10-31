@@ -33,6 +33,39 @@ class LoaderTests(unittest.TestCase):
     def test_python39_syntax(self):
         ast.parse(FILE.read_text(),feature_version=(3,9))
 
+    def test_failure_diagnostics_have_only_known_stage_code_and_field(self):
+        m.STAGE='controller_read';secret='synthetic-private-value-never-print'
+        for error in (KeyError(secret),RuntimeError(secret),m.b.Refusal(secret),ValueError(secret)):
+            summary=m.failure(error)
+            self.assertEqual(summary['stage'],'controller_read')
+            self.assertNotIn(secret,json.dumps(summary));self.assertNotIn('known_field',summary)
+        self.assertEqual(m.failure(KeyError('database_container'))['known_field'],'database_container')
+
+    def test_public_inspection_redacts_all_unselected_config_values(self):
+        state=self.root/'state';state.mkdir(mode=0o700)
+        (self.root/'auto-recovery').mkdir(mode=0o700)
+        secret='synthetic-private-value-never-print'
+        policy={'database_container':m.b.DATABASE,'edge_container':'pals-edge','kms_public_key_sha256':'a'*64,
+                'state_dir':str(state),'runtime_profile':'isolated-lean-v1','containers':m.b.ACTORS,
+                'docker_binary':'/usr/bin/docker','docker_config':str(self.root/'docker'),'docker_context':'orbstack',
+                'database_identity':{'private':secret},'unknown-secret':secret}
+        m.b.write(self.root/'controller-policy.json',json.dumps(policy).encode())
+        m.b.write(self.root/'deploy-config.json',json.dumps(policy).encode())
+        m.b.write(self.root/'controller.py',b'# synthetic controller code')
+        m.b.write(self.root/'auto-recovery/auto_recovery.py',b'# synthetic watchdog code')
+        for name in ('host-update.lock','deploy.lock'):m.b.write(state/name,b'')
+        report=m.public_inspection(self.root)
+        self.assertNotIn(secret,json.dumps(report));self.assertNotIn('unknown-secret',json.dumps(report))
+        self.assertTrue(report['policy_fields']['database_container']['matches_fixed_source'])
+        self.assertEqual(report['locks']['deploy.lock']['mode'],'0o600')
+        self.assertEqual(report['files']['watchdog']['sha256'],m.b.sha(b'# synthetic watchdog code'))
+
+    def test_inspection_bypasses_controller_and_all_subprocesses(self):
+        with patch.object(m.Path,'home',return_value=self.root),patch.object(m.b,'controller',side_effect=AssertionError('no validation')), \
+             patch.object(m.b,'run',side_effect=AssertionError('no subprocess')),patch('sys.stdout',new_callable=io.StringIO) as out:
+            self.assertEqual(m.main(['--inspect-controller']),0)
+        self.assertEqual(json.loads(out.getvalue())['status'],'tool_loader_public_controller_inspection')
+
     def test_metadata_pin_closed_fields_and_fixed_destination(self):
         value=receipt();raw=json.dumps(value).encode();self.assertEqual(m.metadata(raw,m.b.sha(raw)),value)
         with self.assertRaises(m.b.Refusal):m.metadata(raw,'0'*64)
