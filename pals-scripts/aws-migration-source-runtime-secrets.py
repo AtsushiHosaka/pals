@@ -101,9 +101,15 @@ def failure_summary(error):
         code = "invalid_json"
     elif isinstance(error, KeyError):
         code = "required_field_absent"
-    return {"status": "runtime_secret_transfer_failed", "phase": PHASE,
-            "code": code,
-            "action": "inspect_protected_receipt_and_explicitly_reconcile_before_retry"}
+    result = {"status": "runtime_secret_transfer_failed", "phase": PHASE,
+              "code": code,
+              "action": "inspect_protected_receipt_and_explicitly_reconcile_before_retry"}
+    exit_code = getattr(error, "aws_exit_code", None)
+    if type(exit_code) is int and 0 <= exit_code <= 255:
+        result["aws_exit_code"] = exit_code
+        result["parameter_not_found_label"] = getattr(error, "parameter_not_found_label", False) is True
+        result["ansi_formatting_present"] = getattr(error, "ansi_formatting_present", False) is True
+    return result
 
 
 def require(condition, code="guard_rejected"):
@@ -345,7 +351,7 @@ def aws_cli_privacy():
 class Parameters:
     def __init__(self):
         self.prefix = ["aws", "--profile", PROFILE, "--region", REGION,
-                       "--output", "json", "--no-cli-pager",
+                       "--output", "json", "--color", "off", "--no-cli-pager",
                        "--cli-connect-timeout", "10", "--cli-read-timeout", "20"]
 
     def identity(self):
@@ -363,7 +369,11 @@ class Parameters:
                 err.strip(),
             ):
                 return None
-            raise GuardError("parameter_read_failed")
+            failure = GuardError("parameter_read_failed")
+            failure.aws_exit_code = code
+            failure.parameter_not_found_label = b"ParameterNotFound" in err
+            failure.ansi_formatting_present = b"\x1b[" in err
+            raise failure
         result = decode(out)["Parameter"]
         require(result.get("Name") == name and result.get("ARN") == arn(name)
                 and result.get("Type") == "SecureString"

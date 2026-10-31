@@ -219,6 +219,15 @@ class SourceTests(unittest.TestCase):
 
 
 class CommandTests(unittest.TestCase):
+    def test_failed_read_exposes_only_bounded_exit_and_format_metadata(self):
+        with patch.object(m, "command", return_value=(255, SECRET.encode(), b"ParameterNotFound\x1b[0m")), self.assertRaises(m.GuardError) as caught:
+            m.Parameters().get(next(iter(values())))
+        summary = m.failure_summary(caught.exception)
+        self.assertEqual(summary["aws_exit_code"], 255)
+        self.assertIs(summary["parameter_not_found_label"], True)
+        self.assertIs(summary["ansi_formatting_present"], True)
+        self.assertNotIn(SECRET, json.dumps(summary))
+
     def test_current_cli_error_prefix_preserves_exact_missing_parameter_classification(self):
         missing = b"\naws: [ERROR]: An error occurred (ParameterNotFound) when calling the GetParameter operation:\n"
         with patch.object(m, "command", return_value=(254, b"", missing)):
