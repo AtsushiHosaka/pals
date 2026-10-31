@@ -7,11 +7,11 @@ workflow, documentation, and Codex helper scripts. Implementation repositories
 are managed separately and will be linked from this repository after their
 GitHub remotes are created.
 
-## AWS migration
+## AWS構成図・配備状況
 
 [![PALS AWS architecture and deployment status](docs/diagrams/pals-aws-private-target.png)](docs/diagrams/pals-aws-private-target.png)
 
-[Full-size PNG](docs/diagrams/pals-aws-private-target.png) · [Editable draw.io diagram](docs/diagrams/pals-aws-private-target.drawio)
+[PNGを拡大](docs/diagrams/pals-aws-private-target.png) · [draw.ioで編集](docs/diagrams/pals-aws-private-target.drawio) · [配置・通信・確認範囲](docs/diagrams/README.md)
 
 At 2026-11-01 01:29 JST, the signed sequence-5 update was deployed to the
 private AWS runtime, and the Cloudflare/TLS ALB listener and rules were restored.
