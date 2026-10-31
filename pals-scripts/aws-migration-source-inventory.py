@@ -56,6 +56,9 @@ def public_endpoint(value: object, *, reviewer: bool) -> bool:
     """Observe public identity only; never URL credentials or query material."""
     if not isinstance(value, str) or not 1 <= len(value) <= 512:
         return False
+    if not reviewer and "://" not in value:
+        return (re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:/@+-]{0,127}", value) is not None
+                and not value.startswith(("sk-", "AKIA", "ASIA")))
     try:
         parsed = urlsplit(value)
         if (not parsed.hostname or not value.isascii()
@@ -69,7 +72,7 @@ def public_endpoint(value: object, *, reviewer: bool) -> bool:
             return parsed.path in {"", "/"} and (
                 parsed.scheme == "https" or (parsed.scheme == "http" and parsed.hostname in {
                     "pals-recipe-reviewer", "recipe-reviewer", "localhost", "127.0.0.1", "::1"}))
-        return (parsed.scheme == "https"
+        return (parsed.scheme in {"http", "https"}
                 and re.fullmatch(r"[A-Za-z0-9._~/-]*", parsed.path) is not None
                 and not any(part.startswith(("sk-", "AKIA", "ASIA"))
                             for part in parsed.path.split("/")))

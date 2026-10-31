@@ -75,8 +75,24 @@ class PublicRuntimeInventoryTests(unittest.TestCase):
                 MODULE.public_runtime_configuration(["PALS_PFI_PROVENANCE_SHA256=" + value])
             self.assertNotIn(value, str(caught.exception))
 
+    def test_embedding_endpoint_identity_supports_public_labels_and_http_without_normalizing(self):
+        for value in ("deployment-east-1", "local_embedding:v1", "models/snapshot-2026",
+                      "http://localhost:11434", "http://ollama:11434/api/", "https://api.openai.com/v1"):
+            self.assertEqual(MODULE.public_runtime_configuration([
+                "PALS_DRAFT_EMBEDDING_ENDPOINT_IDENTITY=" + value]),
+                {"PALS_DRAFT_EMBEDDING_ENDPOINT_IDENTITY": value})
+
+    def test_embedding_endpoint_identity_label_cannot_bypass_url_credential_checks(self):
+        for value in ("sk-" + "synthetic-private-canary", "AKIAcanary", "ASIAcanary", "private canary",
+                      "https://user:canary@example.com", "http://user:canary@ollama:11434",
+                      "http://ollama:11434?canary", "http://ollama:11434#canary", "http://ollama:11434?",
+                      "a" * 129):
+            with self.subTest(value=value), self.assertRaises(RuntimeError) as caught:
+                MODULE.public_runtime_configuration(["PALS_DRAFT_EMBEDDING_ENDPOINT_IDENTITY=" + value])
+            self.assertNotIn(value, str(caught.exception))
+
     def test_public_endpoints_reject_credentials_query_fragment_and_unsafe_paths(self):
-        for value in ("http://example.com/v1", "https://user:synthetic-private-canary@example.com/v1",
+        for value in ("ftp://example.com/v1", "https://user:synthetic-private-canary@example.com/v1",
                       "https://example.com/v1?synthetic-private-canary", "https://example.com/#canary",
                       "https://example.com/?", "https://example.com/#", "https://example.com/sk-canary",
                       "https://example.com/percent%20canary", "https://example.com:99999/v1",
