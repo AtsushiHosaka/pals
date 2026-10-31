@@ -6,9 +6,11 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 
 ## 現在の実行状況
 
-2026年10月31日13:24 JST時点。13:00までのAWS切り替えには間に合っていません。移行は未完了で、公開先はMac miniです。DBはユーザー承認済みの同一イメージprivate EC2方式へ変更し、サーバー起動とTLS付き読み取り確認まで進みました。直近の公開WebとAPI healthのGETは200でしたが、回答生成や30人の負荷確認を通過した記録ではありません。
+2026年10月31日13:57 JST時点。13:00までのAWS切り替えには間に合っていません。移行は未完了で、公開先はMac miniです。DBはユーザー承認済みの同一イメージprivate EC2方式へ変更し、サーバー起動とTLS付き読み取り確認まで進みました。13:24までに確認した公開WebとAPI healthのGETは200でしたが、回答生成や30人の負荷確認を通過した記録ではありません。
 
-Parsecに接続候補がなく、移行元の作業を継続できないため、接続復旧を依頼しています。Mac miniの最終drain・停止・最終取得は行っていません。移行ツールの読込はsource lockの取得で停止し、秘密値転送も未完了です。新しいSDK入力処理は作業端末で検証しましたが、実Miniでの読み取りprobe・照合・転送が残っています。
+Parsecへの接続は復旧しましたが、入力先が別アプリへ移るため遠隔キー入力を中止しました。ユーザーがMac miniで準備スクリプトを実行し、13:51の診断レポートを非公開S3から固定version・SHA256で取得しました。設定とcontroller/watchdogの既知ハッシュは一致しています。Pythonプロセスが既存のhost-update.lockとdeploy.lockを保持しており、準備は事前確認で停止しました。秘密値のSDK probe・照合・転送、ツール読込、最終drain・停止・最終取得は未実施です。ロック保持者を特定するまで、プロセス終了やロックの作り直しは行いません。
+
+AWSのcontrol/computeでは、公開コード9ファイルと固定イメージ5件を事前配置し、実機のhash・所有者・mode・image config bytes・RootFSを照合しました。ECR用の一時認証ディレクトリが残っていないこと、実行中のアプリコンテナが0件であることを読み戻しました。これらは起動準備の完了であり、本番の復元・受理・起動を示しません。13:53のCloudflare管理画面でも、Web/APIとも既存Mac mini tunnelを向いています。
 
 | 段階 | 状態 | 実際に確認したこと |
 | --- | --- | --- |
@@ -28,9 +30,9 @@ Parsecに接続候補がなく、移行元の作業を継続できないため�
 | Lean単体の測定 | 実施済み | largeで48件の実コンパイルに成功。必要なimportとLake環境再利用で中央値0.805秒。アプリ全体の遅延は未測定 |
 | private EC2 DB | 起動・実接続確認済み | m7g.large、暗号化80 GiBの保持data EBS、専用SGと6 endpoint。実TLS1.3・PG16.15・locale/libc2.36・vector0.8.7を確認。空DBで、本番復元・受理は未実施 |
 | 公開入口のWAF | 適用・読戻し済み | 実送信元がCloudflare公式15 IPv4 CIDRの場合だけ許可。default BLOCK、sampling無効。DNSとアプリ公開は未変更 |
-| AWS runtimeと容量モード | アプリ未配備 | x86 runtime、別ホストmTLS、pool配送、drain、通常・大会モードの実配備は未実施 |
-| runtimeイメージ | ECR準備済み | 固定sourceのAPI・Web・workerをbuild・pushし、digestを読み戻した。非root importとWebの主要5画面は確認。本番起動・実ログインは未実施 |
-| runtime秘密値の引き継ぎ | 許可済み・実転送は停止中 | 固定5件への転送とhost supervisorの完全一致GetParameterを承認済み。IAM追加は完了。Mini側のCLI入力方式を調査中で、転送完了とは扱わない |
+| AWS runtimeと容量モード | アプリ未起動・容量制御未実装 | 別ホストmTLSによる本番接続、pool配送、drain、通常・大会モードの切り替えは未実施。largeからxlargeへの安全な切り替えには処理中ジョブのdrain確認と再開処理が必要 |
+| runtimeイメージ | AWS実機へ事前配置済み | controlのAPI・Web・derived Caddy、computeのworker・verifierの固定digest/platform/config bytes・RootFSを照合。公開コード9ファイルも照合。一時ECR認証は削除済み、アプリコンテナは未起動 |
+| runtime秘密値の引き継ぎ | 許可済み・source lockで停止中 | 固定5件への転送とhost supervisorの完全一致GetParameterを承認済み。IAM追加は完了。実Miniの準備は既存Pythonプロセスのロック保持によりSDK probeより前で停止。5件の転送は未完了 |
 | DNS切り替え | 未実施 | 現行Cloudflare originとMac miniを維持 |
 | 移行後の受け入れ | 未実施 | ログイン、履歴、資料、生成、共有、ゲスト、負荷試験が必要 |
 
