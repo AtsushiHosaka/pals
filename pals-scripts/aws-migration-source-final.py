@@ -244,7 +244,10 @@ def result(args):
 
 
 def aws_args(service, operation):
-    require(service in {"sts", "kms", "s3api"})
+    require((service, operation) in {
+        ("sts", "get-caller-identity"), ("kms", "get-public-key"), ("kms", "sign"), ("kms", "verify"),
+        *(("s3api", name) for name in ("get-public-access-block", "get-bucket-acl", "get-bucket-versioning",
+                                      "get-object", "put-object", "head-object"))})
     endpoint = {"sts": "sts", "kms": "kms", "s3api": "s3"}[service]
     args = ["aws", "--profile", PROFILE, "--region", REGION, "--output", "json",
             "--no-cli-pager", "--cli-connect-timeout", "10", "--cli-read-timeout", "20",
@@ -253,10 +256,64 @@ def aws_args(service, operation):
 
 
 def cli(service, operation, payload=None, extra=()):
+    """Closed public-metadata requests. No value/body JSON or stdin paramfile."""
     args = aws_args(service, operation)
-    if payload is not None:
-        args += ["--cli-input-json", "file:///dev/stdin"]
-    return document(run(args+list(extra), encoded(payload) if payload is not None else None)[1])
+    require(isinstance(extra, (list, tuple)))
+    if service == "sts":
+        require(operation == "get-caller-identity" and payload is None and not extra)
+        return document(run(args)[1])
+    require(isinstance(payload, dict))
+    if service == "kms":
+        require(operation == "get-public-key" and payload == {"KeyId": KEY} and not extra)
+        return document(run(args+["--key-id", KEY])[1])
+    fields = {"Bucket", "ExpectedBucketOwner"}
+    require(payload.get("Bucket") == BUCKET and payload.get("ExpectedBucketOwner") == ACCOUNT)
+    args += ["--bucket", BUCKET, "--expected-bucket-owner", ACCOUNT]
+    if operation in ("get-public-access-block", "get-bucket-acl", "get-bucket-versioning"):
+        require(set(payload) == fields and not extra)
+        return document(run(args)[1])
+    fields.add("Key")
+    key = payload.get("Key")
+    require(isinstance(key, str) and re.fullmatch(r"aws-migration-20261030/[A-Za-z0-9._/-]{1,384}", key)
+            and ".." not in PurePosixPath(key).parts)
+    args += ["--key", key]
+    if "VersionId" in payload:
+        fields.add("VersionId")
+        version = payload["VersionId"]
+        require(isinstance(version, str) and re.fullmatch(r"[A-Za-z0-9._+/=-]{1,1024}", version)
+                and version != "null")
+        args += ["--version-id", version]
+    if operation == "get-object":
+        fields.add("Range")
+        byte_range = payload.get("Range")
+        require(isinstance(byte_range, str) and re.fullmatch(r"bytes=0-[0-9]{1,10}", byte_range)
+                and int(byte_range[8:])+1 <= MAX_ARTIFACT)
+        require(len(extra) == 1 and isinstance(extra[0], str))
+        private(Path(extra[0]), 0)  # Only our exclusive empty download destination.
+        args += ["--range", byte_range, extra[0]]
+    elif operation == "head-object":
+        fields |= {"VersionId", "ChecksumMode"}
+        require(payload.get("ChecksumMode") == "ENABLED" and not extra)
+        args += ["--checksum-mode", "ENABLED"]
+    elif operation == "put-object":
+        fields |= {"ServerSideEncryption", "Metadata", "ChecksumSHA256"}
+        metadata = payload.get("Metadata")
+        require("VersionId" not in payload and payload.get("ServerSideEncryption") == "AES256" and
+                isinstance(metadata, dict) and set(metadata) == {"sha256"} and
+                isinstance(metadata["sha256"], str) and HEX.fullmatch(metadata["sha256"]) and
+                payload.get("ChecksumSHA256") == base64.b64encode(bytes.fromhex(metadata["sha256"])).decode())
+        require(len(extra) == 2 and extra[0] == "--body" and isinstance(extra[1], str))
+        body = Path(extra[1])
+        require(body.is_absolute() and body.resolve(strict=True) == body)
+        info = body.lstat()
+        require(stat.S_ISREG(info.st_mode) and info.st_uid == os.geteuid() and info.st_nlink == 1
+                and not info.st_mode & 0o077 and info.st_size <= MAX_ARTIFACT)
+        args += ["--server-side-encryption", "AES256", "--metadata", json.dumps(metadata, separators=(",", ":")),
+                 "--checksum-sha256", payload["ChecksumSHA256"], "--body", str(body)]
+    else:
+        raise Refusal("guard_rejected")
+    require(set(payload) == fields)
+    return document(run(args)[1])
 
 
 def aws_preflight(policy, predecessor, signature):
@@ -287,20 +344,26 @@ def verify_signature(raw, signature):
     # fileb:// bypasses profile-specific binary-format settings. Passing a blob
     # through --cli-input-json can sign its base64 text instead of 32 digest bytes.
     with tempfile.TemporaryDirectory(prefix="pals-source-signature-") as temporary:
-        path = Path(temporary).resolve(strict=True)/"signature.der"
+        directory = Path(temporary).resolve(strict=True)
+        path = directory/"signature.der"
+        digest = directory/"message-digest.bin"
         write(path, signature)
+        write(digest, hashlib.sha256(raw).digest())
         args = aws_args("kms", "verify")+["--key-id", KEY, "--message-type", "DIGEST",
-                "--signing-algorithm", "ECDSA_SHA_256", "--message", "fileb:///dev/stdin",
+                "--signing-algorithm", "ECDSA_SHA_256", "--message", "fileb://"+str(digest),
                 "--signature", "fileb://"+str(path)]
-        observed = document(run(args, hashlib.sha256(raw).digest())[1])
+        observed = document(run(args)[1])
     require(observed.get("SignatureValid") is True and observed.get("KeyId") == KEY and
             observed.get("SigningAlgorithm") == "ECDSA_SHA_256", "kms_verify_failed")
 
 
 def signed(raw):
-    args = aws_args("kms", "sign")+["--key-id", KEY, "--message-type", "DIGEST",
-            "--signing-algorithm", "ECDSA_SHA_256", "--message", "fileb:///dev/stdin"]
-    observed = document(run(args, hashlib.sha256(raw).digest())[1])
+    with tempfile.TemporaryDirectory(prefix="pals-source-signature-") as temporary:
+        digest = Path(temporary).resolve(strict=True)/"message-digest.bin"
+        write(digest, hashlib.sha256(raw).digest())
+        args = aws_args("kms", "sign")+["--key-id", KEY, "--message-type", "DIGEST",
+                "--signing-algorithm", "ECDSA_SHA_256", "--message", "fileb://"+str(digest)]
+        observed = document(run(args)[1])
     require(observed.get("KeyId") == KEY and observed.get("SigningAlgorithm") == "ECDSA_SHA_256")
     signature = base64.b64decode(observed["Signature"], validate=True)
     require(8 <= len(signature) <= 80 and signature[0] == 0x30)

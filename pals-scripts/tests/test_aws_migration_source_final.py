@@ -156,10 +156,20 @@ class ImageAndSignatureTests(unittest.TestCase):
     def test_kms_uses_32_raw_digest_bytes_and_actual_verify_command(self):
         signature = b"\x30"+b"x"*69
         calls = []
+        temporary_files = []
         def aws(args, data=None, **_options):
             calls.append((args,data))
-            self.assertEqual(data, hashlib.sha256(b"fixture-payload").digest())
-            self.assertIn("fileb:///dev/stdin", args)
+            self.assertIsNone(data)
+            digest = Path(args[args.index('--message')+1].removeprefix('fileb://'))
+            temporary_files.append(digest)
+            self.assertEqual(digest.read_bytes(),hashlib.sha256(b'fixture-payload').digest())
+            self.assertEqual(digest.stat().st_size,32)
+            self.assertEqual(digest.stat().st_mode&0o777,0o600)
+            self.assertEqual(digest.parent.stat().st_mode&0o777,0o700)
+            self.assertEqual(args[args.index('--key-id')+1],m.KEY)
+            self.assertEqual(args[args.index('--message-type')+1],'DIGEST')
+            self.assertEqual(args[args.index('--signing-algorithm')+1],'ECDSA_SHA_256')
+            self.assertNotIn('fixture-payload',repr(args))
             self.assertNotIn("--cli-input-json", args)
             if "sign" in args:
                 response = {"KeyId": m.KEY, "SigningAlgorithm": "ECDSA_SHA_256",
@@ -174,6 +184,53 @@ class ImageAndSignatureTests(unittest.TestCase):
             observed = json.loads(m.signed(b"fixture-payload"))
         self.assertEqual([a[a.index("kms")+1] for a,_d in calls], ["sign", "verify"])
         self.assertEqual(base64.b64decode(observed["payload_b64"]), b"fixture-payload")
+        self.assertTrue(all(not path.exists() and not path.parent.exists() for path in temporary_files))
+
+    def test_public_aws_calls_use_closed_exact_argv_without_stdin(self):
+        calls=[]
+        def execute(args,data=None,**_options):
+            self.assertIsNone(data);self.assertNotIn('--cli-input-json',args)
+            self.assertEqual(args[args.index('--profile')+1],m.PROFILE)
+            self.assertEqual(args[args.index('--region')+1],m.REGION)
+            calls.append(args);return 0,b'{}',b''
+        with tempfile.TemporaryDirectory() as temporary,patch.object(m,'run',side_effect=execute):
+            root=Path(temporary).resolve();target=root/'download';m.write(target,b'')
+            body=root/'body';m.write(body,CANARY.encode())
+            base={'Bucket':m.BUCKET,'ExpectedBucketOwner':m.ACCOUNT}
+            key='aws-migration-20261030/tools/api-7027478-arm64.tar.gz';version='1MfCzRK8zYelAFqgiGxO1fgChCMnHC8v'
+            m.cli('sts','get-caller-identity')
+            m.cli('kms','get-public-key',{'KeyId':m.KEY})
+            for operation in ('get-public-access-block','get-bucket-acl','get-bucket-versioning'):
+                m.cli('s3api',operation,base)
+            m.cli('s3api','get-object',{**base,'Key':key,'VersionId':version,'Range':'bytes=0-149928496'},[str(target)])
+            args=calls[-1]
+            for flag,value in [('--bucket',m.BUCKET),('--expected-bucket-owner',m.ACCOUNT),('--key',key),
+                               ('--version-id',version),('--range','bytes=0-149928496')]:
+                self.assertEqual(args[args.index(flag)+1],value)
+            self.assertEqual(args[-1],str(target))
+            digest=m.sha(CANARY.encode());checksum=base64.b64encode(bytes.fromhex(digest)).decode()
+            m.cli('s3api','put-object',{**base,'Key':key,'Metadata':{'sha256':digest},'ChecksumSHA256':checksum,
+                                      'ServerSideEncryption':'AES256'},['--body',str(body)])
+            self.assertNotIn(CANARY,repr(calls[-1]))
+            self.assertEqual(calls[-1][calls[-1].index('--checksum-sha256')+1],checksum)
+            m.cli('s3api','head-object',{**base,'Key':key,'VersionId':version,'ChecksumMode':'ENABLED'})
+            self.assertEqual(calls[-1][-2:],['--checksum-mode','ENABLED'])
+
+    def test_public_aws_unknown_calls_fields_and_foreign_pins_never_execute(self):
+        base={'Bucket':m.BUCKET,'ExpectedBucketOwner':m.ACCOUNT}
+        with patch.object(m,'run',side_effect=AssertionError('invalid request must not execute')):
+            cases=[('ssm','put-parameter',{'Value':CANARY},()),('kms','decrypt',{},()),
+                   ('kms','get-public-key',{'KeyId':'foreign'},()),
+                   ('s3api','get-bucket-acl',{**base,'Bucket':'foreign'},()),
+                   ('s3api','get-bucket-acl',{**base,'Value':CANARY},()),
+                   ('s3api','get-bucket-versioning',base,['--endpoint-url','https://foreign.invalid']),
+                   ('s3api','head-object',{**base,'Key':'aws-migration-20261030/../foreign','VersionId':'fixed','ChecksumMode':'ENABLED'},()),
+                   ('s3api','head-object',{**base,'Key':'aws-migration-20261030/key','VersionId':'null','ChecksumMode':'ENABLED'},()),
+                   ('s3api','get-object',{**base,'Key':'aws-migration-20261030/key','Range':'bytes=1-5'},()),
+                   ('s3api','get-object',{**base,'Key':'aws-migration-20261030/key','Range':'bytes=0-9999999999'},())]
+            for service,operation,payload,extra in cases:
+                with self.subTest(operation=operation,payload=payload),self.assertRaises(m.Refusal):
+                    m.cli(service,operation,payload,extra)
 
     def test_false_kms_verify_never_produces_envelope(self):
         with patch.object(m, "run", return_value=(0, json.dumps({"KeyId":m.KEY,
