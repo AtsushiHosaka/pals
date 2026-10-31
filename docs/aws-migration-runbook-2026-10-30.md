@@ -6,6 +6,18 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 
 ## 現在の実行状況
 
+### 10月31日、履歴を移さず新規DBで起動する方針への変更
+
+ユーザーはチャット履歴を抽出しないこと、Draft・Recipeは後から再生成して追加してもよいことを指示しました。これ以降は既存DBの抽出を起動の前提にせず、用意済みの空の本番Auroraを正規の初期化処理で起動する経路を実装・検証します。旧Mac miniのDBは削除しません。既存の全データ移送を前提とする下記の手順と記録は、この方針変更前のものです。
+
+直近の実記録では旧DBだけが稼働し、API・Web・workerなど他の7コンテナは停止しています。AWSのWeb表示は確認済みですが、お試しチャットは未復旧です。抽出処理はスキーマ確認先の誤りを修正後、専用Draft読取接続の入力不足で停止しました。追加の抽出実行は依頼しません。
+
+新規DB用の経路では、既存の署名・DB権限・Lean検証を維持し、未対応の初期マイグレーションとprivate runtime接続を修正します。現時点では実装中であり、Aurora初期化・API起動・回答生成に成功した記録はありません。既存の復元成功記録や配備署名を、新規DBの成功記録として流用しません。
+
+復旧後は実DBのLean関連構造、Draft・Recipeの件数と内容を確認します。追加対象には「tan 1°は有理数か」と「π > 3.05を示せ」を含め、問題文と証明を照合し、実際のLean検証に通ったものを登録します。登録済み問題の再現試験と、未登録問題への一般化の評価は分けます。
+
+### 方針変更前の実行記録
+
 2026年10月31日15:45 JST時点。13:00までのAWS切り替えには間に合っていません。Webを先行し、`palschat.site`はCloudflare経由でAWSのprivate controlから配信しています。実トップページと静的ファイルの200、ALB targetのhealthy、公開URLへの一意なリクエストの200と`CF-Cache-Status: DYNAMIC`、ブラウザ表示を確認しました。Cloudflareのフル（厳密）も保存後に読み戻しました。APIの`api.palschat.site`はMac miniを向いたままで、AWSのAPI・LeanとDB復元は未完了です。Webの表示を回答生成や30人の負荷確認の代わりには扱いません。
 
 Web先行公開では、ALBのHTTPS listenerに`palschat.site`だけの優先順位10の経路を追加し、専用target groupのHTTP 8080へ転送します。controlへの入口とALBの出口は、互いのsecurity groupだけを8080で許可しました。private control上の一時Webは固定image、読み取り専用filesystem、UID1000、capabilityなしで起動し、新規の外向き通信を遮断しています。ブラウザからのAPI呼び出し先は既存の`https://api.palschat.site`です。本番APIのHTTPS 443用target groupは変更していません。先行WebはAPIの本番経路への切り替え後、所有する一時コンテナとnetwork・firewallだけを片付けます。
