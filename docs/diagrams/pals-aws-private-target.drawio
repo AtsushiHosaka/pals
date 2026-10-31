@@ -1,0 +1,221 @@
+<mxfile host="app.diagrams.net" agent="PALS architecture authoring" version="32.6.1">
+  <diagram id="pals-private-current" name="AWS deployed architecture — seq6 2026-11-01">
+    <mxGraphModel dx="2440" dy="1980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2440" pageHeight="1980" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="&lt;b&gt;PALS AWS 本番アーキテクチャ&lt;/b&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#142d4e;strokeColor=#142d4e;strokeWidth=1.5;fontSize=32;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="40" y="25" width="2360" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="snapshot" value="&lt;b&gt;2026年11月1日 01:57 JST の配備記録 / seq6&lt;/b&gt;&lt;br&gt;Web・API・Lean側の全7コンテナ、private TLS、復旧設定を確認して公開を再開。既存カタログ9項目の内容を保持。" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#eaf7ee;strokeColor=#579a72;strokeWidth=1.5;fontSize=23;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="105" width="2360" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="region" value="AWS 東京リージョン / ap-northeast-1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#f6f8fc;strokeColor=#8ca4c0;strokeWidth=1.5;fontSize=23;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;verticalAlign=top;spacingTop=12;spacingLeft=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="410" width="2360" height="1330" as="geometry" />
+        </mxCell>
+        <mxCell id="vpc" value="VPC 10.42.0.0/16 / 2 AZ: ap-northeast-1a・1c" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6f8eaf;strokeWidth=1.5;fontSize=23;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;verticalAlign=top;spacingTop=12;spacingLeft=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="65" y="460" width="1650" height="1235" as="geometry" />
+        </mxCell>
+        <mxCell id="public" value="Public subnets / 1a: 10.42.0.0/24・1c: 10.42.1.0/24" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#edf4fd;strokeColor=#8db1d9;strokeWidth=1.5;fontSize=23;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;verticalAlign=top;spacingTop=12;spacingLeft=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="515" width="1600" height="235" as="geometry" />
+        </mxCell>
+        <mxCell id="control_zone" value="Private control / 1a: 10.42.20.0/24・1c: 10.42.21.0/24" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#eff8f3;strokeColor=#8bbba7;strokeWidth=1.5;fontSize=23;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;verticalAlign=top;spacingTop=12;spacingLeft=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="785" width="1600" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="compute_zone" value="Private compute / 1a: 10.42.30.0/24・1c: 10.42.31.0/24" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#c6a46d;strokeWidth=1.5;fontSize=23;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;verticalAlign=top;spacingTop=12;spacingLeft=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="1080" width="1600" height="235" as="geometry" />
+        </mxCell>
+        <mxCell id="database_zone" value="Isolated DB / 1a: 10.42.10.0/24・1c: 10.42.11.0/24" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#f3effa;strokeColor=#a995c9;strokeWidth=1.5;fontSize=23;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;verticalAlign=top;spacingTop=12;spacingLeft=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="1370" width="1600" height="215" as="geometry" />
+        </mxCell>
+        <mxCell id="user" value="&lt;b&gt;利用者&lt;/b&gt;&lt;br&gt;ブラウザー" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#edf3fa;strokeColor=#8ca4c0;strokeWidth=1.5;fontSize=21;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="70" y="255" width="220" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="cloudflare" value="&lt;b&gt;Cloudflare DNS / Proxy&lt;/b&gt;&lt;br&gt;palschat.site・api.palschat.site&lt;br&gt;両方ともAWS ALBへ / Full (strict)" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#eaf7ee;strokeColor=#579a72;strokeWidth=1.5;fontSize=21;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="400" y="235" width="520" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="cognito" value="&lt;b&gt;Cognito&lt;/b&gt;&lt;br&gt;既存の利用者認証を継続" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#f4effb;strokeColor=#aa95c4;strokeWidth=1.5;fontSize=21;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="1800" y="510" width="530" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="operator" value="&lt;b&gt;運用者&lt;/b&gt;&lt;br&gt;AWS SSO → Systems Manager&lt;br&gt;SSHポート・踏み台なし" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#f4effb;strokeColor=#aa95c4;strokeWidth=1.5;fontSize=21;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="1790" y="235" width="550" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="alb" value="&lt;b&gt;WAF → Internet-facing ALB&lt;/b&gt;&lt;br&gt;HTTPS 443 / ACM証明書&lt;br&gt;Cloudflare公式IPv4のみ許可・既定BLOCK&lt;br&gt;root優先rule / API既定rule → 同じcontrol EC2" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#eaf7ee;strokeColor=#579a72;strokeWidth=1.5;fontSize=21;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="120" y="575" width="760" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="nat" value="&lt;b&gt;NAT Gateway ×1 / AZ 1a&lt;/b&gt;&lt;br&gt;private hostの外向き通信" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#fff1df;strokeColor=#cf9a56;strokeWidth=1.5;fontSize=20;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="600" width="370" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="igw" value="&lt;b&gt;IGW&lt;/b&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#edf4fd;strokeColor=#8db1d9;strokeWidth=1.5;fontSize=22;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="600" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="control" value="&lt;b&gt;Control EC2 / t4g.medium ×1 / ARM64&lt;/b&gt;&lt;br&gt;2 vCPU・4 GiB / 10.42.20.43 / public IPv4なし&lt;br&gt;&lt;b&gt;Web・API・Caddy・reconciler&lt;/b&gt;&lt;br&gt;ALB → Caddy → Web/API / APIからAuroraへTLS接続" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#eaf7ee;strokeColor=#579a72;strokeWidth=1.5;fontSize=22;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="135" y="850" width="745" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="control_reserve" value="&lt;b&gt;Control 1c: subnetのみ&lt;/b&gt;&lt;br&gt;EC2の二重化は未実施&lt;br&gt;Web containerの外向き通信はDROP" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#f7fafc;strokeColor=#a4b6c7;strokeWidth=1.5;fontSize=21;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="855" width="510" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="compute" value="&lt;b&gt;Compute EC2 / r8a.large ×1 / AMD64&lt;/b&gt;&lt;br&gt;2 vCPU・16 GiB / 10.42.30.100 / public IPv4なし&lt;br&gt;&lt;b&gt;評価worker・証明worker・Lean verifier&lt;/b&gt;&lt;br&gt;verifierへDB・AWS・LLMの資格情報を渡さない" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#fff0df;strokeColor=#c99552;strokeWidth=1.5;fontSize=22;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="135" y="1140" width="745" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="capacity" value="&lt;b&gt;Compute 1c: subnetのみ&lt;/b&gt;&lt;br&gt;通常large → 大会xlargeは今後の切替機能&lt;br&gt;ASG・自動増減・30人負荷検証は未実施" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#fffcf7;strokeColor=#c9b28e;strokeWidth=1.5;fontSize=21;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="1150" width="510" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="database" value="&lt;b&gt;Aurora PostgreSQL 16.15 / pgvector&lt;/b&gt;&lt;br&gt;private endpoint / writer ×1・readerなし&lt;br&gt;control SG → 5432のみ / TLS verify-full・保存時暗号化&lt;br&gt;Draft 433件・Recipe登録102件・検索公開20件" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#efe7fa;strokeColor=#9d83bd;strokeWidth=1.5;fontSize=21;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="135" y="1430" width="745" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="old_database" value="&lt;b&gt;旧方式DB EC2: 停止済み&lt;/b&gt;&lt;br&gt;10.42.10.172 / m7g.large・EBS保持&lt;br&gt;専用interface endpoint ×6とS3 endpointは残存&lt;br&gt;Auroraの接続先ではない" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#f7f3fc;strokeColor=#ac98c6;strokeWidth=1.5;fontSize=20;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="1430" width="510" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="s3_endpoint" value="&lt;b&gt;S3 Gateway Endpoint&lt;/b&gt;　control・compute用 / DB専用とは分離" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#e2f3ef;strokeColor=#639f8d;strokeWidth=1.5;fontSize=21;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="800" y="1615" width="830" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="llm" value="&lt;b&gt;外部LLM API&lt;/b&gt;&lt;br&gt;workerの評価・生成・独立審査&lt;br&gt;HTTPS 443 / NAT経由" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#fff1df;strokeColor=#cf9a56;strokeWidth=1.5;fontSize=22;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="235" width="520" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="sqs" value="&lt;b&gt;SQS + DLQ&lt;/b&gt;&lt;br&gt;評価・証明キュー / 既存を継続&lt;br&gt;workerがHTTPS 443で受信 / NAT経由" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#fff1df;strokeColor=#cf9a56;strokeWidth=1.5;fontSize=22;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="1800" y="710" width="530" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="aws_api" value="&lt;b&gt;SSM / ECR / CloudWatch / KMS&lt;/b&gt;&lt;br&gt;control・compute host → HTTPS 443 / NAT&lt;br&gt;SSM SecureString・KMSで秘密値管理&lt;br&gt;SSM経由の操作 / IMDSv2必須" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#f4effb;strokeColor=#aa95c4;strokeWidth=1.5;fontSize=21;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="1800" y="910" width="530" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="&lt;b&gt;S3 / private・暗号化&lt;/b&gt;&lt;br&gt;資料・成果物・移行データ&lt;br&gt;Gateway Endpoint経由 / NATを通らない" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#e2f3ef;strokeColor=#639f8d;strokeWidth=1.5;fontSize=22;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="1800" y="1160" width="530" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="operations" value="&lt;b&gt;運用・費用・復旧&lt;/b&gt;&lt;br&gt;復旧unit 3本: 有効・待機中 / 実再起動試験は未実施&lt;br&gt;料金通知: 実額20・50・100・650 USD、予測520 USD&lt;br&gt;通知の実配信は未検証 / 一時参照権限は削除済み" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#f4effb;strokeColor=#aa95c4;strokeWidth=1.5;fontSize=21;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="1800" y="1405" width="530" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="e_user_proxy" source="user" target="cloudflare" value="HTTPS 443" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#2467a0;fontColor=#2467a0;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_user_auth" source="user" target="cognito" value="認証 / HTTPS 443" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#7956a1;fontColor=#7956a1;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="180" y="215" />
+              <mxPoint x="1740" y="215" />
+              <mxPoint x="1740" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_proxy_alb" source="cloudflare" target="alb" value="HTTPS 443" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#2467a0;fontColor=#2467a0;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="660" y="390" />
+              <mxPoint x="500" y="390" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_alb_control" source="alb" target="control" value="HTTPS 443" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#2467a0;fontColor=#2467a0;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_verifier" source="control" target="compute" value="reconciler → verifier / mTLS 18117" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#2467a0;fontColor=#2467a0;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=0.25;exitY=1;entryX=0.25;entryY=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="320" y="1050" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_worker_api" source="compute" target="control" value="worker → API / HTTPS 443" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#7956a1;fontColor=#7956a1;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=0.8;exitY=0;entryX=0.8;entryY=1;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="700" y="1050" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_db" source="control" target="database" value="TLS 5432" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#2467a0;fontColor=#2467a0;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=0;exitY=0.9;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="110" y="1020" />
+              <mxPoint x="110" y="1490" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_control_nat" source="control" target="nat" value="host外向き" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#b5792d;fontColor=#b5792d;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=1;exitY=0.35;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1000" y="900" />
+              <mxPoint x="1000" y="650" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_compute_nat" source="compute" target="nat" value="worker/host外向き" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#b5792d;fontColor=#b5792d;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=1;exitY=0.4;entryX=0.5;entryY=1;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1040" y="1200" />
+              <mxPoint x="1040" y="740" />
+              <mxPoint x="1245" y="740" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_nat_igw" source="nat" target="igw" value="HTTPS" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#b5792d;fontColor=#b5792d;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_igw_llm" source="igw" target="llm" value="443" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#b5792d;fontColor=#b5792d;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0.5;entryY=1;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1700" y="650" />
+              <mxPoint x="1700" y="385" />
+              <mxPoint x="1340" y="385" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_igw_sqs" source="igw" target="sqs" value="443" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#b5792d;fontColor=#b5792d;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=1;exitY=0.7;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1760" y="650" />
+              <mxPoint x="1760" y="770" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_igw_aws" source="igw" target="aws_api" value="443" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#b5792d;fontColor=#b5792d;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=1;exitY=0.9;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1725" y="670" />
+              <mxPoint x="1725" y="990" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_ssm_operator" source="operator" target="aws_api" value="SSO / SSM操作" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#7956a1;fontColor=#7956a1;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=1;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2370" y="300" />
+              <mxPoint x="2370" y="990" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_control_s3ep" source="control" target="s3_endpoint" value="S3経路" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#36816c;fontColor=#36816c;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=1;exitY=0.8;entryX=0.25;entryY=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="920" y="960" />
+              <mxPoint x="920" y="1595" />
+              <mxPoint x="1020" y="1595" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_compute_s3ep" source="compute" target="s3_endpoint" value="" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#36816c;fontColor=#36816c;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=1;exitY=0.8;entryX=0.75;entryY=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="960" y="1260" />
+              <mxPoint x="960" y="1595" />
+              <mxPoint x="1420" y="1595" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_s3ep_s3" source="s3_endpoint" target="s3" value="HTTPS 443" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#36816c;fontColor=#36816c;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1750" y="1640" />
+              <mxPoint x="1750" y="1220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend" value="&lt;b&gt;矢印は通信の開始方向&lt;/b&gt;　青: 公開・API・DB・verifier通信 / 橙: NAT経由の外向き通信 / 緑: S3 endpoint経由 / 紫: 認証・運用&lt;br&gt;EC2・DBへ直接公開なし。compute → Auroraの通信は許可しない。DB subnetにインターネット向けdefault routeなし。" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#edf3fa;strokeColor=#a7bacd;strokeWidth=1.5;fontSize=22;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1765" width="2360" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="limits" value="&lt;b&gt;未完了の項目&lt;/b&gt;　1秒回答・30人を10秒以内・1,100件の本番利用・ASG/自動増減・全体セキュリティ監査。&lt;br&gt;control・compute・NAT・Aurora writerは各1台。2 AZのsubnetだけでアプリが冗長化されるわけではない。Auroraはpending-reboot。" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#fff2df;strokeColor=#cfad79;strokeWidth=1.5;fontSize=21;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1860" width="2360" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

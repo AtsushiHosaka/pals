@@ -7,6 +7,24 @@ workflow, documentation, and Codex helper scripts. Implementation repositories
 are managed separately and will be linked from this repository after their
 GitHub remotes are created.
 
+## AWS構成図
+
+2026年11月1日01:57 JSTに公開を再開した本番構成です。Web・API・Leanの7コンテナをAWSのprivate subnetで稼働させ、本番DBにはAurora PostgreSQLを使用しています。
+
+[![PALSのAWS構成図](docs/diagrams/pals-aws-private-target.png)](docs/diagrams/pals-aws-private-target.png)
+
+[PNGを拡大](docs/diagrams/pals-aws-private-target.png) · [draw.ioで編集](docs/diagrams/pals-aws-private-target.drawio) · [配置・通信・確認範囲](docs/diagrams/README.md)
+
+| 層 | 配備構成 |
+| --- | --- |
+| 公開入口 | Cloudflare → WAFを関連付けた公開ALB → private controlのCaddy。Web・APIともHTTPS |
+| Web・API | t4g.medium ×1。Web、API、Caddy、reconcilerを実行。公開IPv4なし |
+| Lean・生成 | r8a.large ×1。評価worker、証明worker、隔離Lean verifierを実行。公開IPv4なし |
+| DB | isolated subnetのAurora PostgreSQL 16.15・pgvector。controlからTLSで接続。writerは1台 |
+| 外向き通信・運用 | 許可された通信はNAT Gateway経由。S3はGateway Endpoint経由。AWS SSO・SSMで管理 |
+
+図には実際の通信方向とsubnetを記載しています。xlargeへの大会時切り替えと自動スケールは未配備です。1秒回答・30件を10秒以内に処理する性能も未達成または未検証です。全層の冗長化やセキュリティ監査の完了を示す図ではありません。
+
 ## Repository Layout
 
 - `pals-api` - private FastAPI backend
