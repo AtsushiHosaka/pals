@@ -458,6 +458,7 @@ class IndependentLockProfileTests(unittest.TestCase):
 
 class CaptureOrderingTests(unittest.TestCase):
     def setUp(self):
+        patcher=patch.object(m,"prepare_source_patch");patcher.start();self.addCleanup(patcher.stop)
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name).resolve();(self.root/"aws-migration-20261030").mkdir(mode=0o700)
         m.write(self.root/'deploy.lock',b'')
@@ -477,7 +478,7 @@ class CaptureOrderingTests(unittest.TestCase):
         self.identity={"image_uri":"pgvector/pgvector@sha256:"+"f"*64,"image_id":self.items[m.DATABASE]['Image'],
                        "source_docker_image_id":self.items[m.DATABASE]['Image'],"source_image_config_sha256":"d"*64,
                        "source_image_rootfs_diff_ids":["sha256:"+"c"*64]}
-        self.args=SimpleNamespace(final=True,tool_image="sha256:"+"a"*64,tool_api_commit="b"*40,
+        self.args=SimpleNamespace(final=True,tool_image="sha256:"+"a"*64,tool_api_commit=m.SOURCE_PATCH_BASE,
                                   confirm_source_manifest=self.current['manifest_sha256'])
         self.fail_capture=False;self.fail_db_stop=False;m.DEADLINE=time.monotonic()+30
 
@@ -652,6 +653,7 @@ class CaptureOrderingTests(unittest.TestCase):
 
 class WireAndUploadTests(unittest.TestCase):
     def setUp(self):
+        patcher=patch.object(m,"source_patch_path",return_value=Path("/fixed-reviewed-module.py"));patcher.start();self.addCleanup(patcher.stop)
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name).resolve();(self.root/'inputs').mkdir(mode=0o700)
         (self.root/'artifacts').mkdir(mode=0o700);m.write(self.root/'deploy.lock',b'')
@@ -666,7 +668,9 @@ class WireAndUploadTests(unittest.TestCase):
                     "raw="+repr(raw)+";p="+repr(str(target))+";f=os.open(p,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600);os.write(f,raw);os.close(f);"
                     "print(json.dumps({'status':'smoke_unsigned_not_admissible','payload_sha256':hashlib.sha256(raw).hexdigest(),'table_count':0,'admission_eligible':False}),flush=True)")
         original=subprocess.Popen
-        def popen(_args,**options):return original([sys.executable,'-c',child_code],**options)
+        def popen(_args,**options):
+            self.assertIn('type=bind,source=/fixed-reviewed-module.py,target=/workspace/pals-api/app/release/cloud_restore_ec2_source.py,readonly',_args)
+            return original([sys.executable,'-c',child_code],**options)
         def dumps(args,**options):
             if 'ps' in args:return 0,b'',b''
             self.assertIn('--snapshot=00000003-00000001-1',args)
@@ -807,6 +811,42 @@ class WireAndUploadTests(unittest.TestCase):
         with patch.object(m,'result',return_value=[]),patch.object(m,'run') as command,self.assertRaises(m.Refusal):
             m.read_volume_marker(['docker'],policy,self.items[m.DATABASE])
         command.assert_not_called()
+
+
+
+
+class SourcePatchTests(unittest.TestCase):
+    def test_fixed_version_download_and_digest_are_both_required(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output=Path(directory).resolve();(output/'inputs').mkdir(mode=0o700)
+            raw=b'reviewed operator source module'
+            digest=m.sha(raw);calls=[]
+            def cli(service,operation,payload,extra=()):
+                calls.append((service,operation,payload))
+                self.assertEqual(payload['Key'],m.SOURCE_PATCH_KEY)
+                self.assertEqual(payload['VersionId'],'fixed-version')
+                response={'VersionId':'fixed-version','ContentLength':len(raw),'ServerSideEncryption':'AES256',
+                          'Metadata':{'sha256':digest},'ChecksumSHA256':base64.b64encode(bytes.fromhex(digest)).decode()}
+                if operation=='get-object':Path(extra[0]).write_bytes(raw)
+                return response
+            with patch.object(m,'SOURCE_PATCH_VERSION','fixed-version'),patch.object(m,'SOURCE_PATCH_SHA',digest), \
+                 patch.object(m,'SOURCE_PATCH_SIZE',len(raw)),patch.object(m,'cli',side_effect=cli):
+                path=m.prepare_source_patch(output)
+                self.assertEqual(path.read_bytes(),raw)
+                self.assertEqual(len(calls),2)
+                path.write_bytes(b'x'*len(raw))
+                with self.assertRaises(m.Refusal):m.source_patch_path(output)
+                path.write_bytes(raw);path.chmod(0o644)
+                with self.assertRaises(m.Refusal):m.source_patch_path(output)
+
+    def test_wrong_s3_version_is_rejected_before_download(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output=Path(directory).resolve();(output/'inputs').mkdir(mode=0o700)
+            with patch.object(m,'SOURCE_PATCH_VERSION','fixed-version'),patch.object(m,'SOURCE_PATCH_SIZE',1), \
+                 patch.object(m,'cli',return_value={'VersionId':'wrong-version'}) as cli:
+                with self.assertRaises(m.Refusal):m.prepare_source_patch(output)
+                self.assertEqual(cli.call_count,1)
+                self.assertEqual(list((output/'inputs').iterdir()),[])
 
 
 if __name__=='__main__':unittest.main()

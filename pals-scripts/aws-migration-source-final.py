@@ -87,6 +87,17 @@ TOOL_FAILURE_CLASSES = frozenset({'ValueError','KeyError','TypeError','OSError',
     'InsufficientPrivilege','UndefinedFunction','InvalidTextRepresentation','InvalidSchemaName',
     'QueryCanceled','LockNotAvailable','InvalidTransactionState','ReadOnlySqlTransaction',
     'KeyboardInterrupt','ImportError','ModuleNotFoundError','Exception'})
+SOURCE_PATCH_COMMIT = '76491965e494786e036e577875be023417c6c286'
+SOURCE_PATCH_BASE = '7027478ef6664a0ab8f8a245e3da714e18dc0f37'
+SOURCE_PATCH_SHA = 'cec2cf67fbd9f704e41a6765197e3bbb137afcb3cb80cb838b38c0f35b3cee66'
+SOURCE_PATCH_KEY = 'aws-migration-20261030/operator-tool/cloud_restore_ec2_source-76491965.py'
+SOURCE_PATCH_VERSION = 'z69QS6Ynm.9S8qTnsysHF3HiqCtikGsl'
+SOURCE_PATCH_SIZE = 16579
+OPERATOR_PATCH_APPLIED = False
+
+def operator_patch():
+    return {'api_source_commit':SOURCE_PATCH_COMMIT,'module_sha256':SOURCE_PATCH_SHA,'base_api_commit':SOURCE_PATCH_BASE}
+
 TOOL_SCHEMA_STEPS = frozenset(('trace-data-governance', 'pjr-admission-control', 'pjr-foundation', 'pex-foundation', 'account-output-language', 'account-notation-preferences', 'project-chats', 'semantic-reviews', 'semantic-review-operations', 'recipe-proof-candidate-source', 'proof-output-reviews', 'explanation-retries', 'individual-billing', 'proof-requests', 'token-accounting', 'chat-shares', 'typed-draft-catalog', 'lean-recipe-catalog', 'recipe-candidate-admission', 'recipe-curation-proposals', 'recipe-attempt-traces', 'natural-sketch-catalog', 'natural-draft-reader', 'project-materials', 'project-materials-ocr', 'guest-chat', 'math-conventions', 'proof-request-lean', 'recipe-search', 'draft-addition-candidates', 'reply-language', 'complimentary-token-pro', 'chat-experience'))
 TOOL_CAPTURE_WRAPPER = r'''
 import json,os,signal,sys
@@ -874,17 +885,44 @@ def read_tool_diagnostic(process):
         return {}
 
 
+def source_patch_path(output):
+    path=output/'inputs/cloud_restore_ec2_source-76491965.py'
+    raw=private(path,SOURCE_PATCH_SIZE)
+    require(path.stat().st_uid==os.geteuid() and stat.S_IMODE(path.stat().st_mode)==0o600 and
+            len(raw)==SOURCE_PATCH_SIZE and sha(raw)==SOURCE_PATCH_SHA)
+    return path
+
+
+def prepare_source_patch(output):
+    require(SOURCE_PATCH_VERSION!='PENDING' and SOURCE_PATCH_SIZE>0)
+    payload={'Bucket':BUCKET,'ExpectedBucketOwner':ACCOUNT,'Key':SOURCE_PATCH_KEY,'VersionId':SOURCE_PATCH_VERSION}
+    observed=cli('s3api','head-object',{**payload,'ChecksumMode':'ENABLED'})
+    require(observed.get('VersionId')==SOURCE_PATCH_VERSION and observed.get('ContentLength')==SOURCE_PATCH_SIZE and
+            observed.get('ServerSideEncryption')=='AES256' and observed.get('Metadata')=={'sha256':SOURCE_PATCH_SHA} and
+            observed.get('ChecksumSHA256')==base64.b64encode(bytes.fromhex(SOURCE_PATCH_SHA)).decode())
+    path=output/'inputs/cloud_restore_ec2_source-76491965.py'
+    write(path,b'')
+    response=cli('s3api','get-object',{**payload,'Range':'bytes=0-'+str(SOURCE_PATCH_SIZE-1)},extra=(str(path),))
+    require(response.get('VersionId')==SOURCE_PATCH_VERSION and response.get('ContentLength')==SOURCE_PATCH_SIZE and
+            response.get('ServerSideEncryption')=='AES256' and response.get('Metadata')=={'sha256':SOURCE_PATCH_SHA})
+    return source_patch_path(output)
+
+
 def capture_tool(root, output, policy, docker, items, image, tools, smoke):
+    global OPERATOR_PATCH_APPLIED
+    patch_path=source_patch_path(output)
     name = "pals-source-capture-"+output.name[:16]
     require(not run(docker+["ps", "-aq", "--filter", "name=^/"+name+"$"])[1].strip())
     args = docker_tool(docker, image, name,
                        [(output/"inputs", "/inputs", True), (output/"artifacts", "/output", False),
+                        (patch_path, "/workspace/pals-api/app/release/cloud_restore_ec2_source.py", True),
                         (Path(policy["state_dir"])/"deploy.lock", "/deployment-lock", True)],
                        network="container:"+items[DATABASE]["Id"], interactive=True)
     args += ["-I", "-c", TOOL_CAPTURE_WRAPPER,
              "smoke-capture-unsigned" if smoke else "capture-unsigned", "/inputs/capture-config.json"]
     # The constant wrapper suppresses all raw stderr and emits only closed
     # class/module/line metadata. It invokes the unchanged owning checks.
+    OPERATOR_PATCH_APPLIED=True
     with subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                           stderr=subprocess.PIPE, env=environment(), start_new_session=True,
                           pass_fds=(() if LOCK_FD is None else (LOCK_FD,))) as process:
@@ -1112,6 +1150,8 @@ def capture(root, args, policy, current, docker, binding, items, verify):
     PHASE='prepare_stage';output = stage(root)
     PHASE='prepare_inputs'
     prepare_inputs(root, output, policy, current, docker, items, public, dump_sha)
+    require(args.tool_api_commit==SOURCE_PATCH_BASE)
+    prepare_source_patch(output)
     PHASE='source_image_identity'
     identity = image_identity(docker, items[DATABASE], output/"artifacts")
     if resuming:
@@ -1120,6 +1160,7 @@ def capture(root, args, policy, current, docker, binding, items, verify):
              "controller_policy_sha256": sha(binding[0]), "controller_current_sha256": sha(binding[1]),
              "source_facts": facts(items), "source_image_identity": identity,
              "tool_image": args.tool_image, "tool_api_commit": args.tool_api_commit,
+             "operator_patch": operator_patch(),
              "capture_completed": False, "admission_eligible": False}
     if resuming:
         state['previous_capture']=previous_capture
@@ -1216,7 +1257,7 @@ def capture(root, args, policy, current, docker, binding, items, verify):
                 require(stopped(recheck()))
                 journal(root, state, "uploaded_source_fenced")
             return {"status": "final_uploaded_source_fenced" if args.final else "smoke_uploaded_not_admissible",
-                    "session": output.name, "admission_eligible": False}
+                    "session": output.name, "admission_eligible": False, "operator_patch": operator_patch()}
     except BaseException:
         if args.final and journal_path(root).exists() and (not resuming or resume_journal_written):
             state["failed_phase"] = state.get("phase")
@@ -1365,6 +1406,8 @@ def failure_summary(error):
         step=getattr(error,'tool_failed_step',None)
         if type(step) is str and step in TOOL_SCHEMA_STEPS:
             report['tool_failed_step']=step
+    if OPERATOR_PATCH_APPLIED:
+        report['operator_patch']=operator_patch()
     return report
 
 
