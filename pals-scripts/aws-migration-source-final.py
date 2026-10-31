@@ -87,6 +87,7 @@ TOOL_FAILURE_CLASSES = frozenset({'ValueError','KeyError','TypeError','OSError',
     'InsufficientPrivilege','UndefinedFunction','InvalidTextRepresentation','InvalidSchemaName',
     'QueryCanceled','LockNotAvailable','InvalidTransactionState','ReadOnlySqlTransaction',
     'KeyboardInterrupt','ImportError','ModuleNotFoundError','Exception'})
+TOOL_SCHEMA_STEPS = frozenset(('trace-data-governance', 'pjr-admission-control', 'pjr-foundation', 'pex-foundation', 'account-output-language', 'account-notation-preferences', 'project-chats', 'semantic-reviews', 'semantic-review-operations', 'recipe-proof-candidate-source', 'proof-output-reviews', 'explanation-retries', 'individual-billing', 'proof-requests', 'token-accounting', 'chat-shares', 'typed-draft-catalog', 'lean-recipe-catalog', 'recipe-candidate-admission', 'recipe-curation-proposals', 'recipe-attempt-traces', 'natural-sketch-catalog', 'natural-draft-reader', 'project-materials', 'project-materials-ocr', 'guest-chat', 'math-conventions', 'proof-request-lean', 'recipe-search', 'draft-addition-candidates', 'reply-language', 'complimentary-token-pro', 'chat-experience'))
 TOOL_CAPTURE_WRAPPER = r'''
 import json,os,signal,sys
 from pathlib import Path
@@ -95,12 +96,29 @@ sys.stderr=open(os.devnull,'w')
 def interrupted(*unused):
     raise KeyboardInterrupt
 signal.signal(signal.SIGTERM,interrupted)
+failed_step=None
+step_names=__TOOL_STEPS__
+def observe_schema(frame,event,value):
+    global failed_step
+    # Observe the existing all() generator. Never call/replace a predicate or SQL.
+    if (frame.f_code.co_filename.endswith('/app/release/cloud_restore_ec2_source.py')
+            and frame.f_code.co_name=='<genexpr>' and frame.f_back is not None
+            and frame.f_back.f_code.co_name=='capture_unsigned'):
+        if event=='return' and value is False:
+            identifier=getattr(frame.f_locals.get('step'),'identifier',None)
+            if type(identifier) is str and identifier in step_names:
+                failed_step=identifier
+        return observe_schema
+    return None
 try:
     sys.path.insert(0,'/workspace/pals-api')
     from app.release import cloud_restore_ec2_source as source
+    sys.settrace(observe_schema)
     value=source.capture_unsigned(source.load_config(Path(sys.argv[2])),smoke=sys.argv[1]=='smoke-capture-unsigned')
+    sys.settrace(None)
     print(json.dumps(value,sort_keys=True),flush=True)
 except BaseException as error:
+    sys.settrace(None)
     modules=__TOOL_MODULES__
     classes=__TOOL_CLASSES__
     module='wrapper';line=1;trace=error.__traceback__
@@ -111,9 +129,12 @@ except BaseException as error:
             module=candidate;line=trace.tb_lineno
         trace=trace.tb_next
     kind=type(error).__name__
-    print(json.dumps({'tool_module':module,'tool_line':line,'tool_error':kind if kind in classes else 'Exception'},sort_keys=True),file=diagnostic,flush=True)
+    result={'tool_module':module,'tool_line':line,'tool_error':kind if kind in classes else 'Exception'}
+    if module=='cloud_restore_ec2_source' and kind=='ValueError' and failed_step is not None:
+        result['tool_failed_step']=failed_step
+    print(json.dumps(result,sort_keys=True),file=diagnostic,flush=True)
     sys.exit(2)
-'''.replace('__TOOL_MODULES__',repr(sorted(TOOL_FAILURE_MODULES))).replace('__TOOL_CLASSES__',repr(sorted(TOOL_FAILURE_CLASSES)))
+'''.replace('__TOOL_MODULES__',repr(sorted(TOOL_FAILURE_MODULES))).replace('__TOOL_CLASSES__',repr(sorted(TOOL_FAILURE_CLASSES))).replace('__TOOL_STEPS__',repr(sorted(TOOL_SCHEMA_STEPS)))
 # Exact owning mac_production_database_update._DRAIN_CHECKS. Verify this list
 # against the actual admitted API image before any final source operation.
 DRAIN = [
@@ -841,7 +862,8 @@ def read_tool_diagnostic(process):
                 return {}
     try:
         value=document(bytes(raw))
-        require(set(value)=={'tool_module','tool_line','tool_error'} and
+        require(set(value) in ({'tool_module','tool_line','tool_error'}, {'tool_module','tool_line','tool_error','tool_failed_step'}) and
+                ('tool_failed_step' not in value or (type(value['tool_failed_step']) is str and value['tool_failed_step'] in TOOL_SCHEMA_STEPS)) and
                 type(value['tool_module']) is str and value['tool_module'] in TOOL_FAILURE_MODULES and
                 type(value['tool_error']) is str and value['tool_error'] in TOOL_FAILURE_CLASSES and
                 type(value['tool_line']) is int and 1<=value['tool_line']<=20000)
@@ -1338,6 +1360,9 @@ def failure_summary(error):
     if type(module) is str and module in TOOL_FAILURE_MODULES and type(kind) is str and kind in TOOL_FAILURE_CLASSES and \
             type(line) is int and 1<=line<=20000:
         report.update(tool_module=module,tool_line=line,tool_error=kind)
+        step=getattr(error,'tool_failed_step',None)
+        if type(step) is str and step in TOOL_SCHEMA_STEPS:
+            report['tool_failed_step']=step
     return report
 
 

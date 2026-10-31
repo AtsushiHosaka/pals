@@ -695,7 +695,7 @@ class WireAndUploadTests(unittest.TestCase):
         self.assertIn('inspect',observed[0]);self.assertIn('stop',observed[1]);self.assertIn('a'*64,observed[1])
 
     def test_tool_eof_preserves_only_closed_exception_diagnostic(self):
-        diagnostic={'tool_module':'cloud_restore_ec2_source','tool_line':261,'tool_error':'ValueError'}
+        diagnostic={'tool_module':'cloud_restore_ec2_source','tool_line':261,'tool_error':'ValueError','tool_failed_step':'pjr-foundation'}
         code='import sys;sys.stderr.write('+repr(json.dumps(diagnostic))+');sys.stderr.flush();sys.exit(2)'
         original=subprocess.Popen
         def popen(_args,**options):return original([sys.executable,'-c',code],**options)
@@ -709,6 +709,32 @@ class WireAndUploadTests(unittest.TestCase):
             try:m.capture_tool(self.root,self.root,{'state_dir':str(self.root)},['docker'],self.items,'sha256:'+'a'*64,self.tools,False)
             except m.Refusal as error:report=m.failure_summary(error)
         self.assertNotIn(CANARY,json.dumps(report));self.assertNotIn('tool_module',report)
+
+    def test_wrapper_observes_real_short_circuit_without_repeating_predicates(self):
+        package=self.root/'app/release';package.mkdir(parents=True)
+        (package.parent/'__init__.py').touch();(package/'__init__.py').touch()
+        module=package/'cloud_restore_ec2_source.py'
+        for identifier in ('pjr-foundation', CANARY):
+            module.write_text("from types import SimpleNamespace\n"
+                "def load_config(path): return {}\n"
+                "calls=[]\n"
+                "def status(cursor):\n"
+                " calls.append(1)\n"
+                " if len(calls)>1: raise RuntimeError('predicate repeated')\n"
+                " return False\n"
+                "def capture_unsigned(config,smoke=False):\n"
+                " steps=[SimpleNamespace(identifier="+repr(identifier)+",status=status)]\n"
+                " if not all(step.status(None) for step in steps): raise ValueError('"+CANARY+"')\n")
+            wrapper=m.TOOL_CAPTURE_WRAPPER.replace("sys.path.insert(0,'/workspace/pals-api')",
+                                                    'sys.path.insert(0,'+repr(str(self.root))+')')
+            result=subprocess.run([sys.executable,'-I','-c',wrapper,'capture-unsigned','unused'],capture_output=True)
+            self.assertEqual(result.returncode,2)
+            report=json.loads(result.stderr)
+            self.assertEqual(report['tool_module'],'cloud_restore_ec2_source')
+            self.assertEqual(report['tool_error'],'ValueError')
+            self.assertNotIn(CANARY,result.stderr.decode())
+            if identifier=='pjr-foundation':self.assertEqual(report['tool_failed_step'],identifier)
+            else:self.assertNotIn('tool_failed_step',report)
 
     def test_manifest_is_last_after_every_artifact_readback(self):
         output=self.root/'artifacts';m.write(output/'one',CANARY.encode());m.write(output/'two',b'fixture')
