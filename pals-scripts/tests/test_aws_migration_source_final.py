@@ -585,6 +585,39 @@ class CaptureOrderingTests(unittest.TestCase):
         journal=json.loads(m.private(m.journal_path(self.root)))
         self.assertEqual(journal['phase'],'failed_reconcile_required');self.assertIs(journal['capture_completed'],False)
 
+    def test_explicit_resume_preserves_failed_capture_and_never_restarts_writers(self):
+        self.fail_capture=True
+        with self.assertRaises(m.Refusal):self.execute()
+        old=m.private(m.journal_path(self.root));previous=json.loads(old)
+        self.items=copy.deepcopy(self.actual);self.events=[];self.fail_capture=False
+        self.args.resume_final=True;self.args.host_native_locks=True
+        m.write(self.root/'host-update.lock',b'')
+        with m.existing_lock(self.root/'host-update.lock'),m.existing_lock(self.root/'deploy.lock'):
+            result=self.execute()
+        self.assertEqual(result['status'],'final_uploaded_source_fenced')
+        state=json.loads(m.private(m.journal_path(self.root)))
+        self.assertEqual(state['previous_capture'],{'journal_sha256':m.sha(old),'output_directory':previous['output_directory']})
+        self.assertNotEqual(state['output_directory'],previous['output_directory'])
+        self.assertTrue(Path(previous['output_directory']).is_dir())
+        stops=[args for action,args in self.events if action=='stop']
+        self.assertEqual(len(stops),1);self.assertIn(self.items[m.DATABASE]['Id'],stops[0])
+        self.assertNotIn('start',[action for action,_args in self.events])
+
+    def test_resume_rejects_wrong_phase_changed_facts_or_running_writer_without_journal_replacement(self):
+        self.fail_capture=True
+        with self.assertRaises(m.Refusal):self.execute()
+        old=m.private(m.journal_path(self.root));valid=json.loads(old)
+        self.items=copy.deepcopy(self.actual);self.args.resume_final=True;self.args.host_native_locks=True
+        for key,value in [('failed_phase','database_stop_pending'),('capture_completed',True),('tool_api_commit','f'*40)]:
+            state=copy.deepcopy(valid);state[key]=value;m.write(m.journal_path(self.root),m.encoded(state),replace=True)
+            before=m.private(m.journal_path(self.root))
+            with self.subTest(key=key),self.assertRaises(m.Refusal):self.execute()
+            self.assertEqual(m.private(m.journal_path(self.root)),before)
+        m.write(m.journal_path(self.root),old,replace=True)
+        self.items[m.ACTORS['api']]['State']['Running']=True
+        with self.assertRaisesRegex(m.Refusal,'resume_final_state_invalid'):self.execute()
+        self.assertEqual(m.private(m.journal_path(self.root)),old)
+
     def test_missing_or_unsafe_maintenance_prevents_first_source_mutation(self):
         marker=self.root/'auto-recovery/disabled.json'
         marker.unlink()
@@ -660,6 +693,22 @@ class WireAndUploadTests(unittest.TestCase):
             m.capture_tool(self.root,self.root,{'state_dir':str(self.root)},['docker'],self.items,image,self.tools,True)
         self.assertEqual(len(observed),2)
         self.assertIn('inspect',observed[0]);self.assertIn('stop',observed[1]);self.assertIn('a'*64,observed[1])
+
+    def test_tool_eof_preserves_only_closed_exception_diagnostic(self):
+        diagnostic={'tool_module':'cloud_restore_ec2_source','tool_line':261,'tool_error':'ValueError'}
+        code='import sys;sys.stderr.write('+repr(json.dumps(diagnostic))+');sys.stderr.flush();sys.exit(2)'
+        original=subprocess.Popen
+        def popen(_args,**options):return original([sys.executable,'-c',code],**options)
+        with patch.object(m,'run',return_value=(0,b'',b'')),patch.object(m.subprocess,'Popen',side_effect=popen):
+            try:m.capture_tool(self.root,self.root,{'state_dir':str(self.root)},['docker'],self.items,'sha256:'+'a'*64,self.tools,False)
+            except m.Refusal as error:report=m.failure_summary(error)
+        self.assertEqual(report['reason'],'tool_capture_failed')
+        self.assertEqual({key:report[key] for key in diagnostic},diagnostic)
+        with patch.object(m,'run',return_value=(0,b'',b'')), \
+                patch.object(m.subprocess,'Popen',side_effect=lambda _args,**options:original([sys.executable,'-c','import sys;sys.stderr.write('+repr(CANARY)+');sys.exit(2)'],**options)):
+            try:m.capture_tool(self.root,self.root,{'state_dir':str(self.root)},['docker'],self.items,'sha256:'+'a'*64,self.tools,False)
+            except m.Refusal as error:report=m.failure_summary(error)
+        self.assertNotIn(CANARY,json.dumps(report));self.assertNotIn('tool_module',report)
 
     def test_manifest_is_last_after_every_artifact_readback(self):
         output=self.root/'artifacts';m.write(output/'one',CANARY.encode());m.write(output/'two',b'fixture')

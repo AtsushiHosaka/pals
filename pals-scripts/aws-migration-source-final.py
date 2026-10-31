@@ -68,7 +68,8 @@ FINAL_FAILURE_CODES = frozenset({
     'source_container_identity_invalid','source_container_state_unsafe','source_file_changed','source_file_too_large',
     'unsafe_path','unsafe_parent','unsafe_file','controller_state_path_invalid','controller_policy_invalid',
     'controller_config_invalid','controller_current_invalid','controller_key_invalid','controller_edge_invalid',
-    'controller_docker_invalid','source_mount_inventory_invalid','source_mount_destination_duplicate'})
+    'controller_docker_invalid','source_mount_inventory_invalid','source_mount_destination_duplicate',
+    'resume_final_state_invalid','resume_final_source_changed','tool_stdio_closed','tool_capture_failed'})
 CAPTURE_STAGES = frozenset({'initialization','controller_preflight','tool_identity','native_lock_probe',
     'maintenance_guard','source_running_guard','drain_definition_guard','source_tools_guard','predecessor_guard',
     'aws_preflight','explicit_final_confirmation','journal_guard','prepare_stage','prepare_inputs','source_image_identity',
@@ -76,7 +77,43 @@ CAPTURE_STAGES = frozenset({'initialization','controller_preflight','tool_identi
     'native_lock_handoff','archive_registry','database_restart_disable','database_stop','writers_restart_disable',
     'source_fence_check','source_sign','fence_sign','upload','final_state_check','inspect_final_state',
     'recheck_maintenance','recheck_native_locks','recheck_controller_read','recheck_controller_binding',
-    'recheck_container_inspect','recheck_container_identity'})
+    'recheck_container_inspect','recheck_container_identity','resume_guard','resume_drain','resume_journal'})
+TOOL_FAILURE_MODULES = frozenset({'wrapper','cloud_restore_ec2_source','cloud_restore_capture',
+    'cloud_restore_catalog','cloud_restore_evidence','cloud_restore_preflight',
+    'mac_production_database_bootstrap','mac_production_database_update',
+    'production_database_bootstrap','production_database_release'})
+TOOL_FAILURE_CLASSES = frozenset({'ValueError','KeyError','TypeError','OSError','PermissionError',
+    'FileNotFoundError','RuntimeError','OperationalError','ProgrammingError','UndefinedTable',
+    'InsufficientPrivilege','UndefinedFunction','InvalidTextRepresentation','InvalidSchemaName',
+    'QueryCanceled','LockNotAvailable','InvalidTransactionState','ReadOnlySqlTransaction',
+    'KeyboardInterrupt','ImportError','ModuleNotFoundError','Exception'})
+TOOL_CAPTURE_WRAPPER = r'''
+import json,os,signal,sys
+from pathlib import Path
+diagnostic=sys.stderr
+sys.stderr=open(os.devnull,'w')
+def interrupted(*unused):
+    raise KeyboardInterrupt
+signal.signal(signal.SIGTERM,interrupted)
+try:
+    sys.path.insert(0,'/workspace/pals-api')
+    from app.release import cloud_restore_ec2_source as source
+    value=source.capture_unsigned(source.load_config(Path(sys.argv[2])),smoke=sys.argv[1]=='smoke-capture-unsigned')
+    print(json.dumps(value,sort_keys=True),flush=True)
+except BaseException as error:
+    modules=__TOOL_MODULES__
+    classes=__TOOL_CLASSES__
+    module='wrapper';line=1;trace=error.__traceback__
+    while trace is not None:
+        filename=trace.tb_frame.f_code.co_filename
+        candidate=filename.rsplit('/',1)[-1].removesuffix('.py')
+        if '/app/release/' in filename and candidate in modules and 1<=trace.tb_lineno<=20000:
+            module=candidate;line=trace.tb_lineno
+        trace=trace.tb_next
+    kind=type(error).__name__
+    print(json.dumps({'tool_module':module,'tool_line':line,'tool_error':kind if kind in classes else 'Exception'},sort_keys=True),file=diagnostic,flush=True)
+    sys.exit(2)
+'''.replace('__TOOL_MODULES__',repr(sorted(TOOL_FAILURE_MODULES))).replace('__TOOL_CLASSES__',repr(sorted(TOOL_FAILURE_CLASSES)))
 # Exact owning mac_production_database_update._DRAIN_CHECKS. Verify this list
 # against the actual admitted API image before any final source operation.
 DRAIN = [
@@ -458,6 +495,10 @@ def actor_environment(item):
 
 def require_running(items, current):
     require(all(x["State"]["Running"] is True for x in items.values()))
+    require_source_images(items, current)
+
+
+def require_source_images(items, current):
     for role, name in ACTORS.items():
         component = {"assessment-worker": "worker", "reconciler": "api"}.get(role, role)
         require(items[name]["Image"] == current["images"][component], "source_image_changed")
@@ -785,6 +826,30 @@ def line(process, maximum=4096, timeout=190):
                 return document(bytes(data))
 
 
+def read_tool_diagnostic(process):
+    raw=bytearray();until=time.monotonic()+2
+    with selectors.DefaultSelector() as selector:
+        selector.register(process.stderr,selectors.EVENT_READ)
+        while time.monotonic()<until:
+            if not selector.select(0.1):
+                continue
+            block=os.read(process.stderr.fileno(),4097-len(raw))
+            if not block:
+                break
+            raw.extend(block)
+            if len(raw)>4096:
+                return {}
+    try:
+        value=document(bytes(raw))
+        require(set(value)=={'tool_module','tool_line','tool_error'} and
+                type(value['tool_module']) is str and value['tool_module'] in TOOL_FAILURE_MODULES and
+                type(value['tool_error']) is str and value['tool_error'] in TOOL_FAILURE_CLASSES and
+                type(value['tool_line']) is int and 1<=value['tool_line']<=20000)
+        return value
+    except (ValueError,TypeError,Refusal):
+        return {}
+
+
 def capture_tool(root, output, policy, docker, items, image, tools, smoke):
     name = "pals-source-capture-"+output.name[:16]
     require(not run(docker+["ps", "-aq", "--filter", "name=^/"+name+"$"])[1].strip())
@@ -792,12 +857,12 @@ def capture_tool(root, output, policy, docker, items, image, tools, smoke):
                        [(output/"inputs", "/inputs", True), (output/"artifacts", "/output", False),
                         (Path(policy["state_dir"])/"deploy.lock", "/deployment-lock", True)],
                        network="container:"+items[DATABASE]["Id"], interactive=True)
-    args += ["-m", "app.release.cloud_restore_ec2_source",
-             "smoke-capture-unsigned" if smoke else "capture-unsigned", "--config", "/inputs/capture-config.json"]
-    # Error output is discarded: the API has a static diagnostic; no private SQL
-    # exception or configuration can escape to the operator's console.
+    args += ["-I", "-c", TOOL_CAPTURE_WRAPPER,
+             "smoke-capture-unsigned" if smoke else "capture-unsigned", "/inputs/capture-config.json"]
+    # The constant wrapper suppresses all raw stderr and emits only closed
+    # class/module/line metadata. It invokes the unchanged owning checks.
     with subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                          stderr=subprocess.DEVNULL, env=environment(), start_new_session=True,
+                          stderr=subprocess.PIPE, env=environment(), start_new_session=True,
                           pass_fds=(() if LOCK_FD is None else (LOCK_FD,))) as process:
         try:
             ready = line(process)
@@ -826,6 +891,14 @@ def capture_tool(root, output, policy, docker, items, image, tools, smoke):
             require(payload["schema_version"] == ("pals.cloud-restore.ec2-rehearsal-unsigned.v1" if smoke else
                                                    "pals.cloud-restore.source-evidence.v1"))
             return raw
+        except BaseException:
+            diagnostic=read_tool_diagnostic(process)
+            if diagnostic:
+                failure=Refusal('tool_capture_failed')
+                for key,value in diagnostic.items():
+                    setattr(failure,key,value)
+                raise failure from None
+            raise
         finally:
             if process.poll() is None:
                 # A separate short cleanup allowance must work after capture's
@@ -960,15 +1033,43 @@ def fence(items, identity, source_envelope, policy_sha, policy, phase):
             "phase": phase}
 
 
+def resume_final_state(root, args, policy, current, binding, items):
+    require(args.final and getattr(args,'host_native_locks',False), 'resume_final_state_invalid')
+    raw=private(journal_path(root));state=document(raw)
+    require(state.get('schema_version')=='pals.ec2-source-host-journal.v1' and
+            state.get('phase')=='failed_reconcile_required' and
+            state.get('failed_phase')=='writers_stopped_capture_pending' and
+            state.get('capture_completed') is False, 'resume_final_state_invalid')
+    require(state.get('controller_policy_sha256')==sha(binding[0]) and
+            state.get('controller_current_sha256')==sha(binding[1]) and state.get('source_facts')==facts(items) and
+            state.get('tool_image')==args.tool_image and state.get('tool_api_commit')==args.tool_api_commit,
+            'resume_final_source_changed')
+    require(items[DATABASE]['State']['Running'] is True and
+            all(item['State']['Running'] is False for name,item in items.items() if name!=DATABASE),
+            'resume_final_state_invalid')
+    require_source_images(items,current)
+    output=Path(state['output_directory'])
+    require(output.parent==root/'aws-migration-20261030/source-final' and re.fullmatch(r'[0-9a-f]{32}',output.name) and
+            output.resolve(strict=True)==output and output.is_dir() and output.stat().st_uid==os.geteuid() and
+            not output.stat().st_mode&0o077, 'resume_final_state_invalid')
+    return state,{'journal_sha256':sha(raw),'output_directory':str(output)}
+
+
 def capture(root, args, policy, current, docker, binding, items, verify):
     global PHASE
     PHASE='maintenance_guard'
     if args.final:
         require_maintenance(root)
-    PHASE='source_running_guard'
-    require_running(items, current)
-    PHASE='drain_definition_guard'
-    require_drain_definition(docker, items[ACTORS["api"]])
+    resuming=getattr(args,'resume_final',False)
+    resumed=None
+    if resuming:
+        PHASE='resume_guard'
+        resumed,previous_capture=resume_final_state(root,args,policy,current,binding,items)
+    else:
+        PHASE='source_running_guard'
+        require_running(items, current)
+        PHASE='drain_definition_guard'
+        require_drain_definition(docker, items[ACTORS["api"]])
     PHASE='source_tools_guard'
     tools, dump_sha = source_tools(docker, items[DATABASE])
     if not getattr(args, 'host_native_locks', False):
@@ -983,17 +1084,22 @@ def capture(root, args, policy, current, docker, binding, items, verify):
     require(not args.final or args.confirm_source_manifest == current["manifest_sha256"],
             "explicit_final_source_confirmation_required")
     PHASE='journal_guard'
-    require(not args.final or not journal_path(root).exists(), "existing_final_journal_requires_reconcile")
+    require(resuming or not args.final or not journal_path(root).exists(), "existing_final_journal_requires_reconcile")
     PHASE='prepare_stage';output = stage(root)
     PHASE='prepare_inputs'
     prepare_inputs(root, output, policy, current, docker, items, public, dump_sha)
     PHASE='source_image_identity'
     identity = image_identity(docker, items[DATABASE], output/"artifacts")
+    if resuming:
+        require(identity==resumed['source_image_identity'], 'resume_final_source_changed')
     state = {"schema_version": "pals.ec2-source-host-journal.v1", "output_directory": str(output),
              "controller_policy_sha256": sha(binding[0]), "controller_current_sha256": sha(binding[1]),
              "source_facts": facts(items), "source_image_identity": identity,
              "tool_image": args.tool_image, "tool_api_commit": args.tool_api_commit,
              "capture_completed": False, "admission_eligible": False}
+    if resuming:
+        state['previous_capture']=previous_capture
+    resume_journal_written=False
     def recheck():
         global PHASE
         previous_phase = PHASE
@@ -1017,7 +1123,14 @@ def capture(root, args, policy, current, docker, binding, items, verify):
     try:
         PHASE='source_recheck'
         recheck()
-        if args.final:
+        if resuming:
+            PHASE='resume_drain'
+            require(drained(docker,items[DATABASE],tools),'source_workload_not_drained')
+            verify()
+            require(sha(private(journal_path(root)))==previous_capture['journal_sha256'],'resume_final_source_changed')
+            PHASE='resume_journal';journal(root,state,'writers_stopped_capture_pending')
+            resume_journal_written=True
+        if args.final and not resuming:
             PHASE='ingress_stop'
             journal(root, state, "ingress_stop_pending")
             mutate(["stop", "--time", "15", items[policy["edge_container"]]["Id"]])
@@ -1081,7 +1194,7 @@ def capture(root, args, policy, current, docker, binding, items, verify):
             return {"status": "final_uploaded_source_fenced" if args.final else "smoke_uploaded_not_admissible",
                     "session": output.name, "admission_eligible": False}
     except BaseException:
-        if args.final and journal_path(root).exists():
+        if args.final and journal_path(root).exists() and (not resuming or resume_journal_written):
             state["failed_phase"] = state.get("phase")
             journal(root, state, "failed_reconcile_required")
         raise
@@ -1142,12 +1255,15 @@ def main(arguments=None):
     mode.add_argument("--probe-lock-propagation", action="store_true")
     mode.add_argument("--smoke", action="store_true")
     mode.add_argument("--final", action="store_true")
+    mode.add_argument("--resume-final", action="store_true")
     mode.add_argument("--reconcile", action="store_true")
     mode.add_argument("--refresh-fence", action="store_true")
     mode.add_argument("--inspect-final-state", action="store_true")
     parser.add_argument("--confirm-source-manifest")
     parser.add_argument('--host-native-locks', action='store_true')
     args = parser.parse_args(arguments)
+    require(not args.resume_final or args.host_native_locks, 'resume_final_state_invalid')
+    args.final=args.final or args.resume_final
     require(args.inspect_final_state or (args.tool_image and args.tool_api_commit), "invalid_arguments")
     root = Path.home()/"pals-mini-deploy"
     PHASE = 'controller_preflight'
@@ -1218,6 +1334,10 @@ def failure_summary(error):
         changed = getattr(error, 'controller_changed_fields', [])
         if type(changed) is list and len(changed) <= 3 and all(type(field) is str and field in {'policy','current','config'} for field in changed):
             report['controller_changed_fields'] = changed
+    module=getattr(error,'tool_module',None);line=getattr(error,'tool_line',None);kind=getattr(error,'tool_error',None)
+    if type(module) is str and module in TOOL_FAILURE_MODULES and type(kind) is str and kind in TOOL_FAILURE_CLASSES and \
+            type(line) is int and 1<=line<=20000:
+        report.update(tool_module=module,tool_line=line,tool_error=kind)
     return report
 
 
