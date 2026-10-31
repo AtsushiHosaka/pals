@@ -3,6 +3,7 @@ import ast
 import importlib.util
 import io
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -106,6 +107,54 @@ class PreparationTests(unittest.TestCase):
             m.baseline(Path('/source'),report)
         self.assertEqual(report['lock_holders'],[])
 
+    def test_process_metadata_closed_public_fields(self):
+        raw=b'29456 1 501 Sat Oct 31 13:48:01 2026 01:00 0.0 Ss /usr/bin/Python\n'
+        with patch.object(m.B,'run',return_value=(0,raw,b'')) as call:
+            value=m.process_metadata(29456)
+        self.assertEqual(value,{'pid':29456,'ppid':1,'uid':501,'started_local':'2026-10-31T13:48:01',
+                               'elapsed':'01:00','cpu_percent':0.0,'state':'Ss','comm':'Python'})
+        self.assertNotIn('command=',repr(call.call_args.args[0]))
+
+    def test_script_classification_uses_actual_script_position_only(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary).resolve();(root/'controller.py').write_text('# fixture')
+            known=str(root/'controller.py')
+            self.assertEqual(m.classify_command(('python3 -I -B '+known+' '+SECRET).encode(),root),'host_controller')
+            for raw in ('python3 -c '+repr(known)+' '+SECRET,'/bin/echo '+known,'python3 /foreign/controller.py'):
+                self.assertEqual(m.classify_command(raw.encode(),root),'unknown')
+
+    def test_lock_owner_snapshot_rechecks_start_identity_fd_and_inode(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary).resolve();state=root/'state';state.mkdir(mode=0o700)
+            (root/'controller.py').write_text('# fixture')
+            for name in ('host-update.lock','deploy.lock'):m.B.write(state/name,b'')
+            inspection={'files':{name:{'sha256':pin} for name,pin in m.PINS.items()}}
+            controller=({'state_dir':str(state)},None,None,(b'policy',b'current',b'config'))
+            fds=[{'pid':29456,'command':'Python','fd':fd} for fd in ('4','5')]
+            before={'pid':29456,'ppid':1,'uid':501,'started_local':'2026-10-31T13:48:01',
+                    'elapsed':'01:00','cpu_percent':0.0,'state':'Ss','comm':'Python'}
+            for changed in (False,True):
+                after={**before,'started_local':'2026-10-31T13:49:01'} if changed else dict(before)
+                report={}
+                with patch.object(m.L,'public_inspection',return_value=inspection),patch.object(m.B,'controller',return_value=controller), \
+                     patch.object(m,'holders',side_effect=[fds,fds]),patch.object(m,'process_metadata',side_effect=[before,after]), \
+                     patch.object(m.B,'run',return_value=(0,('python3 '+str(root/'controller.py')+' '+SECRET).encode(),b'')):
+                    m.inspect_lock_owners(root,report)
+                self.assertNotIn(SECRET,json.dumps(report))
+                observed=report['lock_owner_processes'][0]
+                self.assertEqual(observed['identity_stable'],not changed)
+                self.assertEqual(observed['script_classification'],'process_changed_or_exited' if changed else 'host_controller')
+            report={}
+            def replacement(_pid):
+                fresh=state/'fresh';m.B.write(fresh,b'');os.replace(fresh,state/'deploy.lock')
+                return dict(before)
+            with patch.object(m.L,'public_inspection',return_value=inspection),patch.object(m.B,'controller',return_value=controller), \
+                 patch.object(m,'holders',side_effect=[fds,fds]),patch.object(m,'process_metadata',side_effect=replacement), \
+                 patch.object(m.B,'run',return_value=(0,b'python3 -c public',b'')):
+                m.inspect_lock_owners(root,report)
+            self.assertFalse(report['lock_inode_snapshot_stable'])
+            self.assertFalse(report['lock_owner_processes'][0]['identity_stable'])
+
     def test_reports_are_private_versioned_checksummed_and_summary_binds_inspection(self):
         with tempfile.TemporaryDirectory() as temporary:
             directory=Path(temporary).resolve();stored={};calls=[]
@@ -154,6 +203,17 @@ class PreparationTests(unittest.TestCase):
             self.assertEqual(json.loads(out.getvalue())['stage'],'sdk_read_only_probe')
             self.assertEqual(upload.call_args.args[1]['failure']['sdk_stage'],'aws_identity')
             self.assertFalse(upload.call_args.args[1]['source_stop_performed'])
+
+    def test_inspect_only_never_enters_preparation_or_takes_source_lock(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            home=Path(temporary).resolve();(home/'pals-mini-deploy').mkdir(mode=0o700)
+            def inspect(_root,report):report.update(status='lock_owner_inspection_complete',stage='complete')
+            with patch.object(m.Path,'home',return_value=home),patch.object(m,'inspect_lock_owners',side_effect=inspect), \
+                 patch.object(m,'sequence',side_effect=AssertionError('no preparation')), \
+                 patch.object(m.B,'existing_lock',side_effect=AssertionError('no lock acquisition')), \
+                 patch.object(m,'upload_reports',return_value={}),redirect_stdout(io.StringIO()):
+                self.assertEqual(m.main(['--inspect-lock-owner-only']),0)
+        with self.assertRaises(m.B.Refusal):m.main(['--inspect-lock-owner-only','--apply-runtime-secrets'])
 
 
 if __name__=='__main__':unittest.main()

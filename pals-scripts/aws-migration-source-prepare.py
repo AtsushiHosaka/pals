@@ -5,14 +5,17 @@ Default performs the SDK read-only probe, public inventory upload, fixed tool lo
 and real native/container lock probe. --apply-runtime-secrets explicitly reconciles
 then creates only missing authorized SecureStrings. --smoke is a separate opt-in.
 Every child owns its existing lock. No retries, journal deletion or service restart.
+--inspect-lock-owner-only runs only public file/lsof/ps inspection and report upload.
 """
 import base64
 import importlib.util
 import json
 import os
 import re
+import shlex
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
@@ -92,6 +95,75 @@ def holders(state):
             result.append({'command':command,'pid':pid,'fd':line[1:]})
     B.require(code in (0,1) and len(result)<=64)
     return result
+
+
+def process_metadata(pid):
+    code,out,_err=B.run(['/bin/ps','-p',str(pid),'-o','pid=,ppid=,uid=,lstart=,etime=,pcpu=,stat=,comm='],
+                       timeout=5,accepted=(0,1))
+    if code:return None
+    values=out.decode('ascii').strip().split(None,11)
+    B.require(len(values)==12 and all(re.fullmatch(r'[0-9]{1,10}',value) for value in values[:3]))
+    B.require(int(values[0])==pid and re.fullmatch(r'[0-9:-]{1,20}',values[8])
+              and re.fullmatch(r'[0-9]{1,4}(?:\.[0-9]{1,2})?',values[9])
+              and re.fullmatch(r'[A-Za-z+<>-]{1,16}',values[10]))
+    started=datetime.strptime(' '.join(values[3:8]),'%a %b %d %H:%M:%S %Y').isoformat()  # noqa: DTZ007 -- ps reports local time, explicitly labeled below
+    comm=Path(values[11]).name
+    return {'pid':pid,'ppid':int(values[1]),'uid':int(values[2]),'started_local':started,
+            'elapsed':values[8],'cpu_percent':float(values[9]),'state':values[10],
+            'comm':comm if re.fullmatch(r'[A-Za-z0-9_.+-]{1,64}',comm) else 'unclassified'}
+
+
+def classify_command(raw,root):
+    # Inspect only the executable/script position; a string occurring in -c or
+    # another argument cannot impersonate an allowlisted installed script.
+    try:
+        tokens=shlex.split(raw.decode())
+        if not tokens:return 'unknown'
+        index=0
+        if re.fullmatch(r'(?:Python|python(?:[0-9]+(?:\.[0-9]+)*)?)',Path(tokens[0]).name):
+            index=1
+            while index<len(tokens) and tokens[index] in {'-I','-B','-u','-s','-S','-E'}:index+=1
+        if index>=len(tokens) or tokens[index].startswith('-'):return 'unknown'
+        selected=Path(tokens[index]).resolve(strict=True)
+        known={root/'controller.py':'host_controller',root/'auto-recovery/auto_recovery.py':'auto_recovery',
+               SCRIPTS/'aws-migration-source-prepare.py':'source_preparation',
+               **{SCRIPTS/filename:'source_'+name for name,filename in FILES.items()}}
+        return known.get(selected,'unknown')
+    except (OSError,ValueError):return 'unknown'
+
+
+def inspect_lock_owners(root,report):
+    report['stage']='lock_owner_inspection'
+    inspection=L.public_inspection(root);report['public_controller_inspection']=inspection
+    B.require(all(inspection['files'][name].get('sha256')==pin for name,pin in PINS.items()),
+              'installed_controller_baseline_changed')
+    policy,_current,_docker,binding=B.controller(root);state=Path(policy['state_dir'])
+    report['source_baseline']={name:B.sha(raw) for name,raw in zip(('policy_sha256','current_sha256','config_sha256'),binding)}
+    def inodes():return [(path.stat().st_dev,path.stat().st_ino) for path in
+                         (state/'host-update.lock',state/'deploy.lock')]
+    initial_inodes=inodes();initial=holders(state);observed=[]
+    for pid in sorted({item['pid'] for item in initial}):
+        try:
+            first=process_metadata(pid)
+            code,command,_err=B.run(['/bin/ps','-p',str(pid),'-o','command='],timeout=5,accepted=(0,1))
+            classification=classify_command(command,root) if code==0 else 'unknown'
+            del command  # Raw arguments are never part of report/file/stdout.
+            last=process_metadata(pid)
+            stable=first is not None and last is not None and all(first[key]==last[key]
+                     for key in ('pid','ppid','uid','started_local','comm'))
+            observed.append({**(last or {'pid':pid}),'identity_stable':stable,
+                             'script_classification':classification if stable else 'process_changed_or_exited'})
+        except (OSError,ValueError,B.Refusal):
+            observed.append({'pid':pid,'identity_stable':False,'script_classification':'metadata_unavailable'})
+    final=holders(state);inode_stable=initial_inodes==inodes()
+    for item in observed:
+        before=sorted(value['fd'] for value in initial if value['pid']==item['pid'])
+        after=sorted(value['fd'] for value in final if value['pid']==item['pid'])
+        if not inode_stable or before!=after or not after:
+            item.update(identity_stable=False,script_classification='process_changed_or_exited')
+        item['lock_fds_observed']=after
+    report.update(status='lock_owner_inspection_complete',lock_holders=final,lock_owner_processes=observed,
+                  lock_inode_snapshot_stable=inode_stable,stage='complete')
 
 
 def baseline(root,report):
@@ -182,7 +254,9 @@ def main(arguments=None):
     parser=B.Parser(description=__doc__)
     parser.add_argument('--apply-runtime-secrets',action='store_true')
     parser.add_argument('--smoke',action='store_true')
+    parser.add_argument('--inspect-lock-owner-only',action='store_true')
     args=parser.parse_args(arguments)
+    B.require(not args.inspect_lock_owner_only or not (args.apply_runtime_secrets or args.smoke),'invalid_arguments')
     root=Path.home()/'pals-mini-deploy';parent=root/'aws-migration-20261030/source-preparation'
     for path in (parent.parent,parent):
         if not path.exists():path.mkdir(mode=0o700)
@@ -195,7 +269,8 @@ def main(arguments=None):
             'helper_sha256':{name:B.sha(B.private(SCRIPTS/filename,private_mode=False))
                              for name,filename in (FILES|{'prepare':Path(__file__).name}).items()}}
     try:
-        sequence(args,root,report)
+        if args.inspect_lock_owner_only:inspect_lock_owners(root,report)
+        else:sequence(args,root,report)
     except (OSError,ValueError,KeyError,TypeError,B.Refusal,KeyboardInterrupt) as error:
         report['failure']=getattr(error,'diagnostic',{'code':'preparation_guard_rejected'})
         if isinstance(error,BlockingIOError):report['failure']={'code':'source_lock_busy'}
@@ -220,7 +295,7 @@ def main(arguments=None):
                           'failure':report.get('failure',{}),'action':'check_existing_operator_sso_and_protected_receipt'},sort_keys=True))
         return 2
     print(json.dumps({'status':report['status'],'stage':report['stage'],'reports':receipts,'admission_eligible':False},sort_keys=True))
-    return 0 if report['status']=='prepared_not_admitted' else 2
+    return 0 if report['status'] in {'prepared_not_admitted','lock_owner_inspection_complete'} else 2
 
 
 if __name__=='__main__':
