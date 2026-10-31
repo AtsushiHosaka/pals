@@ -2,14 +2,56 @@
 """Read source runtime metadata, without credentials, DB rows, or mutations."""
 from __future__ import annotations
 
-import json
 import configparser
 import hashlib
+import json
 import os
 import pathlib
+import re
 import stat
 import subprocess
 import sys
+
+PUBLIC_BOOLEANS = frozenset({
+    "PALS_LOCAL_RUNTIME_ENABLED", "PALS_GUEST_CHAT_ENABLED",
+    "PALS_TOKEN_ACCOUNTING_ENABLED", "UVICORN_PROXY_HEADERS",
+})
+PUBLIC_TOKENS = frozenset({
+    "PALS_PROOF_CAPABILITY", "PALS_DRAFT_EMBEDDING_DIM",
+    "PALS_DRAFT_EMBEDDING_MODEL", "PALS_DRAFT_EMBEDDING_PROVIDER",
+    "PALS_DRAFT_EMBEDDING_REVISION", "PALS_GUEST_GLOBAL_DAILY_LIMIT",
+    "PALS_GUEST_CLIENT_IP_HEADER", "PALS_RECIPE_SEMANTIC_REVIEWER_PRINCIPAL",
+    "PALS_RECIPE_ACTIVE_LAKE_MANIFEST_SHA256", "PALS_RECIPE_ACTIVE_LEAN_VERSION",
+    "PALS_RECIPE_VERIFIER_SHA256", "PALS_RECIPE_CATALOG_ACTIVE_LAKE_MANIFEST_SHA256",
+    "PALS_RECIPE_CATALOG_ACTIVE_LEAN_VERSION", "PALS_RECIPE_CATALOG_ACTIVE_VERIFIER_SHA256",
+})
+PUBLIC_ORIGINS = frozenset({"PALS_GUEST_ALLOWED_ORIGINS", "PALS_CORS_ALLOWED_ORIGINS"})
+
+
+def public_runtime_configuration(entries: list[str]) -> dict[str, str]:
+    """A closed, validated metadata subset; never credentials or database URLs."""
+    values: dict[str, str] = {}
+    for entry in entries:
+        name, sep, value = entry.partition("=")
+        if name not in PUBLIC_BOOLEANS | PUBLIC_TOKENS | PUBLIC_ORIGINS:
+            continue
+        if not sep or name in values:
+            raise RuntimeError("Public runtime metadata is ambiguous")
+        if name in PUBLIC_BOOLEANS:
+            valid = value in {"true", "false", "1", "0", "on", "off"}
+        elif name in PUBLIC_ORIGINS:
+            origins = json.loads(value)
+            valid = isinstance(origins, list) and 0 < len(origins) <= 4 and all(
+                origin in {"https://palschat.site", "https://app.palschat.site"}
+                for origin in origins
+            )
+        else:
+            valid = re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:/@+-]{0,127}", value) is not None
+            valid = valid and not value.startswith(("sk-", "AKIA", "ASIA"))
+        if not valid:
+            raise RuntimeError("Public runtime metadata is invalid")
+        values[name] = value
+    return values
 
 
 def command(args: list[str]) -> str:
@@ -73,6 +115,7 @@ def main() -> None:
             "image_id": item["Image"],
             "state": item["State"]["Status"],
             "environment_names": sorted(env.partition("=")[0] for env in cfg.get("Env", [])),
+            "public_runtime_configuration": public_runtime_configuration(cfg.get("Env", [])),
             "mounts": [{key: mount.get(key) for key in ("Type", "Source", "Destination", "RW")} for mount in item.get("Mounts", [])],
         }
         if name.endswith("-db"):
