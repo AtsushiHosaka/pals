@@ -219,6 +219,11 @@ class SourceTests(unittest.TestCase):
 
 
 class CommandTests(unittest.TestCase):
+    def test_current_cli_error_prefix_preserves_exact_missing_parameter_classification(self):
+        missing = b"\naws: [ERROR]: An error occurred (ParameterNotFound) when calling the GetParameter operation:\n"
+        with patch.object(m, "command", return_value=(254, b"", missing)):
+            self.assertIsNone(m.Parameters().get(next(iter(values()))))
+
     def test_put_uses_stdin_and_no_secret_argv(self):
         name = next(iter(values()))
         with patch.object(m, "command", return_value=(0, b'{"Version":1}', b"")) as call:

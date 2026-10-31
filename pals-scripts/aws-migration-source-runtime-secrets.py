@@ -71,6 +71,7 @@ SAFE_FAILURE_CODES = frozenset({
     "reconcile_required", "existing_value_differs", "controller_changed",
     "source_changed", "explicit_apply_required", "write_outcome_unverified",
     "incomplete_transfer",
+    "wrong_account", "parameter_read_failed", "parameter_metadata_mismatch",
 })
 
 
@@ -358,7 +359,7 @@ class Parameters:
                                                "--with-decryption"])
         if code:
             if code == 254 and re.match(
-                rb"An error occurred \(ParameterNotFound\) when calling the GetParameter operation:",
+                rb"(?:aws: \[ERROR\]: )?An error occurred \(ParameterNotFound\) when calling the GetParameter operation:",
                 err.strip(),
             ):
                 return None
