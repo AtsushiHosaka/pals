@@ -59,6 +59,19 @@ MAX_OUTPUT = 4 * 1024 * 1024
 JOURNAL = "runtime-secrets-receipt.json"
 DEADLINE = 0.0
 LOCK_FD = None
+PHASE = "initialization"
+SAFE_FAILURE_CODES = frozenset({
+    "guard_rejected", "unsafe_path", "unsafe_parent", "not_private",
+    "wrong_path_type", "file_too_large", "duplicate_member", "invalid_arguments",
+    "lock_changed", "total_timeout", "command_timeout", "command_output_limit",
+    "command_failed", "actor_mismatch", "pending_transition", "image_mismatch",
+    "ambiguous_environment", "required_secret_absent", "invalid_secret",
+    "alias_mismatch", "aws_config_too_large", "missing_fixed_profile",
+    "cli_history_forbidden", "custom_aws_CA_forbidden", "cli_plugins_forbidden",
+    "reconcile_required", "existing_value_differs", "controller_changed",
+    "source_changed", "explicit_apply_required", "write_outcome_unverified",
+    "incomplete_transfer",
+})
 
 
 class GuardError(RuntimeError):
@@ -68,6 +81,24 @@ class GuardError(RuntimeError):
 class Parser(argparse.ArgumentParser):
     def error(self, _message):
         raise GuardError("invalid_arguments")
+
+
+def failure_summary(error):
+    """Emit fixed diagnostic labels only; exception text may contain secrets."""
+    code = "unexpected_failure"
+    if isinstance(error, GuardError):
+        code = error.args[0] if len(error.args) == 1 and isinstance(
+            error.args[0], str
+        ) and error.args[0] in SAFE_FAILURE_CODES else "guard_rejected"
+    elif isinstance(error, FileNotFoundError):
+        code = "required_path_absent"
+    elif isinstance(error, PermissionError):
+        code = "permission_denied"
+    elif isinstance(error, json.JSONDecodeError):
+        code = "invalid_json"
+    return {"status": "runtime_secret_transfer_failed", "phase": PHASE,
+            "code": code,
+            "action": "inspect_protected_receipt_and_explicitly_reconcile_before_retry"}
 
 
 def require(condition, code="guard_rejected"):
@@ -419,7 +450,8 @@ def transfer(store, values, apply, reconcile, directory, recheck):
 
 
 def main(arguments=None):
-    global DEADLINE
+    global DEADLINE, PHASE
+    PHASE = "source_preflight"
     DEADLINE = time.monotonic() + 420
     parser = Parser(description=__doc__)
     mode = parser.add_mutually_exclusive_group()
@@ -442,9 +474,12 @@ def main(arguments=None):
             require(actual == values and ids == identities, "source_changed")
 
         if args.apply or args.reconcile:
+            PHASE = "receipt_directory_preflight"
             directory = root / "aws-migration-20261030"
             os.close(protected(directory, directory=True))
+            PHASE = "aws_cli_privacy_preflight"
             aws_cli_privacy()
+            PHASE = "ssm_reconciliation" if args.reconcile else "ssm_transfer"
             result = transfer(Parameters(), values, args.apply, args.reconcile,
                               directory, recheck)
             print(json.dumps({"status": result["status"],
@@ -465,7 +500,6 @@ if __name__ == "__main__":
         sys.exit(main())
     except SystemExit:
         raise
-    except BaseException:  # noqa: BLE001 -- static privacy boundary, including interruption
-        print('{"status":"runtime_secret_transfer_failed","action":"inspect_protected_receipt_and_explicitly_reconcile_before_retry"}',
-              file=sys.stderr)
+    except BaseException as error:  # noqa: BLE001 -- fixed-label privacy boundary
+        print(json.dumps(failure_summary(error)), file=sys.stderr)
         sys.exit(2)

@@ -46,6 +46,32 @@ class Store:
         return 1
 
 
+class FailureDiagnosticTests(unittest.TestCase):
+    def test_fixed_guard_label_is_actionable_without_exception_text(self):
+        self.assertEqual(m.failure_summary(m.GuardError("not_private"))["code"],
+                         "not_private")
+
+    def test_unknown_guard_text_is_not_emitted(self):
+        output = json.dumps(m.failure_summary(m.GuardError(SECRET)))
+        self.assertNotIn(SECRET, output)
+        self.assertEqual(json.loads(output)["code"], "guard_rejected")
+
+    def test_missing_path_does_not_emit_path(self):
+        output = json.dumps(m.failure_summary(FileNotFoundError(2, SECRET, SECRET)))
+        self.assertNotIn(SECRET, output)
+        self.assertEqual(json.loads(output)["code"], "required_path_absent")
+
+    def test_raw_command_error_is_not_emitted(self):
+        output = json.dumps(m.failure_summary(RuntimeError(SECRET)))
+        self.assertNotIn(SECRET, output)
+        self.assertEqual(json.loads(output)["code"], "unexpected_failure")
+
+    def test_json_decode_error_does_not_emit_document(self):
+        output = json.dumps(m.failure_summary(json.JSONDecodeError(SECRET, SECRET, 0)))
+        self.assertNotIn(SECRET, output)
+        self.assertEqual(json.loads(output)["code"], "invalid_json")
+
+
 class TransferTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
