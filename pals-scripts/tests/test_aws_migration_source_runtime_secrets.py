@@ -342,12 +342,13 @@ class CommandTests(unittest.TestCase):
         self.assertGreater(summary['stderr_bytes'],0);self.assertEqual(summary['stdout_bytes'],0)
         self.assertNotIn('synthetic-private-value',json.dumps(summary))
 
-    def test_installed_awscli_interpreter_imports_sdk_without_aws_calls(self):
+    def test_installed_sdk_constructs_real_config_and_both_clients_with_network_disabled(self):
         m.DEADLINE=time.monotonic()+10
         interpreter=m.sdk_interpreter()
         self.assertRegex(interpreter,r'^/opt/homebrew/Cellar/awscli/[0-9._]+/libexec/bin/python$')
         code,out,err=m.command([interpreter,'-I','-B','-c',m.SDK_CHILD],b'{"operation":"inspect"}')
-        self.assertEqual(code,0);self.assertEqual(json.loads(out),{'status':'sdk_import_verified'})
+        self.assertEqual(code,0)
+        self.assertEqual(json.loads(out),{'status':'sdk_construction_verified','network_disabled':True,'max_attempts':1})
         self.assertNotIn(SECRET,repr((out,err)))
 
     def test_installed_sdk_child_rejects_foreign_or_extra_input_before_clients(self):
@@ -394,7 +395,7 @@ class CommandTests(unittest.TestCase):
                 exec(compile(m.SDK_CHILD,'<fixed-sdk-child>','exec'),{})  # noqa: S102 -- fixed reviewed SDK child, fake modules only
             result=json.loads(out.getvalue());self.assertNotIn(SECRET,out.getvalue())
             self.assertIn(('session',{'profile':m.PROFILE}),calls)
-            self.assertEqual(next(value for name,value in calls if name=='config')['retries'],{'total_max_attempts':1})
+            self.assertEqual(next(value for name,value in calls if name=='config')['retries'],{'max_attempts':1})
             if operation=='put':
                 self.assertEqual(result,{'status':'sdk_put_verified','Version':1})
                 self.assertEqual([value for name,value in calls if name=='put'],[{'Name':next(iter(values())),

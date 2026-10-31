@@ -143,7 +143,7 @@ def failure_summary(error):
     if label in AWS_ERROR_CODES | {"unclassified", "multiple_known_codes"}:
         result["aws_error_code"] = label
     sdk_stage = getattr(error, "sdk_stage", None)
-    if sdk_stage in {"sdk_import", "input_validation", "aws_identity", "ssm_metadata", "ssm_put"}:
+    if sdk_stage in {"sdk_import", "input_validation", "sdk_config", "sdk_construction", "aws_identity", "ssm_metadata", "ssm_put"}:
         result["sdk_stage"] = sdk_stage
     return result
 
@@ -488,10 +488,21 @@ try:
   value=request['Value']
   if not isinstance(value,str) or not 0<len(value.encode())<=4096 or any(ord(c)<32 or ord(c)==127 for c in value): raise ValueError()
  else: raise ValueError()
+ stage='sdk_config'
+ config=Config(connect_timeout=5,read_timeout=5,retries={'max_attempts':1},signature_version='v4')
  if operation=='inspect':
-  print('{"status":"sdk_import_verified"}')
+  stage='sdk_construction'
+  import socket
+  def no_network(*args,**kwargs): raise RuntimeError()
+  socket.socket.connect=no_network
+  socket.getaddrinfo=no_network
+  session=Session()
+  for service in ('sts','ssm'):
+   endpoint='https://'+service+'.ap-northeast-1.amazonaws.com'
+   client=session.create_client(service,region_name='ap-northeast-1',endpoint_url=endpoint,use_ssl=True,verify=True,config=config,aws_access_key_id='synthetic-no-request-key',aws_secret_access_key='synthetic-no-request-value')
+   if client.meta.endpoint_url!=endpoint or client.meta.config.retries.get('max_attempts')!=1: raise ValueError()
+  print('{"status":"sdk_construction_verified","network_disabled":true,"max_attempts":1}')
  else:
-  config=Config(connect_timeout=5,read_timeout=5,retries={'total_max_attempts':1},signature_version='v4')
   session=Session(profile='pals-migration-operator')
   stage='aws_identity'
   sts=session.create_client('sts',region_name='ap-northeast-1',endpoint_url='https://sts.ap-northeast-1.amazonaws.com',use_ssl=True,verify=True,config=config)
