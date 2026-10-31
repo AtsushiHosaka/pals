@@ -13,22 +13,35 @@ GitHub remotes are created.
 
 [Full-size PNG](docs/diagrams/pals-aws-private-target.png) · [Editable draw.io diagram](docs/diagrams/pals-aws-private-target.drawio)
 
-As of 2026-10-31 21:41 JST, both `palschat.site` and `api.palschat.site` serve
-the private AWS runtime through Cloudflare and the TLS ALB. Public browser
-verification confirmed a mathematical answer and its Lean source. Aurora holds
+As of 2026-11-01 01:29 JST, the signed sequence-5 update is deployed to the
+private AWS runtime, and the Cloudflare/TLS ALB listener and rules are restored.
+A public Japanese tan-one-degree question reached `answered` with its proof and
+Lean source displayed. Its verified Recipe was reused in 47.153515 seconds of
+server time, with independent request/answer correspondence checks. Aurora holds
 433 seeded Drafts and 102 compiler-verified Recipes. Of those Recipes, 20 have
 independently approved searchable entries; the new 82 are not yet searchable.
 A set of 744 typed Draft candidates passed local Lean and axiom replay; the new
 82 Recipes come from that same set and are not additional unique propositions.
-None of the typed Drafts is active in production. The 1,100 usable-item target
-is not yet achieved.
+There are 35 inactive typed Drafts across four generations and none active in
+production. Nine catalog counts and content/vector fingerprints were unchanged
+across this update. The 1,100 usable-item target is not yet achieved.
 Chat history was not imported, as requested.
 
-The signed sequence-4 API/worker update is deployed. All seven containers,
-private TLS connections, three recovery units, the existing catalog, and the
-ALB target passed live checks. A new public question also produced a verified
-proof and displayed its Lean source. Typed catalog publication remains disabled
-pending content review and real retrieval/proof evaluation.
+The sequence-5 manifest is
+`3c4f602e217e22685daa13eafca69fd4a6dc2cf48aa0c0bdae7f477e18442b18`.
+All 33 preflight checks, all seven containers, private TLS connections and recovery
+unit checks passed. The temporary KMS verification/RDS read policy was removed
+and its absence confirmed. Typed catalog publication remains disabled pending
+content review and real retrieval/proof evaluation.
+
+The Web update moves project navigation to the sidebar heading and creation to
+its + button, keeps plan/usage under Settings, and reuses an empty chat without
+losing its draft or attachments. Fractions and exponents can be edited inline in
+prose, with fonts served from PALS. Public checks passed project navigation and
+creation/cancel, Settings-to-usage access, empty-chat reuse, and ordinary keyboard
+fraction input with TeX copy. Explicit paste currently runs twice: the same
+operation produces `nn/(n+1n+1)` in production and `n/(n+1)` with the local fix.
+The corrected Web build and public verification are still pending.
 
 Aurora now rejects the tested non-TLS connection path and accepts TLS 1.3.
 The writer still reports `pending-reboot`; no reboot was performed. Private
@@ -41,8 +54,10 @@ The natural-power continuity question reused a verified Recipe and reached
 generation trial. These are two individual observations, not a controlled
 performance benchmark. One-second answers, the 30-person latency target, and
 automatic scaling remain unachieved or unverified. Recovery units are enabled,
-but an actual reboot test has not been performed. See the runbook for the
-current release window and the shared-network guest quota.
+but an actual reboot test has not been performed. Controlled restart/rebuild
+permission for the current release expires on 2026-11-02 at 00:51:45 JST; running
+services do not stop solely because that time passes. See the runbook for the
+release window and the shared-network guest quota.
 
 - [Migration runbook and execution status](docs/aws-migration-runbook-2026-10-30.md)
 - [AWS security checks and catalog expansion evidence](docs/aws-security-and-catalog-check-2026-10-31.md)
