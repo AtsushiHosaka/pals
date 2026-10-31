@@ -247,18 +247,21 @@ class CommandTests(unittest.TestCase):
         with patch.object(m,'command',return_value=(0,out,b'')):
             self.assertEqual(m.Parameters().get(name),existing)
 
-    def test_put_uses_fifo_and_no_secret_argv(self):
+    def test_put_uses_fixed_sdk_child_and_stdin_only(self):
         name = next(iter(values()))
-        with patch.object(m, "fifo_json", return_value=(0, b'{"Version":1}', b"")) as call:
+        with patch.object(m,'sdk_interpreter',return_value='/trusted/aws/python'), \
+             patch.object(m,"command",return_value=(0,b'{"status":"sdk_put_verified","Version":1}',b'')) as call:
             m.Parameters().put(name, SECRET)
-        args, data, _directory = call.call_args.args
+        args, data = call.call_args.args
         self.assertNotIn(SECRET, repr(args))
-        self.assertEqual(args[-1], "put-parameter")
+        self.assertEqual(args[:4],['/trusted/aws/python','-I','-B','-c'])
+        self.assertEqual(args[-1],m.SDK_CHILD)
         payload = json.loads(data)
         self.assertEqual(payload["Value"], SECRET)
-        self.assertIs(payload["Overwrite"], False)
-        self.assertEqual(payload["Type"], "SecureString")
-        self.assertIn("https://ssm.ap-northeast-1.amazonaws.com", args)
+        self.assertEqual(set(payload),{'operation','Name','Value'})
+        self.assertEqual(payload['Name'],name)
+        self.assertIn("Type='SecureString',Overwrite=False",m.SDK_CHILD)
+        self.assertIn("https://ssm.ap-northeast-1.amazonaws.com",m.SDK_CHILD)
 
     def test_fifo_real_reader_private_kernel_transport_and_cleanup(self):
         m.DEADLINE=time.monotonic()+5
@@ -284,7 +287,8 @@ class CommandTests(unittest.TestCase):
 
     def test_put_error_reports_only_fixed_paramfile_diagnostics(self):
         err=SECRET.encode()+b' [Errno 6] Device not configured: paramfile'
-        with patch.object(m,'fifo_json',return_value=(255,b'',err)),self.assertRaises(m.GuardError) as caught:
+        with patch.object(m,'sdk_interpreter',return_value='/trusted/aws/python'), \
+             patch.object(m,'command',return_value=(255,b'',err)),self.assertRaises(m.GuardError) as caught:
             m.Parameters().put(next(iter(values())),SECRET)
         summary=m.failure_summary(caught.exception)
         self.assertTrue(summary['stdin_device_unavailable']);self.assertTrue(summary['parameter_file_error'])
@@ -316,7 +320,8 @@ class CommandTests(unittest.TestCase):
         for code in ('AccessDeniedException','InvalidKeyId','ValidationException','ParameterAlreadyExists',
                      'ParameterLimitExceeded','UnsupportedParameterType','ThrottlingException'):
             err=SECRET.encode()+b' ('+code.encode()+b') '+SECRET.encode()
-            with patch.object(m,'fifo_json',return_value=(254,SECRET.encode(),err)),self.assertRaises(m.GuardError) as caught:
+            with patch.object(m,'sdk_interpreter',return_value='/trusted/aws/python'), \
+                 patch.object(m,'command',return_value=(254,SECRET.encode(),err)),self.assertRaises(m.GuardError) as caught:
                 m.Parameters().put(next(iter(values())),SECRET)
             summary=m.failure_summary(caught.exception)
             self.assertEqual(summary['code'],'write_outcome_unverified')
@@ -336,6 +341,66 @@ class CommandTests(unittest.TestCase):
         self.assertEqual(summary['aws_error_code'],'AccessDeniedException')
         self.assertGreater(summary['stderr_bytes'],0);self.assertEqual(summary['stdout_bytes'],0)
         self.assertNotIn('synthetic-private-value',json.dumps(summary))
+
+    def test_installed_awscli_interpreter_imports_sdk_without_aws_calls(self):
+        m.DEADLINE=time.monotonic()+10
+        interpreter=m.sdk_interpreter()
+        self.assertRegex(interpreter,r'^/opt/homebrew/Cellar/awscli/[0-9._]+/libexec/bin/python$')
+        code,out,err=m.command([interpreter,'-I','-B','-c',m.SDK_CHILD],b'{"operation":"inspect"}')
+        self.assertEqual(code,0);self.assertEqual(json.loads(out),{'status':'sdk_import_verified'})
+        self.assertNotIn(SECRET,repr((out,err)))
+
+    def test_installed_sdk_child_rejects_foreign_or_extra_input_before_clients(self):
+        m.DEADLINE=time.monotonic()+10;interpreter=m.sdk_interpreter()
+        for request in ({'operation':'put','Name':'/foreign','Value':SECRET},
+                        {'operation':'put','Name':next(iter(values())),'Value':SECRET,'Overwrite':True},
+                        {'operation':'put','Name':next(iter(values())),'Value':'invalid\n'},
+                        {'operation':'probe','Value':SECRET}):
+            code,out,err=m.command([interpreter,'-I','-B','-c',m.SDK_CHILD],json.dumps(request).encode())
+            self.assertEqual(code,2)
+            self.assertEqual(json.loads(out),{'status':'sdk_failed','stage':'input_validation','error_code':'unclassified'})
+            self.assertNotIn(SECRET,repr((out,err)))
+
+    def test_sdk_failure_keeps_static_error_stage_and_reconcile_requirement(self):
+        out=json.dumps({'status':'sdk_failed','stage':'ssm_put','error_code':'AccessDeniedException'}).encode()
+        with patch.object(m,'sdk_interpreter',return_value='/trusted/aws/python'), \
+             patch.object(m,'command',return_value=(2,out,b'')),self.assertRaises(m.GuardError) as caught:
+            m.Parameters().put(next(iter(values())),SECRET)
+        report=m.failure_summary(caught.exception)
+        self.assertEqual(report['code'],'write_outcome_unverified')
+        self.assertEqual(report['sdk_stage'],'ssm_put');self.assertEqual(report['aws_error_code'],'AccessDeniedException')
+        self.assertNotIn(SECRET,json.dumps(report))
+
+    def test_sdk_child_fixed_identity_put_and_probe_without_put(self):
+        import types
+        from types import SimpleNamespace
+        calls=[]
+        class Client:
+            meta=SimpleNamespace(endpoint_url='https://ssm.ap-northeast-1.amazonaws.com')
+            def get_caller_identity(self):calls.append(('identity',{}));return {'Account':m.ACCOUNT}
+            def put_parameter(self,**kwargs):calls.append(('put',kwargs));return {'Version':1}
+            def describe_parameters(self,**kwargs):calls.append(('describe',kwargs));return {'Parameters':[]}
+        class Session:
+            def __init__(self,**kwargs):calls.append(('session',kwargs))
+            def create_client(self,service,**kwargs):calls.append((service,kwargs));return Client()
+        def Config(**kwargs):calls.append(('config',kwargs));return kwargs
+        modules={name:types.ModuleType(name) for name in ('awscli','awscli.botocore','awscli.botocore.session','awscli.botocore.config')}
+        modules['awscli.botocore.session'].Session=Session;modules['awscli.botocore.config'].Config=Config
+        for operation in ('put','probe'):
+            calls.clear();request={'operation':operation}
+            if operation=='put':request.update(Name=next(iter(values())),Value=SECRET)
+            stdin=SimpleNamespace(buffer=io.BytesIO(json.dumps(request).encode()))
+            with patch.dict(sys.modules,modules),patch('sys.stdin',stdin),patch('logging.disable'),redirect_stdout(io.StringIO()) as out:
+                exec(compile(m.SDK_CHILD,'<fixed-sdk-child>','exec'),{})  # noqa: S102 -- fixed reviewed SDK child, fake modules only
+            result=json.loads(out.getvalue());self.assertNotIn(SECRET,out.getvalue())
+            self.assertIn(('session',{'profile':m.PROFILE}),calls)
+            self.assertEqual(next(value for name,value in calls if name=='config')['retries'],{'total_max_attempts':1})
+            if operation=='put':
+                self.assertEqual(result,{'status':'sdk_put_verified','Version':1})
+                self.assertEqual([value for name,value in calls if name=='put'],[{'Name':next(iter(values())),
+                                   'Value':SECRET,'Type':'SecureString','Overwrite':False}])
+            else:
+                self.assertEqual(result['status'],'sdk_probe_verified');self.assertFalse(any(name=='put' for name,_ in calls))
 
     def test_get_type_arn_version_and_error_guards(self):
         name = next(iter(values()))

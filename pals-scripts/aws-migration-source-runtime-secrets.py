@@ -11,6 +11,10 @@ Writes are not a transaction: a failure can leave a verified subset in SSM.
 later --apply can create parameters observed absent during reconciliation.
 The metadata journal is ~/pals-mini-deploy/aws-migration-20261030/
 runtime-secrets-receipt.json (0600). Never delete it to bypass reconciliation.
+Secret puts use the existing trusted Homebrew AWS CLI interpreter's bundled SDK
+in a fixed isolated child; JSON values travel only through ordinary stdin.
+--probe-sdk-transport checks its import, fixed STS account and SSM metadata read;
+it never puts a parameter. CLI/FIFO probes remain diagnostic only.
 """
 from __future__ import annotations
 
@@ -22,6 +26,7 @@ import json
 import os
 import re
 import selectors
+import shutil
 import signal
 import stat
 import subprocess
@@ -76,6 +81,7 @@ SAFE_FAILURE_CODES = frozenset({
     "wrong_account", "parameter_read_failed", "parameter_metadata_mismatch",
     "parameter_batch_response_invalid",
     "fifo_transport_failed",
+    "sdk_interpreter_untrusted", "sdk_transport_failed",
 })
 # Diagnostic labels from AWS SSM PutParameter/CommonErrors documentation.
 # A text match never establishes permissions, absence, success, or retry safety.
@@ -136,6 +142,9 @@ def failure_summary(error):
     label = getattr(error, "aws_error_code", None)
     if label in AWS_ERROR_CODES | {"unclassified", "multiple_known_codes"}:
         result["aws_error_code"] = label
+    sdk_stage = getattr(error, "sdk_stage", None)
+    if sdk_stage in {"sdk_import", "input_validation", "aws_identity", "ssm_metadata", "ssm_put"}:
+        result["sdk_stage"] = sdk_stage
     return result
 
 
@@ -452,6 +461,111 @@ def fifo_json(arguments, payload, directory):
         path.unlink()
 
 
+SDK_CHILD = r'''
+import sys,json,logging
+logging.disable(logging.CRITICAL)
+stage='sdk_import'
+try:
+ from awscli.botocore.session import Session
+ from awscli.botocore.config import Config
+ stage='input_validation'
+ def unique(items):
+  result={}
+  for key,value in items:
+   if key in result: raise ValueError()
+   result[key]=value
+  return result
+ raw=sys.stdin.buffer.read(32769)
+ if not 0<len(raw)<=32768: raise ValueError()
+ request=json.loads(raw,object_pairs_hook=unique)
+ if not isinstance(request,dict): raise ValueError()
+ operation=request.get('operation')
+ names={'/pals/prod/guest-hash-key','/pals/prod/worker-shared-secret','/pals/prod/recipe-worker-secret','/pals/prod/recipe-semantic-reviewer-secret','/pals/prod/openai-api-key'}
+ if operation in ('inspect','probe'):
+  if set(request)!={'operation'}: raise ValueError()
+ elif operation=='put':
+  if set(request)!={'operation','Name','Value'} or request['Name'] not in names: raise ValueError()
+  value=request['Value']
+  if not isinstance(value,str) or not 0<len(value.encode())<=4096 or any(ord(c)<32 or ord(c)==127 for c in value): raise ValueError()
+ else: raise ValueError()
+ if operation=='inspect':
+  print('{"status":"sdk_import_verified"}')
+ else:
+  config=Config(connect_timeout=5,read_timeout=5,retries={'total_max_attempts':1},signature_version='v4')
+  session=Session(profile='pals-migration-operator')
+  stage='aws_identity'
+  sts=session.create_client('sts',region_name='ap-northeast-1',endpoint_url='https://sts.ap-northeast-1.amazonaws.com',use_ssl=True,verify=True,config=config)
+  if sts.get_caller_identity().get('Account')!='828786775577': raise ValueError()
+  ssm=session.create_client('ssm',region_name='ap-northeast-1',endpoint_url='https://ssm.ap-northeast-1.amazonaws.com',use_ssl=True,verify=True,config=config)
+  if ssm.meta.endpoint_url!='https://ssm.ap-northeast-1.amazonaws.com': raise ValueError()
+  if operation=='probe':
+   stage='ssm_metadata'
+   response=ssm.describe_parameters(ParameterFilters=[{'Key':'Name','Option':'Equals','Values':['/pals/prod/guest-hash-key']}],MaxResults=5)
+   found=response.get('Parameters')
+   if not isinstance(found,list) or len(found)>1 or response.get('NextToken') or any(item.get('Name')!='/pals/prod/guest-hash-key' for item in found): raise ValueError()
+   print('{"status":"sdk_probe_verified","account_verified":true,"endpoint_verified":true,"metadata_read_verified":true}')
+  else:
+   stage='ssm_put'
+   response=ssm.put_parameter(Name=request['Name'],Value=request['Value'],Type='SecureString',Overwrite=False)
+   if type(response.get('Version')) is not int or response['Version']!=1: raise ValueError()
+   print('{"status":"sdk_put_verified","Version":1}')
+except BaseException as error:
+ response=getattr(error,'response',{})
+ code=response.get('Error',{}).get('Code') if isinstance(response,dict) else None
+ allowed=__ERROR_CODES__
+ print(json.dumps({'status':'sdk_failed','stage':stage,'error_code':code if code in allowed else 'unclassified'}))
+ sys.exit(2)
+'''.replace('__ERROR_CODES__', repr(sorted(AWS_ERROR_CODES)))
+
+
+def sdk_interpreter():
+    """Use the already installed Homebrew AWS CLI SDK, never install/export."""
+    candidate = shutil.which("aws", path="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin")
+    require(candidate is not None, "sdk_interpreter_untrusted")
+    script = Path(candidate).resolve(strict=True)
+    require(re.fullmatch(r"/opt/homebrew/Cellar/awscli/[0-9]+\.[0-9]+\.[0-9]+(?:_[0-9]+)?/libexec/bin/aws",
+                         str(script)), "sdk_interpreter_untrusted")
+    def trusted_tool(path):
+        require(path.resolve(strict=True) == path and path.is_file() and os.access(path, os.X_OK),
+                "sdk_interpreter_untrusted")
+        for selected in (path, *path.parents):
+            if selected == Path('/opt/homebrew/Cellar'):
+                break  # Existing Homebrew admin-owned Cellar can be0775.
+            info = selected.stat()
+            require(info.st_uid in (0, os.geteuid()) and not info.st_mode & 0o022,
+                    "sdk_interpreter_untrusted")
+    trusted_tool(script)
+    with script.open('rb') as stream:
+        shebang = stream.readline(512)
+    expected = script.parent/'python'
+    require(shebang == ('#!'+str(expected)+'\n').encode(), "sdk_interpreter_untrusted")
+    interpreter = expected.resolve(strict=True)
+    require(re.fullmatch(r'/opt/homebrew/Cellar/python(?:@[0-9]+\.[0-9]+)?/[0-9]+\.[0-9]+\.[0-9]+(?:_[0-9]+)?/.+',
+                         str(interpreter)), "sdk_interpreter_untrusted")
+    trusted_tool(interpreter)
+    return str(expected)
+
+
+def sdk_request(request):
+    payload = json.dumps(request, ensure_ascii=True, separators=(',', ':')).encode()
+    require(0 < len(payload) <= 32768, "sdk_transport_failed")
+    code, out, err = command([sdk_interpreter(), '-I', '-B', '-c', SDK_CHILD], payload)
+    try:
+        result = decode(out)
+    except (ValueError, UnicodeError, GuardError):
+        result = None
+    if code or not isinstance(result, dict) or result.get('status') == 'sdk_failed':
+        failure = GuardError('write_outcome_unverified' if request.get('operation') == 'put' else 'sdk_transport_failed')
+        failure.aws_exit_code = code
+        diagnose(failure, out, err)
+        if isinstance(result, dict) and set(result) == {'status','stage','error_code'}:
+            failure.sdk_stage = result.get('stage')
+            if result.get('error_code') in AWS_ERROR_CODES | {'unclassified'}:
+                failure.aws_error_code = result['error_code']
+        raise failure
+    return result
+
+
 class Parameters:
     def __init__(self, directory=None):
         self.directory = directory or Path.home()/"pals-mini-deploy/aws-migration-20261030"
@@ -494,19 +608,17 @@ class Parameters:
         return result
 
     def put(self, name, value):
-        payload = json.dumps({"Name": name, "Value": value, "Type": "SecureString",
-                              "Overwrite": False}, ensure_ascii=True).encode()
-        code, out, err = fifo_json(self.prefix + ["--endpoint-url", "https://ssm." + REGION +
-                                                 ".amazonaws.com", "ssm", "put-parameter"], payload, self.directory)
-        if code:
-            failure = GuardError("write_outcome_unverified")
-            failure.aws_exit_code = code
-            diagnose(failure, out, err)
-            raise failure
-        result = decode(out)
-        require(type(result.get("Version")) is int and result["Version"] == 1,
+        result = sdk_request({'operation':'put','Name':name,'Value':value})
+        require(set(result) == {'status','Version'} and result['status'] == 'sdk_put_verified'
+                and type(result.get("Version")) is int and result["Version"] == 1,
                 "write_outcome_unverified")
         return result["Version"]
+
+    def probe_sdk(self):
+        result = sdk_request({'operation':'probe'})
+        require(result == {'status':'sdk_probe_verified','account_verified':True,
+                           'endpoint_verified':True,'metadata_read_verified':True}, 'sdk_transport_failed')
+        return {**result,'service_write_attempted':False}
 
     def probe_transport(self, transport="both"):
         global PHASE
@@ -618,6 +730,7 @@ def main(arguments=None):
     mode.add_argument("--probe-cli-transport", action="store_true")
     mode.add_argument("--probe-cli-transport-stdin", action="store_true")
     mode.add_argument("--probe-cli-transport-fifo", action="store_true")
+    mode.add_argument("--probe-sdk-transport", action="store_true")
     args = parser.parse_args(arguments)
     root = Path.home() / "pals-mini-deploy"
     os.close(protected(root, directory=True))
@@ -634,7 +747,7 @@ def main(arguments=None):
             actual, ids = source(current, docker)
             require(actual == values and ids == identities, "source_changed")
 
-        probing = args.probe_cli_transport or args.probe_cli_transport_stdin or args.probe_cli_transport_fifo
+        probing = args.probe_cli_transport or args.probe_cli_transport_stdin or args.probe_cli_transport_fifo or args.probe_sdk_transport
         if args.apply or args.reconcile or probing:
             PHASE = "receipt_directory_preflight"
             directory = root / "aws-migration-20261030"
@@ -642,6 +755,10 @@ def main(arguments=None):
             PHASE = "aws_cli_privacy_preflight"
             aws_cli_privacy()
             if probing:
+                if args.probe_sdk_transport:
+                    PHASE = "sdk_transport_probe"
+                    print(json.dumps(Parameters(directory).probe_sdk(),sort_keys=True))
+                    return 0
                 PHASE = "cli_transport_probe"
                 selected = "stdin" if args.probe_cli_transport_stdin else "fifo" if args.probe_cli_transport_fifo else "both"
                 print(json.dumps(Parameters(directory).probe_transport(selected), sort_keys=True))
