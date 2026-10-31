@@ -72,6 +72,7 @@ SAFE_FAILURE_CODES = frozenset({
     "source_changed", "explicit_apply_required", "write_outcome_unverified",
     "incomplete_transfer",
     "wrong_account", "parameter_read_failed", "parameter_metadata_mismatch",
+    "parameter_batch_response_invalid",
 })
 
 
@@ -360,30 +361,26 @@ class Parameters:
         require(result.get("Account") == ACCOUNT, "wrong_account")
 
     def get(self, name):
-        code, out, err = command(self.prefix + ["--endpoint-url", "https://ssm." + REGION +
-                                               ".amazonaws.com", "ssm", "get-parameter", "--name", name,
-                                               "--with-decryption"])
+        code, out, _err = command(self.prefix + ["--endpoint-url", "https://ssm." + REGION +
+                                                ".amazonaws.com", "ssm", "get-parameters", "--names", name,
+                                                "--with-decryption"])
         if code:
-            # CLI error formatting varies across the Mini's installations.
-            # A label is only a trigger for a separate exact-name metadata read;
-            # stderr alone never establishes that a parameter is absent.
-            if code == 254 and not out.strip() and b"ParameterNotFound" in err:
-                request = json.dumps({"ParameterFilters": [{"Key": "Name", "Option": "Equals",
-                                       "Values": [name]}], "MaxResults": 5}).encode()
-                listed_code, listed_out, _listed_err = command(self.prefix + [
-                    "--endpoint-url", "https://ssm." + REGION + ".amazonaws.com",
-                    "ssm", "describe-parameters", "--no-paginate", "--cli-input-json",
-                    "file:///dev/stdin"], request)
-                if listed_code == 0:
-                    listed = decode(listed_out)
-                    if isinstance(listed, dict) and set(listed) == {"Parameters"} and listed["Parameters"] == []:
-                        return None
             failure = GuardError("parameter_read_failed")
             failure.aws_exit_code = code
-            failure.parameter_not_found_label = b"ParameterNotFound" in err
-            failure.ansi_formatting_present = b"\x1b[" in err
             raise failure
-        result = decode(out)["Parameter"]
+        try:
+            response = decode(out)
+        except (ValueError, UnicodeError, GuardError):
+            raise GuardError("parameter_batch_response_invalid") from None
+        require(isinstance(response, dict) and set(response) == {"Parameters", "InvalidParameters"}
+                and isinstance(response["Parameters"], list) and isinstance(response["InvalidParameters"], list),
+                "parameter_batch_response_invalid")
+        if response["Parameters"] == [] and response["InvalidParameters"] == [name]:
+            return None
+        require(len(response["Parameters"]) == 1 and response["InvalidParameters"] == [],
+                "parameter_batch_response_invalid")
+        result = response["Parameters"][0]
+        require(isinstance(result, dict), "parameter_batch_response_invalid")
         require(result.get("Name") == name and result.get("ARN") == arn(name)
                 and result.get("Type") == "SecureString"
                 and type(result.get("Version")) is int and result["Version"] >= 1
