@@ -32,11 +32,12 @@ class PreparationTests(unittest.TestCase):
         self.calls.append((role,args))
         if self.fail and self.fail in args:raise m.B.Refusal('child_failed')
         if role=='secrets':
-            if args==['--probe-sdk-transport']:
+            self.assertEqual(args[1:],['--sdk-tool-image','sha256:'+'b'*64,'--sdk-tool-api-commit',m.L.COMMIT])
+            if args[0]=='--probe-sdk-transport':
                 value={'status':'sdk_probe_verified','account_verified':True,'endpoint_verified':True,
                        'metadata_read_verified':True,'service_write_attempted':False}
             else:
-                verified=args==['--apply'] or self.reconciled=='verified'
+                verified=args[0]=='--apply' or self.reconciled=='verified'
                 value={'status':'verified' if verified else 'reconciled_absent',
                        'verified_parameter_count':5 if verified else 2,'admission_eligible':False}
         elif role=='inventory':
@@ -54,9 +55,9 @@ class PreparationTests(unittest.TestCase):
 
     def test_order_reconcile_before_apply_load_then_actual_lock_probe_never_final(self):
         self.sequence()
-        self.assertEqual([args for role,args in self.calls if role=='secrets'],
+        self.assertEqual([args[:1] for role,args in self.calls if role=='secrets'],
                          [['--probe-sdk-transport'],['--reconcile'],['--apply']])
-        self.assertEqual([role for role,_ in self.calls],['secrets','secrets','secrets','inventory','loader','final'])
+        self.assertEqual([role for role,_ in self.calls],['inventory','loader','secrets','secrets','secrets','final'])
         final=self.calls[-1][1]
         self.assertEqual(final,['--tool-image','sha256:'+'b'*64,'--tool-api-commit',m.L.COMMIT,'--probe-lock-propagation'])
         self.assertEqual(self.report['status'],'prepared_not_admitted')
@@ -67,7 +68,7 @@ class PreparationTests(unittest.TestCase):
         self.reconciled='verified';self.sequence()
         self.assertFalse(any('--apply' in args for role,args in self.calls if role=='secrets'))
         self.calls.clear();self.sequence(apply=False)
-        self.assertEqual([args for role,args in self.calls if role=='secrets'],[['--probe-sdk-transport']])
+        self.assertEqual([args[:1] for role,args in self.calls if role=='secrets'],[['--probe-sdk-transport']])
 
     def test_failure_stops_without_retry_or_later_actions(self):
         for flag in ('--probe-sdk-transport','--reconcile','--apply','--probe-lock-propagation'):

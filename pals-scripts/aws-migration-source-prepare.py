@@ -217,19 +217,6 @@ def sequence(args,root,report):
     if getattr(args,'final_migration',False):
         report['stage']='enter_watchdog_maintenance'
         enter_migration_maintenance(root,report)
-    sdk=B.document(step('sdk_read_only_probe','secrets',['--probe-sdk-transport']))
-    B.require(sdk=={'status':'sdk_probe_verified','account_verified':True,'endpoint_verified':True,
-                   'metadata_read_verified':True,'service_write_attempted':False})
-    report['sdk_probe_verified']=True
-    if args.apply_runtime_secrets:
-        result=B.document(step('runtime_secrets_reconcile','secrets',['--reconcile']))
-        B.require(set(result)=={'status','verified_parameter_count','admission_eligible'}
-                  and result['admission_eligible'] is False and type(result['verified_parameter_count']) is int
-                  and 0<=result['verified_parameter_count']<=5)
-        if result['status']=='reconciled_absent' and result['verified_parameter_count']<5:
-            result=B.document(step('runtime_secrets_apply','secrets',['--apply']))
-        B.require(result=={'status':'verified','verified_parameter_count':5,'admission_eligible':False})
-        report['verified_runtime_parameter_count']=5
     raw=step('public_inventory_upload','inventory',['upload-inventory'])
     lines=raw.decode('ascii').splitlines()
     B.require(len(lines)==3 and lines[0]=='Inventory uploaded to existing private backup bucket.')
@@ -241,6 +228,20 @@ def sequence(args,root,report):
               and isinstance(loaded['source_docker_image_id'],str) and B.IMAGE.fullmatch(loaded['source_docker_image_id']))
     report['source_tool_docker_image_id']=loaded['source_docker_image_id']
     common=['--tool-image',loaded['source_docker_image_id'],'--tool-api-commit',L.COMMIT]
+    sdk_common=['--sdk-tool-image',loaded['source_docker_image_id'],'--sdk-tool-api-commit',L.COMMIT]
+    sdk=B.document(step('sdk_read_only_probe','secrets',['--probe-sdk-transport',*sdk_common]))
+    B.require(sdk=={'status':'sdk_probe_verified','account_verified':True,'endpoint_verified':True,
+                   'metadata_read_verified':True,'service_write_attempted':False})
+    report['sdk_probe_verified']=True
+    if args.apply_runtime_secrets:
+        result=B.document(step('runtime_secrets_reconcile','secrets',['--reconcile',*sdk_common]))
+        B.require(set(result)=={'status','verified_parameter_count','admission_eligible'}
+                  and result['admission_eligible'] is False and type(result['verified_parameter_count']) is int
+                  and 0<=result['verified_parameter_count']<=5)
+        if result['status']=='reconciled_absent' and result['verified_parameter_count']<5:
+            result=B.document(step('runtime_secrets_apply','secrets',['--apply',*sdk_common]))
+        B.require(result=={'status':'verified','verified_parameter_count':5,'admission_eligible':False})
+        report['verified_runtime_parameter_count']=5
     observed=B.document(step('native_container_lock_probe','final',common+['--probe-lock-propagation']))
     B.require(observed=={'status':'native_container_lock_exclusion_observed','admission_eligible':False})
     if args.smoke:
