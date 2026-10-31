@@ -301,6 +301,42 @@ class CommandTests(unittest.TestCase):
             self.assertEqual(args[args.index('--generate-cli-skeleton')+1],'output')
             self.assertNotIn(SECRET,repr(args));self.assertNotIn(SECRET,payload.decode())
 
+    def test_probe_selects_one_transport_and_timeout_has_specific_phase(self):
+        for selected in ('stdin','fifo'):
+            with patch.object(m,'command',side_effect=m.GuardError('command_timeout')) as pipe, \
+                 patch.object(m,'fifo_json',side_effect=m.GuardError('command_timeout')) as fifo:
+                report=m.Parameters().probe_transport(selected)
+            self.assertEqual(set(report),{'status','service_write_attempted',selected})
+            self.assertEqual(report[selected]['phase'],'cli_transport_probe_'+selected)
+            self.assertEqual(report[selected]['failure_code'],'command_timeout')
+            self.assertEqual(pipe.call_count,1 if selected=='stdin' else 0)
+            self.assertEqual(fifo.call_count,1 if selected=='fifo' else 0)
+
+    def test_known_aws_codes_are_diagnostics_only_and_no_unknown_text(self):
+        for code in ('AccessDeniedException','InvalidKeyId','ValidationException','ParameterAlreadyExists',
+                     'ParameterLimitExceeded','UnsupportedParameterType','ThrottlingException'):
+            err=SECRET.encode()+b' ('+code.encode()+b') '+SECRET.encode()
+            with patch.object(m,'fifo_json',return_value=(254,SECRET.encode(),err)),self.assertRaises(m.GuardError) as caught:
+                m.Parameters().put(next(iter(values())),SECRET)
+            summary=m.failure_summary(caught.exception)
+            self.assertEqual(summary['code'],'write_outcome_unverified')
+            self.assertEqual(summary['aws_error_code'],code)
+            self.assertEqual(summary['stdout_bytes'],len(SECRET.encode()))
+            self.assertEqual(summary['stderr_bytes'],len(err))
+            self.assertNotIn(SECRET,json.dumps(summary))
+        error=m.GuardError('write_outcome_unverified')
+        m.diagnose(error,b'',b'UnknownCode '+SECRET.encode())
+        self.assertEqual(m.failure_summary(error)['aws_error_code'],'unclassified')
+
+    def test_actual_timeout_reports_only_bounded_output_counts_and_labels(self):
+        m.DEADLINE=time.monotonic()+0.15
+        child="import sys,time;sys.stderr.write('AccessDeniedException synthetic-private-value');sys.stderr.flush();time.sleep(5)"
+        with self.assertRaises(m.GuardError) as caught:m.command([sys.executable,'-c',child])
+        summary=m.failure_summary(caught.exception)
+        self.assertEqual(summary['aws_error_code'],'AccessDeniedException')
+        self.assertGreater(summary['stderr_bytes'],0);self.assertEqual(summary['stdout_bytes'],0)
+        self.assertNotIn('synthetic-private-value',json.dumps(summary))
+
     def test_get_type_arn_version_and_error_guards(self):
         name = next(iter(values()))
         for key, value in (("Type", "String"), ("ARN", "foreign"), ("Version", True),

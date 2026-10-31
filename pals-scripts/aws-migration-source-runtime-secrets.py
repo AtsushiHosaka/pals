@@ -77,6 +77,19 @@ SAFE_FAILURE_CODES = frozenset({
     "parameter_batch_response_invalid",
     "fifo_transport_failed",
 })
+# Diagnostic labels from AWS SSM PutParameter/CommonErrors documentation.
+# A text match never establishes permissions, absence, success, or retry safety.
+AWS_ERROR_CODES = frozenset({
+    "AccessDeniedException", "ExpiredTokenException", "IncompleteSignature", "InternalFailure",
+    "MalformedHttpRequestException", "NotAuthorized", "OptInRequired", "RequestAbortedException",
+    "RequestEntityTooLargeException", "RequestTimeoutException", "ServiceUnavailable",
+    "ThrottlingException", "UnknownOperationException", "UnrecognizedClientException", "ValidationError",
+    "ValidationException", "HierarchyLevelLimitExceededException", "HierarchyTypeMismatchException",
+    "IncompatiblePolicyException", "InternalServerError", "InvalidAllowedPatternException",
+    "InvalidKeyId", "InvalidPolicyAttributeException", "InvalidPolicyTypeException", "ParameterAlreadyExists",
+    "ParameterLimitExceeded", "ParameterMaxVersionLimitExceeded", "ParameterPatternMismatchException",
+    "PoliciesLimitExceededException", "TooManyUpdates", "UnsupportedParameterType",
+})
 
 
 class GuardError(RuntimeError):
@@ -113,8 +126,16 @@ def failure_summary(error):
         result["aws_exit_code"] = exit_code
         result["parameter_not_found_label"] = getattr(error, "parameter_not_found_label", False) is True
         result["ansi_formatting_present"] = getattr(error, "ansi_formatting_present", False) is True
-        for key in ("stdin_device_unavailable", "parameter_file_error"):
-            result[key] = getattr(error, key, False) is True
+    for key in ("stdin_device_unavailable", "parameter_file_error"):
+        if hasattr(error, key):
+            result[key] = getattr(error, key) is True
+    for key in ("stdout_bytes", "stderr_bytes"):
+        size = getattr(error, key, None)
+        if type(size) is int and 0 <= size <= MAX_OUTPUT+65536:
+            result[key] = size
+    label = getattr(error, "aws_error_code", None)
+    if label in AWS_ERROR_CODES | {"unclassified", "multiple_known_codes"}:
+        result["aws_error_code"] = label
     return result
 
 
@@ -247,6 +268,9 @@ def command(args, data=None):
                                         "command_output_limit")
                 child.wait(timeout=max(0.01, until-time.monotonic()))
             return child.returncode, bytes(output["out"]), bytes(output["err"])
+        except GuardError as error:
+            diagnose(error, bytes(output["out"]), bytes(output["err"]))
+            raise
         finally:
             if child.poll() is None:
                 try:
@@ -360,6 +384,16 @@ def transport_labels(err):
             "parameter_file_error": b"paramfile" in err or b"Error parsing parameter" in err}
 
 
+def diagnose(error, out, err):
+    """Bounded output sizes and allowlisted diagnostic labels, never raw text."""
+    error.stdout_bytes, error.stderr_bytes = len(out), len(err)
+    matched = [code for code in sorted(AWS_ERROR_CODES) if re.search(
+        rb"(?<![A-Za-z0-9_])"+code.encode()+rb"(?![A-Za-z0-9_])", err)]
+    error.aws_error_code = matched[0] if len(matched) == 1 else "multiple_known_codes" if matched else "unclassified"
+    for label, observed in transport_labels(err).items():
+        setattr(error, label, observed)
+
+
 def fifo_json(arguments, payload, directory):
     """Named FIFO: no regular secret file, argv value, shell, or CLI stdin open."""
     require(isinstance(payload, bytes) and 0 < len(payload) <= MAX_OUTPUT, "fifo_transport_failed")
@@ -431,12 +465,13 @@ class Parameters:
         require(result.get("Account") == ACCOUNT, "wrong_account")
 
     def get(self, name):
-        code, out, _err = command(self.prefix + ["--endpoint-url", "https://ssm." + REGION +
+        code, out, err = command(self.prefix + ["--endpoint-url", "https://ssm." + REGION +
                                                 ".amazonaws.com", "ssm", "get-parameters", "--names", name,
                                                 "--with-decryption"])
         if code:
             failure = GuardError("parameter_read_failed")
             failure.aws_exit_code = code
+            diagnose(failure, out, err)
             raise failure
         try:
             response = decode(out)
@@ -466,26 +501,42 @@ class Parameters:
         if code:
             failure = GuardError("write_outcome_unverified")
             failure.aws_exit_code = code
-            for label, observed in transport_labels(err).items():
-                setattr(failure, label, observed)
+            diagnose(failure, out, err)
             raise failure
         result = decode(out)
         require(type(result.get("Version")) is int and result["Version"] == 1,
                 "write_outcome_unverified")
         return result["Version"]
 
-    def probe_transport(self):
+    def probe_transport(self, transport="both"):
+        global PHASE
+        require(transport in ("both", "stdin", "fifo"), "invalid_arguments")
         # --generate-cli-skeleton output validates inputs locally and sends no
         # service request. The payload is a fixed synthetic value, never source.
         payload = json.dumps({"Name": "/pals/prod/guest-hash-key", "Value": "synthetic-transport-probe",
                               "Type": "SecureString", "Overwrite": False}).encode()
         args = self.prefix+["--endpoint-url", "https://ssm."+REGION+".amazonaws.com", "ssm", "put-parameter",
                             "--generate-cli-skeleton", "output"]
-        pipe_code, _out, pipe_err = command(args+["--cli-input-json", "file:///dev/stdin"], payload)
-        fifo_code, _out, fifo_err = fifo_json(args, payload, self.directory)
-        return {"status": "cli_json_transport_probe", "service_write_attempted": False,
-                "stdin": {"input_loaded": pipe_code == 0, "exit_code": pipe_code, **transport_labels(pipe_err)},
-                "fifo": {"input_loaded": fifo_code == 0, "exit_code": fifo_code, **transport_labels(fifo_err)}}
+        result = {"status": "cli_json_transport_probe", "service_write_attempted": False}
+        for selected in ("stdin", "fifo"):
+            if transport not in ("both", selected):
+                continue
+            PHASE = "cli_transport_probe_"+selected
+            try:
+                code, out, err = (command(args+["--cli-input-json", "file:///dev/stdin"], payload)
+                                  if selected == "stdin" else fifo_json(args, payload, self.directory))
+                observed = GuardError("command_failed")
+                diagnose(observed, out, err)
+                detail = failure_summary(observed)
+                result[selected] = {"input_loaded": code == 0, "exit_code": code,
+                                    **{key: detail[key] for key in ("stdout_bytes", "stderr_bytes", "aws_error_code",
+                                       "stdin_device_unavailable", "parameter_file_error")}}
+            except GuardError as error:
+                detail = failure_summary(error)
+                result[selected] = {"input_loaded": False, "failure_code": detail["code"],
+                                    "phase": PHASE, **{key: detail[key] for key in ("stdout_bytes", "stderr_bytes",
+                                    "aws_error_code", "stdin_device_unavailable", "parameter_file_error") if key in detail}}
+        return result
 
 
 def receipt(directory, value):
@@ -565,6 +616,8 @@ def main(arguments=None):
     mode.add_argument("--apply", action="store_true")
     mode.add_argument("--reconcile", action="store_true")
     mode.add_argument("--probe-cli-transport", action="store_true")
+    mode.add_argument("--probe-cli-transport-stdin", action="store_true")
+    mode.add_argument("--probe-cli-transport-fifo", action="store_true")
     args = parser.parse_args(arguments)
     root = Path.home() / "pals-mini-deploy"
     os.close(protected(root, directory=True))
@@ -581,15 +634,17 @@ def main(arguments=None):
             actual, ids = source(current, docker)
             require(actual == values and ids == identities, "source_changed")
 
-        if args.apply or args.reconcile or args.probe_cli_transport:
+        probing = args.probe_cli_transport or args.probe_cli_transport_stdin or args.probe_cli_transport_fifo
+        if args.apply or args.reconcile or probing:
             PHASE = "receipt_directory_preflight"
             directory = root / "aws-migration-20261030"
             os.close(protected(directory, directory=True))
             PHASE = "aws_cli_privacy_preflight"
             aws_cli_privacy()
-            if args.probe_cli_transport:
+            if probing:
                 PHASE = "cli_transport_probe"
-                print(json.dumps(Parameters(directory).probe_transport(), sort_keys=True))
+                selected = "stdin" if args.probe_cli_transport_stdin else "fifo" if args.probe_cli_transport_fifo else "both"
+                print(json.dumps(Parameters(directory).probe_transport(selected), sort_keys=True))
                 return 0
             PHASE = "ssm_reconciliation" if args.reconcile else "ssm_transfer"
             result = transfer(Parameters(), values, args.apply, args.reconcile,
