@@ -9,6 +9,10 @@ GitHub remotes are created.
 
 ## AWS migration
 
+[![PALS AWS architecture and deployment status](docs/diagrams/pals-aws-private-target.png)](docs/diagrams/pals-aws-private-target.png)
+
+[Full-size PNG](docs/diagrams/pals-aws-private-target.png) · [Editable draw.io diagram](docs/diagrams/pals-aws-private-target.drawio)
+
 As of 2026-10-31 20:32 JST, both `palschat.site` and `api.palschat.site` serve
 the private AWS runtime through Cloudflare and the TLS ALB. Public browser
 verification confirmed a mathematical answer and its Lean source. Aurora holds
@@ -34,11 +38,8 @@ automatic scaling remain unachieved or unverified. Recovery units are enabled,
 but an actual reboot test has not been performed. See the runbook for the
 current release window and the shared-network guest quota.
 
-![PALS AWS private network target](docs/diagrams/pals-aws-private-target.png)
-
 - [Migration runbook and execution status](docs/aws-migration-runbook-2026-10-30.md)
 - [AWS security checks and catalog expansion evidence](docs/aws-security-and-catalog-check-2026-10-31.md)
-- [Editable draw.io diagram](docs/diagrams/pals-aws-private-target.drawio)
 - [Capacity and performance design](docs/aws-low-latency-architecture-2026-10-30.md)
 - [Native Lean measurements on the private large instance](docs/aws-native-lean-benchmark-2026-10-30.md)
 - [Verified Recipe reuse latency and the next optimization design](docs/aws-recipe-reuse-latency-2026-10-31.md)
