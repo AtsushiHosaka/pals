@@ -44,6 +44,66 @@ def source_items(edge="pals-edge"):
 
 
 class PrivateIOTests(unittest.TestCase):
+    def test_public_inspector_holds_both_real_native_locks(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            policy = {"state_dir": str(root)}
+            for name in ("host-update.lock", "deploy.lock"):
+                m.write(root/name, b"")
+            def inspect(*unused):
+                for name in ("host-update.lock", "deploy.lock"):
+                    code = "import fcntl,sys; f=open(sys.argv[1]); fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB)"
+                    process = subprocess.run([sys.executable, "-c", code, str(root/name)], capture_output=True, check=False, timeout=5)
+                    self.assertNotEqual(process.returncode, 0)
+                return {"status": "source_final_state_observed"}
+            with patch.object(m, "DEADLINE", time.monotonic()+5), \
+                    patch.object(m, "controller", return_value=(policy, {}, ["docker"], ())), \
+                    patch.object(m, "_inspect_final_state", side_effect=inspect):
+                self.assertEqual(m.inspect_final_state(root, policy, ["docker"])["status"], "source_final_state_observed")
+
+    def test_inspect_cli_needs_no_tool_and_does_not_validate_tool(self):
+        policy = {"state_dir": "/unused"}
+        with patch.object(m, "controller", return_value=(policy, {}, ["docker"], ())), \
+                patch.object(m, "inspect_final_state", return_value={"status": "source_final_state_observed"}), \
+                patch.object(m, "tool_image", side_effect=AssertionError("tool forbidden")), \
+                patch("sys.stdout", new_callable=io.StringIO):
+            self.assertEqual(m.main(["--inspect-final-state"]), 0)
+
+    def test_final_state_without_journal_exposes_only_public_fields(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            items = source_items()
+            items[m.DATABASE]["Config"]["Image"] = "pgvector/pgvector:pg16"
+            items[m.DATABASE]["Config"]["Env"] = ["PASSWORD="+CANARY]
+            image = {"Id": items[m.DATABASE]["Image"], "RepoDigests": ["pgvector/pgvector@sha256:"+"a"*64]}
+            with patch.object(m, "result", side_effect=[list(items.values()), [image]]):
+                actual = m._inspect_final_state(root, {"edge_container": "pals-edge"}, ["docker"])
+            self.assertFalse(actual["journal"]["exists"])
+            self.assertEqual(actual["database"]["config_image"], "pgvector/pgvector:pg16")
+            self.assertNotIn(CANARY, json.dumps(actual))
+            self.assertEqual(set(actual["containers"][m.DATABASE]), {"id", "running", "restart_policy"})
+
+    def test_final_state_invalid_journal_is_unavailable_without_raw_content(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            m.journal_path(root).parent.mkdir(mode=0o700)
+            m.write(m.journal_path(root), m.encoded({"phase": CANARY, "capture_completed": True}))
+            items = source_items()
+            image = {"Id": items[m.DATABASE]["Image"], "RepoDigests": []}
+            with patch.object(m, "result", side_effect=[list(items.values()), [image]]):
+                actual = m._inspect_final_state(root, {"edge_container": "pals-edge"}, ["docker"])
+            self.assertEqual(actual["journal"]["read_status"], "unavailable")
+            self.assertNotIn(CANARY, json.dumps(actual))
+
+    def test_failure_diagnostic_is_closed_and_preserves_stage(self):
+        with patch.object(m, "PHASE", "source_image_identity"):
+            known = m.failure_summary(m.Refusal("command_failed"))
+            self.assertEqual(known["stage"], "source_image_identity")
+            self.assertEqual(known["reason"], "command_failed")
+            unknown = m.failure_summary(RuntimeError(CANARY))
+            self.assertEqual(unknown["reason"], "guard_rejected")
+            self.assertNotIn(CANARY, json.dumps(unknown))
+
     def test_private_read_rejects_alias_and_permissions(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve(); file = root/"input"

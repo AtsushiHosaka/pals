@@ -57,6 +57,19 @@ LOCK_FD = None
 LOCK_WAIT_SECONDS = 30.0
 ENVELOPE = "pals.cloud-restore.signed-evidence.v1"
 FENCE = "pals.cloud-restore.ec2-source-fence.v1"
+FINAL_FAILURE_CODES = frozenset({
+    'native_container_lock_domain_not_proven','tool_image_not_pinned_native_source','source_workload_not_drained',
+    'existing_final_journal_requires_reconcile','explicit_final_source_confirmation_required',
+    'actual_authority_drain_definition_changed','actual_DB_identity_volume_not_mounted','wrong_account','kms_verify_failed',
+    'command_failed','command_timeout','total_timeout','tool_stdio_timeout','persistent_source_fence_not_observed',
+    'reconcile_source_identity_changed','fresh_fence_requires_uploaded_final','invalid_arguments',
+    'source_recovery_maintenance_required','guard_rejected'})
+CAPTURE_STAGES = frozenset({'initialization','controller_preflight','tool_identity','native_lock_probe',
+    'maintenance_guard','source_running_guard','drain_definition_guard','source_tools_guard','predecessor_guard',
+    'aws_preflight','explicit_final_confirmation','journal_guard','prepare_stage','prepare_inputs','source_image_identity',
+    'source_recheck','ingress_stop','authority_drain','writers_stop','post_stop_drain','snapshot_tool',
+    'native_lock_handoff','archive_registry','database_restart_disable','database_stop','writers_restart_disable',
+    'source_fence_check','source_sign','fence_sign','upload','final_state_check','inspect_final_state'})
 # Exact owning mac_production_database_update._DRAIN_CHECKS. Verify this list
 # against the actual admitted API image before any final source operation.
 DRAIN = [
@@ -780,6 +793,61 @@ def journal_path(root):
     return root/"aws-migration-20261030/source-final-journal.json"
 
 
+def inspect_final_state(root, policy, docker):
+    """Public state under BOTH existing native locks. No SQL/tool/AWS."""
+    state = Path(policy["state_dir"])
+    with existing_lock(state/"host-update.lock") as verify_host, \
+            existing_lock(state/"deploy.lock") as verify_deploy:
+        current_policy, _, current_docker, _ = controller(root)
+        require(current_policy == policy and current_docker == docker)
+        actual = _inspect_final_state(root, policy, docker)
+        verify_host(); verify_deploy()
+        return actual
+
+
+def _inspect_final_state(root, policy, docker):
+    names = [*ACTORS.values(), policy["edge_container"], DATABASE]
+    observed = result(docker+["inspect", *names])
+    require(type(observed) is list and len(observed) == len(names))
+    items = {item["Name"].removeprefix("/"): item for item in observed}
+    require(set(items) == set(names))
+    containers = {}
+    for name, item in items.items():
+        restart = item["HostConfig"]["RestartPolicy"]["Name"]
+        require(HEX.fullmatch(item["Id"]) and IMAGE.fullmatch(item["Image"]) and
+                type(item["State"]["Running"]) is bool and
+                restart in {"no", "always", "unless-stopped", "on-failure"})
+        containers[name] = {"id": item["Id"], "running": item["State"]["Running"],
+                            "restart_policy": restart}
+    database = items[DATABASE]
+    reference = database["Config"]["Image"]
+    require(type(reference) is str and 0 < len(reference) <= 512 and
+            re.fullmatch(r"[a-zA-Z0-9._/:@-]+", reference))
+    images = result(docker+["image", "inspect", database["Image"]])
+    require(type(images) is list and len(images) == 1 and images[0]["Id"] == database["Image"])
+    digests = images[0].get("RepoDigests") or []
+    require(type(digests) is list and len(digests) <= 64 and all(type(value) is str and len(value) <= 512 and
+            re.fullmatch(r"[a-zA-Z0-9._/:-]+@sha256:[0-9a-f]{64}", value) for value in digests))
+    path = journal_path(root)
+    state = {"exists": os.path.lexists(path), "phase": None, "capture_completed": None,
+             "read_status": "absent"}
+    if state["exists"]:
+        state["read_status"] = "unavailable"
+        try:
+            data = document(private(path))
+            phases = {"ingress_stop_pending", "ingress_stopped_draining", "writers_stop_pending",
+                      "writers_stopped_capture_pending", "capture_complete_db_fence_pending",
+                      "database_stop_pending", "writer_restart_disable_pending", "source_fenced_sign_pending",
+                      "source_fenced_upload_pending", "uploaded_source_fenced", "failed_reconcile_required"}
+            require(data.get("phase") in phases and type(data.get("capture_completed")) is bool)
+            state.update(phase=data["phase"], capture_completed=data["capture_completed"], read_status="validated")
+        except (OSError, ValueError, TypeError, KeyError, Refusal):
+            pass
+    return {"status": "source_final_state_observed", "admission_eligible": False, "journal": state,
+            "containers": containers, "database": {"config_image": reference,
+            "docker_image_id": database["Image"], "repo_digests": digests}}
+
+
 def journal(root, state, phase):
     state["phase"] = phase
     write(journal_path(root), encoded(state), replace=True)
@@ -833,22 +901,33 @@ def fence(items, identity, source_envelope, policy_sha, policy, phase):
 
 
 def capture(root, args, policy, current, docker, binding, items, verify):
+    global PHASE
+    PHASE='maintenance_guard'
     if args.final:
         require_maintenance(root)
+    PHASE='source_running_guard'
     require_running(items, current)
+    PHASE='drain_definition_guard'
     require_drain_definition(docker, items[ACTORS["api"]])
+    PHASE='source_tools_guard'
     tools, dump_sha = source_tools(docker, items[DATABASE])
     if not getattr(args, 'host_native_locks', False):
+        PHASE='native_lock_probe'
         probe_lock(docker, args.tool_image, Path(policy["state_dir"])/"deploy.lock")
+    PHASE='predecessor_guard'
     previous = private(reference_path(policy, "signed_predecessor_manifest", root), private_mode=False)
     signature = private(reference_path(policy, "signed_predecessor_signature", root), private_mode=False)
     require(sha(previous) == current["manifest_sha256"] and document(previous)["kms_key_arn"] == KEY)
-    public = aws_preflight(policy, previous, signature)
+    PHASE='aws_preflight';public = aws_preflight(policy, previous, signature)
+    PHASE='explicit_final_confirmation'
     require(not args.final or args.confirm_source_manifest == current["manifest_sha256"],
             "explicit_final_source_confirmation_required")
+    PHASE='journal_guard'
     require(not args.final or not journal_path(root).exists(), "existing_final_journal_requires_reconcile")
-    output = stage(root)
+    PHASE='prepare_stage';output = stage(root)
+    PHASE='prepare_inputs'
     prepare_inputs(root, output, policy, current, docker, items, public, dump_sha)
+    PHASE='source_image_identity'
     identity = image_identity(docker, items[DATABASE], output/"artifacts")
     state = {"schema_version": "pals.ec2-source-host-journal.v1", "output_directory": str(output),
              "controller_policy_sha256": sha(binding[0]), "controller_current_sha256": sha(binding[1]),
@@ -865,12 +944,15 @@ def capture(root, args, policy, current, docker, binding, items, verify):
         recheck()
         return run(docker+arguments, timeout=timeout)
     try:
+        PHASE='source_recheck'
         recheck()
         if args.final:
+            PHASE='ingress_stop'
             journal(root, state, "ingress_stop_pending")
             mutate(["stop", "--time", "15", items[policy["edge_container"]]["Id"]])
             require(recheck()[policy["edge_container"]]["State"]["Running"] is False)
             journal(root, state, "ingress_stopped_draining")
+            PHASE='authority_drain'
             for _attempt in range(60):
                 if drained(docker, items[DATABASE], tools):
                     break
@@ -878,41 +960,51 @@ def capture(root, args, policy, current, docker, binding, items, verify):
             else:
                 raise Refusal("source_workload_not_drained")
             journal(root, state, "writers_stop_pending")
+            PHASE='writers_stop'
             mutate(["stop", "--time", "30", *[items[n]["Id"] for n in ACTORS.values()]], timeout=110)
             require(all(recheck()[name]["State"]["Running"] is False for name in ACTORS.values()))
+            PHASE='post_stop_drain'
             require(drained(docker, items[DATABASE], tools), "work_reappeared_after_writer_stop")
             journal(root, state, "writers_stopped_capture_pending")
+        PHASE='snapshot_tool'
         raw = capture_tool(root, output, policy, docker, items, args.tool_image, tools, not args.final)
         # Default profile reacquires native deploy.lock after the guest exits.
         # The explicit independent-domain profile already holds both native
         # locks in main; the unchanged API tool still takes its real guest lock.
+        PHASE='native_lock_handoff'
         with existing_lock(Path(policy["state_dir"])/"deploy.lock") if args.final and not getattr(args, 'host_native_locks', False) else nullcontext():
             state["capture_completed"] = True
             names = ["source.dump", "schema.sql", "roles.jcs", "authority.jcs", "source-payload.jcs",
                      "source-image-config.json"]
             # Historical registry remains necessary for target predecessor validation.
+            PHASE='archive_registry'
             write(output/"artifacts/historical-registry.json", private(output/"inputs/historical-registry.json"))
             names.append("historical-registry.json")
             if args.final:
                 journal(root, state, "capture_complete_db_fence_pending")
                 recheck()
+                PHASE='database_restart_disable'
                 mutate(["update", "--restart=no", items[DATABASE]["Id"]])
                 journal(root, state, "database_stop_pending")
+                PHASE='database_stop'
                 mutate(["stop", "--time", "60", items[DATABASE]["Id"]], timeout=75)
                 journal(root, state, "writer_restart_disable_pending")
+                PHASE='writers_restart_disable'
                 mutate(["update", "--restart=no", *[items[n]["Id"] for n in
                     [*ACTORS.values(), policy["edge_container"]]]])
+                PHASE='source_fence_check'
                 actual = recheck(); require(stopped(actual), "persistent_source_fence_not_observed")
                 journal(root, state, "source_fenced_sign_pending")
-                source_signed = signed(raw)
+                PHASE='source_sign';source_signed = signed(raw)
                 write(output/"artifacts/source-evidence.jcs", source_signed)
                 observed = fence(actual, identity, source_signed, sha(binding[0]), policy, "stopped-after-final-capture")
-                write(output/"artifacts/source-fence.jcs", signed(encoded(observed)))
+                PHASE='fence_sign';write(output/"artifacts/source-fence.jcs", signed(encoded(observed)))
                 names += ["source-evidence.jcs", "source-fence.jcs"]
                 journal(root, state, "source_fenced_upload_pending")
             prefix = "aws-migration-20261030/"+("final/" if args.final else "source-smoke/")+output.name+"/"
-            upload(output/"artifacts", names, prefix, smoke=not args.final)
+            PHASE='upload';upload(output/"artifacts", names, prefix, smoke=not args.final)
             if args.final:
+                PHASE='final_state_check'
                 require(stopped(recheck()))
                 journal(root, state, "uploaded_source_fenced")
             return {"status": "final_uploaded_source_fenced" if args.final else "smoke_uploaded_not_admissible",
@@ -970,28 +1062,37 @@ def reconcile(root, args, policy, docker, binding, items):
 
 
 def main(arguments=None):
-    global DEADLINE
+    global DEADLINE, PHASE
     DEADLINE = time.monotonic()+1200
     parser = Parser(description=__doc__)
-    parser.add_argument("--tool-image", required=True)
-    parser.add_argument("--tool-api-commit", required=True)
+    parser.add_argument("--tool-image")
+    parser.add_argument("--tool-api-commit")
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--probe-lock-propagation", action="store_true")
     mode.add_argument("--smoke", action="store_true")
     mode.add_argument("--final", action="store_true")
     mode.add_argument("--reconcile", action="store_true")
     mode.add_argument("--refresh-fence", action="store_true")
+    mode.add_argument("--inspect-final-state", action="store_true")
     parser.add_argument("--confirm-source-manifest")
     parser.add_argument('--host-native-locks', action='store_true')
     args = parser.parse_args(arguments)
+    require(args.inspect_final_state or (args.tool_image and args.tool_api_commit), "invalid_arguments")
     root = Path.home()/"pals-mini-deploy"
+    PHASE = 'controller_preflight'
     policy, current, docker, binding = controller(root)
     state = Path(policy["state_dir"])
+    if args.inspect_final_state:
+        PHASE = 'inspect_final_state'
+        print(json.dumps(inspect_final_state(root, policy, docker), sort_keys=True))
+        return 0
     with existing_lock(state/"host-update.lock") as verify:
         require(controller(root)[3] == binding)
+        PHASE = 'tool_identity'
         tool_image(docker, args.tool_image, args.tool_api_commit)
         items = inspect_all(docker, policy["edge_container"])
         if args.probe_lock_propagation:
+            PHASE = 'native_lock_probe'
             probe_lock(docker, args.tool_image, state/"deploy.lock", host_native=args.host_native_locks)
             status = 'independent_native_guest_lock_domains_observed' if args.host_native_locks else 'native_container_lock_exclusion_observed'
             print(json.dumps({'status':status,'admission_eligible':False},sort_keys=True))
@@ -1024,23 +1125,19 @@ def main(arguments=None):
     return 0
 
 
+def failure_summary(error):
+    reason = error.args[0] if type(error) is Refusal and len(error.args) == 1 and error.args[0] in FINAL_FAILURE_CODES else "guard_rejected"
+    return {"status": "source_final_failed_closed", "reason": reason,
+            "phase": "final_maintenance_prerequisite" if reason == "source_recovery_maintenance_required"
+            else "source_final_operation", "stage": PHASE if PHASE in CAPTURE_STAGES else "initialization",
+            "action": "reconcile_before_any_retry"}
+
+
 if __name__ == "__main__":
     try:
         sys.exit(main())
     except SystemExit:
         raise
     except BaseException as error:  # noqa: BLE001 -- closed labels only
-        safe = {"native_container_lock_domain_not_proven", "tool_image_not_pinned_native_source",
-                "source_workload_not_drained", "existing_final_journal_requires_reconcile",
-                "explicit_final_source_confirmation_required", "actual_authority_drain_definition_changed",
-                "actual_DB_identity_volume_not_mounted", "wrong_account", "kms_verify_failed",
-                "command_failed", "command_timeout", "total_timeout", "tool_stdio_timeout",
-                "persistent_source_fence_not_observed", "reconcile_source_identity_changed",
-                "fresh_fence_requires_uploaded_final", "invalid_arguments"}
-        safe.add("source_recovery_maintenance_required")
-        reason = error.args[0] if type(error) is Refusal and len(error.args) == 1 and error.args[0] in safe else "guard_rejected"
-        print(json.dumps({"status": "source_final_failed_closed", "reason": reason,
-                          "phase": "final_maintenance_prerequisite" if reason == "source_recovery_maintenance_required"
-                          else "source_final_operation",
-                          "action": "reconcile_before_any_retry"}), file=sys.stderr)
+        print(json.dumps(failure_summary(error)), file=sys.stderr)
         sys.exit(2)
