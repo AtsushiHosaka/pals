@@ -1,7 +1,13 @@
 """Only validated public configuration may enter the inventory upload."""
+import contextlib
 import importlib.util
+import io
+import json
+import os
+import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 FILE = Path(__file__).resolve().parents[1] / "aws-migration-source-inventory.py"
 SPEC = importlib.util.spec_from_file_location("public_migration_inventory", FILE)
@@ -125,6 +131,69 @@ class PublicRuntimeInventoryTests(unittest.TestCase):
                       "PALS_RECIPE_REVIEWER_URL=https://review.example.com"):
             with self.subTest(key=entry.split("=", 1)[0]), self.assertRaises(RuntimeError):
                 MODULE.public_runtime_configuration([entry, entry])
+
+
+    def test_additional_code_backed_public_values_are_preserved(self):
+        fields = {"PALS_PUBLIC_SUPPORT_EMAIL": "support@example.com", "PALS_OPENAI_MODEL": "gpt-5-mini",
+                  "OPENAI_MODEL": "gpt-5-mini", "PALS_OPENAI_BASE_URL": "http://localhost:11434/v1",
+                  "PALS_OPENAI_MAX_OUTPUT_TOKENS": "12000", "PALS_MAX_REPAIR_ATTEMPTS": "4",
+                  "PALS_AGENT_WORKER_IDLE_SLEEP_SECONDS": "2.0", "PALS_EXPLANATION_MODEL_TIMEOUT_SECONDS": "90",
+                  "PALS_LEAN_TIMEOUT_SECONDS": "3e2", "PALS_LEAN_REUSE_LAKE_ENVIRONMENT": "false"}
+        self.assertEqual(MODULE.public_runtime_configuration([k+"="+v for k,v in fields.items()]), fields)
+        self.assertEqual(MODULE.public_runtime_configuration([]), {})
+
+    def test_additional_public_fields_fail_closed_without_values(self):
+        for key,value in (("PALS_PUBLIC_SUPPORT_EMAIL", "bad<@example.com"),
+                          ("PALS_OPENAI_BASE_URL", "plain-label"),
+                          ("PALS_OPENAI_BASE_URL", "https://user:canary@example.com"),
+                          ("PALS_OPENAI_BASE_URL", "https://example.com?canary"),
+                          ("PALS_MAX_REPAIR_ATTEMPTS", "65"),
+                          ("PALS_EXPLANATION_MODEL_TIMEOUT_SECONDS", "301"),
+                          ("PALS_AGENT_WORKER_IDLE_SLEEP_SECONDS", "nan"),
+                          ("PALS_AGENT_WORKER_IDLE_SLEEP_SECONDS", "0"),
+                          ("PALS_OPENAI_MAX_OUTPUT_TOKENS", "0"),
+                          ("PALS_LEAN_TIMEOUT_SECONDS", "301"),
+                          ("PALS_LEAN_REUSE_LAKE_ENVIRONMENT", "on")):
+            with self.subTest(key=key), self.assertRaises(RuntimeError) as caught:
+                MODULE.public_runtime_configuration([key+"="+value])
+            self.assertNotIn(value, str(caught.exception))
+
+    def test_upload_file_reuse_is_exact_private_and_never_overwrites(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/"inventory.json";data=b'{"public":"fixture"}'
+            MODULE.persist_inventory(path,data);before=path.stat()
+            MODULE.persist_inventory(path,data)
+            self.assertEqual(path.stat().st_ino,before.st_ino)
+            self.assertEqual(path.read_bytes(),data)
+            with self.assertRaises(RuntimeError):MODULE.persist_inventory(path,b"different")
+            path.chmod(0o644)
+            with self.assertRaises(RuntimeError):MODULE.persist_inventory(path,data)
+            path.chmod(0o600)
+            alias=Path(directory)/"alias";alias.symlink_to(path)
+            with self.assertRaises(OSError):MODULE.persist_inventory(alias,data)
+            link=Path(directory)/"link";os.link(path,link)
+            with self.assertRaises(RuntimeError):MODULE.persist_inventory(path,data)
+            self.assertEqual(path.read_bytes(),data)
+
+    def test_stopped_configured_database_is_inspected_without_exec_or_sql(self):
+        with tempfile.TemporaryDirectory() as directory:
+            home=Path(directory);root=home/"pals-mini-deploy";root.mkdir();(root/"state").mkdir()
+            actors={"api":"pals-api"};policy={"containers":actors,"database_container":"pals-source-db"}
+            (root/"deploy-config.json").write_text(json.dumps({"containers":actors}))
+            (root/"controller-policy.json").write_text(json.dumps(policy))
+            (root/"state/current.json").write_text('{}')
+            calls=[]
+            def command(args):
+                calls.append(args)
+                self.assertEqual(args,["docker","inspect","pals-api","pals-source-db"])
+                return json.dumps([{"Name":"/"+name,"Image":"fixture-image","State":{"Status":"exited","Running":False},"Config":{"Env":["PALS_OPENAI_API_KEY=synthetic-private-canary"]},"Mounts":[]} for name in ("pals-api","pals-source-db")])
+            output=io.StringIO()
+            with patch.object(MODULE.pathlib.Path,"home",return_value=home),patch.object(MODULE.sys,"argv",["inventory"]),patch.object(MODULE,"command",side_effect=command),contextlib.redirect_stdout(output):
+                MODULE.main()
+            report=json.loads(output.getvalue());self.assertEqual(len(calls),1)
+            self.assertEqual(report["report_kind"],"read_only_inventory_not_backup")
+            self.assertEqual(report["containers"][1]["database_probe_skipped"],"container_not_running")
+            self.assertNotIn("synthetic-private-canary",output.getvalue())
 
 
 if __name__ == "__main__":

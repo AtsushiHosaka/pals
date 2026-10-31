@@ -5,6 +5,7 @@ from __future__ import annotations
 import configparser
 import hashlib
 import json
+import math
 import os
 import pathlib
 import re
@@ -16,7 +17,7 @@ from urllib.parse import urlsplit
 PUBLIC_BOOLEANS = frozenset({
     "PALS_LOCAL_RUNTIME_ENABLED", "PALS_GUEST_CHAT_ENABLED",
     "PALS_TOKEN_ACCOUNTING_ENABLED", "UVICORN_PROXY_HEADERS",
-    "PALS_TYPED_CATALOG_ENABLED",
+    "PALS_TYPED_CATALOG_ENABLED", "PALS_LEAN_REUSE_LAKE_ENVIRONMENT",
 })
 PUBLIC_TOKENS = frozenset({
     "PALS_PROOF_CAPABILITY", "PALS_DRAFT_EMBEDDING_DIM",
@@ -26,11 +27,16 @@ PUBLIC_TOKENS = frozenset({
     "PALS_RECIPE_ACTIVE_LAKE_MANIFEST_SHA256", "PALS_RECIPE_ACTIVE_LEAN_VERSION",
     "PALS_RECIPE_VERIFIER_SHA256", "PALS_RECIPE_CATALOG_ACTIVE_LAKE_MANIFEST_SHA256",
     "PALS_RECIPE_CATALOG_ACTIVE_LEAN_VERSION", "PALS_RECIPE_CATALOG_ACTIVE_VERIFIER_SHA256",
-    "PALS_DRAFT_EMBEDDING_DEPLOYMENT_IDENTITY",
+    "PALS_DRAFT_EMBEDDING_DEPLOYMENT_IDENTITY", "PALS_OPENAI_MODEL", "OPENAI_MODEL",
 })
+PUBLIC_INTEGERS = {"PALS_OPENAI_MAX_OUTPUT_TOKENS": (1, 1000000),
+                   "PALS_MAX_REPAIR_ATTEMPTS": (1, 64),
+                   "PALS_EXPLANATION_MODEL_TIMEOUT_SECONDS": (1, 300)}
+PUBLIC_FLOATS = frozenset({"PALS_AGENT_WORKER_IDLE_SLEEP_SECONDS", "PALS_LEAN_TIMEOUT_SECONDS"})
+PUBLIC_EMAILS = frozenset({"PALS_PUBLIC_SUPPORT_EMAIL"})
 PUBLIC_DIGESTS = frozenset({"PALS_PFI_PROVENANCE_SHA256"})
 PUBLIC_ENDPOINTS = frozenset({
-    "PALS_DRAFT_EMBEDDING_ENDPOINT_IDENTITY", "PALS_RECIPE_REVIEWER_URL",
+    "PALS_DRAFT_EMBEDDING_ENDPOINT_IDENTITY", "PALS_RECIPE_REVIEWER_URL", "PALS_OPENAI_BASE_URL",
 })
 PUBLIC_ORIGINS = frozenset({"PALS_GUEST_ALLOWED_ORIGINS", "PALS_CORS_ALLOWED_ORIGINS"})
 
@@ -98,19 +104,34 @@ def public_runtime_configuration(entries: list[str]) -> dict[str, str]:
     values: dict[str, str] = {}
     for entry in entries:
         name, sep, value = entry.partition("=")
-        if name not in PUBLIC_BOOLEANS | PUBLIC_TOKENS | PUBLIC_ORIGINS | PUBLIC_DIGESTS | PUBLIC_ENDPOINTS:
+        if name not in PUBLIC_BOOLEANS | PUBLIC_TOKENS | PUBLIC_ORIGINS | PUBLIC_DIGESTS | PUBLIC_ENDPOINTS | PUBLIC_INTEGERS.keys() | PUBLIC_FLOATS | PUBLIC_EMAILS:
             continue
         if not sep or name in values:
             raise RuntimeError("Public runtime metadata is ambiguous")
-        if name == "PALS_TYPED_CATALOG_ENABLED":
+        if name in {"PALS_TYPED_CATALOG_ENABLED", "PALS_LEAN_REUSE_LAKE_ENVIRONMENT"}:
             # The agent owns this strict opt-in; preserve literal false vs absence.
             valid = value in {"true", "false"}
         elif name in PUBLIC_BOOLEANS:
             valid = value in {"true", "false", "1", "0", "on", "off"}
+        elif name in PUBLIC_INTEGERS:
+            lower, upper = PUBLIC_INTEGERS[name]
+            valid = (re.fullmatch(r"[0-9]{1,7}", value) is not None
+                     and lower <= int(value) <= upper)
+        elif name in PUBLIC_FLOATS:
+            valid = re.fullmatch(r"[0-9]{1,6}(?:\.[0-9]{1,6})?(?:[eE][+-]?[0-9]{1,3})?", value) is not None
+            if valid:
+                number = float(value)
+                valid = math.isfinite(number) and 0 < number <= 86400
+                if name == "PALS_LEAN_TIMEOUT_SECONDS":
+                    valid = valid and number == 300
+        elif name in PUBLIC_EMAILS:
+            valid = (value.isascii() and len(value) <= 254
+                     and re.fullmatch(r"[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+", value) is not None)
         elif name in PUBLIC_DIGESTS:
             valid = re.fullmatch(r"[0-9a-f]{64}", value) is not None
         elif name in PUBLIC_ENDPOINTS:
-            valid = public_endpoint(value, reviewer=name == "PALS_RECIPE_REVIEWER_URL")
+            valid = (public_endpoint(value, reviewer=name == "PALS_RECIPE_REVIEWER_URL")
+                     and (name != "PALS_OPENAI_BASE_URL" or "://" in value))
         elif name in PUBLIC_ORIGINS:
             try:
                 # Match the owning Settings validators: CORS is comma-separated,
@@ -161,6 +182,43 @@ def path_metadata(value: object) -> object:
     return type(value).__name__
 
 
+def configured_names(config: dict[str, object], policy: dict[str, object]) -> list[str]:
+    actors = config.get("containers")
+    if (not isinstance(actors, dict) or not actors or actors != policy.get("containers")
+            or not all(isinstance(name, str) for name in actors.values())
+            or len(set(actors.values())) != len(actors)):
+        raise RuntimeError("Configured source containers are ambiguous")
+    names = [*actors.values(), policy.get("database_container")]
+    if (not all(isinstance(name, str) for name in names) or len(set(names)) != len(names)
+            or not all(re.fullmatch(r"pals-[A-Za-z0-9_.-]{1,120}", name)
+            and "geekten" not in name for name in names)):
+        raise RuntimeError("Configured source container names are invalid")
+    return sorted(names)
+
+
+def persist_inventory(path: pathlib.Path, data: bytes) -> None:
+    """Create or reuse exact protected bytes; never truncate or replace a file."""
+    try:
+        descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+    except FileExistsError:
+        descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+        with os.fdopen(descriptor, "rb") as stream:
+            info = os.fstat(stream.fileno())
+            if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid()
+                    or info.st_nlink != 1 or stat.S_IMODE(info.st_mode) != 0o600
+                    or info.st_size != len(data) or stream.read(len(data) + 1) != data):
+                raise RuntimeError("Existing inventory file is unsafe or differs")
+            current = path.lstat()
+            if (current.st_dev, current.st_ino) != (info.st_dev, info.st_ino):
+                raise RuntimeError("Existing inventory file changed")
+        return
+    with os.fdopen(descriptor, "wb") as stream:
+        os.fchmod(stream.fileno(), 0o600)
+        stream.write(data)
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
 def main() -> None:
     if sys.argv[1:] == ["configure-sso"]:
         configure_sso()
@@ -179,8 +237,8 @@ def main() -> None:
         return
     report["state_filenames"] = sorted(item.name for item in (root / "state").iterdir())
     report["current_state_metadata"] = path_metadata(json.loads((root / "state" / "current.json").read_text()))
-    names = command(["docker", "ps", "--format", "{{.Names}}"]).splitlines()
-    names = [name for name in names if name.startswith("pals-") and "geekten" not in name]
+    policy = json.loads((root / "controller-policy.json").read_text())
+    names = configured_names(config, policy)
     containers = json.loads(command(["docker", "inspect", *names])) if names else []
     public: list[dict[str, object]] = []
     for item in containers:
@@ -194,7 +252,7 @@ def main() -> None:
             "public_runtime_configuration": public_runtime_configuration(cfg.get("Env", [])),
             "mounts": [{key: mount.get(key) for key in ("Type", "Source", "Destination", "RW")} for mount in item.get("Mounts", [])],
         }
-        if name.endswith("-db"):
+        if name.endswith("-db") and item["State"].get("Running") is True:
             entry["pg_dump_version"] = command(["docker", "exec", name, "pg_dump", "--version"]).strip()
             environment = dict(env.partition("=")[::2] for env in cfg.get("Env", []))
             if name == "pals-mini-prod-webfix-20261004-db" and environment.get("POSTGRES_DB"):
@@ -214,6 +272,8 @@ SELECT json_build_object(
 ); ROLLBACK;"""
                 output = command(["docker", "exec", "--user", "postgres", name, "psql", "-X", "-A", "-t", "-q", "-v", "ON_ERROR_STOP=1", "-U", user, "-d", environment["POSTGRES_DB"], "-c", sql])
                 entry["database_metadata_not_migration_evidence"] = json.loads(output)
+        if name.endswith("-db") and item["State"].get("Running") is not True:
+            entry["database_probe_skipped"] = "container_not_running"
         public.append(entry)
     report["containers"] = public
     if sys.argv[1:] == ["upload-inventory"]:
@@ -270,14 +330,12 @@ def upload_inventory(report: dict[str, object]) -> None:
         raise RuntimeError("Wrong AWS account")
     root = pathlib.Path.home() / "pals-mini-deploy" / "aws-migration-20261030"
     root.mkdir(mode=0o700, exist_ok=True)
-    if root.is_symlink() or root.stat().st_mode & 0o077:
+    if root.is_symlink() or root.stat().st_uid != os.getuid() or stat.S_IMODE(root.stat().st_mode) != 0o700:
         raise RuntimeError("Unsafe inventory directory")
     data = (json.dumps(report, indent=2, ensure_ascii=True) + "\n").encode()
     digest = hashlib.sha256(data).hexdigest()
     path = root / ("inventory-" + digest + ".json")
-    with path.open("xb") as stream:
-        os.fchmod(stream.fileno(), 0o600)
-        stream.write(data)
+    persist_inventory(path, data)
     key = "aws-migration-20261030/source-inventory/" + path.name
     command(prefix + ["s3api", "put-object", "--bucket", "pals-mini-prod-backups-828786775577", "--expected-bucket-owner", "828786775577", "--key", key, "--body", str(path), "--server-side-encryption", "AES256"])
     print("Inventory uploaded to existing private backup bucket.")
