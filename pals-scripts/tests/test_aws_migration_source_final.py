@@ -303,6 +303,56 @@ class NativeLockWaitTests(unittest.TestCase):
         self.assertIsNone(m.LOCK_FD)
 
 
+class IndependentLockProfileTests(unittest.TestCase):
+    def test_real_distinct_inode_guest_probe_is_000_and_shared_profile_refuses_it(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary).resolve();native=root/'native.lock';guest=root/'guest.lock'
+            m.write(native,b'');m.write(guest,b'');m.DEADLINE=time.monotonic()+5;statuses=[]
+            def boundary(args,**_options):
+                code=args[-1].replace("'/lock'",repr(str(guest)))
+                result=subprocess.run([sys.executable,'-I','-c',code],capture_output=True,timeout=2,check=False)
+                statuses.append(result.returncode);return result.returncode,result.stdout,result.stderr
+            with patch.object(m,'run',side_effect=boundary):
+                m.probe_lock(['docker'],'sha256:'+'a'*64,native,host_native=True)
+                self.assertEqual(statuses,[0,0,0])
+                with self.assertRaisesRegex(m.Refusal,'native_container_lock_domain_not_proven'):
+                    m.probe_lock(['docker'],'sha256:'+'a'*64,native)
+
+    def test_independent_profile_refuses_actual_shared_native_inode(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            native=Path(temporary).resolve()/'native.lock';m.write(native,b'');m.DEADLINE=time.monotonic()+5
+            def boundary(args,**_options):
+                code=args[-1].replace("'/lock'",repr(str(native)))
+                result=subprocess.run([sys.executable,'-I','-c',code],capture_output=True,timeout=2,check=False)
+                return result.returncode,result.stdout,result.stderr
+            with patch.object(m,'run',side_effect=boundary),self.assertRaises(m.Refusal):
+                m.probe_lock(['docker'],'sha256:'+'a'*64,native,host_native=True)
+
+    def test_cli_holds_both_real_native_locks_across_complete_capture_call(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            home=Path(temporary).resolve();state=home/'state';state.mkdir(mode=0o700)
+            for name in ('host-update.lock','deploy.lock'):m.write(state/name,b'')
+            policy={'state_dir':str(state),'edge_container':'pals-edge'};binding=(b'p',b'c',b'd');events=[]
+            def capture(*arguments):
+                events.append('capture');arguments[-1]()
+                for name in ('host-update.lock','deploy.lock'):
+                    fd=os.open(state/name,os.O_RDONLY)
+                    try:
+                        with self.assertRaises(BlockingIOError):fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
+                    finally:os.close(fd)
+                return {'status':'fixture_completed'}
+            def probe(*_args,**kwargs):
+                self.assertIs(kwargs['host_native'],True);events.append('probe')
+                fd=os.open(state/'deploy.lock',os.O_RDONLY)
+                try:fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
+                finally:os.close(fd)
+            with patch.object(m.Path,'home',return_value=home),patch.object(m,'controller',return_value=(policy,{},['docker'],binding)), \
+                 patch.object(m,'tool_image'),patch.object(m,'inspect_all',return_value={}),patch.object(m,'probe_lock',side_effect=probe), \
+                 patch.object(m,'capture',side_effect=capture),patch('sys.stdout',new_callable=io.StringIO):
+                self.assertEqual(m.main(['--tool-image','sha256:'+'a'*64,'--tool-api-commit','b'*40,'--host-native-locks','--smoke']),0)
+            self.assertEqual(events,['probe','capture'])
+
+
 class CaptureOrderingTests(unittest.TestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
@@ -379,6 +429,12 @@ class CaptureOrderingTests(unittest.TestCase):
         self.assertLess(labels.index('capture'),dbstop);self.assertLess(dbstop,labels.index('sign'))
         journal=json.loads(m.private(m.journal_path(self.root)));self.assertEqual(journal['phase'],'uploaded_source_fenced')
         self.assertNotIn(CANARY,repr(journal));self.assertFalse((Path(journal['output_directory'])/'inputs/master-url').exists())
+
+    def test_independent_profile_keeps_native_deploy_lock_without_reacquiring_it(self):
+        self.args.host_native_locks=True;m.write(self.root/'host-update.lock',b'')
+        with m.existing_lock(self.root/'host-update.lock'),m.existing_lock(self.root/'deploy.lock'):
+            result=self.execute()
+        self.assertEqual(result['status'],'final_uploaded_source_fenced')
 
     def test_default_plan_has_no_aws_or_mutation_boundary(self):
         m.write(self.root/'host-update.lock',b'')

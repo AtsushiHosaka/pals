@@ -475,7 +475,7 @@ def docker_tool(docker, image, name, mounts, network="none", interactive=False):
     return args+[image]
 
 
-def probe_lock(docker, image, path):
+def probe_lock(docker, image, path, *, host_native=False):
     code = ("import fcntl,os,sys; f=os.open('/lock',os.O_RDONLY);\n"
             "try: fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB)\n"
             "except BlockingIOError: print('native_lock_refused'); sys.exit(75)\n"
@@ -489,7 +489,7 @@ def probe_lock(docker, image, path):
     # false positive. Each metadata-only probe is removed by Docker after exit.
     observe((0, b"native_lock_acquired\n"))
     with existing_lock(path):
-        observe((75, b"native_lock_refused\n"))
+        observe((0, b"native_lock_acquired\n") if host_native else (75, b"native_lock_refused\n"))
     observe((0, b"native_lock_acquired\n"))
 
 
@@ -838,7 +838,8 @@ def capture(root, args, policy, current, docker, binding, items, verify):
     require_running(items, current)
     require_drain_definition(docker, items[ACTORS["api"]])
     tools, dump_sha = source_tools(docker, items[DATABASE])
-    probe_lock(docker, args.tool_image, Path(policy["state_dir"])/"deploy.lock")
+    if not getattr(args, 'host_native_locks', False):
+        probe_lock(docker, args.tool_image, Path(policy["state_dir"])/"deploy.lock")
     previous = private(reference_path(policy, "signed_predecessor_manifest", root), private_mode=False)
     signature = private(reference_path(policy, "signed_predecessor_signature", root), private_mode=False)
     require(sha(previous) == current["manifest_sha256"] and document(previous)["kms_key_arn"] == KEY)
@@ -882,9 +883,10 @@ def capture(root, args, policy, current, docker, binding, items, verify):
             require(drained(docker, items[DATABASE], tools), "work_reappeared_after_writer_stop")
             journal(root, state, "writers_stopped_capture_pending")
         raw = capture_tool(root, output, policy, docker, items, args.tool_image, tools, not args.final)
-        # The tool owns this same real deploy.lock during capture. Reacquire it
-        # after the tool exits; never invent a second file or bypass exclusion.
-        with existing_lock(Path(policy["state_dir"])/"deploy.lock") if args.final else nullcontext():
+        # Default profile reacquires native deploy.lock after the guest exits.
+        # The explicit independent-domain profile already holds both native
+        # locks in main; the unchanged API tool still takes its real guest lock.
+        with existing_lock(Path(policy["state_dir"])/"deploy.lock") if args.final and not getattr(args, 'host_native_locks', False) else nullcontext():
             state["capture_completed"] = True
             names = ["source.dump", "schema.sql", "roles.jcs", "authority.jcs", "source-payload.jcs",
                      "source-image-config.json"]
@@ -980,6 +982,7 @@ def main(arguments=None):
     mode.add_argument("--reconcile", action="store_true")
     mode.add_argument("--refresh-fence", action="store_true")
     parser.add_argument("--confirm-source-manifest")
+    parser.add_argument('--host-native-locks', action='store_true')
     args = parser.parse_args(arguments)
     root = Path.home()/"pals-mini-deploy"
     policy, current, docker, binding = controller(root)
@@ -989,8 +992,9 @@ def main(arguments=None):
         tool_image(docker, args.tool_image, args.tool_api_commit)
         items = inspect_all(docker, policy["edge_container"])
         if args.probe_lock_propagation:
-            probe_lock(docker, args.tool_image, state/"deploy.lock")
-            print('{"status":"native_container_lock_exclusion_observed","admission_eligible":false}')
+            probe_lock(docker, args.tool_image, state/"deploy.lock", host_native=args.host_native_locks)
+            status = 'independent_native_guest_lock_domains_observed' if args.host_native_locks else 'native_container_lock_exclusion_observed'
+            print(json.dumps({'status':status,'admission_eligible':False},sort_keys=True))
             return 0
         if args.reconcile or args.refresh_fence:
             with existing_lock(state/"deploy.lock"):
@@ -1001,7 +1005,17 @@ def main(arguments=None):
                 print(json.dumps(reconcile(root, args, policy, docker, binding, items), sort_keys=True))
             return 0
         if args.smoke or args.final:
-            print(json.dumps(capture(root, args, policy, current, docker, binding, items, verify), sort_keys=True))
+            if args.host_native_locks:
+                # Prove 0/0/0 while native deploy.lock is initially free, then
+                # retain BOTH actual native locks through tool/DBstop/sign/upload.
+                probe_lock(docker,args.tool_image,state/'deploy.lock',host_native=True)
+                with existing_lock(state/'deploy.lock') as verify_deploy:
+                    def verify_both():
+                        verify();verify_deploy()
+                    result=capture(root,args,policy,current,docker,binding,items,verify_both)
+            else:
+                result=capture(root,args,policy,current,docker,binding,items,verify)
+            print(json.dumps(result,sort_keys=True))
             return 0
         require_running(items, current)
         require_drain_definition(docker, items[ACTORS["api"]])
