@@ -36,12 +36,19 @@ class PublicRuntimeInventoryTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "ambiguous"):
             MODULE.public_runtime_configuration(["PALS_GUEST_CHAT_ENABLED=true"] * 2)
 
-    def test_foreign_origin_or_secret_shaped_model_is_rejected(self):
-        for entry in ('PALS_CORS_ALLOWED_ORIGINS=https://example.com',
+    def test_credential_bearing_origin_or_secret_shaped_model_is_rejected(self):
+        for entry in ('PALS_CORS_ALLOWED_ORIGINS=https://user:private-canary@example.com',
+                      'PALS_CORS_ALLOWED_ORIGINS=https://example.com/private-canary',
+                      'PALS_CORS_ALLOWED_ORIGINS=https://example.com?private-canary',
                       'PALS_GUEST_ALLOWED_ORIGINS=not-json',
                       "PALS_DRAFT_EMBEDDING_MODEL=sk-private-canary"):
             with self.subTest(entry=entry), self.assertRaises(RuntimeError):
                 MODULE.public_runtime_configuration([entry])
+
+    def test_existing_public_origins_are_observed_without_inventing_a_domain_allowlist(self):
+        for value in ('https://api.palschat.site,http://localhost:3000', '*'):
+            self.assertEqual(MODULE.public_runtime_configuration(['PALS_CORS_ALLOWED_ORIGINS='+value]),
+                             {'PALS_CORS_ALLOWED_ORIGINS': value})
 
 
 if __name__ == "__main__":

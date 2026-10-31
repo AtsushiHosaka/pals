@@ -11,6 +11,7 @@ import re
 import stat
 import subprocess
 import sys
+from urllib.parse import urlsplit
 
 PUBLIC_BOOLEANS = frozenset({
     "PALS_LOCAL_RUNTIME_ENABLED", "PALS_GUEST_CHAT_ENABLED",
@@ -26,6 +27,23 @@ PUBLIC_TOKENS = frozenset({
     "PALS_RECIPE_CATALOG_ACTIVE_LEAN_VERSION", "PALS_RECIPE_CATALOG_ACTIVE_VERIFIER_SHA256",
 })
 PUBLIC_ORIGINS = frozenset({"PALS_GUEST_ALLOWED_ORIGINS", "PALS_CORS_ALLOWED_ORIGINS"})
+
+
+def public_origin(value: object, *, cors: bool) -> bool:
+    if not isinstance(value, str) or not 1 <= len(value) <= 253:
+        return False
+    if value == "*":
+        return cors
+    try:
+        parsed = urlsplit(value)
+        return bool(parsed.hostname) and all(ord(char) < 128 for char in value) and (
+            parsed.scheme in {"http", "https"} and parsed.username is None and parsed.password is None
+            and not parsed.path and not parsed.query and not parsed.fragment
+            and re.fullmatch(r"[A-Za-z0-9.:[\]-]+", parsed.netloc) is not None
+            and (parsed.port is None or 1 <= parsed.port <= 65535)
+        )
+    except ValueError:
+        return False
 
 
 class PublicConfigurationError(RuntimeError):
@@ -60,10 +78,8 @@ def public_runtime_configuration(entries: list[str]) -> dict[str, str]:
                            if name == "PALS_CORS_ALLOWED_ORIGINS" else json.loads(value))
             except (TypeError, ValueError) as error:
                 raise PublicConfigurationError(name) from error
-            valid = isinstance(origins, list) and 0 < len(origins) <= 4 and all(
-                origin in {"https://palschat.site", "https://app.palschat.site"}
-                for origin in origins
-            )
+            valid = isinstance(origins, list) and 0 < len(origins) <= 32 and all(
+                public_origin(origin, cors=name == "PALS_CORS_ALLOWED_ORIGINS") for origin in origins)
         else:
             valid = re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:/@+-]{0,127}", value) is not None
             valid = valid and not value.startswith(("sk-", "AKIA", "ASIA"))
