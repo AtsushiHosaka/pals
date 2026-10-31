@@ -224,6 +224,8 @@ class PreparationTests(unittest.TestCase):
                                    'admission_eligible':False}).encode()
             events.append(args[0]);return self.child(role,args)
         with patch.object(m,'baseline',side_effect=base),patch.object(m,'enter_migration_maintenance',side_effect=maintain), \
+             patch.object(m.B,'inspect_final_state',return_value={'journal':{'exists':False},
+                 'containers':{'fixture':{'running':True}}},create=True), \
              patch.object(m,'child',side_effect=run),patch.object(m.B,'controller',return_value=(
                  {},{'manifest_sha256':'e'*64},None,binding)):
             if failure:
@@ -261,6 +263,23 @@ class PreparationTests(unittest.TestCase):
                 report={'session':'b'*32};m.enter_migration_maintenance(root,report)
                 self.assertEqual(marker.read_bytes(),raw)
                 self.assertTrue(report['watchdog_maintenance']['existing_marker_preserved'])
+
+    def test_final_reason_and_fixed_stage_survive_diagnostic_filter(self):
+        value=m.safe_diagnostic(json.dumps({'status':'source_final_failed_closed',
+            'reason':'actual_authority_drain_definition_changed','stage':'drain_definition_guard',
+            'Value':SECRET}).encode())
+        self.assertEqual(value['reason'],'actual_authority_drain_definition_changed')
+        self.assertEqual(value['stage'],'drain_definition_guard')
+        self.assertNotIn(SECRET,json.dumps(value))
+
+    def test_existing_final_journal_prevents_maintenance_or_any_child_operation(self):
+        with patch.object(m,'baseline',side_effect=self.baseline),patch.object(m.B,'controller',return_value=({},None,[],None)), \
+             patch.object(m.B,'inspect_final_state',return_value={'journal':{'exists':True}}), \
+             patch.object(m,'enter_migration_maintenance') as maintain,patch.object(m,'child') as run, \
+             self.assertRaisesRegex(m.B.Refusal,'existing_final_journal_requires_reconcile'):
+            m.sequence(SimpleNamespace(apply_runtime_secrets=True,smoke=False,final_migration=True),Path('/source'),self.report)
+        maintain.assert_not_called();run.assert_not_called()
+        self.assertTrue(self.report['source_state_requires_reconciliation'])
 
     def test_inspect_only_never_enters_preparation_or_takes_source_lock(self):
         with tempfile.TemporaryDirectory() as temporary:

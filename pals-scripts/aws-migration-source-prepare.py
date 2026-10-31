@@ -61,6 +61,7 @@ def safe_diagnostic(raw):
         'metadata_validation','existing_image','archive_download','archive_contract','image_load',
         'loaded_image_validation','receipt_write','source_final_operation','final_maintenance_prerequisite',
         'native_container_lock_domain_not_proven','docker','aws'}
+    allowed=allowed|getattr(B,'FINAL_FAILURE_CODES',set())|getattr(B,'CAPTURE_STAGES',set())
     result = {}
     for key in ('status','code','reason','phase','stage','program','sdk_stage','aws_error_code'):
         item = value.get(key)
@@ -215,6 +216,14 @@ def sequence(args,root,report):
         return raw
     report['stage']='controller_preflight';baseline(root,report)
     if getattr(args,'final_migration',False):
+        policy,_current,docker,_binding=B.controller(root)
+        report['source_final_state']=B.inspect_final_state(root,policy,docker)
+        if report['source_final_state']['journal']['exists']:
+            report.update(source_stop_performed=None,final_signing_performed=None,
+                          source_state_requires_reconciliation=True)
+            raise B.Refusal('existing_final_journal_requires_reconcile')
+        B.require(all(item['running'] is True for item in report['source_final_state']['containers'].values()),
+                  'source_not_running_requires_operator_review')
         report['stage']='enter_watchdog_maintenance'
         enter_migration_maintenance(root,report)
     raw=step('public_inventory_upload','inventory',['upload-inventory'])
@@ -302,8 +311,10 @@ def main(arguments=None):
     parser.add_argument('--smoke',action='store_true')
     parser.add_argument('--inspect-lock-owner-only',action='store_true')
     parser.add_argument('--final-migration',action='store_true')
+    parser.add_argument('--inspect-final-state-only',action='store_true')
     args=parser.parse_args(arguments)
-    B.require(not args.inspect_lock_owner_only or not (args.apply_runtime_secrets or args.smoke or args.final_migration),'invalid_arguments')
+    B.require(not args.inspect_lock_owner_only or not (args.apply_runtime_secrets or args.smoke or args.final_migration or args.inspect_final_state_only),'invalid_arguments')
+    B.require(not args.inspect_final_state_only or not (args.apply_runtime_secrets or args.smoke or args.final_migration),'invalid_arguments')
     if args.final_migration:
         args.apply_runtime_secrets=True
     root=Path.home()/'pals-mini-deploy';parent=root/'aws-migration-20261030/source-preparation'
@@ -318,15 +329,27 @@ def main(arguments=None):
             'helper_sha256':{name:B.sha(B.private(SCRIPTS/filename,private_mode=False))
                              for name,filename in (FILES|{'prepare':Path(__file__).name}).items()}}
     try:
-        if args.inspect_lock_owner_only:inspect_lock_owners(root,report)
+        if args.inspect_final_state_only:
+            policy,_current,docker,_binding=B.controller(root)
+            report['stage']='final_state_inspection'
+            report['source_final_state']=B.inspect_final_state(root,policy,docker)
+            report.update(status='final_state_inspection_complete',stage='complete')
+        elif args.inspect_lock_owner_only:inspect_lock_owners(root,report)
         else:sequence(args,root,report)
     except (OSError,ValueError,KeyError,TypeError,B.Refusal,KeyboardInterrupt) as error:
         report['failure']=getattr(error,'diagnostic',{'code':'preparation_guard_rejected'})
         if isinstance(error,BlockingIOError):report['failure']={'code':'source_lock_busy'}
         if isinstance(error,KeyboardInterrupt):report['failure']={'code':'operator_interrupted'}
         if isinstance(error,B.Refusal) and len(error.args)==1 and error.args[0] in R.SAFE_FAILURE_CODES | {
-                'installed_controller_baseline_changed','source_lock_busy','controller_changed'}:
+                'installed_controller_baseline_changed','source_lock_busy','controller_changed',
+                'existing_final_journal_requires_reconcile','source_not_running_requires_operator_review'}:
             report['failure']={'code':error.args[0]}
+        if report.get('source_state_requires_reconciliation'):
+            try:
+                policy,_current,docker,_binding=B.controller(root)
+                report['source_final_state']=B.inspect_final_state(root,policy,docker)
+            except (OSError,ValueError,KeyError,TypeError,B.Refusal):
+                report['source_final_state']={'status':'read_only_inspection_unavailable'}
         if report['failure'].get('code')=='source_lock_busy' and report.get('public_controller_inspection',{}).get('locks'):
             try:
                 state=Path(report['public_controller_inspection']['locks']['host-update.lock']['path']).parent
@@ -345,7 +368,7 @@ def main(arguments=None):
         return 2
     print(json.dumps({'status':report['status'],'stage':report['stage'],'reports':receipts,'admission_eligible':False},sort_keys=True))
     return 0 if report['status'] in {'prepared_not_admitted','lock_owner_inspection_complete',
-                                   'final_uploaded_source_fenced_not_admitted'} else 2
+                                   'final_uploaded_source_fenced_not_admitted','final_state_inspection_complete'} else 2
 
 
 if __name__=='__main__':
