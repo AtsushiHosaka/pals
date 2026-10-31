@@ -90,6 +90,37 @@ class PreparationTests(unittest.TestCase):
         self.assertNotIn(SECRET,json.dumps(safe));self.assertNotIn('Value',safe)
         self.assertEqual(safe['aws_error_code'],'AccessDeniedException')
 
+    def test_final_recheck_diagnostics_survive_exact_closed_filter(self):
+        value={'status':'source_final_failed_closed','reason':'source_container_changed',
+               'stage':'recheck_container_identity','phase':'source_final_operation','failed_check_line':482,
+               'changed_fields':[{'container':m.B.DATABASE,'fields':['Mounts','Config']}], 'Env':SECRET}
+        safe=m.safe_diagnostic(json.dumps(value).encode())
+        self.assertEqual(safe,{key:item for key,item in value.items() if key!='Env'})
+        control={'reason':'controller_changed','stage':'recheck_controller_binding',
+                 'controller_changed_fields':['policy','current','config']}
+        self.assertEqual(m.safe_diagnostic(json.dumps(control).encode()),control)
+
+    def test_failed_check_line_is_strict_bounded_integer(self):
+        for line in (True,False,0,-1,20001,1.5,'482',None):
+            with self.subTest(line=line):
+                self.assertNotIn('failed_check_line',m.safe_diagnostic(json.dumps({'failed_check_line':line}).encode()))
+        for line in (1,20000):
+            self.assertEqual(m.safe_diagnostic(json.dumps({'failed_check_line':line}).encode())['failed_check_line'],line)
+
+    def test_changed_fields_reject_unknown_names_values_duplicates_and_extra_keys(self):
+        known={'container':m.B.DATABASE,'fields':['Config']}
+        invalid=[[],[{'container':SECRET,'fields':['Config']}],
+                 [{'container':m.B.DATABASE,'fields':['Env',SECRET]}],
+                 [{'container':m.B.DATABASE,'fields':['Config','Config']}],
+                 [{'container':m.B.DATABASE,'fields':['Config'],'value':SECRET}],
+                 [{'container':m.B.DATABASE,'fields':[['Config']]}],[known,known]]
+        for changes in invalid:
+            safe=m.safe_diagnostic(json.dumps({'reason':'source_container_changed','changed_fields':changes}).encode())
+            self.assertNotIn('changed_fields',safe);self.assertNotIn(SECRET,json.dumps(safe))
+        for changes in ([],['current','current'],['current',SECRET],[['current']],['Env']):
+            safe=m.safe_diagnostic(json.dumps({'reason':'controller_changed','controller_changed_fields':changes}).encode())
+            self.assertNotIn('controller_changed_fields',safe);self.assertNotIn(SECRET,json.dumps(safe))
+
     def test_lsof_returns_only_command_pid_fd_without_paths_or_argv(self):
         raw=b'p123\ncPython\nf5\nlW\nn/private/secret-path\n'+SECRET.encode()+b'\n'
         with patch.object(m.B,'run',return_value=(0,raw,b'')) as call:

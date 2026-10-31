@@ -44,6 +44,8 @@ PINS = {'watchdog':'3b4ed85f09aed5212e0e7b352e83ecd7990ad34ea517b7766f3060020b70
         'controller':'b2855d4bff4ab850206dd2c35b1f1495c06a8e188d288d915816efe9b946d159'}
 FILES = {'secrets':'aws-migration-source-runtime-secrets.py', 'inventory':'aws-migration-source-inventory.py',
          'loader':'aws-migration-source-load-tool.py', 'final':'aws-migration-source-final.py'}
+PUBLIC_CONTAINER_NAMES = frozenset({*B.ACTORS.values(), B.DATABASE,
+                                    'pals-mini-prod-webfix-20261004-edge-public'})
 
 
 def safe_diagnostic(raw):
@@ -74,6 +76,23 @@ def safe_diagnostic(raw):
     for key in ('stdin_device_unavailable','parameter_file_error'):
         if type(value.get(key)) is bool:
             result[key]=value[key]
+    line=value.get('failed_check_line')
+    if type(line) is int and 1<=line<=20000:
+        result['failed_check_line']=line
+    changes=value.get('changed_fields')
+    if result.get('reason')=='source_container_changed' and type(changes) is list and 0<len(changes)<=8 and all(
+            type(row) is dict and set(row)=={'container','fields'} and
+            type(row['container']) is str and row['container'] in PUBLIC_CONTAINER_NAMES and
+            type(row['fields']) is list and 0<len(row['fields'])<=4 and
+            all(type(field) is str and field in {'Id','Image','Mounts','Config'} for field in row['fields']) and
+            len(set(row['fields']))==len(row['fields']) for row in changes) and \
+            len({row['container'] for row in changes})==len(changes):
+        result['changed_fields']=changes
+    controller_changes=value.get('controller_changed_fields')
+    if result.get('reason')=='controller_changed' and type(controller_changes) is list and 0<len(controller_changes)<=3 and \
+            all(type(field) is str and field in {'policy','current','config'} for field in controller_changes) and \
+            len(set(controller_changes))==len(controller_changes):
+        result['controller_changed_fields']=controller_changes
     return result or {'code':'child_output_unclassified'}
 
 
