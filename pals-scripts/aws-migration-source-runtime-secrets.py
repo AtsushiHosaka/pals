@@ -15,6 +15,8 @@ Secret puts use the existing trusted Homebrew AWS CLI interpreter's bundled SDK
 in a fixed isolated child; JSON values travel only through ordinary stdin.
 --probe-sdk-transport checks its import, fixed STS account and SSM metadata read;
 it never puts a parameter. CLI/FIFO probes remain diagnostic only.
+The explicit --sdk-tool-image/--sdk-tool-api-commit pair uses a pinned isolated
+ARM64 API tool instead; exported temporary credentials travel only in its stdin.
 """
 from __future__ import annotations
 
@@ -34,6 +36,7 @@ import sys
 import threading
 import time
 from contextlib import contextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
 
@@ -83,6 +86,7 @@ SAFE_FAILURE_CODES = frozenset({
     "parameter_batch_response_invalid",
     "fifo_transport_failed",
     "sdk_interpreter_untrusted", "sdk_transport_failed",
+    "sdk_tool_image_untrusted", "credential_export_failed", "credential_export_invalid",
 })
 # Diagnostic labels from AWS SSM PutParameter/CommonErrors documentation.
 # A text match never establishes permissions, absence, success, or retry safety.
@@ -543,6 +547,118 @@ except BaseException as error:
  sys.exit(2)
 '''.replace('__ERROR_CODES__', repr(sorted(AWS_ERROR_CODES)))
 
+DOCKER_SDK_CHILD = r'''
+import sys,json,logging,os,signal,re
+from datetime import datetime,timezone
+def deadline_expired(signum,frame): raise TimeoutError()
+signal.signal(signal.SIGALRM,deadline_expired)
+signal.alarm(25)
+logging.disable(logging.CRITICAL)
+os.environ.clear()
+os.environ.update(HOME='/tmp',PATH='/usr/local/bin:/usr/bin:/bin',AWS_CONFIG_FILE='/dev/null',AWS_SHARED_CREDENTIALS_FILE='/dev/null',BOTO_CONFIG='/dev/null',AWS_EC2_METADATA_DISABLED='true')
+stage='sdk_import'
+try:
+ from boto3 import Session
+ from botocore.config import Config
+ stage='input_validation'
+ def unique(items):
+  result={}
+  for key,value in items:
+   if key in result: raise ValueError()
+   result[key]=value
+  return result
+ raw=sys.stdin.buffer.read(65537)
+ if not 0<len(raw)<=65536: raise ValueError()
+ envelope=json.loads(raw,object_pairs_hook=unique)
+ if not isinstance(envelope,dict) or set(envelope)!={'credentials','request'}: raise ValueError()
+ credentials,request=envelope['credentials'],envelope['request']
+ if not isinstance(credentials,dict) or set(credentials)!={'Version','AccessKeyId','SecretAccessKey','SessionToken','Expiration'} or type(credentials['Version']) is not int or credentials['Version']!=1: raise ValueError()
+ if re.fullmatch(r'ASIA[A-Z0-9]{16}',credentials['AccessKeyId']) is None or re.fullmatch(r'[A-Za-z0-9/+=]{40}',credentials['SecretAccessKey']) is None or not isinstance(credentials['SessionToken'],str) or not 16<=len(credentials['SessionToken'])<=16384 or any(ord(c)<33 or ord(c)>126 for c in credentials['SessionToken']): raise ValueError()
+ expires=datetime.fromisoformat(credentials['Expiration'].replace('Z','+00:00'))
+ if expires.tzinfo is None or not 60<(expires-datetime.now(timezone.utc)).total_seconds()<=43200: raise ValueError()
+ if not isinstance(request,dict): raise ValueError()
+ operation=request.get('operation')
+ names={'/pals/prod/guest-hash-key','/pals/prod/worker-shared-secret','/pals/prod/recipe-worker-secret','/pals/prod/recipe-semantic-reviewer-secret','/pals/prod/openai-api-key'}
+ if operation in ('probe','inspect'):
+  if set(request)!={'operation'}: raise ValueError()
+ elif operation=='put':
+  if set(request)!={'operation','Name','Value'} or request['Name'] not in names or not isinstance(request['Value'],str) or not 0<len(request['Value'].encode())<=4096 or any(ord(c)<32 or ord(c)==127 for c in request['Value']): raise ValueError()
+ else: raise ValueError()
+ stage='sdk_config'
+ config=Config(connect_timeout=5,read_timeout=5,retries={'total_max_attempts':1},signature_version='v4',proxies={})
+ session=Session(aws_access_key_id=credentials['AccessKeyId'],aws_secret_access_key=credentials['SecretAccessKey'],aws_session_token=credentials['SessionToken'],region_name='ap-northeast-1')
+ if operation=='inspect':
+  stage='sdk_construction'
+  import socket
+  def no_network(*args,**kwargs): raise RuntimeError()
+  socket.socket.connect=no_network;socket.getaddrinfo=no_network
+ for service in ('sts','ssm'):
+  endpoint='https://'+service+'.ap-northeast-1.amazonaws.com'
+  client=session.client(service,region_name='ap-northeast-1',endpoint_url=endpoint,use_ssl=True,verify=True,config=config)
+  if client.meta.endpoint_url!=endpoint: raise ValueError()
+  if service=='sts':sts=client
+  else:ssm=client
+ if operation=='inspect':print('{"status":"sdk_construction_verified","network_disabled":true,"total_max_attempts":1}')
+ else:
+  stage='aws_identity'
+  if sts.get_caller_identity().get('Account')!='828786775577': raise ValueError()
+  if operation=='probe':
+   stage='ssm_metadata'
+   response=ssm.describe_parameters(ParameterFilters=[{'Key':'Name','Option':'Equals','Values':['/pals/prod/guest-hash-key']}],MaxResults=5)
+   found=response.get('Parameters')
+   if not isinstance(found,list) or len(found)>1 or response.get('NextToken') or any(item.get('Name')!='/pals/prod/guest-hash-key' for item in found): raise ValueError()
+   print('{"status":"sdk_probe_verified","account_verified":true,"endpoint_verified":true,"metadata_read_verified":true}')
+  else:
+   stage='ssm_put'
+   response=ssm.put_parameter(Name=request['Name'],Value=request['Value'],Type='SecureString',Overwrite=False)
+   if type(response.get('Version')) is not int or response['Version']!=1: raise ValueError()
+   print('{"status":"sdk_put_verified","Version":1}')
+except BaseException as error:
+ response=getattr(error,'response',{})
+ code=response.get('Error',{}).get('Code') if isinstance(response,dict) else None
+ allowed=__ERROR_CODES__
+ print(json.dumps({'status':'sdk_failed','stage':stage,'error_code':code if code in allowed else 'unclassified'}))
+ sys.exit(2)
+'''.replace('__ERROR_CODES__', repr(sorted(AWS_ERROR_CODES)))
+
+
+class DockerSdk:
+    """One pinned isolated tool per request; credentials exist only in RAM/stdin."""
+    def __init__(self,docker,image,commit):
+        require(isinstance(image,str) and IMAGE.fullmatch(image) and
+                commit=='7027478ef6664a0ab8f8a245e3da714e18dc0f37','sdk_tool_image_untrusted')
+        self.docker,self.image=list(docker),image
+        observed=successful(self.docker+['image','inspect',image])
+        require(isinstance(observed,list) and len(observed)==1 and observed[0].get('Id')==image and
+                observed[0].get('Os')=='linux' and observed[0].get('Architecture')=='arm64' and
+                (observed[0].get('Config',{}).get('Labels') or {}).get('org.opencontainers.image.revision')==commit,
+                'sdk_tool_image_untrusted')
+
+    def request(self,request):
+        code,out,err=command(['aws','--profile',PROFILE,'--region',REGION,'--no-cli-pager',
+                             'configure','export-credentials','--format','process'])
+        if code:
+            failure=GuardError('credential_export_failed');failure.aws_exit_code=code;diagnose(failure,out,err)
+            raise failure
+        credentials=decode(out)
+        require(isinstance(credentials,dict) and set(credentials)=={'Version','AccessKeyId','SecretAccessKey','SessionToken','Expiration'}
+                and type(credentials['Version']) is int and credentials['Version']==1,'credential_export_invalid')
+        require(isinstance(credentials['AccessKeyId'],str) and re.fullmatch(r'ASIA[A-Z0-9]{16}',credentials['AccessKeyId'])
+                and isinstance(credentials['SecretAccessKey'],str) and re.fullmatch(r'[A-Za-z0-9/+=]{40}',credentials['SecretAccessKey'])
+                and isinstance(credentials['SessionToken'],str) and 16<=len(credentials['SessionToken'])<=16384
+                and all(33<=ord(c)<=126 for c in credentials['SessionToken']),'credential_export_invalid')
+        expires=datetime.fromisoformat(credentials['Expiration'].replace('Z','+00:00'))
+        require(expires.tzinfo is not None and 60<(expires-datetime.now(timezone.utc)).total_seconds()<=43200,
+                'credential_export_invalid')
+        payload=json.dumps({'credentials':credentials,'request':request},ensure_ascii=True,separators=(',',':')).encode()
+        require(len(payload)<=65536,'sdk_transport_failed')
+        arguments=self.docker+['run','--rm','-i','--name','pals-source-ssm-sdk-'+uuid4().hex,
+            '--label','pals.migration.purpose=runtime-secrets-sdk','--pull=never','--platform','linux/arm64',
+            '--read-only','--cap-drop=ALL','--security-opt=no-new-privileges:true','--user',str(os.geteuid())+':'+str(os.getegid()),
+            '--pids-limit=128','--memory=512m','--memory-swap=512m','--network','bridge','--log-driver=none',
+            '--tmpfs','/tmp:rw,noexec,nosuid,nodev,size=32m','--entrypoint','python',self.image,'-I','-B','-c',DOCKER_SDK_CHILD]
+        return sdk_result(request,*command(arguments,payload))
+
 
 def sdk_interpreter():
     """Use the already installed Homebrew AWS CLI SDK, never install/export."""
@@ -572,10 +688,7 @@ def sdk_interpreter():
     return str(expected)
 
 
-def sdk_request(request):
-    payload = json.dumps(request, ensure_ascii=True, separators=(',', ':')).encode()
-    require(0 < len(payload) <= 32768, "sdk_transport_failed")
-    code, out, err = command([sdk_interpreter(), '-I', '-B', '-c', SDK_CHILD], payload)
+def sdk_result(request,code,out,err):
     try:
         result = decode(out)
     except (ValueError, UnicodeError, GuardError):
@@ -592,9 +705,16 @@ def sdk_request(request):
     return result
 
 
+def sdk_request(request):
+    payload = json.dumps(request, ensure_ascii=True, separators=(',', ':')).encode()
+    require(0 < len(payload) <= 32768, "sdk_transport_failed")
+    return sdk_result(request,*command([sdk_interpreter(), '-I', '-B', '-c', SDK_CHILD], payload))
+
+
 class Parameters:
-    def __init__(self, directory=None):
+    def __init__(self, directory=None, sdk_tool=None):
         self.directory = directory or Path.home()/"pals-mini-deploy/aws-migration-20261030"
+        self.sdk_tool=sdk_tool
         self.prefix = ["aws", "--profile", PROFILE, "--region", REGION,
                        "--output", "json", "--color", "off", "--no-cli-pager",
                        "--cli-connect-timeout", "10", "--cli-read-timeout", "20"]
@@ -634,14 +754,14 @@ class Parameters:
         return result
 
     def put(self, name, value):
-        result = sdk_request({'operation':'put','Name':name,'Value':value})
+        result = (self.sdk_tool.request if self.sdk_tool else sdk_request)({'operation':'put','Name':name,'Value':value})
         require(set(result) == {'status','Version'} and result['status'] == 'sdk_put_verified'
                 and type(result.get("Version")) is int and result["Version"] == 1,
                 "write_outcome_unverified")
         return result["Version"]
 
     def probe_sdk(self):
-        result = sdk_request({'operation':'probe'})
+        result = (self.sdk_tool.request if self.sdk_tool else sdk_request)({'operation':'probe'})
         require(result == {'status':'sdk_probe_verified','account_verified':True,
                            'endpoint_verified':True,'metadata_read_verified':True}, 'sdk_transport_failed')
         return {**result,'service_write_attempted':False}
@@ -757,7 +877,10 @@ def main(arguments=None):
     mode.add_argument("--probe-cli-transport-stdin", action="store_true")
     mode.add_argument("--probe-cli-transport-fifo", action="store_true")
     mode.add_argument("--probe-sdk-transport", action="store_true")
+    parser.add_argument('--sdk-tool-image')
+    parser.add_argument('--sdk-tool-api-commit')
     args = parser.parse_args(arguments)
+    require(bool(args.sdk_tool_image)==bool(args.sdk_tool_api_commit),'invalid_arguments')
     root = Path.home() / "pals-mini-deploy"
     os.close(protected(root, directory=True))
     first = controller(root)
@@ -780,17 +903,18 @@ def main(arguments=None):
             os.close(protected(directory, directory=True))
             PHASE = "aws_cli_privacy_preflight"
             aws_cli_privacy()
+            sdk_tool=DockerSdk(docker,args.sdk_tool_image,args.sdk_tool_api_commit) if args.sdk_tool_image else None
             if probing:
                 if args.probe_sdk_transport:
                     PHASE = "sdk_transport_probe"
-                    print(json.dumps(Parameters(directory).probe_sdk(),sort_keys=True))
+                    print(json.dumps(Parameters(directory,sdk_tool).probe_sdk(),sort_keys=True))
                     return 0
                 PHASE = "cli_transport_probe"
                 selected = "stdin" if args.probe_cli_transport_stdin else "fifo" if args.probe_cli_transport_fifo else "both"
                 print(json.dumps(Parameters(directory).probe_transport(selected), sort_keys=True))
                 return 0
             PHASE = "ssm_reconciliation" if args.reconcile else "ssm_transfer"
-            result = transfer(Parameters(), values, args.apply, args.reconcile,
+            result = transfer(Parameters(sdk_tool=sdk_tool), values, args.apply, args.reconcile,
                               directory, recheck)
             print(json.dumps({"status": result["status"],
                               "verified_parameter_count": len(result["parameters"]),

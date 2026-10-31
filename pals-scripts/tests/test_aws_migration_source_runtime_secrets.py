@@ -545,6 +545,91 @@ class NativeLockWaitTests(unittest.TestCase):
         self.assertIsNone(m.LOCK_FD)
 
 
+class DockerSdkTests(unittest.TestCase):
+    def setUp(self):
+        from datetime import datetime, timedelta, timezone
+        self.credentials={'Version':1,'AccessKeyId':'AS'+'IA'+'A'*16,'SecretAccessKey':'z'*40,
+                          'SessionToken':SECRET,'Expiration':(datetime.now(timezone.utc)+timedelta(hours=1)).isoformat()}
+        self.image='sha256:'+'a'*64;self.commit='7027478ef6664a0ab8f8a245e3da714e18dc0f37'
+        self.inspection=[{'Id':self.image,'Os':'linux','Architecture':'arm64',
+                          'Config':{'Labels':{'org.opencontainers.image.revision':self.commit}}}]
+
+    def tool(self):
+        with patch.object(m,'successful',return_value=self.inspection):
+            return m.DockerSdk(['docker'],self.image,self.commit)
+
+    def test_image_mismatch_refuses_before_credentials(self):
+        for field,value in [('Id','sha256:'+'b'*64),('Architecture','amd64'),('Os','foreign')]:
+            changed={**self.inspection[0],field:value}
+            with patch.object(m,'successful',return_value=[changed]),patch.object(m,'command') as export, \
+                 self.assertRaises(m.GuardError):m.DockerSdk(['docker'],self.image,self.commit)
+            export.assert_not_called()
+
+    def test_credentials_and_secret_only_stdin_isolated_short_lived_container(self):
+        calls=[]
+        def execute(args,data=None):
+            calls.append((args,data))
+            if args[0]=='aws':return 0,json.dumps(self.credentials).encode(),b''
+            for value in [SECRET,self.credentials['AccessKeyId'],self.credentials['SecretAccessKey']]:
+                self.assertNotIn(value,repr(args))
+            self.assertNotIn('--mount',args);self.assertNotIn('--volume',args)
+            for flag in ('--rm','-i','--read-only','--cap-drop=ALL','--security-opt=no-new-privileges:true','--log-driver=none'):
+                self.assertIn(flag,args)
+            self.assertEqual(args[args.index('--network')+1],'bridge')
+            self.assertEqual(args[args.index('--entrypoint')+1],'python')
+            envelope=json.loads(data)
+            self.assertEqual(envelope['credentials'],self.credentials)
+            self.assertEqual(envelope['request'],{'operation':'put','Name':next(iter(values())),'Value':SECRET})
+            return 0,b'{"status":"sdk_put_verified","Version":1}',b''
+        tool=self.tool()
+        with patch.object(m,'command',side_effect=execute):
+            result=m.Parameters(sdk_tool=tool).put(next(iter(values())),SECRET)
+        self.assertEqual(result,1);self.assertEqual(len(calls),2)
+        self.assertEqual(calls[0][0][-4:],['configure','export-credentials','--format','process'])
+
+    def test_permanent_or_invalid_export_never_reaches_container(self):
+        for field,value in [('AccessKeyId','AK'+'IA'+'A'*16),('Version',True),('SessionToken','short')]:
+            tool=self.tool();credentials={**self.credentials,field:value}
+            with patch.object(m,'command',return_value=(0,json.dumps(credentials).encode(),b'')) as execute, \
+                 self.assertRaises(m.GuardError):tool.request({'operation':'probe'})
+            self.assertEqual(execute.call_count,1)
+
+    def test_docker_child_exact_requests_with_explicit_credentials_and_one_attempt(self):
+        import types
+        from types import SimpleNamespace
+        calls=[]
+        class Client:
+            meta=SimpleNamespace(endpoint_url='https://ssm.ap-northeast-1.amazonaws.com')
+            def get_caller_identity(self):calls.append(('identity',{}));return {'Account':m.ACCOUNT}
+            def put_parameter(self,**kwargs):calls.append(('put',kwargs));return {'Version':1}
+            def describe_parameters(self,**kwargs):calls.append(('describe',kwargs));return {'Parameters':[]}
+        class Session:
+            def __init__(self,**kwargs):calls.append(('session',kwargs))
+            def client(self,service,**kwargs):
+                calls.append((service,kwargs));client=Client();client.meta=SimpleNamespace(endpoint_url=kwargs['endpoint_url']);return client
+        def Config(**kwargs):calls.append(('config',kwargs));return kwargs
+        modules={name:types.ModuleType(name) for name in ('boto3','botocore','botocore.config')}
+        modules['boto3'].Session=Session;modules['botocore.config'].Config=Config
+        for operation in ('probe','put'):
+            calls.clear();request={'operation':operation}
+            if operation=='put':request.update(Name=next(iter(values())),Value=SECRET)
+            stdin=SimpleNamespace(buffer=io.BytesIO(json.dumps({'credentials':self.credentials,'request':request}).encode()))
+            with patch.dict(sys.modules,modules),patch.dict(os.environ,dict(os.environ)),patch('sys.stdin',stdin), \
+                 patch('signal.alarm') as alarm,patch('signal.signal') as handler,patch('logging.disable'),redirect_stdout(io.StringIO()) as out:
+                exec(compile(m.DOCKER_SDK_CHILD,'<fixed-docker-sdk-child>','exec'),{})  # noqa: S102 -- fixed code and fake SDK only
+            alarm.assert_called_once_with(25)
+            with self.assertRaises(TimeoutError):handler.call_args.args[1](0,None)
+            self.assertNotIn(SECRET,out.getvalue())
+            self.assertEqual(next(value for name,value in calls if name=='config')['retries'],{'total_max_attempts':1})
+            session=next(value for name,value in calls if name=='session')
+            self.assertEqual(session['aws_session_token'],self.credentials['SessionToken'])
+            self.assertEqual(session['region_name'],m.REGION)
+            if operation=='put':
+                self.assertEqual([value for name,value in calls if name=='put'],[{'Name':next(iter(values())),
+                                  'Value':SECRET,'Type':'SecureString','Overwrite':False}])
+            else:self.assertFalse(any(name=='put' for name,_ in calls))
+
+
 class ControllerTests(unittest.TestCase):
     def setUp(self):
         m.DEADLINE=time.monotonic()+5
