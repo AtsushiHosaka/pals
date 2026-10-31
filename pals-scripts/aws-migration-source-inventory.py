@@ -28,6 +28,19 @@ PUBLIC_TOKENS = frozenset({
 PUBLIC_ORIGINS = frozenset({"PALS_GUEST_ALLOWED_ORIGINS", "PALS_CORS_ALLOWED_ORIGINS"})
 
 
+class PublicConfigurationError(RuntimeError):
+    def __init__(self, name: str):
+        self.field = name
+        super().__init__("Public runtime metadata is invalid")
+
+
+class InventoryCommandError(RuntimeError):
+    def __init__(self, program: str, code: int):
+        self.program = program if program in {"aws", "docker"} else "other"
+        self.code = code
+        super().__init__("Inventory command failed")
+
+
 def public_runtime_configuration(entries: list[str]) -> dict[str, str]:
     """A closed, validated metadata subset; never credentials or database URLs."""
     values: dict[str, str] = {}
@@ -49,7 +62,7 @@ def public_runtime_configuration(entries: list[str]) -> dict[str, str]:
             valid = re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:/@+-]{0,127}", value) is not None
             valid = valid and not value.startswith(("sk-", "AKIA", "ASIA"))
         if not valid:
-            raise RuntimeError("Public runtime metadata is invalid")
+            raise PublicConfigurationError(name)
         values[name] = value
     return values
 
@@ -57,7 +70,7 @@ def public_runtime_configuration(entries: list[str]) -> dict[str, str]:
 def command(args: list[str]) -> str:
     result = subprocess.run(args, capture_output=True, text=True, check=False, timeout=30)
     if result.returncode:
-        raise RuntimeError(f"command failed: {args[0]} (exit {result.returncode})")
+        raise InventoryCommandError(args[0], result.returncode)
     return result.stdout
 
 
@@ -212,6 +225,11 @@ def upload_inventory(report: dict[str, object]) -> None:
 if __name__ == "__main__":
     try:
         main()
-    except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired):
-        print("Source inventory failed; no credential values or command stderr were emitted.", file=sys.stderr)
+    except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as error:
+        result = {"status": "source_inventory_failed", "code": "read_only_inventory_failed"}
+        if isinstance(error, PublicConfigurationError):
+            result.update(code="public_configuration_invalid", field=error.field)
+        elif isinstance(error, InventoryCommandError):
+            result.update(code="inventory_command_failed", program=error.program, exit_code=error.code)
+        print(json.dumps(result, sort_keys=True), file=sys.stderr)
         sys.exit(1)
