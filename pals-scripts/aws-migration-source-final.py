@@ -68,7 +68,7 @@ FINAL_FAILURE_CODES = frozenset({
     'source_container_identity_invalid','source_container_state_unsafe','source_file_changed','source_file_too_large',
     'unsafe_path','unsafe_parent','unsafe_file','controller_state_path_invalid','controller_policy_invalid',
     'controller_config_invalid','controller_current_invalid','controller_key_invalid','controller_edge_invalid',
-    'controller_docker_invalid'})
+    'controller_docker_invalid','source_mount_inventory_invalid','source_mount_destination_duplicate'})
 CAPTURE_STAGES = frozenset({'initialization','controller_preflight','tool_identity','native_lock_probe',
     'maintenance_guard','source_running_guard','drain_definition_guard','source_tools_guard','predecessor_guard',
     'aws_preflight','explicit_final_confirmation','journal_guard','prepare_stage','prepare_inputs','source_image_identity',
@@ -463,12 +463,33 @@ def require_running(items, current):
         require(items[name]["Image"] == current["images"][component], "source_image_changed")
 
 
+def canonical_mounts(mounts):
+    """Docker does not give Mounts array ordering identity significance.
+
+    Compare every complete record, including unknown fields. Only record order
+    changes; destination aliases and duplicate destinations are refused.
+    """
+    require(type(mounts) is list and len(mounts) <= 256, 'source_mount_inventory_invalid')
+    destinations = []
+    for mount in mounts:
+        require(type(mount) is dict and all(type(key) is str for key in mount), 'source_mount_inventory_invalid')
+        destination = mount.get('Destination')
+        require(type(destination) is str and destination.startswith('/') and len(destination) <= 4096 and
+                '\x00' not in destination and str(PurePosixPath(destination)) == destination and
+                '..' not in PurePosixPath(destination).parts, 'source_mount_inventory_invalid')
+        destinations.append(destination)
+    require(len(set(destinations)) == len(destinations), 'source_mount_destination_duplicate')
+    return sorted(mounts, key=lambda mount: mount['Destination'])
+
+
 def require_same(before, after):
     require(set(before) == set(after), 'source_inventory_invalid')
     changes = []
     for name, original in before.items():
         current = after[name]
-        changed = [key for key in ("Id", "Image", "Mounts", "Config") if current[key] != original[key]]
+        changed = [key for key in ("Id", "Image", "Mounts", "Config") if
+                   (canonical_mounts(current[key]) != canonical_mounts(original[key]) if key == 'Mounts'
+                    else current[key] != original[key])]
         if changed:
             changes.append({'container': name, 'fields': changed})
     if changes:
@@ -892,7 +913,8 @@ def journal(root, state, phase):
 
 
 def facts(items):
-    return {name: {key: item[key] for key in ("Id", "Image", "Mounts")}
+    return {name: {key: canonical_mounts(item[key]) if key == 'Mounts' else item[key]
+                   for key in ("Id", "Image", "Mounts")}
             for name, item in items.items()}
 
 

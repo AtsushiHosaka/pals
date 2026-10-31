@@ -44,6 +44,30 @@ def source_items(edge="pals-edge"):
 
 
 class PrivateIOTests(unittest.TestCase):
+    def test_complete_mount_record_permutation_passes_and_facts_are_identical(self):
+        before=source_items();after=copy.deepcopy(before)
+        mounts=[{'Type':'bind','Source':'/fixture/a','Destination':'/a','RW':False,
+                 'Propagation':'rprivate','Mode':'ro','Unknown':{'retained':['one','two']}},
+                {'Type':'volume','Source':'/fixture/b','Destination':'/b','RW':True,'Name':'fixture-volume'}]
+        before[m.DATABASE]['Mounts']=mounts;after[m.DATABASE]['Mounts']=list(reversed(copy.deepcopy(mounts)))
+        m.require_same(before,after)
+        self.assertEqual(m.facts(before),m.facts(after))
+        self.assertEqual(m.canonical_mounts(after[m.DATABASE]['Mounts']),mounts)
+
+    def test_mount_record_semantic_changes_and_duplicate_destinations_refuse(self):
+        before=source_items();before[m.DATABASE]['Mounts']=[{'Type':'bind','Source':'/fixture/a',
+            'Destination':'/a','RW':False,'Propagation':'rprivate','Mode':'ro','Unknown':'original'}]
+        for key,value in [('Source','/fixture/changed'),('RW',True),('Propagation','rshared'),
+                          ('Mode','rw'),('Unknown','changed'),('Type','volume')]:
+            after=copy.deepcopy(before);after[m.DATABASE]['Mounts'][0][key]=value
+            with self.subTest(key=key),self.assertRaisesRegex(m.Refusal,'source_container_changed'):
+                m.require_same(before,after)
+        after=copy.deepcopy(before);after[m.DATABASE]['Mounts']*=2
+        with self.assertRaisesRegex(m.Refusal,'source_mount_destination_duplicate'):
+            m.require_same(before,after)
+        with self.assertRaisesRegex(m.Refusal,'source_mount_destination_duplicate'):
+            m.facts(after)
+
     def test_changed_container_diagnostic_has_only_field_names_and_exact_source_line(self):
         before=source_items();after=copy.deepcopy(before)
         after[m.DATABASE]['Config']['Env']=['PASSWORD='+CANARY]
@@ -509,8 +533,20 @@ class CaptureOrderingTests(unittest.TestCase):
         journal=json.loads(m.private(m.journal_path(self.root)));self.assertEqual(journal['phase'],'uploaded_source_fenced')
         self.assertNotIn(CANARY,repr(journal));self.assertFalse((Path(journal['output_directory'])/'inputs/master-url').exists())
 
+    def test_reconcile_uses_same_complete_mount_canonical_form_as_capture(self):
+        name=m.ACTORS['api']
+        mounts=[{'Destination':'/b','Source':'/fixture/b','RW':False,'Type':'bind','Propagation':'rprivate'},
+                {'Destination':'/a','Source':'/fixture/a','RW':True,'Type':'volume','Name':'fixture'}]
+        self.items[name]['Mounts']=copy.deepcopy(mounts);self.actual[name]['Mounts']=copy.deepcopy(mounts)
+        self.execute();self.actual[name]['Mounts'].reverse()
+        result=m.reconcile(self.root,SimpleNamespace(refresh_fence=False),self.policy,['docker'],self.binding,self.actual)
+        self.assertEqual(result['status'],'source_fenced_stopped')
+        self.actual[name]['Mounts'][0]['Propagation']='rshared'
+        with self.assertRaisesRegex(m.Refusal,'reconcile_source_identity_changed'):
+            m.reconcile(self.root,SimpleNamespace(refresh_fence=False),self.policy,['docker'],self.binding,self.actual)
+
     def test_prejournal_recheck_reports_exact_failed_boundary_without_stopping(self):
-        self.actual[m.DATABASE]['Mounts']=[{'private':CANARY}]
+        self.actual[m.DATABASE]['Mounts']=[{'Destination':'/fixture','private':CANARY}]
         try:
             self.execute()
         except m.Refusal as error:
