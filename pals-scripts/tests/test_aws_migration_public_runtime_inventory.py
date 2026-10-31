@@ -23,7 +23,8 @@ class PublicRuntimeInventoryTests(unittest.TestCase):
     def test_public_flags_models_and_origins_are_preserved_exactly(self):
         values = ["PALS_TOKEN_ACCOUNTING_ENABLED=true",
                   "PALS_DRAFT_EMBEDDING_MODEL=text-embedding-3-small",
-                  'PALS_CORS_ALLOWED_ORIGINS=["https://palschat.site"]']
+                  'PALS_CORS_ALLOWED_ORIGINS=https://palschat.site,https://app.palschat.site',
+                  'PALS_GUEST_ALLOWED_ORIGINS=["https://palschat.site"]']
         self.assertEqual(MODULE.public_runtime_configuration(values),
                          dict(value.split("=", 1) for value in values))
 
@@ -36,7 +37,8 @@ class PublicRuntimeInventoryTests(unittest.TestCase):
             MODULE.public_runtime_configuration(["PALS_GUEST_CHAT_ENABLED=true"] * 2)
 
     def test_foreign_origin_or_secret_shaped_model_is_rejected(self):
-        for entry in ('PALS_CORS_ALLOWED_ORIGINS=["https://example.com"]',
+        for entry in ('PALS_CORS_ALLOWED_ORIGINS=https://example.com',
+                      'PALS_GUEST_ALLOWED_ORIGINS=not-json',
                       "PALS_DRAFT_EMBEDDING_MODEL=sk-private-canary"):
             with self.subTest(entry=entry), self.assertRaises(RuntimeError):
                 MODULE.public_runtime_configuration([entry])

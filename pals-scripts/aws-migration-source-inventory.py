@@ -53,7 +53,13 @@ def public_runtime_configuration(entries: list[str]) -> dict[str, str]:
         if name in PUBLIC_BOOLEANS:
             valid = value in {"true", "false", "1", "0", "on", "off"}
         elif name in PUBLIC_ORIGINS:
-            origins = json.loads(value)
+            try:
+                # Match the owning Settings validators: CORS is comma-separated,
+                # while the guest origin setting requires an explicit JSON list.
+                origins = ([origin.strip() for origin in value.split(",") if origin.strip()]
+                           if name == "PALS_CORS_ALLOWED_ORIGINS" else json.loads(value))
+            except (TypeError, ValueError) as error:
+                raise PublicConfigurationError(name) from error
             valid = isinstance(origins, list) and 0 < len(origins) <= 4 and all(
                 origin in {"https://palschat.site", "https://app.palschat.site"}
                 for origin in origins
