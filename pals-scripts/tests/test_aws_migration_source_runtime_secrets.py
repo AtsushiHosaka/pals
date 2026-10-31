@@ -221,7 +221,7 @@ class SourceTests(unittest.TestCase):
 class CommandTests(unittest.TestCase):
     def test_cli_warning_before_structured_missing_error_is_supported(self):
         missing = b"CLI warning\naws: [ERROR]: An error occurred (ParameterNotFound) when calling the GetParameter operation:\n"
-        with patch.object(m, "command", return_value=(254, b"", missing)):
+        with patch.object(m, "command", side_effect=[(254, b"", missing), (0, b'{"Parameters":[]}', b'')]):
             self.assertIsNone(m.Parameters().get(next(iter(values()))))
         with patch.object(m, "command", return_value=(254, SECRET.encode(), missing)), self.assertRaises(m.GuardError):
             m.Parameters().get(next(iter(values())))
@@ -237,7 +237,7 @@ class CommandTests(unittest.TestCase):
 
     def test_current_cli_error_prefix_preserves_exact_missing_parameter_classification(self):
         missing = b"\naws: [ERROR]: An error occurred (ParameterNotFound) when calling the GetParameter operation:\n"
-        with patch.object(m, "command", return_value=(254, b"", missing)):
+        with patch.object(m, "command", side_effect=[(254, b"", missing), (0, b'{"Parameters":[]}', b'')]):
             self.assertIsNone(m.Parameters().get(next(iter(values()))))
 
     def test_put_uses_stdin_and_no_secret_argv(self):
@@ -262,12 +262,45 @@ class CommandTests(unittest.TestCase):
             with patch.object(m, "command", return_value=(0, json.dumps({"Parameter": p}).encode(), b"")), \
                  self.assertRaises(m.GuardError):
                 m.Parameters().get(name)
-        with patch.object(m, "command", return_value=(254, b"", b"An error occurred (ParameterNotFound) when calling the GetParameter operation: absent")):
+        with patch.object(m, "command", side_effect=[
+                (254, b"", b"An error occurred (ParameterNotFound) when calling the GetParameter operation: absent"),
+                (0, b'{"Parameters":[]}', b'')]):
             self.assertIsNone(m.Parameters().get(name))
         with patch.object(m, "command", return_value=(1, SECRET.encode(), SECRET.encode())), \
              self.assertRaises(m.GuardError) as error:
             m.Parameters().get(name)
         self.assertNotIn(SECRET, str(error.exception))
+
+    def test_missing_label_requires_exact_name_closed_empty_metadata(self):
+        name=next(iter(values()))
+        # Warning/localized/changed formatting no longer needs a CLI prose regex.
+        missing=(254,b'',b'CLI warning\n[ParameterNotFound] formatting varies\n')
+        with patch.object(m,'command',side_effect=[missing,(0,b'{"Parameters":[]}',b'warning')]) as call:
+            self.assertIsNone(m.Parameters().get(name))
+        args,payload=call.call_args.args
+        self.assertIn('https://ssm.ap-northeast-1.amazonaws.com',args)
+        self.assertIn('describe-parameters',args);self.assertIn('--no-paginate',args)
+        self.assertEqual(args[args.index('--profile')+1],m.PROFILE)
+        self.assertEqual(args[args.index('--region')+1],m.REGION)
+        self.assertEqual(json.loads(payload),{'ParameterFilters':[{'Key':'Name','Option':'Equals','Values':[name]}],'MaxResults':5})
+        for metadata in ({'Parameters':[{'Name':name}]},{'Parameters':[],'NextToken':'unknown'},
+                         {'Parameters':[],'unknown':True},{'Parameters':None},{},[]):
+            with patch.object(m,'command',side_effect=[missing,(0,json.dumps(metadata).encode(),b'')]), \
+                 self.assertRaises(m.GuardError) as caught:
+                m.Parameters().get(name)
+            self.assertEqual(str(caught.exception),'parameter_read_failed')
+
+    def test_missing_metadata_access_denied_and_other_get_failures_refuse(self):
+        missing=(254,b'',b'ParameterNotFound')
+        with patch.object(m,'command',side_effect=[missing,(254,b'',SECRET.encode())]) as call, \
+             self.assertRaises(m.GuardError) as caught:
+            m.Parameters().get(next(iter(values())))
+        self.assertEqual(call.call_count,2);self.assertNotIn(SECRET,json.dumps(m.failure_summary(caught.exception)))
+        for error in [(254,b'',b'AccessDeniedException'),(255,b'',b'ParameterNotFound'),
+                      (254,SECRET.encode(),b'ParameterNotFound')]:
+            with patch.object(m,'command',return_value=error) as call,self.assertRaises(m.GuardError):
+                m.Parameters().get(next(iter(values())))
+            self.assertEqual(call.call_count,1)
 
     def test_real_subprocess_stdin_bounded_and_environment_closed(self):
         m.DEADLINE = time.monotonic() + 5

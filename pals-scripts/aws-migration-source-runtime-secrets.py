@@ -364,11 +364,20 @@ class Parameters:
                                                ".amazonaws.com", "ssm", "get-parameter", "--name", name,
                                                "--with-decryption"])
         if code:
-            if code == 254 and not out.strip() and re.search(
-                rb"(?:aws: \[ERROR\]: )?An error occurred \(ParameterNotFound\) when calling the GetParameter operation:",
-                err.strip(),
-            ):
-                return None
+            # CLI error formatting varies across the Mini's installations.
+            # A label is only a trigger for a separate exact-name metadata read;
+            # stderr alone never establishes that a parameter is absent.
+            if code == 254 and not out.strip() and b"ParameterNotFound" in err:
+                request = json.dumps({"ParameterFilters": [{"Key": "Name", "Option": "Equals",
+                                       "Values": [name]}], "MaxResults": 5}).encode()
+                listed_code, listed_out, _listed_err = command(self.prefix + [
+                    "--endpoint-url", "https://ssm." + REGION + ".amazonaws.com",
+                    "ssm", "describe-parameters", "--no-paginate", "--cli-input-json",
+                    "file:///dev/stdin"], request)
+                if listed_code == 0:
+                    listed = decode(listed_out)
+                    if isinstance(listed, dict) and set(listed) == {"Parameters"} and listed["Parameters"] == []:
+                        return None
             failure = GuardError("parameter_read_failed")
             failure.aws_exit_code = code
             failure.parameter_not_found_label = b"ParameterNotFound" in err
