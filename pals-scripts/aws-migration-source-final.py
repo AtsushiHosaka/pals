@@ -666,6 +666,39 @@ def reference_path(policy, name, root):
     return path
 
 
+def read_volume_marker(docker, policy, database):
+    """Observe the controller's existing identity volume without adding a DB mount."""
+    volume = policy["identity_volume"]
+    require(type(volume) is str and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", volume))
+    inside = policy.get("database_marker_inside_container", False)
+    require(type(inside) is bool)
+    if inside:
+        require(any(m["Type"] == "volume" and m.get("Name") == volume and
+                    m["Destination"] == "/run/pals-volume" for m in database["Mounts"]),
+                "actual_DB_identity_volume_not_mounted")
+        marker = run(docker+["exec", "--user", "0:0", database["Id"], "cat",
+                            "/run/pals-volume/volume.identity"])[1]
+    else:
+        # Inspect first: Docker otherwise creates a missing named volume, even
+        # for a read-only mount. Use the already observed source image ID.
+        observed = result(docker+["volume", "inspect", volume])
+        require(type(observed) is list and len(observed) == 1 and observed[0]["Name"] == volume and
+                observed[0]["Driver"] == "local")
+        require(IMAGE.fullmatch(database["Image"]))
+        image = result(docker+["image", "inspect", database["Image"]])
+        require(type(image) is list and len(image) == 1 and image[0]["Id"] == database["Image"] and
+                image[0]["Os"] == "linux" and image[0]["Architecture"] == "arm64")
+        marker = run(docker+["run", "--rm", "--pull=never", "--network=none", "--read-only",
+            "--cap-drop=ALL", "--security-opt=no-new-privileges:true", "--pids-limit=32", "--memory=64m",
+            "--log-driver=none", "--name", "pals-source-volume-observer-"+uuid4().hex,
+            "--label", "pals.migration.purpose=source-volume-observer", "--mount",
+            "type=volume,source="+volume+",target=/identity,readonly,volume-nocopy",
+            "--entrypoint", "cat", database["Image"], "/identity/volume.identity"])[1]
+    require(len(marker) <= 128 and marker.decode("ascii").removesuffix("\n") ==
+            policy["database_identity"]["database_volume_id"])
+    return marker
+
+
 def prepare_inputs(root, output, policy, current, docker, items, public, dump_sha):
     inputs, artifacts = output/"inputs", output/"artifacts"
     files = {"predecessor_manifest_file": ("previous-manifest.jcs", "signed_predecessor_manifest"),
@@ -697,14 +730,7 @@ def prepare_inputs(root, output, policy, current, docker, items, public, dump_sh
             and not any(ord(c) < 32 or ord(c) == 127 for c in unquote(parsed.password)))
     url = urlunsplit(("postgresql", parsed.netloc.rsplit("@", 1)[0]+"@127.0.0.1:5432", "/pals", "", ""))
     write(inputs/"master-url", url.encode())
-    database = items[DATABASE]
-    identity_mounts = [m for m in database["Mounts"] if m["Type"] == "volume" and
-                       m.get("Name") == policy["identity_volume"]]
-    require(len(identity_mounts) == 1, "actual_DB_identity_volume_not_mounted")
-    marker_path = identity_mounts[0]["Destination"]+"/volume.identity"
-    require(marker_path.startswith("/") and ".." not in Path(marker_path).parts)
-    marker = run(docker+["exec", "--user", "0:0", database["Id"], "cat", marker_path])[1]
-    require(marker.decode().removesuffix("\n") == policy["database_identity"]["database_volume_id"])
+    marker = read_volume_marker(docker, policy, items[DATABASE])
     write(inputs/"volume-marker", marker)
     write(inputs/"capture-config.json", encoded(config))
     require(not any(artifacts.iterdir()))

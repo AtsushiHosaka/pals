@@ -631,12 +631,15 @@ class WireAndUploadTests(unittest.TestCase):
                 ('previous_production_registry','registry',b'{}'),('host_marker','host',b'host')]:
             policy[name]=str(self.root/filename);m.write(self.root/filename,content)
         m.write(self.root/'original-url',('postgresql+psycopg://postgres:'+CANARY+'@original-host:35432/pals').encode())
-        self.items[m.DATABASE]['Mounts']=[{'Type':'volume','Name':'fixture-volume-name','Destination':'/var/lib/postgresql/data'}]
+        self.items[m.DATABASE]['Mounts']=[{'Type':'volume','Name':'source-pgdata','Destination':'/var/lib/postgresql/data'}]
         calls=[]
         def cat(args,**_options):calls.append(args);return 0,b'fixture-volume\n',b''
         bindings={'cognito_user_pool_id':'fixture','cognito_app_client_id':'fixture','cognito_issuer':'fixture',
                   'artifact_bucket':'fixture','proof_jobs_queue_arn':'fixture1','proof_requests_queue_arn':'fixture2','guest_key_sha256':'a'*64}
-        with patch.object(m,'external_bindings',return_value=bindings),patch.object(m,'run',side_effect=cat):
+        observations=[[{'Name':'fixture-volume-name','Driver':'local'}],
+                      [{'Id':self.items[m.DATABASE]['Image'],'Os':'linux','Architecture':'arm64'}]]
+        with patch.object(m,'external_bindings',return_value=bindings),patch.object(m,'run',side_effect=cat), \
+                patch.object(m,'result',side_effect=observations):
             m.prepare_inputs(self.root,self.root,policy,{'manifest_sha256':m.sha(b'{}')},['docker'],self.items,b'public','b'*64)
         config=json.loads((self.root/'inputs/capture-config.json').read_bytes())
         owning=FILE.parents[1]/'pals-api/app/release/cloud_restore_ec2_source.py'
@@ -648,6 +651,20 @@ class WireAndUploadTests(unittest.TestCase):
         self.assertEqual((self.root/'inputs/master-url').read_text(),
                          'postgresql://postgres:'+CANARY+'@127.0.0.1:5432/pals')
         self.assertNotIn(CANARY,repr(calls))
+        observer=calls[0]
+        self.assertIn('--network=none',observer);self.assertIn('--pull=never',observer)
+        self.assertIn('type=volume,source=fixture-volume-name,target=/identity,readonly,volume-nocopy',observer)
+        self.assertEqual(observer[-2:],[self.items[m.DATABASE]['Image'],'/identity/volume.identity'])
+
+    def test_volume_marker_rejects_wrong_actual_marker_or_missing_volume(self):
+        policy={'identity_volume':'fixture-volume-name','database_identity':{'database_volume_id':'expected'}}
+        image={'Id':self.items[m.DATABASE]['Image'],'Os':'linux','Architecture':'arm64'}
+        with patch.object(m,'result',side_effect=[[{'Name':'fixture-volume-name','Driver':'local'}],[image]]), \
+                patch.object(m,'run',return_value=(0,b'wrong\n',b'')),self.assertRaises(m.Refusal):
+            m.read_volume_marker(['docker'],policy,self.items[m.DATABASE])
+        with patch.object(m,'result',return_value=[]),patch.object(m,'run') as command,self.assertRaises(m.Refusal):
+            m.read_volume_marker(['docker'],policy,self.items[m.DATABASE])
+        command.assert_not_called()
 
 
 if __name__=='__main__':unittest.main()
