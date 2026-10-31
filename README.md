@@ -9,8 +9,10 @@ GitHub remotes are created.
 
 ## AWS migration
 
-The migration is in progress. The diagram below describes the target private
-network; it is not evidence that the runtime or DNS cutover is complete.
+The migration is incomplete. The private EC2 PostgreSQL server has started and
+passed TLS/build/locale checks; final data restore, application activation and
+DNS cutover remain pending. The diagram records the observed 2026-10-31 11:46 JST
+state and the intended communication after cutover. Production still uses the Mac mini.
 
 ![PALS AWS private network target](docs/diagrams/pals-aws-private-target.png)
 
