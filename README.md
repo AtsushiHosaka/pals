@@ -9,11 +9,20 @@ GitHub remotes are created.
 
 ## AWS migration
 
-As of 2026-10-31 19:46 JST, both `palschat.site` and `api.palschat.site` serve
+As of 2026-10-31 20:32 JST, both `palschat.site` and `api.palschat.site` serve
 the private AWS runtime through Cloudflare and the TLS ALB. Public browser
 verification confirmed a mathematical answer and its Lean source. Aurora holds
-433 seeded Drafts and 20 newly compiled, independently reviewed Recipes with
-20 searchable entries. Chat history was not imported, as requested.
+433 seeded Drafts and 102 compiler-verified Recipes. Of those Recipes, 20 have
+independently approved searchable entries; the new 82 are not yet searchable.
+Another 744 typed Draft candidates passed local Lean and axiom replay, but none
+is active in production. The 1,100 usable-item target is not yet achieved.
+Chat history was not imported, as requested.
+
+Aurora now rejects the tested non-TLS connection path and accepts TLS 1.3.
+The writer still reports `pending-reboot`; no reboot was performed. Private
+networking, encryption, access controls and budget notifications were inspected.
+The application source-security scan could not start, so this is not an
+application-wide security approval.
 
 The natural-power continuity question reused a verified Recipe and reached
 `answered` in 25.003 seconds of server time, versus 154.333 seconds in the earlier
@@ -26,6 +35,7 @@ current release window and the shared-network guest quota.
 ![PALS AWS private network target](docs/diagrams/pals-aws-private-target.png)
 
 - [Migration runbook and execution status](docs/aws-migration-runbook-2026-10-30.md)
+- [AWS security checks and catalog expansion evidence](docs/aws-security-and-catalog-check-2026-10-31.md)
 - [Editable draw.io diagram](docs/diagrams/pals-aws-private-target.drawio)
 - [Capacity and performance design](docs/aws-low-latency-architecture-2026-10-30.md)
 - [Native Lean measurements on the private large instance](docs/aws-native-lean-benchmark-2026-10-30.md)
