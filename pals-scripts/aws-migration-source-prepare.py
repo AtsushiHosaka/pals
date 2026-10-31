@@ -85,6 +85,8 @@ def safe_diagnostic(raw):
             result[field]=value[field]
     if type(value.get('tool_line')) is int and 1<=value['tool_line']<=20000:
         result['tool_line']=value['tool_line']
+    if type(value.get('tool_failed_step')) is str and value['tool_failed_step'] in getattr(B,'TOOL_SCHEMA_STEPS',set()):
+        result['tool_failed_step']=value['tool_failed_step']
     changes=value.get('changed_fields')
     if result.get('reason')=='source_container_changed' and type(changes) is list and 0<len(changes)<=8 and all(
             type(row) is dict and set(row)=={'container','fields'} and

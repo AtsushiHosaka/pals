@@ -117,6 +117,10 @@ class PreparationTests(unittest.TestCase):
                            ('tool_line',0),('tool_line',20001)]:
             bad={**value,field:item};filtered=m.safe_diagnostic(json.dumps(bad).encode())
             self.assertNotIn(field,filtered);self.assertNotIn(SECRET,json.dumps(filtered))
+        step=next(iter(m.B.TOOL_SCHEMA_STEPS))
+        self.assertEqual(m.safe_diagnostic(json.dumps({'tool_failed_step':step}).encode()),{'tool_failed_step':step})
+        self.assertNotIn('tool_failed_step',m.safe_diagnostic(json.dumps({'tool_failed_step':SECRET}).encode()))
+        self.assertNotIn(SECRET,json.dumps(m.safe_diagnostic(json.dumps({'tool_failed_step':SECRET}).encode())))
 
     def test_changed_fields_reject_unknown_names_values_duplicates_and_extra_keys(self):
         known={'container':m.B.DATABASE,'fields':['Config']}
