@@ -13,8 +13,8 @@ GitHub remotes are created.
 
 [Full-size PNG](docs/diagrams/pals-aws-private-target.png) · [Editable draw.io diagram](docs/diagrams/pals-aws-private-target.drawio)
 
-As of 2026-11-01 01:29 JST, the signed sequence-5 update is deployed to the
-private AWS runtime, and the Cloudflare/TLS ALB listener and rules are restored.
+At 2026-11-01 01:29 JST, the signed sequence-5 update was deployed to the
+private AWS runtime, and the Cloudflare/TLS ALB listener and rules were restored.
 A public Japanese tan-one-degree question reached `answered` with its proof and
 Lean source displayed. Its verified Recipe was reused in 47.153515 seconds of
 server time, with independent request/answer correspondence checks. Aurora holds
@@ -39,9 +39,20 @@ its + button, keeps plan/usage under Settings, and reuses an empty chat without
 losing its draft or attachments. Fractions and exponents can be edited inline in
 prose, with fonts served from PALS. Public checks passed project navigation and
 creation/cancel, Settings-to-usage access, empty-chat reuse, and ordinary keyboard
-fraction input with TeX copy. Explicit paste currently runs twice: the same
-operation produces `nn/(n+1n+1)` in production and `n/(n+1)` with the local fix.
-The corrected Web build and public verification are still pending.
+fraction input with TeX copy. Sequence 5 had a reproducible double-paste defect.
+The corrected Web image, commit `79f2df0722d241663851bab9fa66cc5b99fb09df`,
+was deployed in sequence 6. Its signed manifest is
+`b17899ab82efad2dc27bae99985fc78593012bb43bb4aa30984c281375f527d4`.
+The owning Aurora update admitted it without changing the API, worker or
+verifier image/toolchain; the temporary KMS/RDS policy was removed and its
+absence verified. All seven containers, private TLS and recovery-unit checks
+passed, and all nine catalog fingerprints were preserved. Public access was
+restored around 2026-11-01 01:57:50 JST with the ALB target healthy. After a
+transient connection error cleared on reload, the authenticated browser showed
+history and the Japanese proof. Explicit paste followed by TeX copy returned
+`\frac{n}{n+1}` without duplicated characters in the public Web UI. In a new
+empty chat, pressing New Chat twice kept the same URL, one list item and the
+unsent Japanese draft, and returned focus to the composer.
 
 Aurora now rejects the tested non-TLS connection path and accepts TLS 1.3.
 The writer still reports `pending-reboot`; no reboot was performed. Private
@@ -55,8 +66,8 @@ generation trial. These are two individual observations, not a controlled
 performance benchmark. One-second answers, the 30-person latency target, and
 automatic scaling remain unachieved or unverified. Recovery units are enabled,
 but an actual reboot test has not been performed. Controlled restart/rebuild
-permission for the current release expires on 2026-11-02 at 00:51:45 JST; running
-services do not stop solely because that time passes. See the runbook for the
+permission for the newly admitted sequence-6 release expires on 2026-11-02
+at 01:39:09 JST; running services do not stop solely because that time passes. See the runbook for the
 release window and the shared-network guest quota.
 
 - [Migration runbook and execution status](docs/aws-migration-runbook-2026-10-30.md)
