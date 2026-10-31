@@ -14,8 +14,10 @@ the private AWS runtime through Cloudflare and the TLS ALB. Public browser
 verification confirmed a mathematical answer and its Lean source. Aurora holds
 433 seeded Drafts and 102 compiler-verified Recipes. Of those Recipes, 20 have
 independently approved searchable entries; the new 82 are not yet searchable.
-Another 744 typed Draft candidates passed local Lean and axiom replay, but none
-is active in production. The 1,100 usable-item target is not yet achieved.
+A set of 744 typed Draft candidates passed local Lean and axiom replay; the new
+82 Recipes come from that same set and are not additional unique propositions.
+None of the typed Drafts is active in production. The 1,100 usable-item target
+is not yet achieved.
 Chat history was not imported, as requested.
 
 Aurora now rejects the tested non-TLS connection path and accepts TLS 1.3.
