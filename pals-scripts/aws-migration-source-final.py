@@ -7,6 +7,10 @@ drains the existing authority predicates, stops writers, captures, then persiste
 stops the DB before real KMS signing and private S3 upload. No source restart or
 automatic retry exists. Failed/uncertain actions require --reconcile. Only root's
 operator should execute mutation modes after reviewing the plan and target gates.
+Final capture and fresh fence require the existing watchdog maintenance marker
+~/pals-mini-deploy/auto-recovery/disabled.json (owned regular 0600 JSON object).
+The helper never creates/removes this marker. Leave it in place on failure;
+inspect the protected journal and reconcile before any source restart.
 """
 from __future__ import annotations
 
@@ -712,6 +716,18 @@ def stopped(items):
                for item in items.values())
 
 
+def require_maintenance(root):
+    # This is the watchdog's existing planned-maintenance contract. A source
+    # stop alone is unsafe: recovery could restart writers after our lock exits.
+    path = root/"auto-recovery/disabled.json"
+    try:
+        document(private(path))
+        info = path.lstat()
+        require(info.st_uid == os.geteuid() and stat.S_IMODE(info.st_mode) == 0o600)
+    except (OSError, ValueError, Refusal):
+        raise Refusal("source_recovery_maintenance_required") from None
+
+
 def fence(items, identity, source_envelope, policy_sha, policy, phase):
     require(phase in ("stopped-after-final-capture", "stopped-before-target-admission") and stopped(items))
     source = document(base64.b64decode(document(source_envelope)["payload_b64"], validate=True))
@@ -736,6 +752,8 @@ def fence(items, identity, source_envelope, policy_sha, policy, phase):
 
 
 def capture(root, args, policy, current, docker, binding, items, verify):
+    if args.final:
+        require_maintenance(root)
     require_running(items, current)
     require_drain_definition(docker, items[ACTORS["api"]])
     tools, dump_sha = source_tools(docker, items[DATABASE])
@@ -756,14 +774,19 @@ def capture(root, args, policy, current, docker, binding, items, verify):
              "tool_image": args.tool_image, "tool_api_commit": args.tool_api_commit,
              "capture_completed": False, "admission_eligible": False}
     def recheck():
+        if args.final:
+            require_maintenance(root)
         verify(); require(controller(root)[3] == binding, "controller_changed")
         actual = inspect_all(docker, policy["edge_container"]); require_same(items, actual)
         return actual
+    def mutate(arguments, timeout=30):
+        recheck()
+        return run(docker+arguments, timeout=timeout)
     try:
         recheck()
         if args.final:
             journal(root, state, "ingress_stop_pending")
-            run(docker+["stop", "--time", "15", items[policy["edge_container"]]["Id"]])
+            mutate(["stop", "--time", "15", items[policy["edge_container"]]["Id"]])
             require(recheck()[policy["edge_container"]]["State"]["Running"] is False)
             journal(root, state, "ingress_stopped_draining")
             for _attempt in range(60):
@@ -773,7 +796,7 @@ def capture(root, args, policy, current, docker, binding, items, verify):
             else:
                 raise Refusal("source_workload_not_drained")
             journal(root, state, "writers_stop_pending")
-            run(docker+["stop", "--time", "30", *[items[n]["Id"] for n in ACTORS.values()]], timeout=110)
+            mutate(["stop", "--time", "30", *[items[n]["Id"] for n in ACTORS.values()]], timeout=110)
             require(all(recheck()[name]["State"]["Running"] is False for name in ACTORS.values()))
             require(drained(docker, items[DATABASE], tools), "work_reappeared_after_writer_stop")
             journal(root, state, "writers_stopped_capture_pending")
@@ -790,11 +813,11 @@ def capture(root, args, policy, current, docker, binding, items, verify):
             if args.final:
                 journal(root, state, "capture_complete_db_fence_pending")
                 recheck()
-                run(docker+["update", "--restart=no", items[DATABASE]["Id"]])
+                mutate(["update", "--restart=no", items[DATABASE]["Id"]])
                 journal(root, state, "database_stop_pending")
-                run(docker+["stop", "--time", "60", items[DATABASE]["Id"]], timeout=75)
+                mutate(["stop", "--time", "60", items[DATABASE]["Id"]], timeout=75)
                 journal(root, state, "writer_restart_disable_pending")
-                run(docker+["update", "--restart=no", *[items[n]["Id"] for n in
+                mutate(["update", "--restart=no", *[items[n]["Id"] for n in
                     [*ACTORS.values(), policy["edge_container"]]]])
                 actual = recheck(); require(stopped(actual), "persistent_source_fence_not_observed")
                 journal(root, state, "source_fenced_sign_pending")
@@ -890,6 +913,8 @@ def main(arguments=None):
             return 0
         if args.reconcile or args.refresh_fence:
             with existing_lock(state/"deploy.lock"):
+                if args.refresh_fence:
+                    require_maintenance(root)
                 verify()
                 items = inspect_all(docker, policy["edge_container"])
                 print(json.dumps(reconcile(root, args, policy, docker, binding, items), sort_keys=True))
@@ -917,7 +942,10 @@ if __name__ == "__main__":
                 "command_failed", "command_timeout", "total_timeout", "tool_stdio_timeout",
                 "persistent_source_fence_not_observed", "reconcile_source_identity_changed",
                 "fresh_fence_requires_uploaded_final", "invalid_arguments"}
+        safe.add("source_recovery_maintenance_required")
         reason = error.args[0] if type(error) is Refusal and len(error.args) == 1 and error.args[0] in safe else "guard_rejected"
         print(json.dumps({"status": "source_final_failed_closed", "reason": reason,
+                          "phase": "final_maintenance_prerequisite" if reason == "source_recovery_maintenance_required"
+                          else "source_final_operation",
                           "action": "reconcile_before_any_retry"}), file=sys.stderr)
         sys.exit(2)

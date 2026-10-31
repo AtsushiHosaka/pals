@@ -202,6 +202,8 @@ class CaptureOrderingTests(unittest.TestCase):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name).resolve();(self.root/"aws-migration-20261030").mkdir(mode=0o700)
         m.write(self.root/'deploy.lock',b'')
+        (self.root/'auto-recovery').mkdir(mode=0o700)
+        m.write(self.root/'auto-recovery/disabled.json',b'{"reason":"final-source-capture"}')
         self.previous=m.encoded({"kms_key_arn":m.KEY});self.previous_path=self.root/"previous"
         m.write(self.previous_path,self.previous);m.write(self.root/"signature",b"signature")
         self.policy={"state_dir":str(self.root),"edge_container":"pals-edge","signed_predecessor_manifest":str(self.previous_path),
@@ -293,6 +295,28 @@ class CaptureOrderingTests(unittest.TestCase):
         self.assertNotIn('sign',[x[0] for x in self.events]);self.assertNotIn('start',[x[0] for x in self.events])
         journal=json.loads(m.private(m.journal_path(self.root)))
         self.assertEqual(journal['phase'],'failed_reconcile_required');self.assertIs(journal['capture_completed'],False)
+
+    def test_missing_or_unsafe_maintenance_prevents_first_source_mutation(self):
+        marker=self.root/'auto-recovery/disabled.json'
+        marker.unlink()
+        with self.assertRaisesRegex(m.Refusal,'source_recovery_maintenance_required'):self.execute()
+        self.assertEqual(self.events,[])
+        for raw,mode in [(b'[]',0o600),(b'{}',0o644),(b'not-json',0o600)]:
+            m.write(marker,raw);marker.chmod(mode)
+            with self.assertRaisesRegex(m.Refusal,'source_recovery_maintenance_required'):self.execute()
+            self.assertEqual(self.events,[]);marker.unlink()
+
+    def test_removed_maintenance_after_ingress_stop_blocks_further_mutation(self):
+        original=self.fake_run
+        def changed(args,**options):
+            result=original(args,**options)
+            (self.root/'auto-recovery/disabled.json').unlink()
+            return result
+        with patch.object(self,'fake_run',side_effect=changed),self.assertRaisesRegex(m.Refusal,'source_recovery_maintenance_required'):
+            self.execute()
+        self.assertEqual(len(self.events),1)
+        self.assertTrue(self.actual[m.DATABASE]['State']['Running'])
+        self.assertNotIn('sign',[x[0] for x in self.events])
 
     def test_ambiguous_database_stop_never_signs_or_retries(self):
         self.fail_db_stop=True
