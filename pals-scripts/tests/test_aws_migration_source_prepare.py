@@ -8,7 +8,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from contextlib import redirect_stdout
+from contextlib import nullcontext, redirect_stdout
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -203,6 +203,63 @@ class PreparationTests(unittest.TestCase):
             self.assertEqual(json.loads(out.getvalue())['stage'],'sdk_read_only_probe')
             self.assertEqual(upload.call_args.args[1]['failure']['sdk_stage'],'aws_identity')
             self.assertFalse(upload.call_args.args[1]['source_stop_performed'])
+
+    def final_sequence(self, failure=False):
+        binding=(b'policy',b'current',b'config')
+        expected={key:m.B.sha(raw) for key,raw in zip(
+            ('policy_sha256','current_sha256','config_sha256'),binding)}
+        events=[]
+        def base(_root,report):
+            report['source_baseline']=expected
+        def maintain(_root,report):
+            events.append('maintenance');report['watchdog_maintenance']={'entered':True}
+        def run(role,args,**kwargs):
+            if '--final' in args:
+                events.append('final')
+                self.assertEqual(kwargs,{'timeout':1200})
+                self.assertEqual(args[-2:],['--confirm-source-manifest','e'*64])
+                if failure:raise m.B.Refusal('child_failed')
+                return json.dumps({'status':'final_uploaded_source_fenced','session':'d'*32,
+                                   'admission_eligible':False}).encode()
+            events.append(args[0]);return self.child(role,args)
+        with patch.object(m,'baseline',side_effect=base),patch.object(m,'enter_migration_maintenance',side_effect=maintain), \
+             patch.object(m,'child',side_effect=run),patch.object(m.B,'controller',return_value=(
+                 {},{'manifest_sha256':'e'*64},None,binding)):
+            if failure:
+                with self.assertRaises(m.B.Refusal):
+                    m.sequence(SimpleNamespace(apply_runtime_secrets=True,smoke=True,final_migration=True),Path('/source'),self.report)
+            else:
+                m.sequence(SimpleNamespace(apply_runtime_secrets=True,smoke=True,final_migration=True),Path('/source'),self.report)
+        return events
+
+    def test_final_migration_enters_maintenance_then_probe_smoke_and_exact_final(self):
+        events=self.final_sequence()
+        self.assertEqual(events[0],'maintenance');self.assertEqual(events[-1],'final')
+        self.assertIn('--smoke',self.calls[-1][1])
+        self.assertEqual(self.report['status'],'final_uploaded_source_fenced_not_admitted')
+        self.assertTrue(self.report['source_stop_performed'])
+        self.assertFalse(self.report['source_state_requires_reconciliation'])
+
+    def test_final_failure_never_claims_source_unchanged_or_automatically_resumes(self):
+        self.final_sequence(failure=True)
+        self.assertIsNone(self.report['source_stop_performed'])
+        self.assertIsNone(self.report['final_signing_performed'])
+        self.assertTrue(self.report['source_state_requires_reconciliation'])
+
+    def test_maintenance_creates_private_marker_and_preserves_existing_bytes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary).resolve();directory=root/'auto-recovery';directory.mkdir(mode=0o700)
+            inspection={'files':{name:{'sha256':pin} for name,pin in m.PINS.items()}}
+            observed=({'state_dir':str(root/'state')},{},None,(b'p',b'c',b'd'))
+            with patch.object(m.L,'public_inspection',return_value=inspection), \
+                 patch.object(m.B,'controller',return_value=observed),patch.object(m.B,'existing_lock',return_value=nullcontext()):
+                report={'session':'a'*32};m.enter_migration_maintenance(root,report)
+                marker=directory/'disabled.json';raw=marker.read_bytes()
+                self.assertEqual(marker.stat().st_mode&0o777,0o600)
+                self.assertFalse(report['watchdog_maintenance']['existing_marker_preserved'])
+                report={'session':'b'*32};m.enter_migration_maintenance(root,report)
+                self.assertEqual(marker.read_bytes(),raw)
+                self.assertTrue(report['watchdog_maintenance']['existing_marker_preserved'])
 
     def test_inspect_only_never_enters_preparation_or_takes_source_lock(self):
         with tempfile.TemporaryDirectory() as temporary:

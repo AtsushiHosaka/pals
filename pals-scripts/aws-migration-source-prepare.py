@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Mini preparation only: never final capture, drain, stop or maintenance changes.
+"""Mini preparation, or explicitly requested final migration without auto-resume.
 
 Default performs the SDK read-only probe, public inventory upload, fixed tool load
 and real native/container lock probe. --apply-runtime-secrets explicitly reconciles
 then creates only missing authorized SecureStrings. --smoke is a separate opt-in.
 Every child owns its existing lock. No retries, journal deletion or service restart.
 --inspect-lock-owner-only runs only public file/lsof/ps inspection and report upload.
+--final-migration explicitly enters existing watchdog maintenance, prepares,
+smoke-checks, then drains/captures/fences the source. Never resumes it automatically.
 """
 import base64
 import importlib.util
@@ -183,6 +185,28 @@ def baseline(root,report):
         raise B.Refusal('source_lock_busy') from None
 
 
+def enter_migration_maintenance(root, report):
+    inspection=L.public_inspection(root)
+    B.require(all(inspection['files'][name].get('sha256')==pin for name,pin in PINS.items()),
+              'installed_controller_baseline_changed')
+    policy,_current,_docker,binding=B.controller(root)
+    with B.existing_lock(Path(policy['state_dir'])/'host-update.lock'):
+        B.require(B.controller(root)[3]==binding,'controller_changed')
+        directory=root/'auto-recovery'
+        info=directory.lstat()
+        B.require(directory.resolve(strict=True)==directory and directory.is_dir()
+                  and info.st_uid==os.geteuid() and info.st_mode&0o777==0o700)
+        marker=directory/'disabled.json'
+        existed=marker.exists() or marker.is_symlink()
+        if not existed:
+            B.write(marker,B.encoded({'schema_version':'pals.ec2-migration-maintenance.v1',
+                'reason':'user_authorized_final_aws_migration','session':report['session'],
+                'automatic_resume':False}))
+        B.require_maintenance(root)
+        report['watchdog_maintenance']={'entered':True,'existing_marker_preserved':existed,
+                                       'automatic_resume':False}
+
+
 def sequence(args,root,report):
     def step(name,role,arguments):
         report['stage']=name
@@ -190,6 +214,9 @@ def sequence(args,root,report):
         report['successful_child_stages'].append(name)
         return raw
     report['stage']='controller_preflight';baseline(root,report)
+    if getattr(args,'final_migration',False):
+        report['stage']='enter_watchdog_maintenance'
+        enter_migration_maintenance(root,report)
     sdk=B.document(step('sdk_read_only_probe','secrets',['--probe-sdk-transport']))
     B.require(sdk=={'status':'sdk_probe_verified','account_verified':True,'endpoint_verified':True,
                    'metadata_read_verified':True,'service_write_attempted':False})
@@ -223,6 +250,24 @@ def sequence(args,root,report):
         report['smoke_session']=observed['session']
     final={};baseline(root,final)
     B.require(final['source_baseline']==report['source_baseline'],'controller_changed')
+    if getattr(args,'final_migration',False):
+        _policy,current,_docker,binding=B.controller(root)
+        B.require({name:B.sha(raw) for name,raw in zip(
+            ('policy_sha256','current_sha256','config_sha256'),binding)}==report['source_baseline'],
+            'controller_changed')
+        report.update(stage='final_source_capture',source_stop_performed=None,
+                      final_signing_performed=None,source_state_requires_reconciliation=True)
+        raw=child('final',common+['--final','--confirm-source-manifest',current['manifest_sha256']],timeout=1200)
+        observed=B.document(raw)
+        B.require(set(observed)=={'status','session','admission_eligible'}
+                  and observed['status']=='final_uploaded_source_fenced'
+                  and observed['admission_eligible'] is False
+                  and re.fullmatch(r'[0-9a-f]{32}',observed['session']))
+        report['successful_child_stages'].append('final_source_capture')
+        report.update(status='final_uploaded_source_fenced_not_admitted',stage='complete',
+                      final_source_session=observed['session'],source_stop_performed=True,
+                      final_signing_performed=True,source_state_requires_reconciliation=False)
+        return
     report['status']='prepared_not_admitted';report['stage']='complete'
 
 
@@ -250,13 +295,17 @@ def upload_reports(directory,report):
 
 
 def main(arguments=None):
-    B.DEADLINE=time.monotonic()+1200
+    B.DEADLINE=time.monotonic()+2400
     parser=B.Parser(description=__doc__)
     parser.add_argument('--apply-runtime-secrets',action='store_true')
     parser.add_argument('--smoke',action='store_true')
     parser.add_argument('--inspect-lock-owner-only',action='store_true')
+    parser.add_argument('--final-migration',action='store_true')
     args=parser.parse_args(arguments)
-    B.require(not args.inspect_lock_owner_only or not (args.apply_runtime_secrets or args.smoke),'invalid_arguments')
+    B.require(not args.inspect_lock_owner_only or not (args.apply_runtime_secrets or args.smoke or args.final_migration),'invalid_arguments')
+    if args.final_migration:
+        args.apply_runtime_secrets=True
+        args.smoke=True
     root=Path.home()/'pals-mini-deploy';parent=root/'aws-migration-20261030/source-preparation'
     for path in (parent.parent,parent):
         if not path.exists():path.mkdir(mode=0o700)
@@ -295,7 +344,8 @@ def main(arguments=None):
                           'failure':report.get('failure',{}),'action':'check_existing_operator_sso_and_protected_receipt'},sort_keys=True))
         return 2
     print(json.dumps({'status':report['status'],'stage':report['stage'],'reports':receipts,'admission_eligible':False},sort_keys=True))
-    return 0 if report['status'] in {'prepared_not_admitted','lock_owner_inspection_complete'} else 2
+    return 0 if report['status'] in {'prepared_not_admitted','lock_owner_inspection_complete',
+                                   'final_uploaded_source_fenced_not_admitted'} else 2
 
 
 if __name__=='__main__':
