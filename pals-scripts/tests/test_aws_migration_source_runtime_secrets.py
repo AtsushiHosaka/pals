@@ -247,18 +247,59 @@ class CommandTests(unittest.TestCase):
         with patch.object(m,'command',return_value=(0,out,b'')):
             self.assertEqual(m.Parameters().get(name),existing)
 
-    def test_put_uses_stdin_and_no_secret_argv(self):
+    def test_put_uses_fifo_and_no_secret_argv(self):
         name = next(iter(values()))
-        with patch.object(m, "command", return_value=(0, b'{"Version":1}', b"")) as call:
+        with patch.object(m, "fifo_json", return_value=(0, b'{"Version":1}', b"")) as call:
             m.Parameters().put(name, SECRET)
-        args, data = call.call_args.args
+        args, data, _directory = call.call_args.args
         self.assertNotIn(SECRET, repr(args))
-        self.assertEqual(args[-1], "file:///dev/stdin")
+        self.assertEqual(args[-1], "put-parameter")
         payload = json.loads(data)
         self.assertEqual(payload["Value"], SECRET)
         self.assertIs(payload["Overwrite"], False)
         self.assertEqual(payload["Type"], "SecureString")
         self.assertIn("https://ssm.ap-northeast-1.amazonaws.com", args)
+
+    def test_fifo_real_reader_private_kernel_transport_and_cleanup(self):
+        m.DEADLINE=time.monotonic()+5
+        with tempfile.TemporaryDirectory() as temporary:
+            directory=Path(temporary).resolve()
+            payload=json.dumps({'Value':SECRET*500}).encode()
+            child="import sys,json,stat,os; p=sys.argv[-1][7:]; s=os.lstat(p); assert stat.S_ISFIFO(s.st_mode) and stat.S_IMODE(s.st_mode)==0o600; v=json.load(open(p)); assert len(v['Value'])>1000; print('{\"Version\":1}')"
+            code,out,err=m.fifo_json([sys.executable,'-c',child],payload,directory)
+            self.assertEqual((code,json.loads(out),err),(0,{'Version':1},b''))
+            self.assertEqual(list(directory.iterdir()),[]);self.assertNotIn(SECRET,out.decode())
+
+    def test_fifo_reader_exit_and_expired_budget_cleanup_without_retry(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            directory=Path(temporary).resolve();m.DEADLINE=time.monotonic()+5
+            code,_out,_err=m.fifo_json([sys.executable,'-c','import sys;sys.exit(2)'],SECRET.encode(),directory)
+            self.assertEqual(code,2);self.assertEqual(list(directory.iterdir()),[])
+            m.DEADLINE=time.monotonic()-1
+            with self.assertRaises(m.GuardError):m.fifo_json([sys.executable,'-c','pass'],SECRET.encode(),directory)
+            self.assertEqual(list(directory.iterdir()),[])
+            with patch.object(m,'command',side_effect=AssertionError('oversized payload never starts command')), \
+                 self.assertRaises(m.GuardError):m.fifo_json([],b'x'*(m.MAX_OUTPUT+1),directory)
+            self.assertEqual(list(directory.iterdir()),[])
+
+    def test_put_error_reports_only_fixed_paramfile_diagnostics(self):
+        err=SECRET.encode()+b' [Errno 6] Device not configured: paramfile'
+        with patch.object(m,'fifo_json',return_value=(255,b'',err)),self.assertRaises(m.GuardError) as caught:
+            m.Parameters().put(next(iter(values())),SECRET)
+        summary=m.failure_summary(caught.exception)
+        self.assertTrue(summary['stdin_device_unavailable']);self.assertTrue(summary['parameter_file_error'])
+        self.assertNotIn(SECRET,json.dumps(summary))
+
+    def test_probe_is_synthetic_offline_skeleton_for_both_transports(self):
+        with patch.object(m,'command',return_value=(255,b'',b'[Errno 6] paramfile')) as pipe, \
+             patch.object(m,'fifo_json',return_value=(0,b'{"Version":0}',b'')) as fifo:
+            observed=m.Parameters().probe_transport()
+        self.assertIs(observed['service_write_attempted'],False)
+        self.assertFalse(observed['stdin']['input_loaded']);self.assertTrue(observed['fifo']['input_loaded'])
+        for call in (pipe,fifo):
+            args,payload=call.call_args.args[:2]
+            self.assertEqual(args[args.index('--generate-cli-skeleton')+1],'output')
+            self.assertNotIn(SECRET,repr(args));self.assertNotIn(SECRET,payload.decode())
 
     def test_get_type_arn_version_and_error_guards(self):
         name = next(iter(values()))

@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import configparser
+import errno
 import fcntl
 import json
 import os
@@ -25,6 +26,7 @@ import signal
 import stat
 import subprocess
 import sys
+import threading
 import time
 from contextlib import contextmanager
 from pathlib import Path
@@ -73,6 +75,7 @@ SAFE_FAILURE_CODES = frozenset({
     "incomplete_transfer",
     "wrong_account", "parameter_read_failed", "parameter_metadata_mismatch",
     "parameter_batch_response_invalid",
+    "fifo_transport_failed",
 })
 
 
@@ -110,6 +113,8 @@ def failure_summary(error):
         result["aws_exit_code"] = exit_code
         result["parameter_not_found_label"] = getattr(error, "parameter_not_found_label", False) is True
         result["ansi_formatting_present"] = getattr(error, "ansi_formatting_present", False) is True
+        for key in ("stdin_device_unavailable", "parameter_file_error"):
+            result[key] = getattr(error, key, False) is True
     return result
 
 
@@ -349,8 +354,73 @@ def aws_cli_privacy():
         os.close(fd)
 
 
+def transport_labels(err):
+    """Diagnostic booleans only; never use stderr to permit a write/retry."""
+    return {"stdin_device_unavailable": b"[Errno 6]" in err or b"Device not configured" in err,
+            "parameter_file_error": b"paramfile" in err or b"Error parsing parameter" in err}
+
+
+def fifo_json(arguments, payload, directory):
+    """Named FIFO: no regular secret file, argv value, shell, or CLI stdin open."""
+    require(isinstance(payload, bytes) and 0 < len(payload) <= MAX_OUTPUT, "fifo_transport_failed")
+    os.close(protected(directory, directory=True))
+    path = directory/(".runtime-json-"+uuid4().hex)
+    os.mkfifo(path, 0o600)
+    original = path.lstat()
+    require(stat.S_ISFIFO(original.st_mode) and stat.S_IMODE(original.st_mode) == 0o600
+            and original.st_uid == os.geteuid() and original.st_nlink == 1, "fifo_transport_failed")
+    stop = threading.Event()
+    completed = threading.Event()
+    failed = threading.Event()
+    until = min(DEADLINE, time.monotonic()+30)
+
+    def writer():
+        fd = None
+        try:
+            while not stop.is_set() and time.monotonic() < until:
+                try:
+                    fd = os.open(path, os.O_WRONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
+                    break
+                except OSError as error:
+                    if error.errno != errno.ENXIO:
+                        raise
+                    stop.wait(0.02)
+            if fd is None:
+                failed.set(); return
+            info = os.fstat(fd)
+            require(stat.S_ISFIFO(info.st_mode) and (info.st_dev, info.st_ino) ==
+                    (original.st_dev, original.st_ino), "fifo_transport_failed")
+            pending = memoryview(payload)
+            while pending and not stop.is_set() and time.monotonic() < until:
+                try:
+                    pending = pending[os.write(fd, pending[:4096]):]
+                except BlockingIOError:
+                    stop.wait(0.02)
+            (failed if pending else completed).set()
+        except (OSError, GuardError):
+            failed.set()
+        finally:
+            if fd is not None:
+                os.close(fd)
+
+    thread = threading.Thread(target=writer, name="runtime-json-fifo", daemon=True)
+    thread.start()
+    try:
+        result = command(arguments+["--cli-input-json", "file://"+str(path)])
+        if result[0] == 0:
+            require(completed.is_set() and not failed.is_set(), "fifo_transport_failed")
+        return result
+    finally:
+        stop.set(); thread.join(timeout=1)
+        named = path.lstat()
+        require(not thread.is_alive() and (named.st_dev, named.st_ino) ==
+                (original.st_dev, original.st_ino), "fifo_transport_failed")
+        path.unlink()
+
+
 class Parameters:
-    def __init__(self):
+    def __init__(self, directory=None):
+        self.directory = directory or Path.home()/"pals-mini-deploy/aws-migration-20261030"
         self.prefix = ["aws", "--profile", PROFILE, "--region", REGION,
                        "--output", "json", "--color", "off", "--no-cli-pager",
                        "--cli-connect-timeout", "10", "--cli-read-timeout", "20"]
@@ -391,15 +461,31 @@ class Parameters:
     def put(self, name, value):
         payload = json.dumps({"Name": name, "Value": value, "Type": "SecureString",
                               "Overwrite": False}, ensure_ascii=True).encode()
-        # The stdin URI is literal. Values never occur in argv or temporary files.
-        code, out, _err = command(self.prefix + ["--endpoint-url", "https://ssm." + REGION +
-                                                ".amazonaws.com", "ssm", "put-parameter", "--cli-input-json",
-                                                "file:///dev/stdin"], payload)
-        require(code == 0, "write_outcome_unverified")
+        code, out, err = fifo_json(self.prefix + ["--endpoint-url", "https://ssm." + REGION +
+                                                 ".amazonaws.com", "ssm", "put-parameter"], payload, self.directory)
+        if code:
+            failure = GuardError("write_outcome_unverified")
+            failure.aws_exit_code = code
+            for label, observed in transport_labels(err).items():
+                setattr(failure, label, observed)
+            raise failure
         result = decode(out)
         require(type(result.get("Version")) is int and result["Version"] == 1,
                 "write_outcome_unverified")
         return result["Version"]
+
+    def probe_transport(self):
+        # --generate-cli-skeleton output validates inputs locally and sends no
+        # service request. The payload is a fixed synthetic value, never source.
+        payload = json.dumps({"Name": "/pals/prod/guest-hash-key", "Value": "synthetic-transport-probe",
+                              "Type": "SecureString", "Overwrite": False}).encode()
+        args = self.prefix+["--endpoint-url", "https://ssm."+REGION+".amazonaws.com", "ssm", "put-parameter",
+                            "--generate-cli-skeleton", "output"]
+        pipe_code, _out, pipe_err = command(args+["--cli-input-json", "file:///dev/stdin"], payload)
+        fifo_code, _out, fifo_err = fifo_json(args, payload, self.directory)
+        return {"status": "cli_json_transport_probe", "service_write_attempted": False,
+                "stdin": {"input_loaded": pipe_code == 0, "exit_code": pipe_code, **transport_labels(pipe_err)},
+                "fifo": {"input_loaded": fifo_code == 0, "exit_code": fifo_code, **transport_labels(fifo_err)}}
 
 
 def receipt(directory, value):
@@ -478,6 +564,7 @@ def main(arguments=None):
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--apply", action="store_true")
     mode.add_argument("--reconcile", action="store_true")
+    mode.add_argument("--probe-cli-transport", action="store_true")
     args = parser.parse_args(arguments)
     root = Path.home() / "pals-mini-deploy"
     os.close(protected(root, directory=True))
@@ -494,12 +581,16 @@ def main(arguments=None):
             actual, ids = source(current, docker)
             require(actual == values and ids == identities, "source_changed")
 
-        if args.apply or args.reconcile:
+        if args.apply or args.reconcile or args.probe_cli_transport:
             PHASE = "receipt_directory_preflight"
             directory = root / "aws-migration-20261030"
             os.close(protected(directory, directory=True))
             PHASE = "aws_cli_privacy_preflight"
             aws_cli_privacy()
+            if args.probe_cli_transport:
+                PHASE = "cli_transport_probe"
+                print(json.dumps(Parameters(directory).probe_transport(), sort_keys=True))
+                return 0
             PHASE = "ssm_reconciliation" if args.reconcile else "ssm_transfer"
             result = transfer(Parameters(), values, args.apply, args.reconcile,
                               directory, recheck)
