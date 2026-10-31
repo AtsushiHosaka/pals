@@ -219,6 +219,13 @@ class SourceTests(unittest.TestCase):
 
 
 class CommandTests(unittest.TestCase):
+    def test_cli_warning_before_structured_missing_error_is_supported(self):
+        missing = b"CLI warning\naws: [ERROR]: An error occurred (ParameterNotFound) when calling the GetParameter operation:\n"
+        with patch.object(m, "command", return_value=(254, b"", missing)):
+            self.assertIsNone(m.Parameters().get(next(iter(values()))))
+        with patch.object(m, "command", return_value=(254, SECRET.encode(), missing)), self.assertRaises(m.GuardError):
+            m.Parameters().get(next(iter(values())))
+
     def test_failed_read_exposes_only_bounded_exit_and_format_metadata(self):
         with patch.object(m, "command", return_value=(255, SECRET.encode(), b"ParameterNotFound\x1b[0m")), self.assertRaises(m.GuardError) as caught:
             m.Parameters().get(next(iter(values())))

@@ -364,7 +364,7 @@ class Parameters:
                                                ".amazonaws.com", "ssm", "get-parameter", "--name", name,
                                                "--with-decryption"])
         if code:
-            if code == 254 and re.match(
+            if code == 254 and not out.strip() and re.search(
                 rb"(?:aws: \[ERROR\]: )?An error occurred \(ParameterNotFound\) when calling the GetParameter operation:",
                 err.strip(),
             ):
