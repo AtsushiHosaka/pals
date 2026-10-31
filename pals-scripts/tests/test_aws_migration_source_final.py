@@ -44,6 +44,25 @@ def source_items(edge="pals-edge"):
 
 
 class PrivateIOTests(unittest.TestCase):
+    def test_changed_container_diagnostic_has_only_field_names_and_exact_source_line(self):
+        before=source_items();after=copy.deepcopy(before)
+        after[m.DATABASE]['Config']['Env']=['PASSWORD='+CANARY]
+        try:
+            m.require_same(before,after)
+        except m.Refusal as error:
+            report=m.failure_summary(error)
+        self.assertEqual(report['reason'],'source_container_changed')
+        self.assertEqual(report['changed_fields'],[{'container':m.DATABASE,'fields':['Config']}])
+        self.assertIs(type(report['failed_check_line']),int)
+        self.assertEqual(FILE.read_text().splitlines()[report['failed_check_line']-1].strip(),'raise error')
+        self.assertNotIn(CANARY,json.dumps(report))
+
+    def test_diagnostic_rejects_untrusted_metadata_and_exception_text(self):
+        error=m.Refusal('source_container_changed')
+        error.changed_fields=[{'container':CANARY,'fields':['Env',CANARY]}]
+        report=m.failure_summary(error)
+        self.assertNotIn('changed_fields',report);self.assertNotIn(CANARY,json.dumps(report))
+
     def test_public_inspector_holds_both_real_native_locks(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
@@ -489,6 +508,18 @@ class CaptureOrderingTests(unittest.TestCase):
         self.assertLess(labels.index('capture'),dbstop);self.assertLess(dbstop,labels.index('sign'))
         journal=json.loads(m.private(m.journal_path(self.root)));self.assertEqual(journal['phase'],'uploaded_source_fenced')
         self.assertNotIn(CANARY,repr(journal));self.assertFalse((Path(journal['output_directory'])/'inputs/master-url').exists())
+
+    def test_prejournal_recheck_reports_exact_failed_boundary_without_stopping(self):
+        self.actual[m.DATABASE]['Mounts']=[{'private':CANARY}]
+        try:
+            self.execute()
+        except m.Refusal as error:
+            report=m.failure_summary(error)
+        self.assertEqual(report['stage'],'recheck_container_identity')
+        self.assertEqual(report['reason'],'source_container_changed')
+        self.assertEqual(report['changed_fields'],[{'container':m.DATABASE,'fields':['Mounts']}])
+        self.assertFalse(m.journal_path(self.root).exists());self.assertEqual(self.events,[])
+        self.assertNotIn(CANARY,json.dumps(report))
 
     def test_independent_profile_keeps_native_deploy_lock_without_reacquiring_it(self):
         self.args.host_native_locks=True;m.write(self.root/'host-update.lock',b'')

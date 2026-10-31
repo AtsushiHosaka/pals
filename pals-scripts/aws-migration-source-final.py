@@ -63,13 +63,20 @@ FINAL_FAILURE_CODES = frozenset({
     'actual_authority_drain_definition_changed','actual_DB_identity_volume_not_mounted','wrong_account','kms_verify_failed',
     'command_failed','command_timeout','total_timeout','tool_stdio_timeout','persistent_source_fence_not_observed',
     'reconcile_source_identity_changed','fresh_fence_requires_uploaded_final','invalid_arguments',
-    'source_recovery_maintenance_required','guard_rejected'})
+    'source_recovery_maintenance_required','guard_rejected','source_lock_changed','controller_changed',
+    'source_container_changed','source_transition_pending','source_image_changed','source_inventory_invalid',
+    'source_container_identity_invalid','source_container_state_unsafe','source_file_changed','source_file_too_large',
+    'unsafe_path','unsafe_parent','unsafe_file','controller_state_path_invalid','controller_policy_invalid',
+    'controller_config_invalid','controller_current_invalid','controller_key_invalid','controller_edge_invalid',
+    'controller_docker_invalid'})
 CAPTURE_STAGES = frozenset({'initialization','controller_preflight','tool_identity','native_lock_probe',
     'maintenance_guard','source_running_guard','drain_definition_guard','source_tools_guard','predecessor_guard',
     'aws_preflight','explicit_final_confirmation','journal_guard','prepare_stage','prepare_inputs','source_image_identity',
     'source_recheck','ingress_stop','authority_drain','writers_stop','post_stop_drain','snapshot_tool',
     'native_lock_handoff','archive_registry','database_restart_disable','database_stop','writers_restart_disable',
-    'source_fence_check','source_sign','fence_sign','upload','final_state_check','inspect_final_state'})
+    'source_fence_check','source_sign','fence_sign','upload','final_state_check','inspect_final_state',
+    'recheck_maintenance','recheck_native_locks','recheck_controller_read','recheck_controller_binding',
+    'recheck_container_inspect','recheck_container_identity'})
 # Exact owning mac_production_database_update._DRAIN_CHECKS. Verify this list
 # against the actual admitted API image before any final source operation.
 DRAIN = [
@@ -148,8 +155,8 @@ def private(path, maximum=MAX_METADATA, private_mode=True):
         raw = os.read(fd, maximum + 1)
         after = os.fstat(fd)
         require(all(getattr(before, n) == getattr(after, n) for n in
-                    ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")))
-        require(len(raw) <= maximum)
+                    ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")), "source_file_changed")
+        require(len(raw) <= maximum, "source_file_too_large")
         return raw
     finally:
         os.close(fd)
@@ -407,21 +414,21 @@ def controller(root):
     policy_raw = private(root/"controller-policy.json"); policy = document(policy_raw)
     config = document(private(root/"deploy-config.json"))
     state = Path(policy["state_dir"])
-    require(root in state.parents and state.resolve(strict=True) == state)
+    require(root in state.parents and state.resolve(strict=True) == state, 'controller_state_path_invalid')
     current_raw = private(state/"current.json"); current = document(current_raw)
     require(policy["schema_version"] == "pals.macmini-host-controller.v1" and
-            policy.get("runtime_profile") == "isolated-lean-v1" and policy["containers"] == ACTORS)
+            policy.get("runtime_profile") == "isolated-lean-v1" and policy["containers"] == ACTORS, 'controller_policy_invalid')
     require(policy["database_container"] == DATABASE and config["containers"] == ACTORS and
-            config["state_dir"] == str(state) and config["docker_context"] == policy["docker_context"])
+            config["state_dir"] == str(state) and config["docker_context"] == policy["docker_context"], 'controller_config_invalid')
     require(current["status"] == "healthy" and HEX.fullmatch(current["manifest_sha256"]) and
-            current["database_identity"] == policy["database_identity"] == config["database_identity"])
+            current["database_identity"] == policy["database_identity"] == config["database_identity"], 'controller_current_invalid')
     for name in ("initial-runtime-pending.json", "normal-update-pending.json"):
         require(not (state/name).exists() and not (state/name).is_symlink(), "source_transition_pending")
-    require(HEX.fullmatch(policy["kms_public_key_sha256"]))
+    require(HEX.fullmatch(policy["kms_public_key_sha256"]), 'controller_key_invalid')
     edge = policy["edge_container"]
-    require(re.fullmatch(r"pals[A-Za-z0-9_.-]{1,120}", edge) and edge not in ACTORS.values() and edge != DATABASE)
+    require(re.fullmatch(r"pals[A-Za-z0-9_.-]{1,120}", edge) and edge not in ACTORS.values() and edge != DATABASE, 'controller_edge_invalid')
     docker = [policy["docker_binary"], "--config", policy["docker_config"], "--context", policy["docker_context"]]
-    require(Path(docker[0]).is_absolute() and Path(docker[2]).is_absolute())
+    require(Path(docker[0]).is_absolute() and Path(docker[2]).is_absolute(), 'controller_docker_invalid')
     for name in ("host-update.lock", "deploy.lock"):
         private(state/name, 1024)
     return policy, current, docker, (policy_raw, current_raw, private(root/"deploy-config.json"))
@@ -430,13 +437,13 @@ def controller(root):
 def inspect_all(docker, edge):
     names = [*ACTORS.values(), edge, DATABASE]
     observed = result(docker+["inspect", *names])
-    require(isinstance(observed, list) and len(observed) == len(names))
+    require(isinstance(observed, list) and len(observed) == len(names), 'source_inventory_invalid')
     items = {item["Name"].removeprefix("/"): item for item in observed}
-    require(set(items) == set(names) and len({x["Id"] for x in items.values()}) == len(names))
+    require(set(items) == set(names) and len({x["Id"] for x in items.values()}) == len(names), 'source_inventory_invalid')
     for name, item in items.items():
-        require(item["Name"] == "/"+name and HEX.fullmatch(item["Id"]) and IMAGE.fullmatch(item["Image"]))
+        require(item["Name"] == "/"+name and HEX.fullmatch(item["Id"]) and IMAGE.fullmatch(item["Image"]), 'source_container_identity_invalid')
         require(not item["State"].get("Dead") and not item["State"].get("Paused") and
-                not item["State"].get("Restarting"))
+                not item["State"].get("Restarting"), 'source_container_state_unsafe')
     return items
 
 
@@ -457,11 +464,16 @@ def require_running(items, current):
 
 
 def require_same(before, after):
-    require(set(before) == set(after))
+    require(set(before) == set(after), 'source_inventory_invalid')
+    changes = []
     for name, original in before.items():
         current = after[name]
-        require(all(current[k] == original[k] for k in ("Id", "Image", "Mounts", "Config")),
-                "source_container_changed")
+        changed = [key for key in ("Id", "Image", "Mounts", "Config") if current[key] != original[key]]
+        if changed:
+            changes.append({'container': name, 'fields': changed})
+    if changes:
+        error = Refusal('source_container_changed'); error.changed_fields = changes
+        raise error
 
 
 def tool_image(docker, image, commit):
@@ -961,10 +973,21 @@ def capture(root, args, policy, current, docker, binding, items, verify):
              "tool_image": args.tool_image, "tool_api_commit": args.tool_api_commit,
              "capture_completed": False, "admission_eligible": False}
     def recheck():
+        global PHASE
+        previous_phase = PHASE
         if args.final:
+            PHASE='recheck_maintenance'
             require_maintenance(root)
-        verify(); require(controller(root)[3] == binding, "controller_changed")
-        actual = inspect_all(docker, policy["edge_container"]); require_same(items, actual)
+        PHASE='recheck_native_locks';verify()
+        PHASE='recheck_controller_read'; observed_binding = controller(root)[3]
+        PHASE='recheck_controller_binding'
+        if observed_binding != binding:
+            error=Refusal('controller_changed')
+            error.controller_changed_fields=[name for name,old,new in zip(('policy','current','config'),binding,observed_binding) if old != new]
+            raise error
+        PHASE='recheck_container_inspect';actual = inspect_all(docker, policy["edge_container"])
+        PHASE='recheck_container_identity';require_same(items, actual)
+        PHASE=previous_phase
         return actual
     def mutate(arguments, timeout=30):
         recheck()
@@ -1153,10 +1176,27 @@ def main(arguments=None):
 
 def failure_summary(error):
     reason = error.args[0] if type(error) is Refusal and len(error.args) == 1 and error.args[0] in FINAL_FAILURE_CODES else "guard_rejected"
-    return {"status": "source_final_failed_closed", "reason": reason,
+    report = {"status": "source_final_failed_closed", "reason": reason,
             "phase": "final_maintenance_prerequisite" if reason == "source_recovery_maintenance_required"
             else "source_final_operation", "stage": PHASE if PHASE in CAPTURE_STAGES else "initialization",
             "action": "reconcile_before_any_retry"}
+    trace = error.__traceback__
+    while trace is not None:
+        if trace.tb_frame.f_code.co_filename == __file__ and trace.tb_frame.f_code.co_name != 'require' and 1 <= trace.tb_lineno <= 20000:
+            report['failed_check_line'] = trace.tb_lineno
+        trace = trace.tb_next
+    if reason == 'source_container_changed':
+        changes = getattr(error, 'changed_fields', [])
+        if type(changes) is list and len(changes) <= 8 and all(type(row) is dict and set(row) == {'container','fields'} and
+                type(row['container']) is str and re.fullmatch(r'pals[A-Za-z0-9_.-]{1,120}',row['container']) and
+                type(row['fields']) is list and 0 < len(row['fields']) <= 4 and
+                all(type(field) is str and field in {'Id','Image','Mounts','Config'} for field in row['fields']) for row in changes):
+            report['changed_fields'] = changes
+    if reason == 'controller_changed':
+        changed = getattr(error, 'controller_changed_fields', [])
+        if type(changed) is list and len(changed) <= 3 and all(type(field) is str and field in {'policy','current','config'} for field in changed):
+            report['controller_changed_fields'] = changed
+    return report
 
 
 if __name__ == "__main__":
