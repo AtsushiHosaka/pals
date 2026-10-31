@@ -1,6 +1,8 @@
 # AWS上で移行元と同じPostgreSQLを運用する代替案
 
-2026年10月31日の設計案です。採用、配備、既存仕様の変更は行っていません。PAM-010のAurora条件付き採用を維持したまま、同じDBイメージを使うEC2案を比較します。この文書は準備用のplanに相当し、AWS変更や切り替えを許可するものではありません。
+2026年10月31日、ユーザーはこの方式と追加費用を承認しました。11:42 JST時点で、m7g.largeのprivate DBホスト、保持する80 GiBの暗号化data EBS、専用SG・endpointを配備し、同一内容のDBイメージを起動しました。実際のTLS1.3接続、PG16.15・libc2.36・locale・vector0.8.7を確認しました。空DBで、本番復元・受理とアプリ起動は未実施です。以下のbackup/PITR・standby・復旧試験は運用設計を含み、配備完了を意味しません。
+
+この文書はEC2方式の設計と比較を記録します。実施済みの範囲は冒頭と検証記録に示し、backup/PITRや冗長化の未実施部分は設計として区別します。
 
 ## 検討する理由と確認範囲
 
@@ -25,7 +27,7 @@ PostgreSQL 16.15、pgvector 0.8.7、Debian 12、glibc 2.36、UTF8、`en_US.utf8`
 
 最初の評価候補は`m7g.large`1台、2 vCPU・8 GiBです。基準DBは2 CPU・1 GiB制限の隔離コンテナで復元と機能比較に成功しましたが、少量のsnapshotを使った試験です。本番のpeak RSS、同時接続、autovacuum、checkpoint、バックアップ併走を測っていません。8 GiBはOSと監視、DB cache、保守処理に余裕を置く初期案であり、必要量や性能の実証値ではありません。
 
-`t4g.medium`の2 vCPU・4 GiBは低価格の比較候補です。ただしCPU creditを使うため、継続負荷を測らずに安定したDB容量と扱いません。`m8g.large`も2 vCPU・8 GiBの候補です。AWSの[リージョン一覧](https://docs.aws.amazon.com/ec2/latest/instancetypes/ec2-instance-regions.html)と[仕様表](https://docs.aws.amazon.com/ec2/latest/instancetypes/gp.html)で、東京のM7g・M8g・T4gとARM構成を確認しました。選択AZでの提供、在庫、AMIと実イメージの動作は未確認です。
+`t4g.medium`の2 vCPU・4 GiBは低価格の比較候補です。ただしCPU creditを使うため、継続負荷を測らずに安定したDB容量と扱いません。`m8g.large`も2 vCPU・8 GiBの候補です。AWSの[リージョン一覧](https://docs.aws.amazon.com/ec2/latest/instancetypes/ec2-instance-regions.html)と[仕様表](https://docs.aws.amazon.com/ec2/latest/instancetypes/gp.html)で、東京のM7g・M8g・T4gとARM構成を確認しました。採用したm7g.largeは実AZで起動し、固定AMIとDBイメージのnative実行を確認しました。ほかの候補の在庫と動作は未確認です。
 
 primaryは既存のisolated DB subnetの一方に配置します。公開IP、SSH、internet/NATへのdefault routeを持たせず、TCP5432の接続元は既存control SGだけに限定する案です。control側にも新DB SG宛ての5432 egressを明示します。PGDATAは専用の暗号化gp3 80 GiB、OSは暗号化20 GiBを初期案とし、data volumeはinstance終了時に削除しません。容量、IOPS、throughputは測定後に見直します。DBのTLSは固有のprivate hostnameとCAでverify-fullを行い、秘密鍵をサーバーだけへread-only mountします。
 
@@ -65,7 +67,7 @@ metricsの送信は`monitoring`、通常のlog送信は`logs`を使います。L
 | restore operator/standby | 固定backup versionのS3読取りとKMS Decrypt、指定hostのSSM操作 | backup書換え・削除、現primaryの自動昇格 |
 | DBサーバーのコンテナ | sourceと同じDB roleを復元し、必要なPGDATAとTLSだけをmount | AWS/provider資格情報、Docker socket、IMDSへの接続 |
 
-ECR token取得などresource指定できないAPIは、AWSの仕様に従いregion/accountと呼出主体を限定します。S3は専用prefix、KMSはS3経由とencryption contextへ絞ります。CloudWatchの`PutMetricData`はnamespace条件、Logsは事前作成したgroup/streamへ限定する方針です。IAM JSONと実権限は未実装・未検証です。EBS暗号化のためのKMS利用と、DB hostへ直接付けるKMS権限は区別します。[EBS暗号化の仕組み](https://docs.aws.amazon.com/ebs/latest/userguide/how-ebs-encryption-works.html)
+ECR token取得などresource指定できないAPIは、AWSの仕様に従いregion/accountと呼出主体を限定します。S3は専用prefix、KMSはS3経由とencryption contextへ絞ります。CloudWatchの`PutMetricData`はnamespace条件、Logsは事前作成したgroup/streamへ限定する方針です。実配備ではDB専用role、ECR取得、固定bootstrap object、backup prefixとS3経由KMSの条件を実装し、bootstrap取得とECR pullを確認しました。継続backupとmetrics/log送信の実動作は未検証です。EBS暗号化のためのKMS利用と、DB hostへ直接付けるKMS権限は区別します。[EBS暗号化の仕組み](https://docs.aws.amazon.com/ebs/latest/userguide/how-ebs-encryption-works.html)
 
 バックアップ案は、host側の固定PG16 toolsによる`pg_basebackup`と`pg_receivewal --synchronous`、暗号化EBS上の専用spool、SSE-KMSのS3への転送です。DBイメージを改造せず、local接続だけをbackup roleへ許可します。base backup、WAL、timeline、manifestと設定のversionを対応付け、S3保存とchecksumの検証が済むまでspoolを消しません。backup roleの追加は明示的な運用差分として審査し、sourceのアプリ24 roleの照合を省略する理由にしません。[pg_basebackup](https://www.postgresql.org/docs/16/app-pgbasebackup.html)、[pg_receivewal](https://www.postgresql.org/docs/16/app-pgreceivewal.html)
 
@@ -90,11 +92,13 @@ T4g Unlimitedには余剰CPU creditのUSD0.04/vCPU時が別に発生します。
 | m7g.large案の固定部分 | primary1台・endpoint1 AZ | 同容量2台・endpoint2 AZ |
 | --- | --- | --- |
 | EC2 | USD76.94 | USD153.88 |
-| gp3合計100 GiB/host | USD9.60 | USD19.20 |
+| gp3合計100 GiB/host（設計時） | USD9.60 | USD19.20 |
 | interface 6サービス×AZ数 | USD61.32 | USD122.64 |
 | 小計 | USD147.86、約22,179円 | USD295.72、約44,359円 |
 
 東京のgp3はUSD0.096/GB月で、標準の3,000 IOPS・125 MiB/sを使う仮定です。追加IOPS、throughputは含みません。interface endpointは東京のUSD0.014/サービス/AZ時を使い、最初の1 PBの処理量はUSD0.01/GBが別です。追加サービス1個につき1 AZで月USD10.22、2 AZでUSD20.44増えます。1 AZだけのendpointを別AZから使う案ではcross-AZ通信と障害依存が残るため、2 AZ構成の小計はendpointも複製しました。[EBS料金](https://aws.amazon.com/ebs/pricing/)、[PrivateLink料金](https://aws.amazon.com/privatelink/pricing/)
+
+実配備では公式AMIの最小容量に合わせてrootを30 GiBとし、data80 GiBとの合計は110 GiBです。上表の100 GiBとの差は、同じ単価なら1台あたり月USD0.96です。
 
 小計はDB案の固定部分です。税、backup/S3容量・request、KMS、ECR保存、metrics/log、endpoint処理量、AZ間転送、AMI作成と復元試験、LLM料金、運用工数は別です。既存control medium、Lean large、大会xlarge、ALB/NATなどの費用もこの表に含みません。既存Auroraを保持して比較する間はAurora料金も併存し、削除前提の差額を節約実績とは扱いません。
 
@@ -104,6 +108,6 @@ T4g Unlimitedには余剰CPU creditのUSD0.04/vCPU時が別に発生します。
 
 Auroraを置き換えると決めた場合も、現時点で空の本番Auroraや検証clusterは削除しません。採用承認後にcluster/instance、parameter/subnet group、専用secret/SGなどの依存と保持要件を列挙し、対象を閉じた別cleanup planとして審査します。共用DB subnet、control SG、VPC、bucket、既存roleをまとめて消しません。sourceのDB・volume・サービスも保持します。
 
-次の未確認事項を解消してから採用を判断します。選択AZの提供と容量、固定AMIとsource imageのnative実行、既存API・検索・文字変換のreplay、同時負荷とbackup併走、TLS/IAM/endpointの実readback、実PITRとAZ復旧、RPO/RTOと運用担当です。初期storage、retention、追加費用の許容範囲も確定していません。
+EC2方式の採用と追加費用は承認済みで、初期data EBSは80 GiBに確定しました。実DBの起動とTLS接続は確認しました。最終データの復元、既存API・検索のreplay、同時負荷、継続backupとPITR、AZ障害からの復旧、retentionとRPO/RTOの実測は残っています。
 
 どちらを採用しても、新hostへの移送を結び付ける署名付きprofile、source drain後の最終capture、受理、全機能確認が必要です。履歴署名や今回の練習用snapshotを最終受理に流用しません。既存の厳密なvalidatorやsource資料を緩めず、公開DNSとwriterは承認された最終切り替えまで変更しません。

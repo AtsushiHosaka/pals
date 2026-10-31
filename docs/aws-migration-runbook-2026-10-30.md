@@ -6,6 +6,8 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 
 ## 現在の実行状況
 
+2026年10月31日11:42 JST時点。移行は未完了で、公開先はMac miniです。DBはユーザー承認済みの同一イメージprivate EC2方式へ変更し、サーバー起動とTLS付き読み取り確認まで進みました。13:00のAWS稼働は未確定です。
+
 | 段階 | 状態 | 実際に確認したこと |
 | --- | --- | --- |
 | 対象と接続 | 実施済み | pals-prod-memberのSSOをユーザーが更新し、本番アカウントとの一致をSTSで確認 |
@@ -19,19 +21,18 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 | 既存資源の再利用 | 基盤で確認済み | 現在のCognito・S3・SQS・署名KMSを読み取り参照する経路を実装・試験済み。実planの独立照合中 |
 | private control接続 | 実施済み | t4g.mediumを公開IPなしで起動。SSM Online、cloud-init完了、PG16.15 client、アプリ未起動markerを確認 |
 | private compute接続 | 実施済み | r8a.largeを公開IPなしで起動。SSM Online、cloud-init完了、native x86 DockerとAMD EPYC 9R45、起動時のアプリ未配備markerを確認 |
-| 短期AWS資格情報 | 実機検証済み | API/workerと各host supervisorの4 roleを分離。実STS認証とtimerによる更新、API image内のread-only mountからの資格情報検査に成功。parameter・master・署名権限なし |
+| 短期AWS資格情報 | 実機検証済み | API/workerと各host supervisorの4 roleを分離。実STS認証とtimerによる更新、API image内のread-only mountからの資格情報検査に成功。アプリactorにはparameter・master・署名権限なし。supervisorには承認済みの完全一致GetParameterだけ追加 |
 | AWS料金アラート | 設定済み | 本番アカウント全体の月額予算をUSD650へ更新。実費USD20・50・100・650、月末予測USD520超過の5通知とメール宛先をAWSから読み戻して照合。自動停止actionなし |
 | Lean単体の測定 | 実施済み | largeで48件の実コンパイルに成功。必要なimportとLake環境再利用で中央値0.805秒。アプリ全体の遅延は未測定 |
-| DB移送と署名付き受理 | 練習用復元済み・本番受理は未実施 | 分離したAuroraに検証専用profileで復元し、実際の5 LOGINと制限付きreaderを確認。最終snapshot・本番用DBへの復元・署名付き移行受理は未実施 |
+| private EC2 DB | 起動・実接続確認済み | m7g.large、暗号化80 GiBの保持data EBS、専用SGと6 endpoint。実TLS1.3・PG16.15・locale/libc2.36・vector0.8.7を確認。空DBで、本番復元・受理は未実施 |
+| 公開入口のWAF | 適用・読戻し済み | 実送信元がCloudflare公式15 IPv4 CIDRの場合だけ許可。default BLOCK、sampling無効。DNSとアプリ公開は未変更 |
 | AWS runtimeと容量モード | アプリ未配備 | x86 runtime、別ホストmTLS、pool配送、drain、通常・大会モードの実配備は未実施 |
 | runtimeイメージ | ECR準備済み | 固定sourceのAPI・Web・workerをbuild・pushし、digestを読み戻した。非root importとWebの主要5画面は確認。本番起動・実ログインは未実施 |
-| runtime秘密値の引き継ぎ | Miniで計画確認済み・承認待ち | 5件を同アカウント・東京のSSM SecureStringへコピーするhelperと22試験を準備し、実Miniの読み取り専用planも通過。具体的な秘密値と宛先への許可が必要として自動承認レビューが実行前に拒否。コピーは未実施 |
+| runtime秘密値の引き継ぎ | 許可済み・実転送は停止中 | 固定5件への転送とhost supervisorの完全一致GetParameterを承認済み。IAM追加は完了。Mini側のCLI入力方式を調査中で、転送完了とは扱わない |
 | DNS切り替え | 未実施 | 現行Cloudflare originとMac miniを維持 |
 | 移行後の受け入れ | 未実施 | ログイン、履歴、資料、生成、共有、ゲスト、負荷試験が必要 |
 
-移行元はpgvector 0.8.7、作成したAuroraの提供版は0.8.2です。locale名と並べ替えライブラリの版も異なります。ユーザーはAuroraで先に互換性を検証し、データ・権限・検索結果を確認できた場合だけ採用する方針を選択しました。元のDBは変更せず、この差を解消するまで本番復元・受理を進めません。[AWSの対応拡張一覧](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraPostgreSQLReleaseNotes/AuroraPostgreSQL.Extensions.html)も確認しています。
-
-10月31日までのバックアップ、基準環境と分離Auroraの復元、検索比較とイメージ準備の実行結果は、[検証記録](aws-migration-verification-2026-10-31.md)にまとめています。既存データの実アプリ比較は通過しましたが、追加Unicode文字の検索条件と管理版の修正状況が未解決のため、Auroraの採用は確定していません。[同じDBイメージをprivate EC2で運用する代替案](aws-postgresql-ec2-alternative-2026-10-31.md)も用意し、方式の選択を待っています。
+移行元はpgvector0.8.7、Auroraの提供版は0.8.2で、localeと文字検索にも差が残りました。ユーザーは10月31日、13:00の大会稼働に向け、現行と同じDBイメージのprivate EC2方式と追加費用を承認しました。Auroraは保持します。[EC2方式と運用責任](aws-postgresql-ec2-alternative-2026-10-31.md)、[実機の検証記録](aws-migration-verification-2026-10-31.md)を参照します。
 
 上流のpgvector 0.8.7にはIVFFlat index作成時の脆弱性修正が含まれます。Auroraの管理版に同じ修正が取り込まれているかは未確認です。公式SQLで実測したAuroraの版は16.15.1でした。版番号だけで安全性を判断せず、AWSの該当buildについて根拠を確認します。[上流の修正情報](https://github.com/pgvector/pgvector/issues/1036)を採用前の確認対象に加え、[具体的な問い合わせ文案](aws-aurora-pgvector-security-inquiry-2026-10-31.md)の送信許可を待っています。
 
@@ -53,11 +54,11 @@ raw dump、DB接続先、鍵、provider token、Terraform plan/state、SSO cache
 
 [draw.io元ファイル](diagrams/pals-aws-private-target.drawio)は編集可能で、PNGは実際のdraw.ioで出力しています。図の8 subnetとCIDRは基盤作成後に読み戻して照合しました。アプリ、計算poolと容量制御を含む図全体は、引き続き移行先の設計図です。
 
-公開ALBは2つのpublic subnetに置き、ACMでTLSを終端してprivate controlのHTTPSだけへ接続します。Web・APIと計算ノードにはpublic IPを付けません。Auroraはインターネット向けdefault routeのないDB subnetへ置き、controlのsecurity groupからの5432だけを許可します。
+公開ALBは2つのpublic subnetに置き、ACMでTLSを終端してprivate controlのHTTPSだけへ接続します。Web・APIと計算ノードにはpublic IPを付けません。採用したPostgreSQL EC2はインターネット向けdefault routeのないDB subnetへ置き、controlのsecurity groupからの5432だけを許可します。
 
 外部LLMへの通信が必要なため、private workloadの外向きHTTPSにはNATを使います。S3はgateway endpointを使います。初期のNATは1台で、AZをまたぐ通信と単一障害点を含む費用・可用性の選択です。EC2にはSSHを開かずSSMで管理します。verifierはさらにコンテナ単位で外向き通信を遮断し、DB・AWS・provider資格情報を持たせません。
 
-通常のEC2本体約2.6万円に、NAT・ALB・Aurora最低容量などが加わります。2026年10月30日のAWS Price List APIで、東京のZonal NATは$0.062/時、ALBは$0.0243/時、Aurora PostgreSQL Standard Serverless v2は$0.15/ACU時と確認しました。月730時間、Aurora平均0.5 ACU、public IPv4最低3個を$0.005/IP時、1ドル150円と置くと、本体とこれらの合計は約4.5万円です。mediumとlargeは準備用として起動済みで、金額は通常構成の月額見積もりです。ストレージ、I/O、LCU、NAT処理量、通信、ログ、税、LLM利用料と移行中の重複稼働は別途かかります。[VPC料金](https://aws.amazon.com/vpc/pricing/)、[ALB料金](https://aws.amazon.com/elasticloadbalancing/pricing/)、[Aurora料金](https://aws.amazon.com/rds/aurora/pricing/)を参照します。
+次の約4.5万円は、10月30日のAurora方式の見積もりです。現在のEC2 DB追加、専用endpoint、保持中のAuroraと検証clusterの重複稼働費は含みません。採用したDB部分の見積もりは[EC2方式](aws-postgresql-ec2-alternative-2026-10-31.md)を参照します。通常のEC2本体約2.6万円に、NAT・ALB・Aurora最低容量などを加えて計算しました。2026年10月30日のAWS Price List APIで、東京のZonal NATは$0.062/時、ALBは$0.0243/時、Aurora PostgreSQL Standard Serverless v2は$0.15/ACU時と確認しました。月730時間、Aurora平均0.5 ACU、public IPv4最低3個を$0.005/IP時、1ドル150円と置くと、本体とこれらの合計は約4.5万円です。mediumとlargeは準備用として起動済みで、金額は通常構成の月額見積もりです。ストレージ、I/O、LCU、NAT処理量、通信、ログ、税、LLM利用料と移行中の重複稼働は別途かかります。[VPC料金](https://aws.amazon.com/vpc/pricing/)、[ALB料金](https://aws.amazon.com/elasticloadbalancing/pricing/)、[Aurora料金](https://aws.amazon.com/rds/aurora/pricing/)を参照します。
 
 料金アラートは、既存の`pals-prod-monthly-cost`を再利用しています。private構成の月額予算はUSD650で、実費がUSD650を超えた場合と、月末の予測費用がUSD520を超えた場合に`hosaka2917+pals@gmail.com`へ通知します。設計時の固定換算1ドル150円では、それぞれ約9.75万円・7.8万円です。為替への自動追従や円建ての支出制限は行いません。既存の実費USD20・50・100の通知と、別管理の旧予算は保持しました。
 
@@ -87,7 +88,11 @@ VPC、public/control/compute/DB subnet、route、NAT、S3 endpoint、ALB、Auror
 
 sourceの実DB/host/volume identity、現在のKMS署名付きadmission、dump digest、catalogとroleの比較記録、保持するguest key fingerprintと外部resource identityを新しい移送証拠に結び付けます。旧署名のpayloadを編集せず、元のadmission履歴も残します。
 
-### 4 Auroraへの復元と受理
+### 4 DBへの復元と受理
+
+採用したEC2用には独立した`pals.production-database-restore.ec2.v1`を使います。実EC2/EBS/ECR/SSM/CloudTrailとTLSを結び付け、空DB、sourceと同じbuild・locale、全role・権限・行・sequenceを照合します。復元と本番受理は分け、直前の旧DB停止証拠を再確認してから受理します。既存Aurora用profileは変更しません。
+
+以下はAuroraを採用する場合の条件として保持します。
 
 移行先Auroraは本番と同じengine系統、非公開接続、TLSとCA検証で照合します。AWSのcluster/resource identityと実PostgreSQLの観測を結び付けます。RDSの管理roleはMacのtrue SUPERUSERと同じではないため、所有者・ACL・role mappingの差を明示して検証します。superuser向けglobalsを無条件にrestoreしません。
 

@@ -35,9 +35,7 @@ eight results and persisted distances. Default-collation order differs for
 three existing text fields. Actual project/chat repositories matched captured
 pagination/search results for all 16 owners; 3,828 existing text/FTS component
 rows also matched. A public Unicode search-predicate fixture differs, and
-managed-build security evidence remains unresolved. Adoption is pending a DB
-approach decision; the [EC2 alternative](../../docs/aws-postgresql-ec2-alternative-2026-10-31.md)
-is a proposal, not an approved replacement of this profile. See the
+managed-build security evidence remains unresolved. On 2026-10-31 the user approved the same-source-image private EC2 PostgreSQL approach and its additional cost. The [EC2 design](../../docs/aws-postgresql-ec2-alternative-2026-10-31.md) replaces PAM-004/005 Aurora delivery for this migration: retain encrypted EBS, control-only DB access, TLS1.3, exact native image/build/locale, full authority/data comparison, a distinct EC2 signed carrier, final source fencing and independent admission. Aurora resources remain preserved. Actual DB startup/read-only checks passed; restore/admission/runtime/cutover remain incomplete. See the
 [execution evidence](../../docs/aws-migration-verification-2026-10-31.md).
 Use a distinct private rehearsal cluster because application roles are
 cluster-wide. The current final-restore v1 rejects these version/locale

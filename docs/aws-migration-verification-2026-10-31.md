@@ -1,6 +1,28 @@
 # AWS移行の復元・配備準備の検証記録
 
-2026年10月30日から31日に実施した作業の記録です。基準環境と分離したAuroraへの復元は成功し、全行と権限の比較を通過しました。全433件のvector検索も一致しましたが、一部の文字列の並び順に差が出ています。Auroraの採用、本番受理、アプリのAWS起動、DNS切り替えは未実施です。
+2026年10月31日11:42 JST時点の記録です。ユーザーの承認により、移行先DBを現行と同じPostgreSQL・pgvectorイメージのprivate EC2へ変更しました。DBサーバーの起動と読み取り接続まで完了しています。DBの本番復元・受理、アプリのAWS起動、DNS切り替えは未実施です。公開先は引き続きMac miniです。
+
+## 10月31日午前の実機確認
+
+| 対象 | 実際の結果 |
+| --- | --- |
+| DB基盤 | 独立stateの保存済みplanを適用し、25資源を新規作成。既存資源の更新・削除なし |
+| DBホスト | `i-041db5930304ef5d1`、m7g.large、`10.42.10.172`、public IPなし、IMDSv2、SSM Online |
+| ディスク | 暗号化した80 GiB gp3を保持。`vol-007fcbf9fa67f80fd`を`/srv/pals-postgresql`へmountし、実UUID・device・PGDATAの対応を照合 |
+| DBイメージ | sourceと同じ内容をECRへ保存し、実コンテナのconfigと全16 layerをECRのOCI連鎖と照合 |
+| DBのTLS・SQL | 実SSM転送とCloudTrailの接続先一致、証明書・hostname検証付きTLS1.3接続、PostgreSQL16.15、libc2.36、`en_US.utf8`を確認。vector0.8.7が利用可能 |
+| 空の移行先 | アプリroleとアプリobjectはともに0。データ復元・本番受理は未実施 |
+| DB認証情報 | 新規master passwordとDB用TLS秘密鍵の指定先への配備をユーザーが許可。非公開S3の固定versionをSSE-KMSで転送し、指定DBホストへ配備済み |
+| DBネットワーク | control SGから5432のみ。DB専用の6 interface endpointはprivate DNS無効で、DBホストだけの名前解決を使う。既存control/computeのVPC DNSを変更しない |
+| 公開入口 | 専用WAFの新規3資源を適用。実ALB association、default BLOCK、Cloudflare公式15 IPv4 CIDRの実送信元だけの許可、request sampling無効をAWSから読み戻し |
+| hostのSSM権限 | 承認済みのcontrol4件・compute3件について、完全一致名のGetParameterだけを追加。アプリactorとverifierには付与しない |
+| native worker | AWS x86実機でimport試験を通過。ECR認証を`/run`のtmpfsに限り、終了後の削除を確認。queue処理と本番回答生成は未検証 |
+
+DB起動コマンド`e2f186c0-3190-4a2b-ab41-a125aea1655a`と独立observer`a621da98-3315-4d66-9238-383c5083d458`は実SSMでSuccess/0でした。読み取りSQL観測のSHA256は`d8cc6857c695f59c1f53c58c71a1c1494836f2c3ace004f810d7a0d4fd145c08`です。これらを本番復元・アプリ起動の証拠には扱いません。
+
+最終取得前に、Mac miniの既存watchdogをmaintenanceにし、実MacとLinuxコンテナのlock伝播を確認します。取得に失敗した場合も、watchdogが旧writerを勝手に再開しないことが必要です。最終取得・署名・受理と実アプリの確認が通るまでDNSは変更しません。
+
+以下は練習用バックアップとAurora比較の記録です。Auroraを本番DBとして採用した記録ではありません。
 
 ## 練習用バックアップ
 
@@ -90,7 +112,7 @@ sourceのpgvector 0.8.7に対し、このAuroraの提供版は0.8.2です。公�
 
 | 用途 | CPU構成 | 固定source | ECR digestの先頭 |
 | --- | --- | --- | --- |
-| API | arm64 | `187191753eca58ce425e0a9a8b8a3edc51c16abc` | `bbcf45449f8c` |
+| API | arm64 | `7027478ef6664a0ab8f8a245e3da714e18dc0f37` | `e870dc5d2d4d` |
 | Web | arm64 | `89daac472e89ac9800563b81f360d43e73cc7665` | `eb52fbaa64ce` |
 | worker | amd64 | `0a45e4984538dc82294ad41994309081eddb9296` | `1b57f44cc2ef` |
 | verifier | amd64 | `0a45e4984538dc82294ad41994309081eddb9296` | `6fe2a2e7e2b9` |
@@ -105,8 +127,6 @@ APIとworkerは、資格情報なし・非root・networkなしで正式モジュ
 
 [専用helper](../pals-scripts/aws-migration-source-runtime-secrets.py)は、既存controllerのlockと稼働中コンテナのidentityを照合し、固定した5件だけを同AWSアカウント・東京のSSM SecureStringへ移す処理です。秘密値はstdinで渡し、ファイル、argv、標準出力やreceiptへ保存しません。既存値が異なる場合は上書きせず、一致する既存値だけを再利用します。書き込み結果が不明な場合は、読み取り専用の明示的なreconcileが必要です。
 
-22件のローカル試験を通過し、Mac mini上のdefault planでも既存設定と移送先5件の確認に成功しました。このplanはAWS APIを呼ばず、秘密値を表示しません。続く実行は自動承認レビューにより、「一般的な移行指示だけでは、具体的な秘密値と送信先への明示許可を確認できない」として実行前に拒否されました。許可を依頼しており、コピーは未実施です。sourceの作業用ターミナルには、この実行コマンドを未実行のまま残しています。
+ユーザーは5項目のSSM転送、control/compute supervisorへの限定した読取権限、RAM内だけのECR短期token利用を許可しました。権限追加とnative worker試験は実施済みです。秘密値の転送はMac mini側のCLI入力方式で停止しており、完了していません。既存値と異なる値を上書きせず、不明な書込結果は構造化レスポンスで照合してから再開します。
 
-AWS native workerのimport試験も未完了です。ホストへ資格情報を残す可能性があるECRログインは自動承認レビューに拒否され、既存認証の再利用も認証設定がなく実行できませんでした。`/run`のtmpfs内に短期tokenだけを一時保存して終了時に削除する実行案を用意し、その利用許可を待っています。
-
-この結果を踏まえ、[現行と同じDBイメージをprivate EC2で運用する代替案](aws-postgresql-ec2-alternative-2026-10-31.md)も用意しました。DB方式の選択を依頼しており、採用・追加配備はしていません。どちらを選ぶ場合も、別の署名付き復元profile、最終snapshot、実runtime、全機能、容量制御、DNSと復旧の確認が必要です。[移行手順書](aws-migration-runbook-2026-10-30.md)で実施状況を更新します。
+EC2方式の選択と追加費用は承認済みです。DBサーバーは前述のとおり起動しました。最終snapshot、全データ・権限の復元照合、署名付き受理、実runtime、全機能、容量制御、DNSと復旧の確認が残っています。[移行手順書](aws-migration-runbook-2026-10-30.md)で実施状況を更新します。
