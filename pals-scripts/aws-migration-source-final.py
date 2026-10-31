@@ -108,6 +108,8 @@ def observe_schema(frame,event,value):
             identifier=getattr(frame.f_locals.get('step'),'identifier',None)
             if type(identifier) is str and identifier in step_names:
                 failed_step=identifier
+        if event=='return' and (value is False or value is None):
+            sys.settrace(None)
         return observe_schema
     return None
 try:
