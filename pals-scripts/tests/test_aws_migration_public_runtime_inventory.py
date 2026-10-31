@@ -51,5 +51,65 @@ class PublicRuntimeInventoryTests(unittest.TestCase):
                              {'PALS_CORS_ALLOWED_ORIGINS': value})
 
 
+    def test_observed_optional_capabilities_are_preserved_without_defaults(self):
+        fields = {"PALS_TYPED_CATALOG_ENABLED": "false",
+                  "PALS_PFI_PROVENANCE_SHA256": "a" * 64,
+                  "PALS_DRAFT_EMBEDDING_ENDPOINT_IDENTITY": "https://api.openai.com/v1",
+                  "PALS_DRAFT_EMBEDDING_DEPLOYMENT_IDENTITY": "text-embedding-3-small",
+                  "PALS_RECIPE_REVIEWER_URL": "http://pals-recipe-reviewer:18119"}
+        self.assertEqual(MODULE.public_runtime_configuration(
+            [key + "=" + value for key, value in fields.items()]), fields)
+        self.assertEqual(MODULE.public_runtime_configuration([]), {})
+        for value in ("true", "false"):
+            self.assertEqual(MODULE.public_runtime_configuration([
+                "PALS_TYPED_CATALOG_ENABLED=" + value]), {"PALS_TYPED_CATALOG_ENABLED": value})
+
+    def test_typed_opt_in_matches_strict_agent_bool_without_coercion(self):
+        for value in ("1", "0", "on", "off", "TRUE", " false", "synthetic-private-canary"):
+            with self.subTest(value=value), self.assertRaises(RuntimeError):
+                MODULE.public_runtime_configuration(["PALS_TYPED_CATALOG_ENABLED=" + value])
+
+    def test_provenance_requires_exact_lowercase_sha256(self):
+        for value in ("a" * 63, "a" * 65, "A" * 64, "synthetic-private-canary"):
+            with self.subTest(length=len(value)), self.assertRaises(RuntimeError) as caught:
+                MODULE.public_runtime_configuration(["PALS_PFI_PROVENANCE_SHA256=" + value])
+            self.assertNotIn(value, str(caught.exception))
+
+    def test_public_endpoints_reject_credentials_query_fragment_and_unsafe_paths(self):
+        for value in ("http://example.com/v1", "https://user:synthetic-private-canary@example.com/v1",
+                      "https://example.com/v1?synthetic-private-canary", "https://example.com/#canary",
+                      "https://example.com/?", "https://example.com/#", "https://example.com/sk-canary",
+                      "https://example.com/percent%20canary", "https://example.com:99999/v1",
+                      "https://example.com/\\canary", "https://example.com/\ncanary"):
+            with self.subTest(value=value), self.assertRaises(RuntimeError) as caught:
+                MODULE.public_runtime_configuration(["PALS_DRAFT_EMBEDDING_ENDPOINT_IDENTITY=" + value])
+            self.assertNotIn(value, str(caught.exception))
+
+    def test_reviewer_matches_owning_origin_boundary(self):
+        for value in ("http://pals-recipe-reviewer:18119", "http://recipe-reviewer:18119/",
+                      "http://127.0.0.1:18119", "https://review.example.com"):
+            self.assertEqual(MODULE.public_runtime_configuration(["PALS_RECIPE_REVIEWER_URL=" + value]),
+                             {"PALS_RECIPE_REVIEWER_URL": value})
+        for value in ("http://foreign.example.com", "https://review.example.com/v1",
+                      "https://user:canary@review.example.com", "https://review.example.com?canary"):
+            with self.subTest(value=value), self.assertRaises(RuntimeError):
+                MODULE.public_runtime_configuration(["PALS_RECIPE_REVIEWER_URL=" + value])
+
+    def test_optional_deployment_rejects_secret_shaped_values_and_unknown_enable_flags(self):
+        for value in ("sk-" + "synthetic-private-canary", "ASIAcanary", "AKIAcanary", "a b", ""):
+            with self.subTest(value=value), self.assertRaises(RuntimeError) as caught:
+                MODULE.public_runtime_configuration(["PALS_DRAFT_EMBEDDING_DEPLOYMENT_IDENTITY=" + value])
+            self.assertNotIn("synthetic-private-canary", str(caught.exception))
+        self.assertEqual(MODULE.public_runtime_configuration([
+            "PALS_OCR_ENABLED=synthetic-private-canary", "PALS_DIAGRAM_ENABLED=synthetic-private-canary",
+            "PALS_RECIPE_REVIEW_REQUESTER_SECRET=synthetic-private-canary"]), {})
+
+    def test_new_public_keys_still_reject_duplicate_observations(self):
+        for entry in ("PALS_TYPED_CATALOG_ENABLED=true", "PALS_PFI_PROVENANCE_SHA256=" + "b" * 64,
+                      "PALS_RECIPE_REVIEWER_URL=https://review.example.com"):
+            with self.subTest(key=entry.split("=", 1)[0]), self.assertRaises(RuntimeError):
+                MODULE.public_runtime_configuration([entry, entry])
+
+
 if __name__ == "__main__":
     unittest.main()

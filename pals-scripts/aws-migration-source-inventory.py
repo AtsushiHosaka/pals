@@ -16,6 +16,7 @@ from urllib.parse import urlsplit
 PUBLIC_BOOLEANS = frozenset({
     "PALS_LOCAL_RUNTIME_ENABLED", "PALS_GUEST_CHAT_ENABLED",
     "PALS_TOKEN_ACCOUNTING_ENABLED", "UVICORN_PROXY_HEADERS",
+    "PALS_TYPED_CATALOG_ENABLED",
 })
 PUBLIC_TOKENS = frozenset({
     "PALS_PROOF_CAPABILITY", "PALS_DRAFT_EMBEDDING_DIM",
@@ -25,6 +26,11 @@ PUBLIC_TOKENS = frozenset({
     "PALS_RECIPE_ACTIVE_LAKE_MANIFEST_SHA256", "PALS_RECIPE_ACTIVE_LEAN_VERSION",
     "PALS_RECIPE_VERIFIER_SHA256", "PALS_RECIPE_CATALOG_ACTIVE_LAKE_MANIFEST_SHA256",
     "PALS_RECIPE_CATALOG_ACTIVE_LEAN_VERSION", "PALS_RECIPE_CATALOG_ACTIVE_VERIFIER_SHA256",
+    "PALS_DRAFT_EMBEDDING_DEPLOYMENT_IDENTITY",
+})
+PUBLIC_DIGESTS = frozenset({"PALS_PFI_PROVENANCE_SHA256"})
+PUBLIC_ENDPOINTS = frozenset({
+    "PALS_DRAFT_EMBEDDING_ENDPOINT_IDENTITY", "PALS_RECIPE_REVIEWER_URL",
 })
 PUBLIC_ORIGINS = frozenset({"PALS_GUEST_ALLOWED_ORIGINS", "PALS_CORS_ALLOWED_ORIGINS"})
 
@@ -42,6 +48,31 @@ def public_origin(value: object, *, cors: bool) -> bool:
             and re.fullmatch(r"[A-Za-z0-9.:[\]-]+", parsed.netloc) is not None
             and (parsed.port is None or 1 <= parsed.port <= 65535)
         )
+    except ValueError:
+        return False
+
+
+def public_endpoint(value: object, *, reviewer: bool) -> bool:
+    """Observe public identity only; never URL credentials or query material."""
+    if not isinstance(value, str) or not 1 <= len(value) <= 512:
+        return False
+    try:
+        parsed = urlsplit(value)
+        if (not parsed.hostname or not value.isascii()
+                or any(ord(char) < 33 or ord(char) > 126 for char in value)
+                or parsed.username is not None or parsed.password is not None
+                or parsed.query or parsed.fragment or "?" in value or "#" in value
+                or re.fullmatch(r"[A-Za-z0-9.:[\]-]+", parsed.netloc) is None
+                or (parsed.port is not None and not 1 <= parsed.port <= 65535)):
+            return False
+        if reviewer:
+            return parsed.path in {"", "/"} and (
+                parsed.scheme == "https" or (parsed.scheme == "http" and parsed.hostname in {
+                    "pals-recipe-reviewer", "recipe-reviewer", "localhost", "127.0.0.1", "::1"}))
+        return (parsed.scheme == "https"
+                and re.fullmatch(r"[A-Za-z0-9._~/-]*", parsed.path) is not None
+                and not any(part.startswith(("sk-", "AKIA", "ASIA"))
+                            for part in parsed.path.split("/")))
     except ValueError:
         return False
 
@@ -64,12 +95,19 @@ def public_runtime_configuration(entries: list[str]) -> dict[str, str]:
     values: dict[str, str] = {}
     for entry in entries:
         name, sep, value = entry.partition("=")
-        if name not in PUBLIC_BOOLEANS | PUBLIC_TOKENS | PUBLIC_ORIGINS:
+        if name not in PUBLIC_BOOLEANS | PUBLIC_TOKENS | PUBLIC_ORIGINS | PUBLIC_DIGESTS | PUBLIC_ENDPOINTS:
             continue
         if not sep or name in values:
             raise RuntimeError("Public runtime metadata is ambiguous")
-        if name in PUBLIC_BOOLEANS:
+        if name == "PALS_TYPED_CATALOG_ENABLED":
+            # The agent owns this strict opt-in; preserve literal false vs absence.
+            valid = value in {"true", "false"}
+        elif name in PUBLIC_BOOLEANS:
             valid = value in {"true", "false", "1", "0", "on", "off"}
+        elif name in PUBLIC_DIGESTS:
+            valid = re.fullmatch(r"[0-9a-f]{64}", value) is not None
+        elif name in PUBLIC_ENDPOINTS:
+            valid = public_endpoint(value, reviewer=name == "PALS_RECIPE_REVIEWER_URL")
         elif name in PUBLIC_ORIGINS:
             try:
                 # Match the owning Settings validators: CORS is comma-separated,
