@@ -46,7 +46,8 @@ class PreparationTests(unittest.TestCase):
         elif role=='loader':value={'source_docker_image_id':'sha256:'+'b'*64,'admission_eligible':False}
         elif '--probe-lock-propagation' in args:
             value={'status':'independent_native_guest_lock_domains_observed','admission_eligible':False}
-        else:value={'status':'smoke_uploaded_not_admissible','session':'c'*32,'admission_eligible':False}
+        else:value={'status':'smoke_uploaded_not_admissible','session':'c'*32,'admission_eligible':False,
+                    'operator_patch':m.B.operator_patch()}
         return json.dumps(value).encode()
 
     def sequence(self,apply=True,smoke=False):
@@ -121,6 +122,9 @@ class PreparationTests(unittest.TestCase):
         self.assertEqual(m.safe_diagnostic(json.dumps({'tool_failed_step':step}).encode()),{'tool_failed_step':step})
         self.assertNotIn('tool_failed_step',m.safe_diagnostic(json.dumps({'tool_failed_step':SECRET}).encode()))
         self.assertNotIn(SECRET,json.dumps(m.safe_diagnostic(json.dumps({'tool_failed_step':SECRET}).encode())))
+        self.assertEqual(m.safe_diagnostic(json.dumps({'operator_patch':m.B.operator_patch()}).encode()),
+                         {'operator_patch':m.B.operator_patch()})
+        self.assertNotIn('operator_patch',m.safe_diagnostic(json.dumps({'operator_patch':{'module_sha256':SECRET}}).encode()))
 
     def test_changed_fields_reject_unknown_names_values_duplicates_and_extra_keys(self):
         known={'container':m.B.DATABASE,'fields':['Config']}
@@ -268,7 +272,7 @@ class PreparationTests(unittest.TestCase):
                 self.assertEqual(args[-2:],['--confirm-source-manifest','e'*64])
                 if failure:raise m.B.Refusal('child_failed')
                 return json.dumps({'status':'final_uploaded_source_fenced','session':'d'*32,
-                                   'admission_eligible':False}).encode()
+                                   'admission_eligible':False,'operator_patch':m.B.operator_patch()}).encode()
             events.append(args[0]);return self.child(role,args)
         with patch.object(m,'baseline',side_effect=base),patch.object(m,'enter_migration_maintenance',side_effect=maintain), \
              patch.object(m.B,'inspect_final_state',return_value=(

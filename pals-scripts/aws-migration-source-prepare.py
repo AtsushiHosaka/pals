@@ -87,6 +87,8 @@ def safe_diagnostic(raw):
         result['tool_line']=value['tool_line']
     if type(value.get('tool_failed_step')) is str and value['tool_failed_step'] in getattr(B,'TOOL_SCHEMA_STEPS',set()):
         result['tool_failed_step']=value['tool_failed_step']
+    if value.get('operator_patch')==B.operator_patch():
+        result['operator_patch']=B.operator_patch()
     changes=value.get('changed_fields')
     if result.get('reason')=='source_container_changed' and type(changes) is list and 0<len(changes)<=8 and all(
             type(row) is dict and set(row)=={'container','fields'} and
@@ -302,7 +304,8 @@ def sequence(args,root,report):
     B.require(observed=={'status':'independent_native_guest_lock_domains_observed','admission_eligible':False})
     if args.smoke:
         observed=B.document(step('unsigned_smoke_capture','final',common+['--smoke']))
-        B.require(set(observed)=={'status','session','admission_eligible'} and observed['status']=='smoke_uploaded_not_admissible'
+        B.require(set(observed)=={'status','session','admission_eligible','operator_patch'} and
+                  observed['operator_patch']==B.operator_patch() and observed['status']=='smoke_uploaded_not_admissible'
                   and observed['admission_eligible'] is False and re.fullmatch(r'[0-9a-f]{32}',observed['session']))
         report['smoke_session']=observed['session']
     final={};baseline(root,final)
@@ -317,13 +320,14 @@ def sequence(args,root,report):
         raw=child('final',common+['--resume-final' if resume else '--final',
                   '--confirm-source-manifest',current['manifest_sha256']],timeout=1200)
         observed=B.document(raw)
-        B.require(set(observed)=={'status','session','admission_eligible'}
+        B.require(set(observed)=={'status','session','admission_eligible','operator_patch'}
+                  and observed['operator_patch']==B.operator_patch()
                   and observed['status']=='final_uploaded_source_fenced'
                   and observed['admission_eligible'] is False
                   and re.fullmatch(r'[0-9a-f]{32}',observed['session']))
         report['successful_child_stages'].append('final_source_capture')
         report.update(status='final_uploaded_source_fenced_not_admitted',stage='complete',
-                      final_source_session=observed['session'],source_stop_performed=True,
+                      final_source_session=observed['session'],operator_patch=observed['operator_patch'],source_stop_performed=True,
                       final_signing_performed=True,source_state_requires_reconciliation=False)
         return
     report['status']='prepared_not_admitted';report['stage']='complete'
