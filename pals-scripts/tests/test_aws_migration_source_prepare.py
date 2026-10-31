@@ -107,6 +107,17 @@ class PreparationTests(unittest.TestCase):
         for line in (1,20000):
             self.assertEqual(m.safe_diagnostic(json.dumps({'failed_check_line':line}).encode())['failed_check_line'],line)
 
+    def test_tool_diagnostic_keeps_only_closed_names_and_bounded_location(self):
+        value={'tool_module':'cloud_restore_preflight','tool_error':'FileNotFoundError',
+               'tool_line':92,'exception_message':SECRET,'sql':SECRET}
+        safe=m.safe_diagnostic(json.dumps(value).encode())
+        self.assertEqual(safe,{key:item for key,item in value.items() if key.startswith('tool_')})
+        self.assertNotIn(SECRET,json.dumps(safe))
+        for field,item in [('tool_module',SECRET),('tool_error',SECRET),('tool_line',True),
+                           ('tool_line',0),('tool_line',20001)]:
+            bad={**value,field:item};filtered=m.safe_diagnostic(json.dumps(bad).encode())
+            self.assertNotIn(field,filtered);self.assertNotIn(SECRET,json.dumps(filtered))
+
     def test_changed_fields_reject_unknown_names_values_duplicates_and_extra_keys(self):
         known={'container':m.B.DATABASE,'fields':['Config']}
         invalid=[[],[{'container':SECRET,'fields':['Config']}],
@@ -236,7 +247,7 @@ class PreparationTests(unittest.TestCase):
             self.assertEqual(upload.call_args.args[1]['failure']['sdk_stage'],'aws_identity')
             self.assertFalse(upload.call_args.args[1]['source_stop_performed'])
 
-    def final_sequence(self, failure=False):
+    def final_sequence(self, failure=False, resume=False):
         binding=(b'policy',b'current',b'config')
         expected={key:m.B.sha(raw) for key,raw in zip(
             ('policy_sha256','current_sha256','config_sha256'),binding)}
@@ -246,8 +257,9 @@ class PreparationTests(unittest.TestCase):
         def maintain(_root,report):
             events.append('maintenance');report['watchdog_maintenance']={'entered':True}
         def run(role,args,**kwargs):
-            if '--final' in args:
+            if '--final' in args or '--resume-final' in args:
                 events.append('final')
+                self.assertEqual('--resume-final' in args,resume)
                 self.assertEqual(kwargs,{'timeout':1200})
                 self.assertEqual(args[-2:],['--confirm-source-manifest','e'*64])
                 if failure:raise m.B.Refusal('child_failed')
@@ -255,16 +267,46 @@ class PreparationTests(unittest.TestCase):
                                    'admission_eligible':False}).encode()
             events.append(args[0]);return self.child(role,args)
         with patch.object(m,'baseline',side_effect=base),patch.object(m,'enter_migration_maintenance',side_effect=maintain), \
-             patch.object(m.B,'inspect_final_state',return_value={'journal':{'exists':False},
-                 'containers':{'fixture':{'running':True}}},create=True), \
+             patch.object(m.B,'inspect_final_state',return_value=(
+                 {'journal':{'exists':True,'read_status':'validated','phase':'failed_reconcile_required',
+                             'capture_completed':False},
+                  'containers':{name:{'running':name==m.B.DATABASE} for name in m.PUBLIC_CONTAINER_NAMES}}
+                 if resume else {'journal':{'exists':False},'containers':{'fixture':{'running':True}}}),create=True), \
              patch.object(m,'child',side_effect=run),patch.object(m.B,'controller',return_value=(
                  {},{'manifest_sha256':'e'*64},None,binding)):
             if failure:
                 with self.assertRaises(m.B.Refusal):
                     m.sequence(SimpleNamespace(apply_runtime_secrets=True,smoke=True,final_migration=True),Path('/source'),self.report)
             else:
-                m.sequence(SimpleNamespace(apply_runtime_secrets=True,smoke=True,final_migration=True),Path('/source'),self.report)
+                m.sequence(SimpleNamespace(apply_runtime_secrets=True,smoke=not resume,final_migration=not resume,
+                                           resume_final_migration=resume),Path('/source'),self.report)
         return events
+
+    def test_explicit_resume_uses_only_resume_mode_after_observed_stopped_source(self):
+        events=self.final_sequence(resume=True)
+        self.assertEqual(events[0],'maintenance');self.assertEqual(events[-1],'final')
+        self.assertFalse(any('--smoke' in args or '--final' in args for _,args in self.calls))
+        self.assertEqual(self.report['status'],'final_uploaded_source_fenced_not_admitted')
+
+    def test_resume_refuses_wrong_source_state_before_any_preparation(self):
+        state={'journal':{'exists':True,'read_status':'validated','phase':'failed_reconcile_required',
+                          'capture_completed':False},
+               'containers':{name:{'running':name==m.B.DATABASE} for name in m.PUBLIC_CONTAINER_NAMES}}
+        for key in ('running_actor','database_stopped','capture_complete','journal_absent','journal_unvalidated'):
+            bad=json.loads(json.dumps(state))
+            if key=='running_actor':bad['containers'][next(iter(m.B.ACTORS.values()))]['running']=True
+            if key=='database_stopped':bad['containers'][m.B.DATABASE]['running']=False
+            if key=='capture_complete':bad['journal']['capture_completed']=True
+            if key=='journal_absent':bad['journal']['exists']=False
+            if key=='journal_unvalidated':bad['journal']['read_status']='unavailable'
+            with self.subTest(key=key),patch.object(m,'baseline',side_effect=self.baseline), \
+                 patch.object(m.B,'controller',return_value=({},None,[],None)), \
+                 patch.object(m.B,'inspect_final_state',return_value=bad), \
+                 patch.object(m,'enter_migration_maintenance') as maintain,patch.object(m,'child') as run, \
+                 self.assertRaisesRegex(m.B.Refusal,'resume_source_state_not_eligible'):
+                m.sequence(SimpleNamespace(apply_runtime_secrets=True,smoke=False,final_migration=False,
+                                           resume_final_migration=True),Path('/source'),self.report)
+            maintain.assert_not_called();run.assert_not_called()
 
     def test_final_migration_enters_maintenance_then_probe_smoke_and_exact_final(self):
         events=self.final_sequence()

@@ -79,6 +79,12 @@ def safe_diagnostic(raw):
     line=value.get('failed_check_line')
     if type(line) is int and 1<=line<=20000:
         result['failed_check_line']=line
+    for field,values in (('tool_module',getattr(B,'TOOL_FAILURE_MODULES',set())),
+                         ('tool_error',getattr(B,'TOOL_FAILURE_CLASSES',set()))):
+        if type(value.get(field)) is str and value[field] in values:
+            result[field]=value[field]
+    if type(value.get('tool_line')) is int and 1<=value['tool_line']<=20000:
+        result['tool_line']=value['tool_line']
     changes=value.get('changed_fields')
     if result.get('reason')=='source_container_changed' and type(changes) is list and 0<len(changes)<=8 and all(
             type(row) is dict and set(row)=={'container','fields'} and
@@ -228,21 +234,36 @@ def enter_migration_maintenance(root, report):
 
 
 def sequence(args,root,report):
+    resume=getattr(args,'resume_final_migration',False)
+    migrating=getattr(args,'final_migration',False) or resume
     def step(name,role,arguments):
         report['stage']=name
         raw=child(role,arguments)
         report['successful_child_stages'].append(name)
         return raw
     report['stage']='controller_preflight';baseline(root,report)
-    if getattr(args,'final_migration',False):
+    if migrating:
         policy,_current,docker,_binding=B.controller(root)
         report['source_final_state']=B.inspect_final_state(root,policy,docker)
-        if report['source_final_state']['journal']['exists']:
+        observed=report['source_final_state']
+        if resume:
+            report.update(source_stop_performed=None,final_signing_performed=None,
+                          source_state_requires_reconciliation=True)
+            B.require(observed['journal'].get('exists') is True and
+                      observed['journal'].get('read_status')=='validated' and
+                      observed['journal'].get('phase')=='failed_reconcile_required' and
+                      observed['journal'].get('capture_completed') is False and
+                      set(observed.get('containers',{}))==PUBLIC_CONTAINER_NAMES and
+                      all(item['running'] is (name==B.DATABASE)
+                          for name,item in observed['containers'].items()),
+                      'resume_source_state_not_eligible')
+        elif observed['journal']['exists']:
             report.update(source_stop_performed=None,final_signing_performed=None,
                           source_state_requires_reconciliation=True)
             raise B.Refusal('existing_final_journal_requires_reconcile')
-        B.require(all(item['running'] is True for item in report['source_final_state']['containers'].values()),
-                  'source_not_running_requires_operator_review')
+        else:
+            B.require(all(item['running'] is True for item in observed['containers'].values()),
+                      'source_not_running_requires_operator_review')
         report['stage']='enter_watchdog_maintenance'
         enter_migration_maintenance(root,report)
     raw=step('public_inventory_upload','inventory',['upload-inventory'])
@@ -279,14 +300,15 @@ def sequence(args,root,report):
         report['smoke_session']=observed['session']
     final={};baseline(root,final)
     B.require(final['source_baseline']==report['source_baseline'],'controller_changed')
-    if getattr(args,'final_migration',False):
+    if migrating:
         _policy,current,_docker,binding=B.controller(root)
         B.require({name:B.sha(raw) for name,raw in zip(
             ('policy_sha256','current_sha256','config_sha256'),binding)}==report['source_baseline'],
             'controller_changed')
         report.update(stage='final_source_capture',source_stop_performed=None,
                       final_signing_performed=None,source_state_requires_reconciliation=True)
-        raw=child('final',common+['--final','--confirm-source-manifest',current['manifest_sha256']],timeout=1200)
+        raw=child('final',common+['--resume-final' if resume else '--final',
+                  '--confirm-source-manifest',current['manifest_sha256']],timeout=1200)
         observed=B.document(raw)
         B.require(set(observed)=={'status','session','admission_eligible'}
                   and observed['status']=='final_uploaded_source_fenced'
@@ -330,11 +352,14 @@ def main(arguments=None):
     parser.add_argument('--smoke',action='store_true')
     parser.add_argument('--inspect-lock-owner-only',action='store_true')
     parser.add_argument('--final-migration',action='store_true')
+    parser.add_argument('--resume-final-migration',action='store_true')
     parser.add_argument('--inspect-final-state-only',action='store_true')
     args=parser.parse_args(arguments)
-    B.require(not args.inspect_lock_owner_only or not (args.apply_runtime_secrets or args.smoke or args.final_migration or args.inspect_final_state_only),'invalid_arguments')
-    B.require(not args.inspect_final_state_only or not (args.apply_runtime_secrets or args.smoke or args.final_migration),'invalid_arguments')
-    if args.final_migration:
+    B.require(not (args.final_migration and args.resume_final_migration),'invalid_arguments')
+    B.require(not args.inspect_lock_owner_only or not (args.apply_runtime_secrets or args.smoke or args.final_migration or args.resume_final_migration or args.inspect_final_state_only),'invalid_arguments')
+    B.require(not args.inspect_final_state_only or not (args.apply_runtime_secrets or args.smoke or args.final_migration or args.resume_final_migration),'invalid_arguments')
+    B.require(not args.resume_final_migration or not args.smoke,'invalid_arguments')
+    if args.final_migration or args.resume_final_migration:
         args.apply_runtime_secrets=True
     root=Path.home()/'pals-mini-deploy';parent=root/'aws-migration-20261030/source-preparation'
     for path in (parent.parent,parent):
@@ -361,7 +386,8 @@ def main(arguments=None):
         if isinstance(error,KeyboardInterrupt):report['failure']={'code':'operator_interrupted'}
         if isinstance(error,B.Refusal) and len(error.args)==1 and error.args[0] in R.SAFE_FAILURE_CODES | {
                 'installed_controller_baseline_changed','source_lock_busy','controller_changed',
-                'existing_final_journal_requires_reconcile','source_not_running_requires_operator_review'}:
+                'existing_final_journal_requires_reconcile','source_not_running_requires_operator_review',
+                'resume_source_state_not_eligible'}:
             report['failure']={'code':error.args[0]}
         if report.get('source_state_requires_reconciliation'):
             try:
