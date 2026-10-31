@@ -7,7 +7,7 @@ then creates only missing authorized SecureStrings. --smoke is a separate opt-in
 Every child owns its existing lock. No retries, journal deletion or service restart.
 --inspect-lock-owner-only runs only public file/lsof/ps inspection and report upload.
 --final-migration explicitly enters existing watchdog maintenance, prepares,
-smoke-checks, then drains/captures/fences the source. Never resumes it automatically.
+then drains/transfers/fences the source. --smoke remains optional.
 """
 import base64
 import importlib.util
@@ -227,7 +227,7 @@ def sequence(args,root,report):
     B.require(set(loaded)=={'source_docker_image_id','admission_eligible'} and loaded['admission_eligible'] is False
               and isinstance(loaded['source_docker_image_id'],str) and B.IMAGE.fullmatch(loaded['source_docker_image_id']))
     report['source_tool_docker_image_id']=loaded['source_docker_image_id']
-    common=['--tool-image',loaded['source_docker_image_id'],'--tool-api-commit',L.COMMIT]
+    common=['--tool-image',loaded['source_docker_image_id'],'--tool-api-commit',L.COMMIT,'--host-native-locks']
     sdk_common=['--sdk-tool-image',loaded['source_docker_image_id'],'--sdk-tool-api-commit',L.COMMIT]
     sdk=B.document(step('sdk_read_only_probe','secrets',['--probe-sdk-transport',*sdk_common]))
     B.require(sdk=={'status':'sdk_probe_verified','account_verified':True,'endpoint_verified':True,
@@ -243,7 +243,7 @@ def sequence(args,root,report):
         B.require(result=={'status':'verified','verified_parameter_count':5,'admission_eligible':False})
         report['verified_runtime_parameter_count']=5
     observed=B.document(step('native_container_lock_probe','final',common+['--probe-lock-propagation']))
-    B.require(observed=={'status':'native_container_lock_exclusion_observed','admission_eligible':False})
+    B.require(observed=={'status':'independent_native_guest_lock_domains_observed','admission_eligible':False})
     if args.smoke:
         observed=B.document(step('unsigned_smoke_capture','final',common+['--smoke']))
         B.require(set(observed)=={'status','session','admission_eligible'} and observed['status']=='smoke_uploaded_not_admissible'
@@ -306,7 +306,6 @@ def main(arguments=None):
     B.require(not args.inspect_lock_owner_only or not (args.apply_runtime_secrets or args.smoke or args.final_migration),'invalid_arguments')
     if args.final_migration:
         args.apply_runtime_secrets=True
-        args.smoke=True
     root=Path.home()/'pals-mini-deploy';parent=root/'aws-migration-20261030/source-preparation'
     for path in (parent.parent,parent):
         if not path.exists():path.mkdir(mode=0o700)

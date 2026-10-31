@@ -45,7 +45,7 @@ class PreparationTests(unittest.TestCase):
                     'a'*64+'.json\nSHA256: '+'a'*64+'\n').encode()
         elif role=='loader':value={'source_docker_image_id':'sha256:'+'b'*64,'admission_eligible':False}
         elif '--probe-lock-propagation' in args:
-            value={'status':'native_container_lock_exclusion_observed','admission_eligible':False}
+            value={'status':'independent_native_guest_lock_domains_observed','admission_eligible':False}
         else:value={'status':'smoke_uploaded_not_admissible','session':'c'*32,'admission_eligible':False}
         return json.dumps(value).encode()
 
@@ -59,7 +59,7 @@ class PreparationTests(unittest.TestCase):
                          [['--probe-sdk-transport'],['--reconcile'],['--apply']])
         self.assertEqual([role for role,_ in self.calls],['inventory','loader','secrets','secrets','secrets','final'])
         final=self.calls[-1][1]
-        self.assertEqual(final,['--tool-image','sha256:'+'b'*64,'--tool-api-commit',m.L.COMMIT,'--probe-lock-propagation'])
+        self.assertEqual(final,['--tool-image','sha256:'+'b'*64,'--tool-api-commit',m.L.COMMIT,'--host-native-locks','--probe-lock-propagation'])
         self.assertEqual(self.report['status'],'prepared_not_admitted')
         for forbidden in ('--final','--refresh-fence','--confirm-source-manifest','stop','kill'):
             self.assertFalse(any(forbidden in args for _,args in self.calls))
