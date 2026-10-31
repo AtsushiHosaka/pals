@@ -6,7 +6,9 @@ DNSを先にAWSへ向けると、未準備の移行先へ利用者を送って�
 
 ## 現在の実行状況
 
-2026年10月31日15:32 JST時点。13:00までのAWS切り替えには間に合っていません。移行は未完了で、公開先はMac miniです。DBはユーザー承認済みの同一イメージprivate EC2方式へ変更し、サーバー起動とTLS付き読み取り確認まで進みました。公開WebとAPI healthのGETは200でしたが、ユーザーの画面ではLean検証失敗が発生しています。healthの応答を回答生成や30人の負荷確認の代わりには扱いません。
+2026年10月31日15:45 JST時点。13:00までのAWS切り替えには間に合っていません。Webを先行し、`palschat.site`はCloudflare経由でAWSのprivate controlから配信しています。実トップページと静的ファイルの200、ALB targetのhealthy、公開URLへの一意なリクエストの200と`CF-Cache-Status: DYNAMIC`、ブラウザ表示を確認しました。Cloudflareのフル（厳密）も保存後に読み戻しました。APIの`api.palschat.site`はMac miniを向いたままで、AWSのAPI・LeanとDB復元は未完了です。Webの表示を回答生成や30人の負荷確認の代わりには扱いません。
+
+Web先行公開では、ALBのHTTPS listenerに`palschat.site`だけの優先順位10の経路を追加し、専用target groupのHTTP 8080へ転送します。controlへの入口とALBの出口は、互いのsecurity groupだけを8080で許可しました。private control上の一時Webは固定image、読み取り専用filesystem、UID1000、capabilityなしで起動し、新規の外向き通信を遮断しています。ブラウザからのAPI呼び出し先は既存の`https://api.palschat.site`です。本番APIのHTTPS 443用target groupは変更していません。先行WebはAPIの本番経路への切り替え後、所有する一時コンテナとnetwork・firewallだけを片付けます。
 
 13:51の準備は既存ロックの競合で停止しました。14:07の読み取り診断で、保持者は開始から4秒のauto_recoveryで、前回とは別のPIDと確認できました。設定とcontroller/watchdogの既知ハッシュは一致しています。同じ既存descriptor・inodeのロック取得を最大30秒待つ修正をpushし、実POSIX競合テストで取得・期限・ファイル差し替え拒否を確認しました。ロックの削除や保持者の強制終了は行いません。
 
@@ -39,7 +41,7 @@ AWSのcontrol/computeでは、公開コード9ファイルと固定イメージ5
 | AWS runtimeと容量モード | アプリ未起動・容量制御未実装 | 別ホストmTLSによる本番接続、pool配送、drain、通常・大会モードの切り替えは未実施。largeからxlargeへの安全な切り替えには処理中ジョブのdrain確認と再開処理が必要 |
 | runtimeイメージ | AWS実機へ事前配置済み | controlのAPI・Web・derived Caddy、computeのworker・verifierの固定digest/platform/config bytes・RootFSを照合。公開コード9ファイルも照合。一時ECR認証は削除済み、アプリコンテナは未起動 |
 | runtime秘密値の引き継ぎ | 転送・実機読取確認済み | 固定5件を転送・照合済み。実controlの4件、computeの3件について、各host roleの実GetParameter・復号・固定metadata照合に成功。値はRAM内だけで処理し、公開出力は件数のみ |
-| DNS切り替え | 未実施 | 現行Cloudflare originとMac miniを維持 |
+| DNS切り替え | Webのみ実施済み | palschat.siteのCNAMEをAWS ALBへ変更し、proxyを維持。公開Webを実確認。api.palschat.siteは既存Mini tunnelを維持 |
 | 移行後の受け入れ | 未実施 | ログイン、履歴、資料、生成、共有、ゲスト、負荷試験が必要 |
 
 移行元はpgvector0.8.7、Auroraの提供版は0.8.2で、localeと文字検索にも差が残りました。ユーザーは10月31日、13:00の大会稼働に向け、現行と同じDBイメージのprivate EC2方式と追加費用を承認しました。Auroraは保持します。[EC2方式と運用責任](aws-postgresql-ec2-alternative-2026-10-31.md)、[実機の検証記録](aws-migration-verification-2026-10-31.md)を参照します。

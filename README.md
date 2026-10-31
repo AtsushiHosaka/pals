@@ -9,10 +9,12 @@ GitHub remotes are created.
 
 ## AWS migration
 
-The migration is incomplete. The private EC2 PostgreSQL server has started and
-passed TLS/build/locale checks; final data restore, application activation and
-DNS cutover remain pending. The diagram records the observed 2026-10-31 11:46 JST
-state and the intended communication after cutover. Production still uses the Mac mini.
+The migration is incomplete. As of 2026-10-31 15:45 JST, `palschat.site` serves
+the frontend from the private AWS control host through Cloudflare and the TLS
+ALB. Public HTML and a static asset return HTTP 200, the ALB target is healthy,
+and Cloudflare uses Full (strict). `api.palschat.site` still points to the Mac mini;
+AWS API/Lean activation and final database restore remain pending. Frontend
+availability does not establish successful answer generation.
 
 ![PALS AWS private network target](docs/diagrams/pals-aws-private-target.png)
 
