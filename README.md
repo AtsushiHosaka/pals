@@ -9,12 +9,19 @@ GitHub remotes are created.
 
 ## AWS migration
 
-The migration is incomplete. As of 2026-10-31 15:45 JST, `palschat.site` serves
-the frontend from the private AWS control host through Cloudflare and the TLS
-ALB. Public HTML and a static asset return HTTP 200, the ALB target is healthy,
-and Cloudflare uses Full (strict). `api.palschat.site` still points to the Mac mini;
-AWS API/Lean activation and final database restore remain pending. Frontend
-availability does not establish successful answer generation.
+As of 2026-10-31 19:46 JST, both `palschat.site` and `api.palschat.site` serve
+the private AWS runtime through Cloudflare and the TLS ALB. Public browser
+verification confirmed a mathematical answer and its Lean source. Aurora holds
+433 seeded Drafts and 20 newly compiled, independently reviewed Recipes with
+20 searchable entries. Chat history was not imported, as requested.
+
+The natural-power continuity question reused a verified Recipe and reached
+`answered` in 25.003 seconds of server time, versus 154.333 seconds in the earlier
+generation trial. These are two individual observations, not a controlled
+performance benchmark. One-second answers, the 30-person latency target, and
+automatic scaling remain unachieved or unverified. Recovery units are enabled,
+but an actual reboot test has not been performed. See the runbook for the
+current release window and the shared-network guest quota.
 
 ![PALS AWS private network target](docs/diagrams/pals-aws-private-target.png)
 
