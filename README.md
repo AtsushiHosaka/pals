@@ -13,7 +13,7 @@ GitHub remotes are created.
 
 [Full-size PNG](docs/diagrams/pals-aws-private-target.png) · [Editable draw.io diagram](docs/diagrams/pals-aws-private-target.drawio)
 
-As of 2026-10-31 20:32 JST, both `palschat.site` and `api.palschat.site` serve
+As of 2026-10-31 21:41 JST, both `palschat.site` and `api.palschat.site` serve
 the private AWS runtime through Cloudflare and the TLS ALB. Public browser
 verification confirmed a mathematical answer and its Lean source. Aurora holds
 433 seeded Drafts and 102 compiler-verified Recipes. Of those Recipes, 20 have
@@ -23,6 +23,12 @@ A set of 744 typed Draft candidates passed local Lean and axiom replay; the new
 None of the typed Drafts is active in production. The 1,100 usable-item target
 is not yet achieved.
 Chat history was not imported, as requested.
+
+The signed sequence-4 API/worker update is deployed. All seven containers,
+private TLS connections, three recovery units, the existing catalog, and the
+ALB target passed live checks. A new public question also produced a verified
+proof and displayed its Lean source. Typed catalog publication remains disabled
+pending content review and real retrieval/proof evaluation.
 
 Aurora now rejects the tested non-TLS connection path and accepts TLS 1.3.
 The writer still reports `pending-reboot`; no reboot was performed. Private
