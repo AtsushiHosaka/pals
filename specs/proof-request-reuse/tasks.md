@@ -84,3 +84,20 @@ Executed evidence and remaining gates: `docs/recipe-first-implementation-2026-10
 - [x] PFR-015 agent: refute plan after a clarification when a counterexample is still reported; localized negation statement; unit tests (agent `e8d3467`).
 - [x] PFR-015 webfront: "Lean-refuted" label for project, projectless and guest answers in four languages (webfront `e19606c`).
 - [x] PFR-015 real local journey: "n² + n is odd" kept as written was refuted by Lean (`¬ ∀ n, 0 < n → Odd (n² + n)`) and shown as "Leanで反証済み：この主張は偽です" with the counterexample n = 1. Evidence: `docs/math-conventions-evidence-2026-10-05.md`.
+
+## 2026-11-01 Recipe latency and exact-input profiles
+
+Authority: the user explicitly requested reuse of the existing natural-power
+continuity Recipe, a public answer within ten seconds and independent work in
+parallel. Baseline is the actual sequence-9 release, API `adda209` and worker
+`d58b60d`. This additive change affects PFR-010/016–018 and LRC-018/020; it does
+not authorize weaker proof evidence or an unverified fixed answer.
+
+- [x] Diagnose the actual slow request: the power Recipe was retrieved and passed all scope checks; independent answer correspondence rejected it before new DSP generation. Record the missing rejection-rationale evidence as a diagnostic gap.
+- [x] Define the separate exact-input contract and independently review the two complete Japanese question forms against the admitted universal natural-power theorem, including zero and the recorded power convention.
+- [ ] PFR-018 API: authoritative finite registry, distinct closed evidence kind, exact current request/claim/context/convention validation and unchanged locked catalog/answer/lifecycle revalidation. No schema migration or worker-created provider approval.
+- [ ] PFR-006/018 API: permit zero-provider token settlement only from server-established exact-profile validation and absence of provider call records; retain normal holds, guest limits, replay fences and non-profile settlement behavior. Real PostgreSQL positive/negative/replay tests.
+- [ ] PFR-018 agent: real authenticated catalog retrieval and exact immutable entry validation before zero-call reuse; unknown input or context retains the ordinary route. Prove generator, compiler, Draft, explanation and model call counts remain zero for eligible inputs.
+- [ ] PFR-010/017 general path: independently assess and review the same bounded candidates concurrently, require exact agreement, preserve separate request context and token-call attribution, and retain bounded private rejection reasons.
+- [ ] Hard negatives: changed exponent type, conclusion, quantifiers, method, output language, conventions, added text, history/material/image context, source/answer/toolchain tampering, retired entry, stale claim and forged profile must not be accepted as matching reuse.
+- [ ] Signed software-only deployment followed by real public guest submissions: exact stored answer/Lean hashes, `lean_catalog`, no linked proof job, zero model/generator/verifier/Draft calls and each measured end-to-end time at most ten seconds. Report actual measurements and any remaining limits.

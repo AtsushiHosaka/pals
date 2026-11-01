@@ -39,3 +39,10 @@ Executed evidence and remaining gates: `docs/recipe-first-implementation-2026-10
 - [x] LRC-019: actual mTLS Lean raw-source admission preserves exact bytes and replay identity; historical selector excludes the new raw policy.
 - [x] Registration producers: existing-key stateless Recipe and Draft provider-review CLIs, actual response-ID binding, no-overwrite output and cross-repository consumer contract tests.
 - [ ] Live provider mathematical review, complete operator publication/resume and production release acceptance.
+
+## 2026-11-01 Exact-input reuse latency
+
+- [x] LRC-020 scope: independently reviewed complete natural-power question forms bind the existing admitted Recipe, source, target, stored Japanese answer, compiler receipt and toolchain. This does not admit or publish a new Recipe/Draft.
+- [ ] LRC-018/020: API-owned registry and explicit new evidence, byte-exact full input and compatible convention/context checks, actual authenticated retrieval and unchanged atomic source/answer/admission/lifecycle validation.
+- [ ] LRC-020: executable negative matrix for altered mathematical scope, unregistered text, context, conventions, provenance, replay and forged evidence; independent code/math review.
+- [ ] Real public performance witness: return the existing reviewed source and answer with `lean_catalog`, zero new model/generation/compile/Draft calls and a measured answer within ten seconds. Local fixtures alone do not complete this item.

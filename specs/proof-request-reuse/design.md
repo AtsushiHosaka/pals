@@ -28,6 +28,12 @@ The formal worker runs a request-linked job like any proof job. New request-link
 
 One hold (count policy) or one token operation (token policy) per request revision covers assessment and the linked job. Needs_input releases it; continuation reacquires it. Consumption happens once on a `lean_catalog` or `lean_verified` answer; any terminal failure releases it. Linked-job provider calls obtain permits and receipts against the request's token operation. Bounds: at most five premise rounds, two learner retries and three delivery attempts per revision; admission also has an account rate limit. Public results omit prompts and provider internals. Context belongs to the exact owner/chat/request and is not shared with another learner.
 
+PFR-018 keeps the same normal count/guest consumption. Under the token policy,
+only the API's successful exact-profile admission may close the one held operation
+with zero utilization, after checking that no provider-call records or usage exist
+for this revision. No worker field grants free settlement. Existing non-profile
+QA/permit rules, one-time settlement, replay fences and failure release remain.
+
 ## Frontend
 
 All composers create proof requests. The thread shows premise questions, live Lean stages of the linked job (existing proof-job events), the Lean-verified answer with its Lean source, natural-language proof and follow-up questions (existing explanation and clarification components), and on failure a notice with retry and no answer text. Saved `llm_assessed` answers keep their existing display. Polling and event streams are scoped to the owner and chat, use abort on change and refuse mismatched response identities.
@@ -36,17 +42,45 @@ All composers create proof requests. The thread shows premise questions, live Le
 
 The preflight sees the original request, confirmed clarifications and authorized material context. Before candidate retrieval or Lean, it preserves PFR-014 literal-claim counterexample/truth-dependent-choice preflight and the learner’s saved choice. A retained suspected counterexample after clarification enters formal(refute) under PFR-015 before Recipe retrieval; it asks only for a consequential missing premise (PFR-004); search or verification difficulty is not a missing premise. It extracts a bounded mathematical signature before reading candidates. That signature and the exact request-context digest are retained as private evidence; they do not modify the learner's statement.
 
-The internal Recipe search returns at most eight admitted, source-bound reuse entries (LRC-015–LRC-018), without calling the Draft service. Retrieval can use the entry's statement and structured mathematical description; ranking is deterministic and scores do not imply equality. The first assessor compares the request with each candidate's description and actual Lean source. Only a complete signature match can reach the separate-session correspondence reviewer, which sees the original request, confirmed assumptions, selected Lean, stored description and answer. It judges domain, hypotheses, quantifier binding/order, conclusion, method, and whether the stored answer answers this request without adaptation. Candidate text is untrusted data, never prompt instructions.
+The internal Recipe search returns at most eight admitted, source-bound reuse entries (LRC-015–LRC-018), without calling the Draft service. Retrieval can use the entry's statement and structured mathematical description; ranking is deterministic and scores do not imply equality. Independent assessment and separate-session correspondence/answer review may run concurrently over the same bounded candidate batch. Neither consumes the other's verdict. Each independently selects a candidate from the original request, confirmed assumptions and source-bound data. Reuse requires agreement on the exact entry/revision and complete checks for domain, hypotheses, quantifier binding/order, conclusion, method and direct usability of the stored answer. Candidate text is untrusted data, never prompt instructions. Propagate per-request context and collect the two calls' actual usage independently; a shared last-call identifier cannot establish which call performed answer QA.
 
 The independent result is `same`, `different`, or `uncertain`, with a bounded rationale and checks for the named mathematical dimensions. `same` needs every check true. Reviewer failure/invalid response is an explicit provider failure; a valid `different`/`uncertain` result falls through to new Lean. If two distinct eligible candidates remain and their correspondence cannot be disambiguated, use DSP; never select by unspecified row order. Do not copy a candidate's formal target into a selector request and present that circular equality as request verification. The old formal selector normalizes only whitespace and remains a separate proof-job contract.
 
 The stored answer must exist in the request's output language and independently bind to this Recipe source. Request-specific QA reviews these exact bytes against the present request; it does not rewrite them. A missing language variant or needed explanation change uses the new-Lean path. The answer's original review and the present request reviews are distinct evidence. Unicode validation occurs before review, digest and durable JSON storage.
+
+### Finite exact-input profiles
+
+PFR-018 is a distinct correspondence contract, not a cache of a prior model verdict.
+An API-owned source registry binds each independently reviewed complete input text to
+the exact sealed catalog entry, target, Lean source, stored answer, compiler receipt
+and active toolchain. Initial eligibility is byte-exact for the two reviewed Japanese
+natural-power-continuity questions. Whitespace trimming, Unicode normalization, TeX
+stripping, partial matches and arbitrary paraphrases are not equality evidence.
+
+The worker may propose a profile only before ordinary model assessment when its full
+input/context/convention eligibility holds. It still calls the real authenticated
+Recipe search and verifies the returned source-bound data. The API independently
+resolves its own registry, rechecks the current request and convention readings, then
+uses the existing atomic lifecycle/answer/allowance settlement boundary. A profile
+does not authorize a different Recipe, adapted answer, method or target. The evidence
+names its actual deterministic validation method and registry digest; no provider
+review, generated session identity or compiler invocation is invented. Ineligible
+inputs keep the ordinary reviewed path; integrity failures remain explicit failures.
+
+The first profile's theorem is exactly `∀ (n : ℕ), Continuous (fun x : ℝ => x ^ n)`.
+It includes zero and adopts the explicitly recorded `0^0 = 1` convention. It does not
+cover integer/real/variable exponents, uniform continuity, punctured domains or a
+newly requested proof method. Missing/conflicting conventions, nonempty history or
+clarifications, attachments, images and available material context make this initial
+profile ineligible. Record bounded private reasons for rejected model correspondence
+so a later generation fallback can be diagnosed without exposing learner history.
 
 ### Decision table
 
 | Situation | Result | Draft DB | Compile |
 |---|---|---|---|
 | Same mathematical target, method compatible, valid source/answer/toolchain and both independent reviews pass | `catalog_reuse` / `lean_catalog` | No call | No call |
+| Registered complete exact input and independent API profile validation pass, with current admitted source/answer/toolchain | `catalog_reuse` / `lean_catalog`, explicit PFR-018 evidence | No call | No call |
 | Similar statement, changed domain/hypothesis/quantifier/conclusion, uncertain match or no eligible entry | `formal(dsp)` | Only DSP Draft | Required |
 | General theorem needs substitution, a wrapper or a different method | `formal(dsp)` | Only if DSP Draft runs | Required for all new source |
 | Missing consequential premise | `needs_input` | No call | No call |

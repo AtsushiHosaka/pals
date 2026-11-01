@@ -492,9 +492,13 @@ A correctly configured empty eligible catalog returns an empty candidate list. U
 
 ### Request correspondence and settlement
 
-The first assessment compares the pre-extracted request signature to each candidate's full description and actual source. It distinguishes same statement from a consequence, generalization or substitution. A second stateless session independently reviews the exact original request/confirmed premises, selected source and stored answer; it cannot rely only on the first assessor's verdict. An explicit method request must agree with the entry and Lean; an unspecified method imposes no extra constraint. Unknown or conflicting dimensions are not `same`.
+The ordinary model-reviewed branch below and the separately discriminated
+PFR-018/LRC-020 exact-input branch are alternative correspondence contracts.
+Both retain the same current-catalog, compiler, answer and lifecycle checks.
 
-Closed correspondence evidence contains exactly:
+In the ordinary branch, the assessment compares the pre-extracted request signature to each candidate's full description and actual source. It distinguishes same statement from a consequence, generalization or substitution. A separate stateless session independently reviews the exact original request/confirmed premises, source and stored answer; it cannot rely on the assessor's verdict. Both may run concurrently over the same bounded batch but must independently select the exact same candidate and pass all checks. An explicit method request must agree with the entry and Lean; an unspecified method imposes no extra constraint. Unknown or conflicting dimensions are not `same`.
+
+Ordinary model-reviewed correspondence evidence contains exactly:
 
 ```text
 schema_version: pals.recipe-correspondence.v1,
@@ -503,9 +507,33 @@ entry_sha256, lean_sha256, answer_sha256,
 reviewer_session_id, assessment_session_id, approved, rationale
 ```
 
-`approved` must be true for reuse. Both session IDs are canonical UUIDs and unequal; `rationale` is nonblank and at most 2,000 characters; the actual worker provider-session identities are recorded and fenced by its provider usage evidence. `request_context_sha256` hashes RFC 8785 bytes of the API's exact original `statement`, ordered `context_turns`, and `output_language`; it is recomputed by the API, not derived from the candidate. The entry/source/answer digests bind this review to the candidate. The request's separate exact-answer QA also binds the stored answer digest, existing permitted model/session usage and present request context. An admission answer review cannot stand in for either present-request review.
+For that branch, `approved` must be true for reuse. Both session IDs are canonical UUIDs and unequal; `rationale` is nonblank and at most 2,000 characters; the actual worker provider-session identities are recorded and fenced by its provider usage evidence. `request_context_sha256` hashes RFC 8785 bytes of the API's exact original `statement`, ordered `context_turns`, and `output_language`; it is recomputed by the API, not derived from the candidate. The entry/source/answer digests bind this review to the candidate. The request's separate exact-answer QA also binds the stored answer digest, existing permitted model/session usage and present request context. An admission answer review cannot stand in for either present-request model review.
+
+The exact-input branch instead carries the closed
+`pals.recipe-exact-input-correspondence.v1` object under
+`recipe_exact_input_correspondence`. Its fields are `profile_id`, `profile_sha256`,
+`request_id`, `claim_id`, `request_revision`, `request_context_sha256`,
+`statement_sha256`, `entry_sha256`, `lean_sha256`, `answer_sha256` and
+`toolchain_sha256`, plus the schema discriminator. It has no provider approval or
+session identities. The API recomputes the canonical descriptor digest from its
+own reviewed source registry and requires the current authoritative statement to
+be one complete registered literal, revision one without retry, Japanese output,
+empty history/clarifications/attachments and no available material context. It
+independently checks the current effective natural-zero and zero-to-zero-power
+conventions. The descriptor pins the precise target and Recipe revision as well
+as entry/source/answer/compiler/toolchain identities. Normal retrieval and live
+admission/review/lifecycle/source checks still run; the profile never publishes
+new metadata or treats an unverified string as a proof. See the full eligibility
+and negative rules in PFR-018 and LRC-020.
 
 `catalog_reuse` settlement carries `answer.lean.entry_sha256` and `answer.lean.answer_sha256` alongside Recipe/source/target/toolchain/compiler-receipt identity and the closed correspondence evidence. In one claim-fenced API transaction, resolve the live Recipe/entry, recompute all canonical and byte digests, re-read the exact stored answer, verify active toolchain and independent review bindings, and persist only those DB-stored answer/source bytes. Use the existing lifecycle lock so retirement cannot race with answer settlement. No Draft revalidation, generator call, linked job or compiler call occurs. Valid different/uncertain reviews or intact ineligible entries may use `formal(dsp)`; forged evidence or altered immutable source/answer/receipt fails explicitly.
+
+Only successful server-side exact-input resolution may authorize the zero-provider
+token-settlement branch. Worker JSON cannot assert that authorization. It requires
+no persisted provider-call records and empty usage for this request revision;
+token utilization is then consumed once at zero while the existing count/guest
+policy still consumes its normal one request. Non-profile QA/permit validation,
+holds, replay and failure release are unchanged.
 
 Owner-authenticated `GET /v1/proof-requests/{id}/lean-source` resolves only that answered request's stored source binding. It cannot read an arbitrary Recipe or another owner's source. The closed response has `request_id`, `chat_id`, `recipe_id`, `recipe_revision`, `entry_sha256`, `lean_code`, `lean_sha256`, `compiler_receipt_sha256`, `toolchain_sha256`. Catalog source keeps its original admission evidence; saved answers remain historical if entries later retire.
 
