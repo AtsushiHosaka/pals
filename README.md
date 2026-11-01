@@ -13,54 +13,23 @@ GitHub remotes are created.
 
 [PNGを拡大](docs/diagrams/pals-aws-private-target.png) · [draw.ioで編集](docs/diagrams/pals-aws-private-target.drawio) · [配置・通信・確認範囲](docs/diagrams/README.md)
 
-At 2026-11-02 00:25:23 JST, signed sequence 11 restored the public ALB
-listener and rules with the guest Recipe-read fix. All seven containers,
-private TLS, all 35 database readiness steps and recovery units passed actual
-read-back checks. All nine catalog fingerprints were preserved. The manifest is
-`a22a5f2f0a98d15b761f679cfa2e7f19f0307f9af5398d0c14d63a502c84e9c7`.
-The temporary KMS/RDS read policy was removed and its absence confirmed.
+2026年11月2日03:02:32 JSTに、署名済みseq12を配備し、元のALB listenerとruleで公開を再開しました。全7コンテナ、サービス間TLS、DBの35項目、復旧unitを実機で確認し、カタログ9項目の件数・fingerprintが一致しました。一時的なKMS検証・RDS参照権限は削除済みです。公開WebとAPI healthのHTTP 200を確認しました。言い換えた質問への公開画面での証明生成は、ログイン確認待ちのため未検証です。
 
-The same logged-out natural-power continuity question that previously took
-137.447 seconds now reused its verified Recipe. Three fresh chats in one normal
-guest session returned the stored answer and Lean source:
+数学的な言い換えには、現在の検索公開済み20候補をGPT-6 Luna・lowの独立した2呼び出しで並列に確認する経路を配備しました。型・仮定・量化・結論・方法と、保存回答がその質問に答えていることを確かめ、両者が一致した場合だけ再利用します。実APIを使った32問では、同値・変数名変更13問中11問を受理し、条件などが異なる19問はすべて拒否しました。受理した分類時間は6.082〜9.883秒ですが、キュー・保存・ブラウザー表示は含みません。cached入力tokenは0でした。[測定結果と2件の見逃し](docs/aws-recipe-semantic-benchmark-2026-11-02.md)を記録しています。右極限とπの回答を明確にするrevision 2は未登録です。
 
-| Sample | Send click to visible answer | Request creation to saved answer |
-| --- | --- | --- |
-| 1 | 4.775 s | 2.664 s |
-| 2 | 4.664 s | 2.507 s |
-| 3 | 4.830 s | 2.683 s |
+Web・APIはprivate controlのt4g.medium、Lean worker・verifierはprivate computeのr8a.large、DBはAuroraです。物理構成はseq11から変えていません。大会時のxlarge切り替え、ASG・自動スケールは未配備です。1秒回答、30人同時利用、1,100件の本番利用は未達成または未検証です。Lean生成の既定はTerra・mediumで、モデルの自動切り替えはありません。
 
-All three returned `lean_catalog`, with the exact stored answer/source/compiler
-receipt and no linked proof job. A separate read-only production observation
-confirmed zero provider usage records, token calls and new proof jobs. The UI
-and Lean panel screenshots were inspected. Normal guest allowance was consumed
-from three to zero; it was not reset. The complete tested question, request IDs,
-method and limits are in the [Recipe latency evidence](docs/aws-recipe-reuse-latency-2026-10-31.md).
+seq12のmanifestは`6f84b0967c9ef4cd12fb6658764599c2d5ccd2c7582daa03b67376df358acf3f`です。
 
-The zero-call route covers two independently reviewed complete literal Japanese
-inputs with compatible conventions and no history or materials; one form was
-publicly measured three times. Other wording/context retains the ordinary review
-route. Its two independent candidate reviews now run concurrently and must agree.
-These observations establish the ten-second target for the measured question;
-they do not establish general, one-second or 30-user performance.
-
-The original delay occurred after retrieval: the correct Recipe passed scope
-checks but answer correspondence rejected it, causing new generation. An initial
-release then saved a valid answer in 2.776 seconds but guest reads still required
-the old QA evidence and returned 503. Sequence 11 fixes that read boundary using
-the committed exact-profile evidence; it does not invent an old model approval.
-
-The chat retains GPT-6.1 Terra, GPT-6.1 Sol and GPT-6 Luna with low/medium/high
-reasoning. The default remains Terra/medium; there is no automatic model cascade.
-The public measurements selected Sol/high, with no provider call on Recipe reuse.
-
-| Deployed source | Commit |
+| 配備元 | commit |
 | --- | --- |
-| Parent | `f6f02bc4f876aef13e688fec8d21b01af1a522bc` |
-| API | `9b8b004463f2be2579eb80d71149a4378eeb4675` |
-| Worker | `122f2f92e75220c3f34e224b20a63bb28addde2c` |
-| Infrastructure | `46f4010177a1ea5a79a785d312acc122ad8581be` |
+| 親リポジトリ | `e65906a01ff182e7e40e5aa7a98b8bdf7ae09751` |
+| API | `7cde9674b0ff61d92116280f303638351362729e` |
+| worker | `7c000dbb84288e01391e72bde796b53bfdd51608` |
+| infra | `cf212c9134e4c4bf7a6747d8628f61bd98dd6027` |
 | Web | `a74b57b130ac0de6c7bf793ca095e81b54c4344f` |
+
+以前のseq11では、完全一致する自然数冪の日本語入力をモデル呼び出しなしで再利用し、通常ゲストの3チャットで4.775秒・4.664秒・4.830秒で回答とLeanソースを表示しました。これは今回の言い換え経路とは別の公開実測です。[対象の全文・測定方法・利用枠・記録](docs/aws-recipe-reuse-latency-2026-10-31.md)を参照してください。
 
 The earlier observations below retain their original release and timing context.
 
