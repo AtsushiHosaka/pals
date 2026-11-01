@@ -43,6 +43,7 @@ Executed evidence and remaining gates: `docs/recipe-first-implementation-2026-10
 ## 2026-11-01 Exact-input reuse latency
 
 - [x] LRC-020 scope: independently reviewed complete natural-power question forms bind the existing admitted Recipe, source, target, stored Japanese answer, compiler receipt and toolchain. This does not admit or publish a new Recipe/Draft.
-- [ ] LRC-018/020: API-owned registry and explicit new evidence, byte-exact full input and compatible convention/context checks, actual authenticated retrieval and unchanged atomic source/answer/admission/lifecycle validation.
-- [ ] LRC-020: executable negative matrix for altered mathematical scope, unregistered text, context, conventions, provenance, replay and forged evidence; independent code/math review.
-- [ ] Real public performance witness: return the existing reviewed source and answer with `lean_catalog`, zero new model/generation/compile/Draft calls and a measured answer within ten seconds. Local fixtures alone do not complete this item.
+- [x] LRC-018/020: API-owned registry and explicit new evidence, byte-exact full input and compatible convention/context checks, actual authenticated retrieval and unchanged atomic source/answer/admission/lifecycle validation.
+- [x] LRC-020: executable negative matrix for altered mathematical scope, unregistered text, context, conventions, provenance, replay and forged evidence; independent code/math review.
+- [x] Real public performance witness: return the existing reviewed source and answer with `lean_catalog`, zero new model/generation/compile/Draft calls and a measured answer within ten seconds. Sequence 11 measured the registered plain-text input three times at 4.7752/4.6638/4.8301 seconds; separate production reads confirmed the sealed profile/source/answer and zero calls/jobs. [Evidence and scope](../../docs/aws-recipe-reuse-latency-2026-10-31.md#11月2日の実装と公開確認の状況).
+- [ ] Measure the other registered TeX-delimited form publicly. General wording and 30 concurrent users remain unmeasured.

@@ -6,6 +6,17 @@
 
 ## 現在の実行状況
 
+### 11月2日のAPI資格情報の確認と再起動手順
+
+seq10の切り替え中、新APIは起動時に`API AWS session is unavailable`を記録して終了しました。既存の資格情報brokerは更新時にready markerを削除してからSTS要求を行います。APIの再起動がこの区間と重なった可能性がありますが、競合した瞬間は観測できていません。確実に確認できたのは、APIの資格情報事前検査の失敗と、既存のbrokerロックを保持した再開処理の成功です。SSM `94ddb3b2-c1b8-4e4e-af8c-830ea0b1365f`で同じAPI・reconcilerを再開し、controlのreadinessを確認しました。
+
+再起動時は、既存の`/opt/pals/private-runtime/credentials/api/.renew.lock`を排他取得します。root所有の通常ファイル、0600、link数1、親ディレクトリの所有権と書き込み制限を確認し、ロック待ちは20秒以内に制限します。取得後に同じinodeであること、現在の設定と短期資格情報が正規の検査を通ることを確認します。正式なcontrol起動、またはreconciler起動とAPI再起動、TLS/readinessの確認が終わるまで保持します。取得できない場合はコンテナを変更せず終了します。資格情報のコピーやmarkerの書き換え、時刻の偽装は行いません。
+
+seq11の運用処理では、このロックを通常のcontrol起動とreconciler起動の両方に適用します。署名済みmanifestは`a22a5f2f0a98d15b761f679cfa2e7f19f0307f9af5398d0c14d63a502c84e9c7`です。変更対象はAPIで、worker・Web・verifierのソースとイメージ、infraのソース、35項目のDB検査は維持します。DB受理には正式な5段階のソフトウェア更新を使います。受理後も、7コンテナとTLS、復旧unit、カタログの前後一致を実測するまで公開経路を戻しません。seq11では全7コンテナ、private TLS、復旧unitを実機で確認しました。SSM記録はcontrolが`6bd9fedd-4332-4fab-b3e4-3e43ca9b8602`、computeが`2270fca6-704e-461e-9296-1b8a898a8944`です。9種類のカタログの前後比較が一致し、Draft433件、登録済みRecipe102件、検索対象entry20件を保持しました。11月2日00時25分JSTごろにALBを復旧し、一時IAM参照権限の削除と不在を確認しています。
+
+復旧後、同じ通常ゲストの新規3チャットで、自然数べきの連続性の平文入力に4.7752秒、4.6638秒、4.8301秒で回答を表示しました。3件の保存証拠とprovider呼び出し・証明jobが0であることも照合済みです。対象となる2つの定型文のうち公開試験を行ったのは平文形式だけです。全文一致の条件、先行したゲストGETの503、実行IDと測定範囲は[Recipe再利用の記録](aws-recipe-reuse-latency-2026-10-31.md#11月2日の実装と公開確認の状況)に残しています。
+
+
 ### seq6の貼り付け修正
 
 数式の貼り付けが二重に実行される不具合を修正し、Web commit `79f2df0722d241663851bab9fa66cc5b99fb09df`をseq6として配備しました。署名済みmanifestは`b17899ab82efad2dc27bae99985fc78593012bb43bb4aa30984c281375f527d4`です。前世代のseq5を参照し、API・worker・verifierのイメージ、Leanのtoolchain、既存の証明・審査条件を維持しています。
