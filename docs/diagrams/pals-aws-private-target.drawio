@@ -1,5 +1,5 @@
 <mxfile host="app.diagrams.net" agent="PALS architecture authoring" version="32.6.1">
-  <diagram id="pals-private-current" name="AWS deployed architecture — seq7 2026-11-01">
+  <diagram id="pals-private-current" name="AWS deployed architecture — seq9 2026-11-01">
     <mxGraphModel dx="2440" dy="1980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2440" pageHeight="1980" background="#ffffff" math="0" shadow="0">
       <root>
         <mxCell id="0" />
@@ -7,8 +7,8 @@
         <mxCell id="title" value="&lt;b&gt;PALS AWS 本番アーキテクチャ&lt;/b&gt;" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#142d4e;strokeColor=#142d4e;strokeWidth=1.5;fontSize=32;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;fontColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="40" y="25" width="2360" height="65" as="geometry" />
         </mxCell>
-        <mxCell id="snapshot" value="&lt;b&gt;2026年11月1日 13:46 JST の配備記録 / seq7&lt;/b&gt;&lt;br&gt;全7コンテナ・private TLS・DB確認34段階・復旧設定を確認して公開を再開。既存カタログ9項目の内容を保持。" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#eaf7ee;strokeColor=#579a72;strokeWidth=1.5;fontSize=23;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
-          <mxGeometry x="40" y="105" width="2360" height="90" as="geometry" />
+        <mxCell id="snapshot" value="&lt;b&gt;2026年11月1日 21:53 JST の配備記録 / seq9&lt;/b&gt;&lt;br&gt;全7コンテナ・private TLS・DB確認35段階・復旧設定を確認して公開を再開。既存カタログ9項目を保持。&lt;br&gt;Parent 6dca76e / API adda209 / Worker d58b60d / Infra 92330d6 / Web a74b57b / manifest a3340a717db9" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#eaf7ee;strokeColor=#579a72;strokeWidth=1.5;fontSize=21;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="105" width="2360" height="110" as="geometry" />
         </mxCell>
         <mxCell id="region" value="AWS 東京リージョン / ap-northeast-1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#f6f8fc;strokeColor=#8ca4c0;strokeWidth=1.5;fontSize=23;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;verticalAlign=top;spacingTop=12;spacingLeft=18;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="40" y="410" width="2360" height="1330" as="geometry" />
@@ -70,7 +70,7 @@
         <mxCell id="s3_endpoint" value="&lt;b&gt;S3 Gateway Endpoint&lt;/b&gt;　control・compute用 / DB専用とは分離" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#e2f3ef;strokeColor=#639f8d;strokeWidth=1.5;fontSize=21;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
           <mxGeometry x="800" y="1615" width="830" height="55" as="geometry" />
         </mxCell>
-        <mxCell id="llm" value="&lt;b&gt;外部LLM API / 静的モデル設定&lt;/b&gt;&lt;br&gt;Lean生成・修正: 6.1 Terra / medium&lt;br&gt;説明・経路判定・審査: Luna / low&lt;br&gt;HTTPS 443 / NAT経由" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#fff1df;strokeColor=#cf9a56;strokeWidth=1.5;fontSize=20;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
+        <mxCell id="llm" value="&lt;b&gt;外部LLM API / チャットで選択&lt;/b&gt;&lt;br&gt;Lean: 6.1 Terra / 6.1 Sol / 6 Luna&lt;br&gt;推論量: low / medium / high&lt;br&gt;その他の役割: 既存設定 / HTTPS・NAT" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#fff1df;strokeColor=#cf9a56;strokeWidth=1.5;fontSize=20;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
           <mxGeometry x="1080" y="235" width="520" height="135" as="geometry" />
         </mxCell>
         <mxCell id="sqs" value="&lt;b&gt;SQS + DLQ&lt;/b&gt;&lt;br&gt;評価・証明キュー / 既存を継続&lt;br&gt;workerがHTTPS 443で受信 / NAT経由" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#fff1df;strokeColor=#cf9a56;strokeWidth=1.5;fontSize=22;fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;align=left;verticalAlign=middle;spacing=14;" vertex="1" parent="1">
@@ -91,8 +91,8 @@
         <mxCell id="e_user_auth" source="user" target="cognito" value="認証 / HTTPS 443" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#7956a1;fontColor=#7956a1;fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;entryX=0;entryY=0.5;">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="180" y="215" />
-              <mxPoint x="1740" y="215" />
+              <mxPoint x="180" y="225" />
+              <mxPoint x="1740" y="225" />
               <mxPoint x="1740" y="570" />
             </Array>
           </mxGeometry>

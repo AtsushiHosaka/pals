@@ -13,20 +13,33 @@ GitHub remotes are created.
 
 [PNGを拡大](docs/diagrams/pals-aws-private-target.png) · [draw.ioで編集](docs/diagrams/pals-aws-private-target.drawio) · [配置・通信・確認範囲](docs/diagrams/README.md)
 
-At 2026-11-01 13:46:23 JST, sequence 7 restored the public ALB listener
-and its rules after deploying the API and worker update. All seven containers,
-private TLS, all 34 database readiness steps and the three recovery units passed
-read-back checks. All nine catalog counts and content/vector fingerprints were
-preserved. The signed manifest is
-`c9aa33f03336cea5696491c124707d481711c8388e08bb07291ce72b81417860`.
-Lean Draft/Sketch/Prove/Repair now use GPT-6.1 Terra with medium reasoning;
-explanation, routing and review roles use Luna with low reasoning. This is a
-static configuration, with no automatic model fallback added. Web and verifier
-images/toolchain are unchanged from sequence 6. The temporary KMS verification
-and RDS read policy was removed, and its absence was read back. Logged-out proof
-generation and its latency require a separate public test; deployment checks alone do not
-establish either result. The earlier observations below retain their original
-release and timing context.
+At 2026-11-01 21:53:13 JST, sequence 9 restored the original public ALB
+listener and rules after deploying the model/reasoning selection update. All
+seven containers, private TLS, all 35 database readiness steps and the three
+recovery units passed read-back checks. All nine catalog counts and content/vector
+fingerprints were preserved. The signed manifest is
+`a3340a717db963f64e42de8ddea3e10483f32712d4e4b9d2702f0866c95b774c`.
+The deployed chat offers GPT-6.1 Terra, GPT-6.1 Sol and GPT-6 Luna, each with
+low/medium/high reasoning. The chosen settings are bound to each Lean
+Draft/Sketch/Prove/Repair request. Other roles retain their existing configured
+models. No automatic model fallback was added. The default is
+GPT-6.1 Terra with medium reasoning. API, worker and Web images were updated;
+the verifier image/toolchain was retained. The temporary KMS verification/RDS
+read policy was removed and its absence confirmed. A logged-out GPT-6.1 Sol/high
+request proved continuity of the natural power function, including exponent zero,
+with fresh Lean verification. Server completion took 135.622958 seconds; public
+polling observed completion after 137.447 seconds. It used a fresh proof job
+rather than a Recipe. This observation does not meet the 10-second target. Actual selected-model usage settlement remains unverified.
+
+| Deployed source | Commit |
+| --- | --- |
+| Parent | `6dca76eb6de6f3de41c0a98883f135c1bb334c82` |
+| API | `adda2098ff3c8ee73d07214e3256e6e27b11e987` |
+| Worker | `d58b60dee6ac246db26f62891a1939083b17236b` |
+| Infrastructure | `92330d6cdf204379b5e4fd652c7737fafc90bca3` |
+| Web | `a74b57b130ac0de6c7bf793ca095e81b54c4344f` |
+
+The earlier observations below retain their original release and timing context.
 
 At 2026-11-01 01:29 JST, the signed sequence-5 update was deployed to the
 private AWS runtime, and the Cloudflare/TLS ALB listener and rules were restored.
@@ -81,8 +94,8 @@ generation trial. These are two individual observations, not a controlled
 performance benchmark. One-second answers, the 30-person latency target, and
 automatic scaling remain unachieved or unverified. Recovery units are enabled,
 but an actual reboot test has not been performed. Controlled restart/rebuild
-permission for the current sequence-7 release expires on 2026-11-02
-at 12:32:25 JST; running services do not stop solely because that time passes. See the runbook for the
+permission for the current sequence-9 release expires on 2026-11-02
+at 21:39:18 JST; running services do not stop solely because that time passes. See the runbook for the
 release window and the shared-network guest quota.
 
 - [Migration runbook and execution status](docs/aws-migration-runbook-2026-10-30.md)
