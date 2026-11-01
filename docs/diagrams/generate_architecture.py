@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Generate the editable seq9 architecture snapshot; export PNG with draw.io.
+"""Generate the editable seq11 architecture snapshot; export PNG with draw.io.
 
-Evidence: signed seq9 manifest and actual both-host/catalog read-back receipts,
+Evidence: signed seq11 manifest and actual both-host/catalog read-back receipts,
 docs/aws-security-and-catalog-check-2026-10-31.md. No AWS calls are made.
 All coordinates, labels and connectors below are diagram source, not an image.
 """
@@ -11,7 +11,7 @@ from xml.etree import ElementTree as ET
 DEST = Path(__file__).with_name('pals-aws-private-target.drawio')
 WIDTH, HEIGHT = 2440, 1980
 mxfile = ET.Element('mxfile', host='app.diagrams.net', agent='PALS architecture authoring', version='32.6.1')
-diagram = ET.SubElement(mxfile, 'diagram', id='pals-private-current', name='AWS deployed architecture — seq9 2026-11-01')
+diagram = ET.SubElement(mxfile, 'diagram', id='pals-private-current', name='AWS deployed architecture — seq11 2026-11-02')
 model = ET.SubElement(diagram, 'mxGraphModel', dx=str(WIDTH), dy=str(HEIGHT), grid='1', gridSize='10', guides='1', tooltips='1', connect='1', arrows='1', fold='1', page='1', pageScale='1', pageWidth=str(WIDTH), pageHeight=str(HEIGHT), background='#ffffff', math='0', shadow='0')
 root = ET.SubElement(model, 'root')
 ET.SubElement(root, 'mxCell', id='0')
@@ -43,7 +43,7 @@ def edge(identifier, source, target, value='', color='#2467a0', points=(), extra
 
 # Zones are drawn first. Boxes remain individually editable in draw.io.
 box('title', '<b>PALS AWS 本番アーキテクチャ</b>', 40, 25, 2360, 65, '#142d4e', '#142d4e', 32, 'fontColor=#ffffff;')
-box('snapshot', '<b>2026年11月1日 21:53 JST の配備記録 / seq9</b><br>全7コンテナ・private TLS・DB確認35段階・復旧設定を確認して公開を再開。既存カタログ9項目を保持。<br>Parent 6dca76e / API adda209 / Worker d58b60d / Infra 92330d6 / Web a74b57b / manifest a3340a717db9', 40, 105, 2360, 110, '#eaf7ee', '#579a72', 21)
+box('snapshot', '<b>2026年11月2日 00:25 JST の配備記録 / seq11</b><br>全7コンテナ・private TLS・DB確認35段階・復旧設定を確認して公開を再開。既存カタログ9項目を保持。自然数冪の登録済み入力で公開実測4.66〜4.83秒。<br>Parent f6f02bc / API 9b8b004 / Worker 122f2f9 / Infra 46f4010 / Web a74b57b / manifest a22a5f2f0a98', 40, 105, 2360, 110, '#eaf7ee', '#579a72', 21)
 zone('region', 'AWS 東京リージョン / ap-northeast-1', 40, 410, 2360, 1330, '#f6f8fc', '#8ca4c0')
 zone('vpc', 'VPC 10.42.0.0/16 / 2 AZ: ap-northeast-1a・1c', 65, 460, 1650, 1235, '#ffffff', '#6f8eaf')
 zone('public', 'Public subnets / 1a: 10.42.0.0/24・1c: 10.42.1.0/24', 90, 515, 1600, 235, '#edf4fd', '#8db1d9')
