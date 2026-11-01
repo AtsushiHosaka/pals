@@ -13,6 +13,21 @@ GitHub remotes are created.
 
 [PNGを拡大](docs/diagrams/pals-aws-private-target.png) · [draw.ioで編集](docs/diagrams/pals-aws-private-target.drawio) · [配置・通信・確認範囲](docs/diagrams/README.md)
 
+At 2026-11-01 13:46:23 JST, sequence 7 restored the public ALB listener
+and its rules after deploying the API and worker update. All seven containers,
+private TLS, all 34 database readiness steps and the three recovery units passed
+read-back checks. All nine catalog counts and content/vector fingerprints were
+preserved. The signed manifest is
+`c9aa33f03336cea5696491c124707d481711c8388e08bb07291ce72b81417860`.
+Lean Draft/Sketch/Prove/Repair now use GPT-6.1 Terra with medium reasoning;
+explanation, routing and review roles use Luna with low reasoning. This is a
+static configuration, with no automatic model fallback added. Web and verifier
+images/toolchain are unchanged from sequence 6. The temporary KMS verification
+and RDS read policy was removed, and its absence was read back. Logged-out proof
+generation and its latency require a separate public test; deployment checks alone do not
+establish either result. The earlier observations below retain their original
+release and timing context.
+
 At 2026-11-01 01:29 JST, the signed sequence-5 update was deployed to the
 private AWS runtime, and the Cloudflare/TLS ALB listener and rules were restored.
 A public Japanese tan-one-degree question reached `answered` with its proof and
@@ -66,8 +81,8 @@ generation trial. These are two individual observations, not a controlled
 performance benchmark. One-second answers, the 30-person latency target, and
 automatic scaling remain unachieved or unverified. Recovery units are enabled,
 but an actual reboot test has not been performed. Controlled restart/rebuild
-permission for the newly admitted sequence-6 release expires on 2026-11-02
-at 01:39:09 JST; running services do not stop solely because that time passes. See the runbook for the
+permission for the current sequence-7 release expires on 2026-11-02
+at 12:32:25 JST; running services do not stop solely because that time passes. See the runbook for the
 release window and the shared-network guest quota.
 
 - [Migration runbook and execution status](docs/aws-migration-runbook-2026-10-30.md)

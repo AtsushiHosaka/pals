@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Generate the editable seq6 architecture snapshot; export PNG with draw.io.
+"""Generate the editable seq7 architecture snapshot; export PNG with draw.io.
 
-Evidence: docs/aws-migration-runbook-2026-10-30.md (seq6),
+Evidence: signed seq7 manifest and actual both-host/catalog read-back receipts,
 docs/aws-security-and-catalog-check-2026-10-31.md. No AWS calls are made.
 All coordinates, labels and connectors below are diagram source, not an image.
 """
@@ -11,7 +11,7 @@ from xml.etree import ElementTree as ET
 DEST = Path(__file__).with_name('pals-aws-private-target.drawio')
 WIDTH, HEIGHT = 2440, 1980
 mxfile = ET.Element('mxfile', host='app.diagrams.net', agent='PALS architecture authoring', version='32.6.1')
-diagram = ET.SubElement(mxfile, 'diagram', id='pals-private-current', name='AWS deployed architecture — seq6 2026-11-01')
+diagram = ET.SubElement(mxfile, 'diagram', id='pals-private-current', name='AWS deployed architecture — seq7 2026-11-01')
 model = ET.SubElement(diagram, 'mxGraphModel', dx=str(WIDTH), dy=str(HEIGHT), grid='1', gridSize='10', guides='1', tooltips='1', connect='1', arrows='1', fold='1', page='1', pageScale='1', pageWidth=str(WIDTH), pageHeight=str(HEIGHT), background='#ffffff', math='0', shadow='0')
 root = ET.SubElement(model, 'root')
 ET.SubElement(root, 'mxCell', id='0')
@@ -43,7 +43,7 @@ def edge(identifier, source, target, value='', color='#2467a0', points=(), extra
 
 # Zones are drawn first. Boxes remain individually editable in draw.io.
 box('title', '<b>PALS AWS 本番アーキテクチャ</b>', 40, 25, 2360, 65, '#142d4e', '#142d4e', 32, 'fontColor=#ffffff;')
-box('snapshot', '<b>2026年11月1日 01:57 JST の配備記録 / seq6</b><br>Web・API・Lean側の全7コンテナ、private TLS、復旧設定を確認して公開を再開。既存カタログ9項目の内容を保持。', 40, 105, 2360, 90, '#eaf7ee', '#579a72', 23)
+box('snapshot', '<b>2026年11月1日 13:46 JST の配備記録 / seq7</b><br>全7コンテナ・private TLS・DB確認34段階・復旧設定を確認して公開を再開。既存カタログ9項目の内容を保持。', 40, 105, 2360, 90, '#eaf7ee', '#579a72', 23)
 zone('region', 'AWS 東京リージョン / ap-northeast-1', 40, 410, 2360, 1330, '#f6f8fc', '#8ca4c0')
 zone('vpc', 'VPC 10.42.0.0/16 / 2 AZ: ap-northeast-1a・1c', 65, 460, 1650, 1235, '#ffffff', '#6f8eaf')
 zone('public', 'Public subnets / 1a: 10.42.0.0/24・1c: 10.42.1.0/24', 90, 515, 1600, 235, '#edf4fd', '#8db1d9')
@@ -70,7 +70,7 @@ box('old_database', '<b>旧方式DB EC2: 停止済み</b><br>10.42.10.172 / m7g.
 box('s3_endpoint', '<b>S3 Gateway Endpoint</b>　control・compute用 / DB専用とは分離', 800, 1615, 830, 55, '#e2f3ef', '#639f8d', 21)
 
 # Regional / external services: endpoint placement is not a private subnet.
-box('llm', '<b>外部LLM API</b><br>workerの評価・生成・独立審査<br>HTTPS 443 / NAT経由', 1080, 235, 520, 135, '#fff1df', '#cf9a56', 22)
+box('llm', '<b>外部LLM API / 静的モデル設定</b><br>Lean生成・修正: 6.1 Terra / medium<br>説明・経路判定・審査: Luna / low<br>HTTPS 443 / NAT経由', 1080, 235, 520, 135, '#fff1df', '#cf9a56', 20)
 box('sqs', '<b>SQS + DLQ</b><br>評価・証明キュー / 既存を継続<br>workerがHTTPS 443で受信 / NAT経由', 1800, 710, 530, 125, '#fff1df', '#cf9a56', 22)
 box('aws_api', '<b>SSM / ECR / CloudWatch / KMS</b><br>control・compute host → HTTPS 443 / NAT<br>SSM SecureString・KMSで秘密値管理<br>SSM経由の操作 / IMDSv2必須', 1800, 910, 530, 160, '#f4effb', '#aa95c4', 21)
 box('s3', '<b>S3 / private・暗号化</b><br>資料・成果物・移行データ<br>Gateway Endpoint経由 / NATを通らない', 1800, 1160, 530, 125, '#e2f3ef', '#639f8d', 22)
