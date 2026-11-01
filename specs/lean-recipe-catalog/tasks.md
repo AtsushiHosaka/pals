@@ -47,3 +47,11 @@ Executed evidence and remaining gates: `docs/recipe-first-implementation-2026-10
 - [x] LRC-020: executable negative matrix for altered mathematical scope, unregistered text, context, conventions, provenance, replay and forged evidence; independent code/math review.
 - [x] Real public performance witness: return the existing reviewed source and answer with `lean_catalog`, zero new model/generation/compile/Draft calls and a measured answer within ten seconds. Sequence 11 measured the registered plain-text input three times at 4.7752/4.6638/4.8301 seconds; separate production reads confirmed the sealed profile/source/answer and zero calls/jobs. [Evidence and scope](../../docs/aws-recipe-reuse-latency-2026-10-31.md#11月2日の実装と公開確認の状況).
 - [ ] Measure the other registered TeX-delimited form publicly. General wording and 30 concurrent users remain unmeasured.
+
+
+## 2026-11-02 General semantic correspondence
+
+- [ ] LRC-021: complete checked catalog batch and API-owned request/claim/ordered-entry receipt with explicit count/byte overflow handling.
+- [ ] LRC-018/021: two real independent source/request/stored-answer reviews with actual call/usage binding, normal token charging and exact immutable/lifecycle revalidation; historical guest/source compatibility.
+- [ ] Independent review and adversarial scope/receipt/billing/retirement tests, including real PostgreSQL and actual provider evidence.
+- [ ] Public changed-question performance across natural-power continuity, tan-one-degree irrationality and another substantive Recipe: exact admitted proof reuse without new compilation, each measured accepted answer at most ten seconds; no literal-list acceptance.

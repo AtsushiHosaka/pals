@@ -490,10 +490,23 @@ compiler_receipt_sha256, toolchain_sha256
 
 A correctly configured empty eligible catalog returns an empty candidate list. Unconfigured catalog, database error or malformed immutable evidence is an unavailable/integrity outcome. An entry retired or bound to an inactive toolchain is ineligible. A search miss or ineligible intact entry leads to DSP; immutable tampering is never reported as successful empty retrieval.
 
+### Complete bounded catalog batch
+
+LRC-021/PFR-019 adds a claim-fenced complete-catalog read for independent semantic
+review. The selector checks every eligible entry's existing signed review, actual
+Lean target/source and admission compiler receipt, under the active language and
+toolchain. At most 32 entries and 2 MiB are returned with an API-owned completeness
+receipt and canonical ordered-batch digest. The presence of a 33rd entry or a byte
+overflow returns an explicit incomplete empty batch and preserves ordinary search.
+This is neither a multilingual similarity certificate nor a new Recipe admission.
+The original current request and both genuinely independent provider/usage records
+remain necessary at settlement; the complete batch alone proves no correspondence.
+PFR-019 defines the full scope, polarity, billing, historical-read and negative gates.
+
 ### Request correspondence and settlement
 
 The ordinary model-reviewed branch below and the separately discriminated
-PFR-018/LRC-020 exact-input branch are alternative correspondence contracts.
+PFR-018/LRC-020 exact-input branch and PFR-019/LRC-021 complete-batch dual-review branch are separately discriminated correspondence contracts.
 Both retain the same current-catalog, compiler, answer and lifecycle checks.
 
 In the ordinary branch, the assessment compares the pre-extracted request signature to each candidate's full description and actual source. It distinguishes same statement from a consequence, generalization or substitution. A separate stateless session independently reviews the exact original request/confirmed premises, source and stored answer; it cannot rely on the assessor's verdict. Both may run concurrently over the same bounded batch but must independently select the exact same candidate and pass all checks. An explicit method request must agree with the entry and Lean; an unspecified method imposes no extra constraint. Unknown or conflicting dimensions are not `same`.

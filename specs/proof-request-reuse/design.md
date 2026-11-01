@@ -48,6 +48,49 @@ The independent result is `same`, `different`, or `uncertain`, with a bounded ra
 
 The stored answer must exist in the request's output language and independently bind to this Recipe source. Request-specific QA reviews these exact bytes against the present request; it does not rewrite them. A missing language variant or needed explanation change uses the new-Lean path. The answer's original review and the present request reviews are distinct evidence. Unicode validation occurs before review, digest and durable JSON storage.
 
+### Complete-catalog semantic correspondence
+
+PFR-019 adds a model-reviewed route before the ordinary intent/query pipeline for
+initial context-free text requests. It does not extend the literal registry. The
+API reads eligible searchable entries in one repeatable-read, read-only selector
+transaction, checking all source/review/compiler bindings. A 33-row probe detects
+the 32-entry boundary. The response is either the complete checked batch within
+2 MiB or an explicit incomplete empty batch; it never silently reviews a prefix.
+A short claim-fenced API transaction records a server-owned receipt binding the
+original request/context/revision, language, toolchain, ordered entry hashes and
+canonical batch digest. A worker cannot replace this receipt at settlement.
+
+The worker submits the original question, actual effective conventions and complete
+source/answer batch to two independent, stateless provider calls concurrently. The
+calls jointly replace separate intent, premise, translation/query and subsequent
+correspondence calls on an accepted reuse request; neither consumes the other's
+result. Both reconstruct the request's mathematical scope, check consequential
+ambiguity and method/polarity, select an exact entry and assess the original stored
+answer. The closed v2 evidence binds both real usage/provider identities and the
+same API batch. Different/unknown scope or candidate disagreement cannot authorize
+reuse. The typed/scoped record is an auditable model interpretation, not newly
+admitted formal metadata or a machine-checked natural-language equality proof.
+
+A decision question such as asking whether a degree-angle tangent is rational may
+use an existing proof of irrationality only if both independent reviews explicitly
+resolve that decision and the stored proof directly answers it. A demand to prove
+rationality remains a different task and retains the existing premise/refutation
+flow. Domain, angle unit, quantifier dependency, proof method and repeated-variable
+identity are not erased. The source and answer bytes are not rewritten to force a
+match. A proof expressed in a consistently renamed dummy variable can be reused
+only when it remains self-contained for the actual question.
+
+The API verifies the batch receipt, two distinct current-claim call/usage records,
+exact immutable entry/source/target/answer/compiler/toolchain and current lifecycle
+inside normal settlement. All actual provider costs remain in the ordinary token
+operation; this route never uses exact-input preapproval. Guest GET, source and
+Lean reads validate the committed v2 evidence against the original settled claim,
+while keeping valid historical answers readable after Recipe retirement. Existing
+exact-input and ordinary query evidence remain compatible. Unsupported context or
+an incomplete batch uses the ordinary flow; provider and immutable-integrity failures
+remain explicit failures. All in-flight parallel calls are joined and their real
+usage retained even if one fails or the candidate is rejected.
+
 ### Finite exact-input profiles
 
 PFR-018 is a distinct correspondence contract, not a cache of a prior model verdict.

@@ -104,3 +104,18 @@ not authorize weaker proof evidence or an unverified fixed answer.
 - [ ] Measure the other registered form containing TeX delimiters through the public UI. Do not infer its public timing from the plain-text result.
 
 Evidence: [production measurements and limits](../../docs/aws-recipe-reuse-latency-2026-10-31.md#11月2日の実装と公開確認の状況). API `9b8b004`, worker `122f2f9`: independent review, focused negative/concurrency tests and real PostgreSQL settlement plus guest GET/source/Lean tests. These tests do not establish general-input or concurrent-user latency.
+
+
+## 2026-11-02 Mathematical paraphrases within ten seconds
+
+Authority: the user rejected literal-only matching and explicitly requested
+mathematically equivalent changed questions for natural powers, tan 1 degree and
+other Recipes, with real public measurements under ten seconds. Baseline is
+sequence 11, API `9b8b004`, worker `122f2f9`, parent `5e88f2e`.
+
+- [ ] PFR-019 API: complete authenticated bounded catalog snapshot, server-owned claim/input/batch receipt, explicit empty overflow result, unchanged source/compiler/lifecycle authority and no new DB grants.
+- [ ] PFR-014/017/019 worker: two genuine independent concurrent original-request/source/answer reviews, full scope/polarity/premise checks, exact same-entry agreement and ordinary-route compatibility; no question-string allowlist.
+- [ ] Actual-provider experiment: measure full current catalog inputs, choose one static model/effort/output budget from real latency and accuracy; retain every call/usage including joined failures. No automatic model cascade.
+- [ ] PFR-006/016/019 API: actual reviewer identity/usage admission, all provider costs charged, replay/stale/forged receipt rejection, and real PostgreSQL tests for guest and token-policy settlement/read/source/Lean, retirement and concurrency.
+- [ ] Adversarial scope tests: changed exponent domain, degree/radian, dependent quantifiers, missing premises, different limit sidedness, method restrictions, false-proof versus truth-question polarity, answer/source mutation, incomplete catalog and incompatible conventions.
+- [ ] Signed deployment and changed-question public witnesses across at least three substantive Recipes: multiple new paraphrases, exact stored source/answer, both real reviewer calls, zero new Lean jobs and each accepted measured answer within ten seconds. Record failures and remaining limits without extrapolating general completeness or 30-user latency.
