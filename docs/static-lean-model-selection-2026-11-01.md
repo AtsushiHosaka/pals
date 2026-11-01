@@ -82,12 +82,30 @@ No ten-second verified response is demonstrated by these experiments.
 ## Parallel-lemma prototype and repair feedback finding
 
 An offline prototype schedules independent lemma bodies with at most four API
-workers and enforces exact typed goal/context/dependency bindings. Its 26 tests
-cover scheduling and fail-closed assembly, not mathematical validity or live
-speed. It is not enabled in the production worker. Current Draft output is prose;
-a safe general typed-plan extraction and admission path remains necessary.
-Parallelizing only after Sketch cannot meet ten seconds in this measured example:
-Draft plus Sketch already took 35.686 seconds.
+workers and enforces exact typed goal/context/dependency bindings. Its 44 tests
+cover scheduling, bounded accounting and fail-closed assembly. It is not enabled
+in the production worker. Current Draft output is prose; a safe general typed-plan
+extraction and admission path remains necessary.
+
+The same two independent goals (right-hand limit and noncontinuity) were supplied
+in a manually prepared, reused typed plan. Each row is one real provider sample;
+there is no automatic decomposition or Draft cost in these measurements.
+
+| Fixed Terra medium configuration | Lemma generation | Final AWS compilation | Result |
+| --- | ---: | ---: | --- |
+| Sequential Standard | 20.699 s | 3.490 s | Rejected: type mismatch |
+| Parallel Standard | 13.969 s | 3.479 s | Accepted |
+| Parallel Fast | 7.018 s | 3.440 s | Rejected: type mismatch |
+
+The accepted Standard candidate took 17.448 seconds including compilation. Its
+Lean SHA-256 is `0ab24db2f4ee33641d5983f313166a8052c5b2a47586300ea95a8a31c4931b36`.
+An initial assembly indentation defect was corrected and the original paid raw
+responses were reassembled; no proof body was edited and no API call was repeated.
+The Fast run returned the requested tier but did not produce a valid proof.
+These single samples do not establish a repeatable speedup or reliability ranking.
+Draft, automatic planning, semantic admission, explanation and publication are
+excluded. Parallelizing only after Sketch cannot meet ten seconds in the original
+full-path example: Draft plus Sketch already took 35.686 seconds.
 
 Source inspection and an offline diagnostic probe also found that the current
 verifier HTTP boundary reduces multiline Lean errors to code, symbol and source
@@ -109,7 +127,31 @@ in settlement evidence; non-mathematical hashes are omitted from the judge promp
 
 The simple full chat path has four sequential model calls rather than five.
 This is a structural improvement, not evidence that the five-second target has
-been achieved. Public guest measurements must be recorded after deployment.
+been achieved.
+
+## Actual production deployment and guest request
+
+Release sequence 7 was published on 2026-11-01 at 13:46:23 JST. The signed manifest
+SHA-256 is `c9aa33f03336cea5696491c124707d481711c8388e08bb07291ce72b81417860`.
+All seven replacement containers, private TLS readiness, all 34 database migration
+steps, recovery configurations and unchanged catalog fingerprints were checked
+before restoring the exact ALB listener actions. The temporary deployment read
+policy was then deleted and its absence confirmed. This does not establish
+instance resizing, autoscaling or a reboot recovery test.
+
+A new logged-out request at 13:48:03 JST asked for continuity of `x ↦ x^n` for every
+natural number, explicitly including zero. Aurora records show `answered` after
+35.042 seconds and the browser displayed the Japanese induction proof and Lean
+source. The request reused the verified `requested.natural_power_continuous`
+Recipe; it did not create a new Lean generation job. Its two independent review
+sessions, request correspondence and answer hash checks passed. Source SHA-256:
+`2b74ac794880060a9d722414f4abe32689f8023eb173b41d029bd09d14521205`.
+
+This guest sample still followed `separate_resolution`, with one Sol intent call
+and four Luna calls. The combined preparation path was not used. Consequently,
+the actual response remains above the ten-second target; neither this deployment
+nor the prototype demonstrates that target. Project and billing flows were not
+retested, following the narrowed acceptance scope.
 
 ## Price provenance
 
