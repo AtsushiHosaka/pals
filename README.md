@@ -9,35 +9,27 @@ GitHub remotes are created.
 
 ## AWS構成図・配備状況
 
-2026年11月2日00:25:23 JSTにseq11の公開を再開しました。全7コンテナ、サービス間TLS、Auroraの35段階の状態、カタログ保持、復旧unitを実機で確認済みです。配備用の一時KMS・RDS参照権限は削除し、不在を確認しました。
-
-[![PALSのAWS構成図](docs/diagrams/pals-aws-private-target.png)](docs/diagrams/pals-aws-private-target.png)
+[![PALS AWS architecture and deployment status](docs/diagrams/pals-aws-private-target.png)](docs/diagrams/pals-aws-private-target.png)
 
 [PNGを拡大](docs/diagrams/pals-aws-private-target.png) · [draw.ioで編集](docs/diagrams/pals-aws-private-target.drawio) · [配置・通信・確認範囲](docs/diagrams/README.md)
 
-| 層 | 配備構成 |
+2026年11月2日03:02:32 JSTに、署名済みseq12を配備し、元のALB listenerとruleで公開を再開しました。全7コンテナ、サービス間TLS、DBの35項目、復旧unitを実機で確認し、カタログ9項目の件数・fingerprintが一致しました。一時的なKMS検証・RDS参照権限は削除済みです。公開WebとAPI healthのHTTP 200を確認しました。言い換えた質問への公開画面での証明生成は、ログイン確認待ちのため未検証です。
+
+数学的な言い換えには、現在の検索公開済み20候補をGPT-6 Luna・lowの独立した2呼び出しで並列に確認する経路を配備しました。型・仮定・量化・結論・方法と、保存回答がその質問に答えていることを確かめ、両者が一致した場合だけ再利用します。実APIを使った32問では、同値・変数名変更13問中11問を受理し、条件などが異なる19問はすべて拒否しました。受理した分類時間は6.082〜9.883秒ですが、キュー・保存・ブラウザー表示は含みません。cached入力tokenは0でした。[測定結果と2件の見逃し](docs/aws-recipe-semantic-benchmark-2026-11-02.md)を記録しています。右極限とπの回答を明確にするrevision 2は未登録です。
+
+Web・APIはprivate controlのt4g.medium、Lean worker・verifierはprivate computeのr8a.large、DBはAuroraです。物理構成はseq11から変えていません。大会時のxlarge切り替え、ASG・自動スケールは未配備です。1秒回答、30人同時利用、1,100件の本番利用は未達成または未検証です。Lean生成の既定はTerra・mediumで、モデルの自動切り替えはありません。
+
+seq12のmanifestは`6f84b0967c9ef4cd12fb6658764599c2d5ccd2c7582daa03b67376df358acf3f`です。
+
+| 配備元 | commit |
 | --- | --- |
-| 公開入口 | Cloudflare → WAFを関連付けた公開ALB → private controlのCaddy。Web・APIともHTTPS |
-| Web・API | t4g.medium ×1。Web、API、Caddy、reconcilerを実行。公開IPv4なし |
-| Lean・生成 | r8a.large ×1。評価worker、証明worker、隔離Lean verifierを実行。公開IPv4なし |
-| DB | isolated subnetのAurora PostgreSQL 16.15・pgvector。controlからTLSで接続。writerは1台 |
-| 外向き通信・運用 | 許可された通信はNAT Gateway経由。S3はGateway Endpoint経由。AWS SSO・SSMで管理 |
+| 親リポジトリ | `e65906a01ff182e7e40e5aa7a98b8bdf7ae09751` |
+| API | `7cde9674b0ff61d92116280f303638351362729e` |
+| worker | `7c000dbb84288e01391e72bde796b53bfdd51608` |
+| infra | `cf212c9134e4c4bf7a6747d8628f61bd98dd6027` |
+| Web | `a74b57b130ac0de6c7bf793ca095e81b54c4344f` |
 
-以前137.447秒かかった自然数冪の連続性の問題は、検証済みRecipeを再利用するよう修正しました。ログインなしの同じ通常ゲストで、新しい3チャットへの回答とLeanソース表示を確認しました。
-
-| 測定 | 送信クリックから回答表示 | 要求作成からDB保存 |
-| --- | --- | --- |
-| 1 | 4.775秒 | 2.664秒 |
-| 2 | 4.664秒 | 2.507秒 |
-| 3 | 4.830秒 | 2.683秒 |
-
-3件とも`lean_catalog`で、保存済みの回答・Lean・コンパイル記録のハッシュが一致しています。別の本番読み取り確認で、モデル使用量・token呼び出し・新しい証明jobは0件でした。通常ゲスト枠を3から0まで消費し、リセットはしていません。
-
-高速経路は、審査済みの完全な日本語入力2文と適合する規約・空の文脈を対象とします。公開で測定したのはそのうち1文です。それ以外の入力は通常の審査を通し、独立した2つの審査を並列化しました。すべての質問が10秒以内になるとは確認していません。[問題文・実行ID・測定方法](https://github.com/AtsushiHosaka/pals/blob/5e88f2eab52f422fe664b47aa17754729f48c72a/docs/aws-recipe-reuse-latency-2026-10-31.md#11月2日の実装と公開確認の状況)に対象範囲を記録しています。
-
-seq11のmanifestは`a22a5f2f0a98d15b761f679cfa2e7f19f0307f9af5398d0c14d63a502c84e9c7`です。配備元は親`f6f02bc`、API`9b8b004`、worker`122f2f9`、infra`46f4010`、Web`a74b57b`です。モデルと推論量の選択機能は維持し、既定はTerra・mediumです。自動的なモデル切り替えは行いません。
-
-図には実際の通信方向とsubnetを記載しています。大会時のxlarge切り替えと自動スケールは未配備です。1秒回答・30件を10秒以内に処理する性能、1,100件の本番利用も未達成または未検証です。全層の冗長化やセキュリティ監査の完了を示す図ではありません。[配備・復旧手順と実行記録](https://github.com/AtsushiHosaka/pals/blob/5e88f2eab52f422fe664b47aa17754729f48c72a/docs/aws-migration-runbook-2026-10-30.md)も参照してください。
+以前のseq11では、完全一致する自然数冪の日本語入力をモデル呼び出しなしで再利用し、通常ゲストの3チャットで4.775秒・4.664秒・4.830秒で回答とLeanソースを表示しました。これは今回の言い換え経路とは別の公開実測です。[対象の全文・測定方法・利用枠・記録](docs/aws-recipe-reuse-latency-2026-10-31.md)を参照してください。
 
 ## Repository Layout
 
