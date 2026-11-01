@@ -7,9 +7,9 @@ workflow, documentation, and Codex helper scripts. Implementation repositories
 are managed separately and will be linked from this repository after their
 GitHub remotes are created.
 
-## AWS構成図
+## AWS構成図・配備状況
 
-2026年11月1日01:57 JSTに公開を再開した本番構成です。Web・API・Leanの7コンテナをAWSのprivate subnetで稼働させ、本番DBにはAurora PostgreSQLを使用しています。
+2026年11月1日21:53 JSTに公開を再開したseq9の本番構成です。Web・API・Leanの7コンテナ、サービス間TLS、Auroraの35段階の状態、カタログ保持、復旧unitを確認しました。AWSのprivate subnetで稼働させ、本番DBにはAurora PostgreSQLを使用しています。
 
 [![PALSのAWS構成図](docs/diagrams/pals-aws-private-target.png)](docs/diagrams/pals-aws-private-target.png)
 
@@ -22,6 +22,10 @@ GitHub remotes are created.
 | Lean・生成 | r8a.large ×1。評価worker、証明worker、隔離Lean verifierを実行。公開IPv4なし |
 | DB | isolated subnetのAurora PostgreSQL 16.15・pgvector。controlからTLSで接続。writerは1台 |
 | 外向き通信・運用 | 許可された通信はNAT Gateway経由。S3はGateway Endpoint経由。AWS SSO・SSMで管理 |
+
+seq9の署名済みmanifestは`a3340a717db963f64e42de8ddea3e10483f32712d4e4b9d2702f0866c95b774c`です。チャットではGPT-6.1 Terra・GPT-6.1 Sol・GPT-6 Lunaと、推論量low・medium・highを選べます。既定はTerraのmediumです。選択した設定は各依頼のLean生成・修正に固定され、その他の役割は既存のモデル設定を維持します。自動的なモデル切り替えは追加していません。
+
+ログインなしでSol・highを選び、0を含む自然数冪の連続性についてLean検証済みの回答を確認しました。サーバーの完了までは135.622958秒、公開APIのポーリングで完了を確認するまでは137.447秒でした。新規のproof jobで処理した結果で、10秒以内という目標は未達成です。有料枠の実残高からの精算は未検証です。
 
 図には実際の通信方向とsubnetを記載しています。xlargeへの大会時切り替えと自動スケールは未配備です。1秒回答・30件を10秒以内に処理する性能も未達成または未検証です。全層の冗長化やセキュリティ監査の完了を示す図ではありません。
 
