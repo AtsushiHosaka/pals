@@ -509,6 +509,38 @@ reviewer_session_id, assessment_session_id, approved, rationale
 
 Owner-authenticated `GET /v1/proof-requests/{id}/lean-source` resolves only that answered request's stored source binding. It cannot read an arbitrary Recipe or another owner's source. The closed response has `request_id`, `chat_id`, `recipe_id`, `recipe_revision`, `entry_sha256`, `lean_code`, `lean_sha256`, `compiler_receipt_sha256`, `toolchain_sha256`. Catalog source keeps its original admission evidence; saved answers remain historical if entries later retire.
 
+## Retrieved catalog window (LRC-020–LRC-024)
+
+### Why the window moved to the API
+
+The complete-snapshot route returned every selectable entry with its Lean source and answer, validated each one, and left the agent to rank five. It returns `count_limit` above 32 entries, which sends every request to fresh generation. Raising the number does not help: 1,025 catalog cards exceed the 2 MiB response bound, and each entry costs an Ed25519 verification and a target extraction per request. Ranking therefore runs where the rows are, on cheap fields, and only the five shown entries pay for full validation. It also tightens authority: the API now records exactly what the judges saw, so settlement can reject an entry outside the shown window, which the snapshot receipt could not do.
+
+### Port
+
+`POST /v1/internal/proof-requests/{id}/recipe-window` uses the existing worker authentication and live-claim fencing. The closed request has `claim_id`, `output_language`, and an optional `query_embedding` with its `embedding_binding`; the two are present together or absent together. There is no query text and no limit. The API ranks the claimed request's `statement` and re-checks that statement under the claim lock before recording.
+
+The response is `pals.recipe-catalog-window.v1` with the request bindings, `complete`, `reason` (`catalog_limit` or `byte_limit` when refused), `catalog_count`, `catalog_sha256`, `retrieval_profile`, `recipes` in rank order, and `batch_sha256`. `catalog_sha256` is SHA-256 of the sorted concatenated entry digests. `batch_sha256` covers RFC 8785 bytes of the content schema, language, toolchain, count, catalog digest, profile and recipes. A window is whole or refused, never a prefix. An empty catalog is a complete empty window and the ordinary route.
+
+The receipt under the existing `api_recipe_catalog_batch` key drops the recipe bodies and stores the ordered `entry_sha256s`. Settlement branches on `schema_version`: a window requires the entry to be among at most five pins, and a historical snapshot keeps its own rule of at most 32 complete entries. A worker cannot supply this evidence.
+
+### Ranking profiles
+
+`pals.recipe-retrieval.embedding-cosine.v1` is used when the worker supplied a vector under the exact binding and the count of selectable entries equals the count joined to vectors under that binding. It runs an exact pgvector scan ordered by cosine distance, then entry digest. Otherwise `pals.recipe-retrieval.char-ngram-bm25.v1` ranks the entry description in process. It counts only the query's 2–4-grams, so its peak memory stays near 1 MB at 1,045 entries, against about 18 MB for the previous cosine ranker, which built a vector for every entry.
+
+The embedded and ranked text is `pals.recipe-retrieval-text.v1`: `statement`, `domain`, `conclusion` and each assumption joined by newlines. It excludes the answer, the source and the English `search_text`. The binding is OpenAI `text-embedding-3-large` at 1,024 dimensions at the public endpoint, plus the text version, and its digest is stored with each vector. Math text already reaches this provider through the judges, so the query vector adds no new recipient.
+
+`text-embedding-3-large` is required rather than the Draft path's `text-embedding-3-small` because recall was measured, not assumed; see [the benchmark](../../docs/aws-recipe-retrieval-scale-2026-11-02.md). The worker makes one metered call with a short bound before the window request. A failure sends no vector and the API falls back to the lexical profile.
+
+### Storage and rollout
+
+Vectors live in the separate additive schema `pals_recipe_retrieval`, owned by the catalog owner role, immutable like entries, with `SELECT` for the selector role only. It is deliberately not a step in `production_database_release`: registering one would make API readiness depend on an exact signed Aurora append, while a vector carries no authority. A missing or partial table only selects the lexical profile, so code can ship first. The release command `lean-recipe-retrieval-admit` installs the storage and imports vectors with the entry-release credential; it refuses vectors under another binding and detects a changed entry text by digest.
+
+Order: API first (new route, old route kept), then worker. A new worker on an old API would receive 404 and fail the claim, so this order is required. Applying storage and importing vectors are production data steps and need owner approval. The old route and `MAX_RECIPES` are removed in a later release, once no older worker can run.
+
+### False-reuse boundary
+
+The two judges, their prompt gates and consensus rules are unchanged; only the sentence describing what the catalog input is differs, because the input is no longer a complete catalog. Retrieval improving recall also places the nearest variant of a request in the window more often, so scale increases how often the judges face a near miss. This is measured per judge and reported in the benchmark. The gaps found by earlier review remain open: both judges use the same model with near-identical prompts, and `request_scope` and convention choices are not compared by consensus on this route.
+
 ## Failure handling
 
 | Condition | Behavior |
@@ -546,7 +578,7 @@ target selection modes; it does not claim that current learner traffic already h
   provisioned via `PALS_TEST_POSTGRES_URL`; tests assert schema ownership, role restrictions,
   lifecycle-lock serialization, endpoint authentication, and the absence of direct agent DB
   configuration.
-- The existing formal Recipe v1 selector has no vector extension or embedding-provider dependency. Natural-request candidate ranking is a separate bounded read-only profile and must retain its actual algorithm/version, bounded query, immutable identities and order. Floating-point `ts_rank_cd` scores are not persisted. Any embedding profile must bind its fingerprint and egress policy; approximate ranking never establishes correspondence.
+- The existing formal Recipe v1 selector has no vector extension or embedding-provider dependency. The retrieved window uses the versioned vector binding in the section above. Natural-request candidate ranking is a separate bounded read-only profile and must retain its actual algorithm/version, bounded query, immutable identities and order. Floating-point `ts_rank_cd` scores are not persisted. Any embedding profile must bind its fingerprint and egress policy; approximate ranking never establishes correspondence.
 
 ## Evaluation design
 

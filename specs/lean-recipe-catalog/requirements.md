@@ -60,6 +60,11 @@ Lean Recipe Catalog は、数学的な主張・方針・説明を保持する Dr
 | LRC-017 | Reuse-entry admission requires an admitted compiler-checked Recipe, a closed bounded description/answer payload, scalar Unicode, exact source/target binding and independent source-grounded description/answer review. A reviewer principal differs from the Recipe source author. The answer must faithfully explain the compiled statement and recorded method. Admission adds no learner question, conversation, owner, account or Project data. Registration of reuse metadata does not require a Draft schema migration, alignment admission or runtime recompile. |
 | LRC-018 | Natural-request correspondence uses the entry's complete mathematical description and actual Lean source, plus independent separate-session review against the exact learner request and confirmed assumptions. Binder renaming/wording differences may be accepted; implication, specialization, missing assumptions, domain/type changes, dependent quantifier changes and method mismatch cannot be accepted as identical. The old v1 target digest only normalizes whitespace and is not natural-request equality evidence. Stored answer bytes and language must be directly usable; unknown correspondence or adaptation needed uses new Lean and compilation. |
 | LRC-019 | DSP の検証済み Lean source を Recipe に登録するときは、その UTF-8 バイト列を変更せず、実際の隔離された admission verifier で検証する。既存の v1 materializer が再現できない named theorem は、別の raw-source authoring policy と不変の manifest・コンパイル証拠で登録する。未対応の環境や宣言は候補として保留し、コードの書き換えで登録条件を満たしたことにしない。未承認の raw source は従来の selector に選ばせず、独立レビューと公開の全段階が完了するまで直接検索にも出さない。 |
+| LRC-020 | Semantic natural-request reuse shall not stop at a fixed small catalog size. The API shall narrow each eligible request to a retrieved window of at most five entries before the two model judges, so judge calls, prompt size and API response size stay flat as the catalog grows. A safety bound of 4,096 selectable entries per language and toolchain returns an explicit `catalog_limit` refusal and the ordinary non-reuse route, never a prefix of the catalog. |
+| LRC-021 | The API shall rank its own frozen request statement; a worker supplies no query text and no limit. Only the shown entries are fetched and fully revalidated (signature, source, target, compiler receipt, toolchain). The server-side receipt binds the ordered window pins, the catalog count, the digest of the sorted catalog pins, the retrieval profile and the window digest, and settlement accepts only an entry inside that exact window. Ranking and scores are never correspondence evidence, and scores are not persisted. |
+| LRC-022 | Ranking shall use exact cosine distance over versioned query vectors when the worker supplies a query vector under the exact binding and every selectable entry has a vector under that binding. Otherwise it shall use deterministic local character n-gram ranking and record that profile. A provider failure, missing storage or partial coverage changes only ranking quality; none of them may fail the request, widen a judge gate or claim reuse. Vectors are bound to the embedded entry text by digest, immutable and written only by a release identity; a vector cannot make an entry selectable. |
+| LRC-023 | A change to retrieval or window size shall report recall, false reuse and latency at about 32, 100 and 1,000 entries, using paraphrase positives and near-variant negatives (including a changed constant and one-sided versus two-sided) with real judges. False reuse shall not exceed the 32-entry result; any false reuse is a release blocker to be reported, not averaged away. |
+| LRC-024 | The complete-snapshot route and its 32-entry bound remain only for workers released before the window. Historical snapshot receipts keep validating unchanged. |
 
 ## Acceptance criteria
 
@@ -90,6 +95,9 @@ Lean Recipe Catalog は、数学的な主張・方針・説明を保持する Dr
 - Paraphrases and bound-variable names can differ, but negative domain/hypothesis/quantifier/conclusion/method fixtures never produce reuse. Answer/description/review tampering or stale lifecycle/toolchain cannot pass settlement revalidation.
 - The evaluation corpus demonstrates no false Recipe selection in all negative fixtures and uses a
   real local PostgreSQL service plus the pinned Lean verifier.
+- A catalog above 32 entries still reaches the two judges with at most five shown entries, and an
+  entry outside the recorded window cannot settle. Deleting all query vectors or failing the provider
+  still answers through the lexical profile with unchanged judge gates.
 
 ## Constraints and assumptions
 
@@ -110,4 +118,4 @@ Lean Recipe Catalog は、数学的な主張・方針・説明を保持する Dr
 
 ## Open questions
 
-None for the approved local Recipe-first behavior. The initial bounded retrieval method is implementation-owned and must report its actual ranking evidence; it cannot certify equality. Template expansion and production publication remain outside this local slice.
+None for the approved local Recipe-first behavior. The bounded retrieval method is defined by LRC-020–LRC-022, must report its actual ranking evidence, and cannot certify equality. Template expansion and production publication remain outside this local slice.
