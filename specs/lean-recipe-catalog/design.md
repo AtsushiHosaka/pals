@@ -543,7 +543,7 @@ A larger catalog places the nearest variant of a request in the window more ofte
 
 ## Semantic judges (LRC-025–LRC-027)
 
-The assessment runs on `gpt-6-luna` and the review on `gpt-6.1-terra`, both at low effort, in parallel over the same window. Two Luna judges failed together: with the scope gate they still reused the wrong card on the recorded ambiguous question 3 times in 50, while the Terra review approved 0 of the same 125 near-miss windows. The cost is about 15,700 utilization tokens per paid review against 3,150 before, and the median time does not rise because the review finishes first.
+The assessment runs on `gpt-6-luna` and the review on `gpt-6.1-terra`, both at low effort, in parallel over the same window. Two Luna judges failed together: with the scope gate and a premise audit they still reused the wrong card on the recorded ambiguous question 3 times in 50, while the Terra review approved 0 of the same 125 near-miss windows. The cost is about 15,700 utilization tokens per paid review against 3,150 before, and the median time does not rise because the review finishes first.
 
 The policy carries a scope gate. An open number of terms, dimension, index set or domain stays open, and a candidate's fixed value cannot fill it. Reuse needs a candidate covering every reading a learner could reasonably mean; otherwise the judge returns `needs_input` or `miss`. A request stating the scope, or a standard name or notation fixing it, is outside the gate.
 
