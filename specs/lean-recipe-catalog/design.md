@@ -539,7 +539,23 @@ Order: API first (new route, old route kept), then worker. A new worker on an ol
 
 ### False-reuse boundary
 
-The two judges, their prompt gates and consensus rules are unchanged; only the sentence describing what the catalog input is differs, because the input is no longer a complete catalog. A larger catalog places the nearest variant of a request in the window more often, so scale increases how often the judges face a near miss. The benchmark reproduces one resulting false reuse, so the catalog must not grow past its current published size until LRC-T019 passes. The gaps found by earlier review remain open: both judges use the same model with near-identical prompts, and `request_scope` and convention choices are not compared by consensus on this route.
+A larger catalog places the nearest variant of a request in the window more often, so scale increases how often the judges face a near miss. The window itself does not admit anything: reuse depends on the judges below.
+
+## Semantic judges (LRC-025–LRC-027)
+
+The assessment runs on `gpt-6-luna` and the review on `gpt-6.1-terra`, both at low effort, in parallel over the same window. Two Luna judges failed together: with the scope gate they still reused the wrong card on the recorded ambiguous question 3 times in 50, while the Terra review approved 0 of the same 125 near-miss windows. The cost is about 15,700 utilization tokens per paid review against 3,150 before, and the median time does not rise because the review finishes first.
+
+The policy carries a scope gate. An open number of terms, dimension, index set or domain stays open, and a candidate's fixed value cannot fill it. Reuse needs a candidate covering every reading a learner could reasonably mean; otherwise the judge returns `needs_input` or `miss`. A request stating the scope, or a standard name or notation fixing it, is outside the gate.
+
+Consensus requires both judges to approve the same Recipe revision with the same tasks and polarity. Applied readings are the union of both judges' relevant conventions, each of which must already be known. `request_scope` is not compared: the wording differs on correct reuse, and on the recorded false reuse both judges wrote the same narrow scope, so comparing it would refuse good answers without catching the failure. Judges do not choose a reading, so there is no choice to compare.
+
+The union needs the different-model review. Between two Luna judges, the old equality check happened to block most of their joint false approvals of a dropped-hypothesis question (1 of 30 reused with it, 7 of 30 without), and that protection is lost.
+
+Options measured and not adopted: an adversarial review prompt, the request placed before the catalog, the output schema reordered so scope precedes the verdict, Luna at medium effort for the review, a premise audit paragraph, and `gpt-5.4-nano` or `gpt-5.4-mini` as the review model. See [the benchmark](../../docs/recipe-retrieval-scale-2026-11-02.md).
+
+A judge's copy of `source_target_sha256` is not identity. Recipe id and revision select the entry, the receipt stores the computed digest, and only a digest naming another shown entry conflicts. A rejection carrying stray selection fields selects nothing. Neither case fails the request.
+
+The API accepts Luna or Terra for the review, so existing receipts stay valid, and the union is equal to the old rule when both lists match. Deploy the API before the worker.
 
 ## Failure handling
 
