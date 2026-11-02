@@ -539,7 +539,7 @@ Order: API first (new route, old route kept), then worker. A new worker on an ol
 
 ### False-reuse boundary
 
-The two judges, their prompt gates and consensus rules are unchanged; only the sentence describing what the catalog input is differs, because the input is no longer a complete catalog. Retrieval improving recall also places the nearest variant of a request in the window more often, so scale increases how often the judges face a near miss. This is measured per judge and reported in the benchmark. The gaps found by earlier review remain open: both judges use the same model with near-identical prompts, and `request_scope` and convention choices are not compared by consensus on this route.
+The two judges, their prompt gates and consensus rules are unchanged; only the sentence describing what the catalog input is differs, because the input is no longer a complete catalog. A larger catalog places the nearest variant of a request in the window more often, so scale increases how often the judges face a near miss. The benchmark reproduces one resulting false reuse, so the catalog must not grow past its current published size until LRC-T019 passes. The gaps found by earlier review remain open: both judges use the same model with near-identical prompts, and `request_scope` and convention choices are not compared by consensus on this route.
 
 ## Failure handling
 
