@@ -1,5 +1,12 @@
 # Individual Billing Requirements
 
+## 2026-11-02 Free daily tokens and coupons
+
+The user decided that Free accounts move from three lifetime requests to utilization tokens and that coupon codes add tokens. Guests keep their own limit. These values are provisional until production usage has been measured.
+
+- BILL-017: Free receives 10,000 utilization tokens per JST calendar day. It runs one request at a time, and starts a request while any allowance remains. The server holds up to 200,000 tokens per request, so one heavy request may overrun the day's allowance and then ends it. Failures consume nothing, and new requests stop until the next JST day once failed work reaches 30,000 tokens. Direct proof jobs, clarifications and explanation retries keep their existing behavior until they are metered. A rollout flag keeps the three requests until the web update is live.
+- BILL-018: An operator creates coupons with a token amount, a redemption limit, a redemption deadline and a credit lifetime. Only a digest of the 80-bit generated code is stored. Each account redeems a coupon once, unusable and unknown codes return the same error, and credits are not transferable. Credits never grant an entitlement, so Project creation stays paid. Token plans spend their budget first, then the credits that expire soonest. Usage beyond both is written off.
+
 ## 2026-10-08 permanent QA Pro delta
 
 The user requested a named, existing public PALS account receive payment-free Pro with no expiry. BILL-016 adds an operator-managed token entitlement alongside the finite, legacy-count grants in BILL-011. It does not enable public Checkout or change other accounts automatically.
@@ -61,7 +68,7 @@ PALS の個人利用者に、累計無料枠と月額 Pro を安全に提供す�
 ## Non-goals
 
 - 従量課金、usage-based Stripe billing、クレジットの譲渡、金銭の返金・自動返金、税額の自動計算、法人請求、
-  coupon、年額、または複数 Pro プラン。
+  金銭を割り引く coupon、年額、または複数 Pro プラン。
 - 旧制度ではprovider token usageは原価観測のみ。新制度では上記承認変更に従い、換算tokenを利用枠にする。Stripeの無断従量請求は追加しない。
 - Google/Stripe の secret、client secret、Webhook body、カード情報を frontend、Terraform state、ログ、
   chat、proof record に保存すること。
