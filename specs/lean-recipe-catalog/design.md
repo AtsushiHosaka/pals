@@ -525,11 +525,11 @@ The receipt under the existing `api_recipe_catalog_batch` key drops the recipe b
 
 ### Ranking profiles
 
-`pals.recipe-retrieval.embedding-cosine.v1` is used when the worker supplied a vector under the exact binding and the count of selectable entries equals the count joined to vectors under that binding. It runs an exact pgvector scan ordered by cosine distance, then entry digest. Otherwise `pals.recipe-retrieval.char-ngram-bm25.v1` ranks the entry description in process. It counts only the query's 2–4-grams, so its peak memory stays near 1 MB at 1,045 entries, against about 18 MB for the previous cosine ranker, which built a vector for every entry.
+`pals.recipe-retrieval.embedding-cosine.v1` is used when the worker supplied a vector under the exact binding and the count of selectable entries equals the count joined to vectors under that binding. It runs an exact pgvector scan ordered by cosine distance, then entry digest. Otherwise `pals.recipe-retrieval.char-ngram-bm25.v1` ranks the entry description in process. It counts only the query's 2–4-grams, so its Python peak stays near 3 MB at 1,063 entries including row reads, against about 18 MB for the previous cosine ranker's ranking alone at 1,045 entries, which built a vector for every entry.
 
 The embedded and ranked text is `pals.recipe-retrieval-text.v1`: `statement`, `domain`, `conclusion` and each assumption joined by newlines. It excludes the answer, the source and the English `search_text`. The binding is OpenAI `text-embedding-3-large` at 1,024 dimensions at the public endpoint, plus the text version, and its digest is stored with each vector. Math text already reaches this provider through the judges, so the query vector adds no new recipient.
 
-`text-embedding-3-large` is required rather than the Draft path's `text-embedding-3-small` because recall was measured, not assumed; see [the benchmark](../../docs/aws-recipe-retrieval-scale-2026-11-02.md). The worker makes one metered call with a short bound before the window request. A failure sends no vector and the API falls back to the lexical profile.
+`text-embedding-3-large` is required rather than the Draft path's `text-embedding-3-small` because recall was measured, not assumed; see [the benchmark](../../docs/recipe-retrieval-scale-2026-11-02.md). The worker makes one metered call with a short bound before the window request. A failure sends no vector and the API falls back to the lexical profile.
 
 ### Storage and rollout
 

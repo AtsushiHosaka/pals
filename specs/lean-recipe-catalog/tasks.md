@@ -42,8 +42,8 @@ Executed evidence and remaining gates: `docs/recipe-first-implementation-2026-10
 
 ## Retrieved catalog window (2026-11-02)
 
-- [ ] LRC-T014 / LRC-020–LRC-022: API `recipe-window` route, ranking profiles, partial-read validation, window receipt and settlement branch; historical snapshot receipts unchanged. Unit and real PostgreSQL tests, including the selector role's vector scan, a catalog above 32, partial vector coverage and an entry outside the window.
-- [ ] LRC-T015 / LRC-021–LRC-022: Worker query vector with metered usage, window contract, removal of agent ranking; prompt change limited to the input description. Unit tests for provider failure and tampered windows.
-- [ ] LRC-T016 / LRC-023: Recall, false reuse and latency at about 32, 100 and 1,000 entries with real judges. Record results and residual risk in `docs/aws-recipe-retrieval-scale-2026-11-02.md`.
+- [x] LRC-T014 / LRC-020–LRC-022: API `recipe-window` route, ranking profiles, partial-read validation, window receipt and settlement branch; historical snapshot receipts unchanged. Unit and real PostgreSQL tests, including the selector role's vector scan, a catalog above 32, partial vector coverage and an entry outside the window.
+- [x] LRC-T015 / LRC-021–LRC-022: Worker query vector with metered usage, window contract, removal of agent ranking; prompt change limited to the input description. Unit tests for provider failure and tampered windows.
+- [x] LRC-T016 / LRC-023: Recall, false reuse and latency at about 32, 100 and 1,000 entries with real judges. Record results and residual risk in `docs/recipe-retrieval-scale-2026-11-02.md`.
 - [ ] LRC-T017 / LRC-022: After owner approval, install `pals_recipe_retrieval` and import vectors in production; verify the embedding profile on the public route.
 - [ ] LRC-T018 / LRC-024: Remove the snapshot route and `MAX_RECIPES` once no older worker can run.
