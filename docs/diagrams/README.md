@@ -1,6 +1,6 @@
 # PALSのAWS構成図
 
-AWS公式のArchitecture Iconsを使い、2026年11月2日に確認したseq15の配備構成を図示しています。PNGとdraw.ioファイルは同じ図です。今回の更新は図と文書のみで、AWSの設定・配備・速度調整は行っていません。
+AWS公式アイコンで、seq15の主要な接続を示した概要図です。CIDR・ポート・AZ・管理サービスは、下の「配置と通信」にまとめています。PNGとdraw.ioファイルは同じ図です。
 
 [![PALS AWS構成図](pals-aws-private-target.png)](pals-aws-private-target.png)
 
@@ -43,7 +43,7 @@ control・computeのEC2に公開IPv4はなく、SSHポートや踏み台もあ�
 
 [AWS公式Architecture Icons](https://aws.amazon.com/architecture/icons/)の2026年7月31日版を使用しています。公式SVGを変更せずに保存し、draw.io内にも埋め込んでいるため、外部画像へのアクセスなしで開けます。
 
-[SVGと出典情報](assets/aws-2026-07/)に、使用した17ファイルと、元パッケージのURL・SHA256・ZIP内のパスを保存しています。AWSアイコンの権利はAmazon Web Services, Inc.またはその関連会社に帰属します。Cloudflare・OpenAIをAWSサービスのアイコンで表してはいません。
+[SVGと出典情報](assets/aws-2026-07/)に、保管した17ファイルと、元パッケージのURL・SHA256・ZIP内のパスを保存しています。AWSアイコンの権利はAmazon Web Services, Inc.またはその関連会社に帰属します。Cloudflare・OpenAIをAWSサービスのアイコンで表してはいません。
 
 ## 図の再生成
 
@@ -51,7 +51,7 @@ control・computeのEC2に公開IPv4はなく、SSHポートや踏み台もあ�
 python3 docs/diagrams/generate_architecture.py
 /path/to/draw.io.app/Contents/MacOS/draw.io \
   --disable-update --export --format png --embed-diagram \
-  --timeout 60 --scale 1.3 --border 20 \
+  --timeout 60 --scale 1.5 --border 20 \
   --output docs/diagrams/pals-aws-private-target.png \
   docs/diagrams/pals-aws-private-target.drawio
 ```
