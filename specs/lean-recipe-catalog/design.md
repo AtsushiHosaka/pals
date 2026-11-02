@@ -2,7 +2,7 @@
 
 ## Scope and traceability
 
-This design implements `LRC-001`–`LRC-018`. LRC-001–LRC-013 preserve the existing formal proof-job selector; LRC-014–LRC-018 add Recipe-first natural-request reuse. It adds a `pals-api` internal-only catalog service
+This design implements `LRC-001`–`LRC-019` and `LRC-030`–`LRC-037`. LRC-001–LRC-013 preserve the existing formal proof-job selector; LRC-014–LRC-018 add Recipe-first natural-request reuse. It adds a `pals-api` internal-only catalog service
 backed by isolated local PostgreSQL schemas. `pals-agent` calls that service through a private
 RecipeSelection port; it does not connect to the database. The generic Draft tables, PFI and typed-Draft catalog are unchanged. Proof-request answer evidence uses the separate PFR contract.
 
@@ -248,6 +248,9 @@ review candidate are identical bytes.
 or executable/configuration SHA-256, and materializer version. The catalog service obtains it from
 the active verifier configuration before selection. Missing or different fields make every Recipe
 ineligible.
+
+Fingerprint v2 and `RecipeMaterializerV2` supersede these for new admissions; see
+[the v2 section](#proof-relevant-fingerprint-and-materializer-v2-lrc-030lrc-037).
 
 ## Admission flow
 
@@ -572,3 +575,63 @@ PostgreSQL service and pinned Lean verifier. Existing Draft/PFI corpora run unch
 `pals.raw-recipe-authoring.v1` is a distinct release authoring policy. It carries `recipe_id`, `recipe_revision`, `source_author_principal`, `toolchain_id`, exact `toolchain_fingerprint`, `lean_code`, `lean_sha256`, canonical `target_source` and `target_sha256`. The exact UTF-8 source is preserved: changing a named theorem into an `example`, renaming binders, wrapping or normalizing source is forbidden. The isolated admission verifier receives these exact bytes and the current pinned fingerprint and must return a valid real compiler receipt. The admission event and immutable `raw_recipe_admissions` sidecar bind the raw-policy manifest SHA-256; they never claim `RecipeMaterializerV1` generated these bytes.
 
 The initial raw policy accepts one parameterless-header `example`, `theorem` or `lemma`, `import Mathlib` and explicit `open`/`open scoped` lines. Declaration parameters, ambient `variable`, additional definitions, unsafe constructs, multiple target declarations and unsupported environments remain pending candidates with a concrete admission failure. Such candidates are never rewritten to fit the policy. Ordinary generated parameterless named theorems can be admitted after independent review of the actual Lean target. Syntactic extraction does not certify absence of auto-implicit binders; admission review must reject hidden premises. The legacy formal selector explicitly skips raw-policy revisions through a fixed-search-path, read-only boolean policy function; raw revisions become directly searchable only after independently signed source/target/answer review and complete candidate publication. Source-only raw admission must not make an unapproved candidate selectable.
+
+## Proof-relevant fingerprint and materializer v2 (LRC-030–LRC-037)
+
+v1 binds each Recipe to the verifier's OCI or source digest, so any verifier release makes every Recipe ineligible and the catalog must be compiled and reviewed again. The kernel, Mathlib, and acceptance rules decide whether a proof is valid; the rest of the verifier does not.
+
+### Fingerprint v2
+
+```json
+{
+  "schema_version": "pals.lean-toolchain-fingerprint.v2",
+  "lean_version": "...",
+  "lake_manifest_sha256": "64 lowercase hex",
+  "audit_version": "pals.lean-audit.v1",
+  "materializer_version": "pals.recipe-materializer.v2"
+}
+```
+
+`toolchain_fingerprint_sha256` is SHA-256 over its RFC 8785 bytes, as in v1. Existing tables store the digest and JCS, so no column changes. Parsers accept v1 for reading history and v2 for new admission; a v1 Recipe stays eligible only while the active fingerprint is that same v1 value.
+
+`audit_version` lives beside the policy in `pals-agent`, with the SHA-256 of `lean_source_policy.py` and `lean_audit.py` pinned next to it. The guard test recomputes those digests, so changing either file forces a deliberate edit: a bump when acceptance can change, or a new pin with a recorded reason when it cannot. The `pals-api` policy copy is an early filter, and its own drift test compares it with the agent copy.
+
+The running verifier returns `audit_version` in its authenticated readiness response. The API compares it with its configured active fingerprint before serving a Recipe, and treats a mismatch or an unavailable report as an empty selection with reason `audit_version_mismatch`. Deployment attestation keeps using `verifier_toolchain_sha256`. Compiler receipts keep binding the verifier image and source digest. If a bug is found in a verifier build, those receipts identify the affected Recipes, and a version bump requires all of them to be admitted again.
+
+### Materializer v2
+
+```lean
+import Mathlib.Algebra.Group.Hom.Basic
+import Mathlib.Tactic.Ring
+<declared namespace/open environment>
+
+example : <target_source> := <proof_body>
+```
+
+`RecipeAuthoringManifestV2` differs from v1 only in its schema version, its v2 fingerprint, and `imports`. `Std` is allowed because the resolver reports `Std` modules for existing cards. Materialization stays a pure function of the manifest, and the materialized bytes stay the only Recipe source.
+
+### Import narrowing
+
+The resolver is release tooling and never runs in a request. For each manifest with `imports: ["Mathlib"]`:
+
+1. Compile `import Mathlib` and obtain a candidate list, using Mathlib's `#min_imports` or an equivalent. That command is appended only by the tool, so policy-checked candidate text never contains it.
+2. Compile the materialized source for that list alone, through the same isolated verifier and full audit used for admission.
+3. Have a fixed trusted program read both compiled modules as data and compare the target's kernel type, mapping universe parameters by position.
+4. On success, emit a sealed `pals.recipe-import-narrowing.v1` record with both source digests and the type comparison result. On failure, keep `["Mathlib"]` and record `narrow_compile_failed` or `statement_type_differs`.
+
+A candidate list only has to be sufficient, not minimal, and step 2 and 3 are what make it safe. Two lists that pass are both acceptable, so re-running the tool on a newer Mathlib may produce a new list and needs a new fingerprint anyway. A narrower list can resolve instances or notation differently and change a statement without changing its text; the 2026-11-02 catalog run saw 6 such cards among 1,062, which is why step 3 is mandatory.
+
+### Cutover
+
+```mermaid
+flowchart LR
+  V["Release verifier reporting audit_version"]
+  A["Admit v2 revisions and entries"]
+  R["Read back and evaluate under v2"]
+  F["Switch API active fingerprint"]
+  V --> A --> R --> F
+```
+
+The v1 fingerprint stays active until step F, so serving is unaffected while v2 revisions are admitted. Step F changes configuration in one release and reverts the same way, while the v1 verifier image stays available. Revisions and entries are additive, so reverting removes nothing. Exact-input profiles are resealed against the v2 entries before step F, and `recipe_exact_input.py` reads the active fingerprint instead of its `TOOLCHAIN_SHA` constant.
+
+A verifier release before step F, such as the audit fix in `pals-agent#23`, changes the v1 digest. It must follow the LRC-036 v1 rule: admit the published Recipes under the new digest first, then release. Those Recipes also need checking under the stronger audit, so the work is not wasted.
