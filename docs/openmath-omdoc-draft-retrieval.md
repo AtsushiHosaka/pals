@@ -1,5 +1,7 @@
 # OpenMath Draft Retrieval
 
+> Statement search over a sealed catalog is an alternative retrieval path, switched by a worker flag. See [the runbook](draft-statement-retrieval-runbook.md).
+
 ## Decision
 
 PALS stores only the data required to identify, retrieve, and apply a reusable

@@ -376,3 +376,14 @@ its comprehensive gate.
   statements and reports false-match/no-match separately.
 - **Large release regression:** immutable inactive builds, active-pointer transition and
   rollback preserve the last compatible catalog.
+
+## Statement retrieval
+
+The generic natural-sketch search may use English statement embeddings instead of OpenMath XML
+embeddings. The stored text is the exact `canonical_statement`, under the distinct binding
+`draft-canonical-statement-v1`, so a vector of one binding is never compared with the other.
+The rows ship as one sealed file in the API image; no database row or schema changes. OpenMath stays
+part of each Draft for instantiation, so the additive dictionary `pals2` remains in the closed v4
+profile of both validators, while it stays out of query structuring. Canonical bytes of Drafts that
+do not use `pals2` do not change. A worker flag selects the path, and turning it off restores the XML
+search.
