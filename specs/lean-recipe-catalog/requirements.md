@@ -65,6 +65,9 @@ Lean Recipe Catalog は、数学的な主張・方針・説明を保持する Dr
 | LRC-022 | Ranking shall use exact cosine distance over versioned query vectors when the worker supplies a query vector under the exact binding and every selectable entry has a vector under that binding. Otherwise it shall use deterministic local character n-gram ranking and record that profile. A provider failure, missing storage or partial coverage changes only ranking quality; none of them may fail the request, widen a judge gate or claim reuse. Vectors are bound to the embedded entry text by digest, immutable and written only by a release identity; a vector cannot make an entry selectable. |
 | LRC-023 | A change to retrieval or window size shall report recall, false reuse and latency at about 32, 100 and 1,000 entries, using paraphrase positives and near-variant negatives (including a changed constant and one-sided versus two-sided) with real judges. False reuse shall not exceed the 32-entry result; any false reuse is a release blocker to be reported, not averaged away. |
 | LRC-024 | The complete-snapshot route and its 32-entry bound remain only for workers released before the window. Historical snapshot receipts keep validating unchanged. |
+| LRC-025 | A semantic judge shall not resolve an unstated scope in the candidate's favour. When a request leaves the number or dimension of its objects, its domain, or another scope-determining term open, and a candidate covers only some of the readings a learner could mean, the judge shall return `needs_input` or `miss`, not `reuse`. A request that states the candidate's scope stays reusable. |
+| LRC-026 | A change to the judges or consensus shall be adopted only when measured with real judges. A rejected option stays unimplemented and is recorded with its result. A relaxed consensus rule shall keep both judges' approval of the same immutable Recipe and shall not accept opposite verdicts on the request. |
+| LRC-027 | The published catalog shall not grow past its current size until a run at about 1,000 entries shows no false reuse in near-variant negatives, in paraphrases with their correct card removed, or in wrong-card selection; repeated review of the recorded ambiguous case reuses the wrong card zero times; single-judge false approvals fall below the recorded values; and reuse of positives stays at or above the recorded 65.4%. The paid cost of the run is reported. |
 
 ## Acceptance criteria
 
@@ -95,6 +98,7 @@ Lean Recipe Catalog は、数学的な主張・方針・説明を保持する Dr
 - Paraphrases and bound-variable names can differ, but negative domain/hypothesis/quantifier/conclusion/method fixtures never produce reuse. Answer/description/review tampering or stale lifecycle/toolchain cannot pass settlement revalidation.
 - The evaluation corpus demonstrates no false Recipe selection in all negative fixtures and uses a
   real local PostgreSQL service plus the pinned Lean verifier.
+- A question that leaves the number of terms open never reuses a card fixed to two terms, and the same question stating two terms can still reuse it.
 - A catalog above 32 entries still reaches the two judges with at most five shown entries, and an
   entry outside the recorded window cannot settle. Deleting all query vectors or failing the provider
   still answers through the lexical profile with unchanged judge gates.
