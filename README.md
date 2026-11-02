@@ -13,7 +13,9 @@ GitHub remotes are created.
 
 [PNGを拡大](docs/diagrams/pals-aws-private-target.png) · [draw.ioで編集](docs/diagrams/pals-aws-private-target.drawio) · [配置・通信・確認範囲](docs/diagrams/README.md)
 
-署名済みseq15を配備し、2026年11月2日15:12:29.352 JSTに公開WebとAPI healthのHTTP 200を確認しました。全7コンテナ、サービス間TLS、DBの35項目、復旧unit、検索公開済み20件の署名・ソース・compiler receiptを実機で確認しています。配備前後のカタログ9項目の件数・fingerprintも一致しました。一時KMS検証・RDS参照権限は削除し、不在を確認済みです。図はseq12時点の記録で、物理構成は変えていません。
+残作業は[Issue一覧](docs/diagrams/README.md#確認記録と残作業)に記録しました。UI反映、回答時間、Recipe拡充、スケール、署名更新、再起動と料金通知の確認を分けています。
+
+署名済みseq15を配備し、2026年11月2日15:12:29.352 JSTに公開WebとAPI healthのHTTP 200を確認しました。全7コンテナ、サービス間TLS、DBの35項目、復旧unit、検索公開済み20件の署名・ソース・compiler receiptを実機で確認しています。配備前後のカタログ9項目の件数・fingerprintも一致しました。一時KMS検証・RDS参照権限は削除し、不在を確認済みです。図はAWS公式サービスアイコンを使い、確認済みのseq15構成を描き直しました。
 
 seq15のログイン済み公開画面で、自然数冪の連続性、tan 1°の無理性、右極限・非連続性の言い換え3問に回答しました。クリックから表示までは順に14.0561秒、13.9031秒、12.9266秒でした。3件ともLean検証済みRecipeを再利用し、新しいformal jobは0件です。直前のseq14では同じ3問が18.7066秒、20.7712秒、18.2612秒でした。今回も10秒目標は未達です。検証用の数学規約2件と言語設定は元に戻し、再読取で一致を確認しました。seq15のサーバー側でも、実Recipe証跡、各問のLuna・low実2呼び出し、利用枠の精算を独立に照合しました。
 

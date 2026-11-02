@@ -1,103 +1,182 @@
 #!/usr/bin/env python3
-"""Generate the editable seq12 architecture snapshot; export PNG with draw.io.
+"""Build an offline, editable AWS-icon diagram of the saved seq15 deployment.
 
-Evidence: signed seq12 manifest and actual both-host/catalog read-back receipts,
-docs/aws-security-and-catalog-check-2026-10-31.md. No AWS calls are made.
-All coordinates, labels and connectors below are diagram source, not an image.
+AWS SVGs are unmodified assets with source hashes in assets/aws-2026-07/provenance.json.
+This generator performs no network, AWS, model, runtime, or application operations.
 """
+import hashlib
+import json
 from pathlib import Path
+from urllib.parse import quote
 from xml.etree import ElementTree as ET
 
-DEST = Path(__file__).with_name('pals-aws-private-target.drawio')
-WIDTH, HEIGHT = 2440, 1980
-mxfile = ET.Element('mxfile', host='app.diagrams.net', agent='PALS architecture authoring', version='32.6.1')
-diagram = ET.SubElement(mxfile, 'diagram', id='pals-private-current', name='AWS deployed architecture — seq12 2026-11-02')
-model = ET.SubElement(diagram, 'mxGraphModel', dx=str(WIDTH), dy=str(HEIGHT), grid='1', gridSize='10', guides='1', tooltips='1', connect='1', arrows='1', fold='1', page='1', pageScale='1', pageWidth=str(WIDTH), pageHeight=str(HEIGHT), background='#ffffff', math='0', shadow='0')
+HERE = Path(__file__).resolve().parent
+ASSETS = HERE / 'assets/aws-2026-07'
+DEST = HERE / 'pals-aws-private-target.drawio'
+W, H = 2360, 1530
+FONT = 'fontFamily=Hiragino Sans,Noto Sans JP,Arial;'
+NAVY, BLUE, ORANGE, PURPLE, GREEN = '#192B43', '#2876AE', '#C97921', '#8753A1', '#338C78'
+manifest = json.loads((ASSETS / 'provenance.json').read_text())
+for name, ref in manifest['unmodified_svg_files'].items():
+    assert hashlib.sha256((ASSETS / (name + '.svg')).read_bytes()).hexdigest() == ref['sha256']
+mxfile = ET.Element('mxfile', host='app.diagrams.net', agent='PALS AWS architecture', version='32.6.1')
+diagram = ET.SubElement(mxfile, 'diagram', id='pals-aws-seq15', name='AWS deployed architecture — seq15')
+model = ET.SubElement(diagram, 'mxGraphModel', dx=str(W), dy=str(H), grid='1', gridSize='10',
+    guides='1', tooltips='1', connect='1', arrows='1', fold='1', page='1', pageScale='1',
+    pageWidth=str(W), pageHeight=str(H), background='#FFFFFF', math='0', shadow='0')
 root = ET.SubElement(model, 'root')
 ET.SubElement(root, 'mxCell', id='0')
 ET.SubElement(root, 'mxCell', id='1', parent='0')
-FONT = 'fontFamily=Hiragino Sans,Noto Sans JP,Arial;fontColor=#18314e;'
 
+def cell(name, text, x, y, w, h, style):
+    item = ET.SubElement(root, 'mxCell', id=name, value=text, style=style, vertex='1', parent='1')
+    ET.SubElement(item, 'mxGeometry', x=str(x), y=str(y), width=str(w), height=str(h), **{'as': 'geometry'})
+    return item
 
-def box(identifier, value, x, y, w, h, fill='#ffffff', stroke='#8ca4c0', size=21, extra=''):
-    cell = ET.SubElement(root, 'mxCell', id=identifier, value=value,
-        style=f'rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor={fill};strokeColor={stroke};strokeWidth=1.5;fontSize={size};{FONT}align=left;verticalAlign=middle;spacing=14;{extra}', vertex='1', parent='1')
-    ET.SubElement(cell, 'mxGeometry', x=str(x), y=str(y), width=str(w), height=str(h), **{'as': 'geometry'})
+def label(name, text, x, y, w, h=36, size=22, color=NAVY, bold=False, align='left', extra=''):
+    return cell(name, text, x, y, w, h,
+        f'text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;{FONT}fontSize={size};'
+        f'fontColor={color};fontStyle={1 if bold else 0};align={align};verticalAlign=middle;spacing=0;{extra}')
 
+def box(name, x, y, w, h, fill='#FFFFFF', stroke='#D6DEE8', dash=False, radius=8):
+    return cell(name, '', x, y, w, h,
+        f'rounded=1;absoluteArcSize=1;arcSize={radius};html=1;whiteSpace=wrap;fillColor={fill};strokeColor={stroke};'
+        f'strokeWidth=1.5;dashed={1 if dash else 0};pointerEvents=0;')
 
-def zone(identifier, value, x, y, w, h, fill, stroke):
-    box(identifier, value, x, y, w, h, fill, stroke, 23,
-        'verticalAlign=top;spacingTop=12;spacingLeft=18;fontStyle=1;')
+def icon(name, asset, x, y, size=72):
+    data = quote((ASSETS / (asset + '.svg')).read_text(), safe='')
+    return cell(name, '', x, y, size, size,
+        'shape=image;imageAspect=0;aspect=fixed;verticalAlign=top;align=center;'
+        'strokeColor=none;fillColor=none;image=data:image/svg+xml,' + data + ';')
 
+def service(name, asset, title, caption, x, y, width=310):
+    icon(name, asset, x, y, 64)
+    label(name+'-title', title, x+82, y-1, width-82, 32, 21, bold=True)
+    label(name+'-caption', caption, x+82, y+34, width-82, 53, 18, '#5F7185')
 
-def edge(identifier, source, target, value='', color='#2467a0', points=(), extra=''):
-    cell = ET.SubElement(root, 'mxCell', id=identifier, source=source, target=target,
-        value=value, edge='1', parent='1',
-        style=f'edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor={color};fontColor={color};fontSize=18;fontFamily=Hiragino Sans,Arial;labelBackgroundColor=#ffffff;{extra}')
-    geometry = ET.SubElement(cell, 'mxGeometry', relative='1', **{'as': 'geometry'})
+def edge(name, source, target, text='', color=BLUE, points=(), extra='', dashed=False):
+    e = ET.SubElement(root, 'mxCell', id=name, source=source, target=target, value=text, edge='1', parent='1',
+        style=f'edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=20;html=1;'
+        f'endArrow=block;endFill=1;strokeWidth=2.4;strokeColor={color};fontColor={color};'
+        f'fontSize=17;{FONT}labelBackgroundColor=#FFFFFF;dashed={1 if dashed else 0};{extra}')
+    g = ET.SubElement(e, 'mxGeometry', relative='1', **{'as':'geometry'})
     if points:
-        array = ET.SubElement(geometry, 'Array', **{'as': 'points'})
-        for x, y in points:
-            ET.SubElement(array, 'mxPoint', x=str(x), y=str(y))
+        arr = ET.SubElement(g, 'Array', **{'as':'points'})
+        for x,y in points: ET.SubElement(arr, 'mxPoint', x=str(x), y=str(y))
 
+# Clear hierarchy: AWS region > VPC > public subnets / actual AZ placement.
+box('header', 40, 30, 2280, 95, NAVY, NAVY)
+label('title', 'PALS  /  AWS ARCHITECTURE', 68, 43, 1500, 48, 36, '#FFFFFF', True)
+label('subtitle', '東京 ap-northeast-1  ·  保存済み配備記録 seq15  ·  2026-11-02', 70, 91, 2100, 25, 19, '#CDD7E5')
+box('aws', 430, 160, 1865, 1190, '#FAFBFD', '#869BB3')
+label('region', 'AWS Cloud  /  Tokyo Region', 455, 170, 900, 40, 25, bold=True)
+box('vpc-frame', 460, 235, 1410, 1050, '#FFFFFF', '#8297B1')
+icon('vpc', 'vpc', 478, 247, 44)
+label('vpc-label', 'Amazon VPC  /  10.42.0.0/16', 537, 251, 1120, 35, 23, bold=True)
+box('public', 495, 315, 1340, 185, '#F2F6FC', '#A4B8D4')
+label('public-label', 'Public subnets   1a: 10.42.0.0/24   /   1c: 10.42.1.0/24', 515, 321, 1290, 32, 20, '#37567B', True)
+box('az-a', 495, 535, 805, 670, '#FCFDFE', '#CED8E5')
+box('az-c', 1380, 535, 455, 670, '#FCFDFE', '#CED8E5')
+label('az-a-label', 'AZ  /  ap-northeast-1a', 515, 543, 765, 33, 22, bold=True)
+label('az-c-label', 'AZ  /  ap-northeast-1c', 1400, 543, 420, 33, 22, bold=True)
+for name, y, height, title, fill, stroke in [
+    ('control-subnet',590,175,'Private control  /  10.42.20.0/24','#F1F8F4','#ABD0BC'),
+    ('compute-subnet',800,185,'Private compute  /  10.42.30.0/24','#FFF8EF','#DEBF91'),
+    ('db-a-subnet',1020,160,'Isolated DB  /  10.42.10.0/24','#F5F1FA','#C4B1D8')]:
+    box(name,515,y,765,height,fill,stroke);label(name+'-label',title,532,y+5,730,30,19,bold=True)
+for name, y, height, title, fill, stroke in [
+    ('control-c-subnet',590,175,'Private control  /  10.42.21.0/24','#F7FAF8','#CBDDD2'),
+    ('compute-c-subnet',800,185,'Private compute  /  10.42.31.0/24','#FFFBF5','#E3D7C4'),
+    ('db-c-subnet',1020,160,'Isolated DB  /  10.42.11.0/24','#F5F1FA','#C4B1D8')]:
+    box(name,1400,y,415,height,fill,stroke);label(name+'-label',title,1414,y+8,390,30,18,bold=True)
 
-# Zones are drawn first. Boxes remain individually editable in draw.io.
-box('title', '<b>PALS AWS 本番アーキテクチャ</b>', 40, 25, 2360, 65, '#142d4e', '#142d4e', 32, 'fontColor=#ffffff;')
-box('snapshot', '<b>2026年11月2日 03:02 JST の配備記録 / seq12</b><br>全7コンテナ・private TLS・DB確認35段階・復旧設定・カタログ9項目を確認して公開を再開。Web/API正常応答を確認。言い換えた問題の公開証明は未検証。<br>Parent e65906a / API 7cde967 / Worker 7c000db / Infra cf212c9 / Web a74b57b / manifest 6f84b0967c9e', 40, 105, 2360, 110, '#eaf7ee', '#579a72', 21)
-zone('region', 'AWS 東京リージョン / ap-northeast-1', 40, 410, 2360, 1330, '#f6f8fc', '#8ca4c0')
-zone('vpc', 'VPC 10.42.0.0/16 / 2 AZ: ap-northeast-1a・1c', 65, 460, 1650, 1235, '#ffffff', '#6f8eaf')
-zone('public', 'Public subnets / 1a: 10.42.0.0/24・1c: 10.42.1.0/24', 90, 515, 1600, 235, '#edf4fd', '#8db1d9')
-zone('control_zone', 'Private control / 1a: 10.42.20.0/24・1c: 10.42.21.0/24', 90, 785, 1600, 240, '#eff8f3', '#8bbba7')
-zone('compute_zone', 'Private compute / 1a: 10.42.30.0/24・1c: 10.42.31.0/24', 90, 1080, 1600, 235, '#fff7ed', '#c6a46d')
-zone('database_zone', 'Isolated DB / 1a: 10.42.10.0/24・1c: 10.42.11.0/24', 90, 1370, 1600, 215, '#f3effa', '#a995c9')
+# External participants: no AWS icon is used to pretend Cloudflare/OpenAI is AWS.
+icon('users','users',135,350,90)
+label('users-label','利用者 / ブラウザー',45,448,280,42,23,bold=True,align='center')
+cell('cloudflare','',110,560,140,90,'shape=cloud;whiteSpace=wrap;html=1;fillColor=#FFF2E3;strokeColor=#D9903B;strokeWidth=2;')
+label('cloudflare-label','Cloudflare',45,656,280,38,25,bold=True,align='center')
+label('cloudflare-caption','DNS / Proxy<br>palschat.site · api.palschat.site',30,698,315,66,18,'#5F7185',align='center')
+box('openai-card',50,1060,285,145,'#F3F6F9','#C8D1DD')
+label('openai','OpenAI API',75,1080,240,40,25,bold=True,align='center')
+label('openai-note','外部サービス<br>workerから HTTPS 443',65,1125,255,62,19,'#5F7185',align='center')
 
-# Public entry and authentication.
-box('user', '<b>利用者</b><br>ブラウザー', 70, 255, 220, 100, '#edf3fa')
-box('cloudflare', '<b>Cloudflare DNS / Proxy</b><br>palschat.site・api.palschat.site<br>両方ともAWS ALBへ / Full (strict)', 400, 235, 520, 135, '#eaf7ee', '#579a72')
-box('cognito', '<b>Cognito</b><br>既存の利用者認証を継続', 1800, 510, 530, 125, '#f4effb', '#aa95c4')
-box('operator', '<b>運用者</b><br>AWS SSO → Systems Manager<br>SSHポート・踏み台なし', 1790, 235, 550, 135, '#f4effb', '#aa95c4')
-box('alb', '<b>WAF → Internet-facing ALB</b><br>HTTPS 443 / ACM証明書<br>Cloudflare公式IPv4のみ許可・既定BLOCK<br>root優先rule / API既定rule → 同じcontrol EC2', 120, 575, 760, 140, '#eaf7ee', '#579a72', 21)
-box('nat', '<b>NAT Gateway ×1 / AZ 1a</b><br>private hostの外向き通信', 1060, 600, 370, 100, '#fff1df', '#cf9a56', 20)
-box('igw', '<b>IGW</b>', 1510, 600, 150, 100, '#edf4fd', '#8db1d9', 22)
+# AWS service/resource icons from the official July 2026 package.
+icon('waf','waf',540,355,66)
+label('waf-label','AWS WAF',520,439,180,30,20,bold=True)
+label('waf-note','ALBへ関連付け',520,467,220,22,16,'#5F7185')
+icon('alb','alb',870,365,78)
+label('alb-label','Application Load Balancer',730,445,400,28,21,bold=True,align='center')
+label('alb-note','1a / 1c  ·  HTTPS 443',790,474,300,22,17,'#5F7185',align='center')
+icon('acm','acm',1220,370,60)
+label('acm-label','ACM / TLS',1150,439,250,30,19,bold=True)
+icon('nat','nat',1500,370,64)
+label('nat-label','NAT Gateway',1430,439,220,28,20,bold=True,align='center')
+label('nat-note','1aのみ / ×1',1440,471,200,23,17,'#5F7185',align='center')
+icon('igw','igw',1710,375,60)
+label('igw-label','Internet Gateway',1630,440,230,28,18,bold=True,align='center')
 
-# Exactly four control and three compute containers are deployed.
-box('control', '<b>Control EC2 / t4g.medium ×1 / ARM64</b><br>2 vCPU・4 GiB / 10.42.20.43 / public IPv4なし<br><b>Web・API・Caddy・reconciler</b><br>ALB → Caddy → Web/API / APIからAuroraへTLS接続', 135, 850, 745, 145, '#eaf7ee', '#579a72', 22)
-box('control_reserve', '<b>Control 1c: subnetのみ</b><br>EC2の二重化は未実施<br>Web containerの外向き通信はDROP', 1130, 855, 510, 135, '#f7fafc', '#a4b6c7', 21, 'dashed=1;')
-box('compute', '<b>Compute EC2 / r8a.large ×1 / AMD64</b><br>2 vCPU・16 GiB / 10.42.30.100 / public IPv4なし<br><b>評価worker・証明worker・Lean verifier</b><br>verifierへDB・AWS・LLMの資格情報を渡さない', 135, 1140, 745, 145, '#fff0df', '#c99552', 22)
-box('capacity', '<b>Compute 1c: subnetのみ</b><br>通常large → 大会xlargeは今後の切替機能<br>ASG・自動増減・30人負荷検証は未実施', 1130, 1150, 510, 125, '#fffcf7', '#c9b28e', 21, 'dashed=1;')
-box('database', '<b>Aurora PostgreSQL 16.15 / pgvector</b><br>private endpoint / writer ×1・readerなし<br>control SG → 5432のみ / TLS verify-full・保存時暗号化<br>Draft 433件・Recipe登録102件・検索公開20件', 135, 1430, 745, 135, '#efe7fa', '#9d83bd', 21)
-box('old_database', '<b>旧方式DB EC2: 停止済み</b><br>10.42.10.172 / m7g.large・EBS保持<br>専用interface endpoint ×6とS3 endpointは残存<br>Auroraの接続先ではない', 1130, 1430, 510, 135, '#f7f3fc', '#ac98c6', 20)
-box('s3_endpoint', '<b>S3 Gateway Endpoint</b>　control・compute用 / DB専用とは分離', 800, 1615, 830, 55, '#e2f3ef', '#639f8d', 21)
+box('control',535,635,725,106)
+icon('control-ec2','ec2',551,651,72)
+label('control-title','Control  /  t4g.medium ×1',645,645,590,32,24,bold=True)
+label('control-roles','Caddy  ·  Web  ·  API  ·  reconciler',645,684,590,30,20,'#5F7185')
+label('control-noip','ARM64 / 公開IPv4なし',1015,713,225,22,15,'#5F7185',align='right')
+box('compute',535,845,725,116)
+icon('compute-ec2','ec2',551,865,72)
+label('compute-title','Compute  /  r8a.large ×1',645,853,590,33,24,bold=True)
+label('compute-roles','評価worker  ·  証明worker  ·  Lean verifier',645,892,600,30,20,'#5F7185')
+label('compute-noip','AMD64 / 公開IPv4なし',1015,933,225,22,15,'#5F7185',align='right')
+label('control-c-empty','subnetのみ<br>待機EC2・フェイルオーバーなし',1425,650,365,80,21,'#7D8C9D',align='center')
+label('compute-c-empty','subnetのみ<br>ASG / 自動増減は未実装',1425,862,365,80,21,'#7D8C9D',align='center')
+label('db-a-empty','DB subnet group の一部<br>インターネット向けdefault routeなし',540,1070,710,65,21,'#7D8C9D',align='center')
+box('database',1415,1065,385,100)
+icon('aurora','aurora',1428,1080,65)
+label('aurora-title','Amazon Aurora',1510,1071,280,30,22,bold=True)
+label('aurora-note','PostgreSQL 16 / pgvector<br>writer ×1・readerなし',1510,1104,275,54,17,'#5F7185')
+box('s3-endpoint-card',1030,1214,700,50,'#F3FAF6','#B9D8CA')
+icon('s3-endpoint','vpc',1040,1220,38)
+label('s3-endpoint-label','S3 Gateway Endpoint / control・computeの経路',1092,1222,620,32,18,GREEN,True)
 
-# Regional / external services: endpoint placement is not a private subnet.
-box('llm', '<b>外部LLM API / HTTPS・NAT</b><br>Lean: 6.1 Terra / 6.1 Sol / 6 Luna<br>推論量: low / medium / high<br>Recipe言い換え: 6 Luna・low ×2 独立・並列', 1080, 235, 520, 135, '#fff1df', '#cf9a56', 20)
-box('sqs', '<b>SQS + DLQ</b><br>評価・証明キュー / 既存を継続<br>workerがHTTPS 443で受信 / NAT経由', 1800, 710, 530, 125, '#fff1df', '#cf9a56', 22)
-box('aws_api', '<b>SSM / ECR / CloudWatch / KMS</b><br>control・compute host → HTTPS 443 / NAT<br>SSM SecureString・KMSで秘密値管理<br>SSM経由の操作 / IMDSv2必須', 1800, 910, 530, 160, '#f4effb', '#aa95c4', 21)
-box('s3', '<b>S3 / private・暗号化</b><br>資料・成果物・移行データ<br>Gateway Endpoint経由 / NATを通らない', 1800, 1160, 530, 125, '#e2f3ef', '#639f8d', 22)
-box('operations', '<b>運用・費用・復旧</b><br>復旧unit 3本: 有効・待機中 / 実再起動試験は未実施<br>料金通知: 実額20・50・100・650 USD、予測520 USD<br>通知の実配信は未検証 / 一時参照権限は削除済み', 1800, 1405, 530, 200, '#f4effb', '#aa95c4', 21)
+# Regional services sit outside the VPC/subnet boundary.
+label('regional-title','Regional services',1900,242,360,38,23,bold=True)
+service('cognito','cognito','Amazon Cognito','利用者認証',1920,300)
+service('sqs','sqs','Amazon SQS','評価・証明キュー<br>+ Dead-letter queues',1920,500)
+service('s3','s3','Amazon S3','非公開の資料・成果物<br>Gateway Endpoint経由',1920,720)
+box('network-note',1900,895,360,355,'#F3F6FA','#D4DEE9')
+label('security-title','通信と隔離',1920,910,315,35,22,bold=True)
+label('security-note','• DBへの接続はcontrolのみ<br><br>• verifierは外向き通信なし<br>  DB / AWS / LLM資格情報なし<br><br>• アプリ外向き通信は<br>  NAT経由のTCP 443<br><br>• EC2へのSSH公開なし',1920,957,320,270,19,'#52677F')
 
-# Arrows denote the initiating side. Return traffic is omitted.
-edge('e_user_proxy', 'user', 'cloudflare', 'HTTPS 443', extra='exitX=1;exitY=0.5;entryX=0;entryY=0.5;')
-edge('e_user_auth', 'user', 'cognito', '認証 / HTTPS 443', '#7956a1', [(180,225),(1740,225),(1740,570)], 'exitX=0.5;exitY=0;entryX=0;entryY=0.5;')
-edge('e_proxy_alb', 'cloudflare', 'alb', 'HTTPS 443', points=[(660,390),(500,390)], extra='exitX=0.5;exitY=1;entryX=0.5;entryY=0;')
-edge('e_alb_control', 'alb', 'control', 'HTTPS 443', extra='exitX=0.5;exitY=1;entryX=0.5;entryY=0;')
-edge('e_verifier', 'control', 'compute', 'reconciler → verifier / mTLS 18117', points=[(320,1050)], extra='exitX=0.25;exitY=1;entryX=0.25;entryY=0;')
-edge('e_worker_api', 'compute', 'control', 'worker → API / HTTPS 443', '#7956a1', [(700,1050)], 'exitX=0.8;exitY=0;entryX=0.8;entryY=1;')
-edge('e_db', 'control', 'database', 'TLS 5432', points=[(110,1020),(110,1490)], extra='exitX=0;exitY=0.9;entryX=0;entryY=0.5;')
-# Egress and S3 routes use routing corridors outside the workload boxes.
-edge('e_control_nat', 'control', 'nat', 'host外向き', '#b5792d', [(1000,900),(1000,650)], 'exitX=1;exitY=0.35;entryX=0;entryY=0.5;')
-edge('e_compute_nat', 'compute', 'nat', 'worker/host外向き', '#b5792d', [(1040,1200),(1040,740),(1245,740)], 'exitX=1;exitY=0.4;entryX=0.5;entryY=1;')
-edge('e_nat_igw', 'nat', 'igw', 'HTTPS', '#b5792d', extra='exitX=1;exitY=0.5;entryX=0;entryY=0.5;')
-edge('e_igw_llm', 'igw', 'llm', '443', '#b5792d', [(1700,650),(1700,385),(1340,385)], 'exitX=1;exitY=0.5;entryX=0.5;entryY=1;')
-edge('e_igw_sqs', 'igw', 'sqs', '443', '#b5792d', [(1760,650),(1760,770)], 'exitX=1;exitY=0.7;entryX=0;entryY=0.5;')
-edge('e_igw_aws', 'igw', 'aws_api', '443', '#b5792d', [(1725,670),(1725,990)], 'exitX=1;exitY=0.9;entryX=0;entryY=0.5;')
-edge('e_ssm_operator', 'operator', 'aws_api', 'SSO / SSM操作', '#7956a1', [(2370,300),(2370,990)], 'exitX=1;exitY=0.5;entryX=1;entryY=0.5;')
-edge('e_control_s3ep', 'control', 's3_endpoint', 'S3経路', '#36816c', [(920,960),(920,1595),(1020,1595)], 'exitX=1;exitY=0.8;entryX=0.25;entryY=0;')
-edge('e_compute_s3ep', 'compute', 's3_endpoint', '', '#36816c', [(960,1260),(960,1595),(1420,1595)], 'exitX=1;exitY=0.8;entryX=0.75;entryY=0;')
-edge('e_s3ep_s3', 's3_endpoint', 's3', 'HTTPS 443', '#36816c', [(1750,1640),(1750,1220)], 'exitX=1;exitY=0.5;entryX=0;entryY=0.5;')
+# Network paths; distinct corridors avoid crossing workload text.
+edge('browser-proxy','users','cloudflare','HTTPS',extra='exitX=0.5;exitY=1;entryX=0.5;entryY=0;')
+edge('proxy-alb','cloudflare','alb','HTTPS 443',points=[(410,605),(410,428),(850,428)],extra='exitX=1;exitY=0.5;entryX=0;entryY=0.8;')
+edge('waf-association','waf','alb','保護',PURPLE,extra='exitX=1;exitY=0.3;entryX=0;entryY=0.25;',dashed=True)
+edge('certificate','acm','alb','証明書',PURPLE,extra='exitX=0;exitY=0.45;entryX=1;entryY=0.45;',dashed=True)
+edge('alb-control','alb','control','',points=[(917,520),(1180,520)],extra='exitX=0.6;exitY=1;entryX=0.89;entryY=0;')
+edge('verify','control','compute','reconciler → verifier / mTLS 18117',points=[(760,790)],extra='exitX=0.28;exitY=1;entryX=0.28;entryY=0;')
+edge('worker-api','compute','control','worker → API / HTTPS 443',PURPLE,points=[(1125,790)],extra='exitX=0.8;exitY=0;entryX=0.8;entryY=1;')
+edge('control-db','control','database','TLS 5432',points=[(1330,683),(1330,1115)],extra='exitX=1;exitY=0.45;entryX=0;entryY=0.5;')
+edge('control-nat','control','nat','',ORANGE,[(1310,655),(1310,515),(1532,515)],'exitX=1;exitY=0.2;entryX=0.5;entryY=1;')
+edge('compute-nat','compute','nat','',ORANGE,[(1310,868),(1310,515),(1532,515)],'exitX=1;exitY=0.2;entryX=0.5;entryY=1;')
+edge('nat-igw','nat','igw','443',ORANGE,extra='exitX=1;exitY=0.5;entryX=0;entryY=0.5;')
+edge('internet-model','igw','openai-card','HTTPS 443',ORANGE,[(1740,225),(400,225),(400,1130)],'exitX=0.5;exitY=0;entryX=1;entryY=0.5;')
+edge('aws-apis','igw','sqs','HTTPS 443',ORANGE,[(1848,405),(1848,530)],'exitX=1;exitY=0.5;entryX=0;entryY=0.5;')
+edge('control-s3','control','s3-endpoint-card','',GREEN,[(1355,723),(1355,1207),(1275,1207)],'exitX=1;exitY=0.83;entryX=0.35;entryY=0;')
+edge('compute-s3','compute','s3-endpoint-card','',GREEN,[(1355,941),(1355,1207),(1275,1207)],'exitX=1;exitY=0.83;entryX=0.35;entryY=0;')
+edge('endpoint-s3','s3-endpoint-card','s3','HTTPS 443',GREEN,[(1850,1238),(1850,754)],'exitX=1;exitY=0.5;entryX=0;entryY=0.5;')
+edge('authentication','users','cognito','認証 / HTTPS 443',PURPLE,[(180,213),(1952,213)],'exitX=0.5;exitY=0;entryX=0.5;entryY=0;',True)
 
-box('legend', '<b>矢印は通信の開始方向</b>　青: 公開・API・DB・verifier通信 / 橙: NAT経由の外向き通信 / 緑: S3 endpoint経由 / 紫: 認証・運用<br>EC2・DBへ直接公開なし。compute → Auroraの通信は許可しない。DB subnetにインターネット向けdefault routeなし。', 40, 1765, 2360, 80, '#edf3fa', '#a7bacd', 22)
-box('limits', '<b>未完了の項目</b>　1秒回答・30人を10秒以内・1,100件の本番利用・ASG/自動増減・全体セキュリティ監査。<br>control・compute・NAT・Aurora writerは各1台。2 AZのsubnetだけでアプリが冗長化されるわけではない。Auroraはpending-reboot。', 40, 1860, 2360, 80, '#fff2df', '#cfad79', 21)
+# Operations are not part of the verifier's execution/credential boundary.
+label('operations-title','AWS 管理・運用サービス（グローバル機能を含む）',460,1345,1835,25,17,'#5F7185')
+box('operations',460,1375,1835,100,'#F8F9FC','#D6DEE8')
+for x,name,asset,title,caption in [
+ (478,'ssm','ssm','Systems Manager','SSO / ホスト操作'),
+ (832,'ecr','ecr','Amazon ECR','コンテナイメージ'),
+ (1186,'kms','kms','AWS KMS','秘密値 / 署名'),
+ (1540,'logs','cloudwatch','CloudWatch','Auroraログ'),
+ (1894,'budget','budgets','AWS Budgets','費用アラート')]:
+    service(name,asset,title,caption,x,1390,340)
+label('outside-note','実線: 通信開始方向<br>破線: 認証・設定の関連',45,1270,340,80,18,'#5F7185')
+label('footer','EC2各1台・Aurora writer 1台・NAT 1台。2AZのsubnet配置は、アプリの冗長化を意味しません。',465,1300,1790,37,20,'#5F7185')
+label('credit','AWS Architecture Icons · 2026-07-31 official package / ASG・大会モードは未実装。詳細と残作業はREADME・Issuesへ。',460,1490,1840,25,16,'#708296')
 ET.indent(mxfile, space='  ')
-DEST.write_text(ET.tostring(mxfile, encoding='unicode')+'\n', encoding='utf-8')
+DEST.write_text(ET.tostring(mxfile, encoding='unicode')+'\n')
 print(DEST)
