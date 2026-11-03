@@ -1,0 +1,242 @@
+{
+"batch": "L2",
+"reviewed": 81,
+"ok_ids": [
+"ineq_mul_nonneg_bounds","ineq_reciprocal_same_sign","compare_abs_squares","compare_fractions_cross_multiply","mediant_between","means_chain_two","linear_ineq_degenerate_coeff","linear_system_solvable_iff","natural_solutions_count_range","abs_closer_to_left_point","abs_sum_three_points_median","abs_add_lt_one_add_mul","abs_ratio_subadditive","ratio_sum_ge_two","amgm_three_cube_form","amgm_three_product_form","amgm_three_equality_iff","pairwise_products_le_squares","reciprocal_sum_three","cauchy_schwarz_three_terms","cauchy_schwarz_three_equality_iff","titu_three_terms","nesbitt_inequality","rearrangement_two_pairs","rearrangement_three_terms","rearrangement_finite","chebyshev_three_terms","chebyshev_finite","min_linear_plus_reciprocal","min_x_plus_inv_on_ray","min_square_plus_split_reciprocal","min_sum_squares_on_plane","max_linear_on_sphere","sum_mul_sum_reciprocal_ge_count_sq","dvd_add_iff_right","coprime_mul_dvd","pow_dvd_pow_iff","divisor_count_two_primes","even_add_iff_same_parity","odd_mul_iff","difference_of_two_squares_iff","common_divisor_dvd_gcd","common_multiple_dvd_lcm","gcd_mul_left","gcd_cofactors_coprime","gcd_lcm_cofactor_iff","coprime_mul_iff","coprime_add_mul","euclidean_algorithm","coprime_mul_eq_mul_param","linear_diophantine_general_solution_coprime","linear_diophantine_general_solution","digit_sum_congruent_mod_base_sub_one","alternating_digit_sum_congruent_mod_base_add_one","finite_base_expansion_iff","congruence_iff_same_remainder","congruence_polynomial_eval","congruence_cancel_gcd","coprime_multiple_residues_permute","consecutive_product_even","three_consecutive_product_multiple_of_six","consecutive_integers_exactly_one_multiple","square_mod_three","square_mod_four","odd_square_mod_eight","three_dvd_sum_of_squares","no_square_between_consecutive_squares","coprime_mul_eq_square"
+],
+"findings": [
+{
+"id": "ineq_mul_sign_rule",
+"home": "S3",
+"used": "S1",
+"severity": "note",
+"tools": [],
+"fix": "答案は文字式の分配法則だけで書けていて問題ない。題意の「不等式の性質（負の数を掛けると向きが変わる）」は段階表では数I（一次不等式、S4）の内容なので、level: middle は低すぎる。level を high にするか、題意を中学の数値例に限る。",
+"keep_as_advanced": false
+},
+{
+"id": "range_of_sum_and_difference",
+"home": "S3",
+"used": "S1",
+"severity": "note",
+"tools": [],
+"fix": "答案は不等式の辺々の加法と -1 倍だけで足りている。題意の「式の値の範囲」は数I（不等式、S4）の単元なので、level: middle は低すぎる。level を high にする。",
+"keep_as_advanced": false
+},
+{
+"id": "linear_ineq_by_coeff_sign",
+"home": "S3",
+"used": "S1",
+"severity": "note",
+"tools": [],
+"fix": "答案の道具は移項と両辺を割る操作だけ。題意の「一次不等式を文字係数で解く」は数I（S4）の単元なので、level: middle は低すぎる。level を high にする。",
+"keep_as_advanced": false
+},
+{
+"id": "sq_add_sq_ge_two_mul",
+"home": "S3",
+"used": "S3",
+"severity": "note",
+"tools": [],
+"fix": "答案は (a-b)^2 の展開と平方が0以上という性質だけで、中3で足りる。ただし題意の「不等式の証明（相加相乗の原型）」は数II式と証明（S6）の単元で、level: middle は低すぎる。level を high にするか、中学向けの別表現にする。",
+"keep_as_advanced": false
+},
+{
+"id": "compare_powers_nonneg",
+"home": "S4",
+"used": "S6",
+"severity": "major",
+"tools": [
+{"tool": "一般の n での因数分解 b^n-a^n=(b-a)(b^{n-1}+...+a^{n-1})", "stage": "S6", "where": "答案1行目。以降の2行はこの恒等式の第2因数の符号に依存する", "replaceable": true}
+],
+"fix": "一般の n の差の因数分解は数II（因数定理 x^n-a^n）以降の道具。数Iの不等式の性質（0以上の数を両辺に掛ける）を k=1 から n-1 まで順に使えば、順方向も対偶側（a>b なら a^n>b^n）も書ける。",
+"patch": {"answer": "$n$を正の整数、$a,b$を$0$以上の実数とする。\n$a\\leq b$とする。$a^k\\leq b^k$が成り立つとき、$a\\geq 0$を掛けて$a^{k+1}\\leq b^ka$、$a\\leq b$に$b^k\\geq 0$を掛けて$b^ka\\leq b^{k+1}$を得るので、$a^{k+1}\\leq b^{k+1}$である。$k=1$では$a\\leq b$なので、これを$k=1,2,\\ldots,n-1$の順に繰り返して$a^n\\leq b^n$を得る。\n逆に$a>b$とする。このとき$a>0$である。$a^k>b^k$が成り立つとき、$a>0$を掛けて$a^{k+1}>b^ka$、$a>b$に$b^k\\geq 0$を掛けて$b^ka\\geq b^{k+1}$を得るので、$a^{k+1}>b^{k+1}$である。$k=1$では$a>b$なので、同様に繰り返して$a^n>b^n$を得る。対偶をとると、$a^n\\leq b^n$から$a\\leq b$が従う。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "add_dvd_pow_add_pow_odd",
+"home": "S5",
+"used": "S7",
+"severity": "major",
+"tools": [
+{"tool": "数学的帰納法（奇数 n から n+2 へ）", "stage": "S7", "where": "答案全体（n=1 の確認と n から n+2 への推移）。数Aの整数の議論で帰納法を使っているので S7 と数える", "replaceable": true}
+],
+"fix": "x ≡ -y (mod x+y) と合同式の累乗の性質（数A）で一行で済む。x+y=0 のときは別扱いにする。",
+"patch": {"answer": "$x,y$を整数、$n$を正の奇数とする。\n$x+y=0$のとき、$y=-x$であり、$n$が奇数なので$x^n+y^n=x^n+(-x)^n=0$である。$0$は$0$の倍数なので、$x+y$は$x^n+y^n$を割り切る。\n$x+y\\neq 0$のとき、$m=|x+y|$とおく。$x-(-y)=x+y$は$m$の倍数なので、$x\\equiv -y\\pmod{m}$である。合同式の累乗の性質より$x^n\\equiv(-y)^n\\pmod{m}$であり、$n$が奇数なので$(-y)^n=-y^n$である。よって$x^n+y^n\\equiv 0\\pmod{m}$であり、$m$したがって$x+y$は$x^n+y^n$を割り切る。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "prime_dvd_of_dvd_pow",
+"home": "S5",
+"used": "S7",
+"severity": "major",
+"tools": [
+{"tool": "数学的帰納法（指数 n についての帰納）", "stage": "S7", "where": "答案全体。n=0 の確認と n から n+1 への推移", "replaceable": true}
+],
+"fix": "素因数分解の一意性（数A、中1からの素因数分解の延長）で、a^n に現れる素数は a に現れる素数だけと示せば帰納法は要らない。",
+"patch": {"answer": "$p$を素数、$a$を整数、$n$を$0$以上の整数とし、$p$が$a^n$を割り切るとする。\n$n=0$のとき$a^0=1$であり、$p$は$1$を割り切らないので、この場合は仮定が成り立たない。\n$n\\geq 1$とする。$a=0$ならば$p$は$a$を割り切る。$a\\neq 0$のとき、$|a|=1$とすると$|a^n|=1$を素数$p$が割り切ることになり不可能なので、$|a|\\geq 2$である。$|a|=q_1q_2\\cdots q_r$（$q_i$は素数）と素因数分解すると、$|a^n|=|a|^n$の素因数分解は各$q_i$を$n$個ずつ並べたもので、現れる素数は$q_1,\\ldots,q_r$だけである。$p$は$|a|^n$を割り切る素数であり、素因数分解の一意性により$p$はこの中のいずれかの$q_i$に等しい。よって$p$は$|a|$を割り切り、したがって$a$を割り切る。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "coprime_pow_pow",
+"home": "S5",
+"used": "S7",
+"severity": "major",
+"tools": [
+{"tool": "数学的帰納法（m、n についての帰納）", "stage": "S7", "where": "答案の2段落目「m についての帰納法から」と、n についての同様の議論", "replaceable": true}
+],
+"fix": "素数に注目する。公約数が1でなければ共通の素因数 p があり、p が a^m と b^n を割り切ると p が a と b をともに割り切るので仮定に反する。",
+"patch": {"answer": "$a,b$を$\\gcd(a,b)=1$を満たす整数、$m,n$を$0$以上の整数とし、$g=\\gcd(a^m,b^n)$とおく。$g\\neq 1$と仮定する。$g=0$ならどの素数も$g$を割り切り、$g\\geq 2$なら$g$の素因数がある。いずれにせよ、$g$を割り切る素数$p$がある。$p$は$a^m$と$b^n$を割り切る。素数$p$が$a^m$を割り切るならば$p$は$a$を割り切り（素因数分解の一意性による。$m=0$なら$a^0=1$を素数が割り切ることはないので起こらない）、同様に$p$は$b$を割り切る。すると$p$が$a,b$の公約数となり、$\\gcd(a,b)=1$に反する。よって$\\gcd(a^m,b^n)=1$である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "base_expansion_exists_unique",
+"home": "S5",
+"used": "S7",
+"severity": "major",
+"tools": [
+{"tool": "強い帰納法（n についての帰納による存在と一意性）", "stage": "S7", "where": "答案冒頭「n についての強い帰納法で示す」と、存在・一意性の両段落", "replaceable": true}
+],
+"fix": "存在は「b で割って商をまた b で割る」操作を繰り返し、商が正の整数として減り続けることはできないので有限回で0に達する、と算法として書く。一意性は、各桁を割り算の一意性（余りと商の一意性）から下の桁から順に決めていく形で書く。長さが10行を超えるため patch は付けない。帰納法による既存の書き方は、既習者向けの発展として別カードに残す価値がある。",
+"keep_as_advanced": true
+},
+{
+"id": "digit_length_iff_pow_bounds",
+"home": "S5",
+"used": "S6",
+"severity": "minor",
+"tools": [
+{"tool": "一般の k での恒等式 (b-1)(1+b+...+b^k)=b^{k+1}-1（等比和・因数分解）", "stage": "S6", "where": "答案2行目「n≤(b-1)(1+b+⋯+b^k)=b^{k+1}-1」", "replaceable": true}
+],
+"fix": "(b-1)b^i=b^{i+1}-b^i と書いて隣り合う項を打ち消すだけで同じ上界が出る（数Aの範囲）。",
+"patch": {"answer": "$b$を$2$以上の整数、$k,n$を$0$以上の整数とする。\n$n$が$k+1$桁で桁を$d_0,\\ldots,d_k$とする。$d_k\\geq 1$なので$n\\geq b^k$である。また各$d_i\\leq b-1$なので$n\\leq(b-1)b^k+(b-1)b^{k-1}+\\cdots+(b-1)$である。$(b-1)b^i=b^{i+1}-b^i$なので、右辺は$(b^{k+1}-b^k)+(b^k-b^{k-1})+\\cdots+(b-1)$であり、隣り合う項が打ち消し合って$b^{k+1}-1$に等しい。よって$n<b^{k+1}$である。\n逆に$b^k\\leq n<b^{k+1}$とする。$n\\geq 1$なので$n$の桁数は$j+1$（$j\\geq 0$）と書ける。いま示したことから$b^j\\leq n<b^{j+1}$である。したがって$b^j<b^{k+1}$と$b^k<b^{j+1}$が成り立つ。$b\\geq 2$なので累乗は指数について増加し、$j<k+1$と$k<j+1$を得る。よって$j=k$である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "low_digits_remainder",
+"home": "S5",
+"used": "S6",
+"severity": "minor",
+"tools": [
+{"tool": "一般の k での恒等式 (b-1)(1+b+...+b^{k-1})=b^k-1（等比和・因数分解）", "stage": "S6", "where": "答案2行目「0≤v≤(b-1)(1+b+⋯+b^{k-1})=b^k-1」", "replaceable": true}
+],
+"fix": "(b-1)b^i=b^{i+1}-b^i と書いて隣り合う項を打ち消すだけで v≤b^k-1 が出る。",
+"patch": {"answer": "$b$を$2$以上の整数、$d_0,\\ldots,d_{k-1}$を$b$未満の$0$以上の整数、$e_0,\\ldots,e_{j-1}$を$0$以上の整数とする。$v=\\sum_{i<k}d_ib^i$、$w=\\sum_{i<j}e_ib^i$とおく。$d_i\\leq b-1$なので$0\\leq v\\leq(b-1)b^{k-1}+\\cdots+(b-1)$である。$(b-1)b^i=b^{i+1}-b^i$なので、右辺は$(b^k-b^{k-1})+\\cdots+(b-1)$であり、隣り合う項が打ち消し合って$b^k-1$に等しい。よって$0\\leq v<b^k$である。$v+b^kw$は$b^k$の倍数$b^kw$と$0\\leq v<b^k$を満たす$v$の和なので、$b^k$で割った余りは$v$である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "congruence_pow",
+"home": "S5",
+"used": "S7",
+"severity": "major",
+"tools": [
+{"tool": "数学的帰納法（k についての帰納）", "stage": "S7", "where": "答案1行目「k についての帰納法で a-b が a^k-b^k を割り切ることを示す」と2〜3行目の推移", "replaceable": true}
+],
+"fix": "数Aの合同式の性質（積の合同）を指数の分だけ繰り返す形に書き替える。ただし題意が「積の合同の繰り返し」そのものなので、形式的な帰納法の宣言を外して教科書どおりの書き方にするだけである。実質は同じ議論なので、厳密さを重視する版は発展側として残せる。",
+"patch": {"answer": "$a,b,n$を整数、$k$を$0$以上の整数とし、$n$が$a-b$を割り切るとする。まず積の合同を確認する。$a\\equiv b$、$c\\equiv d\\pmod{n}$ならば、$ac-bd=a(c-d)+(a-b)d$は$n$の倍数なので、$ac\\equiv bd\\pmod{n}$である。\n$a^0=b^0=1$なので$k=0$のとき成り立つ。$a\\equiv b$と$a^j\\equiv b^j$に積の合同を使うと$a^{j+1}\\equiv b^{j+1}$を得る。これを$j=0,1,\\ldots,k-1$の順に繰り返すと$a^k\\equiv b^k\\pmod{n}$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "prime_three_mod_four_dvd_sum_of_squares",
+"home": "S5",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "フェルマーの小定理 t^{p-1}≡1 (mod p)", "stage": "S10", "where": "答案3段落目「フェルマーの小定理より t^{p-1}≡1」。高校の学習指導要領の範囲外", "replaceable": true}
+],
+"fix": "フェルマーの小定理を引用せず、数Aの道具（互いに素ならば t·1,…,t(p-1) の余りは 1,…,p-1 の並べ替え、互いに素な数での約分）で t^{p-1}≡1 を示してから使う。10行以内に収まる。進んだ証明として引用版も別カードに残す価値がある。",
+"patch": {"answer": "$p$を$4$で割って$3$余る素数、$a,b$を整数とし、$a^2+b^2\\equiv 0\\pmod p$とする。\n$p$が$b$を割り切らないと仮定する。$p$は素数なので$\\gcd(b,p)=1$であり、ベズーの等式から$bc\\equiv 1\\pmod p$となる整数$c$がある。$t=ac$とおくと、$a^2\\equiv -b^2$の両辺に$c^2$を掛けて$t^2\\equiv -1\\pmod p$である。特に$p$は$t$を割り切らない（割り切るなら$0\\equiv -1$となる）。\nここで$t^{p-1}\\equiv 1\\pmod p$を示す。$\\gcd(t,p)=1$なので、$0\\leq i<p$の整数$i$について$ti$を$p$で割った余りは$0,1,\\ldots,p-1$の並べ替えであり、$i=0$の余りが$0$なので、$t\\cdot 1,\\ t\\cdot 2,\\ \\ldots,\\ t(p-1)$の余りは$1,\\ldots,p-1$の並べ替えである。積をとると$t^{p-1}(p-1)!\\equiv(p-1)!\\pmod p$である。素数$p$は$1,\\ldots,p-1$のどれも割り切らないので$(p-1)!$を割り切らず、$\\gcd((p-1)!,p)=1$である。よって両辺から$(p-1)!$を約して$t^{p-1}\\equiv 1\\pmod p$を得る。\n$p=4k+3$とおくと$\\dfrac{p-1}{2}=2k+1$は奇数である。よって$t^{p-1}=(t^2)^{2k+1}\\equiv(-1)^{2k+1}=-1\\pmod p$である。したがって$1\\equiv -1$、すなわち$p$は$2$を割り切るが、$p\\geq 3$なので矛盾する。\nゆえに$p$は$b$を割り切る。すると$p$は$a^2$を割り切り、$p$は素数なので$a$を割り切る。\n"},
+"keep_as_advanced": true
+}
+],
+"systematic": [
+"school_integers の累乗・指数を扱うカード（add_dvd_pow_add_pow_odd、prime_dvd_of_dvd_pow、coprime_pow_pow、congruence_pow、base_expansion_exists_unique）の標準解答が、数Aの整数の議論で形式的な数学的帰納法（S7）を使っている。素因数分解の一意性・合同式の性質・割り算の繰り返しなど、数Aの道具で書ける。",
+"一般の指数 n の和・差の恒等式（b^n-a^n の因数分解、(b-1)(1+b+...+b^k)=b^{k+1}-1）を、補足なしに使う答案が複数ある（compare_powers_nonneg、digit_length_iff_pow_bounds、low_digits_remainder）。「隣り合う項が打ち消し合う」形か、不等式の性質を繰り返す形に直せる。",
+"school_inequalities の level: middle の4枚（ineq_mul_sign_rule、range_of_sum_and_difference、linear_ineq_by_coeff_sign、sq_add_sq_ge_two_mul）は、答案は中学の道具で足りるが、題意の単元が段階表では数I以上（一次不等式 S4、不等式の証明 S6）にあたる。level の貼り方の問題である。",
+"school_inequalities の不等式カードは、相加相乗・コーシー・シュワルツ・チェビシェフ・ネスビットを平方和の恒等式や因数分解で示していて、微分や大学の道具を使わず、段階の逆転は見つからなかった。平方完成・差の因数分解の型に統一されている。",
+"フェルマーの小定理のような高校範囲外の定理の引用は、このバッチでは prime_three_mod_four_dvd_sum_of_squares の1件だけ。互いに素なら倍数の余りが並べ替えになるカード（coprime_multiple_residues_permute）の議論で自給でき、他のカードに同種の引用は見つからなかった。"
+],
+"home_assignments": {
+"ineq_mul_sign_rule": "S3",
+"range_of_sum_and_difference": "S3",
+"ineq_mul_nonneg_bounds": "S4",
+"ineq_reciprocal_same_sign": "S4",
+"compare_abs_squares": "S4",
+"compare_powers_nonneg": "S4",
+"compare_fractions_cross_multiply": "S4",
+"mediant_between": "S4",
+"means_chain_two": "S6",
+"linear_ineq_by_coeff_sign": "S3",
+"linear_ineq_degenerate_coeff": "S4",
+"linear_system_solvable_iff": "S4",
+"natural_solutions_count_range": "S4",
+"abs_closer_to_left_point": "S4",
+"abs_sum_three_points_median": "S4",
+"abs_add_lt_one_add_mul": "S4",
+"abs_ratio_subadditive": "S6",
+"sq_add_sq_ge_two_mul": "S3",
+"ratio_sum_ge_two": "S6",
+"amgm_three_cube_form": "S6",
+"amgm_three_product_form": "S6",
+"amgm_three_equality_iff": "S6",
+"pairwise_products_le_squares": "S6",
+"reciprocal_sum_three": "S6",
+"cauchy_schwarz_three_terms": "S6",
+"cauchy_schwarz_three_equality_iff": "S6",
+"titu_three_terms": "S6",
+"nesbitt_inequality": "S6",
+"rearrangement_two_pairs": "S6",
+"rearrangement_three_terms": "S6",
+"rearrangement_finite": "S7",
+"chebyshev_three_terms": "S6",
+"chebyshev_finite": "S7",
+"min_linear_plus_reciprocal": "S6",
+"min_x_plus_inv_on_ray": "S6",
+"min_square_plus_split_reciprocal": "S6",
+"min_sum_squares_on_plane": "S6",
+"max_linear_on_sphere": "S6",
+"sum_mul_sum_reciprocal_ge_count_sq": "S7",
+"dvd_add_iff_right": "S5",
+"coprime_mul_dvd": "S5",
+"add_dvd_pow_add_pow_odd": "S5",
+"pow_dvd_pow_iff": "S5",
+"prime_dvd_of_dvd_pow": "S5",
+"divisor_count_two_primes": "S5",
+"even_add_iff_same_parity": "S2",
+"odd_mul_iff": "S2",
+"difference_of_two_squares_iff": "S5",
+"common_divisor_dvd_gcd": "S5",
+"common_multiple_dvd_lcm": "S5",
+"gcd_mul_left": "S5",
+"gcd_cofactors_coprime": "S5",
+"gcd_lcm_cofactor_iff": "S5",
+"coprime_mul_iff": "S5",
+"coprime_pow_pow": "S5",
+"coprime_add_mul": "S5",
+"euclidean_algorithm": "S5",
+"coprime_mul_eq_mul_param": "S5",
+"linear_diophantine_general_solution_coprime": "S5",
+"linear_diophantine_general_solution": "S5",
+"base_expansion_exists_unique": "S5",
+"digit_length_iff_pow_bounds": "S5",
+"digit_sum_congruent_mod_base_sub_one": "S5",
+"alternating_digit_sum_congruent_mod_base_add_one": "S5",
+"low_digits_remainder": "S5",
+"finite_base_expansion_iff": "S5",
+"congruence_iff_same_remainder": "S5",
+"congruence_pow": "S5",
+"congruence_polynomial_eval": "S6",
+"congruence_cancel_gcd": "S5",
+"coprime_multiple_residues_permute": "S5",
+"consecutive_product_even": "S2",
+"three_consecutive_product_multiple_of_six": "S5",
+"consecutive_integers_exactly_one_multiple": "S5",
+"square_mod_three": "S5",
+"square_mod_four": "S5",
+"odd_square_mod_eight": "S5",
+"three_dvd_sum_of_squares": "S5",
+"no_square_between_consecutive_squares": "S5",
+"coprime_mul_eq_square": "S5",
+"prime_three_mod_four_dvd_sum_of_squares": "S5"
+}
+}

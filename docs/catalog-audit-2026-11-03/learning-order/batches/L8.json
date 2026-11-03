@@ -1,0 +1,203 @@
+{
+"batch": "L8",
+"reviewed": 51,
+"ok_ids": [
+"function_power_derivative",
+"sqrt_composite_derivative",
+"sin_cos_affine_derivative",
+"exponential_base_derivative",
+"log_abs_composite_derivative",
+"tangent_line_equation_form",
+"cubic_minus_tangent_factorization",
+"convex_function_above_tangent",
+"derivative_comparison_inequality",
+"unique_root_of_positive_derivative",
+"max_at_endpoint_or_critical_point",
+"max_at_derivative_sign_change",
+"integral_adjacent_intervals",
+"polynomial_definite_integral",
+"integral_sixth_formula",
+"integral_twelfth_formula",
+"integral_sin_power_reduction",
+"integral_reflection",
+"derivative_of_integral_x_minus_t",
+"integral_equation_constant_term",
+"integral_equation_from_upper_limit",
+"integral_function_power_times_derivative",
+"integral_affine_power",
+"integral_semicircle",
+"integral_one_over_sum_of_squares",
+"integral_log_formula",
+"integral_x_mul_derivative",
+"integral_exp_mul_sin",
+"area_split_at_crossing",
+"area_parabola_and_line",
+"area_parabola_and_tangent",
+"area_parabola_two_tangents",
+"integral_inverse_function_identity",
+"geometric_sequence_convergence_criterion",
+"rational_sequence_limit",
+"sqrt_quadratic_sub_x_limit",
+"pow_div_factorial_limit",
+"linear_recurrence_limit",
+"contraction_recurrence_limit",
+"numerator_vanishes_when_denominator_does",
+"one_sub_cos_limit",
+"exp_log_difference_quotient_limit",
+"telescoping_sum_limit",
+"integral_power_product_general"
+],
+"findings": [
+{
+"id": "polynomial_sum_derivative",
+"home": "S6",
+"used": "S7",
+"severity": "minor",
+"tools": [
+{"tool": "数学的帰納法（次数についての帰納法）", "stage": "S7", "where": "答案全体（n=0 と n=m→m+1 の構成）", "replaceable": true}
+],
+"fix": "多項式の微分は数IIの内容。各項 y^k の微分 k x^(k-1) と、定数倍・和の微分（有限個の項）で直接済む。帰納法は不要。",
+"patch": {
+"answer": "$n$を自然数、$a_0,\\dots,a_n,x$を実数とする。各$k$について$y^k$の$x$における微分係数は$kx^{k-1}$（$k=0$のときは$0$）である。定数倍の微分と和の微分により、$\\sum_{k=0}^{n}a_ky^k$の$x$における微分係数は$\\sum_{k=1}^{n}ka_kx^{k-1}$であり、特に微分可能である。添字を$k\\to k+1$とずらすと$\\sum_{k=0}^{n-1}(k+1)a_{k+1}x^k$となる。\n"
+},
+"keep_as_advanced": false
+},
+{
+"id": "cubic_monotone_iff_discriminant",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "平均値の定理（f'≥0 ⇒ 単調非減少）", "stage": "S8", "where": "「b^2≤3ac とする」段落の最終文", "replaceable": true}
+],
+"fix": "3次関数の増減は数IIの題意。平均値の定理は数IIIで初めて導入される。f(y)-f(x)=(y-x)Q(x,y) の Q を平方完成すれば、微分も平均値の定理も使わず両方向を示せる（数Iの平方完成のみ）。",
+"patch": {
+"answer": "$a>0$、$b,c,d$を実数とし、$f(x)=ax^3+bx^2+cx+d$とする。実数$x,y$について\n$f(y)-f(x)=(y-x)Q(x,y),\\quad Q(x,y)=a(x^2+xy+y^2)+b(x+y)+c$\nが成り立つ。$x^2+xy+y^2=\\dfrac34(x+y)^2+\\dfrac14(x-y)^2$を用いて$x+y$について平方完成すると\n$Q(x,y)=\\dfrac{3a}{4}\\left(x+y+\\dfrac{2b}{3a}\\right)^2+\\dfrac a4(x-y)^2+\\dfrac{3ac-b^2}{3a}$\nとなる。\n$b^2\\leq 3ac$とする。$a>0$なので右辺の3項はすべて$0$以上であり、$Q(x,y)\\geq 0$である。$x<y$なら$f(y)-f(x)=(y-x)Q(x,y)\\geq 0$なので、$f$は単調非減少である。\n逆に$f$が単調非減少とする。$h>0$に対して$x=-\\dfrac{b}{3a}-\\dfrac h2$、$y=-\\dfrac{b}{3a}+\\dfrac h2$とおくと、$x<y$、$y-x=h$、$x+y+\\dfrac{2b}{3a}=0$である。$Q(x,y)=\\dfrac{f(y)-f(x)}{y-x}\\geq 0$から$\\dfrac a4h^2+\\dfrac{3ac-b^2}{3a}\\geq 0$を得る。これが全ての$h>0$で成り立つので、$h$を小さくとると$\\dfrac{3ac-b^2}{3a}\\geq 0$となり、$a>0$より$b^2\\leq 3ac$である。\n"
+},
+"keep_as_advanced": true
+},
+{
+"id": "cubic_local_extremum_iff_discriminant",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "第2次導関数による極値の判定法", "stage": "S8", "where": "「逆に D>0 とし」段落の最後の2文（f''(x_0)=2s>0 から極小を結論）", "replaceable": true}
+],
+"fix": "3次関数の極値は数IIの題意。第2次導関数による判定は数IIIで導入される。答案の必要性側で既に使っている因数分解 f(y)-f(t)-f'(t)(y-t)=(y-t)^2(a(y+2t)+b) を使い、f(y)-f(x_0)=(y-x_0)^2(a(y-x_0)+s) と書けば、x_0 の近くで f(y)≥f(x_0) が代数だけで出る（必要性側は S6 の範囲なのでそのまま残す）。",
+"patch": {
+"answer": "$a\\neq 0$、$b,c,d$を実数とし、$f(x)=ax^3+bx^2+cx+d$とする。$f'(x)=3ax^2+2bx+c$であり、$3af'(x)=(3ax+b)^2-(b^2-3ac)$が成り立つ。\n$f$が$x$で極値をとるとする。$f'(x)=0$なので$(3ax+b)^2=b^2-3ac$であり、$b^2-3ac\\geq 0$である。$b^2-3ac=0$と仮定すると$3ax+b=0$となるので、$b=-3ax$、$c=3ax^2$である。これを代入すると全ての$y$で$f(y)-f(x)=a(y-x)^3$が成り立つ。$y-x$の符号によって右辺の符号が変わるので、$x$のどの近くでも$f(y)-f(x)$は正の値と負の値の両方をとる。これは極値であることに反する。よって$b^2-3ac>0$である。\n逆に$D=b^2-3ac>0$とし、$s=\\sqrt{D}>0$、$x_0=\\dfrac{-b+s}{3a}$とおく。$3ax_0+b=s$なので$3af'(x_0)=s^2-D=0$となり、$f'(x_0)=0$である。展開して確かめられる等式\n$f(y)-f(x_0)-f'(x_0)(y-x_0)=(y-x_0)^2\\bigl(a(y+2x_0)+b\\bigr)$\nに$f'(x_0)=0$を代入し、$a(y+2x_0)+b=a(y-x_0)+(3ax_0+b)=a(y-x_0)+s$を用いると\n$f(y)-f(x_0)=(y-x_0)^2\\bigl(a(y-x_0)+s\\bigr)$\nを得る。$|y-x_0|<\\dfrac{s}{|a|}$のとき$a(y-x_0)+s>0$なので、$x_0$の近くで$f(y)\\geq f(x_0)$が成り立つ。したがって$f$は$x_0$で極小となり、極値をもつ。\n"
+},
+"keep_as_advanced": true
+},
+{
+"id": "antitone_sum_integral_bounds",
+"home": "S8",
+"used": "S10",
+"severity": "note",
+"tools": [
+{"tool": "単調関数のリーマン積分可能性", "stage": "S10", "where": "答案第1文「単調関数なので f はこの区間で積分可能である」", "replaceable": false}
+],
+"fix": "題意の仮定が「単調非増加」だけで、積分の存在そのものを前提にしている。単調関数の積分可能性は高校範囲外（数IIIの定積分は連続関数が対象）。level の問題というより仮定の置き方の問題。高校向けには仮定に「連続」を足した別カードにするか、積分可能性は大学範囲の事実として注記して残す。主張を弱めるため patch は付けない。",
+"keep_as_advanced": true
+},
+{
+"id": "geometric_series_convergence_criterion",
+"home": "S8",
+"used": "S10",
+"severity": "note",
+"tools": [
+{"tool": "絶対収束（級数の無条件収束）の概念", "stage": "S10", "where": "題意そのもの、および答案「級数は絶対収束する」の段落", "replaceable": false}
+],
+"fix": "題意が「絶対収束」「無条件に和をもつ」を結論に含み、数IIIの無限級数（和の収束・非収束）を越える。形式化側の Summable に対応した述べ方と思われる。高校向けには「収束することと |r|<1 は同値」だけの別表現にするのが標準。答案の論法自体（項が0に収束しない⇒発散）は数IIIの範囲。",
+"keep_as_advanced": false
+},
+{
+"id": "geometric_series_tail",
+"home": "S8",
+"used": "S10",
+"severity": "minor",
+"tools": [
+{"tool": "絶対収束", "stage": "S10", "where": "答案第4文「この収束は絶対収束である」", "replaceable": true}
+],
+"fix": "題意は和の値だけを問うので、絶対収束の語は付随的。数IIIの言葉（|r| の級数も同様に収束する）に言い換える。形式側の Summable 結論に対応する注記と思われるため、主張は落とさず言い換えるにとどめる。",
+"patch": {
+"answer": "$a,r$を実数、$m$を自然数とし、$|r|<1$とする。$ar^{m+n}=ar^m\\cdot r^n$である。$\\sum_{n=0}^{k-1}r^n=\\dfrac{1-r^k}{1-r}$と$r^k\\to 0$から、無限等比級数$\\sum_{n=0}^{\\infty}r^n$は$\\dfrac{1}{1-r}$に収束する。$|r|<1$なので$|r|$についても同じ計算ができ、$\\sum_{n=0}^{\\infty}|r|^n$も収束する。したがって各項の絶対値を並べた級数も収束し、実数項の級数として無条件に和をもつ。定数$ar^m$を掛けると、与えられた級数は$\\dfrac{ar^m}{1-r}$に収束する。\n"
+},
+"keep_as_advanced": false
+},
+{
+"id": "arithmetic_geometric_series",
+"home": "S8",
+"used": "S10",
+"severity": "minor",
+"tools": [
+{"tool": "絶対収束", "stage": "S10", "where": "答案最終段落「級数は絶対収束する」", "replaceable": true}
+],
+"fix": "題意は和の値だけを問う。絶対収束の語を、|r| についての同じ計算で絶対値の級数も収束する、という数IIIの言葉に言い換える。主張は落とさない。",
+"patch": {
+"answer": "$r$を実数とし、$|r|<1$とする。$S_N=\\sum_{n=0}^{N}nr^n$とおく。$S_N-rS_N$を項ごとに計算すると\n$(1-r)S_N=\\sum_{n=1}^{N}r^n-Nr^{N+1}=\\dfrac{r(1-r^N)}{1-r}-Nr^{N+1}$\nである。$|r|<1$より$r^N\\to 0$である。また$|r|=\\dfrac{1}{1+h}$（$h>0$）と書くと、$r\\neq 0$のとき$(1+h)^{N+1}\\geq\\dfrac{N(N+1)}{2}h^2$なので$N|r|^{N+1}\\to 0$である（$r=0$なら明らかである）。したがって$(1-r)S_N\\to\\dfrac{r}{1-r}$であり、$S_N\\to\\dfrac{r}{(1-r)^2}$である。\nさらに$|r|<1$なので$|r|$についても同じ計算ができ、$\\sum_{n=0}^{\\infty}n|r|^n$も収束する。よって各項の絶対値を並べた級数も収束し、級数は実数項の級数として無条件に和をもつ。\n"
+},
+"keep_as_advanced": false
+}
+],
+"systematic": [
+"微分・積分カードの大半は一般の連続・微分可能関数を扱う題意で、home は S8（数III）になる。そのため平均値の定理・合成関数の微分・部分積分・置換積分の使用は違反でない。違反は、題意が3次関数など数II（多項式）に限られるのに数IIIの道具（平均値の定理、第2次導関数の判定法）を使う2枚に集中している。",
+"数IIの題意（3次関数の増減・極値）の標準解答は、平方完成と因数分解（f(y)-f(x), f(y)-f(t)-f'(t)(y-t) の因式分解）で書くのが学習順序に合う。cubic_minus_tangent_factorization の因数分解を土台にできる。",
+"級数のカードで「絶対収束」「無条件に和をもつ」と書く箇所は、形式化側の Summable に引きずられた表現で、高校範囲外（S10）。geometric_series_tail と arithmetic_geometric_series は言い換えで解消できるが、geometric_series_convergence_criterion は題意自体に含まれる。",
+"6分の1公式系（integral_sixth_formula など）は (x-α)^k の原始関数を、展開せず (x-α)^(k+1)/(k+1) として直接使う。厳密には1次式の合成の微分だが、数IIの教科書の6分の1公式の導出が同じ書き方をしているので違反にしていない。"
+],
+"home_assignments": {
+"polynomial_sum_derivative": "S6",
+"function_power_derivative": "S8",
+"sqrt_composite_derivative": "S8",
+"sin_cos_affine_derivative": "S8",
+"exponential_base_derivative": "S8",
+"log_abs_composite_derivative": "S8",
+"tangent_line_equation_form": "S6",
+"cubic_minus_tangent_factorization": "S6",
+"convex_function_above_tangent": "S8",
+"cubic_monotone_iff_discriminant": "S6",
+"cubic_local_extremum_iff_discriminant": "S6",
+"derivative_comparison_inequality": "S8",
+"unique_root_of_positive_derivative": "S8",
+"max_at_endpoint_or_critical_point": "S8",
+"max_at_derivative_sign_change": "S8",
+"integral_adjacent_intervals": "S8",
+"polynomial_definite_integral": "S6",
+"integral_sixth_formula": "S6",
+"integral_twelfth_formula": "S6",
+"integral_sin_power_reduction": "S8",
+"integral_reflection": "S8",
+"antitone_sum_integral_bounds": "S8",
+"derivative_of_integral_x_minus_t": "S8",
+"integral_equation_constant_term": "S6",
+"integral_equation_from_upper_limit": "S8",
+"integral_function_power_times_derivative": "S8",
+"integral_affine_power": "S8",
+"integral_semicircle": "S8",
+"integral_one_over_sum_of_squares": "S8",
+"integral_log_formula": "S8",
+"integral_x_mul_derivative": "S8",
+"integral_exp_mul_sin": "S8",
+"area_split_at_crossing": "S8",
+"area_parabola_and_line": "S6",
+"area_parabola_and_tangent": "S6",
+"area_parabola_two_tangents": "S6",
+"integral_inverse_function_identity": "S8",
+"geometric_sequence_convergence_criterion": "S8",
+"rational_sequence_limit": "S8",
+"sqrt_quadratic_sub_x_limit": "S8",
+"pow_div_factorial_limit": "S8",
+"linear_recurrence_limit": "S8",
+"contraction_recurrence_limit": "S8",
+"numerator_vanishes_when_denominator_does": "S8",
+"one_sub_cos_limit": "S8",
+"exp_log_difference_quotient_limit": "S8",
+"telescoping_sum_limit": "S8",
+"geometric_series_convergence_criterion": "S8",
+"geometric_series_tail": "S8",
+"arithmetic_geometric_series": "S8",
+"integral_power_product_general": "S8"
+}
+}

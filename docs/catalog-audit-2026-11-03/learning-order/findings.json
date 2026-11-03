@@ -1,0 +1,4136 @@
+[
+ {
+  "id": "exponent_laws_natural_power",
+  "home": "S2",
+  "used": "S7",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "数学的帰納法（nについての帰納法で三つの法則を示す）",
+    "stage": "S7",
+    "where": "冒頭の「三つの等式をnについての帰納法で示す」から最終行「すべてのnで成り立つ」まで。n=0の確認、nから n+1 への移行の全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "指数法則は中2の式の計算（単項式の乗除）の内容。教科書どおり「aをn個掛けたもの」の個数の数え上げで示せる。再帰定義と帰納法は不要。",
+  "patch": {
+   "answer": "$a,b$を実数、$m,n$を$0$以上の整数とする。$a^n$は$a$を$n$個掛けたものであり、$a^0=1$とする。$1$を掛けても値は変わらない。\n$a^m a^n$について。$m,n$がともに$1$以上なら、$a$を$m$個掛けたものに$a$を$n$個掛けたものを掛けるので、$a$を全部で$m+n$個掛けたものになり、$a^{m+n}$に等しい。$n=0$なら$a^m a^0=a^m\\cdot 1=a^{m+0}$であり、$m=0$なら同様に$a^0 a^n=a^n=a^{0+n}$である。\n$(a^m)^n$について。$m,n$がともに$1$以上なら、$a^m$を$n$個掛けることになり、$a$を$m$個ずつ$n$組、全部で$mn$個掛けたものになるので$a^{mn}$に等しい。$n=0$なら$(a^m)^0=1=a^0=a^{m\\cdot 0}$である。$m=0$なら$(a^0)^n=1^n=1=a^0=a^{0\\cdot n}$である。\n$(ab)^n$について。$n\\geq 1$なら、$ab$を$n$個掛けたものであり、掛ける順序を変えても積は変わらないので、$a$どうし、$b$どうしをまとめて$a^n b^n$に等しい。$n=0$なら$(ab)^0=1=1\\cdot 1=a^0 b^0$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L1"
+ },
+ {
+  "id": "sqrt_lt_sqrt_iff_of_nonneg",
+  "home": "S3",
+  "used": "S4",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "背理法（「√b≤√aと仮定すると…矛盾する」）",
+    "stage": "S4",
+    "where": "第2段落（逆向きの証明）。√b≤√a の仮定から b≤a を導き a<b と矛盾させる部分",
+    "replaceable": true
+   }
+  ],
+  "fix": "背理法は数Iの命題で初めて導入される（中学の平方根の単元にはない）。逆向きは (√b-√a)(√b+√a)=b-a>0 と √b+√a>0 から直接示せる。",
+  "patch": {
+   "answer": "$a,b$を$0$以上の実数とする。$\\sqrt{a}<\\sqrt{b}$なら、$\\sqrt{b}>0$であり、$b-a=(\\sqrt{b}-\\sqrt{a})(\\sqrt{b}+\\sqrt{a})>0$となるので$a<b$である。\n逆に$a<b$とする。$b>a\\geq 0$より$b>0$である。$\\sqrt{b}\\geq 0$かつ$(\\sqrt{b})^2=b>0$なので$\\sqrt{b}>0$であり、$\\sqrt{b}+\\sqrt{a}>0$である。$(\\sqrt{b}-\\sqrt{a})(\\sqrt{b}+\\sqrt{a})=b-a>0$を$\\sqrt{b}+\\sqrt{a}>0$で割ると$\\sqrt{b}-\\sqrt{a}>0$となる。よって$\\sqrt{a}<\\sqrt{b}$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L1"
+ },
+ {
+  "id": "fundamental_theorem_symmetric_polynomials",
+  "home": "S10",
+  "used": "S10",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "n変数多項式環での辞書式順序による整列帰納法（先頭項の消去）",
+    "stage": "S10",
+    "where": "第1段落（辞書式順序と整列順序）、第3・4段落（先頭項の積と帰納法の仮定）",
+    "replaceable": false
+   }
+  ],
+  "fix": "題意（任意のnの対称多項式の基本定理）が高校範囲外。levelの値が整数の2で、他の 'middle'/'high' と形式が異なり、貼り方が不正。levelを高校の枠から外すか上級として明示する。数IIで扱う2・3変数の対称式（x+y, xy 等）は別カードにする。答案は大学の初歩の標準的な証明なので、本カードは削除せず上級カードとして残す。",
+  "keep_as_advanced": true,
+  "batch": "L1"
+ },
+ {
+  "id": "ineq_mul_sign_rule",
+  "home": "S3",
+  "used": "S1",
+  "severity": "note",
+  "tools": [],
+  "fix": "答案は文字式の分配法則だけで書けていて問題ない。題意の「不等式の性質（負の数を掛けると向きが変わる）」は段階表では数I（一次不等式、S4）の内容なので、level: middle は低すぎる。level を high にするか、題意を中学の数値例に限る。",
+  "keep_as_advanced": false,
+  "batch": "L2"
+ },
+ {
+  "id": "range_of_sum_and_difference",
+  "home": "S3",
+  "used": "S1",
+  "severity": "note",
+  "tools": [],
+  "fix": "答案は不等式の辺々の加法と -1 倍だけで足りている。題意の「式の値の範囲」は数I（不等式、S4）の単元なので、level: middle は低すぎる。level を high にする。",
+  "keep_as_advanced": false,
+  "batch": "L2"
+ },
+ {
+  "id": "linear_ineq_by_coeff_sign",
+  "home": "S3",
+  "used": "S1",
+  "severity": "note",
+  "tools": [],
+  "fix": "答案の道具は移項と両辺を割る操作だけ。題意の「一次不等式を文字係数で解く」は数I（S4）の単元なので、level: middle は低すぎる。level を high にする。",
+  "keep_as_advanced": false,
+  "batch": "L2"
+ },
+ {
+  "id": "sq_add_sq_ge_two_mul",
+  "home": "S3",
+  "used": "S3",
+  "severity": "note",
+  "tools": [],
+  "fix": "答案は (a-b)^2 の展開と平方が0以上という性質だけで、中3で足りる。ただし題意の「不等式の証明（相加相乗の原型）」は数II式と証明（S6）の単元で、level: middle は低すぎる。level を high にするか、中学向けの別表現にする。",
+  "keep_as_advanced": false,
+  "batch": "L2"
+ },
+ {
+  "id": "compare_powers_nonneg",
+  "home": "S4",
+  "used": "S6",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "一般の n での因数分解 b^n-a^n=(b-a)(b^{n-1}+...+a^{n-1})",
+    "stage": "S6",
+    "where": "答案1行目。以降の2行はこの恒等式の第2因数の符号に依存する",
+    "replaceable": true
+   }
+  ],
+  "fix": "一般の n の差の因数分解は数II（因数定理 x^n-a^n）以降の道具。数Iの不等式の性質（0以上の数を両辺に掛ける）を k=1 から n-1 まで順に使えば、順方向も対偶側（a>b なら a^n>b^n）も書ける。",
+  "patch": {
+   "answer": "$n$を正の整数、$a,b$を$0$以上の実数とする。\n$a\\leq b$とする。$a^k\\leq b^k$が成り立つとき、$a\\geq 0$を掛けて$a^{k+1}\\leq b^ka$、$a\\leq b$に$b^k\\geq 0$を掛けて$b^ka\\leq b^{k+1}$を得るので、$a^{k+1}\\leq b^{k+1}$である。$k=1$では$a\\leq b$なので、これを$k=1,2,\\ldots,n-1$の順に繰り返して$a^n\\leq b^n$を得る。\n逆に$a>b$とする。このとき$a>0$である。$a^k>b^k$が成り立つとき、$a>0$を掛けて$a^{k+1}>b^ka$、$a>b$に$b^k\\geq 0$を掛けて$b^ka\\geq b^{k+1}$を得るので、$a^{k+1}>b^{k+1}$である。$k=1$では$a>b$なので、同様に繰り返して$a^n>b^n$を得る。対偶をとると、$a^n\\leq b^n$から$a\\leq b$が従う。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L2"
+ },
+ {
+  "id": "add_dvd_pow_add_pow_odd",
+  "home": "S5",
+  "used": "S7",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "数学的帰納法（奇数 n から n+2 へ）",
+    "stage": "S7",
+    "where": "答案全体（n=1 の確認と n から n+2 への推移）。数Aの整数の議論で帰納法を使っているので S7 と数える",
+    "replaceable": true
+   }
+  ],
+  "fix": "x ≡ -y (mod x+y) と合同式の累乗の性質（数A）で一行で済む。x+y=0 のときは別扱いにする。",
+  "patch": {
+   "answer": "$x,y$を整数、$n$を正の奇数とする。\n$x+y=0$のとき、$y=-x$であり、$n$が奇数なので$x^n+y^n=x^n+(-x)^n=0$である。$0$は$0$の倍数なので、$x+y$は$x^n+y^n$を割り切る。\n$x+y\\neq 0$のとき、$m=|x+y|$とおく。$x-(-y)=x+y$は$m$の倍数なので、$x\\equiv -y\\pmod{m}$である。合同式の累乗の性質より$x^n\\equiv(-y)^n\\pmod{m}$であり、$n$が奇数なので$(-y)^n=-y^n$である。よって$x^n+y^n\\equiv 0\\pmod{m}$であり、$m$したがって$x+y$は$x^n+y^n$を割り切る。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L2"
+ },
+ {
+  "id": "prime_dvd_of_dvd_pow",
+  "home": "S5",
+  "used": "S7",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "数学的帰納法（指数 n についての帰納）",
+    "stage": "S7",
+    "where": "答案全体。n=0 の確認と n から n+1 への推移",
+    "replaceable": true
+   }
+  ],
+  "fix": "素因数分解の一意性（数A、中1からの素因数分解の延長）で、a^n に現れる素数は a に現れる素数だけと示せば帰納法は要らない。",
+  "patch": {
+   "answer": "$p$を素数、$a$を整数、$n$を$0$以上の整数とし、$p$が$a^n$を割り切るとする。\n$n=0$のとき$a^0=1$であり、$p$は$1$を割り切らないので、この場合は仮定が成り立たない。\n$n\\geq 1$とする。$a=0$ならば$p$は$a$を割り切る。$a\\neq 0$のとき、$|a|=1$とすると$|a^n|=1$を素数$p$が割り切ることになり不可能なので、$|a|\\geq 2$である。$|a|=q_1q_2\\cdots q_r$（$q_i$は素数）と素因数分解すると、$|a^n|=|a|^n$の素因数分解は各$q_i$を$n$個ずつ並べたもので、現れる素数は$q_1,\\ldots,q_r$だけである。$p$は$|a|^n$を割り切る素数であり、素因数分解の一意性により$p$はこの中のいずれかの$q_i$に等しい。よって$p$は$|a|$を割り切り、したがって$a$を割り切る。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L2"
+ },
+ {
+  "id": "coprime_pow_pow",
+  "home": "S5",
+  "used": "S7",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "数学的帰納法（m、n についての帰納）",
+    "stage": "S7",
+    "where": "答案の2段落目「m についての帰納法から」と、n についての同様の議論",
+    "replaceable": true
+   }
+  ],
+  "fix": "素数に注目する。公約数が1でなければ共通の素因数 p があり、p が a^m と b^n を割り切ると p が a と b をともに割り切るので仮定に反する。",
+  "patch": {
+   "answer": "$a,b$を$\\gcd(a,b)=1$を満たす整数、$m,n$を$0$以上の整数とし、$g=\\gcd(a^m,b^n)$とおく。$g\\neq 1$と仮定する。$g=0$ならどの素数も$g$を割り切り、$g\\geq 2$なら$g$の素因数がある。いずれにせよ、$g$を割り切る素数$p$がある。$p$は$a^m$と$b^n$を割り切る。素数$p$が$a^m$を割り切るならば$p$は$a$を割り切り（素因数分解の一意性による。$m=0$なら$a^0=1$を素数が割り切ることはないので起こらない）、同様に$p$は$b$を割り切る。すると$p$が$a,b$の公約数となり、$\\gcd(a,b)=1$に反する。よって$\\gcd(a^m,b^n)=1$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L2"
+ },
+ {
+  "id": "base_expansion_exists_unique",
+  "home": "S5",
+  "used": "S7",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "強い帰納法（n についての帰納による存在と一意性）",
+    "stage": "S7",
+    "where": "答案冒頭「n についての強い帰納法で示す」と、存在・一意性の両段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "存在は「b で割って商をまた b で割る」操作を繰り返し、商が正の整数として減り続けることはできないので有限回で0に達する、と算法として書く。一意性は、各桁を割り算の一意性（余りと商の一意性）から下の桁から順に決めていく形で書く。長さが10行を超えるため patch は付けない。帰納法による既存の書き方は、既習者向けの発展として別カードに残す価値がある。",
+  "keep_as_advanced": true,
+  "batch": "L2"
+ },
+ {
+  "id": "digit_length_iff_pow_bounds",
+  "home": "S5",
+  "used": "S6",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "一般の k での恒等式 (b-1)(1+b+...+b^k)=b^{k+1}-1（等比和・因数分解）",
+    "stage": "S6",
+    "where": "答案2行目「n≤(b-1)(1+b+⋯+b^k)=b^{k+1}-1」",
+    "replaceable": true
+   }
+  ],
+  "fix": "(b-1)b^i=b^{i+1}-b^i と書いて隣り合う項を打ち消すだけで同じ上界が出る（数Aの範囲）。",
+  "patch": {
+   "answer": "$b$を$2$以上の整数、$k,n$を$0$以上の整数とする。\n$n$が$k+1$桁で桁を$d_0,\\ldots,d_k$とする。$d_k\\geq 1$なので$n\\geq b^k$である。また各$d_i\\leq b-1$なので$n\\leq(b-1)b^k+(b-1)b^{k-1}+\\cdots+(b-1)$である。$(b-1)b^i=b^{i+1}-b^i$なので、右辺は$(b^{k+1}-b^k)+(b^k-b^{k-1})+\\cdots+(b-1)$であり、隣り合う項が打ち消し合って$b^{k+1}-1$に等しい。よって$n<b^{k+1}$である。\n逆に$b^k\\leq n<b^{k+1}$とする。$n\\geq 1$なので$n$の桁数は$j+1$（$j\\geq 0$）と書ける。いま示したことから$b^j\\leq n<b^{j+1}$である。したがって$b^j<b^{k+1}$と$b^k<b^{j+1}$が成り立つ。$b\\geq 2$なので累乗は指数について増加し、$j<k+1$と$k<j+1$を得る。よって$j=k$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L2"
+ },
+ {
+  "id": "low_digits_remainder",
+  "home": "S5",
+  "used": "S6",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "一般の k での恒等式 (b-1)(1+b+...+b^{k-1})=b^k-1（等比和・因数分解）",
+    "stage": "S6",
+    "where": "答案2行目「0≤v≤(b-1)(1+b+⋯+b^{k-1})=b^k-1」",
+    "replaceable": true
+   }
+  ],
+  "fix": "(b-1)b^i=b^{i+1}-b^i と書いて隣り合う項を打ち消すだけで v≤b^k-1 が出る。",
+  "patch": {
+   "answer": "$b$を$2$以上の整数、$d_0,\\ldots,d_{k-1}$を$b$未満の$0$以上の整数、$e_0,\\ldots,e_{j-1}$を$0$以上の整数とする。$v=\\sum_{i<k}d_ib^i$、$w=\\sum_{i<j}e_ib^i$とおく。$d_i\\leq b-1$なので$0\\leq v\\leq(b-1)b^{k-1}+\\cdots+(b-1)$である。$(b-1)b^i=b^{i+1}-b^i$なので、右辺は$(b^k-b^{k-1})+\\cdots+(b-1)$であり、隣り合う項が打ち消し合って$b^k-1$に等しい。よって$0\\leq v<b^k$である。$v+b^kw$は$b^k$の倍数$b^kw$と$0\\leq v<b^k$を満たす$v$の和なので、$b^k$で割った余りは$v$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L2"
+ },
+ {
+  "id": "congruence_pow",
+  "home": "S5",
+  "used": "S7",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "数学的帰納法（k についての帰納）",
+    "stage": "S7",
+    "where": "答案1行目「k についての帰納法で a-b が a^k-b^k を割り切ることを示す」と2〜3行目の推移",
+    "replaceable": true
+   }
+  ],
+  "fix": "数Aの合同式の性質（積の合同）を指数の分だけ繰り返す形に書き替える。ただし題意が「積の合同の繰り返し」そのものなので、形式的な帰納法の宣言を外して教科書どおりの書き方にするだけである。実質は同じ議論なので、厳密さを重視する版は発展側として残せる。",
+  "patch": {
+   "answer": "$a,b,n$を整数、$k$を$0$以上の整数とし、$n$が$a-b$を割り切るとする。まず積の合同を確認する。$a\\equiv b$、$c\\equiv d\\pmod{n}$ならば、$ac-bd=a(c-d)+(a-b)d$は$n$の倍数なので、$ac\\equiv bd\\pmod{n}$である。\n$a^0=b^0=1$なので$k=0$のとき成り立つ。$a\\equiv b$と$a^j\\equiv b^j$に積の合同を使うと$a^{j+1}\\equiv b^{j+1}$を得る。これを$j=0,1,\\ldots,k-1$の順に繰り返すと$a^k\\equiv b^k\\pmod{n}$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L2"
+ },
+ {
+  "id": "prime_three_mod_four_dvd_sum_of_squares",
+  "home": "S5",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "フェルマーの小定理 t^{p-1}≡1 (mod p)",
+    "stage": "S10",
+    "where": "答案3段落目「フェルマーの小定理より t^{p-1}≡1」。高校の学習指導要領の範囲外",
+    "replaceable": true
+   }
+  ],
+  "fix": "フェルマーの小定理を引用せず、数Aの道具（互いに素ならば t·1,…,t(p-1) の余りは 1,…,p-1 の並べ替え、互いに素な数での約分）で t^{p-1}≡1 を示してから使う。10行以内に収まる。進んだ証明として引用版も別カードに残す価値がある。",
+  "patch": {
+   "answer": "$p$を$4$で割って$3$余る素数、$a,b$を整数とし、$a^2+b^2\\equiv 0\\pmod p$とする。\n$p$が$b$を割り切らないと仮定する。$p$は素数なので$\\gcd(b,p)=1$であり、ベズーの等式から$bc\\equiv 1\\pmod p$となる整数$c$がある。$t=ac$とおくと、$a^2\\equiv -b^2$の両辺に$c^2$を掛けて$t^2\\equiv -1\\pmod p$である。特に$p$は$t$を割り切らない（割り切るなら$0\\equiv -1$となる）。\nここで$t^{p-1}\\equiv 1\\pmod p$を示す。$\\gcd(t,p)=1$なので、$0\\leq i<p$の整数$i$について$ti$を$p$で割った余りは$0,1,\\ldots,p-1$の並べ替えであり、$i=0$の余りが$0$なので、$t\\cdot 1,\\ t\\cdot 2,\\ \\ldots,\\ t(p-1)$の余りは$1,\\ldots,p-1$の並べ替えである。積をとると$t^{p-1}(p-1)!\\equiv(p-1)!\\pmod p$である。素数$p$は$1,\\ldots,p-1$のどれも割り切らないので$(p-1)!$を割り切らず、$\\gcd((p-1)!,p)=1$である。よって両辺から$(p-1)!$を約して$t^{p-1}\\equiv 1\\pmod p$を得る。\n$p=4k+3$とおくと$\\dfrac{p-1}{2}=2k+1$は奇数である。よって$t^{p-1}=(t^2)^{2k+1}\\equiv(-1)^{2k+1}=-1\\pmod p$である。したがって$1\\equiv -1$、すなわち$p$は$2$を割り切るが、$p\\geq 3$なので矛盾する。\nゆえに$p$は$b$を割り切る。すると$p$は$a^2$を割り切り、$p$は素数なので$a$を割り切る。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L2"
+ },
+ {
+  "id": "sign_change_unique_root_between",
+  "home": "S4",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "中間値の定理（連続関数）",
+    "stage": "S8",
+    "where": "答案1文目「$f$は連続で…中間値の定理により…解がある」（存在証明の全体）",
+    "replaceable": true
+   }
+  ],
+  "fix": "存在も一意性も、判別式と因数分解$f=a(x-\\alpha)(x-\\beta)$で書ける。$a=0$は一次式として別扱いにする。",
+  "patch": {
+   "answer": "$a,b,c,p,q$を実数とし、$p<q$、$f(x)=ax^2+bx+c$、$f(p)f(q)<0$とする。\n$a=0$のとき、$f(x)=bx+c$であり、$f(p)\\neq f(q)$より$b\\neq 0$である。$x_0=-\\frac{c}{b}$とおくと$f(x)=b(x-x_0)$なので、$f(p)f(q)=b^2(p-x_0)(q-x_0)<0$となり、$p<x_0<q$である。解は$x_0$だけだから、$p<x<q$の解はちょうど1つである。\n$a\\neq 0$のとき、$f(p)$と$f(q)$は異符号なので、一方は$a$と異符号である。それを$f(u)$とすると$af(u)<0$である。$D=b^2-4ac$とおくと$4af(u)=(2au+b)^2-D$なので、$D>(2au+b)^2\\geq 0$となる。$\\alpha=\\frac{-b-\\sqrt{D}}{2a}$、$\\beta=\\frac{-b+\\sqrt{D}}{2a}$とおくと、$\\alpha\\neq\\beta$で$f(x)=a(x-\\alpha)(x-\\beta)$であり、解は$\\alpha,\\beta$だけである。\n$f(p)f(q)=a^2(p-\\alpha)(q-\\alpha)(p-\\beta)(q-\\beta)<0$なので、$\\alpha,\\beta$は$p,q$と異なる。実数$r\\neq p,q$に対し、$(p-r)(q-r)<0$は$p<r<q$と同値である（$r$が$p,q$の外にあれば2因数は同符号）。$(p-\\alpha)(q-\\alpha)$と$(p-\\beta)(q-\\beta)$の積が負なので、一方だけが負、すなわち$\\alpha,\\beta$のうちちょうど1つが$p<x<q$にある。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L3"
+ },
+ {
+  "id": "inequality_solution_set_determines_coefficients",
+  "home": "S4",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "多項式関数の連続性（開区間上で負なら端点で$\\leq 0$）",
+    "stage": "S8",
+    "where": "答案2段落目「$f$は連続で、$(p,q)$上で$f<0$なので、閉区間$[p,q]$上で$f\\leq 0$」。これで$f(p)=f(q)=0$を導いている",
+    "replaceable": true
+   }
+  ],
+  "fix": "連続性を使わず、中点での値の恒等式で$a>0$、判別式で$D>0$を出し、解集合$(\\alpha,\\beta)=(p,q)$から端点を比べる。",
+  "patch": {
+   "answer": "$a,b,c,p,q$を実数とし、$p<q$、$f(x)=ax^2+bx+c$とする。$f(x)<0$の解全体が$(p,q)$であるとする。$m=\\frac{p+q}{2}$とおく。\n$p,q$は解でないので$f(p)\\geq 0$、$f(q)\\geq 0$であり、$m$は解なので$f(m)<0$である。展開すると$\\frac{f(p)+f(q)}{2}-f(m)=\\frac{a(q-p)^2}{4}$なので、左辺が正であることから$a>0$を得る。\n$D=b^2-4ac$とおくと$4af(m)=(2am+b)^2-D<0$なので$D>0$である。$\\alpha=\\frac{-b-\\sqrt{D}}{2a}<\\beta=\\frac{-b+\\sqrt{D}}{2a}$とおくと、$f(x)=a(x-\\alpha)(x-\\beta)$である。$a>0$なので$f(x)<0$の解全体は$(\\alpha,\\beta)$である。これが$(p,q)$に等しいから、端点が一致して$\\alpha=p$、$\\beta=q$である。\n解の公式から$\\alpha+\\beta=-\\frac{b}{a}$、$\\alpha\\beta=\\frac{c}{a}$なので、$b=-a(p+q)$、$c=apq$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L3"
+ },
+ {
+  "id": "product_over_distinct_roots_divides",
+  "home": "S6",
+  "used": "S7",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "数学的帰納法",
+    "stage": "S7",
+    "where": "第1段落「kについての帰納法で」と、第2段落の k から k+1 への推移",
+    "replaceable": true
+   }
+  ],
+  "fix": "「割り切れるような最大の k（0..n）」を取り、k<n と仮定して矛盾を導く形に書き替えられる。因数定理（S6）と代入だけで済む。",
+  "patch": {
+   "answer": "$a_1,\\dots,a_n$を相異なる実数とし、$P(x)$を各$i$で$P(a_i)=0$を満たす実数係数の整式とする。$0\\leq k\\leq n$の整数$k$のうち、$P(x)$が$(x-a_1)\\cdots(x-a_k)$で割り切れるものを考える。$k=0$（積は$1$）はこれを満たすので、そのような$k$の最大値$k_0$がある。$k_0<n$と仮定して矛盾を導く。\n$P(x)=(x-a_1)\\cdots(x-a_{k_0})S(x)$と書ける。$x=a_{k_0+1}$を代入すると、$P(a_{k_0+1})=0$であり、$a_{k_0+1}-a_i\\neq 0$ $(i\\leq k_0)$だから$S(a_{k_0+1})=0$である。因数定理により$S(x)=(x-a_{k_0+1})T(x)$となる整式$T(x)$があり、$P(x)$は$(x-a_1)\\cdots(x-a_{k_0+1})$で割り切れる。これは$k_0$の最大性に反する。よって$k_0=n$であり、$P(x)$は$(x-a_1)\\cdots(x-a_n)$で割り切れる。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L4"
+ },
+ {
+  "id": "even_odd_coefficient_sums_by_evaluation",
+  "home": "S6",
+  "used": "S7",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "Σ記号（和の記号）",
+    "stage": "S7",
+    "where": "第1段落の P(x)=Σc_i x^i、P(-1)=Σ(-1)^i c_i と、第2段落の Σ(1±(-1)^i)/2·c_i（数列の単元で初出）",
+    "replaceable": true
+   }
+  ],
+  "fix": "Σ を c_0+c_1x+…+c_nx^n の展開形に置き換え、足す・引くで奇数次か偶数次の項が消えると説明すればよい。",
+  "patch": {
+   "answer": "$P(x)=c_0+c_1x+c_2x^2+\\cdots+c_nx^n$を実数係数の整式とする。$P(1)=c_0+c_1+c_2+\\cdots+c_n$、$P(-1)=c_0-c_1+c_2-\\cdots+(-1)^nc_n$である（奇数次の項だけ符号が変わる）。\n辺々を足すと、奇数次の項は打ち消し合い、偶数次の項は2倍になる。よって$\\frac{P(1)+P(-1)}{2}$は偶数次の項の係数の和である。辺々を引くと、偶数次の項は打ち消し合い、奇数次の項は2倍になる。よって$\\frac{P(1)-P(-1)}{2}$は奇数次の項の係数の和である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L4"
+ },
+ {
+  "id": "coefficient_comparison_for_polynomial_identity",
+  "home": "S6",
+  "used": "S7",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "Σ記号（和の記号）",
+    "stage": "S7",
+    "where": "題意（statement/conclusion/assumptions）と answer の F(x)=Σc_i x^i",
+    "replaceable": true
+   }
+  ],
+  "fix": "数II「恒等式」の題意に数Bの Σ が入っている。statement 等を a_0+a_1x+…+a_{n-1}x^{n-1} の形に直すのが望ましい。answer は Σ なしの patch を付けた（statement を直さない場合でも主張は同じ）。",
+  "patch": {
+   "answer": "$n$を自然数とし、実数$a_i,b_i$ $(0\\leq i<n)$について、すべての実数$x$で$a_0+a_1x+\\cdots+a_{n-1}x^{n-1}=b_0+b_1x+\\cdots+b_{n-1}x^{n-1}$が成り立つとする。$c_i=a_i-b_i$とおき、$F(x)=c_0+c_1x+\\cdots+c_{n-1}x^{n-1}$とすると、$F(x)$はすべての実数$x$で$0$である。\nもし係数のどれかが$0$でなければ、$F(x)$は$0$でない整式である。$0$でない整式の解の個数は次数以下で有限だが、$F(x)$は無限個の実数で$0$になるので矛盾する。よってすべての$i$で$c_i=0$、すなわち$a_i=b_i$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L4"
+ },
+ {
+  "id": "rational_root_theorem",
+  "home": "S6",
+  "used": "S7",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "Σ記号（和の記号）",
+    "stage": "S7",
+    "where": "第1段落の P(x)=Σc_i x^i と第2段落の Σc_i m^i n^{d-i}=0",
+    "replaceable": true
+   }
+  ],
+  "fix": "Σ を c_d m^d+…+c_0 n^d の展開形に置き換えれば、割り算の議論は変わらない。",
+  "patch": {
+   "answer": "$P(x)$を整数係数の整式とし、$m,n$を互いに素な整数で$n\\neq 0$, $P\\left(\\frac{m}{n}\\right)=0$とする。$P=0$のときは定数項と最高次の係数がともに$0$であり、どの整数も$0$を割り切るので主張は成り立つ。以下$P\\neq 0$とし、$P(x)=c_dx^d+c_{d-1}x^{d-1}+\\cdots+c_1x+c_0$ $(c_d\\neq 0)$と書く。\n等式に$n^d$を掛けると$c_dm^d+c_{d-1}m^{d-1}n+\\cdots+c_1mn^{d-1}+c_0n^d=0$である。$c_0n^d$以外の項はすべて$m$で割り切れるので、$m$は$c_0n^d$を割り切る。$m,n$は互いに素だから$m$は$c_0$を割り切る。同様に$c_dm^d$以外の項はすべて$n$で割り切れるので、$n$は$c_dm^d$を割り切り、$n$は$c_d$を割り切る。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L4"
+ },
+ {
+  "id": "cubic_root_power_sum_recurrence",
+  "home": "S6",
+  "used": "S7",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "三項間漸化式（一般の n についての数列 S_n の関係式）",
+    "stage": "S7",
+    "where": "題意の結論 S_{n+3}+pS_{n+2}+qS_{n+1}+rS_n=0（答案自体は α^n を掛けて足すだけで S6 以内）",
+    "replaceable": false
+   }
+  ],
+  "fix": "答案は問題ない。題意が数Bの漸化式の形で、topic は数II。level の貼り方がやや低い（境界事例）。S_3, S_4 などの具体的な n に限れば数II。",
+  "keep_as_advanced": false,
+  "batch": "L4"
+ },
+ {
+  "id": "conjugate_respects_arithmetic",
+  "home": "S6",
+  "used": "S7",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "数学的帰納法",
+    "stage": "S7",
+    "where": "第3段落「累乗の式は…n についての帰納法で得る」と n=0 から n+1 への推移",
+    "replaceable": true
+   }
+  ],
+  "fix": "積の式を繰り返し使う（z を n 個掛けたものの共役）形にすれば帰納法を名乗らずに済む。",
+  "patch": {
+   "answer": "$z=a+bi$, $w=c+di$（$a,b,c,d$は実数）とし、$n$を$0$以上の整数とする。$\\overline{z+w}=(a+c)-(b+d)i=\\overline{z}+\\overline{w}$である。\n$\\overline{zw}=(ac-bd)-(ad+bc)i$であり、$\\overline{z}\\,\\overline{w}=(a-bi)(c-di)=(ac-bd)-(ad+bc)i$なので、両者は等しい。\n累乗の式は、積の式を繰り返し使って得る。$n=0$では両辺とも$1$である。$n\\geq 1$では$z^n$は$z$を$n$個掛けたものなので、$\\overline{z^n}=\\overline{z\\cdot z\\cdots z}=\\overline{z}\\cdot\\overline{z}\\cdots\\overline{z}=\\overline{z}^{\\,n}$である。\n$w\\neq 0$のとき、$\\overline{z/w}\\cdot\\overline{w}=\\overline{(z/w)\\cdot w}=\\overline{z}$である。$\\overline{w}\\neq 0$なので、$\\overline{z/w}=\\overline{z}/\\overline{w}$を得る。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L4"
+ },
+ {
+  "id": "conjugate_root_theorem_real_polynomial",
+  "home": "S6",
+  "used": "S7",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "Σ記号（和の記号）",
+    "stage": "S7",
+    "where": "P(x)=Σc_i x^i と、P(\\bar α)=Σc_i \\bar α^i=Σ\\overline{c_i α^i} の連鎖",
+    "replaceable": true
+   }
+  ],
+  "fix": "Σ を c_n x^n+…+c_0 の展開形に置き換える。共役が和・積・累乗を保つ性質は直前の card（S6）で足りている。",
+  "patch": {
+   "answer": "$P(x)=c_nx^n+\\cdots+c_1x+c_0$を実数係数の整式とし、$\\alpha$を$P(\\alpha)=0$を満たす複素数とする。共役は和と積と累乗を保ち、$c_k$は実数なので$\\overline{c_k}=c_k$である。よって各項で$\\overline{c_k\\alpha^k}=\\overline{c_k}\\,\\overline{\\alpha}^{\\,k}=c_k\\overline{\\alpha}^{\\,k}$が成り立つ。これらを足して$P(\\overline{\\alpha})=c_n\\overline{\\alpha}^{\\,n}+\\cdots+c_1\\overline{\\alpha}+c_0=\\overline{c_n\\alpha^n+\\cdots+c_1\\alpha+c_0}=\\overline{P(\\alpha)}=\\overline{0}=0$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L4"
+ },
+ {
+  "id": "rpow_add_exponent_law",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数 log と指数関数 e^t（実数べきを a^t=e^{t log a} で定義し、e^{u+v}=e^u e^v を使う）",
+    "stage": "S8",
+    "where": "答案の全行（定義と加法法則の適用）",
+    "replaceable": true
+   }
+  ],
+  "fix": "数IIの定義（実数べきは有理数列の極限、極限は直観的）に戻し、有理数の指数法則を極限でうつす。e の定義による証明は既習者向けに別カード化できる。",
+  "patch": {
+   "answer": "$a>0$とし、$x,y$を実数とする。実数のべきは、有理数列の極限で定める（数IIの定義。極限は直観的に用いる）。有理数$r,s$については指数法則$a^{r+s}=a^ra^s$が成り立つ。$x$に収束する有理数列$r_n$と、$y$に収束する有理数列$s_n$をとると、$r_n+s_n$は$x+y$に収束する有理数列で、$a^{r_n+s_n}=a^{r_n}a^{s_n}$である。$n\\to\\infty$とすると、左辺は$a^{x+y}$に、右辺は$a^xa^y$に近づく。よって$a^{x+y}=a^xa^y$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L5"
+ },
+ {
+  "id": "rpow_mul_exponent_law",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数 log と指数関数 e^t（a^t=e^{t log a}、log a^x=x log a）",
+    "stage": "S8",
+    "where": "答案の全行",
+    "replaceable": true
+   }
+  ],
+  "fix": "有理数列の極限による定義に戻し、有理数の指数法則 (a^r)^s=a^{rs} を二段階の極限でうつす。",
+  "patch": {
+   "answer": "$a>0$とし、$x,y$を実数とする。実数のべきは、有理数列の極限で定める（数IIの定義。極限は直観的に用いる）。有理数$r,s$については$(a^r)^s=a^{rs}$が成り立つ。$x$に収束する有理数列$r_n$と、$y$に収束する有理数列$s_m$をとる。まず有理数$s$を固定すると$(a^{r_n})^s=a^{r_ns}$であり、$n\\to\\infty$とすると左辺は$(a^x)^s$、右辺は$a^{xs}$に近づくので、$(a^x)^s=a^{xs}$である。ここで$a^x>0$である。この$s$を$s_m$にして$m\\to\\infty$とすると、左辺は$(a^x)^y$に近づき、右辺は指数$xs_m$が$xy$に近づくので$a^{xy}$に近づく。よって$(a^x)^y=a^{xy}$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L5"
+ },
+ {
+  "id": "mul_rpow_base_law",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数 log と指数関数 e^t（a^t=e^{t log a}）",
+    "stage": "S8",
+    "where": "答案の全行",
+    "replaceable": true
+   }
+  ],
+  "fix": "有理数列の極限による定義に戻し、有理数の指数での (ab)^r=a^r b^r を極限でうつす。",
+  "patch": {
+   "answer": "$a,b>0$とし、$x$を実数とする。実数のべきは、有理数列の極限で定める（数IIの定義。極限は直観的に用いる）。有理数$r$については$(ab)^r=a^rb^r$が成り立つ。$x$に収束する有理数列$r_n$をとると、$(ab)^{r_n}=a^{r_n}b^{r_n}$である。$n\\to\\infty$とすると、左辺は$(ab)^x$に、右辺は$a^xb^x$に近づく。よって$(ab)^x=a^xb^x$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L5"
+ },
+ {
+  "id": "power_function_lt_iff_positive_exponent",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数 log と指数関数 e^t（c^p=e^{p log c}）",
+    "stage": "S8",
+    "where": "最終文（a,b>0 の場合）",
+    "replaceable": true
+   }
+  ],
+  "fix": "自然対数を常用対数（数II）に置き換える。他の場合分けはそのまま。",
+  "patch": {
+   "answer": "$a,b\\geq 0$、$p>0$とする。$p>0$なので$0^p=0$であり、$c>0$なら$c^p>0$である。$b=0$のときは$a^p<0$も$a<0$も成り立たない。$a=0$、$b>0$のときは$a^p=0<b^p$かつ$a<b$である。$a,b>0$のときは、$\\log_{10}$が狭義増加で$\\log_{10}(c^p)=p\\log_{10}c$であることを使う。$a^p<b^p$は$p\\log_{10}a<p\\log_{10}b$と同値であり、$p>0$で割ると$\\log_{10}a<\\log_{10}b$と同値である。これは$a<b$と同値である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L5"
+ },
+ {
+  "id": "exp_lt_iff_base_gt_one",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数 log と指数関数 e^t（a^t=e^{t log a}、e^t の単調性）",
+    "stage": "S8",
+    "where": "答案の第2文以降",
+    "replaceable": true
+   }
+  ],
+  "fix": "常用対数の単調性とべき乗の公式 log(M^p)=p log M で書き替える。",
+  "patch": {
+   "answer": "$a>1$とし、$x,y$を実数とする。$\\log_{10}$は狭義増加で$\\log_{10}1=0$なので、$a>1$より$\\log_{10}a>0$である。$a^x,a^y>0$であり$\\log_{10}$は狭義増加なので、$a^x<a^y$は$\\log_{10}a^x<\\log_{10}a^y$、すなわち$x\\log_{10}a<y\\log_{10}a$と同値である。$\\log_{10}a>0$で割ると、これは$x<y$と同値である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L5"
+ },
+ {
+  "id": "exp_lt_iff_base_lt_one",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数 log と指数関数 e^t（a^t=e^{t log a}）",
+    "stage": "S8",
+    "where": "答案の第2文以降",
+    "replaceable": true
+   }
+  ],
+  "fix": "常用対数の単調性で書き替える。",
+  "patch": {
+   "answer": "$0<a<1$とし、$x,y$を実数とする。$\\log_{10}$は狭義増加で$\\log_{10}1=0$なので、$0<a<1$より$\\log_{10}a<0$である。$a^x,a^y>0$であり$\\log_{10}$は狭義増加なので、$a^x<a^y$は$x\\log_{10}a<y\\log_{10}a$と同値である。負の数$\\log_{10}a$で割ると不等号の向きが変わるので、これは$y<x$と同値である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L5"
+ },
+ {
+  "id": "exp_eq_iff_exponent_eq",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数をとる操作",
+    "stage": "S8",
+    "where": "「両辺の自然対数をとると」の行",
+    "replaceable": true
+   }
+  ],
+  "fix": "自然対数を常用対数に置き換える。",
+  "patch": {
+   "answer": "$a>0$、$a\\neq 1$とし、$x,y$を実数とする。$x=y$なら$a^x=a^y$である。逆に$a^x=a^y$とする。両辺の常用対数をとると$x\\log_{10}a=y\\log_{10}a$である。$\\log_{10}$は狭義増加で$\\log_{10}1=0$なので、$a\\neq 1$より$\\log_{10}a\\neq 0$である。よって$x=y$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L5"
+ },
+ {
+  "id": "exp_eq_positive_has_unique_solution",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数 log と指数関数 e^t（x0=log y/log a、a^{x0}=e^{x0 log a}）",
+    "stage": "S8",
+    "where": "存在の行と一意性の行",
+    "replaceable": true
+   }
+  ],
+  "fix": "常用対数を用いて a=10^s, y=10^u と書き、指数法則で同じ構成を行う。",
+  "patch": {
+   "answer": "$a>0$、$a\\neq 1$、$y>0$とする。$s=\\log_{10}a$、$u=\\log_{10}y$とおくと、$a=10^s$、$y=10^u$である。$\\log_{10}$は狭義増加で$\\log_{10}1=0$なので、$a\\neq 1$より$s\\neq 0$である。$x_0=\\dfrac{u}{s}$とおくと、指数法則より$a^{x_0}=(10^s)^{u/s}=10^u=y$である。これで存在がいえた。$a^x=y$をみたす実数$x$があれば、$10^{sx}=10^u$である。$10^t$は狭義増加なので$sx=u$、すなわち$x=x_0$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L5"
+ },
+ {
+  "id": "exp_lt_const_iff_base_gt_one",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数 log（log_a b を log b/log a で定義し、両辺の自然対数をとる）",
+    "stage": "S8",
+    "where": "第2文以降",
+    "replaceable": true
+   }
+  ],
+  "fix": "対数の定義 b=a^{log_a b} と、底が1より大きい指数関数の単調性だけで書ける。",
+  "patch": {
+   "answer": "$a>1$、$b>0$とし、$x$を実数とする。対数の定義より$b=a^{\\log_ab}$である。よって$a^x<b$は$a^x<a^{\\log_ab}$と同値である。$a>1$のとき指数関数$a^t$は狭義増加なので、これは$x<\\log_ab$と同値である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L5"
+ },
+ {
+  "id": "exp_lt_const_iff_base_lt_one",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数 log（log_a b を log b/log a で定義し、両辺の自然対数をとる）",
+    "stage": "S8",
+    "where": "第2文以降",
+    "replaceable": true
+   }
+  ],
+  "fix": "対数の定義 b=a^{log_a b} と、0<a<1 の指数関数の単調減少性だけで書ける。",
+  "patch": {
+   "answer": "$0<a<1$、$b>0$とし、$x$を実数とする。対数の定義より$b=a^{\\log_ab}$である。よって$a^x<b$は$a^x<a^{\\log_ab}$と同値である。$0<a<1$のとき指数関数$a^t$は狭義減少なので、これは$\\log_ab<x$と同値である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L5"
+ },
+ {
+  "id": "reciprocal_exponent_sum_common_value",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数 log（log_k u=log u/log k と、両辺の自然対数）",
+    "stage": "S8",
+    "where": "第2文以降の全行",
+    "replaceable": true
+   }
+  ],
+  "fix": "自然対数を常用対数に置き換え、底の変換公式と積の対数の公式を使う。",
+  "patch": {
+   "answer": "$a,b,k>0$、$k\\neq 1$とし、実数$x,y$は$a^x=k$、$b^y=k$をみたすとする。$\\log_{10}$は狭義増加で$\\log_{10}1=0$なので、$k\\neq 1$より$\\log_{10}k\\neq 0$である。$a^x=k$の常用対数をとると$x\\log_{10}a=\\log_{10}k$である。右辺が$0$でないので$x\\neq 0$であり、$\\log_{10}a=\\dfrac{\\log_{10}k}{x}$である。同様に$y\\neq 0$で$\\log_{10}b=\\dfrac{\\log_{10}k}{y}$である。底の変換公式と積の対数の公式より、$\\log_k(ab)=\\dfrac{\\log_{10}a+\\log_{10}b}{\\log_{10}k}=\\dfrac{1}{x}+\\dfrac{1}{y}$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L5"
+ },
+ {
+  "id": "logb_eq_iff_rpow_eq_definition",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数 log による log_a M の定義（log M/log a）",
+    "stage": "S8",
+    "where": "第2文以降",
+    "replaceable": true
+   }
+  ],
+  "fix": "数IIでは log_a M は a^p=M をみたす p として定義される。このカードは定義そのものなので、定義の確認として書く。",
+  "patch": {
+   "answer": "$a>0$、$a\\neq 1$、$M>0$とし、$p$を実数とする。数IIの定義では、$\\log_aM$は$a^p=M$をみたす実数$p$である。$a>0$、$a\\neq 1$のとき、指数関数$a^t$は狭義単調で正の実数全体の値をとるので、$a^p=M$をみたす$p$はただ一つ存在する。したがって$\\log_aM=p$であることと$a^p=M$であることは同値である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L5"
+ },
+ {
+  "id": "rpow_logb_cancel",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数 log と指数関数 e^t（a^t=e^{t log a}、log_a M=log M/log a）",
+    "stage": "S8",
+    "where": "第2文以降",
+    "replaceable": true
+   }
+  ],
+  "fix": "対数の定義から直ちに従う。",
+  "patch": {
+   "answer": "$a>0$、$a\\neq 1$、$M>0$とする。対数の定義より、$p=\\log_aM$は$a^p=M$をみたす実数である。したがって$a^{\\log_aM}=M$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L5"
+ },
+ {
+  "id": "logb_lt_iff_base_gt_one",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数 log（log_a u=log u/log a、log の単調性）",
+    "stage": "S8",
+    "where": "第2文以降",
+    "replaceable": true
+   }
+  ],
+  "fix": "対数の定義 u=a^{log_a u} と、a>1 の指数関数の単調性で書ける。",
+  "patch": {
+   "answer": "$a>1$、$x,y>0$とする。対数の定義より$x=a^{\\log_ax}$、$y=a^{\\log_ay}$である。$a>1$のとき指数関数$a^t$は狭義増加なので、$x<y$は$a^{\\log_ax}<a^{\\log_ay}$と同値であり、これは$\\log_ax<\\log_ay$と同値である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L5"
+ },
+ {
+  "id": "logb_lt_iff_base_lt_one",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数 log（log_a u=log u/log a、log の単調性）",
+    "stage": "S8",
+    "where": "第2文以降",
+    "replaceable": true
+   }
+  ],
+  "fix": "対数の定義 u=a^{log_a u} と、0<a<1 の指数関数の単調減少性で書ける。",
+  "patch": {
+   "answer": "$0<a<1$、$x,y>0$とする。対数の定義より$x=a^{\\log_ax}$、$y=a^{\\log_ay}$である。$0<a<1$のとき指数関数$a^t$は狭義減少なので、$\\log_ax<\\log_ay$は$a^{\\log_ax}>a^{\\log_ay}$、すなわち$x>y$と同値である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L5"
+ },
+ {
+  "id": "logb_pos_iff_sign_product",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数 log（log_a x=log x/log a）",
+    "stage": "S8",
+    "where": "第2文以降",
+    "replaceable": true
+   }
+  ],
+  "fix": "自然対数を常用対数に置き換え、底の変換公式を使う。",
+  "patch": {
+   "answer": "$a>0$、$a\\neq 1$、$x>0$とする。底の変換公式より$\\log_ax=\\dfrac{\\log_{10}x}{\\log_{10}a}$である。$\\log_{10}$は狭義増加で$\\log_{10}1=0$なので、正の数$u$について$\\log_{10}u$と$u-1$は符号が等しい。$a\\neq 1$より$\\log_{10}a\\neq 0$である。商$\\dfrac{\\log_{10}x}{\\log_{10}a}$が正であることは、$\\log_{10}a$と$\\log_{10}x$が同じ符号で$0$でないことと同値である。これは$(a-1)(x-1)>0$と同値である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L5"
+ },
+ {
+  "id": "logb_compare_different_bases",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "自然対数 log（log_b x=log x/log b）",
+    "stage": "S8",
+    "where": "第1文以降",
+    "replaceable": true
+   }
+  ],
+  "fix": "自然対数を常用対数に置き換え、底の変換公式を使う。",
+  "patch": {
+   "answer": "$1<a<b$、$x>1$とする。$\\log_{10}$は狭義増加で$\\log_{10}1=0$なので、$0<\\log_{10}a<\\log_{10}b$であり、$\\log_{10}x>0$である。底の変換公式より、$\\log_bx=\\dfrac{\\log_{10}x}{\\log_{10}b}$、$\\log_ax=\\dfrac{\\log_{10}x}{\\log_{10}a}$である。分子が正で等しい分数は分母が大きいほど小さいので、$\\log_bx<\\log_ax$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L5"
+ },
+ {
+  "id": "exists_angle_of_unit_circle",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "中間値の定理（cosの連続性を使う）",
+    "stage": "S8",
+    "where": "第3文「中間値の定理により cos t = a となる t がとれる」",
+    "replaceable": true
+   }
+  ],
+  "fix": "三角関数の定義（単位円上の点は動径の角で表される）そのものが主張なので、定義から直接示せる。同じカタログの harmonic_addition も同じ書き方をしている。",
+  "patch": {
+   "answer": "$a,b$を$a^2+b^2=1$をみたす実数とする。点$P(a,b)$は原点を中心とする単位円上にある。$x$軸の正の部分から動径$OP$への回転角を$\\theta$とすると、三角関数の定義より$\\cos\\theta=a$、$\\sin\\theta=b$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L6"
+ },
+ {
+  "id": "cos_nat_mul_polynomial",
+  "home": "S6",
+  "used": "S7",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "数学的帰納法（任意のnに対する漸化的構成）",
+    "stage": "S7",
+    "where": "答案冒頭「nに関する帰納法で示す」と P_{n+2}=2uP_{n+1}-P_n",
+    "replaceable": false
+   }
+  ],
+  "fix": "題意が任意の n に対する多項式の存在であり、帰納法なしには書けない。答案の問題ではなく level 指定の問題。数B（数列・帰納法）以降の内容として扱うのが妥当。",
+  "keep_as_advanced": false,
+  "batch": "L6"
+ },
+ {
+  "id": "exists_sin_cos_combination_iff",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "中間値の定理（sinの連続性）",
+    "stage": "S8",
+    "where": "逆向きの後半「sinの連続性と…中間値の定理から sin y = c/r となる y がとれる」",
+    "replaceable": true
+   }
+  ],
+  "fix": "sin y = c/r となる y の存在は、単位円上の点 (√(1-(c/r)^2), c/r) の動径の角として定義から得られる。",
+  "patch": {
+   "answer": "$a,b,c$を実数とする。$a\\sin x+b\\cos x=c$となる$x$があれば、$(a\\sin x+b\\cos x)^2+(a\\cos x-b\\sin x)^2=a^2+b^2$より$c^2\\leq a^2+b^2$である。逆に$c^2\\leq a^2+b^2$とする。$a=b=0$なら$c=0$であり、どの$x$も解である。そうでないとき$r=\\sqrt{a^2+b^2}>0$とおくと、合成により実数$\\alpha$がとれて、任意の$x$で$a\\sin x+b\\cos x=r\\sin(x+\\alpha)$である。$|c/r|\\leq1$なので、点$\\left(\\sqrt{1-(c/r)^2},\\,c/r\\right)$は単位円上にある。この点の動径の角を$y$とすると、三角関数の定義より$\\sin y=c/r$である。$x=y-\\alpha$とおくと$a\\sin x+b\\cos x=r\\sin y=c$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L6"
+ },
+ {
+  "id": "exists_unique_sin_principal",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "中間値の定理（sinの連続性）",
+    "stage": "S8",
+    "where": "存在の部分「中間値の定理により区間[-π/2,π/2]に sin x = a の解がある」",
+    "replaceable": true
+   }
+  ],
+  "fix": "存在は単位円上の点 (√(1-a^2), a) の動径の角（x座標が0以上なので[-π/2,π/2]にとれる）から得る。一意性の部分は和積の公式のみで既習範囲。",
+  "patch": {
+   "answer": "$a$を$-1\\leq a\\leq1$をみたす実数とする。点$(\\sqrt{1-a^2},\\,a)$は単位円上にあり、その$x$座標は$0$以上である。$x$座標が$0$以上の動径は$-\\pi/2\\leq x\\leq\\pi/2$の範囲の角で表せるので、この点の動径の角を$x\\in[-\\pi/2,\\pi/2]$にとると、三角関数の定義より$\\sin x=a$である。一意性を示す。$-\\pi/2\\leq x<y\\leq\\pi/2$なら和積の公式より$\\sin y-\\sin x=2\\cos\\dfrac{x+y}{2}\\sin\\dfrac{y-x}{2}$であり、$-\\pi/2<(x+y)/2<\\pi/2$、$0<(y-x)/2\\leq\\pi/2$からこれは正である。よって$\\sin$はこの区間で狭義に増加し、解はただ一つである。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L6"
+ },
+ {
+  "id": "exists_unique_cos_principal",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "中間値の定理（cosの連続性）",
+    "stage": "S8",
+    "where": "存在の部分「中間値の定理により区間[0,π]に cos x = a の解がある」",
+    "replaceable": true
+   }
+  ],
+  "fix": "存在は単位円上の点 (a, √(1-a^2)) の動径の角（y座標が0以上なので[0,π]にとれる）から得る。一意性の部分は既習範囲。",
+  "patch": {
+   "answer": "$a$を$-1\\leq a\\leq1$をみたす実数とする。点$(a,\\,\\sqrt{1-a^2})$は単位円上にあり、その$y$座標は$0$以上である。$y$座標が$0$以上の動径は$0\\leq x\\leq\\pi$の範囲の角で表せるので、この点の動径の角を$x\\in[0,\\pi]$にとると、三角関数の定義より$\\cos x=a$である。一意性を示す。$0\\leq x<y\\leq\\pi$なら和積の公式より$\\cos x-\\cos y=2\\sin\\dfrac{x+y}{2}\\sin\\dfrac{y-x}{2}$であり、$0<(x+y)/2<\\pi$、$0<(y-x)/2\\leq\\pi/2$からこれは正である。よって$\\cos$はこの区間で狭義に減少し、解はただ一つである。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L6"
+ },
+ {
+  "id": "exists_unique_tan_principal",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "中間値の定理（cosの連続性）",
+    "stage": "S8",
+    "where": "存在の部分「中間値の定理により cos x = 1/r となる x∈[0,π] がとれる」",
+    "replaceable": true
+   }
+  ],
+  "fix": "点 (1/r, a/r) は単位円上で x座標が正なので、その動径の角を(-π/2,π/2)にとれば tan x = a。一意性の部分は既習範囲。",
+  "patch": {
+   "answer": "$a$を実数とする。$r=\\sqrt{1+a^2}$とおくと$(1/r)^2+(a/r)^2=1$であり、点$(1/r,\\,a/r)$は単位円上にある。その$x$座標は正なので、この点の動径の角を$-\\pi/2<x<\\pi/2$にとれる。定義より$\\cos x=1/r$、$\\sin x=a/r$であるから、$\\tan x=a$である。一意性を示す。$-\\pi/2<x<y<\\pi/2$なら$\\tan y-\\tan x=\\dfrac{\\sin(y-x)}{\\cos x\\cos y}$であり、$0<y-x<\\pi$から分子は正、$\\cos x,\\cos y>0$から分母も正である。よって$\\tan$はこの区間で狭義に増加し、解はただ一つである。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L6"
+ },
+ {
+  "id": "range_comp_sin_cos",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "中間値の定理（sin, cosの連続性）",
+    "stage": "S8",
+    "where": "逆向きの部分「中間値の定理により sin x = t となる x がとれる」と cos の同様の議論",
+    "replaceable": true
+   }
+  ],
+  "fix": "-1≤t≤1 に対する sin x = t, cos x = t の解の存在は、単位円上の点 (√(1-t^2), t), (t, √(1-t^2)) の動径の角で得る。",
+  "patch": {
+   "answer": "$f$を実数値関数、$y$を実数とする。$f(\\sin x)=y$となる$x$があれば、$t=\\sin x$は$-1\\leq t\\leq1$と$f(t)=y$をみたす。逆に$-1\\leq t\\leq1$かつ$f(t)=y$となる$t$があるとする。点$(\\sqrt{1-t^2},\\,t)$は単位円上にあるので、その動径の角を$x$とすると、三角関数の定義より$\\sin x=t$である。この$x$について$f(\\sin x)=y$である。$\\cos$については、単位円上の点$(t,\\sqrt{1-t^2})$の動径の角を$x$とすれば$\\cos x=t$となり、同様に示せる。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L6"
+ },
+ {
+  "id": "sum_reverse_order",
+  "home": "S7",
+  "used": "S10",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "全単射（写像の用語。高校の教科書には出ない）",
+    "stage": "S10",
+    "where": "答案の第3文「全単射である」",
+    "replaceable": true
+   }
+  ],
+  "fix": "写像の用語を使わず、項を実際に書き並べて「同じ項が逆順に並ぶだけ」と述べれば足りる。内容は元の論法と同じで、用語だけの問題。",
+  "patch": {
+   "answer": "$(a_k)$を実数列、$n$を自然数とする。$k=1,2,\\dots,n$に対する$a_{n+1-k}$を順に書くと、$a_n,\\ a_{n-1},\\ \\dots,\\ a_1$である。これは$a_1,\\ a_2,\\ \\dots,\\ a_n$を逆の順に並べたもので、同じ$n$個の項が一度ずつ現れる。有限個の数の和は加える順序によらないので、$\\sum_{k=1}^{n}a_{n+1-k}=\\sum_{k=1}^{n}a_k$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L7"
+ },
+ {
+  "id": "polynomial_sum_derivative",
+  "home": "S6",
+  "used": "S7",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "数学的帰納法（次数についての帰納法）",
+    "stage": "S7",
+    "where": "答案全体（n=0 と n=m→m+1 の構成）",
+    "replaceable": true
+   }
+  ],
+  "fix": "多項式の微分は数IIの内容。各項 y^k の微分 k x^(k-1) と、定数倍・和の微分（有限個の項）で直接済む。帰納法は不要。",
+  "patch": {
+   "answer": "$n$を自然数、$a_0,\\dots,a_n,x$を実数とする。各$k$について$y^k$の$x$における微分係数は$kx^{k-1}$（$k=0$のときは$0$）である。定数倍の微分と和の微分により、$\\sum_{k=0}^{n}a_ky^k$の$x$における微分係数は$\\sum_{k=1}^{n}ka_kx^{k-1}$であり、特に微分可能である。添字を$k\\to k+1$とずらすと$\\sum_{k=0}^{n-1}(k+1)a_{k+1}x^k$となる。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L8"
+ },
+ {
+  "id": "cubic_monotone_iff_discriminant",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "平均値の定理（f'≥0 ⇒ 単調非減少）",
+    "stage": "S8",
+    "where": "「b^2≤3ac とする」段落の最終文",
+    "replaceable": true
+   }
+  ],
+  "fix": "3次関数の増減は数IIの題意。平均値の定理は数IIIで初めて導入される。f(y)-f(x)=(y-x)Q(x,y) の Q を平方完成すれば、微分も平均値の定理も使わず両方向を示せる（数Iの平方完成のみ）。",
+  "patch": {
+   "answer": "$a>0$、$b,c,d$を実数とし、$f(x)=ax^3+bx^2+cx+d$とする。実数$x,y$について\n$f(y)-f(x)=(y-x)Q(x,y),\\quad Q(x,y)=a(x^2+xy+y^2)+b(x+y)+c$\nが成り立つ。$x^2+xy+y^2=\\dfrac34(x+y)^2+\\dfrac14(x-y)^2$を用いて$x+y$について平方完成すると\n$Q(x,y)=\\dfrac{3a}{4}\\left(x+y+\\dfrac{2b}{3a}\\right)^2+\\dfrac a4(x-y)^2+\\dfrac{3ac-b^2}{3a}$\nとなる。\n$b^2\\leq 3ac$とする。$a>0$なので右辺の3項はすべて$0$以上であり、$Q(x,y)\\geq 0$である。$x<y$なら$f(y)-f(x)=(y-x)Q(x,y)\\geq 0$なので、$f$は単調非減少である。\n逆に$f$が単調非減少とする。$h>0$に対して$x=-\\dfrac{b}{3a}-\\dfrac h2$、$y=-\\dfrac{b}{3a}+\\dfrac h2$とおくと、$x<y$、$y-x=h$、$x+y+\\dfrac{2b}{3a}=0$である。$Q(x,y)=\\dfrac{f(y)-f(x)}{y-x}\\geq 0$から$\\dfrac a4h^2+\\dfrac{3ac-b^2}{3a}\\geq 0$を得る。これが全ての$h>0$で成り立つので、$h$を小さくとると$\\dfrac{3ac-b^2}{3a}\\geq 0$となり、$a>0$より$b^2\\leq 3ac$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L8"
+ },
+ {
+  "id": "cubic_local_extremum_iff_discriminant",
+  "home": "S6",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "第2次導関数による極値の判定法",
+    "stage": "S8",
+    "where": "「逆に D>0 とし」段落の最後の2文（f''(x_0)=2s>0 から極小を結論）",
+    "replaceable": true
+   }
+  ],
+  "fix": "3次関数の極値は数IIの題意。第2次導関数による判定は数IIIで導入される。答案の必要性側で既に使っている因数分解 f(y)-f(t)-f'(t)(y-t)=(y-t)^2(a(y+2t)+b) を使い、f(y)-f(x_0)=(y-x_0)^2(a(y-x_0)+s) と書けば、x_0 の近くで f(y)≥f(x_0) が代数だけで出る（必要性側は S6 の範囲なのでそのまま残す）。",
+  "patch": {
+   "answer": "$a\\neq 0$、$b,c,d$を実数とし、$f(x)=ax^3+bx^2+cx+d$とする。$f'(x)=3ax^2+2bx+c$であり、$3af'(x)=(3ax+b)^2-(b^2-3ac)$が成り立つ。\n$f$が$x$で極値をとるとする。$f'(x)=0$なので$(3ax+b)^2=b^2-3ac$であり、$b^2-3ac\\geq 0$である。$b^2-3ac=0$と仮定すると$3ax+b=0$となるので、$b=-3ax$、$c=3ax^2$である。これを代入すると全ての$y$で$f(y)-f(x)=a(y-x)^3$が成り立つ。$y-x$の符号によって右辺の符号が変わるので、$x$のどの近くでも$f(y)-f(x)$は正の値と負の値の両方をとる。これは極値であることに反する。よって$b^2-3ac>0$である。\n逆に$D=b^2-3ac>0$とし、$s=\\sqrt{D}>0$、$x_0=\\dfrac{-b+s}{3a}$とおく。$3ax_0+b=s$なので$3af'(x_0)=s^2-D=0$となり、$f'(x_0)=0$である。展開して確かめられる等式\n$f(y)-f(x_0)-f'(x_0)(y-x_0)=(y-x_0)^2\\bigl(a(y+2x_0)+b\\bigr)$\nに$f'(x_0)=0$を代入し、$a(y+2x_0)+b=a(y-x_0)+(3ax_0+b)=a(y-x_0)+s$を用いると\n$f(y)-f(x_0)=(y-x_0)^2\\bigl(a(y-x_0)+s\\bigr)$\nを得る。$|y-x_0|<\\dfrac{s}{|a|}$のとき$a(y-x_0)+s>0$なので、$x_0$の近くで$f(y)\\geq f(x_0)$が成り立つ。したがって$f$は$x_0$で極小となり、極値をもつ。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L8"
+ },
+ {
+  "id": "antitone_sum_integral_bounds",
+  "home": "S8",
+  "used": "S10",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "単調関数のリーマン積分可能性",
+    "stage": "S10",
+    "where": "答案第1文「単調関数なので f はこの区間で積分可能である」",
+    "replaceable": false
+   }
+  ],
+  "fix": "題意の仮定が「単調非増加」だけで、積分の存在そのものを前提にしている。単調関数の積分可能性は高校範囲外（数IIIの定積分は連続関数が対象）。level の問題というより仮定の置き方の問題。高校向けには仮定に「連続」を足した別カードにするか、積分可能性は大学範囲の事実として注記して残す。主張を弱めるため patch は付けない。",
+  "keep_as_advanced": true,
+  "batch": "L8"
+ },
+ {
+  "id": "geometric_series_convergence_criterion",
+  "home": "S8",
+  "used": "S10",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "絶対収束（級数の無条件収束）の概念",
+    "stage": "S10",
+    "where": "題意そのもの、および答案「級数は絶対収束する」の段落",
+    "replaceable": false
+   }
+  ],
+  "fix": "題意が「絶対収束」「無条件に和をもつ」を結論に含み、数IIIの無限級数（和の収束・非収束）を越える。形式化側の Summable に対応した述べ方と思われる。高校向けには「収束することと |r|<1 は同値」だけの別表現にするのが標準。答案の論法自体（項が0に収束しない⇒発散）は数IIIの範囲。",
+  "keep_as_advanced": false,
+  "batch": "L8"
+ },
+ {
+  "id": "geometric_series_tail",
+  "home": "S8",
+  "used": "S10",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "絶対収束",
+    "stage": "S10",
+    "where": "答案第4文「この収束は絶対収束である」",
+    "replaceable": true
+   }
+  ],
+  "fix": "題意は和の値だけを問うので、絶対収束の語は付随的。数IIIの言葉（|r| の級数も同様に収束する）に言い換える。形式側の Summable 結論に対応する注記と思われるため、主張は落とさず言い換えるにとどめる。",
+  "patch": {
+   "answer": "$a,r$を実数、$m$を自然数とし、$|r|<1$とする。$ar^{m+n}=ar^m\\cdot r^n$である。$\\sum_{n=0}^{k-1}r^n=\\dfrac{1-r^k}{1-r}$と$r^k\\to 0$から、無限等比級数$\\sum_{n=0}^{\\infty}r^n$は$\\dfrac{1}{1-r}$に収束する。$|r|<1$なので$|r|$についても同じ計算ができ、$\\sum_{n=0}^{\\infty}|r|^n$も収束する。したがって各項の絶対値を並べた級数も収束し、実数項の級数として無条件に和をもつ。定数$ar^m$を掛けると、与えられた級数は$\\dfrac{ar^m}{1-r}$に収束する。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L8"
+ },
+ {
+  "id": "arithmetic_geometric_series",
+  "home": "S8",
+  "used": "S10",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "絶対収束",
+    "stage": "S10",
+    "where": "答案最終段落「級数は絶対収束する」",
+    "replaceable": true
+   }
+  ],
+  "fix": "題意は和の値だけを問う。絶対収束の語を、|r| についての同じ計算で絶対値の級数も収束する、という数IIIの言葉に言い換える。主張は落とさない。",
+  "patch": {
+   "answer": "$r$を実数とし、$|r|<1$とする。$S_N=\\sum_{n=0}^{N}nr^n$とおく。$S_N-rS_N$を項ごとに計算すると\n$(1-r)S_N=\\sum_{n=1}^{N}r^n-Nr^{N+1}=\\dfrac{r(1-r^N)}{1-r}-Nr^{N+1}$\nである。$|r|<1$より$r^N\\to 0$である。また$|r|=\\dfrac{1}{1+h}$（$h>0$）と書くと、$r\\neq 0$のとき$(1+h)^{N+1}\\geq\\dfrac{N(N+1)}{2}h^2$なので$N|r|^{N+1}\\to 0$である（$r=0$なら明らかである）。したがって$(1-r)S_N\\to\\dfrac{r}{1-r}$であり、$S_N\\to\\dfrac{r}{(1-r)^2}$である。\nさらに$|r|<1$なので$|r|$についても同じ計算ができ、$\\sum_{n=0}^{\\infty}n|r|^n$も収束する。よって各項の絶対値を並べた級数も収束し、級数は実数項の級数として無条件に和をもつ。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L8"
+ },
+ {
+  "id": "prob_uniform_range",
+  "home": "S2",
+  "used": "S5",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "集合記号（Ω, A⊆Ω）と要素数 |A|（教科書の n(A)）",
+    "stage": "S5",
+    "where": "題意と答案の全体（A⊆Ω から 0≤|A|≤|Ω|）",
+    "replaceable": false
+   }
+  ],
+  "fix": "答案の論法（0≤|A|≤|Ω| を |Ω| で割る）は中2の確率の初歩で足りる。ただし題意が集合記号と要素数 |A| で書かれており、集合は数I、要素数 n(A) は数Aで初めて導入される。level: middle の貼り方か、題意の表現のどちらかを見直す。答案の道具の問題ではない。",
+  "keep_as_advanced": false,
+  "batch": "L9"
+ },
+ {
+  "id": "prob_uniform_compl",
+  "home": "S2",
+  "used": "S5",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "集合記号（補集合 Ω∖A, 余事象の上線）と要素数 |A|",
+    "stage": "S5",
+    "where": "題意と答案の全体（|A|+|Ā|=|Ω| を割る）",
+    "replaceable": false
+   }
+  ],
+  "fix": "答案は「起こる場合の数と起こらない場合の数の和が全体」という中2の論法で足りる。題意が補集合記号と要素数 |A| で書かれており、集合は数I、n(A) は数Aで導入される。level: middle の貼り方か題意の表現を見直す。答案の道具の問題ではない。",
+  "keep_as_advanced": false,
+  "batch": "L9"
+ },
+ {
+  "id": "binomial_prob_sum_one",
+  "home": "S5",
+  "used": "S6",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "二項定理",
+    "stage": "S6",
+    "where": "答案2文目（(p+(1-p))^n の展開）",
+    "replaceable": false
+   }
+  ],
+  "fix": "題意は任意の実数 p についての恒等式で、実質が二項定理そのもの（数II）。数Aの反復試行の範囲で書けるのは 0≤p≤1 の確率の議論（ちょうど k 回の事象が標本空間を分割する）だけで、これは主張を弱める。したがって答案の書き替えはできない。このカードは数IIの二項定理の系として置き直すか、確率版（0≤p≤1）を別カードにする。",
+  "keep_as_advanced": false,
+  "batch": "L9"
+ },
+ {
+  "id": "multinomial_theorem",
+  "home": "S6",
+  "used": "S10",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "可換半環（抽象代数の対象）",
+    "stage": "S10",
+    "where": "題意の仮定（f_i は可換半環の元）",
+    "replaceable": false
+   }
+  ],
+  "fix": "答案の道具（分配法則、同じものを含む順列 S5）は多項定理の標準的な学習段階の範囲内。ただし題意が可換半環で述べられており、高校範囲外の語彙。初学者向けには実数（または多項式）の文字 f_i に限定した形を標準とし、半環版は別カードにする。",
+  "keep_as_advanced": false,
+  "batch": "L9"
+ },
+ {
+  "id": "trinomial_expansion",
+  "home": "S6",
+  "used": "S10",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "可換半環（抽象代数の対象）",
+    "stage": "S10",
+    "where": "題意の仮定（x,y,z は可換半環の元）",
+    "replaceable": false
+   }
+  ],
+  "fix": "答案の道具（二項定理を2回、S6）は題意と同じ段階で問題ない。ただし題意が可換半環で述べられており、高校範囲外の語彙。実数（または多項式）の文字に限定した形を標準とし、半環版は別カードにする。",
+  "keep_as_advanced": false,
+  "batch": "L9"
+ },
+ {
+  "id": "card_disjoint_family_sum",
+  "home": "S5",
+  "used": "S7",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "数学的帰納法（|I| についての帰納法）",
+    "stage": "S7",
+    "where": "答案2文目以降（|I| についての帰納法で示す、帰納法の仮定）",
+    "replaceable": true
+   }
+  ],
+  "fix": "和の法則（2集合版）を1つずつ加える操作として書けば、帰納法を名指さずに同じ主張を示せる。以下のパッチで置き換える。",
+  "patch": {
+   "answer": "$I$を有限集合とし、$A_i\\ (i\\in I)$をどの2つも共通部分をもたない有限集合とする。共通部分をもたない2つの有限集合$X,Y$については、和の法則（基本形）より$|X\\cup Y|=|X|+|Y|$である。$I$の添字を1つずつ順に取り上げ、和集合に$A_i$を加えていく。新しく加える$A_i$は、これまでに加えたどの集合とも共通部分をもたないので、それまでの和集合とも共通部分をもたない。したがって、$A_i$を加えるたびに和集合の要素数はちょうど$|A_i|$だけ増える。すべての添字を加え終えたとき、要素数は増加分の合計$\\sum_{i\\in I}|A_i|$に等しい。$I$が空なら両辺とも$0$である。"
+  },
+  "keep_as_advanced": false,
+  "batch": "L9"
+ },
+ {
+  "id": "lot_drawing_position_fair",
+  "home": "S5",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "互換と置換の左からの合成（群の演算・群作用による全単射）",
+    "stage": "S10",
+    "where": "答案4〜5文目（互換 τ を左から合成する写像 σ→τσ が S_a から S_b への全単射）",
+    "replaceable": true
+   }
+  ],
+  "fix": "σ(i)=a となる置換は、残りの n-1 個の対応を決める順列の数 (n-1)! で直接数えられる。互換の合成は不要。以下のパッチで置き換える。",
+  "patch": {
+   "answer": "$\\alpha$を有限で空でない集合、$n=|\\alpha|$とし、$i\\in\\alpha$、$W\\subseteq\\alpha$とする。$\\alpha$の置換$\\sigma$は$n!$個あり、同様に確からしいとする。$a\\in\\alpha$を1つ決め、$\\sigma(i)=a$となる置換の個数を数える。$i$の行き先が$a$に決まっていて、残りの$n-1$個の要素$\\alpha\\setminus\\{i\\}$を残りの$n-1$個の値$\\alpha\\setminus\\{a\\}$に1対1に割り当てる方法は、$n-1$個の異なるものを並べる順列の数に等しく$(n-1)!$通りである。この個数は$a$によらない。$\\sigma(i)\\in W$となる置換は、$\\sigma(i)=a$となる置換を$a\\in W$について重なりなく集めたものなので、その個数は$|W|\\,(n-1)!$である。これを$n!$で割ると$\\dfrac{|W|(n-1)!}{n!}=\\dfrac{|W|}{n}$となり、$i$によらず$|W|/|\\alpha|$である。"
+  },
+  "keep_as_advanced": false,
+  "batch": "L9"
+ },
+ {
+  "id": "words_given_letter_counts_multinomial",
+  "home": "S5",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "置換の合成と固定部分群（群作用の軌道・安定部分群の議論）",
+    "stage": "S10",
+    "where": "答案3〜6文目（ω0∘σ、σ τ^{-1} が ω0 を保つ、ω0 を保つ置換の個数 Πc_i!）",
+    "replaceable": true
+   }
+  ],
+  "fix": "教科書の標準論法「同じ文字に番号を付けて区別すれば |α|! 通り。番号を外すと各並びが Πc_i! 回ずつ重複する」で足りる。以下のパッチで置き換える。",
+  "patch": {
+   "answer": "$\\alpha,\\iota$を有限集合とし、$c:\\iota\\to\\mathbb{N}$は$\\sum_i c_i=|\\alpha|$を満たすとする。$X$を、各$i$がちょうど$c_i$回現れる写像$\\omega:\\alpha\\to\\iota$全体とし、$N=|X|$とする。文字$i$が現れる$c_i$個の位置に$1,\\dots,c_i$の番号を1つずつ付けて、同じ文字を区別することを考える。$\\omega\\in X$を1つ決めると、各文字$i$について番号の付け方は$c_i!$通りあり、文字ごとの付け方は互いに影響しないので、積の法則より$\\omega$への番号の付け方は全部で$\\prod_i c_i!$通りである。一方、番号付きの文字$(i,j)$（$i\\in\\iota$、$1\\leq j\\leq c_i$）は全部で$\\sum_i c_i=|\\alpha|$個あり、どれも区別できる。これらを$\\alpha$の各位置に1つずつ置く置き方は$|\\alpha|!$通りである。この置き方は、番号を外した並び$\\omega\\in X$と$\\omega$への番号の付け方の組と、過不足なく1対1に対応する。よって$|\\alpha|!=\\sum_{\\omega\\in X}\\prod_i c_i!=N\\prod_i c_i!$を得る。"
+  },
+  "keep_as_advanced": false,
+  "batch": "L9"
+ },
+ {
+  "id": "dist_euclidean_plane_coordinates",
+  "home": "S6",
+  "used": "S9",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "ベクトルのノルムとしての距離の定義（ユークリッド空間のノルム）",
+    "stage": "S9",
+    "where": "第1文: 距離を「2点の差のベクトルのノルム」と定義し、成分の平方和の平方根で定義されるとする",
+    "replaceable": true
+   }
+  ],
+  "fix": "ベクトルのノルムは用語の引用にとどまり、実質は結論を定義として引くだけで循環に近い。数IIの2点間の距離は、座標軸に平行な線分で直角三角形を作り、三平方の定理（S3）から導くのが標準。patchはその書き替え。",
+  "patch": {
+   "answer": "$x_1,y_1,x_2,y_2$を実数とし、$A(x_1,y_1)$、$B(x_2,y_2)$とする。\n\n$x_1\\ne x_2$かつ$y_1\\ne y_2$のとき、$A$を通り$x$軸に平行な直線と$B$を通り$y$軸に平行な直線の交点を$C(x_2,y_1)$とおく。$AC=|x_1-x_2|$、$BC=|y_1-y_2|$であり、三角形$ABC$は$C$で直角になる。三平方の定理より$AB^2=|x_1-x_2|^2+|y_1-y_2|^2=(x_1-x_2)^2+(y_1-y_2)^2$であり、$AB>0$なので$AB=\\sqrt{(x_1-x_2)^2+(y_1-y_2)^2}$を得る。\n\n$y_1=y_2$のとき、$AB$は$x$軸に平行な線分で$AB=|x_1-x_2|=\\sqrt{(x_1-x_2)^2}$であり、$(y_1-y_2)^2=0$を加えても同じ値である。$x_1=x_2$のときも同様に$AB=|y_1-y_2|=\\sqrt{(y_1-y_2)^2}$である。2点が一致するときは$AB=0$で、式の値も$0$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L10"
+ },
+ {
+  "id": "triangle_region_coefficients",
+  "home": "S9",
+  "used": "S10",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "凸包（有限点集合の凸包は係数が非負で和が1の1次結合の全体、という特徴づけ）",
+    "stage": "S10",
+    "where": "題意そのもの、および答案の第2文",
+    "replaceable": false
+   }
+  ],
+  "fix": "題意が「凸包」という大学の概念で書かれている。高校では「三角形OABの周および内部」とし、s,t>=0かつs+t<=1が教科書の定理として使われる。題意を三角形の周と内部に書き替えるか、カードをS10扱いにする。答案は凸包の特徴づけを証明なしで引用しており、題意の定義に合わせたままでは書き替えられない。",
+  "keep_as_advanced": false,
+  "batch": "L11"
+ },
+ {
+  "id": "coplanar_iff_affine_combination",
+  "home": "S9",
+  "used": "S10",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "部分空間・次元（線形代数）",
+    "stage": "S10",
+    "where": "答案の第2文以降。dim W, dim W' を比べる議論全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "平面ベクトルの基本定理（1次独立な2ベクトルによる表示）で書き替える。",
+  "patch": {
+   "answer": "$\\vec a,\\vec b,\\vec c,\\vec p$ を実ベクトル空間のベクトルとし、$\\mathrm{A},\\mathrm{B},\\mathrm{C}$ は同一直線上にないとする。このとき $\\vec b-\\vec a$ と $\\vec c-\\vec a$ は平行でなく、1次独立である。$\\mathrm{A},\\mathrm{B},\\mathrm{C}$ を通る平面はただ一つあり、それを $\\alpha$ とする。4点が同一平面上にあるとは、$\\mathrm{P}$ が $\\alpha$ 上にあることである。$\\mathrm{P}$ が $\\alpha$ 上にあれば、$\\vec p-\\vec a$ は $\\alpha$ に平行なベクトルであり、$\\alpha$ 上の1次独立な $\\overrightarrow{\\mathrm{AB}},\\overrightarrow{\\mathrm{AC}}$ による表示（平面ベクトルの基本定理）から、実数 $s,t$ で $\\vec p-\\vec a=s(\\vec b-\\vec a)+t(\\vec c-\\vec a)$ と書ける。逆に $\\vec p=\\vec a+s(\\vec b-\\vec a)+t(\\vec c-\\vec a)$ と書けるなら、$\\mathrm{P}$ は $\\mathrm{A}$ を通り $\\overrightarrow{\\mathrm{AB}},\\overrightarrow{\\mathrm{AC}}$ に平行な平面、すなわち $\\alpha$ 上にあるので、4点は同一平面上にある。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L11"
+ },
+ {
+  "id": "foot_of_perpendicular_to_plane_exists",
+  "home": "S9",
+  "used": "S10",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "有限次元部分空間への直交分解（ヒルベルト空間・線形代数の射影定理）",
+    "stage": "S10",
+    "where": "答案の第2文",
+    "replaceable": true
+   }
+  ],
+  "fix": "垂線の足の条件を s,t の連立1次方程式に直し、1次独立の場合はクラメルの公式（判別式が正）、そうでない場合は1ベクトルへの射影で解く。",
+  "patch": {
+   "answer": "$\\vec a,\\vec b,\\vec p$ を実内積空間のベクトルとする。求める条件は $(\\vec p-s\\vec a-t\\vec b)\\cdot\\vec a=0$ かつ $(\\vec p-s\\vec a-t\\vec b)\\cdot\\vec b=0$ であり、これは連立方程式 $s|\\vec a|^2+t\\,\\vec a\\cdot\\vec b=\\vec p\\cdot\\vec a$、$s\\,\\vec a\\cdot\\vec b+t|\\vec b|^2=\\vec p\\cdot\\vec b$ と同値である。\n\n$\\vec a,\\vec b$ が1次独立のとき、両者は平行でないのでコーシー・シュワルツの不等式の等号は成り立たず、$D=|\\vec a|^2|\\vec b|^2-(\\vec a\\cdot\\vec b)^2>0$ である。係数の行列式が $D\\neq 0$ なので、連立方程式は解 $s=\\dfrac{(\\vec p\\cdot\\vec a)|\\vec b|^2-(\\vec p\\cdot\\vec b)(\\vec a\\cdot\\vec b)}{D}$、$t=\\dfrac{|\\vec a|^2(\\vec p\\cdot\\vec b)-(\\vec a\\cdot\\vec b)(\\vec p\\cdot\\vec a)}{D}$ をもつ。\n\n$\\vec a,\\vec b$ が1次独立でないときは次のとおり。$\\vec a\\neq\\vec 0$ で $\\vec b=k\\vec a$ なら、$t=0$、$s=\\dfrac{\\vec p\\cdot\\vec a}{|\\vec a|^2}$ とすると、第1式は $s|\\vec a|^2=\\vec p\\cdot\\vec a$ で成り立ち、第2式は $sk|\\vec a|^2=k\\,\\vec p\\cdot\\vec a=\\vec p\\cdot\\vec b$ で成り立つ。$\\vec a=\\vec 0$ で $\\vec b\\neq\\vec 0$ なら、$s=0$、$t=\\dfrac{\\vec p\\cdot\\vec b}{|\\vec b|^2}$ とすればよい。$\\vec a=\\vec b=\\vec 0$ なら両式とも $0=0$ で、任意の $s,t$ が解である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L11"
+ },
+ {
+  "id": "inner_eq_norm_norm_cos",
+  "home": "S9",
+  "used": "S10",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "arccos（逆三角関数は学習指導要領の範囲外）と一般の内積空間でのコーシー・シュワルツ",
+    "stage": "S10",
+    "where": "題意の仮定（なす角の定義）と答案の第2〜3文",
+    "replaceable": false
+   }
+  ],
+  "fix": "高校では a・b=|a||b|cosθ が内積の定義であり、このカードの主張自体が定義の言い換えになる。題意が抽象内積空間と arccos による角の定義に依存しており、level が高校では低すぎる。カードをS10扱いにするか、高校版（定義からの導出としてのみ）を別に用意する。",
+  "keep_as_advanced": false,
+  "batch": "L11"
+ },
+ {
+  "id": "inner_sign_acute_obtuse",
+  "home": "S9",
+  "used": "S10",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "arccos と狭義単調減少（逆三角関数）",
+    "stage": "S10",
+    "where": "答案の第1文（θ=arccos…）、第4〜5文",
+    "replaceable": true
+   }
+  ],
+  "fix": "なす角を cosθ=(a・b)/(|a||b|)（0<=θ<=π）で扱い、単位円での cos の符号で書く。",
+  "patch": {
+   "answer": "$\\vec a,\\vec b$ を実内積空間の $\\vec 0$ でないベクトル、$\\theta$（$0\\le\\theta\\le\\pi$）をそのなす角とする。なす角は $\\cos\\theta=\\dfrac{\\vec a\\cdot\\vec b}{|\\vec a||\\vec b|}$ を満たす。$|\\vec a||\\vec b|>0$ なので、$\\vec a\\cdot\\vec b$ の符号は $\\cos\\theta$ の符号に等しい。$0\\le\\theta\\le\\pi$ の範囲では、$\\cos\\theta$ は単位円上の点の $x$ 座標であり、$\\theta<\\dfrac{\\pi}{2}$ のとき正、$\\theta=\\dfrac{\\pi}{2}$ のとき $0$、$\\theta>\\dfrac{\\pi}{2}$ のとき負である。よって $\\cos\\theta>0\\iff\\theta<\\dfrac{\\pi}{2}$、$\\cos\\theta<0\\iff\\theta>\\dfrac{\\pi}{2}$ となり、これらは主張の2つの同値である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L11"
+ },
+ {
+  "id": "angle_bisector_division_vector",
+  "home": "S9",
+  "used": "S10",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "arccos（逆三角関数）",
+    "stage": "S10",
+    "where": "答案の最終文「なす角はこの値の arccos だから」",
+    "replaceable": true
+   }
+  ],
+  "fix": "最終文を、cosθ の値が等しく cos は 0<=θ<=π で単調に減少するから角が等しい、と書き替える。",
+  "patch": {
+   "answer": "$\\vec b,\\vec c$ を実内積空間の $\\vec 0$ でないベクトル、$\\vec d=\\dfrac{|\\vec c|\\vec b+|\\vec b|\\vec c}{|\\vec b|+|\\vec c|}\\neq\\vec 0$ とし、$L=|\\vec b|+|\\vec c|$ とおく。内積を計算すると $\\vec b\\cdot\\vec d=\\dfrac{|\\vec b|\\left(|\\vec b||\\vec c|+\\vec b\\cdot\\vec c\\right)}{L}$、$\\vec c\\cdot\\vec d=\\dfrac{|\\vec c|\\left(|\\vec b||\\vec c|+\\vec b\\cdot\\vec c\\right)}{L}$ である。よって $\\dfrac{\\vec b\\cdot\\vec d}{|\\vec b||\\vec d|}=\\dfrac{\\vec c\\cdot\\vec d}{|\\vec c||\\vec d|}=\\dfrac{|\\vec b||\\vec c|+\\vec b\\cdot\\vec c}{L|\\vec d|}$ である。$\\vec b$ と $\\vec d$ のなす角を $\\theta_1$、$\\vec c$ と $\\vec d$ のなす角を $\\theta_2$ とすると、$0\\le\\theta_1,\\theta_2\\le\\pi$ で $\\cos\\theta_1=\\dfrac{\\vec b\\cdot\\vec d}{|\\vec b||\\vec d|}$、$\\cos\\theta_2=\\dfrac{\\vec c\\cdot\\vec d}{|\\vec c||\\vec d|}$ である。両者は等しく、$\\cos$ は $0\\le\\theta\\le\\pi$ で単調に減少するので $\\theta_1=\\theta_2$ である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L11"
+ },
+ {
+  "id": "plane_parametric_iff_cross_normal",
+  "home": "S9",
+  "used": "S10",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "外積（ベクトル積）と、それを使った恒等式 N w = A u + B v + (n・w) n（学習指導要領の範囲外）",
+    "stage": "S10",
+    "where": "答案の「逆に」以降（A, B の定義と恒等式）",
+    "replaceable": true
+   }
+  ],
+  "fix": "n の成分のどれかが0でないとして、そのとき2成分の連立方程式をクラメルの公式で解き、残る1成分を n・w=0 と n・u=n・v=0 から合わせる。",
+  "patch": {
+   "answer": "$u_i,v_i,x_0,y_0,z_0,x,y,z$ を実数とし、$\\vec n=(n_1,n_2,n_3)=(u_2v_3-u_3v_2,\\,u_3v_1-u_1v_3,\\,u_1v_2-u_2v_1)\\neq\\vec 0$ とする。$\\vec w=(x-x_0,y-y_0,z-z_0)$ とおく。成分を展開すると各項が打ち消し合い、$\\vec n\\cdot\\vec u=0$、$\\vec n\\cdot\\vec v=0$ である。よって $\\vec w=s\\vec u+t\\vec v$ なら $\\vec n\\cdot\\vec w=s\\,\\vec n\\cdot\\vec u+t\\,\\vec n\\cdot\\vec v=0$ である。逆に $\\vec n\\cdot\\vec w=0$ とする。$\\vec n\\neq\\vec 0$ なので $n_1,n_2,n_3$ のどれかは $0$ でない。$n_3\\neq 0$ の場合を示す（ほかの場合は成分の役割を入れ替えて同様である）。連立方程式 $su_1+tv_1=w_1$、$su_2+tv_2=w_2$ の係数の行列式は $u_1v_2-u_2v_1=n_3\\neq 0$ なので、解 $s,t$ がある。$\\vec w'=s\\vec u+t\\vec v$ とおくと、$w'_1=w_1$、$w'_2=w_2$ であり、上で示したことから $\\vec n\\cdot\\vec w'=0$ である。これと $\\vec n\\cdot\\vec w=0$ より $n_3w_3=-n_1w_1-n_2w_2=n_3w'_3$ となり、$n_3\\neq 0$ から $w'_3=w_3$ である。よって $\\vec w=s\\vec u+t\\vec v$ である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L11"
+ },
+ {
+  "id": "de_moivre_integer_exponent",
+  "home": "S9",
+  "used": "S10",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "オイラーの公式 e^{it}=cos t + i sin t と複素指数関数の指数法則",
+    "stage": "S10",
+    "where": "答案の第2〜4文（答案全体）",
+    "replaceable": true
+   }
+  ],
+  "fix": "n>=1 を加法定理による帰納法、n=0 は自明、n<0 は逆数が cos(-θ)+i sin(-θ) になることから正の場合に帰着する。",
+  "patch": {
+   "answer": "$\\theta$ を実数、$n$ を整数とし、$u=\\cos\\theta+i\\sin\\theta$ とおく。$n=0$ のときは両辺とも $1$ である。$n\\ge 1$ のとき、$n$ についての帰納法で示す。$n=1$ は明らかである。$u^n=\\cos n\\theta+i\\sin n\\theta$ とすると、加法定理より $u^{n+1}=(\\cos n\\theta+i\\sin n\\theta)(\\cos\\theta+i\\sin\\theta)=\\cos(n+1)\\theta+i\\sin(n+1)\\theta$ である。$n<0$ のとき、$m=-n>0$ とする。$(\\cos\\theta+i\\sin\\theta)(\\cos\\theta-i\\sin\\theta)=\\cos^2\\theta+\\sin^2\\theta=1$ なので、$u^{-1}=\\cos(-\\theta)+i\\sin(-\\theta)$ である。これに $n\\ge 1$ の場合を適用すると、$u^n=(u^{-1})^m=\\cos(-m\\theta)+i\\sin(-m\\theta)=\\cos n\\theta+i\\sin n\\theta$ である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L11"
+ },
+ {
+  "id": "data_correlation_abs_le_one",
+  "home": "S4",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "n項和のコーシー・シュワルツの不等式（一般形）",
+    "stage": "S8",
+    "where": "第2段落の最初の式（偏差にコーシー・シュワルツを適用）",
+    "replaceable": true
+   }
+  ],
+  "fix": "相関係数の範囲は数Iのデータの分析の定理。偏差を標準偏差で割った p_i, q_i を作り、(p_i±q_i)^2 ≥ 0 を足し上げれば 2±2r ≥ 0 が出る。コーシー・シュワルツは不要で、平方の非負性だけで足りる。",
+  "patch": {
+   "answer": "$s$を空でない有限集合、$x_i,y_i\\ (i\\in s)$を実数とし、$n=|s|$とする。平均を$\\bar{x},\\bar{y}$とし、$V_x=\\frac{1}{n}\\sum_{i\\in s}(x_i-\\bar{x})^2>0$、$V_y=\\frac{1}{n}\\sum_{i\\in s}(y_i-\\bar{y})^2>0$、$C=\\frac{1}{n}\\sum_{i\\in s}(x_i-\\bar{x})(y_i-\\bar{y})$、$r=\\frac{C}{\\sqrt{V_x}\\sqrt{V_y}}$とおく。\n偏差を標準偏差で割って$p_i=\\frac{x_i-\\bar{x}}{\\sqrt{V_x}}$、$q_i=\\frac{y_i-\\bar{y}}{\\sqrt{V_y}}$とおく。$(\\sqrt{V_x})^2=V_x$なので$\\frac{1}{n}\\sum_{i\\in s}p_i^2=\\frac{V_x}{V_x}=1$であり、同様に$\\frac{1}{n}\\sum_{i\\in s}q_i^2=1$である。また$\\frac{1}{n}\\sum_{i\\in s}p_iq_i=\\frac{C}{\\sqrt{V_x}\\sqrt{V_y}}=r$である。\n全ての$i\\in s$で$(p_i-q_i)^2\\geq0$なので、足して$n$で割ると$0\\leq\\frac{1}{n}\\sum_{i\\in s}(p_i^2-2p_iq_i+q_i^2)=1-2r+1=2-2r$となり、$r\\leq1$を得る。同様に$(p_i+q_i)^2\\geq0$から$0\\leq2+2r$となり、$r\\geq-1$を得る。よって$|r|\\leq1$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L12"
+ },
+ {
+  "id": "law_of_cosines_angle",
+  "home": "S4",
+  "used": "S10",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "実内積空間・アフィン空間（内積の展開、角を内積で定義）",
+    "stage": "S10",
+    "where": "題意そのもの。答案は ‖u-v‖^2 の内積展開で全体が進む",
+    "replaceable": false
+   },
+   {
+    "tool": "ベクトルの内積",
+    "stage": "S9",
+    "where": "第2段落以降すべて",
+    "replaceable": false
+   }
+  ],
+  "fix": "題意が抽象内積空間で書かれており、教科書の余弦定理（数I、三角比、S4）とは別物。level=high のままでは初学者に出る。平面三角形の余弦定理（頂点から垂線を下ろして三平方の定理を使う）は別カードとして用意し、このカードは数C以降（既習者向け）に回す。答案は題意に対して適切なので patch は付けない。",
+  "keep_as_advanced": true,
+  "batch": "L12"
+ },
+ {
+  "id": "pythagoras_angle_iff",
+  "home": "S3",
+  "used": "S10",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "余弦定理（本カード群のもの）",
+    "stage": "S4",
+    "where": "第2段落の最初の式。教科書では余弦定理は三平方の定理を使って示すので、順序が逆になっている",
+    "replaceable": false
+   },
+   {
+    "tool": "実内積空間・アフィン空間の角の定義",
+    "stage": "S10",
+    "where": "題意そのもの",
+    "replaceable": false
+   }
+  ],
+  "fix": "題意が抽象内積空間で、教科書の三平方の定理とその逆（中3、S3）とは別物。平面での三平方の定理と逆（相似または面積による証明、逆は同じ長さの辺を持つ直角三角形との合同）を別カードとして立て、このカードは既習者向けに回す。また、余弦定理を前提にして三平方を導くため、教科書の順序とは逆であることを明記するとよい。",
+  "keep_as_advanced": true,
+  "batch": "L12"
+ },
+ {
+  "id": "triangle_angle_sum",
+  "home": "S2",
+  "used": "S10",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "実内積空間・アフィン空間、内積を保つ線形同型",
+    "stage": "S10",
+    "where": "第3段落（2次元部分空間から C への線形同型 T）",
+    "replaceable": false
+   },
+   {
+    "tool": "複素数の偏角・極形式・虚部による向きの判定",
+    "stage": "S9",
+    "where": "第4〜第6段落（z_1 z_2 z_3 = -1 から偏角の和を出す）",
+    "replaceable": false
+   },
+   {
+    "tool": "双線形形式 D の交代性",
+    "stage": "S10",
+    "where": "第4段落",
+    "replaceable": false
+   }
+  ],
+  "fix": "level=middle だが題意は抽象内積空間で、答案は複素平面の偏角まで使う。中学の「三角形の内角の和」（平行線と角、S2）の標準解答は、辺に平行な補助線を引いて錯角・同位角を使うもの。題意が抽象内積空間なのでこのカードの答案は妥当だが、level を high 以上に直し、別に平面の内角の和（平行線の性質による証明）を middle カードとして立てるのが妥当。答案は主張を弱めずに書き替えられないため patch は付けない。",
+  "keep_as_advanced": true,
+  "batch": "L12"
+ },
+ {
+  "id": "ptolemy_cyclic_quadrilateral",
+  "home": "S5",
+  "used": "S9",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "ベクトルと内積による長さの計算（単位ベクトル e, f と t=<e,f>）",
+    "stage": "S9",
+    "where": "第2段落以降すべて（第2段階の4つの辺の2乗）",
+    "replaceable": false
+   },
+   {
+    "tool": "実内積空間・球面（題意の設定）",
+    "stage": "S10",
+    "where": "題意そのもの",
+    "replaceable": false
+   }
+  ],
+  "fix": "教科書のトレミーの定理（数A、図形の性質の発展、S5）は円に内接する四角形で、相似な三角形（円周角、方べきの定理）を使う綜合幾何が標準。題意が球面・内積空間なのでこの答案は妥当だが、level の貼り方が高校初学者向けではない。平面の円に内接する四角形版を別カードとして立て、このカードは既習者向けとして残す。patch は付けない（題意が抽象内積空間のため）。",
+  "keep_as_advanced": true,
+  "batch": "L12"
+ },
+ {
+  "id": "power_of_a_point_lines",
+  "home": "S5",
+  "used": "S9",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "ベクトルと内積による計算（w=p-o, v=b-a, <w,v>）",
+    "stage": "S9",
+    "where": "第2段落以降すべて",
+    "replaceable": false
+   },
+   {
+    "tool": "実内積空間・アフィン包・球面（題意の設定）",
+    "stage": "S10",
+    "where": "題意そのもの",
+    "replaceable": false
+   }
+  ],
+  "fix": "教科書の方べきの定理（数A、円の性質、S5）は円と2本の割線／接線で、相似な三角形（円周角）から導く。このカードは抽象内積空間で書かれており、題意に対して答案は妥当。平面の円での方べきの定理を別カード（相似による証明）として立て、このカードは既習者向けとして残す。patch は付けない。",
+  "keep_as_advanced": true,
+  "batch": "L12"
+ },
+ {
+  "id": "alternate_angles_of_parallel",
+  "home": "S2",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトル（DC=kAB、なす角、向きの符号）",
+    "stage": "S9",
+    "where": "第1段落から第3段落の全体",
+    "replaceable": false
+   }
+  ],
+  "fix": "錯角の相等は中2で『平行線の性質』として証明なしに認める事実（平行線公準と同値）で、教科書に別の標準証明がない。標準解答にするなら公理扱いとして『平行線の性質より』の1行にするか、ベクトルによる導出を数C以降の別カードに移す。",
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "parallel_of_alternate_angles",
+  "home": "S2",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "有向角と向きの符号（教科書範囲外）",
+    "stage": "S10",
+    "where": "第2段落から第3段落（有向角の符号の比較、有向角の加法）",
+    "replaceable": false
+   },
+   {
+    "tool": "ベクトル（-CD、-CA の反転、正の倍）",
+    "stage": "S9",
+    "where": "第3段落",
+    "replaceable": false
+   }
+  ],
+  "fix": "錯角が等しければ平行は、中2で『平行線になるための条件』として証明なしに認める。有向角は高校課程にもない。標準解答にするなら認める事実として扱い、現在の証明は高度な別カードに移す。",
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "corresponding_angles_of_parallel",
+  "home": "S2",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトル（CD=kAB、なす角が正の倍で不変）",
+    "stage": "S9",
+    "where": "全段落",
+    "replaceable": false
+   }
+  ],
+  "fix": "同位角の相等は中2で証明なしに認める平行線の性質そのもの。標準解答は『平行線の性質より』とし、ベクトル証明は別カードに残す。",
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "parallel_of_corresponding_angles",
+  "home": "S2",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "有向角と向きの符号（教科書範囲外）",
+    "stage": "S10",
+    "where": "第3段落全体",
+    "replaceable": false
+   },
+   {
+    "tool": "ベクトル（AC=-CA、反転）",
+    "stage": "S9",
+    "where": "第2段落",
+    "replaceable": false
+   }
+  ],
+  "fix": "同位角が等しければ平行は、中2で証明なしに認める平行線になるための条件。標準解答は認める事実として扱い、有向角による証明は別カードに移す。",
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "parallel_of_common_perpendicular",
+  "home": "S2",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "直交補空間と部分空間の次元（線形代数）",
+    "stage": "S10",
+    "where": "第1文後半（EFに直交するベクトル全体は1次元）",
+    "replaceable": true
+   },
+   {
+    "tool": "ベクトルの内積と平行",
+    "stage": "S9",
+    "where": "全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "共通の垂線は、同位角が両方90度という平行線の条件で書き替えられる。patchを参照。",
+  "patch": {
+   "answer": "$A,B,C,D,E,F$を平面上の点とし、$A\\neq B$、$C\\neq D$、$E\\neq F$で、直線$AB$と直線$CD$はともに直線$EF$に垂直とする。垂直な2直線は交わるので、直線$AB$と直線$EF$の交点を$P$、直線$CD$と直線$EF$の交点を$Q$とする。\n\n$P=Q$のとき、点$P$を通り直線$EF$に垂直な直線はただ1本なので、直線$AB$と直線$CD$は一致する。\n\n$P\\neq Q$のとき、直線$EF$が2直線$AB$、$CD$を横切るとき、同位角はどちらも$90^\\circ$で等しい。同位角が等しいから、直線$AB$と直線$CD$は平行である（平行線になるための条件）。\n\nどちらの場合も、直線$AB$と直線$CD$は平行（一致を含む）である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "parallelogram_properties",
+  "home": "S2",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトル（位置ベクトル、なす角の反転不変）",
+    "stage": "S9",
+    "where": "全段落（対辺、中点、対角のすべて）",
+    "replaceable": true
+   }
+  ],
+  "fix": "中2の標準は、対角線で2つの三角形に分けて合同条件（2角夾辺）と錯角で対辺・対角を示し、対角線の中点は三角形の合同で示す。ただし題意がAB=DCのベクトル等式で、共線の退化も含むため、同じ主張を保つ書き替えは10行を超える。題意を『2組の対辺が平行な四角形』に直してから書き替えるのが妥当。",
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "parallelogram_of_diagonals_bisect",
+  "home": "S2",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "位置ベクトル",
+    "stage": "S9",
+    "where": "全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "中2の標準は『対角線が互いの中点で交わる→対頂角と2辺夾角で合同→錯角が等しい→平行四辺形』。結論がベクトル等式で退化も含むため同じ主張のまま置換できない。題意を『平行四辺形である』に直してから合同で書く。",
+  "keep_as_advanced": false,
+  "batch": "L13"
+ },
+ {
+  "id": "parallelogram_of_two_pairs_parallel",
+  "home": "S2",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの線形独立と係数比較",
+    "stage": "S9",
+    "where": "第1段落から第2段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "平行四辺形の定義から対辺が等しいことを示すのが中2の標準で、対角線ACで2つの三角形に分け、錯角と共通辺により2角夾辺で合同を示す。ただし結論がベクトル等式（向きを含む）のため同じ主張のままでは書き替えられない。題意を中学の言い方に直してから書く。",
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "parallelogram_of_one_pair_parallel_equal",
+  "home": "S2",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトル（DC=kAB、k=-1の排除）",
+    "stage": "S9",
+    "where": "全段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "中2の標準は、対角線ACを引き、AB=CD、錯角、ACの共通で2辺夾角の合同を作って平行四辺形を示す。反対側の仮定が向きを決める役をしているが、ベクトル等式の結論には中学の言い方がないため、題意を直してから書き替える。",
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "parallelogram_of_two_pairs_equal",
+  "home": "S2",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "コーシー・シュワルツの不等式の等号条件",
+    "stage": "S10",
+    "where": "第3段落（st-m^2>0）",
+    "replaceable": true
+   },
+   {
+    "tool": "ベクトルの内積と1次独立による連立",
+    "stage": "S9",
+    "where": "第2段落から第5段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "中2の標準は、対角線ACで分けた△ABCと△CDAを3辺が等しいとして合同にし、錯角から平行を得る。反対側の仮定で凸の配置を固定する。同じ主張を保つ書き替えはベクトル等式の結論のため難しく、題意を直したうえで合同で書くのが妥当。現在の答案は計算が長く初学者向けではない。",
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "rectangle_diagonals_equal",
+  "home": "S2",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積による展開",
+    "stage": "S9",
+    "where": "第1段落から第3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "平行四辺形の性質と同側内角、合同で書き替えられる。patchを参照。",
+  "patch": {
+   "answer": "$A,B,C,D$を点とし、$A\\neq B$、$A\\neq D$、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$\\angle DAB=\\pi/2$とする。$\\angle DAB=\\pi/2$より$A,B,D$は同一直線上にない。$\\overrightarrow{AB}=\\overrightarrow{DC}$より四角形$ABCD$は平行四辺形で、$AB=DC$、$AD=BC$、$AD\\parallel BC$である。\n\n$AD\\parallel BC$より同側内角の和は$\\pi$なので、$\\angle ABC=\\pi-\\angle DAB=\\pi/2$である。平行四辺形の対角は等しいから、$\\angle BCD=\\angle DAB=\\pi/2$、$\\angle CDA=\\angle ABC=\\pi/2$である。\n\n三角形$ABC$と三角形$BAD$で、$AB=BA$（共通）、$BC=AD$、$\\angle ABC=\\angle BAD=\\pi/2$なので、2辺とその間の角が等しく合同である。よって$AC=BD$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "rectangle_of_equal_diagonals",
+  "home": "S2",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積による展開",
+    "stage": "S9",
+    "where": "全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "平行四辺形の性質、3辺相等による合同、同側内角で書き替えられる。patchを参照。",
+  "patch": {
+   "answer": "$A,B,C,D$を点とし、$A\\neq B$、$A\\neq D$、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$AC=BD$とする。\n\nまず$A,B,D$が同一直線上にないことを示す。同一直線上にあるとして、$A$を原点とする数直線で$B$の座標を$b$、$D$の座標を$d$（$b,d\\neq0$）とおくと、$C$の座標は$b+d$で、$AC=|b+d|$、$BD=|d-b|$である。これらが等しいと$bd=0$となり、$b,d\\neq0$に反する。\n\nよって四角形$ABCD$は平行四辺形で、$AD=BC$、$AD\\parallel BC$である。三角形$ABD$と三角形$BAC$で、$AB=BA$（共通）、$AD=BC$、$BD=AC$なので、3組の辺が等しく合同であり、$\\angle DAB=\\angle CBA$である。$AD\\parallel BC$より同側内角の和は$\\pi$なので$\\angle DAB+\\angle CBA=\\pi$である。したがって$\\angle DAB=\\pi/2$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "rhombus_diagonals_perpendicular",
+  "home": "S2",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積（和と差の積）",
+    "stage": "S9",
+    "where": "全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "平行四辺形の対角線の中点と二等辺三角形の中線が底辺に垂直であることで書き替えられる。patchを参照。",
+  "patch": {
+   "answer": "$A,B,C,D$を点とし、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$AB=AD$とする。\n\n$B=D$のときは$\\overrightarrow{BD}=\\vec{0}$、$A=C$のときは$\\overrightarrow{AC}=\\vec{0}$なので、内積は$0$である。以下$B\\neq D$かつ$A\\neq C$とする。$A,B,D$が同一直線上にあるとすると、$AB=AD$かつ$B\\neq D$より$A$は$BD$の中点となり、$C$は$A$と一致して$A\\neq C$に反する。したがって$A,B,D$は同一直線上にない。\n\nこのとき$\\overrightarrow{AB}=\\overrightarrow{DC}$より四角形$ABCD$は平行四辺形で、対角線$AC$と$BD$は互いの中点$M$で交わる。三角形$ABD$は$AB=AD$の二等辺三角形で、$M$は底辺$BD$の中点だから、$AM\\perp BD$である。直線$AM$は直線$AC$なので、$AC\\perp BD$、すなわち$\\overrightarrow{AC}\\cdot\\overrightarrow{BD}=0$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "rhombus_of_perpendicular_diagonals",
+  "home": "S2",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積（和と差の積）",
+    "stage": "S9",
+    "where": "全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "対角線の中点と、垂直二等分線上の点は両端から等距離という性質で書き替えられる。patchを参照。",
+  "patch": {
+   "answer": "$A,B,C,D$を点とし、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$\\overrightarrow{AC}\\cdot\\overrightarrow{BD}=0$とする。\n\n$B=D$のときは$AB=AD$が明らかである。$A=C$のときは$\\overrightarrow{AB}=\\overrightarrow{DC}=\\overrightarrow{DA}$より$A$が$BD$の中点となり、$AB=AD$である。以下$B\\neq D$かつ$A\\neq C$とする。$A,B,D$が同一直線上にあるとすると、$\\overrightarrow{AC}$と$\\overrightarrow{BD}$はこの直線に平行な零でないベクトルとなり、内積は$0$にならない。したがって$A,B,D$は同一直線上にない。\n\nこのとき四角形$ABCD$は平行四辺形で、対角線$AC$と$BD$は互いの中点$M$で交わる。$AC\\perp BD$より$AM\\perp BD$である。三角形$AMB$と三角形$AMD$で、$AM$は共通、$BM=DM$、$\\angle AMB=\\angle AMD=\\pi/2$なので合同であり、$AB=AD$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "rhombus_diagonal_bisects_angle",
+  "home": "S2",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積と逆余弦によるなす角",
+    "stage": "S9",
+    "where": "第2段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "平行四辺形の対辺が等しいことと3辺相等の合同で書き替えられる。patchを参照。",
+  "patch": {
+   "answer": "$A,B,C,D$を点とし、$A,B,D$は同一直線上になく、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$AB=AD$とする。四角形$ABCD$は平行四辺形なので、$BC=AD$、$DC=AB$である。$AB=AD$とあわせて、$AB=BC=CD=DA$となる。\n\n三角形$ABC$と三角形$ADC$で、$AB=AD$、$BC=DC$、$AC$は共通なので、3組の辺が等しく合同である。よって$\\angle BAC=\\angle DAC=\\angle CAD$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "square_diagonal_length_and_angle",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積と余弦（逆余弦）",
+    "stage": "S9",
+    "where": "第1段落から第3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "三平方の定理と直角二等辺三角形の底角で書き替えられる。patchを参照。",
+  "patch": {
+   "answer": "$A,B,C,D$を点とし、$A\\neq B$、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$AB=AD$、$\\angle DAB=\\pi/2$とする。$\\angle DAB=\\pi/2$より$A,B,D$は同一直線上になく、四角形$ABCD$は平行四辺形で、$BC=AD=AB$、$BC\\parallel AD$である。\n\n同側内角の和は$\\pi$だから、$\\angle ABC=\\pi-\\angle DAB=\\pi/2$である。三角形$ABC$は$\\angle ABC=\\pi/2$、$AB=BC$の直角二等辺三角形である。三平方の定理より$AC^2=AB^2+BC^2=2AB^2$なので、$AC=\\sqrt{2}\\,AB$である。\n\n二等辺三角形の底角は等しく、三角形の内角の和は$\\pi$だから、$\\angle BAC=\\angle BCA=(\\pi-\\pi/2)/2=\\pi/4$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "trapezoid_midline",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトル（位置ベクトルと向きの符号の判定）",
+    "stage": "S9",
+    "where": "全段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "中3の標準は、辺DNを延長して直線ABとの交点Eをとり、△NCD≡△NBE（対頂角、BN=CN、錯角）でN=DEの中点、BE=DCを得て、△ADEで中点連結定理を使い MN∥AE、MN=AE/2=(AB+DC)/2 とする。反対側の仮定がEの位置（Bの先）を決める部分の厳密な扱いが中学では曖昧になり、主張を保った10行以内の書き替えにならないためpatchは付けない。",
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "isosceles_trapezoid_diagonals_base_angles",
+  "home": "S2",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積による展開と余弦",
+    "stage": "S9",
+    "where": "第3段落から第5段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "中学の標準は、上底の両端から下底に垂線を下ろして合同な直角三角形を作り底角の相等を得る。その後△ABCと△BADの合同（2辺夾角）で対角線の相等を得る。AB≠DCの場合分けと配置の扱いで10行を超えるためpatchは付けない。",
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "varignon_parallelogram",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "位置ベクトルによる中点計算",
+    "stage": "S9",
+    "where": "全段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "中3の標準は中点連結定理を△ABCと△CDAに使う（PQ∥AC、PQ=AC/2、SR∥AC、SR=AC/2、△BCDで QR=BD/2）。空間の任意の4点の三角形は平面上にあるのでそのまま使える。ただし結論『PQ=SR』がベクトル等式で退化も含むため、同じ主張を保つpatchは付けない。",
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "convex_polygon_interior_angle_sum",
+  "home": "S2",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "有向角と符号（教科書範囲外）",
+    "stage": "S10",
+    "where": "第1段落から第5段落",
+    "replaceable": true
+   },
+   {
+    "tool": "数学的帰納法",
+    "stage": "S7",
+    "where": "第3段落以降",
+    "replaceable": true
+   }
+  ],
+  "fix": "凸多角形は1つの頂点から対角線で三角形に分ける（中2の標準解答）。ただし凸の定義がカード独自の有向角の符号条件で、教科書の凸の概念とずれる点に注意。patchを参照。",
+  "patch": {
+   "answer": "$p_0,\\dots,p_{n+2}$が凸$(n+3)$角形の頂点をなすとする。頂点$p_0$から他の頂点へ対角線を引くと、多角形は$n+1$個の三角形$p_0p_ip_{i+1}$（$i=1,\\dots,n+1$）に分かれる。\n\n各頂点の内角は、その頂点に集まる三角形の角の和に等しい。$p_1$と$p_{n+2}$の内角はそれぞれ1つの三角形の角、$p_2,\\dots,p_{n+1}$の内角は隣り合う2つの三角形の角の和（角の加法）、$p_0$の内角は$n+1$個の三角形の$p_0$での角の和である。したがって多角形の内角の和は、$n+1$個の三角形の内角の和の合計に等しい。\n\n三角形の内角の和は$\\pi$なので、多角形の内角の和は$(n+1)\\pi$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "convex_polygon_exterior_angle_sum",
+  "home": "S2",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "有向角と符号（教科書範囲外）",
+    "stage": "S10",
+    "where": "第2段落以降",
+    "replaceable": true
+   },
+   {
+    "tool": "数学的帰納法",
+    "stage": "S7",
+    "where": "第3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "内角の和を三角形に分けて求め、頂点数×π から引く（中2の標準）。カード独自の凸の定義と教科書の凸の概念のずれに注意。patchを参照。",
+  "patch": {
+   "answer": "$p_0,\\dots,p_{n+2}$が凸$(n+3)$角形の頂点をなすとする。\n\nまず内角の和が$(n+1)\\pi$であることを示す。頂点$p_0$から他の頂点へ対角線を引くと、多角形は$n+1$個の三角形$p_0p_ip_{i+1}$（$i=1,\\dots,n+1$）に分かれる。各頂点の内角は、その頂点に集まる三角形の角の和に等しいので（角の加法）、多角形の内角の和は$n+1$個の三角形の内角の和の合計に等しい。三角形の内角の和は$\\pi$なので、内角の和は$(n+1)\\pi$である。\n\n頂点は$n+3$個あり、各頂点の外角は$\\pi$から内角を引いたものなので、外角の和は$(n+3)\\pi-(n+1)\\pi=2\\pi$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "triangle_area_sine",
+  "home": "S4",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "線形写像による面積変換（行列式の絶対値倍）",
+    "stage": "S10",
+    "where": "第3段落",
+    "replaceable": true
+   },
+   {
+    "tool": "ベクトルの成分と内積、ラグランジュの恒等式",
+    "stage": "S9",
+    "where": "第4段落",
+    "replaceable": true
+   },
+   {
+    "tool": "凸結合による凸包の記述（ルベーグ測度としての面積）",
+    "stage": "S10",
+    "where": "第2段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "数Iの標準は、底辺×高さ÷2に、高さ=AC sin∠BACを三角比で入れる。patchを参照（面積=底辺×高さ÷2を既知とする）。",
+  "patch": {
+   "answer": "$A,B,C$を平面上の点とし、三角形$ABC$の面積を$S$、$\\theta=\\angle BAC$とする。三角形の面積は、既知の公式『底辺×高さ÷2』で与えられるものとする。\n\n$A=B$または$A=C$のときは、凸包が線分または1点で$S=0$であり、$AB\\cdot AC=0$なので右辺も$0$である。3点が同一直線上にあるときは$S=0$で、$\\theta=0$または$\\pi$より$\\sin\\theta=0$なので右辺も$0$である。\n\n以下、3点は同一直線上にないとする。$C$から直線$AB$に下ろした垂線の足を$H$とする。$\\theta<\\pi/2$のとき、$H$は半直線$AB$上にあり、直角三角形$ACH$で三角比の定義から$CH=AC\\sin\\theta$である。$\\theta=\\pi/2$のとき、$H=A$で$CH=AC=AC\\sin\\theta$である。$\\theta>\\pi/2$のとき、$H$は$A$について$B$と反対側にあり、直角三角形$ACH$で$\\angle CAH=\\pi-\\theta$だから、$CH=AC\\sin(\\pi-\\theta)=AC\\sin\\theta$である。\n\nよって底辺を$AB$、高さを$CH$として、$S=\\frac{1}{2}AB\\cdot CH=\\frac{1}{2}AB\\cdot AC\\sin\\angle BAC$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "heron_formula_area",
+  "home": "S4",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "線形写像による面積変換（行列式の絶対値倍）",
+    "stage": "S10",
+    "where": "第2段落",
+    "replaceable": true
+   },
+   {
+    "tool": "ベクトルの成分とラグランジュの恒等式",
+    "stage": "S9",
+    "where": "第2段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "面積=1/2 bc sinθ を底辺×高さ÷2と三角比で示し、後半（余弦定理による消去）はそのまま使える。patchを参照。",
+  "patch": {
+   "answer": "$A,B,C$を平面上の点とし、$a=BC$、$b=CA$、$c=AB$、$s=(a+b+c)/2$、$\\theta=\\angle BAC$とする。三角形の面積$S$は、既知の公式『底辺×高さ÷2』で与えられるものとする。\n\nまず$S=\\frac{1}{2}bc\\sin\\theta$を示す。$A=B$、$A=C$、または3点が同一直線上のときは、両辺とも$0$である。それ以外のとき、$C$から直線$AB$に下ろした垂線の足を$H$とすると、$\\theta$が鋭角・直角・鈍角のいずれでも$CH=b\\sin\\theta$である（鈍角のときは$\\angle CAH=\\pi-\\theta$と$\\sin(\\pi-\\theta)=\\sin\\theta$を使う）。よって$S=\\frac{1}{2}c\\cdot CH=\\frac{1}{2}bc\\sin\\theta$である。\n\n次に、余弦定理より$2bc\\cos\\theta=b^2+c^2-a^2$である（$bc=0$のときは$a=b$または$a=c$なので両辺とも$0$である）。また$\\sin\\theta\\geq0$である。$\\sin^2\\theta=1-\\cos^2\\theta$より、$\\left(\\frac{1}{2}bc\\sin\\theta\\right)^2=\\frac{1}{4}b^2c^2-\\frac{1}{16}(b^2+c^2-a^2)^2=\\frac{1}{16}(a+b+c)(-a+b+c)(a-b+c)(a+b-c)=s(s-a)(s-b)(s-c)$である。\n\n面積は$0$以上なので、平方根をとって結論を得る。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "triangle_area_base_height",
+  "home": "S1",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "線形写像による面積変換（行列式）と行列式の双線形性・交代性",
+    "stage": "S10",
+    "where": "第2段落から第3段落",
+    "replaceable": true
+   },
+   {
+    "tool": "ベクトルの内積とラグランジュの恒等式",
+    "stage": "S9",
+    "where": "第4段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "題意が三角形の面積公式そのもの（小学校で既習）で、面積を凸包のルベーグ測度とした定義から導く形になっている。中学の標準は、長方形を対角線で2等分する直角三角形の面積に分解する。patchを参照。題意の面積の定義（ルベーグ測度）自体が高校範囲外である。",
+  "patch": {
+   "answer": "$A,B,C,H$を平面上の点とし、$B\\neq C$、$H$は直線$BC$上にあり$HA\\perp BC$（$A$が直線$BC$上なら$H=A$）とする。面積の基本性質（長方形の面積は縦×横、合同な図形の面積は等しい、面積は加法的）を用いる。$h=AH$とおく。\n\n$H\\neq A$のとき、直線$BC$上の点$X$($X\\neq H$)に対して直角三角形$AHX$は、$AH$と$HX$を隣り合う2辺とする長方形を対角線で切った2つの合同な三角形の1つなので、面積は$\\frac{1}{2}h\\cdot HX$である。$X=H$のときは面積$0$で同じ式が成り立つ。\n\n$H$が線分$BC$上にあるとき、三角形$ABC$は直角三角形$AHB$と$AHC$に分かれるので、面積は$\\frac{1}{2}h(HB+HC)=\\frac{1}{2}h\\cdot BC$である。$H$が線分$BC$の外にあるとき、$H$に近い方の端点を$B$とすると、三角形$ABC$は直角三角形$AHC$から$AHB$を除いたものなので、面積は$\\frac{1}{2}h(HC-HB)=\\frac{1}{2}h\\cdot BC$である。$C$の方が近いときも同様である。\n\n$H=A$のときは$A$が直線$BC$上にあり、三角形は線分になって面積は$0$、$AH=0$なので成り立つ。したがって面積は$\\frac{1}{2}BC\\cdot AH$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "area_ratio_common_vertex_base_line",
+  "home": "S2",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "線形写像による面積変換（行列式）",
+    "stage": "S10",
+    "where": "第2段落",
+    "replaceable": true
+   },
+   {
+    "tool": "行列式の双線形性",
+    "stage": "S9",
+    "where": "第3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "高さが等しい三角形の面積は底辺に比例する、という中学の考え方で足りる。patchを参照。",
+  "patch": {
+   "answer": "$A,B,C,D$を平面上の点とし、$B\\neq C$、$D$は直線$BC$上にあるとする。三角形の面積は『底辺×高さ÷2』で与えられるものとし、$S$と書く。$A$から直線$BC$に下ろした垂線の長さを$h$とする（$A$が直線$BC$上なら$h=0$）。\n\n$B,D,C$は同じ直線$BC$上にあるので、三角形$ABD$は底辺$BD$、高さ$h$で$S(ABD)=\\frac{1}{2}BD\\cdot h$である（$B=D$のときは両辺とも$0$）。同様に三角形$ADC$は底辺$DC$、高さ$h$で$S(ADC)=\\frac{1}{2}DC\\cdot h$である。\n\nしたがって$S(ABD)\\cdot DC=\\frac{1}{2}BD\\cdot DC\\cdot h=S(ADC)\\cdot BD$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "area_equal_same_base_parallel",
+  "home": "S2",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "線形写像による面積変換と行列式の展開",
+    "stage": "S10",
+    "where": "第2段落から第3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "等積変形は、平行線の間隔が一定であることと底辺×高さ÷2で示すのが中2の標準。patchを参照。",
+  "patch": {
+   "answer": "$A,A',B,C$を平面上の点とし、$A\\neq A'$、$B\\neq C$、直線$AA'$と直線$BC$は平行とする。三角形の面積は『底辺×高さ÷2』で与えられるものとする。\n\n平行な2直線の間隔は一定なので、$A$と$A'$から直線$BC$までの距離は等しい（直線$AA'$が直線$BC$と一致する場合は、どちらも$0$である）。この距離を$h$とすると、三角形$ABC$と三角形$A'BC$はどちらも底辺$BC$、高さ$h$なので、面積はともに$\\frac{1}{2}BC\\cdot h$である。よって2つの面積は等しい。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "area_ratio_shared_angle",
+  "home": "S4",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "線形写像による面積変換（行列式）",
+    "stage": "S10",
+    "where": "第2段落",
+    "replaceable": true
+   },
+   {
+    "tool": "行列式の双線形性",
+    "stage": "S9",
+    "where": "第3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "数Iの面積公式 S=1/2 xy sinθ を2つの三角形に適用し、共有する角の正弦が等しいことを使う。patchを参照。",
+  "patch": {
+   "answer": "$A,B,C,B',C'$を平面上の点とし、$A\\neq B$、$A\\neq C$、$B'$は直線$AB$上、$C'$は直線$AC$上にあるとする。三角形の面積$S$は、公式$S(XYZ)=\\frac{1}{2}XY\\cdot XZ\\sin\\angle YXZ$（3点が同一直線上でも、両辺は$0$）を用いる。\n\n$B'=A$または$C'=A$のときは、$AB'\\cdot AC'=0$で、三角形$AB'C'$は線分または点なので$S(AB'C')=0$であり、両辺とも$0$である。以下$B'\\neq A$、$C'\\neq A$とする。$B'$は直線$AB$上、$C'$は直線$AC$上の$A$と異なる点だから、半直線$AB'$は半直線$AB$かその反対向きであり、$AC'$も同様である。したがって$\\angle B'AC'$は$\\angle BAC$または$\\pi-\\angle BAC$に等しく、どちらの場合も$\\sin\\angle B'AC'=\\sin\\angle BAC$である。\n\nよって$S(AB'C')=\\frac{1}{2}AB'\\cdot AC'\\sin\\angle BAC$、$S(ABC)=\\frac{1}{2}AB\\cdot AC\\sin\\angle BAC$である。したがって$S(AB'C')\\cdot AB\\cdot AC=\\frac{1}{2}AB'\\cdot AC'\\cdot AB\\cdot AC\\sin\\angle BAC=S(ABC)\\cdot AB'\\cdot AC'$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "area_similar_triangles_ratio_square",
+  "home": "S3",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "線形写像による面積変換（行列式）",
+    "stage": "S10",
+    "where": "第2段落",
+    "replaceable": true
+   },
+   {
+    "tool": "余弦定理とヘロンの公式",
+    "stage": "S4",
+    "where": "第2段落から第3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "中3の標準は、相似な三角形の底辺・高さがともにk倍になることから面積比k^2を得る。patchを参照。",
+  "patch": {
+   "answer": "$A,B,C,D,E,F$を平面上の点、$k>0$とし、$DE=k\\,AB$、$DF=k\\,AC$、$EF=k\\,BC$とする。三角形の面積は『底辺×高さ÷2』で与えられるものとする。\n\n$A,B,C$が同一直線上にあるとき、3辺のうち1つは他の2つの和に等しい。三角形$DEF$の各辺は$k$倍なので同じ関係が成り立ち、$D,E,F$も同一直線上にある。面積はどちらも$0$で、$0=k^2\\cdot0$である。以下、$A,B,C$は三角形をなすとする。このとき$D,E,F$も三角形をなし、3組の辺の比が等しいから、$\\triangle ABC\\sim\\triangle DEF$（相似比$1:k$）である。\n\n$A$から直線$BC$に下ろした垂線の足を$H$、$D$から直線$EF$に下ろした垂線の足を$H'$とする。相似より$\\angle B=\\angle E$である。$\\angle B$が鋭角のとき直角三角形$ABH$と$DEH'$は$\\angle B=\\angle E$で2角が等しく相似、鈍角のときは$\\angle ABH=\\angle DEH'=\\pi-\\angle B$で相似、直角のときは$H=B$、$H'=E$で$AH=AB$、$DH'=DE$である。いずれも$DH':AH=DE:AB=k:1$である。\n\nしたがって$S(DEF)=\\frac{1}{2}EF\\cdot DH'=\\frac{1}{2}(k\\,BC)(k\\,AH)=k^2\\cdot\\frac{1}{2}BC\\cdot AH=k^2S(ABC)$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "parallelogram_area",
+  "home": "S4",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "線形写像による面積変換（行列式）と単位正方形の像",
+    "stage": "S10",
+    "where": "第2段落から第3段落",
+    "replaceable": true
+   },
+   {
+    "tool": "ベクトル成分とラグランジュの恒等式",
+    "stage": "S9",
+    "where": "第3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "平行四辺形を対角線で合同な2つの三角形に分け、数Iの面積公式を使う。patchを参照。",
+  "patch": {
+   "answer": "$A,B,C,D$を平面上の点とし、$\\overrightarrow{AB}=\\overrightarrow{DC}$とする。三角形の面積$S$は、公式$S(XYZ)=\\frac{1}{2}XY\\cdot XZ\\sin\\angle YXZ$を用いる。\n\n$A=B$、$A=D$、または$A,B,D$が同一直線上にあるときは、4点の凸包は線分または1点で面積は$0$であり、$AB\\cdot AD=0$または$\\sin\\angle BAD=0$なので右辺も$0$である。\n\n以下、$A,B,D$は同一直線上にないとする。四角形$ABCD$は平行四辺形で、対角線$BD$により2つの三角形$ABD$、$CDB$に分かれる。この2つは3辺が等しく合同である。よって面積は$2S(ABD)=2\\cdot\\frac{1}{2}AB\\cdot AD\\sin\\angle BAD=AB\\cdot AD\\sin\\angle BAD$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "three_perpendiculars",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積による分解",
+    "stage": "S9",
+    "where": "第2段落全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "数Aの標準は、BC⊥HA、BC⊥HBから直線BCが平面AHBに垂直になり、AB⊥BC を得る（線と平面の垂直条件）。patchを参照。",
+  "patch": {
+   "answer": "平面$\\alpha$と点$A,H,B,C$をとり、$H,B,C$は$\\alpha$上にあり、$B\\neq C$で、$HA$は$\\alpha$に垂直、$HB\\perp BC$とする。\n\n$A=H$のときは$AB=HB\\perp BC$で成り立つ。$H=B$のときは$AB=AH$が$\\alpha$に垂直で、$\\alpha$上の$BC$に垂直なので成り立つ。以下$A\\neq H$、$H\\neq B$とする。このとき$A,H,B$は同一直線上にない（同一直線上なら$HA\\parallel HB$となるが、$HA$は$\\alpha$上の$HB$に垂直なので矛盾）。\n\n$HA$は$\\alpha$に垂直で、$BC$は$\\alpha$上の直線だから$BC\\perp HA$である。また仮定より$BC\\perp HB$である。$BC$は平面$AHB$上の交わる2直線$HA$、$HB$に垂直なので、平面$AHB$に垂直である。直線$AB$は平面$AHB$上にあるから、$BC\\perp AB$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "three_perpendiculars_converse_foot",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積による分解",
+    "stage": "S9",
+    "where": "第2段落全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "数Aの標準は、BC⊥HA、BC⊥ABから直線BCが平面AHBに垂直になり、HB⊥BC を得る。patchを参照。",
+  "patch": {
+   "answer": "平面$\\alpha$と点$A,H,B,C$をとり、$H,B,C$は$\\alpha$上にあり、$B\\neq C$で、$HA$は$\\alpha$に垂直、$AB\\perp BC$とする。\n\n$A=H$のときは$HB=AB\\perp BC$で成り立つ。$H=B$のときは$\\overrightarrow{BH}=\\vec{0}$で成り立つ。以下$A\\neq H$、$H\\neq B$とする。このとき$A,H,B$は同一直線上にない（同一直線上なら$HA\\parallel HB$となるが、$HA$は$\\alpha$上の$HB$に垂直なので矛盾）。\n\n$HA$は$\\alpha$に垂直で、$BC$は$\\alpha$上の直線だから$BC\\perp HA$である。また仮定より$BC\\perp AB$である。$BC$は平面$AHB$上の交わる2直線$AH$、$AB$に垂直なので、平面$AHB$に垂直である。直線$HB$は平面$AHB$上にあるから、$BC\\perp HB$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "three_perpendiculars_converse_plane",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積と線形結合",
+    "stage": "S9",
+    "where": "第1段落から第2段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "数Aの標準は、線と平面の垂直条件を2回使う。patchを参照。",
+  "patch": {
+   "answer": "$A,H,B,C$を点とし、$H,B,C$は同一直線上になく、$AB\\perp BC$、$HB\\perp BC$、$AH\\perp HB$とする。$H\\neq B$である。\n\n$A=H$のときは$\\overrightarrow{HA}=\\vec{0}$で成り立つ。以下$A\\neq H$とする。$A,B,H$が同一直線上にあるとすると$HA\\parallel HB$となるが、$AH\\perp HB$に反する。したがって$A,B,H$は同一直線上にない。\n\n$BC$は平面$ABH$上の交わる2直線$BA$、$BH$に垂直なので、平面$ABH$に垂直である。よって$BC\\perp AH$である。直線$AH$は、平面$HBC$上の交わる2直線$HB$、$HC$のうち$HB$に垂直であり、また$BC$に垂直（$BC\\perp AH$）である。$HB$と$BC$は$B$で交わる平面$HBC$上の2直線なので、直線$AH$は平面$HBC$に垂直である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "line_perpendicular_plane_criterion",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの線形結合と内積の線形性",
+    "stage": "S9",
+    "where": "第2段落全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "線と平面の垂直条件そのものを示すカード。教科書は合同な三角形による長い議論か、証明を省く扱いで、10行以内の書き替えはない。標準解答にするなら level を数C（空間ベクトル）に上げるか、教科書どおり『垂直条件』として認める扱いにする。ベクトルの証明は復習向けに残す価値がある。",
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "lines_perpendicular_to_plane_parallel",
+  "home": "S5",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "直交補空間と次元（線形代数）",
+    "stage": "S10",
+    "where": "第2段落全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "数Aの標準は、2直線を含む平面を作り、平面上で2直線がともに平面αとの交点で垂直になること、または垂線の一意性から示す。10行を超えるため方針のみ。現在の答案は『直交補空間の次元が1』を使い、線形代数の範囲である。",
+  "keep_as_advanced": true,
+  "batch": "L13"
+ },
+ {
+  "id": "foot_of_perpendicular_shortest",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積による展開",
+    "stage": "S9",
+    "where": "第2段落全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "∠AHX=90°の直角三角形に三平方の定理（中3）を使う。patchを参照。",
+  "patch": {
+   "answer": "平面$\\alpha$と点$A,H,X$をとり、$H,X$は$\\alpha$上にあり、$HA$は$\\alpha$に垂直とする。\n\n$H=X$のときは$AX=AH$、$HX=0$で成り立つ。$A=H$のときは$AX=HX$、$AH=0$で成り立つ。以下$A\\neq H$、$X\\neq H$とする。$HA$は$\\alpha$に垂直で、直線$HX$は$\\alpha$上にあるから、$\\angle AHX=\\pi/2$である。直角三角形$AHX$に三平方の定理を使うと、$AX^2=AH^2+HX^2$である。$HX^2\\geq0$より$AH^2\\leq AX^2$であり、長さは$0$以上なので$AH\\leq AX$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L13"
+ },
+ {
+  "id": "slant_equal_iff_foot_equal",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積による展開",
+    "stage": "S9",
+    "where": "第2段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "直角三角形AHXの三平方の定理で AX^2=AH^2+HX^2 を示す。patchを参照。",
+  "patch": {
+   "answer": "平面$\\alpha$と点$A,H,B,C,D$をとり、$H,B,C,D$は$\\alpha$上にあり、$HA$は$\\alpha$に垂直とする。\n\n$\\alpha$上の任意の点$X$について、$AX^2=AH^2+HX^2$が成り立つ。実際、$H=X$または$A=H$のときは明らかで、そうでないときは$\\angle AHX=\\pi/2$の直角三角形$AHX$に三平方の定理を使う。\n\nしたがって$\\alpha$上の2点$X,Y$について、$AX^2=AY^2$と$HX^2=HY^2$は同値である。長さは$0$以上なので、$AX=AY$と$HX=HY$は同値である。これを$(X,Y)=(B,C)$と$(C,D)$に使えば、$AB=AC=AD$と$HB=HC=HD$が同値であることを得る。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L13"
+ },
+ {
+  "id": "triangle_congruent_sas",
+  "home": "S2",
+  "used": "S4",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "余弦定理",
+    "stage": "S4",
+    "where": "第2段落: AC^2=AB^2+BC^2-2AB·BC cos∠ABC を両三角形に適用",
+    "replaceable": false
+   }
+  ],
+  "fix": "2辺夾角相等は中2で合同条件として公理的に採用される。このカードは合同を『距離の一致』と再定義したため第3辺を余弦定理（数I）で出している。中学の道具では導けない（公理）。level を high に上げるか、中学版は条件の採用として別扱いにする。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "triangle_congruent_asa",
+  "home": "S2",
+  "used": "S4",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "正弦定理",
+    "stage": "S4",
+    "where": "第2段落: AB=BC sin∠BCA / sin∠CAB",
+    "replaceable": false
+   },
+   {
+    "tool": "余弦定理",
+    "stage": "S4",
+    "where": "第2段落末: SAS相当を余弦定理で処理",
+    "replaceable": false
+   }
+  ],
+  "fix": "1辺両端角相等も中2では合同条件として採用される。距離による定義に合わせて数Iの正弦・余弦定理で証明している。level を high に上げるか、条件の採用として扱う。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "triangle_congruent_aas",
+  "home": "S2",
+  "used": "S4",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "正弦定理",
+    "stage": "S4",
+    "where": "第2段落: BC, AB を正弦定理で表す",
+    "replaceable": true
+   }
+  ],
+  "fix": "教科書どおり、内角の和（S2）で第3の角を等しくし、1辺両端角相等（ASA）に帰着する。",
+  "patch": {
+   "answer": "$A,B,C,A',B',C'$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$A',B',C'$も同一直線上になく、$\\angle ABC=\\angle A'B'C'$、$\\angle BCA=\\angle B'C'A'$、$CA=C'A'$とする。\n内角の和より$\\angle CAB=\\pi-\\angle ABC-\\angle BCA=\\angle C'A'B'$である。したがって辺$CA$とその両端の角$\\angle BCA,\\angle CAB$が、$C'A'$と$\\angle B'C'A',\\angle C'A'B'$にそれぞれ等しい。合同条件（1辺とその両端の角、頂点を$C,A,B$の順に読み替える）より、$A,B,C$と$A',B',C'$はこの対応で合同である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L14"
+ },
+ {
+  "id": "congruent_triangles_corresponding_parts",
+  "home": "S2",
+  "used": "S4",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "余弦定理と cos の単射性",
+    "stage": "S4",
+    "where": "第2段落: cos∠ABC=(AB^2+BC^2-CA^2)/(2AB·BC) から角の一致を導く",
+    "replaceable": false
+   }
+  ],
+  "fix": "中学では合同を『重ね合わせられる』と定義し、対応する辺と角が等しいことは定義から従う。このカードは合同を距離一致で再定義したため、角の一致に余弦定理が要る。題意の定義そのものが中学の外にあるので、定義を教科書に合わせるか level を high にする。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "right_triangle_congruent_hypotenuse_leg",
+  "home": "S2",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルと内積",
+    "stage": "S9",
+    "where": "第2段落: A-C=(A-B)-(C-B) の内積展開で CA^2=AB^2+BC^2 を出す",
+    "replaceable": true
+   },
+   {
+    "tool": "三平方の定理",
+    "stage": "S3",
+    "where": "第2段落: BC^2=CA^2-AB^2 の差",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答は S2 の道具のみ: 直角の頂点でBCをBDまで延長しBD=B'C'（Dは C-B-D の順）となる点Dをとり、△ABD≡△A'B'C'（2辺夾角）でAD=A'C'=AC、△ACDが二等辺で∠C=∠D、△ABC≡△ABD（斜辺と鋭角: AAS）よりBC=BD=B'C'、最後に3辺相等。ただし題意に A,B,C の非共線の仮定がなく、A=B や C=B の退化ケースの処理で10行を超えるため patch は付けない。題意に非共線を足す必要がある。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "triangle_similar_aa_ratio",
+  "home": "S3",
+  "used": "S4",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "正弦定理",
+    "stage": "S4",
+    "where": "第2段落: ab:bc:ca=sinγ:sinα:sinβ",
+    "replaceable": true
+   }
+  ],
+  "fix": "2角相等は中3で相似条件として採用される。このカードは相似を距離比で定義したため正弦定理で比を出している。S3 の道具での導出は『bP=b'a' となる P をとり、△bPQ≡△b'a'c'（1辺両端角）→PQ∥ac→平行線と線分の比』だが、r<1 と r>1 の場合分けで10行を超える。条件の採用として扱うか level を high にする。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "triangle_similar_sss_ratio",
+  "home": "S3",
+  "used": "S4",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "余弦定理と cos の単射性",
+    "stage": "S4",
+    "where": "第3段落: 角の一致を余弦定理で示す",
+    "replaceable": true
+   }
+  ],
+  "fix": "3辺比相等から角が等しいことは、中3では相似条件（定義）から従う。S3 の道具では『bP=b'a' となる P をとり、a c に平行な線で Q をとり、△bPQ∽△bac から△bPQ≡△b'a'c'（3辺）』と書けるが、場合分けで10行を超える。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "triangle_similar_sas_ratio",
+  "home": "S3",
+  "used": "S4",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "余弦定理",
+    "stage": "S4",
+    "where": "第2段落: AC^2 を両三角形で余弦定理により表す",
+    "replaceable": true
+   }
+  ],
+  "fix": "2辺比夾角相等は中3の相似条件そのもの。S3 の道具では『BP=A'B', BQ=C'B' となる P,Q をとり、△PBQ≡△A'B'C'（SAS）と PQ∥AC（逆の平行線と線分の比）と第三辺比』となるが、r の大小の場合分けで10行を超える。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "similar_triangles_area_ratio_sine_form",
+  "home": "S3",
+  "used": "S4",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "面積公式 (1/2)ab sin C と余弦定理",
+    "stage": "S4",
+    "where": "題意と第2段落",
+    "replaceable": false
+   }
+  ],
+  "fix": "題意に sin を使う面積公式（数I）が入っているため、level=middle が低すぎる。level を high にするのが筋。答案自体の余弦定理の使用は同じ S4 に収まる。",
+  "keep_as_advanced": false,
+  "batch": "L14"
+ },
+ {
+  "id": "triangles_common_angle_product_similar",
+  "home": "S3",
+  "used": "S4",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "余弦定理",
+    "stage": "S4",
+    "where": "第3段落: DE^2=AD^2+AE^2-2AD·AE cos∠DAE",
+    "replaceable": true
+   }
+  ],
+  "fix": "AD:AC=AE:AB と共通角から、相似条件（2辺比夾角）で相似とするのが S3 の標準。題意に A,B,C の非共線の仮定がないので、共線ケースは数直線で処理する。",
+  "patch": {
+   "answer": "$A,B,C,D,E$を実内積空間上のアフィン空間の点とする。$D$は$A$と$B$の間にあって$A,B$と異なり、$E$は$A$と$C$の間にあって$A,C$と異なり、$AD\\cdot AB=AE\\cdot AC$とする。$AB,AC>0$である。\n$r=AD/AC>0$とおくと$AD=r\\,AC$であり、等式を$AC$で割ると$AE=r\\,AB$である。$D$は半直線$AB$上、$E$は半直線$AC$上にあるので$\\angle DAE=\\angle CAB$である。\n$A,B,C$が同一直線上にないとき、$D,A,E$も同一直線上になく、$AD:AC=AE:AB=r$でその間の角が等しい。相似条件（2組の辺の比とその間の角）より、$A,D,E$と$A,C,B$はこの対応で相似である。\n$A,B,C$が同一直線上にあるとき、この直線を数直線とみて$A$を原点とし、$B,C$の座標を$b,c$とする。$B,C$が$A$に対して同じ側にあれば$D,E$の座標は$rc,rb$、反対側にあれば$-rc,-rb$である。いずれも$DE=r|c-b|=r\\,CB$である。$AD=r\\,AC$、$AE=r\\,AB$と合わせて、対応する2頂点間の距離の比がすべて$r$なので、相似である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L14"
+ },
+ {
+  "id": "isosceles_iff_equal_base_angles",
+  "home": "S2",
+  "used": "S4",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "余弦定理と cos の単射性",
+    "stage": "S4",
+    "where": "第2段落: 順方向",
+    "replaceable": true
+   },
+   {
+    "tool": "正弦定理",
+    "stage": "S4",
+    "where": "第3段落: 逆方向",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答は合同: 順方向は中点Mで△ABM≡△ACM（3辺）、逆方向は頂角の二等分線で△ABD≡△ACD（2角と1辺）。",
+  "patch": {
+   "answer": "$A,B,C$を実内積空間上のアフィン空間の、同一直線上にない点とする。\n$AB=AC$とする。$M$を$BC$の中点とすると、$AB=AC$、$BM=CM$、$AM$は共通なので、3辺が等しく$\\triangle ABM\\equiv\\triangle ACM$である。対応する角は等しいので$\\angle ABM=\\angle ACM$である。$M$は線分$BC$上にあるので$\\angle ABM=\\angle ABC$、$\\angle ACM=\\angle ACB$であり、$\\angle ABC=\\angle ACB$である。\n逆に$\\angle ABC=\\angle ACB$とする。$\\angle BAC$の二等分線と線分$BC$の交点を$D$とする。$\\triangle ABD$と$\\triangle ACD$で、$\\angle ABD=\\angle ACD$、$\\angle BAD=\\angle CAD$、$AD$は共通なので、合同条件（2つの角とその間にない1辺）より合同であり、$AB=AC$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "isosceles_iff_median_perpendicular",
+  "home": "S2",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルと内積（題意の垂直条件も内積）",
+    "stage": "S9",
+    "where": "第2〜3段落: h=A-M, d=C-B と ‖h±d/2‖^2 の展開",
+    "replaceable": false
+   }
+  ],
+  "fix": "標準は『△ABM≡△ACM（3辺）で∠AMB=∠AMC、和がπなのでπ/2』と『BM=CM, AM共通, 直角 でSAS』。しかし題意が A,B,C の任意性（A が直線BC上、B=C を含む）と内積条件で書かれており、退化ケースの処理で10行を超える。題意に非共線の仮定を足し、垂直を『中線AMがBCに垂直』と書き直すのが先。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "median_bisects_apex_implies_isosceles",
+  "home": "S2",
+  "used": "S4",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "正弦定理",
+    "stage": "S4",
+    "where": "第3段落: BM sin∠AMB=AB sinθ など",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答: 中線AMをMの先に延ばしてMD=AMとなるDをとる。△AMC≡△DMB（対頂角）から∠BDA=θ=∠BADで△BADが二等辺、BA=BD=AC。",
+  "patch": {
+   "answer": "$A,B,C$を実内積空間上のアフィン空間の、同一直線上にない点とし、$M$を$B$と$C$の中点として$\\angle BAM=\\angle MAC$とする。$\\theta=\\angle BAM$とおく。\n直線$AM$上に、$M$が$A$と$D$の間にあり$MD=AM$となる点$D$をとる。$\\triangle AMC$と$\\triangle DMB$で、$CM=BM$、$AM=DM$、$\\angle AMC=\\angle DMB$（対頂角）なので2辺とその間の角が等しく合同である。よって$AC=DB$、$\\angle CAM=\\angle BDM$である。\n$A$は直線$BC$上にないので、$M$は直線$AB$上になく、$A,B,D$は同一直線上にない。$D$は半直線$AM$上、$A$は半直線$DM$上にあるので$\\angle BAD=\\angle BAM=\\theta$、$\\angle BDA=\\angle BDM=\\angle CAM=\\theta$である。$\\triangle ABD$の底角が等しいので、$BA=BD$である。したがって$AB=BD=AC$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L14"
+ },
+ {
+  "id": "isosceles_apex_bisector_foot_is_midpoint",
+  "home": "S2",
+  "used": "S5",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "角の二等分線の定理",
+    "stage": "S5",
+    "where": "第2段落: AB/AC=BD/DC",
+    "replaceable": true
+   }
+  ],
+  "fix": "角の二等分線の定理は数Aで初出。AB=AC, ∠BAD=∠DAC, AD共通で△ABD≡△ACD（2辺夾角）とすれば中2で足りる。",
+  "patch": {
+   "answer": "$A,B,C,D$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$AB=AC$で、$D$は$B$と$C$の間にあって$B,C$と異なり、$\\angle BAD=\\angle DAC$とする。\n$\\triangle ABD$と$\\triangle ACD$で、$AB=AC$、$\\angle BAD=\\angle CAD$、$AD$は共通なので、2辺とその間の角が等しく合同である。よって$BD=DC$である。$D$は線分$BC$上にあるので$BD+DC=BC$であり、$BD=DC=BC/2$である。線分$BC$上で$B$からの距離が$BC/2$の点は中点だけなので、$D$は$BC$の中点である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L14"
+ },
+ {
+  "id": "isosceles_altitude_foot_is_midpoint",
+  "home": "S2",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルと内積",
+    "stage": "S9",
+    "where": "第2段落: H-B=xd とおき AB^2, AC^2 を内積で展開",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答は直角三角形の合同（斜辺と他の1辺）。退化ケース（Aが直線BC上、H=B）を場合分けして処理する。",
+  "patch": {
+   "answer": "$A,B,C,H$を実内積空間上のアフィン空間の点とする。$B\\neq C$、$AB=AC$で、$H$は直線$BC$上にあり、$\\langle A-H,C-B\\rangle=0$とする。\n$A$が直線$BC$上にあるとき、$A-H$は$C-B\\neq0$に平行で内積が$0$なので$A=H$である。直線上で$B,C$から等距離にある点は中点だけなので、$A=H$は$BC$の中点である。\n$A$が直線$BC$上にないとき、$H\\neq A$で$AH$は直線$BC$に垂直である。$H=B$とすると$\\angle ABC=\\pi/2$であり、$AB=AC$による底角$\\angle ACB=\\angle ABC=\\pi/2$と合わせて内角の和が$\\pi$を超えるので矛盾する。$H=C$も同様なので、$H$は$B,C$と異なり、$\\angle AHB=\\angle AHC=\\pi/2$である。直角三角形$AHB,AHC$は斜辺$AB=AC$と他の1辺$AH$が等しいので、合同条件（直角三角形の斜辺と他の1辺）より$HB=HC$である。$H$は直線$BC$上で$B,C$から等距離にあるので、$BC$の中点である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "isosceles_apex_pi_div_three_is_equilateral",
+  "home": "S2",
+  "used": "S4",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "余弦定理",
+    "stage": "S4",
+    "where": "第2段落: BC^2=AB^2+AC^2-2AB·AC cos(π/3)",
+    "replaceable": true
+   }
+  ],
+  "fix": "二等辺の底角相等と内角の和で、3角がπ/3になり正三角形。",
+  "patch": {
+   "answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$AB=AC$、$\\angle BAC=\\pi/3$とする。\n$\\angle BAC$は$0$でも$\\pi$でもないので、$A,B,C$は同一直線上にない。$AB=AC$より底角は等しく$\\angle ABC=\\angle ACB$である。内角の和より$\\angle ABC+\\angle ACB=\\pi-\\pi/3$なので、$\\angle ABC=\\angle ACB=\\pi/3$である。3つの角が等しい三角形は正三角形なので、$AB=BC=CA$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L14"
+ },
+ {
+  "id": "triangle_side_lt_iff_opposite_angle_lt",
+  "home": "S2",
+  "used": "S4",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "余弦定理と cos の狭義単調性",
+    "stage": "S4",
+    "where": "第2段落全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答: AB<AC なら AC 上に AD=AB となる D をとり、二等辺の底角と外角の定理で ∠ACB<∠ADB=∠ABD<∠ABC。逆は等しい場合と逆向きの場合を除く。",
+  "patch": {
+   "answer": "$A,B,C$を実内積空間上のアフィン空間の、同一直線上にない点とする。\n$AB<AC$とする。線分$AC$上に$AD=AB$となる点$D$をとる。$AD<AC$なので、$D$は$A$と$C$の間にあって$C$と異なる。$\\triangle ABD$は二等辺三角形なので$\\angle ABD=\\angle ADB$である。$D$は線分$AC$の内部にあるので$\\angle ABC=\\angle ABD+\\angle DBC>\\angle ABD$である。また$\\triangle BDC$で外角の定理より$\\angle ADB=\\angle DBC+\\angle DCB>\\angle DCB=\\angle ACB$である。以上から$\\angle ACB<\\angle ADB=\\angle ABD<\\angle ABC$である。\n逆に$\\angle ACB<\\angle ABC$とする。$AB=AC$なら底角が等しく矛盾する。$AB>AC$なら、上の議論で$B$と$C$の役割を入れ替えて$\\angle ABC<\\angle ACB$となり矛盾する。よって$AB<AC$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "side_opposite_nonacute_angle_is_longest",
+  "home": "S2",
+  "used": "S4",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "余弦定理",
+    "stage": "S4",
+    "where": "第2段落: cos≤0 から AC^2≥AB^2+CB^2",
+    "replaceable": true
+   }
+  ],
+  "fix": "直角・鈍角の対辺が最大であることは、上のカード（残りの角は鋭角）と『大角に大辺』（前カード）から出る。∠ABC=π は共線で別処理する。",
+  "patch": {
+   "answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$A\\neq B$、$C\\neq B$、$\\angle ABC\\geq\\pi/2$とする。\n$\\angle ABC=\\pi$のとき、$B$は$A$と$C$の間にあり、$AC=AB+CB$である。$AB>0$、$CB>0$なので$AC>AB$、$AC>CB$である。\n$\\angle ABC<\\pi$のとき、$\\angle ABC$は$0$でも$\\pi$でもないので、$A,B,C$は同一直線上にない。三角形の内角の和より、残りの角$\\angle BCA,\\angle CAB$は$\\pi/2$より小さく、$\\angle ABC\\geq\\pi/2$より小さい。大角に大辺が対応するので、$\\angle ACB<\\angle ABC$から$AB<AC$、$\\angle CAB<\\angle CBA$から$CB<CA$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L14"
+ },
+ {
+  "id": "perpendicular_is_shortest_to_line",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトル分解と内積",
+    "stage": "S9",
+    "where": "第2段落: A-X=h+v, ⟨h,v⟩=0",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答は直角三角形AHXの三平方の定理（斜辺AXが最大）。",
+  "patch": {
+   "answer": "$A,B,C,H,X$を実内積空間上のアフィン空間の点とする。$H,X$は直線$BC$上にあり、$\\langle A-H,C-B\\rangle=0$とする。\n$X=H$なら$AH=AX$である。$X\\neq H$のとき、$A=H$なら$AH=0\\leq AX$である。$A\\neq H$のとき、$H,X$は直線$BC$上にあり$AH$は直線$BC$に垂直なので、$\\angle AHX=\\pi/2$であり、$\\triangle AHX$は$H$を直角とする直角三角形である。三平方の定理より$AX^2=AH^2+HX^2>AH^2$である。長さは$0$以上なので$AH<AX$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "triangle_exists_iff_three_inequalities",
+  "home": "S2",
+  "used": "S3",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "座標平面上の距離と平方根",
+    "stage": "S3",
+    "where": "逆向きの段落: B=(0,0), C=(a,0), A=(x,y), y=√(c^2-x^2)",
+    "replaceable": false
+   }
+  ],
+  "fix": "存在の厳密な構成には座標と平方根が要り、中2の道具（作図）だけでは厳密にできない。三平方の定理（S3）に収まり、1段階後なので軽い。level を high にするか、作図による直観的な説明に留める。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "right_triangle_thirty_sixty_ratio",
+  "home": "S3",
+  "used": "S4",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "三角比 sin(π/6), cos(π/6)",
+    "stage": "S4",
+    "where": "第2段落: BC=AB sin(π/6), AC=AB cos(π/6)",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答: CをBの対称点Dに向けて延ばし△ABDが正三角形になることを使う（正三角形を半分に切る）。",
+  "patch": {
+   "answer": "$A,B,C$を実内積空間上のアフィン空間の、同一直線上にない点とし、$\\angle BCA=\\pi/2$、$\\angle CAB=\\pi/6$とする。\n直線$BC$上に、$C$が$B$と$D$の間にあり$CD=BC$となる点$D$をとる。$\\triangle ACB$と$\\triangle ACD$で、$AC$は共通、$BC=DC$、$\\angle ACB=\\angle ACD=\\pi/2$なので合同であり、$AD=AB$、$\\angle CAD=\\angle CAB=\\pi/6$である。$C$は線分$BD$の内部にあるので$\\angle BAD=\\angle BAC+\\angle CAD=\\pi/3$である。$AB=AD$で頂角が$\\pi/3$なので$\\triangle ABD$は正三角形であり、$BD=AB$である。$BD=2BC$なので$AB=2BC$である。三平方の定理より$AC^2=AB^2-BC^2=3BC^2$であり、$AC=\\sqrt3\\,BC$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L14"
+ },
+ {
+  "id": "right_triangle_hypotenuse_twice_leg_angles",
+  "home": "S3",
+  "used": "S4",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "正弦と sin の単射性・sin(π/6)=1/2",
+    "stage": "S4",
+    "where": "第2段落: sin∠CAB=1/2 から角を決定",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答: CをBの対称点Dまで延ばすと△ABDが正三角形になり、∠ABC=π/3。",
+  "patch": {
+   "answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$B\\neq C$、$\\angle BCA=\\pi/2$、$AB=2BC$とする。$BC>0$である。$A=C$なら$AB=BC$となり$AB=2BC$に反するので$A\\neq C$である。$A=B$なら$AB=0$となり同じく反するので$A\\neq B$である。\n直線$BC$上に、$C$が$B$と$D$の間にあり$CD=BC$となる点$D$をとる。$\\triangle ACB$と$\\triangle ACD$で、$AC$は共通、$BC=DC$、$\\angle ACB=\\angle ACD=\\pi/2$なので合同であり、$AD=AB$である。$BD=2BC=AB$なので$AB=AD=BD$で、$\\triangle ABD$は正三角形、$\\angle ABD=\\pi/3$である。$C$は半直線$BD$上にあるので$\\angle ABC=\\pi/3$である。内角の和より$\\angle CAB=\\pi-\\pi/2-\\pi/3=\\pi/6$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L14"
+ },
+ {
+  "id": "law_of_sines_ratio",
+  "home": "S4",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積とグラム行列式 (コーシー・シュワルツ型恒等式)",
+    "stage": "S9",
+    "where": "第2段落: Δ=√(‖u‖²‖w‖²-⟨u,w⟩²)",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答は垂線の長さ h=AB sinB=AC sinC を2頂点から取り、比を揃える（数I）。",
+  "patch": {
+   "answer": "$A,B,C$を実内積空間上のアフィン空間の、同一直線上にない点とする。3つの角は$0$より大きく$\\pi$より小さいので、正弦はすべて正である。\n$A$から直線$BC$におろした垂線の足を$H$とし、$h=AH$とおく。$A$は直線$BC$上にないので$h>0$である。$\\angle ABC=\\pi/2$なら$H=B$で$h=AB=AB\\sin\\angle ABC$である。$\\angle ABC$が鋭角なら$H$は半直線$BC$上にあり、鈍角なら反対側にあるので、直角三角形$AHB$の鋭角は$\\angle ABC$または$\\pi-\\angle ABC$であり、$\\sin(\\pi-\\theta)=\\sin\\theta$より、いずれも$h=AB\\sin\\angle ABC$である。同様に$h=AC\\sin\\angle ACB$である。よって$AB\\sin\\angle ABC=AC\\sin\\angle ACB$、すなわち$\\dfrac{AB}{\\sin\\angle BCA}=\\dfrac{CA}{\\sin\\angle ABC}$である。\n頂点$B$から垂線をおろして同じ議論をすると$BA\\sin\\angle BAC=BC\\sin\\angle BCA$、すなわち$\\dfrac{BC}{\\sin\\angle BAC}=\\dfrac{AB}{\\sin\\angle BCA}$である。よって3つの比は等しい。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "median_theorem_apollonius",
+  "home": "S4",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルと内積の展開",
+    "stage": "S9",
+    "where": "第2段落: h=A-M, v=B-M, ‖h∓v‖²",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答は M での余弦定理（∠AMB+∠AMC=π）で、数I の範囲。退化ケース（A=M, B=C）は別に注記する。",
+  "patch": {
+   "answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$M$を$B$と$C$の中点とする。\n$A=M$のときは$AB=AC=BM$で両辺は$2BM^2$、$B=C$のときは$M=B=C$で$AB=AC=AM$となり両辺は$2AM^2$なので、等式は成り立つ。以下$A\\neq M$、$B\\neq C$とする。$\\theta=\\angle AMB$とおく。$B,M,C$はこの順に一直線上にあるので$\\angle AMC=\\pi-\\theta$であり、$\\cos\\angle AMC=-\\cos\\theta$である。\n$\\triangle ABM$と$\\triangle ACM$に余弦定理を用いると、$AB^2=AM^2+BM^2-2\\,AM\\cdot BM\\cos\\theta$、$AC^2=AM^2+CM^2+2\\,AM\\cdot CM\\cos\\theta$である。$BM=CM$なので足すと$AB^2+AC^2=2(AM^2+BM^2)$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "angle_bisector_theorem_converse",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積による余弦の計算",
+    "stage": "S9",
+    "where": "第2〜3段落: ⟨u,v⟩, ⟨v,w⟩, I=⟨u,w⟩ の代数",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答は定理（正）を使う一意性: 内角の二等分線の足D'が同じ比を与えるので D=D'。",
+  "patch": {
+   "answer": "$A,B,C,D$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$D$は$B$と$C$の間にあって$B,C$と異なり、$AB/AC=BD/DC$とする。\n$\\angle BAC$の二等分線は線分$BC$の内部の点$D'$で交わる。角の二等分線の定理より$AB/AC=BD'/D'C$である。$k=AB/AC$とおくと、$BD=k\\,DC$かつ$BD+DC=BC$より$BD=\\dfrac{k}{1+k}BC$であり、同様に$BD'=\\dfrac{k}{1+k}BC$である。$D,D'$はともに線分$BC$上で$B$からの距離が等しいので$D=D'$であり、$\\angle BAD=\\angle DAC$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "midsegment_theorem",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルと部分空間（平行=方向の一致）",
+    "stage": "S9",
+    "where": "第2段落全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答は△AMN∽△ABC（2辺比夾角）と同位角。ただし題意が A,B,C の任意性（共線を含む）と『平行は方向一致』という線形代数の定義で書かれており、共線ケースで10行を超える。題意に非共線を足し、平行を通常の意味に戻すのが先。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "midsegment_converse",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの1次独立性",
+    "stage": "S9",
+    "where": "第2段落: (k-1/2)u+(t-k)w=0 から係数比較",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答: ACの中点E'について中点連結定理で ME'∥BC、M を通る BC の平行線は1本なので直線ME=直線ME'、直線AC との交点は E' のみ。",
+  "patch": {
+   "answer": "$A,B,C,E$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$E$は直線$AC$上にあり、$A,B$の中点$M$と$E$を結ぶ直線は直線$BC$に平行であるとする。\n$E'$を$A,C$の中点とする。中点連結定理より、直線$ME'$は直線$BC$に平行である。直線$ME$も直線$BC$に平行で、$M$を通って直線$BC$に平行な直線は1本だけなので、直線$ME$と直線$ME'$は一致する。$M$は直線$AC$上にないので、直線$ME'$と直線$AC$は$E'$だけで交わる。$E$は直線$AC$上かつこの直線上の点なので、$E=E'$であり、$E$は$A,C$の中点である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "medial_triangle_similar",
+  "home": "S3",
+  "used": "S9",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "ベクトル差の表記 (中点同士の差は (Y-Z)/2)",
+    "stage": "S9",
+    "where": "第2段落: 差が ½(Y-Z) である",
+    "replaceable": true
+   }
+  ],
+  "fix": "実質は中点連結定理（前カード）の引用で、ベクトルの計算は表記だけ。中点連結定理の引用に書き換えれば S3 で足りる。",
+  "patch": {
+   "answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$D,E,F$をそれぞれ$BC,CA,AB$の中点とする。\n中点連結定理（任意の3点$X,Y,Z$について、$X,Y$の中点と$X,Z$の中点の距離は$\\frac12YZ$）を用いる。$D,E$は$C$を共有する中点どうしなので$DE=\\frac12AB$、$E,F$は$A$を共有するので$EF=\\frac12BC$、$F,D$は$B$を共有するので$FD=\\frac12CA$である。対応する2頂点間の距離の比はすべて$\\frac12$なので、相似である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L14"
+ },
+ {
+  "id": "parallel_line_proportional_segments",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの1次独立性による係数比較",
+    "stage": "S9",
+    "where": "第2段落: tw-su=k(w-u) から s=t=k",
+    "replaceable": true
+   }
+  ],
+  "fix": "平行線と線分の比そのものは中3の主要定理で、教科書では△ADE∽△ABC（2角相等）から導く。題意が D,E が直線上の任意の点（D=A、延長側を含む）で書かれており、場合分けで10行を超える。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "proportional_segments_imply_parallel",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルと部分空間",
+    "stage": "S9",
+    "where": "第2段落全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答: 2辺の比と夾角（共通角）で△ADE∽△ABC、同位角が等しいので平行。非共線ケースと共線ケースを分ける。",
+  "patch": {
+   "answer": "$A,B,C,D,E$を実内積空間上のアフィン空間の点とする。$D$は$A$と$B$の間にあって$A,B$と異なり、$E$は$A$と$C$の間にあって$A,C$と異なり、$AD/AB=AE/AC$とする。平行は方向が等しいことを指し、直線の一致も含む。\n$A,B,C$が同一直線上にあるときは、$D,E,B,C$がすべてその直線上にあるので、直線$DE$と直線$BC$は一致し、平行である。\n$A,B,C$が同一直線上にないとき、$D,E$は半直線$AB,AC$上にあるので$\\angle DAE=\\angle BAC$であり、$AB:AD=AC:AE$である。2組の辺の比とその間の角が等しいので、相似条件より$\\triangle ADE\\sim\\triangle ABC$である。よって$\\angle ADE=\\angle ABC$であり、同位角が等しいので、直線$DE$は直線$BC$に平行である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "parallel_line_third_side_ratio",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの1次独立性",
+    "stage": "S9",
+    "where": "第2段落: s=t=k",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答は△ADE∽△ABC から AD:AB=DE:BC。D=A や D,E が延長側にある場合を含む題意なので、10行を超える。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "parallel_iff_internal_division_ratio",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの1次独立性",
+    "stage": "S9",
+    "where": "第3段落: tw-su=k(w-u)",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答: 平行線と線分の比（AD/AB=AE/AC）と、その逆から、内分比の言い換えだけで済む。",
+  "patch": {
+   "answer": "$A,B,C,D,E$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$D$は$A$と$B$の間にあって$A,B$と異なり、$E$は$A$と$C$の間にあって$A,C$と異なるとする。\n直線$DE$が直線$BC$に平行であるとする。平行線と線分の比より$AD/AB=AE/AC=s$とおくと、$0<s<1$で$DB=AB-AD=(1-s)AB$、$EC=(1-s)AC$なので、$AD/DB=s/(1-s)=AE/EC$である。\n逆に$AD/DB=AE/EC$とする。$AB=AD+DB$、$AC=AE+EC$である。$AD\\cdot EC=AE\\cdot DB$の両辺に$AD\\cdot AE$を加えると$AD(AE+EC)=AE(AD+DB)$、すなわち$AD\\cdot AC=AE\\cdot AB$なので$AD/AB=AE/AC$である。よって平行線と線分の比の逆（$AD/AB=AE/AC$ならば平行）より、直線$DE$は直線$BC$に平行である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "three_parallel_lines_proportional",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの1次独立性",
+    "stage": "S9",
+    "where": "第3〜4段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答は補助線（A を通り A'C' に平行な線）で平行線と線分の比に帰着する、中3の定理。題意の C' が任意の位置を許す形式で、10行を超える。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "right_triangle_altitude_geometric_mean",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルと内積による展開",
+    "stage": "S9",
+    "where": "第2段落全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答: 垂線の足Hは線分BC内（foot_between カード）。三平方 AB²=BH²+AH², AC²=CH²+AH², BC²=AB²+AC², BC=BH+HC から AH²=BH·HC。題意に非共線の仮定がなく A=B, A=C の退化ケース処理で10行を超える。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "right_triangle_leg_square_projection",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルと内積による展開",
+    "stage": "S9",
+    "where": "第2段落全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答は AB²=BH²+AH²（三平方）と AH²=BH·HC（前カード）から AB²=BH(BH+HC)=BH·BC。退化ケースがあり10行を超える。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "right_triangle_altitude_hypotenuse_product",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルと内積による展開",
+    "stage": "S9",
+    "where": "第2段落全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答は面積の2通りの表し方（½·BC·AH=½·AB·AC）か、△ABC∽△HBA（2角相等）。退化ケースがあり10行を超える。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "right_triangle_altitude_similar_triangles",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルと内積による展開",
+    "stage": "S9",
+    "where": "第2段落全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答: foot_between で H が線分BC内、∠HBA=∠ABC、∠BAH=π/2-∠ABC=∠BCA（内角の和）で2角相等の相似条件。△HAC も同様。patch を付ける量は10行ぎりぎりで、前カードの修正に依存するため、方針だけ示す。",
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "right_triangle_altitude_foot_between",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルと内積による展開",
+    "stage": "S9",
+    "where": "第2段落全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答: 直角三角形の他の2角は鋭角なので、垂線の足は辺の内部に落ちる（足が外にあると、そこの角が鈍角になって矛盾する）。",
+  "patch": {
+   "answer": "$A,B,C,H$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$\\angle BAC=\\pi/2$で、$H$は直線$BC$上にあり、$\\langle A-H,C-B\\rangle=0$とする。\n内角の和より$\\angle ABC+\\angle ACB=\\pi/2$で、どちらも正なので$\\angle ABC,\\angle ACB<\\pi/2$である。$A$は直線$BC$上にないので$H\\neq A$であり、$H\\neq B$なら$\\triangle AHB$は$H$を直角とする直角三角形で、$\\angle ABH<\\pi/2$である。$H$が線分$BC$の内部にないとすると、$H=B$、$H=C$、$B$が$H$と$C$の間にある、$C$が$H$と$B$の間にある、のいずれかである。$H=B$なら$\\langle A-B,C-B\\rangle=0$より$\\angle ABC=\\pi/2$となり矛盾する。$B$が$H$と$C$の間にあるときは、$\\angle ABC=\\pi-\\angle ABH>\\pi/2$となり矛盾する。$C$についても同様である。よって$H$は$B$と$C$の間にあって$B,C$と異なる。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L14"
+ },
+ {
+  "id": "thales_right_angle_iff_on_diameter_circle",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積（ベクトル）による ⟨A-X,B-X⟩=|XO|²-r² の展開",
+    "stage": "S9",
+    "where": "第2〜3段落。直角の判定を内積0に置き換えている",
+    "replaceable": true
+   }
+  ],
+  "fix": "二等辺三角形と内角の和（順）、点対称で作る長方形の対角線（逆）で書き替える。内積版は一般次元の復習用として別カードに残す。",
+  "patch": {
+   "answer": "$M$を$A,B$の中点、$r=AB/2$とする。$AB$を直径とする球面$s$は中心$M$、半径$r$の球面である。\n$X$が直線$AB$上にあるとき、$X\\neq A,B$なので$\\angle AXB$は$0$または$\\pi$であり、$\\pi/2$ではない。また直線$AB$上で$MX=r$となる点は$A,B$だけなので、$X\\in s$でもない。両辺とも成り立たないので同値は成り立つ。\n$X$が直線$AB$上にないとする。$A,B,X$を含む平面で考える。$M$もこの平面にある。\n$X\\in s$とする。$MX=MA=MB$なので、三角形$MAX$と$MBX$は二等辺三角形であり、$\\angle MXA=\\angle MAX$、$\\angle MXB=\\angle MBX$である。$M$は線分$AB$の内点なので$\\angle AXB=\\angle AXM+\\angle MXB=\\angle XAB+\\angle XBA$である。三角形$ABX$の内角の和より$2\\angle AXB=\\pi$であり、$\\angle AXB=\\pi/2$である。\n逆に$\\angle AXB=\\pi/2$とする。$X$について$M$と点対称な点を$X'$とすると、四角形$AXBX'$は対角線が互いに他を二等分するので平行四辺形であり、$\\angle AXB=\\pi/2$なので長方形である。長方形の対角線は等しいので$XX'=AB$であり、$MX=XX'/2=r$である。よって$X\\in s$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L15"
+ },
+ {
+  "id": "right_angle_on_circle_chord_is_diameter",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積による MA=MB=MX の導出",
+    "stage": "S9",
+    "where": "第2段落 ⟨A-X,B-X⟩=‖x‖²-‖a‖²",
+    "replaceable": true
+   },
+   {
+    "tool": "3点から等距離の点の一意性（垂直二等分線の交点）",
+    "stage": "S3",
+    "where": "第3段落。これは中学の範囲",
+    "replaceable": true
+   }
+  ],
+  "fix": "中点で点対称な点を取り、長方形の対角線の長さから MX=MA=MB を出す。",
+  "patch": {
+   "answer": "平面上の中心$O$の円の上に点$A,B,X$をとり、$X\\neq A,B$、$\\angle AXB=\\pi/2$とする。$A=B$なら$\\angle AXB=0$となるので$A\\neq B$であり、$\\angle AXB=\\pi/2$より$A,B,X$は一直線上にない。\n$M$を$A,B$の中点とし、$X$について$M$と点対称な点を$X'$とする。四角形$AXBX'$は対角線$AB,XX'$が互いに他を二等分するので平行四辺形であり、$\\angle AXB=\\pi/2$なので長方形である。長方形の対角線は等しいので$AB=XX'$であり、$MX=XX'/2=AB/2=MA=MB$である。\n$O$は$A,X$から等距離なので線分$AX$の垂直二等分線上にあり、$B,X$から等距離なので線分$BX$の垂直二等分線上にある。$M$も$MA=MX$、$MB=MX$なのでこの2直線上にある。$A,B,X$は一直線上にないので2直線は平行でなく、交点はただ1つである。よって$O=M$であり、$O$は線分$AB$の中点である。すなわち$AB$は直径である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "angle_on_diameter_inside_outside",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積による cos∠AXB の符号判定",
+    "stage": "S9",
+    "where": "第2段落 ⟨A-X,B-X⟩=XO²-r²",
+    "replaceable": true
+   }
+  ],
+  "fix": "余弦定理（数I）と中線定理で XO²-r² の符号に直す。直線AB上のXと A=B は場合分けで補う。内積版は別カードに残す。",
+  "patch": {
+   "answer": "$AB$は直径なので、$O$は$A,B$の中点であり$OA=OB=r$である。$A=B$のときは$r=0$、$O=A$で、$X\\neq A$より$\\angle AXB=0<\\pi/2$かつ$XO>0=r$なので、2つの同値はどちらも成り立つ。\n以下$A\\neq B$とする。$X$が直線$AB$上にあるとき、$X$が線分$AB$の内点なら$\\angle AXB=\\pi$かつ$XO<r$、外にあれば$\\angle AXB=0$かつ$XO>r$である。いずれの場合も2つの同値は成り立つ。\n$X$が直線$AB$上にないとき、$A,B,X$を含む平面で考える。三角形$XAB$に余弦定理を用いると$AB^2=XA^2+XB^2-2XA\\cdot XB\\cos\\angle AXB$である。$O$は$AB$の中点なので中線定理より$XA^2+XB^2=2XO^2+2r^2$であり、$AB^2=4r^2$である。よって$2XA\\cdot XB\\cos\\angle AXB=2XO^2+2r^2-4r^2=2(XO^2-r^2)$である。$XA\\cdot XB>0$なので、$\\cos\\angle AXB$の符号は$XO^2-r^2$の符号に等しい。\n$0<\\angle AXB<\\pi$なので、$\\cos\\angle AXB<0$は$\\angle AXB>\\pi/2$と同値で、$\\cos\\angle AXB>0$は$\\angle AXB<\\pi/2$と同値である。$XO,r\\geq0$なので$XO^2-r^2$の符号は$XO-r$の符号に等しい。以上で2つの同値が得られる。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L15"
+ },
+ {
+  "id": "two_right_angles_on_segment_concyclic",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積による |UM|=r の導出",
+    "stage": "S9",
+    "where": "第2段落 0=⟨A-U,B-U⟩=‖u‖²-‖a‖²",
+    "replaceable": true
+   }
+  ],
+  "fix": "点対称で長方形を作り、対角線が等しいことから MU=AB/2 を出す。",
+  "patch": {
+   "answer": "$M$を$A,B$の中点、$r=AB/2$とする。$U$を$X$または$Y$とする。$\\angle AUB=\\pi/2$なので$A\\neq B$であり、$A,B,U$は一直線上にない。\n$U$について$M$と点対称な点を$U'$とすると、四角形$AUBU'$は対角線が互いに他を二等分するので平行四辺形であり、$\\angle AUB=\\pi/2$なので長方形である。長方形の対角線は等しいので$UU'=AB$であり、$MU=UU'/2=r$である。よって$X,Y$は中心$M$、半径$r$の球面の上にある。$A,B$もこの球面の上にあるので、4点は同一球面上にある。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "altitude_to_diameter_geometric_mean",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルによる H-O=tu の置換と成分計算",
+    "stage": "S9",
+    "where": "第1〜2段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "三平方の定理 XO²=XH²+HO² と、HA,HB が r∓HO であることから従う。",
+  "patch": {
+   "answer": "中心$O$、半径$r$の球面で$AB$は直径なので、$O$は$A,B$の中点であり$OA=OB=r$である。$H$は直線$AB$上の点で$XH\\perp AB$（$X=H$のときは$XH=0$）である。$O$も直線$AB$上にあるので、三平方の定理より$XO^2=XH^2+HO^2$である（$X=H$や$H=O$の場合も成り立つ）。$XO=r$なので$XH^2=r^2-HO^2$である。\n特に$HO\\leq r$なので、$H$は線分$AB$上にあり、$HA,HB$は$r-HO$と$r+HO$（順不同）である。したがって$HA\\cdot HB=r^2-HO^2=XH^2$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "parallel_chords_equal_cross_chords",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積による距離の展開",
+    "stage": "S9",
+    "where": "第3〜4段落 ‖a+u‖²、‖c+ku‖² の展開",
+    "replaceable": true
+   }
+  ],
+  "fix": "平行な弦の垂直二等分線は共通で、中心を通る。この線に関する線対称が A↔B、C↔D を入れ替える。",
+  "patch": {
+   "answer": "直線$AB$と$CD$は平行なので、4点$A,B,C,D$は1つの平面にある。この平面と球面の共通部分は円であり、$A,B,C,D$はこの円の上にある。この円の中心を$P$とする。\n$\\ell$を線分$AB$の垂直二等分線とする。円の弦の垂直二等分線は中心を通るので$P$は$\\ell$上にある。$\\ell\\perp AB$で$CD\\parallel AB$なので$\\ell\\perp CD$である。中心$P$を通り弦$CD$に垂直な直線は弦$CD$を二等分するので、$\\ell$は線分$CD$の垂直二等分線でもある。\nしたがって$\\ell$に関する線対称で$A\\leftrightarrow B$、$C\\leftrightarrow D$となる。この対称で線分$AC$は線分$BD$に移るので、$AC=BD$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "chord_midpoint_perpendicular_to_center_line",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積 ⟨a+b,b-a⟩=‖b‖²-‖a‖² の計算",
+    "stage": "S9",
+    "where": "第2段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "A=B や O=M の退化を分け、それ以外は二等辺三角形OABの底辺の中点への線が垂直、という中2の性質で示す。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O$の球面の上に点$A,B$をとり、$M$を$A,B$の中点とする。$\\langle O-M,B-A\\rangle=0$は、$A=B$または$O=M$であるか、直線$OM$と直線$AB$が垂直であることを意味する。\n$A=B$のとき$B-A=0$、$O=M$のとき$O-M=0$なので成り立つ。$A\\neq B$かつ$O\\neq M$とする。$O$が直線$AB$上にあるなら、$OA=OB$と$A\\neq B$より$O$は$A,B$の中点$M$になり、$O\\neq M$に反する。よって$O$は直線$AB$上にない。三角形$OAB$は$OA=OB$の二等辺三角形で、$M$は底辺$AB$の中点である。三角形$OAM$と$OBM$は3辺が等しいので合同で、$\\angle OMA=\\angle OMB$である。この2角の和は$\\pi$なので、どちらも$\\pi/2$であり、$OM\\perp AB$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "perpendicular_from_center_bisects_chord",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積とベクトルの実数倍による H=M の導出",
+    "stage": "S9",
+    "where": "第2〜3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "三平方の定理で HA²=OA²-OH²=OB²-OH²=HB² を出し、直線上で両端から等距離の点は中点、と書く。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O$の球面の上に相異なる点$A,B$をとり、直線$AB$上の点$H$は$O=H$であるか$OH\\perp AB$であるとする（これが$\\langle O-H,B-A\\rangle=0$の意味である）。\n$A,B$は直線$AB$上にあるので、三平方の定理より$OA^2=OH^2+HA^2$、$OB^2=OH^2+HB^2$である（$H=A$、$H=B$、$O=H$の退化した場合も成り立つ）。$OA=OB$なので$HA=HB$である。$H$は直線$AB$上の点で、$A\\neq B$なので、$A,B$から等距離にある直線上の点は中点だけである。よって$H$は$A,B$の中点である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "half_chord_center_distance_pythagoras",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルと中線定理（平行四辺形の法則）",
+    "stage": "S9",
+    "where": "第2段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "OM⊥AB と三平方の定理（円の弦の基本性質）で書く。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B$をとり、$M$を$A,B$の中点とする。\n$A=B$のとき$M=A$で$OM=r$、$AB=0$なので成り立つ。$A\\neq B$とする。$O$が直線$AB$上にあるなら、$OA=OB$より$O=M$で、$OM=0$、$AB/2=MA=OA=r$なので成り立つ。$O$が直線$AB$上にないなら、三角形$OAB$は二等辺三角形で$M$は底辺の中点なので$OM\\perp AB$である（3辺が等しい三角形$OAM,OBM$は合同で$\\angle OMA=\\angle OMB=\\pi/2$）。直角三角形$OMA$に三平方の定理を用いて$OM^2+MA^2=OA^2=r^2$であり、$MA=AB/2$なので$OM^2+(AB/2)^2=r^2$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "equal_chords_iff_equal_center_distance",
+  "home": "S4",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの平行四辺形の法則による OM²+(AB/2)²=r²",
+    "stage": "S9",
+    "where": "第2段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "OM²+(AB/2)²=r² を三平方の定理で示せば、後半の同値は答案どおりに続く。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B,C,D$をとり、$M,N$を$AB,CD$の中点とする。\nまず$OM^2+(AB/2)^2=r^2$を示す。$A=B$のとき$M=A$で$OM=r$、$AB=0$なので成り立つ。$A\\neq B$のとき、$O$が直線$AB$上にあれば$OA=OB$より$O=M$で、$AB/2=r$なので成り立つ。$O$が直線$AB$上になければ、二等辺三角形$OAB$で$OM\\perp AB$なので、直角三角形$OMA$に三平方の定理を用いて$OM^2+MA^2=OA^2=r^2$であり、$MA=AB/2$なので成り立つ。同様に$ON^2+(CD/2)^2=r^2$である。\nよって$AB=CD$なら$OM^2=ON^2$であり、距離は非負なので$OM=ON$である。逆に$OM=ON$なら$(AB/2)^2=(CD/2)^2$であり、$AB=CD$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "equal_chords_iff_equal_central_angles",
+  "home": "S3",
+  "used": "S4",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "余弦定理と cos の単射性（[0,π]）",
+    "stage": "S4",
+    "where": "第2〜3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "弦の長さが 0, 2r, その間の3場合に分け、中間の場合は三角形の合同条件（3辺・2辺夾角）で示す。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r>0$の球面の上に点$A,B,C,D$をとる。球面上の2点$X,Y$を次の3つの場合に分ける。(i) $X=Y$のとき、$\\angle XOY=0$、$XY=0$である。(ii) $O$が$X,Y$の中点のとき、$\\angle XOY=\\pi$、$XY=2r$である。(iii) それ以外のとき、$O,X,Y$は一直線上にない（一直線上にあると、$OX=OY=r>0$より$X=Y$か(ii)になる）。このとき$0<\\angle XOY<\\pi$であり、$0<XY<2r$である（$XY=2r$は$O$が中点であることと同値で、$XY\\leq2r$は三角不等式による）。\n$\\angle XOY$の値（$0$、$\\pi$、その間）からも、$XY$の値（$0$、$2r$、その間）からも、$(X,Y)$がどの場合に属するかが決まる。したがって$AB=CD$と$\\angle AOB=\\angle COD$のどちらを仮定しても、$(A,B)$と$(C,D)$は同じ場合に属する。(i)なら両辺とも$0$、(ii)なら$AB=CD=2r$かつ$\\angle AOB=\\angle COD=\\pi$なので、結論は成り立つ。(iii)のとき、三角形$OAB$と$OCD$は$OA=OC$、$OB=OD$を満たす。$AB=CD$なら3辺が等しいので合同で、$\\angle AOB=\\angle COD$である。$\\angle AOB=\\angle COD$なら2辺とその間の角が等しいので合同で、$AB=CD$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "chord_le_diameter_eq_iff",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "平行四辺形の法則（ベクトル）による等号条件",
+    "stage": "S9",
+    "where": "第2段落の逆向き",
+    "replaceable": true
+   }
+  ],
+  "fix": "三角形の2辺の和が残りの辺より大きいことと、その等号が一直線の場合に限ることで書く。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B$をとる。三角不等式より$AB\\leq AO+OB=2r$である。\n$AB$が直径、すなわち$O$が$A,B$の中点なら$AB=AO+OB=2r$である。逆に$AB=2r$とする。$A,O,B$が一直線上にないなら、三角形$AOB$で2辺の和は残りの辺より大きいので$AB<AO+OB=2r$となり矛盾する。よって一直線上にある。直線上で$AB=AO+OB$なら$O$は線分$AB$上にあり、$AO=OB=r$なので$O$は$A,B$の中点である。すなわち$AB$は直径である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L15"
+ },
+ {
+  "id": "point_on_chord_strictly_between_iff_inside",
+  "home": "S4",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "パラメータ表示と内積の展開 ‖x+tu‖²",
+    "stage": "S9",
+    "where": "第1〜2段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "中点Mを用いた OP²=OM²+MP²（三平方）で HO<r を MH<MA に直す。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に相異なる点$A,B$をとり、$H$を直線$AB$上の点とする。$M$を$A,B$の中点とする。\n$O$が直線$AB$上にあれば、$OA=OB$と$A\\neq B$より$O=M$である。そうでなければ二等辺三角形$OAB$で$OM\\perp AB$である。どちらの場合も、直線$AB$上の任意の点$P$について、三平方の定理から$OP^2=OM^2+MP^2$である（$P=M$のときも成り立つ）。$P=A$として$r^2=OM^2+MA^2$、$P=H$として$HO^2=OM^2+MH^2$を得る。\n$HO,r\\geq0$なので、$HO<r$は$MH<MA$と同値である。直線$AB$上で、$M$は$A,B$の中点なので、$MH<MA$は$H$が$A$と$B$の間に真にあることと同値である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L15"
+ },
+ {
+  "id": "tangent_iff_perpendicular_radius",
+  "home": "S3",
+  "used": "S9",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "内積による接線の定義と直角の判定",
+    "stage": "S9",
+    "where": "題意そのもの（接線を ⟨U-T,T-O⟩=0 で定義している）",
+    "replaceable": false
+   }
+  ],
+  "fix": "題意が内積で定義した接線に依存していて、答案はその定義の言い換えにとどまる。接線を『半径に垂直な直線』と幾何学的に定義し直すか、内積定義のままなら level を high に上げる。",
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "tangent_iff_unique_common_point",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積による直線と球面の共有点の二次方程式",
+    "stage": "S9",
+    "where": "第2〜3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "接線上の他の点は三平方で円の外、接しない直線は垂線の足に関して接点と対称な点が第二の共有点、という中3の議論で書く。",
+  "patch": {
+   "answer": "$T=O$のとき、球面は点$T$だけなので共有点は$T$だけであり、接する条件も常に成り立つので同値は成り立つ。以下$T\\neq O$とする。直線$TX$と$O$を含む平面で考える。接するとは、直線が半径$OT$に垂直であることである。\n直線$TX$が$T$で接するとする。直線上の点$U\\neq T$について、三平方の定理から$OU^2=OT^2+TU^2>OT^2$なので、$U$は球面上にない。よって共有点は$T$だけである。\n逆に直線$TX$が$OT$に垂直でないとする。$O$から直線に下ろした垂線の足を$H$とすると$H\\neq T$である。直線上で$H$について$T$と対称な点$T'$をとると、$T'\\neq T$であり、$OH$が線分$TT'$の垂直二等分線になる（$H=O$のときは$O$が中点）ので$OT'=OT$である。よって$T'$も共有点であり、共有点は$T$だけではない。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "tangent_iff_length_sq_eq_power",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積による QO²=QT²+2⟨Q-T,T-O⟩+r² の展開",
+    "stage": "S9",
+    "where": "第2段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "三平方の定理とその逆で QO²=QT²+r² ⇔ ∠OTQ=π/2 と直し、O,T,Q が一直線上の場合は別に処理する。",
+  "patch": {
+   "answer": "$r=0$なら$T=O$で、直線$QT$は常に$T$で接し、$QT^2=QO^2-r^2$も成り立つので同値である。以下$r>0$とする。\n$O,T,Q$が一直線上にないとき、三角形$OTQ$について、三平方の定理とその逆により$QO^2=QT^2+TO^2$は$\\angle OTQ=\\pi/2$と同値である。$TO=r$なので、$QT^2=QO^2-r^2$は$\\angle OTQ=\\pi/2$、すなわち直線$QT$が半径$OT$に垂直であること（$T$で接すること）と同値である。\n$O,T,Q$が一直線上にあるとき、直線$QT$は直線$OT$に等しいので半径に垂直でなく、接しない。このとき$QO$は$QT+r$、$r-QT$、$QT-r$のいずれかに等しく、$QO^2-QT^2-r^2$は$2r\\,QT$または$-2r\\,QT$になる。$r>0$、$QT>0$なのでこれは$0$にならず、$QT^2=QO^2-r^2$も成り立たない。両辺とも成り立たないので同値は成り立つ。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "contact_chord_perpendicular_bisected_by_center_line",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積による等距離点の直交性、1次元空間の議論",
+    "stage": "S9",
+    "where": "第2〜3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "Q と O はどちらも A,B から等距離なので AB の垂直二等分線上にあり、Q≠O から直線QOがそれに一致する。",
+  "patch": {
+   "answer": "平面上の中心$O$、半径$r>0$の円をとる。$A\\neq B$、$Q\\neq A,B$で、直線$QA$が$A$で、直線$QB$が$B$で接するとする。\n接線は半径に垂直なので、三平方の定理より$QA^2=QO^2-r^2=QB^2$であり、$QA=QB$である。また$OA=OB=r$である。線分$AB$の両端から等距離にある点は線分$AB$の垂直二等分線$\\ell$上にあるので、$Q,O$はともに$\\ell$上にある。$QO^2=QA^2+r^2>r^2$より$Q\\neq O$なので、直線$QO$は$\\ell$に一致する。よって直線$QO$は弦$AB$に垂直で、$AB$の中点を通る。すなわち$\\langle Q-O,B-A\\rangle=0$であり、$A,B$の中点は直線$QO$上にある。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "tangent_chord_angle_converse",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積による B が接線上にないことの確認",
+    "stage": "S9",
+    "where": "第2段落 ⟨B-A,A-O⟩=-½‖B-A‖²",
+    "replaceable": true
+   }
+  ],
+  "fix": "接線上の A 以外の点は三平方で円の外にある、という事実で B∉ℓ を示す。残りは答案のまま。",
+  "patch": {
+   "answer": "平面上の中心$O$の円の上に点$A,B,C$をとり、$A\\neq B$とする。$T,C$は直線$AB$の反対側にあり直線上になく、$\\angle TAB=\\angle ACB$とする。ここで直線が円に$A$で接するとは、半径$OA$に垂直な直線であることとする。\n$A\\neq B$より半径は正である。$A$を通り$OA$に垂直な直線を$\\ell$とする。$\\ell$は$A$で円に接する。$\\ell$上の$A$と異なる点$U$については、三平方の定理より$OU^2=OA^2+AU^2>OA^2$なので$U$は円上にない。よって$B\\neq A$は$\\ell$上にない。したがって$\\ell$は直線$AB$と$A$だけで交わり、$\\ell$上には$T$と同じ側の点$T'$がある。\n$T',C$は直線$AB$の反対側にあるので、接弦定理（$A$での接線上の点$T'$と円の上の点$C$が直線$AB$の反対側にあるとき$\\angle T'AB=\\angle ACB$）より、$\\angle T'AB=\\angle ACB=\\angle TAB$である。$T,T'$は直線$AB$の同じ側にあり、半直線$AB$となす角が等しいので、半直線$AT$と半直線$AT'$は一致する。したがって$T$は$\\ell$上にあり、直線$AT$は$\\ell$に等しい。よって直線$AT$は$A$で円に接する。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "foot_distance_eq_radius_iff_tangent",
+  "home": "S5",
+  "used": "S9",
+  "severity": "note",
+  "tools": [
+   {
+    "tool": "内積による垂線の足と接線の定義",
+    "stage": "S9",
+    "where": "仮定 ⟨O-H,Y-X⟩=0 と答案全体",
+    "replaceable": false
+   }
+  ],
+  "fix": "仮定と接線の定義が内積で書かれ、答案はその言い換えにとどまる。『Hは垂線の足、接するとは半径に垂直』という幾何学的な定義で書き直すと一行で終わる。",
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "power_value_inside_chord",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "パラメータ表示と内積の展開",
+    "stage": "S9",
+    "where": "第2段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "OM⊥AB と三平方で OP²=OM²+MP² を作り、HA·HB=MA²-MH² に帰着させる。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B$をとり、$H$は$A$と$B$の間に真にあるとする。$A\\neq B$であり、$M$を$A,B$の中点とする。\n$O$が直線$AB$上にあれば$OA=OB$より$O=M$であり、そうでなければ二等辺三角形$OAB$で$OM\\perp AB$である。どちらの場合も、直線$AB$上の点$P$について三平方の定理から$OP^2=OM^2+MP^2$である（$P=M$でも成り立つ）。$P=A$、$P=H$として$r^2=OM^2+MA^2$、$HO^2=OM^2+MH^2$を得る。\n$H$は$A,B$の間に真にあるので$x=MH$とおくと$0\\leq x<MA$であり、$HA,HB$は$MA-x$と$MA+x$（順不同）である。よって$HA\\cdot HB=MA^2-x^2=r^2-HO^2$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L15"
+ },
+ {
+  "id": "power_value_outside_secant",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "パラメータ表示と内積の展開",
+    "stage": "S9",
+    "where": "第2〜3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "同じく OP²=OM²+MP² から HA·HB=MH²-MA²=HO²-r²。A=B は別扱い。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B$をとり、$H$は$A,B$のアフィン包に属し$HO\\geq r$とする。\n$A=B$のとき$H=A$で、$HA\\cdot HB=0$、$HO=r$なので$HA\\cdot HB=HO^2-r^2$が成り立つ。$A\\neq B$とし、$M$を$A,B$の中点とする。$O$が直線$AB$上にあれば$O=M$であり、そうでなければ二等辺三角形$OAB$で$OM\\perp AB$である。どちらの場合も、直線$AB$上の点$P$について三平方の定理から$OP^2=OM^2+MP^2$である。$P=A$、$P=H$として$r^2=OM^2+MA^2$、$HO^2=OM^2+MH^2$を得る。$HO\\geq r$より$MH\\geq MA$である。したがって$H$は線分$AB$の外または端点にあり、$HA,HB$は$MH-MA$と$MH+MA$（順不同）である。$HA\\cdot HB=MH^2-MA^2=HO^2-r^2$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L15"
+ },
+ {
+  "id": "tangent_secant_power",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積による QO²-r²=(t²-t)‖u‖² の展開",
+    "stage": "S9",
+    "where": "第3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "接線の三平方 QO²=QT²+r² と、割線側の QA·QB=QO²-r²（OM⊥AB と三平方）を合わせる。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B$をとり、$Q$は$A,B$のアフィン包に属し、$Q\\neq T$で直線$QT$は$T$で接するとする。直線$QT$は半径$OT$に垂直なので、三平方の定理より$QO^2=QT^2+r^2$である。特に$QO\\geq r$である。\n$A=B$のとき$Q=A$は球面上にあり$QO=r$だが、$QT^2=QO^2-r^2=0$は$Q\\neq T$に反する。よってこの場合は起こらない。$A\\neq B$とし、$M$を$A,B$の中点とする。$O$が直線$AB$上にあれば$O=M$であり、そうでなければ二等辺三角形$OAB$で$OM\\perp AB$である。どちらの場合も、直線$AB$上の点$P$について三平方の定理から$OP^2=OM^2+MP^2$である。$P=A$、$P=Q$として$r^2=OM^2+MA^2$、$QO^2=OM^2+MQ^2$を得る。$QO\\geq r$より$MQ\\geq MA$なので、$QA,QB$は$MQ-MA$と$MQ+MA$（順不同）である。したがって$QA\\cdot QB=MQ^2-MA^2=QO^2-r^2=QT^2$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L15"
+ },
+ {
+  "id": "tangent_secant_converse",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積とパラメータによる w=QA·QB の導出",
+    "stage": "S9",
+    "where": "第2段落",
+    "replaceable": true
+   },
+   {
+    "tool": "内積による接線の判定",
+    "stage": "S9",
+    "where": "第3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "割線の方べきの定理で QO²-r²=QA·QB とし、三平方の定理の逆で QT⊥OT を得る。O,T,Q 共線の場合は別に否定する。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B,T$をとり、$A$は$Q$と$B$の間に真にあり、$QT^2=QA\\cdot QB$とする。$A\\neq B$なので$r>0$である。\n$A$が$Q$と$B$の間に真にあるので、$Q$は線分$AB$の外にあり、$QA>0$、$QB>0$である。円の内部にある直線$AB$上の点は線分$AB$の内点だけなので、$QO\\geq r$である。方べきの定理（割線の形。$Q$が球面の外部または球面上にあるとき$QA\\cdot QB=QO^2-r^2$）より$QO^2-r^2=QA\\cdot QB$である。仮定と合わせて$QT^2=QO^2-r^2>0$、すなわち$Q\\neq T$で$QO^2=QT^2+TO^2$である。\n$O,T,Q$が一直線上にないなら、三平方の定理の逆より$\\angle OTQ=\\pi/2$なので、直線$QT$は$T$で接する。一直線上にあるとすると、$QO$は$QT+r$、$r-QT$、$QT-r$のいずれかに等しく、$QO^2-QT^2-r^2$は$2r\\,QT$または$-2r\\,QT$になる。$r>0$、$QT>0$なのでこれは$0$にならず、$QO^2=QT^2+TO^2$に反する。よって一直線上にはなく、直線$QT$は$T$で接する。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "intersecting_chords_converse",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積による D の球面上の確認",
+    "stage": "S9",
+    "where": "第3〜4段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "A,B,C を通る円と直線CHの第2交点 D' を取り、方べきの定理で HD'=HD から D=D'。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、点$H$は$A,B$の間と$C,D$の間に真にあり、$A,H,C$は一直線上になく、$AH\\cdot BH=CH\\cdot DH$とする。\n$A,B,C$は一直線上にない。一直線上なら$H,C$がともに直線$AB$上にあり、$A,H,C$が一直線上になるからである。$A,B,C$を含む平面を$P$とし、$P$上で$A,B,C$を通る円を$\\Gamma$とする。$H$は弦$AB$の内点なので$\\Gamma$の内部にある。$D$は直線$CH$上にあるので$P$上にある。\n直線$CH$は$\\Gamma$と$C$以外にもう1点$D'$で交わり、$H$は$C$と$D'$の間にある。交わる弦の定理（方べきの定理）より$CH\\cdot D'H=AH\\cdot BH=CH\\cdot DH$である。$CH>0$なので$D'H=DH$である。$D,D'$はどちらも$H$から見て$C$と反対側にあるので$D=D'$である。よって$D$は$\\Gamma$の上にあり、$A,B,C,D$は同一円周上にある。この円を大円とする球面を考えれば、4点は同一球面上にある。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L15"
+ },
+ {
+  "id": "secants_converse",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積による D の球面上の確認",
+    "stage": "S9",
+    "where": "第3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "A,B,C を通る円と直線QCの第2交点 D' を取り、方べきの定理で QD'=QD から D=D'。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、$A$は$Q$と$B$の間に、$C$は$Q$と$D$の間に真にあり、$Q,A,C$は一直線上になく、$QA\\cdot QB=QC\\cdot QD$とする。\n$A,B,C$は一直線上にない。一直線上なら$Q,C$がともに直線$AB$上にあり、$Q,A,C$が一直線上になるからである。$A,B,C$を含む平面を$P$とし、$P$上で$A,B,C$を通る円を$\\Gamma$とする。$Q$は直線$AB$上にあるので$P$上にある。$Q$は線分$AB$の外にあり、$\\Gamma$上にもない（$\\Gamma$上なら$Q=A$または$B$となるため）ので、$\\Gamma$の外部にある。$D$は直線$QC$上にあるので$P$上にある。\n直線$QC$と$\\Gamma$の共有点は$C$と、もう1点$D'$である（接するときは$D'=C$とする）。$Q$は外部の点なので、$C,D'$は$Q$から見て同じ側にある。方べきの定理より$QC\\cdot QD'=QA\\cdot QB=QC\\cdot QD$であり、$QC>0$なので$QD'=QD$である。$D,D'$はどちらも$Q$から出る同じ半直線上にあるので$D=D'$である。よって$D$は$\\Gamma$の上にあり、$A,B,C,D$は同一円周上にある。この円を大円とする球面を考えれば、4点は同一球面上にある。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L15"
+ },
+ {
+  "id": "common_chord_perpendicular_bisected_by_center_line",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積と1次元空間の議論",
+    "stage": "S9",
+    "where": "第2〜3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "O1,O2 は A,B から等距離なので垂直二等分線上にあり、O1≠O2 なので直線 O1O2 がそれに一致する。",
+  "patch": {
+   "answer": "平面上に中心$O_1\\neq O_2$の2円をとり、相異なる点$A,B$を共有するとする。$M$を$A,B$の中点とし、$\\ell$を線分$AB$の垂直二等分線とする。$O_1A=O_1B$、$O_2A=O_2B$なので、$O_1,O_2$はどちらも$\\ell$上にある。$O_1\\neq O_2$なので、直線$O_1O_2$は$\\ell$に一致する。よって直線$O_1O_2$は$AB$に垂直で、$AB$の中点$M$を通る。すなわち$\\langle O_2-O_1,B-A\\rangle=0$であり、$A,B$の中点は直線$O_1O_2$上にある。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "two_circles_at_most_two_common_points",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "原点を固定した内積による根軸の方程式（直線の方程式）",
+    "stage": "S9",
+    "where": "第3段落",
+    "replaceable": true
+   },
+   {
+    "tool": "パラメータ表示による直線と円の交点",
+    "stage": "S6",
+    "where": "第4段落 t(t-1)‖B-A‖²=0",
+    "replaceable": true
+   }
+  ],
+  "fix": "第3の共有点があれば、一直線上にない3点を通る円は1つなので2円が一致して矛盾、と書く。",
+  "patch": {
+   "answer": "平面上の相異なる2円が、相異なる点$A,B$と点$Q$をすべて共有するとし、$Q\\neq A$かつ$Q\\neq B$と仮定する。\n円と直線の共有点は高々2個なので、$A,B,Q$は一直線上にない。一直線上にない3点を通る円はただ1つである（中心は$AB$と$AQ$の垂直二等分線の交点で、この2直線は平行でないので1点に定まり、半径は中心から$A$までの距離に等しい）。2円はどちらも$A,B,Q$を通るので一致し、「2円は異なる」に反する。よって$Q=A$または$Q=B$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "externally_tangent_iff_center_distance",
+  "home": "S5",
+  "used": "S9",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "ベクトル記法による内分点",
+    "stage": "S9",
+    "where": "第3段落 T=O1+(r1/(r1+r2))(O2-O1)（推論は距離の加法だけ）",
+    "replaceable": true
+   }
+  ],
+  "fix": "内分点を『線分を r1:r2 に内分する点』と書けばよい。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2$の2つの球面をとる。外接するとは、共有点$T$で線分$O_1O_2$上にあるものが存在することである。\n外接するとき、$r_1=O_1T\\geq0$、$r_2=O_2T\\geq0$であり、$T$が線分上にあるので$O_1O_2=O_1T+TO_2=r_1+r_2$である。\n逆に$O_1O_2=r_1+r_2$、$r_1,r_2\\geq0$とする。$r_1+r_2=0$なら$r_1=r_2=0$、$O_1=O_2$であり、$T=O_1$が条件を満たす。$r_1+r_2>0$なら、線分$O_1O_2$を$r_1:r_2$に内分する点を$T$とする。$T$は線分上にあり、$O_1T=r_1$、$O_2T=r_2$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "internally_tangent_iff_center_distance",
+  "home": "S5",
+  "used": "S9",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "ベクトル記法による点の構成、単位ベクトル",
+    "stage": "S9",
+    "where": "第3段落 T=O1+r1·e、T=O2+(r2/d)(O1-O2)（推論は距離の加法だけ）",
+    "replaceable": true
+   }
+  ],
+  "fix": "半直線O2O1上で O2T=r2 となる点、と書き替える。",
+  "patch": {
+   "answer": "$0$でない実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2$の2つの球面をとる。第1が第2に内接するとは、共有点$T$で$O_1$が線分$O_2T$上にあるものが存在することである。\n内接するとき、$r_1,r_2\\geq0$であり、$O_2T=O_2O_1+O_1T$より$O_1O_2=r_2-r_1$である。\n逆に$O_1O_2=r_2-r_1$、$r_1,r_2\\geq0$とする。$O_1=O_2$なら$r_1=r_2$で2つの球面は一致する。空間が$0$でないので、$O_1$から距離$r_1$にある点$T$が存在し、$T$は共有点で、$O_1=O_2$は線分$O_2T$の端点にある。$O_1\\neq O_2$なら$d=O_1O_2>0$とし、半直線$O_2O_1$上に$O_2T=r_2$となる点$T$をとる。$r_2=r_1+d\\geq d$なので$O_1$は線分$O_2T$上にあり、$O_1T=r_2-d=r_1$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "externally_tangent_unique_common_point",
+  "home": "S5",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積とコーシー・シュワルツの等号条件",
+    "stage": "S10",
+    "where": "第3段落（一般の内積空間のコーシー・シュワルツ）",
+    "replaceable": true
+   }
+  ],
+  "fix": "三角形の2辺の和が残りの辺より大きいことの等号（共線）で、共有点が線分O1O2上にあることを示す。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2>0$の2つの球面をとり、$d=O_1O_2=r_1+r_2$とする。$d>r_1$なので、線分$O_1O_2$上に$O_1T=r_1$となる点$T$がある。$TO_2=d-r_1=r_2$なので、$T$は共有点である。\n$Q$を共有点とする。$O_1Q=r_1$、$QO_2=r_2$より$O_1Q+QO_2=d=O_1O_2$である。$O_1,Q,O_2$が一直線上にないなら、三角形の2辺の和は残りの辺より大きいので$O_1Q+QO_2>O_1O_2$となり矛盾する。よって一直線上にある。直線上で$O_1Q+QO_2=O_1O_2$なら$Q$は線分$O_1O_2$上にあり、$O_1Q=r_1$なので$Q=T$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L15"
+ },
+ {
+  "id": "internally_tangent_unique_common_point",
+  "home": "S5",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積とコーシー・シュワルツの等号条件",
+    "stage": "S10",
+    "where": "第3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "O2Q=O2O1+O1Q から O1 が線分 O2Q 上にあることを三角不等式の等号で出す。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$0<r_1<r_2$の2つの球面をとり、$d=O_1O_2=r_2-r_1>0$とする。半径$O_2O_1$の延長を考え、半直線$O_2O_1$上に$O_2T=r_2$となる点$T$をとる。$d<r_2$なので$O_1$は線分$O_2T$上にあり、$O_1T=r_2-d=r_1$である。よって$T$は共有点である。\n$Q$を共有点とする。$O_1Q=r_1$、$O_2Q=r_2=d+r_1$より$O_2Q=O_2O_1+O_1Q$である。$O_2,O_1,Q$が一直線上にないなら、三角形の2辺の和は残りの辺より大きいので$O_2Q<O_2O_1+O_1Q$となり矛盾する。よって一直線上にあり、$O_1$は線分$O_2Q$上にある。したがって$Q$は半直線$O_2O_1$上にあり、$O_2Q=r_2$なので$Q=T$である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L15"
+ },
+ {
+  "id": "common_tangent_at_contact_on_center_line",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの実数倍と内積による直交性の移し替え",
+    "stage": "S9",
+    "where": "第2〜3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "直線 TX は直線 O1O2 に垂直で、O2T は同じ直線上にある、と書く。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1>0,r_2$の2つの球面をとる。$T$は直線$O_1O_2$上で第2の球面の上にあり、$X\\neq T$、直線$TX$は第1の球面に$T$で接するとする。\n$r_1>0$より$T\\neq O_1$であり、$T$は直線$O_1O_2$上にある。直線$TX$は第1の球面に$T$で接するので、半径$O_1T$、すなわち直線$O_1O_2$に垂直である。$O_2$は直線$O_1O_2$上にあるので、$O_2=T$であるか、半径$O_2T$が直線$O_1O_2$に重なる。$O_2\\neq T$のとき、直線$TX$は半径$O_2T$に垂直である。$O_2=T$のとき$r_2=0$で、接する条件は常に成り立つ。どちらの場合も、直線$TX$は第2の球面に$T$で接する。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "two_circles_common_point_exists_in_plane",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "直角に回転したベクトル Jy、内積による座標的構成",
+    "stage": "S9",
+    "where": "第1〜3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "3辺 d,r1,r2 の三角形の作図で T を取る。等号の3場合は線分上の点で補う。",
+  "patch": {
+   "answer": "平面上で、中心$O_1\\neq O_2$、半径$r_1,r_2>0$の2円をとり、$d=O_1O_2>0$は$|r_1-r_2|\\leq d\\leq r_1+r_2$を満たすとする。\n$|r_1-r_2|<d<r_1+r_2$のとき、3辺の長さが$d,r_1,r_2$の三角形が作図できる（三角形の成立条件）。その頂点を、長さ$d$の辺の両端が$O_1,O_2$になるようにとり、残りの頂点を$T$とすると、$TO_1=r_1$、$TO_2=r_2$である。\n$d=r_1+r_2$のとき、線分$O_1O_2$を$r_1:r_2$に内分する点を$T$とする。$d=r_2-r_1$のとき、半直線$O_2O_1$上に$O_2T=r_2$となる点$T$をとると、$O_1T=r_2-d=r_1$である。$d=r_1-r_2$のとき、半直線$O_1O_2$上に$O_1T=r_1$となる点$T$をとると、$O_2T=r_1-d=r_2$である。\nどの場合も$T$は2円の共有点である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "common_tangent_bisected_by_common_chord",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "内積によるべき乗の展開",
+    "stage": "S9",
+    "where": "第2段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "各球面について接線と割線の方べきの定理から HT1²=HA·HB=HT2²。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、2つの球面が点$A,B$を共有し、$T_1\\neq T_2$で直線$T_1T_2$は第1の球面に$T_1$で、第2の球面に$T_2$で接するとする。$H$は$A,B$のアフィン包と直線$T_1T_2$の両方に属するとする。\n$A=B$のとき$H=A$で、$H$は直線$T_1T_2$と第1の球面の共有点なので$H=T_1$である。同様に$H=T_2$となり、$T_1\\neq T_2$に反する。よってこの場合は起こらず、$A\\neq B$とする。\n$H\\neq T_1$のとき、直線$HT_1$は直線$T_1T_2$で、$T_1$で接するので、方べきの定理（接線と割線）より$HT_1^2=HA\\cdot HB$である。$H=T_1$のとき、$H$は第1の球面と直線$AB$の共有点なので$H=A$または$H=B$であり、$HT_1^2=0=HA\\cdot HB$である。同様に$HT_2^2=HA\\cdot HB$である。よって$HT_1=HT_2$である。$H$は直線$T_1T_2$上にあり、$T_1\\neq T_2$なので、$T_1,T_2$から等距離にある点は中点だけである。すなわち$H$は$T_1,T_2$の中点である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "external_common_tangent_length",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積と比例の議論による ⟨u,v⟩=r1r2",
+    "stage": "S9",
+    "where": "第2〜3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "半径が平行で同じ向きなので、長方形を作って直角三角形の三平方で書く。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2$の2つの球面をとり、$T_1\\neq T_2$の直線$T_1T_2$が第1に$T_1$で、第2に$T_2$で接し、$O_1,O_2$は直線の同じ側にあって直線上にないとする。\n$O_1,O_2$が直線の同じ側にあるので、4点$T_1,T_2,O_1,O_2$は1つの平面上にある。接線は半径に垂直なので$T_1O_1\\perp T_1T_2$、$T_2O_2\\perp T_1T_2$であり、$O_1,O_2$が同じ側にあるので、半径$T_1O_1$と$T_2O_2$は平行で同じ向きである。命題は添字の入れ替えで不変なので、$r_1\\geq r_2$としてよい。線分$T_1O_1$上に$T_1K=r_2$となる点$K$をとる。$T_1K$と$T_2O_2$は平行で長さが等しく同じ向きなので、四角形$KT_1T_2O_2$は平行四辺形であり、$\\angle KT_1T_2=\\pi/2$なので長方形である。よって$KO_2=T_1T_2$、$KO_2\\perp T_1O_1$であり、$KO_1=r_1-r_2$である。直角三角形$KO_2O_1$に三平方の定理を用いて（$K=O_1$のときは$r_1=r_2$で$O_1O_2=KO_2$）、$O_1O_2^2=T_1T_2^2+(r_1-r_2)^2$である。すなわち$T_1T_2^2=O_1O_2^2-(r_1-r_2)^2$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "internal_common_tangent_length",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積と比例の議論による ⟨u,v⟩=-r1r2",
+    "stage": "S9",
+    "where": "第2〜3段落",
+    "replaceable": true
+   }
+  ],
+  "fix": "半径が平行で反対向きなので、接点の先へ半径 r2 だけ延ばして長方形を作る。",
+  "patch": {
+   "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2$の2つの球面をとり、$T_1\\neq T_2$の直線$T_1T_2$が第1に$T_1$で、第2に$T_2$で接し、$O_1,O_2$は直線を含む平面で直線の両側にあって直線上にないとする。\n接線は半径に垂直なので$T_1O_1\\perp T_1T_2$、$T_2O_2\\perp T_1T_2$であり、$O_1,O_2$が反対側にあるので、半径$T_1O_1$と$T_2O_2$は平行で反対向きである。半直線$O_1T_1$を$T_1$の先へ延ばし、$T_1K=r_2$となる点$K$をとる。$K$は$O_2$と直線$T_1T_2$の同じ側にある。$T_1K$と$T_2O_2$は平行で長さが等しく同じ向きなので、四角形$KT_1T_2O_2$は平行四辺形であり、$\\angle KT_1T_2=\\pi/2$なので長方形である。よって$KO_2=T_1T_2$、$KO_2\\perp KO_1$であり、$T_1$は線分$KO_1$上にあるので$KO_1=r_2+r_1$である。直角三角形$KO_2O_1$に三平方の定理を用いて、$O_1O_2^2=T_1T_2^2+(r_1+r_2)^2$である。すなわち$T_1T_2^2=O_1O_2^2-(r_1+r_2)^2$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L15"
+ },
+ {
+  "id": "medians_concurrent_at_centroid",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトル（AG=(AB+AC)/3=2AL/3 による重心の位置ベクトル表示）",
+    "stage": "S9",
+    "where": "答案第2文（G が直線 AL 上にあることの根拠）",
+    "replaceable": true
+   }
+  ],
+  "fix": "題意は数A「三角形の重心」（中線の共点）で、ベクトルを使わずに書くのが標準。中点連結定理と平行四辺形の対角線で「2本の中線は互いに頭から 2:1 の点で交わる」を示し、3本の中線が同じ点（重心）を通ることにする。後半（2直線は高々1点で交わる）は現行の議論をそのまま使える。重心の定義がベクトル式になっている点がこの系統の原因で、学校の定義（中線の交点）に合わせる必要がある。",
+  "keep_as_advanced": false,
+  "batch": "L16"
+ },
+ {
+  "id": "centroid_leibniz_sum_of_squares",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積による展開（|x-a|^2 の展開と a+b+c=0）",
+    "stage": "S9",
+    "where": "答案第2〜4文（PA^2 の展開から結論まで）",
+    "replaceable": true
+   }
+  ],
+  "fix": "題意は距離の等式で、重心の 2:1 と余弦定理（S4）・中線定理だけで足りる。M を BC の中点として、三角形 PGA, PGM に余弦定理を使い PA^2+2PM^2=3PG^2+6m^2、中線定理で PB^2+PC^2=2PM^2+BC^2/2 を得る。ベクトルによる証明は既習者向けの別解として残す価値がある。",
+  "patch": {
+   "answer": "$A,B,C$を同一直線上にない3点、$G$を重心、$P$を任意の点とし、$M$を辺$BC$の中点とする。重心の性質から$G$は線分$AM$上にあり$AG=2GM$である。$GM=m$とおくと$AG=2m$、$AM=3m$である。まず$P\\neq G$とする。$\\theta=\\angle PGA$とおくと$\\angle PGM=\\pi-\\theta$である（$P$が直線$AM$上にあるときは$\\theta=0$または$\\pi$とみなす）。三角形$PGA$、$PGM$に余弦定理を使うと、$PA^2=PG^2+4m^2-4m\\cdot PG\\cos\\theta$、$PM^2=PG^2+m^2+2m\\cdot PG\\cos\\theta$である。第1式に第2式の2倍を加えると$PA^2+2PM^2=3PG^2+6m^2$を得る。また三角形$PBC$の中線定理（$P$が直線$BC$上にあっても成り立つ）より$PB^2+PC^2=2PM^2+\\frac{BC^2}{2}$である。辺々加えると$PA^2+PB^2+PC^2=3PG^2+6m^2+\\frac{BC^2}{2}$ …(＊)となる。$P=G$のときも、$GA^2=4m^2$と三角形$GBC$の中線定理$GB^2+GC^2=2m^2+\\frac{BC^2}{2}$から$GA^2+GB^2+GC^2=6m^2+\\frac{BC^2}{2}$となり、(＊)は$PG=0$で成り立つ。したがって(＊)の定数部分は$GA^2+GB^2+GC^2$に等しく、すべての$P$について$PA^2+PB^2+PC^2=GA^2+GB^2+GC^2+3PG^2$が成り立つ。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L16"
+ },
+ {
+  "id": "circumcenter_right_triangle_hypotenuse_midpoint",
+  "home": "S3",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積（u・w=0 から |u+w|=|w-u|）",
+    "stage": "S9",
+    "where": "答案第2〜3文（MA=BC/2 の導出）",
+    "replaceable": true
+   }
+  ],
+  "fix": "level が middle の題意。長方形の対角線（S2）で MA=MB=MC=BC/2 が直接出る。ベクトルは不要。",
+  "patch": {
+   "answer": "$A,B,C$を同一直線上にない3点で$\\angle BAC=\\frac{\\pi}{2}$とし、$M$を$BC$の中点とする。直線$MA$上に、$A$と反対側に$MD=MA$となる点$D$をとる。対角線$AD$と$BC$が互いの中点$M$で交わるので、四角形$ABDC$は平行四辺形である。$\\angle BAC$が直角なので、これは長方形である。長方形の対角線は長さが等しく互いの中点で交わるので、$MA=MB=MC=\\frac{BC}{2}$である。$M$は平面$ABC$上にあり、同じ平面上で3頂点から等距離にある点は外心だけなので、$M$は外心で、半径は$\\frac{BC}{2}$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L16"
+ },
+ {
+  "id": "centroid_eq_circumcenter_iff_equilateral",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトル（GA,GB,GC の和が0、|2x+y|^2 などの展開）",
+    "stage": "S9",
+    "where": "答案第2〜4文（9GA^2=2AB^2+2AC^2-BC^2 の導出と比較）",
+    "replaceable": true
+   }
+  ],
+  "fix": "題意は数A「重心・外心」の性質。中線が垂直二等分線になることを使う総合幾何で足りる。9GA^2=2AB^2+2AC^2-BC^2 の公式は既習者向けに残す価値がある。",
+  "patch": {
+   "answer": "$A,B,C$を同一直線上にない3点、$G$を重心、$O$を外心とし、$L,M$を辺$BC,CA$の中点とする。重心の性質から$G$は中線$AL,BM$の上にあり、$AG=2GL$なので$G\\neq L$、同様に$G\\neq M$である。（$\\Rightarrow$）$G=O$とする。$O$は$B,C$から等距離なので線分$BC$の垂直二等分線$\\ell$の上にあり、$L$も$\\ell$の上にある。$O=G\\neq L$なので直線$OL$は$\\ell$であり、$A$は直線$GL$の上にあるから$A$は$\\ell$の上にある。よって$AB=AC$である。同様に$G$が$CA$の垂直二等分線の上にあり、$M$もその上にあることから、$B$がその上にあって$BC=BA$を得る。したがって$AB=BC=CA$で正三角形である。（$\\Leftarrow$）$ABC$を正三角形とする。三角形$ABL$と$ACL$は3辺が等しいので合同であり、$\\angle ALB=\\angle ALC$である。この2つの角の和は$\\pi$なので$AL\\perp BC$となり、$AL$は$BC$の垂直二等分線である。その上にある$G$について$GB=GC$である。同様に$BM$は$CA$の垂直二等分線なので$GC=GA$である。よって$GA=GB=GC$であり、同じ平面上で3頂点から等距離にある点は外心だけなので、$G$は外心である。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L16"
+ },
+ {
+  "id": "vertex_orthocenter_side_circumradius_identity",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトル（外心を原点とする a+b+c で垂心を表す。内積と中線定理型の展開）",
+    "stage": "S9",
+    "where": "答案全体（OH'=a+b+c の構成から |b+c|^2+|c-b|^2 まで）",
+    "replaceable": true
+   }
+  ],
+  "fix": "題意は距離の等式。正弦定理（S4）で BC=2R sinA、垂線の足を使って AH=2R|cosA| を示せば足りるが、鋭角・直角・鈍角で場合分けが要り10行を超える。S5の標準解答にするなら場合分け付きの三角比の証明に書き替える。ベクトル版は既習者向けに残す。",
+  "keep_as_advanced": true,
+  "batch": "L16"
+ },
+ {
+  "id": "orthocenter_reflection_on_circumcircle",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトル（OK=a+b+c による垂心の構成、OO'=b+c）",
+    "stage": "S9",
+    "where": "答案第3〜7文",
+    "replaceable": true
+   }
+  ],
+  "fix": "題意は数A「円の性質」。標準は ∠BHC=π-A（鋭角の場合）と円周角の定理の逆（四角形 BH'CA が円に内接）で示す総合幾何。鋭角・直角・鈍角の場合分けで10行を超えるため patch は付けない。ベクトル版は既習者向けに残す価値がある。",
+  "keep_as_advanced": true,
+  "batch": "L16"
+ },
+ {
+  "id": "altitude_feet_concyclic",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトルの内積による直径の円周上の判定（NZ=-(ZX+ZY)/2、|ZX+ZY|=|ZX-ZY|）",
+    "stage": "S9",
+    "where": "答案第2〜4文",
+    "replaceable": true
+   }
+  ],
+  "fix": "直角が直径を見込む（円周角の定理の逆、S3）だけで足りる。退化した場合（E=C, E=A, A=H など）を明示して書き替える。",
+  "patch": {
+   "answer": "$A,B,C$を同一直線上にない3点、$H$を垂心、$E,F$を上のとおりとする。$BC$を直径とする円を$\\Gamma$とする。$E=C$なら$E$は$\\Gamma$の上にある。$E\\neq C$なら$E$は$B$から直線$CA$に下ろした垂線の足なので$\\angle BEC=\\frac{\\pi}{2}$であり、円周角の定理の逆により$E$は$\\Gamma$の上にある。$F$についても、$F=B$なら$\\Gamma$の上にあり、$F\\neq B$なら$\\angle BFC=\\frac{\\pi}{2}$から$\\Gamma$の上にある。よって$B,C,E,F$は同一円周上にある。次に$A=H$のとき、$AB\\perp AC$なので$E=F=A$であり、4点は一致する。$A\\neq H$のとき、$AH$を直径とする円を$\\Gamma'$とする。$E$と$H$はともに$B$を通り$CA$に垂直な直線上にある。$E=A$または$E=H$なら$E$は$\\Gamma'$の上にある。そうでなければ直線$EH$は$CA$に垂直で、直線$EA$は$CA$なので$\\angle AEH=\\frac{\\pi}{2}$であり、$E$は$\\Gamma'$の上にある。$F$も$C$を通り$AB$に垂直な直線上にあるので同様に$\\Gamma'$の上にある。よって$A,H,E,F$は同一円周上にある。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L16"
+ },
+ {
+  "id": "euler_distance_circumcenter_orthocenter",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトル（OH=a+b+c と内積の展開で OH^2 を辺の長さに直す）",
+    "stage": "S9",
+    "where": "答案全体",
+    "replaceable": false
+   }
+  ],
+  "fix": "題意の距離公式は総合幾何では標準的な証明がなく、ベクトル（または複素数）が本質。S5の標準解答には置けない。この単元の level/単元を数C（ベクトル）側に移すか、題意をベクトル形にして home を S9 とする。現行の答案は既習者向けとして残す。",
+  "keep_as_advanced": true,
+  "batch": "L16"
+ },
+ {
+  "id": "nine_point_circle",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトル（外心を原点とする位置ベクトル、OH=a+b+c、NM=-a/2 など）",
+    "stage": "S9",
+    "where": "答案全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "標準解答は、中点連結定理と円周角の定理の逆（直径を見込む直角）による総合幾何だが、中心が OH の中点であることを示すには相似の位置（重心中心・倍率 -1/2）でオイラー線を先に示す必要があり、10行を超える。patch は付けない。ベクトル版は既習者向けに残す。",
+  "keep_as_advanced": true,
+  "batch": "L16"
+ },
+ {
+  "id": "nine_point_center_and_radius",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトル（外心を原点とする位置ベクトル、OH=a+b+c、NM=-a/2）",
+    "stage": "S9",
+    "where": "答案全体",
+    "replaceable": true
+   }
+  ],
+  "fix": "総合幾何なら、中点三角形は ABC と相似（比 1/2）なので外接円の半径は R/2。中心は、重心を中心とする倍率 -1/2 の相似で O が写る点で、垂心 H が O に写ることからオイラー線の中点と一致する、という流れになる。10行を超えるため patch は付けない。",
+  "keep_as_advanced": true,
+  "batch": "L16"
+ },
+ {
+  "id": "menelaus_unsigned_ratio_form",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトル・アフィン結合（D=(1-r)B+rC の位置ベクトル表示と、ベクトル版メネラウスの引用）",
+    "stage": "S9",
+    "where": "答案第2〜5文",
+    "replaceable": true
+   }
+  ],
+  "fix": "数Aのメネラウスの定理を、ベクトル版の系として出している。3頂点から直線 ℓ までの距離の比（sin と相似、S4）で直接示せる。",
+  "patch": {
+   "answer": "$A,B,C$を同一直線上にない3点、$D,E,F$を直線$BC,CA,AB$上にあって同一直線$\\ell$上にある点とし、$D\\neq C$、$E\\neq A$、$F\\neq B$とする。まず$\\ell$が頂点を通らないことを示す。$A$を通るとすると、$A,E$はどちらも$\\ell$と直線$CA$の上にあり$E\\neq A$なので$\\ell$は直線$CA$であり、$D$は$\\ell$と直線$BC$の共有点$C$になって$D\\neq C$に反する。$B$を通るとすると、$F\\neq B$より$\\ell$は直線$AB$であり、$E$は直線$AB$と直線$CA$の共有点$A$になって$E\\neq A$に反する。$C$を通るとすると、$D\\neq C$より$\\ell$は直線$BC$であり、$F$は$B$になって$F\\neq B$に反する。したがって$A,B,C$から$\\ell$までの距離$a,b,c$はどれも正である。直線$BC$と$\\ell$は$D$で交わるので、そのなす角を$\\theta$（$0<\\theta\\le\\frac{\\pi}{2}$）とすると$b=BD\\sin\\theta$、$c=CD\\sin\\theta$であり、$\\frac{BD}{DC}=\\frac{b}{c}$である。同様に$\\frac{CE}{EA}=\\frac{c}{a}$、$\\frac{AF}{FB}=\\frac{a}{b}$である。3式を掛けると$\\frac{BD}{DC}\\cdot\\frac{CE}{EA}\\cdot\\frac{AF}{FB}=1$を得る。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L16"
+ },
+ {
+  "id": "ceva_unsigned_ratio_form",
+  "home": "S5",
+  "used": "S9",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "ベクトル・アフィン結合（D=(1-r)B+rC と、重心座標を使うベクトル版チェバの引用）",
+    "stage": "S9",
+    "where": "答案第2〜5文",
+    "replaceable": true
+   }
+  ],
+  "fix": "数Aのチェバの定理を、ベクトル版の系として出している。面積比（共通の底辺を持つ三角形の高さの比）で直接示せる。",
+  "patch": {
+   "answer": "$A,B,C$を同一直線上にない3点、$D,E,F$を直線$BC,CA,AB$上の頂点と異なる点、$p$を直線$AD,BE,CF$の共有点とする。直線$AD$と直線$BC$の共有点は$D$だけで$D$は頂点でないから、$B,C$は直線$AD$上にない。同様に$C,A$は直線$BE$上に、$A,B$は直線$CF$上にない。したがって$p$は$A,B,C$のどれとも異なり、直線$Ap$は直線$AD$、直線$Bp$は直線$BE$、直線$Cp$は直線$CF$である。直線$AD$と直線$BC$のなす角を$\\theta$とすると、$B,C$から直線$AD$までの距離はそれぞれ$BD\\sin\\theta$、$CD\\sin\\theta$で、$\\sin\\theta\\neq 0$なので$\\frac{BD}{DC}$は$B,C$から直線$Ap$までの距離の比に等しい。三角形$ABp$と$ACp$は底辺$Ap$を共有するので、この比は面積比に等しく$\\frac{BD}{DC}=\\frac{[ABp]}{[ACp]}$である（$[\\ ]$は面積。$C$が直線$Ap$上にないので分母は正）。同様に$\\frac{CE}{EA}=\\frac{[BCp]}{[BAp]}$、$\\frac{AF}{FB}=\\frac{[CAp]}{[CBp]}$である。$[ABp]=[BAp]$、$[BCp]=[CBp]$、$[CAp]=[ACp]$なので、3式を掛けると$\\frac{BD}{DC}\\cdot\\frac{CE}{EA}\\cdot\\frac{AF}{FB}=1$を得る。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L16"
+ },
+ {
+  "id": "simson_line",
+  "home": "S5",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "有向角（直線のなす角を π を法として扱う）と、それによる円周角の定理・共円の判定",
+    "stage": "S10",
+    "where": "答案全体（有向角 (PR,PS) の定義と、(DF,DX)=(BA,BX) 以降のすべての式）",
+    "replaceable": true
+   }
+  ],
+  "fix": "題意はシムソン線（数Aの円の性質の発展）。有向角は教科書にない道具。標準の総合幾何では、X が弧 BC 上にある配置を取り、円周角の定理と円に内接する四角形の性質で ∠BDF=∠BXF などを追って E,D,F の共線を示す。配置による場合分けが必要で10行を超えるため patch は付けない。有向角による一般配置の証明は別カードとして残す価値がある。",
+  "keep_as_advanced": true,
+  "batch": "L16"
+ },
+ {
+  "id": "sin_cos_one_degree_irrational",
+  "home": "S6",
+  "used": "S7",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "数学的帰納法（cos nθ の有理性を全 n に伝える）と三項間漸化式",
+    "stage": "S7",
+    "where": "第1段落「帰納法により、すべての自然数 n で cos nθ は有理数」",
+    "replaceable": true
+   }
+  ],
+  "fix": "必要な n は 30 と 15 までの有限個。加法定理から得る cos(n+1)θ = 2cosθ cos nθ − cos(n−1)θ を n=1,2,3,… の順に使うと次々に有理数と分かる、という書き方にすれば、帰納法と明記せずに済む（有限の鎖としての記述）。",
+  "patch": {
+   "answer": "$1^\\circ=\\dfrac{\\pi}{180}$ラジアンとする。実数$\\theta$について$\\cos\\theta$が有理数であるとする。加法定理から$\\cos(n+1)\\theta+\\cos(n-1)\\theta=2\\cos\\theta\\cos n\\theta$なので、$\\cos(n+1)\\theta=2\\cos\\theta\\cos n\\theta-\\cos(n-1)\\theta$である。$\\cos 0=1$と$\\cos\\theta$は有理数で、この右辺は連続する$2$項が有理数なら有理数になる。そこで$n=1,2,3,\\dots$の順にこの式を使うと、$\\cos 2\\theta,\\cos 3\\theta,\\dots$が次々に有理数と定まり、必要な自然数$n$について$\\cos n\\theta$は有理数である。\n$\\cos 1^\\circ$が有理数なら、$\\theta=1^\\circ$、$n=30$として$\\cos 30^\\circ=\\dfrac{\\sqrt{3}}{2}$が有理数となり、$\\sqrt{3}$が無理数であることに反する。$\\sin 1^\\circ$が有理数なら、$\\cos 2^\\circ=1-2\\sin^2 1^\\circ$が有理数なので、$\\theta=2^\\circ$、$n=15$として同じく$\\cos 30^\\circ$が有理数となり矛盾する。したがって$\\sin 1^\\circ$と$\\cos 1^\\circ$はともに無理数である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L17"
+ },
+ {
+  "id": "exp_one_gt_two_point_seven",
+  "home": "S8",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "e = Σ 1/k!（指数関数のべき級数展開、実質テイラー展開）",
+    "stage": "S10",
+    "where": "第1文「e=Σ_{k≥0} 1/k! の各項は正なので、e は最初の6項の和より大きい」",
+    "replaceable": true
+   }
+  ],
+  "fix": "数III の範囲では e^x の導関数 (e^x)'=e^x と増加性だけで、x≥0 で e^x ≥ Σ_{k≤m} x^k/k! を m についての帰納法（S7）で示せる。これを m=5, x=1 に使えば同じ主張 e>2.7 が出る。",
+  "patch": {
+   "answer": "$e=\\exp 1$とし、$e^x$が増加関数であること、$(e^x)^{\\prime}=e^x$、$e^0=1$を用いる。$m\\geq 0$について$f_m(x)=e^x-\\sum_{k=0}^{m}\\dfrac{x^k}{k!}$とおき、$x\\geq 0$で$f_m(x)\\geq 0$であることを$m$についての帰納法で示す。$f_0(x)=e^x-1\\geq 0$は$e^x$が増加関数で$e^0=1$であることから従う。$f_m(0)=0$であり、$f_m^{\\prime}(x)=e^x-\\sum_{k=1}^{m}\\dfrac{x^{k-1}}{(k-1)!}=f_{m-1}(x)$なので、$x\\geq 0$で$f_{m-1}(x)\\geq 0$なら$f_m$は$x\\geq 0$で単調に増加し、$f_m(x)\\geq 0$である。\n$m=5$、$x=1$とすると$e\\geq 1+1+\\dfrac{1}{2}+\\dfrac{1}{6}+\\dfrac{1}{24}+\\dfrac{1}{120}=\\dfrac{163}{60}$である。$163>162=2.7\\cdot 60$より$\\dfrac{163}{60}>2.7$なので、$e>2.7$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L17"
+ },
+ {
+  "id": "pi_between_three_point_one_and_three_point_two",
+  "home": "S4",
+  "used": "S8",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "三角関数の加法定理",
+    "stage": "S6",
+    "where": "第2段落「加法定理より sin15°=…, cos15°=…」",
+    "replaceable": true
+   },
+   {
+    "tool": "半角の公式",
+    "stage": "S6",
+    "where": "第3段落「半角の公式 tan(θ/2)=(1−cosθ)/sinθ に θ=15° を代入」",
+    "replaceable": true
+   },
+   {
+    "tool": "0<x<π/2 での sin x < x < tan x（弧度法の不等式、数III の極限の準備で証明される）",
+    "stage": "S8",
+    "where": "第1段落、第2・3段落の x=π/12, π/24 への適用",
+    "replaceable": true
+   }
+  ],
+  "fix": "円周率の評価は、半径1の円に内接・外接する正多角形の周と円周の比較（中学の円周＋数Iの三角比）で書ける。sin15°, tan15°, tan7.5° は、30°・15°の直角三角形に二等辺三角形を付け足す作図と三平方の定理で求まる。home を S4 としたのは題意が「π の数値評価」だけで、多角形の周と三角比で足りるため。home を S6 以上とみなすなら加法定理は許されるが、sin x<x<tan x は依然 S8 寄りである。",
+  "patch": {
+   "answer": "$\\pi$を円周率とする。円に内接する凸多角形の周は円周より短く、外接する凸多角形の周は円周より長いことを用いる。\n三角比を求める。$\\angle C=90^\\circ$、$\\angle A=30^\\circ$、$BC=1$、$AB=2$、$AC=\\sqrt{3}$の直角三角形$ABC$で、辺$CA$の$A$側への延長上に$AD=AB=2$となる点$D$をとる。$\\triangle ABD$は二等辺三角形で$\\angle BAC=30^\\circ$がその外角なので$\\angle D=15^\\circ$である。$CD=2+\\sqrt{3}$、$BD^2=1+(2+\\sqrt{3})^2=8+4\\sqrt{3}=(\\sqrt{6}+\\sqrt{2})^2$より$BD=\\sqrt{6}+\\sqrt{2}$なので、$\\sin 15^\\circ=\\dfrac{1}{\\sqrt{6}+\\sqrt{2}}=\\dfrac{\\sqrt{6}-\\sqrt{2}}{4}$、$\\tan 15^\\circ=\\dfrac{1}{2+\\sqrt{3}}$である。\n同じ作図を$\\angle A=15^\\circ$、$BC=1$の直角三角形に行う。$AC=2+\\sqrt{3}$、$AB=\\sqrt{6}+\\sqrt{2}$であり、$AD=AB$となる点$D$について$\\angle D=7.5^\\circ$、$CD=2+\\sqrt{3}+\\sqrt{6}+\\sqrt{2}$となる。したがって$\\tan 7.5^\\circ=\\dfrac{1}{2+\\sqrt{3}+\\sqrt{6}+\\sqrt{2}}=\\sqrt{6}+\\sqrt{2}-\\sqrt{3}-2$である。最後の等号は$(\\sqrt{6}+\\sqrt{2})^2-(2+\\sqrt{3})^2=1$による。\n単位円に内接する正$12$角形の周は$24\\sin 15^\\circ$で、円周$2\\pi$より短い。よって$\\pi>12\\sin 15^\\circ=3(\\sqrt{6}-\\sqrt{2})$である。$2.449^2<6$より$\\sqrt{6}>2.449$、$1.415^2>2$より$\\sqrt{2}<1.415$なので、$\\pi>3\\cdot 1.034>3.1$である。\n単位円に外接する正$24$角形の周は$48\\tan 7.5^\\circ$で、円周$2\\pi$より長い。よって$\\pi<24\\tan 7.5^\\circ$である。$2.45^2>6$より$\\sqrt{6}<2.45$、$\\sqrt{2}<1.415$、$1.732^2<3$より$\\sqrt{3}>1.732$なので、$\\tan 7.5^\\circ<0.133$である。よって$\\pi<24\\cdot 0.133=3.192<3.2$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L17"
+ },
+ {
+  "id": "exp_pi_gt_pi_exp",
+  "home": "S8",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "e = Σ 1/k!（べき級数展開、実質テイラー展開）と k! ≥ 2^{k−1} による級数の評価",
+    "stage": "S10",
+    "where": "第2段落「e=Σ 1/k! で、k≥2 では k!≥2^{k-1} … なので e<3」",
+    "replaceable": true
+   }
+  ],
+  "fix": "e<3 は log 3>1 と同値。接線型の不等式 1/x ≥ (4−x)/4（差は (x−2)²/(4x)）を [1,3] で積分すると ∫ 1/x dx > 1 が出る。数III の積分だけで足りる。log x < x−1 の導出（微分）と π>3（正六角形）は元のままでよい。",
+  "patch": {
+   "answer": "$e$を自然対数の底、$\\pi$を円周率とする。$x>0$、$x\\neq 1$では$\\log x<x-1$である。実際、$f(x)=x-1-\\log x$は$f^{\\prime}(x)=1-\\dfrac{1}{x}$より$x=1$でのみ最小値$0$をとる。\n$e<3$を示す。$\\log$は増加関数で$\\log e=1$なので、$\\log 3>1$を示せばよい。$x>0$で$\\dfrac{1}{x}-\\dfrac{4-x}{4}=\\dfrac{(x-2)^2}{4x}\\geq 0$であり、等号は$x=2$のときだけである。両辺は連続なので$1$から$3$まで積分すると、$\\log 3=\\int_1^3\\dfrac{dx}{x}>\\int_1^3\\dfrac{4-x}{4}\\,dx=\\left[x-\\dfrac{x^2}{8}\\right]_1^3=1$となる。よって$e<3$である。また円に内接する正六角形の周の長さ$6$は円周$2\\pi$より短いので$\\pi>3$である。よって$e<3<\\pi$であり、$\\dfrac{\\pi}{e}\\neq 1$なので、$x=\\dfrac{\\pi}{e}$を代入すると$\\log\\pi-1<\\dfrac{\\pi}{e}-1$、すなわち$e\\log\\pi<\\pi$を得る。指数関数は増加関数なので、$\\pi^e=\\exp(e\\log\\pi)<\\exp(\\pi)=e^\\pi$である。\n"
+  },
+  "keep_as_advanced": false,
+  "batch": "L17"
+ },
+ {
+  "id": "abs_sin_multiple_angle_bound",
+  "home": "S6",
+  "used": "S7",
+  "severity": "minor",
+  "tools": [
+   {
+    "tool": "数学的帰納法（任意の自然数 n に対する不等式）",
+    "stage": "S7",
+    "where": "第1文「自然数 n についての帰納法で示す」と全体の構造",
+    "replaceable": false
+   }
+  ],
+  "fix": "任意の n についての主張なので帰納法が本質的で、S6 の道具だけでは書き替えられない（telescoping は |sin nx| ≤ 2n|sin(x/2)| にしかならず、複素数は S9）。カードの題意が実質 S7 なので、home/level を数B相当に直すのが妥当。答案の変更は不要。",
+  "keep_as_advanced": false,
+  "batch": "L17"
+ },
+ {
+  "id": "triangle_sine_sum_upper_bound",
+  "home": "S6",
+  "used": "S10",
+  "severity": "major",
+  "tools": [
+   {
+    "tool": "第2次導関数による凹凸の判定",
+    "stage": "S8",
+    "where": "第1文「(sin x)''=−sin x ≤ 0 なので上に凸」",
+    "replaceable": true
+   },
+   {
+    "tool": "イェンセンの不等式",
+    "stage": "S10",
+    "where": "第2文「イェンセンの不等式より…」",
+    "replaceable": true
+   }
+  ],
+  "fix": "和積の公式 (S6) だけで書ける。sinA+sinB ≤ 2sin((A+B)/2)、sinC+sin(π/3) ≤ 2sin((C+π/3)/2) とし、u=(A+B)/2, v=(C+π/3)/2 に再び和積を使うと u+v=2π/3 から sinu+sinv ≤ 2sin(π/3)。4変数に拡げる標準的な手口で、同じ主張が出る。",
+  "patch": {
+   "answer": "$A,B,C$を$A+B+C=\\pi$をみたす正の実数とする。$A+B<\\pi$より$0<\\dfrac{A+B}{2}<\\dfrac{\\pi}{2}$であり、和積の公式から$\\sin A+\\sin B=2\\sin\\dfrac{A+B}{2}\\cos\\dfrac{A-B}{2}\\leq 2\\sin\\dfrac{A+B}{2}$である。同様に$0<C<\\pi$より$0<\\dfrac{C+\\pi/3}{2}<\\dfrac{2\\pi}{3}$なので$\\sin C+\\sin\\dfrac{\\pi}{3}\\leq 2\\sin\\dfrac{C+\\pi/3}{2}$である。\n$u=\\dfrac{A+B}{2}$、$v=\\dfrac{C+\\pi/3}{2}$とおくと$u+v=\\dfrac{2\\pi}{3}$であり、$\\sin u+\\sin v=2\\sin\\dfrac{u+v}{2}\\cos\\dfrac{u-v}{2}\\leq 2\\sin\\dfrac{\\pi}{3}$である。以上を合わせると$\\sin A+\\sin B+\\sin C+\\sin\\dfrac{\\pi}{3}\\leq 2(\\sin u+\\sin v)\\leq 4\\sin\\dfrac{\\pi}{3}$となり、$\\sin A+\\sin B+\\sin C\\leq 3\\sin\\dfrac{\\pi}{3}=\\dfrac{3\\sqrt{3}}{2}$を得る。\n"
+  },
+  "keep_as_advanced": true,
+  "batch": "L17"
+ }
+]

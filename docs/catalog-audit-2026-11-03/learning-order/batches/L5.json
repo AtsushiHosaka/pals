@@ -1,0 +1,281 @@
+{
+"batch": "L5",
+"reviewed": 39,
+"ok_ids": [
+"nth_root_unique_nonneg_solution",
+"even_root_of_even_power_abs",
+"rational_exponent_as_root_of_power",
+"exp_quadratic_substitution_positive",
+"exp_factored_quadratic_inequality",
+"logb_mul_positive",
+"logb_div_positive",
+"logb_rpow_power_positive",
+"logb_even_power_abs",
+"logb_change_of_base",
+"logb_chain_product",
+"logb_power_base_power_argument",
+"logb_eq_iff_arguments_eq",
+"logb_sum_equation_under_true_number_condition",
+"logb_quadratic_substitution",
+"power_compare_via_logb",
+"digit_count_iff_common_log_bounds",
+"digit_count_of_power_floor_formula",
+"leading_digit_iff_common_log_bounds",
+"first_nonzero_decimal_iff_common_log_bounds",
+"digit_count_iff_log_bounds_any_base",
+"digit_count_of_power_floor_any_base"
+],
+"findings": [
+{
+"id": "rpow_add_exponent_law",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数 log と指数関数 e^t（実数べきを a^t=e^{t log a} で定義し、e^{u+v}=e^u e^v を使う）", "stage": "S8", "where": "答案の全行（定義と加法法則の適用）", "replaceable": true}
+],
+"fix": "数IIの定義（実数べきは有理数列の極限、極限は直観的）に戻し、有理数の指数法則を極限でうつす。e の定義による証明は既習者向けに別カード化できる。",
+"patch": {"answer": "$a>0$とし、$x,y$を実数とする。実数のべきは、有理数列の極限で定める（数IIの定義。極限は直観的に用いる）。有理数$r,s$については指数法則$a^{r+s}=a^ra^s$が成り立つ。$x$に収束する有理数列$r_n$と、$y$に収束する有理数列$s_n$をとると、$r_n+s_n$は$x+y$に収束する有理数列で、$a^{r_n+s_n}=a^{r_n}a^{s_n}$である。$n\\to\\infty$とすると、左辺は$a^{x+y}$に、右辺は$a^xa^y$に近づく。よって$a^{x+y}=a^xa^y$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "rpow_mul_exponent_law",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数 log と指数関数 e^t（a^t=e^{t log a}、log a^x=x log a）", "stage": "S8", "where": "答案の全行", "replaceable": true}
+],
+"fix": "有理数列の極限による定義に戻し、有理数の指数法則 (a^r)^s=a^{rs} を二段階の極限でうつす。",
+"patch": {"answer": "$a>0$とし、$x,y$を実数とする。実数のべきは、有理数列の極限で定める（数IIの定義。極限は直観的に用いる）。有理数$r,s$については$(a^r)^s=a^{rs}$が成り立つ。$x$に収束する有理数列$r_n$と、$y$に収束する有理数列$s_m$をとる。まず有理数$s$を固定すると$(a^{r_n})^s=a^{r_ns}$であり、$n\\to\\infty$とすると左辺は$(a^x)^s$、右辺は$a^{xs}$に近づくので、$(a^x)^s=a^{xs}$である。ここで$a^x>0$である。この$s$を$s_m$にして$m\\to\\infty$とすると、左辺は$(a^x)^y$に近づき、右辺は指数$xs_m$が$xy$に近づくので$a^{xy}$に近づく。よって$(a^x)^y=a^{xy}$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "mul_rpow_base_law",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数 log と指数関数 e^t（a^t=e^{t log a}）", "stage": "S8", "where": "答案の全行", "replaceable": true}
+],
+"fix": "有理数列の極限による定義に戻し、有理数の指数での (ab)^r=a^r b^r を極限でうつす。",
+"patch": {"answer": "$a,b>0$とし、$x$を実数とする。実数のべきは、有理数列の極限で定める（数IIの定義。極限は直観的に用いる）。有理数$r$については$(ab)^r=a^rb^r$が成り立つ。$x$に収束する有理数列$r_n$をとると、$(ab)^{r_n}=a^{r_n}b^{r_n}$である。$n\\to\\infty$とすると、左辺は$(ab)^x$に、右辺は$a^xb^x$に近づく。よって$(ab)^x=a^xb^x$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "power_function_lt_iff_positive_exponent",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数 log と指数関数 e^t（c^p=e^{p log c}）", "stage": "S8", "where": "最終文（a,b>0 の場合）", "replaceable": true}
+],
+"fix": "自然対数を常用対数（数II）に置き換える。他の場合分けはそのまま。",
+"patch": {"answer": "$a,b\\geq 0$、$p>0$とする。$p>0$なので$0^p=0$であり、$c>0$なら$c^p>0$である。$b=0$のときは$a^p<0$も$a<0$も成り立たない。$a=0$、$b>0$のときは$a^p=0<b^p$かつ$a<b$である。$a,b>0$のときは、$\\log_{10}$が狭義増加で$\\log_{10}(c^p)=p\\log_{10}c$であることを使う。$a^p<b^p$は$p\\log_{10}a<p\\log_{10}b$と同値であり、$p>0$で割ると$\\log_{10}a<\\log_{10}b$と同値である。これは$a<b$と同値である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "exp_lt_iff_base_gt_one",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数 log と指数関数 e^t（a^t=e^{t log a}、e^t の単調性）", "stage": "S8", "where": "答案の第2文以降", "replaceable": true}
+],
+"fix": "常用対数の単調性とべき乗の公式 log(M^p)=p log M で書き替える。",
+"patch": {"answer": "$a>1$とし、$x,y$を実数とする。$\\log_{10}$は狭義増加で$\\log_{10}1=0$なので、$a>1$より$\\log_{10}a>0$である。$a^x,a^y>0$であり$\\log_{10}$は狭義増加なので、$a^x<a^y$は$\\log_{10}a^x<\\log_{10}a^y$、すなわち$x\\log_{10}a<y\\log_{10}a$と同値である。$\\log_{10}a>0$で割ると、これは$x<y$と同値である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "exp_lt_iff_base_lt_one",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数 log と指数関数 e^t（a^t=e^{t log a}）", "stage": "S8", "where": "答案の第2文以降", "replaceable": true}
+],
+"fix": "常用対数の単調性で書き替える。",
+"patch": {"answer": "$0<a<1$とし、$x,y$を実数とする。$\\log_{10}$は狭義増加で$\\log_{10}1=0$なので、$0<a<1$より$\\log_{10}a<0$である。$a^x,a^y>0$であり$\\log_{10}$は狭義増加なので、$a^x<a^y$は$x\\log_{10}a<y\\log_{10}a$と同値である。負の数$\\log_{10}a$で割ると不等号の向きが変わるので、これは$y<x$と同値である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "exp_eq_iff_exponent_eq",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数をとる操作", "stage": "S8", "where": "「両辺の自然対数をとると」の行", "replaceable": true}
+],
+"fix": "自然対数を常用対数に置き換える。",
+"patch": {"answer": "$a>0$、$a\\neq 1$とし、$x,y$を実数とする。$x=y$なら$a^x=a^y$である。逆に$a^x=a^y$とする。両辺の常用対数をとると$x\\log_{10}a=y\\log_{10}a$である。$\\log_{10}$は狭義増加で$\\log_{10}1=0$なので、$a\\neq 1$より$\\log_{10}a\\neq 0$である。よって$x=y$である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "exp_eq_positive_has_unique_solution",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数 log と指数関数 e^t（x0=log y/log a、a^{x0}=e^{x0 log a}）", "stage": "S8", "where": "存在の行と一意性の行", "replaceable": true}
+],
+"fix": "常用対数を用いて a=10^s, y=10^u と書き、指数法則で同じ構成を行う。",
+"patch": {"answer": "$a>0$、$a\\neq 1$、$y>0$とする。$s=\\log_{10}a$、$u=\\log_{10}y$とおくと、$a=10^s$、$y=10^u$である。$\\log_{10}$は狭義増加で$\\log_{10}1=0$なので、$a\\neq 1$より$s\\neq 0$である。$x_0=\\dfrac{u}{s}$とおくと、指数法則より$a^{x_0}=(10^s)^{u/s}=10^u=y$である。これで存在がいえた。$a^x=y$をみたす実数$x$があれば、$10^{sx}=10^u$である。$10^t$は狭義増加なので$sx=u$、すなわち$x=x_0$である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "exp_lt_const_iff_base_gt_one",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数 log（log_a b を log b/log a で定義し、両辺の自然対数をとる）", "stage": "S8", "where": "第2文以降", "replaceable": true}
+],
+"fix": "対数の定義 b=a^{log_a b} と、底が1より大きい指数関数の単調性だけで書ける。",
+"patch": {"answer": "$a>1$、$b>0$とし、$x$を実数とする。対数の定義より$b=a^{\\log_ab}$である。よって$a^x<b$は$a^x<a^{\\log_ab}$と同値である。$a>1$のとき指数関数$a^t$は狭義増加なので、これは$x<\\log_ab$と同値である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "exp_lt_const_iff_base_lt_one",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数 log（log_a b を log b/log a で定義し、両辺の自然対数をとる）", "stage": "S8", "where": "第2文以降", "replaceable": true}
+],
+"fix": "対数の定義 b=a^{log_a b} と、0<a<1 の指数関数の単調減少性だけで書ける。",
+"patch": {"answer": "$0<a<1$、$b>0$とし、$x$を実数とする。対数の定義より$b=a^{\\log_ab}$である。よって$a^x<b$は$a^x<a^{\\log_ab}$と同値である。$0<a<1$のとき指数関数$a^t$は狭義減少なので、これは$\\log_ab<x$と同値である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "reciprocal_exponent_sum_common_value",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数 log（log_k u=log u/log k と、両辺の自然対数）", "stage": "S8", "where": "第2文以降の全行", "replaceable": true}
+],
+"fix": "自然対数を常用対数に置き換え、底の変換公式と積の対数の公式を使う。",
+"patch": {"answer": "$a,b,k>0$、$k\\neq 1$とし、実数$x,y$は$a^x=k$、$b^y=k$をみたすとする。$\\log_{10}$は狭義増加で$\\log_{10}1=0$なので、$k\\neq 1$より$\\log_{10}k\\neq 0$である。$a^x=k$の常用対数をとると$x\\log_{10}a=\\log_{10}k$である。右辺が$0$でないので$x\\neq 0$であり、$\\log_{10}a=\\dfrac{\\log_{10}k}{x}$である。同様に$y\\neq 0$で$\\log_{10}b=\\dfrac{\\log_{10}k}{y}$である。底の変換公式と積の対数の公式より、$\\log_k(ab)=\\dfrac{\\log_{10}a+\\log_{10}b}{\\log_{10}k}=\\dfrac{1}{x}+\\dfrac{1}{y}$である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "logb_eq_iff_rpow_eq_definition",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数 log による log_a M の定義（log M/log a）", "stage": "S8", "where": "第2文以降", "replaceable": true}
+],
+"fix": "数IIでは log_a M は a^p=M をみたす p として定義される。このカードは定義そのものなので、定義の確認として書く。",
+"patch": {"answer": "$a>0$、$a\\neq 1$、$M>0$とし、$p$を実数とする。数IIの定義では、$\\log_aM$は$a^p=M$をみたす実数$p$である。$a>0$、$a\\neq 1$のとき、指数関数$a^t$は狭義単調で正の実数全体の値をとるので、$a^p=M$をみたす$p$はただ一つ存在する。したがって$\\log_aM=p$であることと$a^p=M$であることは同値である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "rpow_logb_cancel",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数 log と指数関数 e^t（a^t=e^{t log a}、log_a M=log M/log a）", "stage": "S8", "where": "第2文以降", "replaceable": true}
+],
+"fix": "対数の定義から直ちに従う。",
+"patch": {"answer": "$a>0$、$a\\neq 1$、$M>0$とする。対数の定義より、$p=\\log_aM$は$a^p=M$をみたす実数である。したがって$a^{\\log_aM}=M$である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "logb_lt_iff_base_gt_one",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数 log（log_a u=log u/log a、log の単調性）", "stage": "S8", "where": "第2文以降", "replaceable": true}
+],
+"fix": "対数の定義 u=a^{log_a u} と、a>1 の指数関数の単調性で書ける。",
+"patch": {"answer": "$a>1$、$x,y>0$とする。対数の定義より$x=a^{\\log_ax}$、$y=a^{\\log_ay}$である。$a>1$のとき指数関数$a^t$は狭義増加なので、$x<y$は$a^{\\log_ax}<a^{\\log_ay}$と同値であり、これは$\\log_ax<\\log_ay$と同値である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "logb_lt_iff_base_lt_one",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数 log（log_a u=log u/log a、log の単調性）", "stage": "S8", "where": "第2文以降", "replaceable": true}
+],
+"fix": "対数の定義 u=a^{log_a u} と、0<a<1 の指数関数の単調減少性で書ける。",
+"patch": {"answer": "$0<a<1$、$x,y>0$とする。対数の定義より$x=a^{\\log_ax}$、$y=a^{\\log_ay}$である。$0<a<1$のとき指数関数$a^t$は狭義減少なので、$\\log_ax<\\log_ay$は$a^{\\log_ax}>a^{\\log_ay}$、すなわち$x>y$と同値である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "logb_pos_iff_sign_product",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数 log（log_a x=log x/log a）", "stage": "S8", "where": "第2文以降", "replaceable": true}
+],
+"fix": "自然対数を常用対数に置き換え、底の変換公式を使う。",
+"patch": {"answer": "$a>0$、$a\\neq 1$、$x>0$とする。底の変換公式より$\\log_ax=\\dfrac{\\log_{10}x}{\\log_{10}a}$である。$\\log_{10}$は狭義増加で$\\log_{10}1=0$なので、正の数$u$について$\\log_{10}u$と$u-1$は符号が等しい。$a\\neq 1$より$\\log_{10}a\\neq 0$である。商$\\dfrac{\\log_{10}x}{\\log_{10}a}$が正であることは、$\\log_{10}a$と$\\log_{10}x$が同じ符号で$0$でないことと同値である。これは$(a-1)(x-1)>0$と同値である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "logb_compare_different_bases",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "自然対数 log（log_b x=log x/log b）", "stage": "S8", "where": "第1文以降", "replaceable": true}
+],
+"fix": "自然対数を常用対数に置き換え、底の変換公式を使う。",
+"patch": {"answer": "$1<a<b$、$x>1$とする。$\\log_{10}$は狭義増加で$\\log_{10}1=0$なので、$0<\\log_{10}a<\\log_{10}b$であり、$\\log_{10}x>0$である。底の変換公式より、$\\log_bx=\\dfrac{\\log_{10}x}{\\log_{10}b}$、$\\log_ax=\\dfrac{\\log_{10}x}{\\log_{10}a}$である。分子が正で等しい分数は分母が大きいほど小さいので、$\\log_bx<\\log_ax$である。\n"},
+"keep_as_advanced": false
+}
+],
+"systematic": [
+"school_exp_log の標準解答は、実数べきを a^t=e^{t log a}（自然対数と指数関数 e、数IIIで初めて導入）で定義して証明する型が多い（17枚）。数IIの標準は「有理数列の極限で定める実数べき」「log_a M は a^p=M をみたす p」「常用対数」。定義文と補題の順序を数II版に合わせると、多くが自然対数を常用対数または定義そのものに置き換えるだけで直る。",
+"log_a x を log x/log a（自然対数の商）で定義する書き方が、不等式・方程式の複数カードで共通している。底の変換公式（カード logb_change_of_base）は定義に依らず a^p=b から導けるので、それを根拠にすれば自然対数は不要になる。",
+"指数法則3枚（rpow_add_exponent_law, rpow_mul_exponent_law, mul_rpow_base_law）の e の定義による証明は、既習者の復習向けとして残す価値がある（別カード化の候補）。ただし、patch の有理数列の極限による証明は直観的な極限に頼るので、厳密さを求めるなら高校範囲では上限が見える。",
+"patch は、log_10 の単調性や a^t の単調性、log(M^p)=p log M を数IIの既知事実として使う。単調性の最初の根拠（指数関数が単調であること）は教科書では図示で与えられ、カタログ内に証明を持つカードは exp_lt_iff_base_gt_one などの本体であるため、依存順を検証するときは logb 系の他カードとの循環に注意する。"
+],
+"home_assignments": {
+"rpow_add_exponent_law": "S6",
+"rpow_mul_exponent_law": "S6",
+"mul_rpow_base_law": "S6",
+"nth_root_unique_nonneg_solution": "S6",
+"even_root_of_even_power_abs": "S6",
+"rational_exponent_as_root_of_power": "S6",
+"power_function_lt_iff_positive_exponent": "S6",
+"exp_lt_iff_base_gt_one": "S6",
+"exp_lt_iff_base_lt_one": "S6",
+"exp_eq_iff_exponent_eq": "S6",
+"exp_eq_positive_has_unique_solution": "S6",
+"exp_quadratic_substitution_positive": "S6",
+"exp_lt_const_iff_base_gt_one": "S6",
+"exp_lt_const_iff_base_lt_one": "S6",
+"exp_factored_quadratic_inequality": "S6",
+"reciprocal_exponent_sum_common_value": "S6",
+"logb_eq_iff_rpow_eq_definition": "S6",
+"rpow_logb_cancel": "S6",
+"logb_mul_positive": "S6",
+"logb_div_positive": "S6",
+"logb_rpow_power_positive": "S6",
+"logb_even_power_abs": "S6",
+"logb_change_of_base": "S6",
+"logb_chain_product": "S6",
+"logb_power_base_power_argument": "S6",
+"logb_lt_iff_base_gt_one": "S6",
+"logb_lt_iff_base_lt_one": "S6",
+"logb_eq_iff_arguments_eq": "S6",
+"logb_pos_iff_sign_product": "S6",
+"logb_sum_equation_under_true_number_condition": "S6",
+"logb_quadratic_substitution": "S6",
+"logb_compare_different_bases": "S6",
+"power_compare_via_logb": "S6",
+"digit_count_iff_common_log_bounds": "S6",
+"digit_count_of_power_floor_formula": "S6",
+"leading_digit_iff_common_log_bounds": "S6",
+"first_nonzero_decimal_iff_common_log_bounds": "S6",
+"digit_count_iff_log_bounds_any_base": "S6",
+"digit_count_of_power_floor_any_base": "S6"
+}
+}

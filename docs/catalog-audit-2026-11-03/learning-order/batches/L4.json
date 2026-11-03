@@ -1,0 +1,223 @@
+{
+ "batch": "L4",
+ "reviewed": 42,
+ "ok_ids": [
+  "remainder_by_linear_ax_plus_b",
+  "factor_theorem_linear_ax_plus_b",
+  "remainder_by_two_distinct_linear_factors",
+  "remainder_by_square_of_linear",
+  "double_root_iff_value_and_derivative_vanish",
+  "polynomial_division_uniqueness",
+  "division_value_at_root_of_divisor",
+  "odd_power_sum_polynomial_factor",
+  "real_linear_coefficients_fixed_by_nonreal_value",
+  "common_root_of_two_monic_quadratics",
+  "polynomials_equal_on_infinite_set",
+  "identity_linear_in_parameter",
+  "partial_fraction_two_distinct_linear",
+  "reciprocal_quartic_substitution",
+  "monic_integer_polynomial_rational_root_is_integer",
+  "cubic_vieta_formulas",
+  "cubic_from_elementary_symmetric_values",
+  "omega_cube_is_one",
+  "omega_conjugate_is_square",
+  "omega_power_sum_by_residue_mod_three",
+  "cube_difference_factors_with_omega",
+  "complex_equality_real_imaginary_parts",
+  "complex_product_and_quotient_formula",
+  "real_or_pure_imaginary_by_conjugate",
+  "square_roots_of_negative_real",
+  "real_quadratic_negative_discriminant_roots",
+  "real_quadratic_nonreal_root_iff_negative_discriminant",
+  "real_quadratic_factor_from_nonreal_root",
+  "real_cubic_factorization_from_nonreal_root",
+  "linear_combination_of_equal_ratios",
+  "componendo_dividendo",
+  "cyclic_fraction_sum_with_product_one",
+  "cubes_sum_equals_three_product_iff",
+  "one_of_three_equals_one_from_sum_of_reciprocals",
+  "lagrange_identity_two_squares"
+ ],
+ "findings": [
+  {
+   "id": "product_over_distinct_roots_divides",
+   "home": "S6",
+   "used": "S7",
+   "severity": "minor",
+   "tools": [
+    {
+     "tool": "数学的帰納法",
+     "stage": "S7",
+     "where": "第1段落「kについての帰納法で」と、第2段落の k から k+1 への推移",
+     "replaceable": true
+    }
+   ],
+   "fix": "「割り切れるような最大の k（0..n）」を取り、k<n と仮定して矛盾を導く形に書き替えられる。因数定理（S6）と代入だけで済む。",
+   "patch": {
+    "answer": "$a_1,\\dots,a_n$を相異なる実数とし、$P(x)$を各$i$で$P(a_i)=0$を満たす実数係数の整式とする。$0\\leq k\\leq n$の整数$k$のうち、$P(x)$が$(x-a_1)\\cdots(x-a_k)$で割り切れるものを考える。$k=0$（積は$1$）はこれを満たすので、そのような$k$の最大値$k_0$がある。$k_0<n$と仮定して矛盾を導く。\n$P(x)=(x-a_1)\\cdots(x-a_{k_0})S(x)$と書ける。$x=a_{k_0+1}$を代入すると、$P(a_{k_0+1})=0$であり、$a_{k_0+1}-a_i\\neq 0$ $(i\\leq k_0)$だから$S(a_{k_0+1})=0$である。因数定理により$S(x)=(x-a_{k_0+1})T(x)$となる整式$T(x)$があり、$P(x)$は$(x-a_1)\\cdots(x-a_{k_0+1})$で割り切れる。これは$k_0$の最大性に反する。よって$k_0=n$であり、$P(x)$は$(x-a_1)\\cdots(x-a_n)$で割り切れる。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "even_odd_coefficient_sums_by_evaluation",
+   "home": "S6",
+   "used": "S7",
+   "severity": "minor",
+   "tools": [
+    {
+     "tool": "Σ記号（和の記号）",
+     "stage": "S7",
+     "where": "第1段落の P(x)=Σc_i x^i、P(-1)=Σ(-1)^i c_i と、第2段落の Σ(1±(-1)^i)/2·c_i（数列の単元で初出）",
+     "replaceable": true
+    }
+   ],
+   "fix": "Σ を c_0+c_1x+…+c_nx^n の展開形に置き換え、足す・引くで奇数次か偶数次の項が消えると説明すればよい。",
+   "patch": {
+    "answer": "$P(x)=c_0+c_1x+c_2x^2+\\cdots+c_nx^n$を実数係数の整式とする。$P(1)=c_0+c_1+c_2+\\cdots+c_n$、$P(-1)=c_0-c_1+c_2-\\cdots+(-1)^nc_n$である（奇数次の項だけ符号が変わる）。\n辺々を足すと、奇数次の項は打ち消し合い、偶数次の項は2倍になる。よって$\\frac{P(1)+P(-1)}{2}$は偶数次の項の係数の和である。辺々を引くと、偶数次の項は打ち消し合い、奇数次の項は2倍になる。よって$\\frac{P(1)-P(-1)}{2}$は奇数次の項の係数の和である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "coefficient_comparison_for_polynomial_identity",
+   "home": "S6",
+   "used": "S7",
+   "severity": "note",
+   "tools": [
+    {
+     "tool": "Σ記号（和の記号）",
+     "stage": "S7",
+     "where": "題意（statement/conclusion/assumptions）と answer の F(x)=Σc_i x^i",
+     "replaceable": true
+    }
+   ],
+   "fix": "数II「恒等式」の題意に数Bの Σ が入っている。statement 等を a_0+a_1x+…+a_{n-1}x^{n-1} の形に直すのが望ましい。answer は Σ なしの patch を付けた（statement を直さない場合でも主張は同じ）。",
+   "patch": {
+    "answer": "$n$を自然数とし、実数$a_i,b_i$ $(0\\leq i<n)$について、すべての実数$x$で$a_0+a_1x+\\cdots+a_{n-1}x^{n-1}=b_0+b_1x+\\cdots+b_{n-1}x^{n-1}$が成り立つとする。$c_i=a_i-b_i$とおき、$F(x)=c_0+c_1x+\\cdots+c_{n-1}x^{n-1}$とすると、$F(x)$はすべての実数$x$で$0$である。\nもし係数のどれかが$0$でなければ、$F(x)$は$0$でない整式である。$0$でない整式の解の個数は次数以下で有限だが、$F(x)$は無限個の実数で$0$になるので矛盾する。よってすべての$i$で$c_i=0$、すなわち$a_i=b_i$である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "rational_root_theorem",
+   "home": "S6",
+   "used": "S7",
+   "severity": "minor",
+   "tools": [
+    {
+     "tool": "Σ記号（和の記号）",
+     "stage": "S7",
+     "where": "第1段落の P(x)=Σc_i x^i と第2段落の Σc_i m^i n^{d-i}=0",
+     "replaceable": true
+    }
+   ],
+   "fix": "Σ を c_d m^d+…+c_0 n^d の展開形に置き換えれば、割り算の議論は変わらない。",
+   "patch": {
+    "answer": "$P(x)$を整数係数の整式とし、$m,n$を互いに素な整数で$n\\neq 0$, $P\\left(\\frac{m}{n}\\right)=0$とする。$P=0$のときは定数項と最高次の係数がともに$0$であり、どの整数も$0$を割り切るので主張は成り立つ。以下$P\\neq 0$とし、$P(x)=c_dx^d+c_{d-1}x^{d-1}+\\cdots+c_1x+c_0$ $(c_d\\neq 0)$と書く。\n等式に$n^d$を掛けると$c_dm^d+c_{d-1}m^{d-1}n+\\cdots+c_1mn^{d-1}+c_0n^d=0$である。$c_0n^d$以外の項はすべて$m$で割り切れるので、$m$は$c_0n^d$を割り切る。$m,n$は互いに素だから$m$は$c_0$を割り切る。同様に$c_dm^d$以外の項はすべて$n$で割り切れるので、$n$は$c_dm^d$を割り切り、$n$は$c_d$を割り切る。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "cubic_root_power_sum_recurrence",
+   "home": "S6",
+   "used": "S7",
+   "severity": "note",
+   "tools": [
+    {
+     "tool": "三項間漸化式（一般の n についての数列 S_n の関係式）",
+     "stage": "S7",
+     "where": "題意の結論 S_{n+3}+pS_{n+2}+qS_{n+1}+rS_n=0（答案自体は α^n を掛けて足すだけで S6 以内）",
+     "replaceable": false
+    }
+   ],
+   "fix": "答案は問題ない。題意が数Bの漸化式の形で、topic は数II。level の貼り方がやや低い（境界事例）。S_3, S_4 などの具体的な n に限れば数II。",
+   "keep_as_advanced": false
+  },
+  {
+   "id": "conjugate_respects_arithmetic",
+   "home": "S6",
+   "used": "S7",
+   "severity": "minor",
+   "tools": [
+    {
+     "tool": "数学的帰納法",
+     "stage": "S7",
+     "where": "第3段落「累乗の式は…n についての帰納法で得る」と n=0 から n+1 への推移",
+     "replaceable": true
+    }
+   ],
+   "fix": "積の式を繰り返し使う（z を n 個掛けたものの共役）形にすれば帰納法を名乗らずに済む。",
+   "patch": {
+    "answer": "$z=a+bi$, $w=c+di$（$a,b,c,d$は実数）とし、$n$を$0$以上の整数とする。$\\overline{z+w}=(a+c)-(b+d)i=\\overline{z}+\\overline{w}$である。\n$\\overline{zw}=(ac-bd)-(ad+bc)i$であり、$\\overline{z}\\,\\overline{w}=(a-bi)(c-di)=(ac-bd)-(ad+bc)i$なので、両者は等しい。\n累乗の式は、積の式を繰り返し使って得る。$n=0$では両辺とも$1$である。$n\\geq 1$では$z^n$は$z$を$n$個掛けたものなので、$\\overline{z^n}=\\overline{z\\cdot z\\cdots z}=\\overline{z}\\cdot\\overline{z}\\cdots\\overline{z}=\\overline{z}^{\\,n}$である。\n$w\\neq 0$のとき、$\\overline{z/w}\\cdot\\overline{w}=\\overline{(z/w)\\cdot w}=\\overline{z}$である。$\\overline{w}\\neq 0$なので、$\\overline{z/w}=\\overline{z}/\\overline{w}$を得る。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "conjugate_root_theorem_real_polynomial",
+   "home": "S6",
+   "used": "S7",
+   "severity": "minor",
+   "tools": [
+    {
+     "tool": "Σ記号（和の記号）",
+     "stage": "S7",
+     "where": "P(x)=Σc_i x^i と、P(\\bar α)=Σc_i \\bar α^i=Σ\\overline{c_i α^i} の連鎖",
+     "replaceable": true
+    }
+   ],
+   "fix": "Σ を c_n x^n+…+c_0 の展開形に置き換える。共役が和・積・累乗を保つ性質は直前の card（S6）で足りている。",
+   "patch": {
+    "answer": "$P(x)=c_nx^n+\\cdots+c_1x+c_0$を実数係数の整式とし、$\\alpha$を$P(\\alpha)=0$を満たす複素数とする。共役は和と積と累乗を保ち、$c_k$は実数なので$\\overline{c_k}=c_k$である。よって各項で$\\overline{c_k\\alpha^k}=\\overline{c_k}\\,\\overline{\\alpha}^{\\,k}=c_k\\overline{\\alpha}^{\\,k}$が成り立つ。これらを足して$P(\\overline{\\alpha})=c_n\\overline{\\alpha}^{\\,n}+\\cdots+c_1\\overline{\\alpha}+c_0=\\overline{c_n\\alpha^n+\\cdots+c_1\\alpha+c_0}=\\overline{P(\\alpha)}=\\overline{0}=0$である。\n"
+   },
+   "keep_as_advanced": false
+  }
+ ],
+ "systematic": [
+  "Σ記号（数B数列で初出）が、整式の係数を扱う数II カードの標準の書き方になっている（even_odd, coefficient_comparison, rational_root, conjugate_root_theorem）。同じバッチの monic_integer などは「…」で書けており、展開形に統一すれば解消する。",
+  "数学的帰納法（数B）を、因数定理を繰り返し使う場面（product_over_distinct_roots_divides）と共役の累乗（conjugate_respects_arithmetic）で明示的に名乗っている。数II の式と証明・複素数の単元では「繰り返し使う」「最大の k を取る」で書くのが標準。",
+  "remainder_by_square_of_linear と double_root_iff_value_and_derivative_vanish は微分（数IIの微分法）を使う。段階表では同じ S6 なので違反にしていないが、教科書の配列では『式と証明』『複素数と方程式』より後の単元。題意に P' が入っているため home は S6。未習順を厳密に見るなら、微分を前提にする別カード扱いが望ましい。",
+  "因数定理は S6 で、このバッチの多くが依存する。home が S6 なので問題はない。ただし factor_theorem_linear_ax_plus_b は x-c の因数定理を前提にしており、基礎となる x-c の因数定理そのもののカードが別にあるかは、このバッチからは確認できない。"
+ ],
+ "home_assignments": {
+  "remainder_by_linear_ax_plus_b": "S6",
+  "factor_theorem_linear_ax_plus_b": "S6",
+  "remainder_by_two_distinct_linear_factors": "S6",
+  "remainder_by_square_of_linear": "S6",
+  "double_root_iff_value_and_derivative_vanish": "S6",
+  "polynomial_division_uniqueness": "S6",
+  "division_value_at_root_of_divisor": "S6",
+  "product_over_distinct_roots_divides": "S6",
+  "odd_power_sum_polynomial_factor": "S6",
+  "even_odd_coefficient_sums_by_evaluation": "S6",
+  "real_linear_coefficients_fixed_by_nonreal_value": "S6",
+  "common_root_of_two_monic_quadratics": "S6",
+  "coefficient_comparison_for_polynomial_identity": "S6",
+  "polynomials_equal_on_infinite_set": "S6",
+  "identity_linear_in_parameter": "S6",
+  "partial_fraction_two_distinct_linear": "S6",
+  "reciprocal_quartic_substitution": "S6",
+  "rational_root_theorem": "S6",
+  "monic_integer_polynomial_rational_root_is_integer": "S6",
+  "cubic_vieta_formulas": "S6",
+  "cubic_from_elementary_symmetric_values": "S6",
+  "cubic_root_power_sum_recurrence": "S6",
+  "omega_cube_is_one": "S6",
+  "omega_conjugate_is_square": "S6",
+  "omega_power_sum_by_residue_mod_three": "S6",
+  "cube_difference_factors_with_omega": "S6",
+  "complex_equality_real_imaginary_parts": "S6",
+  "complex_product_and_quotient_formula": "S6",
+  "conjugate_respects_arithmetic": "S6",
+  "real_or_pure_imaginary_by_conjugate": "S6",
+  "square_roots_of_negative_real": "S6",
+  "real_quadratic_negative_discriminant_roots": "S6",
+  "real_quadratic_nonreal_root_iff_negative_discriminant": "S6",
+  "conjugate_root_theorem_real_polynomial": "S6",
+  "real_quadratic_factor_from_nonreal_root": "S6",
+  "real_cubic_factorization_from_nonreal_root": "S6",
+  "linear_combination_of_equal_ratios": "S6",
+  "componendo_dividendo": "S6",
+  "cyclic_fraction_sum_with_product_one": "S6",
+  "cubes_sum_equals_three_product_iff": "S6",
+  "one_of_three_equals_one_from_sum_of_reciprocals": "S6",
+  "lagrange_identity_two_squares": "S6"
+ }
+}

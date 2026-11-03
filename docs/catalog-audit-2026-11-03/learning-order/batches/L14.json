@@ -1,0 +1,791 @@
+{
+ "batch": "L14",
+ "reviewed": 62,
+ "ok_ids": [
+  "triangle_congruent_sss",
+  "right_triangle_congruent_hypotenuse_acute",
+  "similar_triangles_side_ratio_cross",
+  "isosceles_base_angle_acute",
+  "equilateral_triangle_angles_pi_div_three",
+  "equiangular_triangle_is_equilateral",
+  "isosceles_cevian_square_difference",
+  "triangle_exterior_angle_eq_sum",
+  "triangle_exterior_angle_gt_remote",
+  "triangle_nonacute_angle_others_acute",
+  "triangle_strict_inequality",
+  "perpendicular_iff_square_difference",
+  "isosceles_right_triangle_ratio",
+  "right_angle_iff_median_half_hypotenuse",
+  "angle_acute_obtuse_iff_side_squares",
+  "cos_angle_from_three_sides",
+  "triangle_projection_formula",
+  "stewart_theorem",
+  "point_on_line_distance_square_formula",
+  "angle_bisector_length_square",
+  "angle_bisector_theorem_internal",
+  "angle_bisector_theorem_external",
+  "angle_bisector_foot_position",
+  "right_triangles_common_hypotenuse_equal_angle_iff_equal_leg"
+ ],
+ "findings": [
+  {
+   "id": "triangle_congruent_sas",
+   "home": "S2",
+   "used": "S4",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "余弦定理",
+     "stage": "S4",
+     "where": "第2段落: AC^2=AB^2+BC^2-2AB·BC cos∠ABC を両三角形に適用",
+     "replaceable": false
+    }
+   ],
+   "fix": "2辺夾角相等は中2で合同条件として公理的に採用される。このカードは合同を『距離の一致』と再定義したため第3辺を余弦定理（数I）で出している。中学の道具では導けない（公理）。level を high に上げるか、中学版は条件の採用として別扱いにする。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "triangle_congruent_asa",
+   "home": "S2",
+   "used": "S4",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "正弦定理",
+     "stage": "S4",
+     "where": "第2段落: AB=BC sin∠BCA / sin∠CAB",
+     "replaceable": false
+    },
+    {
+     "tool": "余弦定理",
+     "stage": "S4",
+     "where": "第2段落末: SAS相当を余弦定理で処理",
+     "replaceable": false
+    }
+   ],
+   "fix": "1辺両端角相等も中2では合同条件として採用される。距離による定義に合わせて数Iの正弦・余弦定理で証明している。level を high に上げるか、条件の採用として扱う。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "triangle_congruent_aas",
+   "home": "S2",
+   "used": "S4",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "正弦定理",
+     "stage": "S4",
+     "where": "第2段落: BC, AB を正弦定理で表す",
+     "replaceable": true
+    }
+   ],
+   "fix": "教科書どおり、内角の和（S2）で第3の角を等しくし、1辺両端角相等（ASA）に帰着する。",
+   "patch": {
+    "answer": "$A,B,C,A',B',C'$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$A',B',C'$も同一直線上になく、$\\angle ABC=\\angle A'B'C'$、$\\angle BCA=\\angle B'C'A'$、$CA=C'A'$とする。\n内角の和より$\\angle CAB=\\pi-\\angle ABC-\\angle BCA=\\angle C'A'B'$である。したがって辺$CA$とその両端の角$\\angle BCA,\\angle CAB$が、$C'A'$と$\\angle B'C'A',\\angle C'A'B'$にそれぞれ等しい。合同条件（1辺とその両端の角、頂点を$C,A,B$の順に読み替える）より、$A,B,C$と$A',B',C'$はこの対応で合同である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "congruent_triangles_corresponding_parts",
+   "home": "S2",
+   "used": "S4",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "余弦定理と cos の単射性",
+     "stage": "S4",
+     "where": "第2段落: cos∠ABC=(AB^2+BC^2-CA^2)/(2AB·BC) から角の一致を導く",
+     "replaceable": false
+    }
+   ],
+   "fix": "中学では合同を『重ね合わせられる』と定義し、対応する辺と角が等しいことは定義から従う。このカードは合同を距離一致で再定義したため、角の一致に余弦定理が要る。題意の定義そのものが中学の外にあるので、定義を教科書に合わせるか level を high にする。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "right_triangle_congruent_hypotenuse_leg",
+   "home": "S2",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルと内積",
+     "stage": "S9",
+     "where": "第2段落: A-C=(A-B)-(C-B) の内積展開で CA^2=AB^2+BC^2 を出す",
+     "replaceable": true
+    },
+    {
+     "tool": "三平方の定理",
+     "stage": "S3",
+     "where": "第2段落: BC^2=CA^2-AB^2 の差",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答は S2 の道具のみ: 直角の頂点でBCをBDまで延長しBD=B'C'（Dは C-B-D の順）となる点Dをとり、△ABD≡△A'B'C'（2辺夾角）でAD=A'C'=AC、△ACDが二等辺で∠C=∠D、△ABC≡△ABD（斜辺と鋭角: AAS）よりBC=BD=B'C'、最後に3辺相等。ただし題意に A,B,C の非共線の仮定がなく、A=B や C=B の退化ケースの処理で10行を超えるため patch は付けない。題意に非共線を足す必要がある。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "triangle_similar_aa_ratio",
+   "home": "S3",
+   "used": "S4",
+   "severity": "minor",
+   "tools": [
+    {
+     "tool": "正弦定理",
+     "stage": "S4",
+     "where": "第2段落: ab:bc:ca=sinγ:sinα:sinβ",
+     "replaceable": true
+    }
+   ],
+   "fix": "2角相等は中3で相似条件として採用される。このカードは相似を距離比で定義したため正弦定理で比を出している。S3 の道具での導出は『bP=b'a' となる P をとり、△bPQ≡△b'a'c'（1辺両端角）→PQ∥ac→平行線と線分の比』だが、r<1 と r>1 の場合分けで10行を超える。条件の採用として扱うか level を high にする。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "triangle_similar_sss_ratio",
+   "home": "S3",
+   "used": "S4",
+   "severity": "minor",
+   "tools": [
+    {
+     "tool": "余弦定理と cos の単射性",
+     "stage": "S4",
+     "where": "第3段落: 角の一致を余弦定理で示す",
+     "replaceable": true
+    }
+   ],
+   "fix": "3辺比相等から角が等しいことは、中3では相似条件（定義）から従う。S3 の道具では『bP=b'a' となる P をとり、a c に平行な線で Q をとり、△bPQ∽△bac から△bPQ≡△b'a'c'（3辺）』と書けるが、場合分けで10行を超える。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "triangle_similar_sas_ratio",
+   "home": "S3",
+   "used": "S4",
+   "severity": "minor",
+   "tools": [
+    {
+     "tool": "余弦定理",
+     "stage": "S4",
+     "where": "第2段落: AC^2 を両三角形で余弦定理により表す",
+     "replaceable": true
+    }
+   ],
+   "fix": "2辺比夾角相等は中3の相似条件そのもの。S3 の道具では『BP=A'B', BQ=C'B' となる P,Q をとり、△PBQ≡△A'B'C'（SAS）と PQ∥AC（逆の平行線と線分の比）と第三辺比』となるが、r の大小の場合分けで10行を超える。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "similar_triangles_area_ratio_sine_form",
+   "home": "S3",
+   "used": "S4",
+   "severity": "note",
+   "tools": [
+    {
+     "tool": "面積公式 (1/2)ab sin C と余弦定理",
+     "stage": "S4",
+     "where": "題意と第2段落",
+     "replaceable": false
+    }
+   ],
+   "fix": "題意に sin を使う面積公式（数I）が入っているため、level=middle が低すぎる。level を high にするのが筋。答案自体の余弦定理の使用は同じ S4 に収まる。",
+   "keep_as_advanced": false
+  },
+  {
+   "id": "triangles_common_angle_product_similar",
+   "home": "S3",
+   "used": "S4",
+   "severity": "minor",
+   "tools": [
+    {
+     "tool": "余弦定理",
+     "stage": "S4",
+     "where": "第3段落: DE^2=AD^2+AE^2-2AD·AE cos∠DAE",
+     "replaceable": true
+    }
+   ],
+   "fix": "AD:AC=AE:AB と共通角から、相似条件（2辺比夾角）で相似とするのが S3 の標準。題意に A,B,C の非共線の仮定がないので、共線ケースは数直線で処理する。",
+   "patch": {
+    "answer": "$A,B,C,D,E$を実内積空間上のアフィン空間の点とする。$D$は$A$と$B$の間にあって$A,B$と異なり、$E$は$A$と$C$の間にあって$A,C$と異なり、$AD\\cdot AB=AE\\cdot AC$とする。$AB,AC>0$である。\n$r=AD/AC>0$とおくと$AD=r\\,AC$であり、等式を$AC$で割ると$AE=r\\,AB$である。$D$は半直線$AB$上、$E$は半直線$AC$上にあるので$\\angle DAE=\\angle CAB$である。\n$A,B,C$が同一直線上にないとき、$D,A,E$も同一直線上になく、$AD:AC=AE:AB=r$でその間の角が等しい。相似条件（2組の辺の比とその間の角）より、$A,D,E$と$A,C,B$はこの対応で相似である。\n$A,B,C$が同一直線上にあるとき、この直線を数直線とみて$A$を原点とし、$B,C$の座標を$b,c$とする。$B,C$が$A$に対して同じ側にあれば$D,E$の座標は$rc,rb$、反対側にあれば$-rc,-rb$である。いずれも$DE=r|c-b|=r\\,CB$である。$AD=r\\,AC$、$AE=r\\,AB$と合わせて、対応する2頂点間の距離の比がすべて$r$なので、相似である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "isosceles_iff_equal_base_angles",
+   "home": "S2",
+   "used": "S4",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "余弦定理と cos の単射性",
+     "stage": "S4",
+     "where": "第2段落: 順方向",
+     "replaceable": true
+    },
+    {
+     "tool": "正弦定理",
+     "stage": "S4",
+     "where": "第3段落: 逆方向",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答は合同: 順方向は中点Mで△ABM≡△ACM（3辺）、逆方向は頂角の二等分線で△ABD≡△ACD（2角と1辺）。",
+   "patch": {
+    "answer": "$A,B,C$を実内積空間上のアフィン空間の、同一直線上にない点とする。\n$AB=AC$とする。$M$を$BC$の中点とすると、$AB=AC$、$BM=CM$、$AM$は共通なので、3辺が等しく$\\triangle ABM\\equiv\\triangle ACM$である。対応する角は等しいので$\\angle ABM=\\angle ACM$である。$M$は線分$BC$上にあるので$\\angle ABM=\\angle ABC$、$\\angle ACM=\\angle ACB$であり、$\\angle ABC=\\angle ACB$である。\n逆に$\\angle ABC=\\angle ACB$とする。$\\angle BAC$の二等分線と線分$BC$の交点を$D$とする。$\\triangle ABD$と$\\triangle ACD$で、$\\angle ABD=\\angle ACD$、$\\angle BAD=\\angle CAD$、$AD$は共通なので、合同条件（2つの角とその間にない1辺）より合同であり、$AB=AC$である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "isosceles_iff_median_perpendicular",
+   "home": "S2",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルと内積（題意の垂直条件も内積）",
+     "stage": "S9",
+     "where": "第2〜3段落: h=A-M, d=C-B と ‖h±d/2‖^2 の展開",
+     "replaceable": false
+    }
+   ],
+   "fix": "標準は『△ABM≡△ACM（3辺）で∠AMB=∠AMC、和がπなのでπ/2』と『BM=CM, AM共通, 直角 でSAS』。しかし題意が A,B,C の任意性（A が直線BC上、B=C を含む）と内積条件で書かれており、退化ケースの処理で10行を超える。題意に非共線の仮定を足し、垂直を『中線AMがBCに垂直』と書き直すのが先。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "median_bisects_apex_implies_isosceles",
+   "home": "S2",
+   "used": "S4",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "正弦定理",
+     "stage": "S4",
+     "where": "第3段落: BM sin∠AMB=AB sinθ など",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答: 中線AMをMの先に延ばしてMD=AMとなるDをとる。△AMC≡△DMB（対頂角）から∠BDA=θ=∠BADで△BADが二等辺、BA=BD=AC。",
+   "patch": {
+    "answer": "$A,B,C$を実内積空間上のアフィン空間の、同一直線上にない点とし、$M$を$B$と$C$の中点として$\\angle BAM=\\angle MAC$とする。$\\theta=\\angle BAM$とおく。\n直線$AM$上に、$M$が$A$と$D$の間にあり$MD=AM$となる点$D$をとる。$\\triangle AMC$と$\\triangle DMB$で、$CM=BM$、$AM=DM$、$\\angle AMC=\\angle DMB$（対頂角）なので2辺とその間の角が等しく合同である。よって$AC=DB$、$\\angle CAM=\\angle BDM$である。\n$A$は直線$BC$上にないので、$M$は直線$AB$上になく、$A,B,D$は同一直線上にない。$D$は半直線$AM$上、$A$は半直線$DM$上にあるので$\\angle BAD=\\angle BAM=\\theta$、$\\angle BDA=\\angle BDM=\\angle CAM=\\theta$である。$\\triangle ABD$の底角が等しいので、$BA=BD$である。したがって$AB=BD=AC$である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "isosceles_apex_bisector_foot_is_midpoint",
+   "home": "S2",
+   "used": "S5",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "角の二等分線の定理",
+     "stage": "S5",
+     "where": "第2段落: AB/AC=BD/DC",
+     "replaceable": true
+    }
+   ],
+   "fix": "角の二等分線の定理は数Aで初出。AB=AC, ∠BAD=∠DAC, AD共通で△ABD≡△ACD（2辺夾角）とすれば中2で足りる。",
+   "patch": {
+    "answer": "$A,B,C,D$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$AB=AC$で、$D$は$B$と$C$の間にあって$B,C$と異なり、$\\angle BAD=\\angle DAC$とする。\n$\\triangle ABD$と$\\triangle ACD$で、$AB=AC$、$\\angle BAD=\\angle CAD$、$AD$は共通なので、2辺とその間の角が等しく合同である。よって$BD=DC$である。$D$は線分$BC$上にあるので$BD+DC=BC$であり、$BD=DC=BC/2$である。線分$BC$上で$B$からの距離が$BC/2$の点は中点だけなので、$D$は$BC$の中点である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "isosceles_altitude_foot_is_midpoint",
+   "home": "S2",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルと内積",
+     "stage": "S9",
+     "where": "第2段落: H-B=xd とおき AB^2, AC^2 を内積で展開",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答は直角三角形の合同（斜辺と他の1辺）。退化ケース（Aが直線BC上、H=B）を場合分けして処理する。",
+   "patch": {
+    "answer": "$A,B,C,H$を実内積空間上のアフィン空間の点とする。$B\\neq C$、$AB=AC$で、$H$は直線$BC$上にあり、$\\langle A-H,C-B\\rangle=0$とする。\n$A$が直線$BC$上にあるとき、$A-H$は$C-B\\neq0$に平行で内積が$0$なので$A=H$である。直線上で$B,C$から等距離にある点は中点だけなので、$A=H$は$BC$の中点である。\n$A$が直線$BC$上にないとき、$H\\neq A$で$AH$は直線$BC$に垂直である。$H=B$とすると$\\angle ABC=\\pi/2$であり、$AB=AC$による底角$\\angle ACB=\\angle ABC=\\pi/2$と合わせて内角の和が$\\pi$を超えるので矛盾する。$H=C$も同様なので、$H$は$B,C$と異なり、$\\angle AHB=\\angle AHC=\\pi/2$である。直角三角形$AHB,AHC$は斜辺$AB=AC$と他の1辺$AH$が等しいので、合同条件（直角三角形の斜辺と他の1辺）より$HB=HC$である。$H$は直線$BC$上で$B,C$から等距離にあるので、$BC$の中点である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "isosceles_apex_pi_div_three_is_equilateral",
+   "home": "S2",
+   "used": "S4",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "余弦定理",
+     "stage": "S4",
+     "where": "第2段落: BC^2=AB^2+AC^2-2AB·AC cos(π/3)",
+     "replaceable": true
+    }
+   ],
+   "fix": "二等辺の底角相等と内角の和で、3角がπ/3になり正三角形。",
+   "patch": {
+    "answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$AB=AC$、$\\angle BAC=\\pi/3$とする。\n$\\angle BAC$は$0$でも$\\pi$でもないので、$A,B,C$は同一直線上にない。$AB=AC$より底角は等しく$\\angle ABC=\\angle ACB$である。内角の和より$\\angle ABC+\\angle ACB=\\pi-\\pi/3$なので、$\\angle ABC=\\angle ACB=\\pi/3$である。3つの角が等しい三角形は正三角形なので、$AB=BC=CA$である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "triangle_side_lt_iff_opposite_angle_lt",
+   "home": "S2",
+   "used": "S4",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "余弦定理と cos の狭義単調性",
+     "stage": "S4",
+     "where": "第2段落全体",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答: AB<AC なら AC 上に AD=AB となる D をとり、二等辺の底角と外角の定理で ∠ACB<∠ADB=∠ABD<∠ABC。逆は等しい場合と逆向きの場合を除く。",
+   "patch": {
+    "answer": "$A,B,C$を実内積空間上のアフィン空間の、同一直線上にない点とする。\n$AB<AC$とする。線分$AC$上に$AD=AB$となる点$D$をとる。$AD<AC$なので、$D$は$A$と$C$の間にあって$C$と異なる。$\\triangle ABD$は二等辺三角形なので$\\angle ABD=\\angle ADB$である。$D$は線分$AC$の内部にあるので$\\angle ABC=\\angle ABD+\\angle DBC>\\angle ABD$である。また$\\triangle BDC$で外角の定理より$\\angle ADB=\\angle DBC+\\angle DCB>\\angle DCB=\\angle ACB$である。以上から$\\angle ACB<\\angle ADB=\\angle ABD<\\angle ABC$である。\n逆に$\\angle ACB<\\angle ABC$とする。$AB=AC$なら底角が等しく矛盾する。$AB>AC$なら、上の議論で$B$と$C$の役割を入れ替えて$\\angle ABC<\\angle ACB$となり矛盾する。よって$AB<AC$である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "side_opposite_nonacute_angle_is_longest",
+   "home": "S2",
+   "used": "S4",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "余弦定理",
+     "stage": "S4",
+     "where": "第2段落: cos≤0 から AC^2≥AB^2+CB^2",
+     "replaceable": true
+    }
+   ],
+   "fix": "直角・鈍角の対辺が最大であることは、上のカード（残りの角は鋭角）と『大角に大辺』（前カード）から出る。∠ABC=π は共線で別処理する。",
+   "patch": {
+    "answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$A\\neq B$、$C\\neq B$、$\\angle ABC\\geq\\pi/2$とする。\n$\\angle ABC=\\pi$のとき、$B$は$A$と$C$の間にあり、$AC=AB+CB$である。$AB>0$、$CB>0$なので$AC>AB$、$AC>CB$である。\n$\\angle ABC<\\pi$のとき、$\\angle ABC$は$0$でも$\\pi$でもないので、$A,B,C$は同一直線上にない。三角形の内角の和より、残りの角$\\angle BCA,\\angle CAB$は$\\pi/2$より小さく、$\\angle ABC\\geq\\pi/2$より小さい。大角に大辺が対応するので、$\\angle ACB<\\angle ABC$から$AB<AC$、$\\angle CAB<\\angle CBA$から$CB<CA$である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "perpendicular_is_shortest_to_line",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトル分解と内積",
+     "stage": "S9",
+     "where": "第2段落: A-X=h+v, ⟨h,v⟩=0",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答は直角三角形AHXの三平方の定理（斜辺AXが最大）。",
+   "patch": {
+    "answer": "$A,B,C,H,X$を実内積空間上のアフィン空間の点とする。$H,X$は直線$BC$上にあり、$\\langle A-H,C-B\\rangle=0$とする。\n$X=H$なら$AH=AX$である。$X\\neq H$のとき、$A=H$なら$AH=0\\leq AX$である。$A\\neq H$のとき、$H,X$は直線$BC$上にあり$AH$は直線$BC$に垂直なので、$\\angle AHX=\\pi/2$であり、$\\triangle AHX$は$H$を直角とする直角三角形である。三平方の定理より$AX^2=AH^2+HX^2>AH^2$である。長さは$0$以上なので$AH<AX$である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "triangle_exists_iff_three_inequalities",
+   "home": "S2",
+   "used": "S3",
+   "severity": "minor",
+   "tools": [
+    {
+     "tool": "座標平面上の距離と平方根",
+     "stage": "S3",
+     "where": "逆向きの段落: B=(0,0), C=(a,0), A=(x,y), y=√(c^2-x^2)",
+     "replaceable": false
+    }
+   ],
+   "fix": "存在の厳密な構成には座標と平方根が要り、中2の道具（作図）だけでは厳密にできない。三平方の定理（S3）に収まり、1段階後なので軽い。level を high にするか、作図による直観的な説明に留める。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "right_triangle_thirty_sixty_ratio",
+   "home": "S3",
+   "used": "S4",
+   "severity": "minor",
+   "tools": [
+    {
+     "tool": "三角比 sin(π/6), cos(π/6)",
+     "stage": "S4",
+     "where": "第2段落: BC=AB sin(π/6), AC=AB cos(π/6)",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答: CをBの対称点Dに向けて延ばし△ABDが正三角形になることを使う（正三角形を半分に切る）。",
+   "patch": {
+    "answer": "$A,B,C$を実内積空間上のアフィン空間の、同一直線上にない点とし、$\\angle BCA=\\pi/2$、$\\angle CAB=\\pi/6$とする。\n直線$BC$上に、$C$が$B$と$D$の間にあり$CD=BC$となる点$D$をとる。$\\triangle ACB$と$\\triangle ACD$で、$AC$は共通、$BC=DC$、$\\angle ACB=\\angle ACD=\\pi/2$なので合同であり、$AD=AB$、$\\angle CAD=\\angle CAB=\\pi/6$である。$C$は線分$BD$の内部にあるので$\\angle BAD=\\angle BAC+\\angle CAD=\\pi/3$である。$AB=AD$で頂角が$\\pi/3$なので$\\triangle ABD$は正三角形であり、$BD=AB$である。$BD=2BC$なので$AB=2BC$である。三平方の定理より$AC^2=AB^2-BC^2=3BC^2$であり、$AC=\\sqrt3\\,BC$である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "right_triangle_hypotenuse_twice_leg_angles",
+   "home": "S3",
+   "used": "S4",
+   "severity": "minor",
+   "tools": [
+    {
+     "tool": "正弦と sin の単射性・sin(π/6)=1/2",
+     "stage": "S4",
+     "where": "第2段落: sin∠CAB=1/2 から角を決定",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答: CをBの対称点Dまで延ばすと△ABDが正三角形になり、∠ABC=π/3。",
+   "patch": {
+    "answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$B\\neq C$、$\\angle BCA=\\pi/2$、$AB=2BC$とする。$BC>0$である。$A=C$なら$AB=BC$となり$AB=2BC$に反するので$A\\neq C$である。$A=B$なら$AB=0$となり同じく反するので$A\\neq B$である。\n直線$BC$上に、$C$が$B$と$D$の間にあり$CD=BC$となる点$D$をとる。$\\triangle ACB$と$\\triangle ACD$で、$AC$は共通、$BC=DC$、$\\angle ACB=\\angle ACD=\\pi/2$なので合同であり、$AD=AB$である。$BD=2BC=AB$なので$AB=AD=BD$で、$\\triangle ABD$は正三角形、$\\angle ABD=\\pi/3$である。$C$は半直線$BD$上にあるので$\\angle ABC=\\pi/3$である。内角の和より$\\angle CAB=\\pi-\\pi/2-\\pi/3=\\pi/6$である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "law_of_sines_ratio",
+   "home": "S4",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルの内積とグラム行列式 (コーシー・シュワルツ型恒等式)",
+     "stage": "S9",
+     "where": "第2段落: Δ=√(‖u‖²‖w‖²-⟨u,w⟩²)",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答は垂線の長さ h=AB sinB=AC sinC を2頂点から取り、比を揃える（数I）。",
+   "patch": {
+    "answer": "$A,B,C$を実内積空間上のアフィン空間の、同一直線上にない点とする。3つの角は$0$より大きく$\\pi$より小さいので、正弦はすべて正である。\n$A$から直線$BC$におろした垂線の足を$H$とし、$h=AH$とおく。$A$は直線$BC$上にないので$h>0$である。$\\angle ABC=\\pi/2$なら$H=B$で$h=AB=AB\\sin\\angle ABC$である。$\\angle ABC$が鋭角なら$H$は半直線$BC$上にあり、鈍角なら反対側にあるので、直角三角形$AHB$の鋭角は$\\angle ABC$または$\\pi-\\angle ABC$であり、$\\sin(\\pi-\\theta)=\\sin\\theta$より、いずれも$h=AB\\sin\\angle ABC$である。同様に$h=AC\\sin\\angle ACB$である。よって$AB\\sin\\angle ABC=AC\\sin\\angle ACB$、すなわち$\\dfrac{AB}{\\sin\\angle BCA}=\\dfrac{CA}{\\sin\\angle ABC}$である。\n頂点$B$から垂線をおろして同じ議論をすると$BA\\sin\\angle BAC=BC\\sin\\angle BCA$、すなわち$\\dfrac{BC}{\\sin\\angle BAC}=\\dfrac{AB}{\\sin\\angle BCA}$である。よって3つの比は等しい。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "median_theorem_apollonius",
+   "home": "S4",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルと内積の展開",
+     "stage": "S9",
+     "where": "第2段落: h=A-M, v=B-M, ‖h∓v‖²",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答は M での余弦定理（∠AMB+∠AMC=π）で、数I の範囲。退化ケース（A=M, B=C）は別に注記する。",
+   "patch": {
+    "answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$M$を$B$と$C$の中点とする。\n$A=M$のときは$AB=AC=BM$で両辺は$2BM^2$、$B=C$のときは$M=B=C$で$AB=AC=AM$となり両辺は$2AM^2$なので、等式は成り立つ。以下$A\\neq M$、$B\\neq C$とする。$\\theta=\\angle AMB$とおく。$B,M,C$はこの順に一直線上にあるので$\\angle AMC=\\pi-\\theta$であり、$\\cos\\angle AMC=-\\cos\\theta$である。\n$\\triangle ABM$と$\\triangle ACM$に余弦定理を用いると、$AB^2=AM^2+BM^2-2\\,AM\\cdot BM\\cos\\theta$、$AC^2=AM^2+CM^2+2\\,AM\\cdot CM\\cos\\theta$である。$BM=CM$なので足すと$AB^2+AC^2=2(AM^2+BM^2)$である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "angle_bisector_theorem_converse",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルの内積による余弦の計算",
+     "stage": "S9",
+     "where": "第2〜3段落: ⟨u,v⟩, ⟨v,w⟩, I=⟨u,w⟩ の代数",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答は定理（正）を使う一意性: 内角の二等分線の足D'が同じ比を与えるので D=D'。",
+   "patch": {
+    "answer": "$A,B,C,D$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$D$は$B$と$C$の間にあって$B,C$と異なり、$AB/AC=BD/DC$とする。\n$\\angle BAC$の二等分線は線分$BC$の内部の点$D'$で交わる。角の二等分線の定理より$AB/AC=BD'/D'C$である。$k=AB/AC$とおくと、$BD=k\\,DC$かつ$BD+DC=BC$より$BD=\\dfrac{k}{1+k}BC$であり、同様に$BD'=\\dfrac{k}{1+k}BC$である。$D,D'$はともに線分$BC$上で$B$からの距離が等しいので$D=D'$であり、$\\angle BAD=\\angle DAC$である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "midsegment_theorem",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルと部分空間（平行=方向の一致）",
+     "stage": "S9",
+     "where": "第2段落全体",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答は△AMN∽△ABC（2辺比夾角）と同位角。ただし題意が A,B,C の任意性（共線を含む）と『平行は方向一致』という線形代数の定義で書かれており、共線ケースで10行を超える。題意に非共線を足し、平行を通常の意味に戻すのが先。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "midsegment_converse",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルの1次独立性",
+     "stage": "S9",
+     "where": "第2段落: (k-1/2)u+(t-k)w=0 から係数比較",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答: ACの中点E'について中点連結定理で ME'∥BC、M を通る BC の平行線は1本なので直線ME=直線ME'、直線AC との交点は E' のみ。",
+   "patch": {
+    "answer": "$A,B,C,E$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$E$は直線$AC$上にあり、$A,B$の中点$M$と$E$を結ぶ直線は直線$BC$に平行であるとする。\n$E'$を$A,C$の中点とする。中点連結定理より、直線$ME'$は直線$BC$に平行である。直線$ME$も直線$BC$に平行で、$M$を通って直線$BC$に平行な直線は1本だけなので、直線$ME$と直線$ME'$は一致する。$M$は直線$AC$上にないので、直線$ME'$と直線$AC$は$E'$だけで交わる。$E$は直線$AC$上かつこの直線上の点なので、$E=E'$であり、$E$は$A,C$の中点である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "medial_triangle_similar",
+   "home": "S3",
+   "used": "S9",
+   "severity": "minor",
+   "tools": [
+    {
+     "tool": "ベクトル差の表記 (中点同士の差は (Y-Z)/2)",
+     "stage": "S9",
+     "where": "第2段落: 差が ½(Y-Z) である",
+     "replaceable": true
+    }
+   ],
+   "fix": "実質は中点連結定理（前カード）の引用で、ベクトルの計算は表記だけ。中点連結定理の引用に書き換えれば S3 で足りる。",
+   "patch": {
+    "answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$D,E,F$をそれぞれ$BC,CA,AB$の中点とする。\n中点連結定理（任意の3点$X,Y,Z$について、$X,Y$の中点と$X,Z$の中点の距離は$\\frac12YZ$）を用いる。$D,E$は$C$を共有する中点どうしなので$DE=\\frac12AB$、$E,F$は$A$を共有するので$EF=\\frac12BC$、$F,D$は$B$を共有するので$FD=\\frac12CA$である。対応する2頂点間の距離の比はすべて$\\frac12$なので、相似である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "parallel_line_proportional_segments",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルの1次独立性による係数比較",
+     "stage": "S9",
+     "where": "第2段落: tw-su=k(w-u) から s=t=k",
+     "replaceable": true
+    }
+   ],
+   "fix": "平行線と線分の比そのものは中3の主要定理で、教科書では△ADE∽△ABC（2角相等）から導く。題意が D,E が直線上の任意の点（D=A、延長側を含む）で書かれており、場合分けで10行を超える。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "proportional_segments_imply_parallel",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルと部分空間",
+     "stage": "S9",
+     "where": "第2段落全体",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答: 2辺の比と夾角（共通角）で△ADE∽△ABC、同位角が等しいので平行。非共線ケースと共線ケースを分ける。",
+   "patch": {
+    "answer": "$A,B,C,D,E$を実内積空間上のアフィン空間の点とする。$D$は$A$と$B$の間にあって$A,B$と異なり、$E$は$A$と$C$の間にあって$A,C$と異なり、$AD/AB=AE/AC$とする。平行は方向が等しいことを指し、直線の一致も含む。\n$A,B,C$が同一直線上にあるときは、$D,E,B,C$がすべてその直線上にあるので、直線$DE$と直線$BC$は一致し、平行である。\n$A,B,C$が同一直線上にないとき、$D,E$は半直線$AB,AC$上にあるので$\\angle DAE=\\angle BAC$であり、$AB:AD=AC:AE$である。2組の辺の比とその間の角が等しいので、相似条件より$\\triangle ADE\\sim\\triangle ABC$である。よって$\\angle ADE=\\angle ABC$であり、同位角が等しいので、直線$DE$は直線$BC$に平行である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "parallel_line_third_side_ratio",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルの1次独立性",
+     "stage": "S9",
+     "where": "第2段落: s=t=k",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答は△ADE∽△ABC から AD:AB=DE:BC。D=A や D,E が延長側にある場合を含む題意なので、10行を超える。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "parallel_iff_internal_division_ratio",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルの1次独立性",
+     "stage": "S9",
+     "where": "第3段落: tw-su=k(w-u)",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答: 平行線と線分の比（AD/AB=AE/AC）と、その逆から、内分比の言い換えだけで済む。",
+   "patch": {
+    "answer": "$A,B,C,D,E$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$D$は$A$と$B$の間にあって$A,B$と異なり、$E$は$A$と$C$の間にあって$A,C$と異なるとする。\n直線$DE$が直線$BC$に平行であるとする。平行線と線分の比より$AD/AB=AE/AC=s$とおくと、$0<s<1$で$DB=AB-AD=(1-s)AB$、$EC=(1-s)AC$なので、$AD/DB=s/(1-s)=AE/EC$である。\n逆に$AD/DB=AE/EC$とする。$AB=AD+DB$、$AC=AE+EC$である。$AD\\cdot EC=AE\\cdot DB$の両辺に$AD\\cdot AE$を加えると$AD(AE+EC)=AE(AD+DB)$、すなわち$AD\\cdot AC=AE\\cdot AB$なので$AD/AB=AE/AC$である。よって平行線と線分の比の逆（$AD/AB=AE/AC$ならば平行）より、直線$DE$は直線$BC$に平行である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "three_parallel_lines_proportional",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルの1次独立性",
+     "stage": "S9",
+     "where": "第3〜4段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答は補助線（A を通り A'C' に平行な線）で平行線と線分の比に帰着する、中3の定理。題意の C' が任意の位置を許す形式で、10行を超える。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "right_triangle_altitude_geometric_mean",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルと内積による展開",
+     "stage": "S9",
+     "where": "第2段落全体",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答: 垂線の足Hは線分BC内（foot_between カード）。三平方 AB²=BH²+AH², AC²=CH²+AH², BC²=AB²+AC², BC=BH+HC から AH²=BH·HC。題意に非共線の仮定がなく A=B, A=C の退化ケース処理で10行を超える。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "right_triangle_leg_square_projection",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルと内積による展開",
+     "stage": "S9",
+     "where": "第2段落全体",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答は AB²=BH²+AH²（三平方）と AH²=BH·HC（前カード）から AB²=BH(BH+HC)=BH·BC。退化ケースがあり10行を超える。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "right_triangle_altitude_hypotenuse_product",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルと内積による展開",
+     "stage": "S9",
+     "where": "第2段落全体",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答は面積の2通りの表し方（½·BC·AH=½·AB·AC）か、△ABC∽△HBA（2角相等）。退化ケースがあり10行を超える。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "right_triangle_altitude_similar_triangles",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルと内積による展開",
+     "stage": "S9",
+     "where": "第2段落全体",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答: foot_between で H が線分BC内、∠HBA=∠ABC、∠BAH=π/2-∠ABC=∠BCA（内角の和）で2角相等の相似条件。△HAC も同様。patch を付ける量は10行ぎりぎりで、前カードの修正に依存するため、方針だけ示す。",
+   "keep_as_advanced": true
+  },
+  {
+   "id": "right_triangle_altitude_foot_between",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルと内積による展開",
+     "stage": "S9",
+     "where": "第2段落全体",
+     "replaceable": true
+    }
+   ],
+   "fix": "標準解答: 直角三角形の他の2角は鋭角なので、垂線の足は辺の内部に落ちる（足が外にあると、そこの角が鈍角になって矛盾する）。",
+   "patch": {
+    "answer": "$A,B,C,H$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$\\angle BAC=\\pi/2$で、$H$は直線$BC$上にあり、$\\langle A-H,C-B\\rangle=0$とする。\n内角の和より$\\angle ABC+\\angle ACB=\\pi/2$で、どちらも正なので$\\angle ABC,\\angle ACB<\\pi/2$である。$A$は直線$BC$上にないので$H\\neq A$であり、$H\\neq B$なら$\\triangle AHB$は$H$を直角とする直角三角形で、$\\angle ABH<\\pi/2$である。$H$が線分$BC$の内部にないとすると、$H=B$、$H=C$、$B$が$H$と$C$の間にある、$C$が$H$と$B$の間にある、のいずれかである。$H=B$なら$\\langle A-B,C-B\\rangle=0$より$\\angle ABC=\\pi/2$となり矛盾する。$B$が$H$と$C$の間にあるときは、$\\angle ABC=\\pi-\\angle ABH>\\pi/2$となり矛盾する。$C$についても同様である。よって$H$は$B$と$C$の間にあって$B,C$と異なる。\n"
+   },
+   "keep_as_advanced": true
+  }
+ ],
+ "systematic": [
+  "ファイル全体（geometry_triangle）が『実内積空間上のアフィン空間』で形式化され、合同・相似を『距離の一致・距離比一定』と再定義している。level=middle の標準解答が、余弦定理・正弦定理（S4）、ベクトル・内積・1次独立（S9）に依存する。中学の道具（合同条件・相似条件・平行線と線分の比・三平方）による標準証明は、退化ケース（共線、点の一致）を許す一般化された題意のため書けないことが多い。",
+  "合同条件（SAS/ASA/SSS）と相似条件（AA/SSS/SAS）は教科書では公理的に採用される。このカード群は距離定義から導くため S4 の道具が必須で、level=middle のままでは学習順序を守れない。基礎の条件は別カード（公理扱いか level=high の形式化カード）に分け、後続の中学カードは条件の引用で書くのが筋。",
+  "中学カードの題意で、垂直・平行を内積・ベクトル（S9）で定義しているもの: isosceles_iff_median_perpendicular, isosceles_altitude_foot_is_midpoint, perpendicular_is_shortest_to_line, midsegment_theorem, parallel_line_proportional_segments, parallel_line_third_side_ratio, three_parallel_lines_proportional, right_triangle_altitude_* 系。題意に非共線の仮定を足し、垂直・平行を通常の幾何の意味に戻すと、標準解答が書ける。",
+  "中学カードの題意で角を弧度（π/2, π/3, π/4, π/6）で書いている（弧度法は数II S6）。度数法に改めるか level を上げる。個別 finding にはしていない。",
+  "スチュワートの定理は学習指導要領にない。isosceles_cevian_square_difference, angle_bisector_length_square が引用する。証明は余弦定理（S4）で足りるため、home を S5 とみなして違反にはしていないが、三平方（S3）や方べきの定理で直接示せる。",
+  "今回の patch は、このバッチ内の別カード（合同条件、中点連結定理、平行線と線分の比、角の二等分線の定理など）を引用する。引用先自体が S9/S4 の答案を持つため、引用先の修正（level の引き上げまたは公理扱い）とセットで反映すること。",
+  "本バッチの三角比の面積公式（similar_triangles_area_ratio_sine_form）は題意が S4。level の貼り方の問題。"
+ ],
+ "home_assignments": {
+  "triangle_congruent_sss": "S2",
+  "triangle_congruent_sas": "S2",
+  "triangle_congruent_asa": "S2",
+  "triangle_congruent_aas": "S2",
+  "congruent_triangles_corresponding_parts": "S2",
+  "right_triangle_congruent_hypotenuse_leg": "S2",
+  "right_triangle_congruent_hypotenuse_acute": "S2",
+  "isosceles_iff_equal_base_angles": "S2",
+  "isosceles_iff_median_perpendicular": "S2",
+  "median_bisects_apex_implies_isosceles": "S2",
+  "isosceles_apex_bisector_foot_is_midpoint": "S2",
+  "isosceles_altitude_foot_is_midpoint": "S2",
+  "isosceles_base_angle_acute": "S2",
+  "equilateral_triangle_angles_pi_div_three": "S2",
+  "equiangular_triangle_is_equilateral": "S2",
+  "isosceles_apex_pi_div_three_is_equilateral": "S2",
+  "triangle_exterior_angle_eq_sum": "S2",
+  "triangle_exterior_angle_gt_remote": "S2",
+  "triangle_nonacute_angle_others_acute": "S2",
+  "triangle_side_lt_iff_opposite_angle_lt": "S2",
+  "side_opposite_nonacute_angle_is_longest": "S2",
+  "triangle_strict_inequality": "S2",
+  "triangle_exists_iff_three_inequalities": "S2",
+  "triangle_similar_aa_ratio": "S3",
+  "triangle_similar_sss_ratio": "S3",
+  "triangle_similar_sas_ratio": "S3",
+  "similar_triangles_side_ratio_cross": "S3",
+  "similar_triangles_area_ratio_sine_form": "S3",
+  "triangles_common_angle_product_similar": "S3",
+  "perpendicular_is_shortest_to_line": "S3",
+  "isosceles_right_triangle_ratio": "S3",
+  "right_triangle_thirty_sixty_ratio": "S3",
+  "right_triangle_hypotenuse_twice_leg_angles": "S3",
+  "midsegment_theorem": "S3",
+  "midsegment_converse": "S3",
+  "medial_triangle_similar": "S3",
+  "parallel_line_proportional_segments": "S3",
+  "proportional_segments_imply_parallel": "S3",
+  "parallel_line_third_side_ratio": "S3",
+  "parallel_iff_internal_division_ratio": "S3",
+  "three_parallel_lines_proportional": "S3",
+  "right_triangle_altitude_geometric_mean": "S3",
+  "right_triangle_leg_square_projection": "S3",
+  "right_triangle_altitude_hypotenuse_product": "S3",
+  "right_triangle_altitude_similar_triangles": "S3",
+  "right_triangle_altitude_foot_between": "S3",
+  "angle_acute_obtuse_iff_side_squares": "S4",
+  "cos_angle_from_three_sides": "S4",
+  "law_of_sines_ratio": "S4",
+  "triangle_projection_formula": "S4",
+  "median_theorem_apollonius": "S4",
+  "isosceles_cevian_square_difference": "S5",
+  "stewart_theorem": "S5",
+  "angle_bisector_length_square": "S5",
+  "angle_bisector_theorem_internal": "S5",
+  "angle_bisector_theorem_external": "S5",
+  "angle_bisector_foot_position": "S5",
+  "angle_bisector_theorem_converse": "S5",
+  "perpendicular_iff_square_difference": "S9",
+  "right_angle_iff_median_half_hypotenuse": "S9",
+  "point_on_line_distance_square_formula": "S9",
+  "right_triangles_common_hypotenuse_equal_angle_iff_equal_leg": "S9"
+ }
+}

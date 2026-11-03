@@ -1,0 +1,233 @@
+{
+"batch": "L16",
+"reviewed": 40,
+"ok_ids": [
+"centroid_divides_median_two_to_one",
+"centroid_iff_vector_sum_zero",
+"circumcenter_equidistant_on_perp_bisectors",
+"perp_bisectors_concurrent_at_circumcenter",
+"law_of_sines_circumradius",
+"side_product_eq_four_circumradius_area",
+"incenter_touchpoint_and_angle_bisector",
+"incircle_tangent_length",
+"interior_bisectors_concurrent_at_incenter",
+"angle_at_incenter",
+"area_eq_inradius_times_semiperimeter",
+"incenter_weighted_vector_sum",
+"excenter_equidistant_and_touchpoint_positions",
+"excenter_internal_and_external_bisectors",
+"vertex_incenter_excenter_collinear",
+"excircle_tangent_length_is_semiperimeter",
+"orthocenter_on_altitudes",
+"three_perpendiculars_identity",
+"orthocenter_unique_from_two_altitudes",
+"orthocenter_right_triangle_vertex",
+"vertex_orthocenter_twice_circumcenter_midpoint",
+"orthocentric_system_swap_vertex",
+"euler_line",
+"menelaus_theorem",
+"menelaus_converse",
+"ceva_theorem",
+"ceva_converse"
+],
+"findings": [
+{
+"id": "medians_concurrent_at_centroid",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトル（AG=(AB+AC)/3=2AL/3 による重心の位置ベクトル表示）", "stage": "S9", "where": "答案第2文（G が直線 AL 上にあることの根拠）", "replaceable": true}
+],
+"fix": "題意は数A「三角形の重心」（中線の共点）で、ベクトルを使わずに書くのが標準。中点連結定理と平行四辺形の対角線で「2本の中線は互いに頭から 2:1 の点で交わる」を示し、3本の中線が同じ点（重心）を通ることにする。後半（2直線は高々1点で交わる）は現行の議論をそのまま使える。重心の定義がベクトル式になっている点がこの系統の原因で、学校の定義（中線の交点）に合わせる必要がある。",
+"keep_as_advanced": false
+},
+{
+"id": "centroid_leibniz_sum_of_squares",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの内積による展開（|x-a|^2 の展開と a+b+c=0）", "stage": "S9", "where": "答案第2〜4文（PA^2 の展開から結論まで）", "replaceable": true}
+],
+"fix": "題意は距離の等式で、重心の 2:1 と余弦定理（S4）・中線定理だけで足りる。M を BC の中点として、三角形 PGA, PGM に余弦定理を使い PA^2+2PM^2=3PG^2+6m^2、中線定理で PB^2+PC^2=2PM^2+BC^2/2 を得る。ベクトルによる証明は既習者向けの別解として残す価値がある。",
+"patch": {"answer": "$A,B,C$を同一直線上にない3点、$G$を重心、$P$を任意の点とし、$M$を辺$BC$の中点とする。重心の性質から$G$は線分$AM$上にあり$AG=2GM$である。$GM=m$とおくと$AG=2m$、$AM=3m$である。まず$P\\neq G$とする。$\\theta=\\angle PGA$とおくと$\\angle PGM=\\pi-\\theta$である（$P$が直線$AM$上にあるときは$\\theta=0$または$\\pi$とみなす）。三角形$PGA$、$PGM$に余弦定理を使うと、$PA^2=PG^2+4m^2-4m\\cdot PG\\cos\\theta$、$PM^2=PG^2+m^2+2m\\cdot PG\\cos\\theta$である。第1式に第2式の2倍を加えると$PA^2+2PM^2=3PG^2+6m^2$を得る。また三角形$PBC$の中線定理（$P$が直線$BC$上にあっても成り立つ）より$PB^2+PC^2=2PM^2+\\frac{BC^2}{2}$である。辺々加えると$PA^2+PB^2+PC^2=3PG^2+6m^2+\\frac{BC^2}{2}$ …(＊)となる。$P=G$のときも、$GA^2=4m^2$と三角形$GBC$の中線定理$GB^2+GC^2=2m^2+\\frac{BC^2}{2}$から$GA^2+GB^2+GC^2=6m^2+\\frac{BC^2}{2}$となり、(＊)は$PG=0$で成り立つ。したがって(＊)の定数部分は$GA^2+GB^2+GC^2$に等しく、すべての$P$について$PA^2+PB^2+PC^2=GA^2+GB^2+GC^2+3PG^2$が成り立つ。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "circumcenter_right_triangle_hypotenuse_midpoint",
+"home": "S3",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの内積（u・w=0 から |u+w|=|w-u|）", "stage": "S9", "where": "答案第2〜3文（MA=BC/2 の導出）", "replaceable": true}
+],
+"fix": "level が middle の題意。長方形の対角線（S2）で MA=MB=MC=BC/2 が直接出る。ベクトルは不要。",
+"patch": {"answer": "$A,B,C$を同一直線上にない3点で$\\angle BAC=\\frac{\\pi}{2}$とし、$M$を$BC$の中点とする。直線$MA$上に、$A$と反対側に$MD=MA$となる点$D$をとる。対角線$AD$と$BC$が互いの中点$M$で交わるので、四角形$ABDC$は平行四辺形である。$\\angle BAC$が直角なので、これは長方形である。長方形の対角線は長さが等しく互いの中点で交わるので、$MA=MB=MC=\\frac{BC}{2}$である。$M$は平面$ABC$上にあり、同じ平面上で3頂点から等距離にある点は外心だけなので、$M$は外心で、半径は$\\frac{BC}{2}$である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "centroid_eq_circumcenter_iff_equilateral",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトル（GA,GB,GC の和が0、|2x+y|^2 などの展開）", "stage": "S9", "where": "答案第2〜4文（9GA^2=2AB^2+2AC^2-BC^2 の導出と比較）", "replaceable": true}
+],
+"fix": "題意は数A「重心・外心」の性質。中線が垂直二等分線になることを使う総合幾何で足りる。9GA^2=2AB^2+2AC^2-BC^2 の公式は既習者向けに残す価値がある。",
+"patch": {"answer": "$A,B,C$を同一直線上にない3点、$G$を重心、$O$を外心とし、$L,M$を辺$BC,CA$の中点とする。重心の性質から$G$は中線$AL,BM$の上にあり、$AG=2GL$なので$G\\neq L$、同様に$G\\neq M$である。（$\\Rightarrow$）$G=O$とする。$O$は$B,C$から等距離なので線分$BC$の垂直二等分線$\\ell$の上にあり、$L$も$\\ell$の上にある。$O=G\\neq L$なので直線$OL$は$\\ell$であり、$A$は直線$GL$の上にあるから$A$は$\\ell$の上にある。よって$AB=AC$である。同様に$G$が$CA$の垂直二等分線の上にあり、$M$もその上にあることから、$B$がその上にあって$BC=BA$を得る。したがって$AB=BC=CA$で正三角形である。（$\\Leftarrow$）$ABC$を正三角形とする。三角形$ABL$と$ACL$は3辺が等しいので合同であり、$\\angle ALB=\\angle ALC$である。この2つの角の和は$\\pi$なので$AL\\perp BC$となり、$AL$は$BC$の垂直二等分線である。その上にある$G$について$GB=GC$である。同様に$BM$は$CA$の垂直二等分線なので$GC=GA$である。よって$GA=GB=GC$であり、同じ平面上で3頂点から等距離にある点は外心だけなので、$G$は外心である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "vertex_orthocenter_side_circumradius_identity",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトル（外心を原点とする a+b+c で垂心を表す。内積と中線定理型の展開）", "stage": "S9", "where": "答案全体（OH'=a+b+c の構成から |b+c|^2+|c-b|^2 まで）", "replaceable": true}
+],
+"fix": "題意は距離の等式。正弦定理（S4）で BC=2R sinA、垂線の足を使って AH=2R|cosA| を示せば足りるが、鋭角・直角・鈍角で場合分けが要り10行を超える。S5の標準解答にするなら場合分け付きの三角比の証明に書き替える。ベクトル版は既習者向けに残す。",
+"keep_as_advanced": true
+},
+{
+"id": "orthocenter_reflection_on_circumcircle",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトル（OK=a+b+c による垂心の構成、OO'=b+c）", "stage": "S9", "where": "答案第3〜7文", "replaceable": true}
+],
+"fix": "題意は数A「円の性質」。標準は ∠BHC=π-A（鋭角の場合）と円周角の定理の逆（四角形 BH'CA が円に内接）で示す総合幾何。鋭角・直角・鈍角の場合分けで10行を超えるため patch は付けない。ベクトル版は既習者向けに残す価値がある。",
+"keep_as_advanced": true
+},
+{
+"id": "altitude_feet_concyclic",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの内積による直径の円周上の判定（NZ=-(ZX+ZY)/2、|ZX+ZY|=|ZX-ZY|）", "stage": "S9", "where": "答案第2〜4文", "replaceable": true}
+],
+"fix": "直角が直径を見込む（円周角の定理の逆、S3）だけで足りる。退化した場合（E=C, E=A, A=H など）を明示して書き替える。",
+"patch": {"answer": "$A,B,C$を同一直線上にない3点、$H$を垂心、$E,F$を上のとおりとする。$BC$を直径とする円を$\\Gamma$とする。$E=C$なら$E$は$\\Gamma$の上にある。$E\\neq C$なら$E$は$B$から直線$CA$に下ろした垂線の足なので$\\angle BEC=\\frac{\\pi}{2}$であり、円周角の定理の逆により$E$は$\\Gamma$の上にある。$F$についても、$F=B$なら$\\Gamma$の上にあり、$F\\neq B$なら$\\angle BFC=\\frac{\\pi}{2}$から$\\Gamma$の上にある。よって$B,C,E,F$は同一円周上にある。次に$A=H$のとき、$AB\\perp AC$なので$E=F=A$であり、4点は一致する。$A\\neq H$のとき、$AH$を直径とする円を$\\Gamma'$とする。$E$と$H$はともに$B$を通り$CA$に垂直な直線上にある。$E=A$または$E=H$なら$E$は$\\Gamma'$の上にある。そうでなければ直線$EH$は$CA$に垂直で、直線$EA$は$CA$なので$\\angle AEH=\\frac{\\pi}{2}$であり、$E$は$\\Gamma'$の上にある。$F$も$C$を通り$AB$に垂直な直線上にあるので同様に$\\Gamma'$の上にある。よって$A,H,E,F$は同一円周上にある。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "euler_distance_circumcenter_orthocenter",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトル（OH=a+b+c と内積の展開で OH^2 を辺の長さに直す）", "stage": "S9", "where": "答案全体", "replaceable": false}
+],
+"fix": "題意の距離公式は総合幾何では標準的な証明がなく、ベクトル（または複素数）が本質。S5の標準解答には置けない。この単元の level/単元を数C（ベクトル）側に移すか、題意をベクトル形にして home を S9 とする。現行の答案は既習者向けとして残す。",
+"keep_as_advanced": true
+},
+{
+"id": "nine_point_circle",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトル（外心を原点とする位置ベクトル、OH=a+b+c、NM=-a/2 など）", "stage": "S9", "where": "答案全体", "replaceable": true}
+],
+"fix": "標準解答は、中点連結定理と円周角の定理の逆（直径を見込む直角）による総合幾何だが、中心が OH の中点であることを示すには相似の位置（重心中心・倍率 -1/2）でオイラー線を先に示す必要があり、10行を超える。patch は付けない。ベクトル版は既習者向けに残す。",
+"keep_as_advanced": true
+},
+{
+"id": "nine_point_center_and_radius",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトル（外心を原点とする位置ベクトル、OH=a+b+c、NM=-a/2）", "stage": "S9", "where": "答案全体", "replaceable": true}
+],
+"fix": "総合幾何なら、中点三角形は ABC と相似（比 1/2）なので外接円の半径は R/2。中心は、重心を中心とする倍率 -1/2 の相似で O が写る点で、垂心 H が O に写ることからオイラー線の中点と一致する、という流れになる。10行を超えるため patch は付けない。",
+"keep_as_advanced": true
+},
+{
+"id": "menelaus_unsigned_ratio_form",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトル・アフィン結合（D=(1-r)B+rC の位置ベクトル表示と、ベクトル版メネラウスの引用）", "stage": "S9", "where": "答案第2〜5文", "replaceable": true}
+],
+"fix": "数Aのメネラウスの定理を、ベクトル版の系として出している。3頂点から直線 ℓ までの距離の比（sin と相似、S4）で直接示せる。",
+"patch": {"answer": "$A,B,C$を同一直線上にない3点、$D,E,F$を直線$BC,CA,AB$上にあって同一直線$\\ell$上にある点とし、$D\\neq C$、$E\\neq A$、$F\\neq B$とする。まず$\\ell$が頂点を通らないことを示す。$A$を通るとすると、$A,E$はどちらも$\\ell$と直線$CA$の上にあり$E\\neq A$なので$\\ell$は直線$CA$であり、$D$は$\\ell$と直線$BC$の共有点$C$になって$D\\neq C$に反する。$B$を通るとすると、$F\\neq B$より$\\ell$は直線$AB$であり、$E$は直線$AB$と直線$CA$の共有点$A$になって$E\\neq A$に反する。$C$を通るとすると、$D\\neq C$より$\\ell$は直線$BC$であり、$F$は$B$になって$F\\neq B$に反する。したがって$A,B,C$から$\\ell$までの距離$a,b,c$はどれも正である。直線$BC$と$\\ell$は$D$で交わるので、そのなす角を$\\theta$（$0<\\theta\\le\\frac{\\pi}{2}$）とすると$b=BD\\sin\\theta$、$c=CD\\sin\\theta$であり、$\\frac{BD}{DC}=\\frac{b}{c}$である。同様に$\\frac{CE}{EA}=\\frac{c}{a}$、$\\frac{AF}{FB}=\\frac{a}{b}$である。3式を掛けると$\\frac{BD}{DC}\\cdot\\frac{CE}{EA}\\cdot\\frac{AF}{FB}=1$を得る。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "ceva_unsigned_ratio_form",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトル・アフィン結合（D=(1-r)B+rC と、重心座標を使うベクトル版チェバの引用）", "stage": "S9", "where": "答案第2〜5文", "replaceable": true}
+],
+"fix": "数Aのチェバの定理を、ベクトル版の系として出している。面積比（共通の底辺を持つ三角形の高さの比）で直接示せる。",
+"patch": {"answer": "$A,B,C$を同一直線上にない3点、$D,E,F$を直線$BC,CA,AB$上の頂点と異なる点、$p$を直線$AD,BE,CF$の共有点とする。直線$AD$と直線$BC$の共有点は$D$だけで$D$は頂点でないから、$B,C$は直線$AD$上にない。同様に$C,A$は直線$BE$上に、$A,B$は直線$CF$上にない。したがって$p$は$A,B,C$のどれとも異なり、直線$Ap$は直線$AD$、直線$Bp$は直線$BE$、直線$Cp$は直線$CF$である。直線$AD$と直線$BC$のなす角を$\\theta$とすると、$B,C$から直線$AD$までの距離はそれぞれ$BD\\sin\\theta$、$CD\\sin\\theta$で、$\\sin\\theta\\neq 0$なので$\\frac{BD}{DC}$は$B,C$から直線$Ap$までの距離の比に等しい。三角形$ABp$と$ACp$は底辺$Ap$を共有するので、この比は面積比に等しく$\\frac{BD}{DC}=\\frac{[ABp]}{[ACp]}$である（$[\\ ]$は面積。$C$が直線$Ap$上にないので分母は正）。同様に$\\frac{CE}{EA}=\\frac{[BCp]}{[BAp]}$、$\\frac{AF}{FB}=\\frac{[CAp]}{[CBp]}$である。$[ABp]=[BAp]$、$[BCp]=[CBp]$、$[CAp]=[ACp]$なので、3式を掛けると$\\frac{BD}{DC}\\cdot\\frac{CE}{EA}\\cdot\\frac{AF}{FB}=1$を得る。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "simson_line",
+"home": "S5",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "有向角（直線のなす角を π を法として扱う）と、それによる円周角の定理・共円の判定", "stage": "S10", "where": "答案全体（有向角 (PR,PS) の定義と、(DF,DX)=(BA,BX) 以降のすべての式）", "replaceable": true}
+],
+"fix": "題意はシムソン線（数Aの円の性質の発展）。有向角は教科書にない道具。標準の総合幾何では、X が弧 BC 上にある配置を取り、円周角の定理と円に内接する四角形の性質で ∠BDF=∠BXF などを追って E,D,F の共線を示す。配置による場合分けが必要で10行を超えるため patch は付けない。有向角による一般配置の証明は別カードとして残す価値がある。",
+"keep_as_advanced": true
+}
+],
+"systematic": [
+"垂心・外心・九点円・オイラー系の S5 題意（距離・円・共円）に対し、答案が「外心を原点とする位置ベクトル a+b+c」の同じ段落を毎回貼って S9 で書いている（7枚: 距離公式、対称点、九点円2枚、垂線の足、AH^2+BC^2、オイラーの距離公式）。ベクトル版を『ベクトル単元の別カード』に分け、S5 側は円周角・相似・中点連結定理で書くのが筋。",
+"重心を『AG=(AB+AC)/3 を満たす点』とベクトル式で定義しているため、題意がベクトルを含まない重心カード（中線の共点、ライプニッツ、重心=外心）まで答案がベクトルになる。学校の定義（中線の交点）と性質（2:1）を土台にすれば S5 で書ける。",
+"符号付きのメネラウス・チェバ（D=(1-r)B+rC）は題意自体がアフィン結合で、home を S9 とした。数Aの比の形（長さの比）の2枚は、この S9 のカードの系として出しているため S5 の学習者には使えない。距離比・面積比による直接証明（patch 参照）に置き換えれば、符号付きとの系統が独立になる。",
+"有向角のカード（interior_bisectors_concurrent_at_incenter, excenter_internal_and_external_bisectors, simson_line）は、題意の述語が教科書にない有向角（mod 2π は数IIの一般角に近いが、mod π の直線間の有向角は S10 相当）。前2枚は題意に有向角を含むため home=S6 として違反にしなかったが、内心・傍心を学ぶ段階の学習者向けには無向角版の入口カードがない。",
+"circumcenter_right_triangle_hypotenuse_midpoint 等 middle の題意が弧度法 π/2 で書かれている（弧度法は S6）。道具ではなく表記だが、中学生向けの題意としては度数法にすべき。orthocentric_system_swap_vertex などはベクトル記号 \\overrightarrow{CH}\\perp\\overrightarrow{AB} を使うが実質は直線の垂直のみで、違反としなかった。"
+],
+"home_assignments": {
+"centroid_divides_median_two_to_one": "S9",
+"medians_concurrent_at_centroid": "S5",
+"centroid_iff_vector_sum_zero": "S9",
+"centroid_leibniz_sum_of_squares": "S5",
+"circumcenter_equidistant_on_perp_bisectors": "S5",
+"perp_bisectors_concurrent_at_circumcenter": "S5",
+"law_of_sines_circumradius": "S4",
+"circumcenter_right_triangle_hypotenuse_midpoint": "S3",
+"side_product_eq_four_circumradius_area": "S4",
+"centroid_eq_circumcenter_iff_equilateral": "S5",
+"incenter_touchpoint_and_angle_bisector": "S5",
+"incircle_tangent_length": "S3",
+"interior_bisectors_concurrent_at_incenter": "S6",
+"angle_at_incenter": "S3",
+"area_eq_inradius_times_semiperimeter": "S4",
+"incenter_weighted_vector_sum": "S9",
+"excenter_equidistant_and_touchpoint_positions": "S5",
+"excenter_internal_and_external_bisectors": "S6",
+"vertex_incenter_excenter_collinear": "S5",
+"excircle_tangent_length_is_semiperimeter": "S5",
+"orthocenter_on_altitudes": "S9",
+"three_perpendiculars_identity": "S9",
+"orthocenter_unique_from_two_altitudes": "S9",
+"orthocenter_right_triangle_vertex": "S5",
+"vertex_orthocenter_twice_circumcenter_midpoint": "S9",
+"vertex_orthocenter_side_circumradius_identity": "S5",
+"orthocenter_reflection_on_circumcircle": "S5",
+"orthocentric_system_swap_vertex": "S5",
+"altitude_feet_concyclic": "S5",
+"euler_line": "S9",
+"euler_distance_circumcenter_orthocenter": "S5",
+"nine_point_circle": "S5",
+"nine_point_center_and_radius": "S5",
+"menelaus_theorem": "S9",
+"menelaus_converse": "S9",
+"menelaus_unsigned_ratio_form": "S5",
+"ceva_theorem": "S9",
+"ceva_converse": "S9",
+"ceva_unsigned_ratio_form": "S5",
+"simson_line": "S5"
+}
+}

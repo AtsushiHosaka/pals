@@ -1,0 +1,164 @@
+{
+  "batch": "L1",
+  "reviewed": 49,
+  "ok_ids": [
+    "fraction_add_general_denominators",
+    "power_quotient_of_exponent_le",
+    "product_zero_iff_factor_zero",
+    "squares_equal_iff_equal_or_negative",
+    "difference_of_squares_factorization",
+    "sum_and_difference_of_cubes_factorization",
+    "cross_multiplication_factorization",
+    "three_cubes_minus_triple_product_factorization",
+    "power_difference_factorization_general",
+    "sophie_germain_identity",
+    "linear_equation_solution_formula",
+    "linear_equation_solution_classification",
+    "two_variable_system_explicit_solution",
+    "two_variable_system_unique_iff_determinant",
+    "two_variable_system_degenerate_solvability",
+    "two_variable_system_degenerate_solution_line",
+    "homogeneous_two_variable_nontrivial_iff_determinant",
+    "two_variable_system_no_solution_ratio_form",
+    "proportion_iff_cross_product",
+    "proportion_iff_common_ratio",
+    "proportion_swap_inner_terms",
+    "continued_ratio_iff_cross_products",
+    "abs_value_cases_by_sign",
+    "abs_of_product_and_quotient",
+    "triangle_inequality_real_numbers",
+    "triangle_equality_iff_product_nonneg",
+    "reverse_triangle_inequality_real_numbers",
+    "abs_eq_iff_with_sign_condition",
+    "abs_less_and_greater_iff_intervals",
+    "abs_two_points_sum_piecewise",
+    "abs_two_points_sum_equals_distance_iff_between",
+    "sqrt_of_square_is_abs",
+    "sqrt_eq_iff_nonneg_and_square",
+    "sqrt_mul_sqrt_of_nonneg",
+    "sqrt_of_sum_le_sum_of_sqrts",
+    "rationalize_denominator_two_square_roots",
+    "rationalize_denominator_linear_in_surd",
+    "rational_coefficients_unique_for_irrational_surd",
+    "nested_square_root_plus_form",
+    "nested_square_root_minus_form_ordered",
+    "nested_square_root_general_formula",
+    "sum_of_cubes_in_sum_and_product",
+    "power_sum_recurrence_two_variables",
+    "real_pair_with_given_sum_and_product_iff",
+    "reciprocal_sum_equals_reciprocal_of_sum_iff",
+    "abs_sub_le_iff_closed_interval"
+  ],
+  "findings": [
+    {
+      "id": "exponent_laws_natural_power",
+      "home": "S2",
+      "used": "S7",
+      "severity": "major",
+      "tools": [
+        {
+          "tool": "数学的帰納法（nについての帰納法で三つの法則を示す）",
+          "stage": "S7",
+          "where": "冒頭の「三つの等式をnについての帰納法で示す」から最終行「すべてのnで成り立つ」まで。n=0の確認、nから n+1 への移行の全体",
+          "replaceable": true
+        }
+      ],
+      "fix": "指数法則は中2の式の計算（単項式の乗除）の内容。教科書どおり「aをn個掛けたもの」の個数の数え上げで示せる。再帰定義と帰納法は不要。",
+      "patch": {
+        "answer": "$a,b$を実数、$m,n$を$0$以上の整数とする。$a^n$は$a$を$n$個掛けたものであり、$a^0=1$とする。$1$を掛けても値は変わらない。\n$a^m a^n$について。$m,n$がともに$1$以上なら、$a$を$m$個掛けたものに$a$を$n$個掛けたものを掛けるので、$a$を全部で$m+n$個掛けたものになり、$a^{m+n}$に等しい。$n=0$なら$a^m a^0=a^m\\cdot 1=a^{m+0}$であり、$m=0$なら同様に$a^0 a^n=a^n=a^{0+n}$である。\n$(a^m)^n$について。$m,n$がともに$1$以上なら、$a^m$を$n$個掛けることになり、$a$を$m$個ずつ$n$組、全部で$mn$個掛けたものになるので$a^{mn}$に等しい。$n=0$なら$(a^m)^0=1=a^0=a^{m\\cdot 0}$である。$m=0$なら$(a^0)^n=1^n=1=a^0=a^{0\\cdot n}$である。\n$(ab)^n$について。$n\\geq 1$なら、$ab$を$n$個掛けたものであり、掛ける順序を変えても積は変わらないので、$a$どうし、$b$どうしをまとめて$a^n b^n$に等しい。$n=0$なら$(ab)^0=1=1\\cdot 1=a^0 b^0$である。\n"
+      },
+      "keep_as_advanced": true
+    },
+    {
+      "id": "sqrt_lt_sqrt_iff_of_nonneg",
+      "home": "S3",
+      "used": "S4",
+      "severity": "minor",
+      "tools": [
+        {
+          "tool": "背理法（「√b≤√aと仮定すると…矛盾する」）",
+          "stage": "S4",
+          "where": "第2段落（逆向きの証明）。√b≤√a の仮定から b≤a を導き a<b と矛盾させる部分",
+          "replaceable": true
+        }
+      ],
+      "fix": "背理法は数Iの命題で初めて導入される（中学の平方根の単元にはない）。逆向きは (√b-√a)(√b+√a)=b-a>0 と √b+√a>0 から直接示せる。",
+      "patch": {
+        "answer": "$a,b$を$0$以上の実数とする。$\\sqrt{a}<\\sqrt{b}$なら、$\\sqrt{b}>0$であり、$b-a=(\\sqrt{b}-\\sqrt{a})(\\sqrt{b}+\\sqrt{a})>0$となるので$a<b$である。\n逆に$a<b$とする。$b>a\\geq 0$より$b>0$である。$\\sqrt{b}\\geq 0$かつ$(\\sqrt{b})^2=b>0$なので$\\sqrt{b}>0$であり、$\\sqrt{b}+\\sqrt{a}>0$である。$(\\sqrt{b}-\\sqrt{a})(\\sqrt{b}+\\sqrt{a})=b-a>0$を$\\sqrt{b}+\\sqrt{a}>0$で割ると$\\sqrt{b}-\\sqrt{a}>0$となる。よって$\\sqrt{a}<\\sqrt{b}$である。\n"
+      },
+      "keep_as_advanced": false
+    },
+    {
+      "id": "fundamental_theorem_symmetric_polynomials",
+      "home": "S10",
+      "used": "S10",
+      "severity": "note",
+      "tools": [
+        {
+          "tool": "n変数多項式環での辞書式順序による整列帰納法（先頭項の消去）",
+          "stage": "S10",
+          "where": "第1段落（辞書式順序と整列順序）、第3・4段落（先頭項の積と帰納法の仮定）",
+          "replaceable": false
+        }
+      ],
+      "fix": "題意（任意のnの対称多項式の基本定理）が高校範囲外。levelの値が整数の2で、他の 'middle'/'high' と形式が異なり、貼り方が不正。levelを高校の枠から外すか上級として明示する。数IIで扱う2・3変数の対称式（x+y, xy 等）は別カードにする。答案は大学の初歩の標準的な証明なので、本カードは削除せず上級カードとして残す。",
+      "keep_as_advanced": true
+    }
+  ],
+  "systematic": [
+    "指数法則の標準答案が再帰定義と数学的帰納法（S7）に依存している。中2の単元の定理を、数Bの道具で証明している。個数の数え上げによる説明を標準に、帰納法版は上級カードとして分ける。",
+    "levelの貼り方がずれたカードが多い。連立方程式の二元の解の公式など、道具は中2の消去法だけのカードが level=high で、中学の枠に収まる内容が high に置かれている（違反ではない）。逆に fundamental_theorem_symmetric_polynomials は level=2 という不正な値で、題意が大学入門に入る。",
+    "ファイルの大半（絶対値・平方根・因数分解・連立方程式・比例式）は、分配法則、因数分解、場合分けだけで書かれていて、学習順序に問題がない。唯一の例外は、中学の平方根（S3）で背理法（S4）が出る点。"
+  ],
+  "home_assignments": {
+    "fraction_add_general_denominators": "S2",
+    "exponent_laws_natural_power": "S2",
+    "power_quotient_of_exponent_le": "S2",
+    "product_zero_iff_factor_zero": "S3",
+    "squares_equal_iff_equal_or_negative": "S3",
+    "difference_of_squares_factorization": "S3",
+    "sum_and_difference_of_cubes_factorization": "S6",
+    "cross_multiplication_factorization": "S4",
+    "three_cubes_minus_triple_product_factorization": "S6",
+    "power_difference_factorization_general": "S7",
+    "sophie_germain_identity": "S4",
+    "linear_equation_solution_formula": "S1",
+    "linear_equation_solution_classification": "S4",
+    "two_variable_system_explicit_solution": "S4",
+    "two_variable_system_unique_iff_determinant": "S4",
+    "two_variable_system_degenerate_solvability": "S4",
+    "two_variable_system_degenerate_solution_line": "S4",
+    "homogeneous_two_variable_nontrivial_iff_determinant": "S4",
+    "two_variable_system_no_solution_ratio_form": "S4",
+    "proportion_iff_cross_product": "S1",
+    "proportion_iff_common_ratio": "S1",
+    "proportion_swap_inner_terms": "S1",
+    "continued_ratio_iff_cross_products": "S4",
+    "abs_value_cases_by_sign": "S1",
+    "abs_of_product_and_quotient": "S4",
+    "triangle_inequality_real_numbers": "S4",
+    "triangle_equality_iff_product_nonneg": "S4",
+    "reverse_triangle_inequality_real_numbers": "S4",
+    "abs_eq_iff_with_sign_condition": "S4",
+    "abs_less_and_greater_iff_intervals": "S4",
+    "abs_two_points_sum_piecewise": "S4",
+    "abs_two_points_sum_equals_distance_iff_between": "S4",
+    "sqrt_of_square_is_abs": "S4",
+    "sqrt_eq_iff_nonneg_and_square": "S4",
+    "sqrt_mul_sqrt_of_nonneg": "S3",
+    "sqrt_lt_sqrt_iff_of_nonneg": "S3",
+    "sqrt_of_sum_le_sum_of_sqrts": "S4",
+    "rationalize_denominator_two_square_roots": "S4",
+    "rationalize_denominator_linear_in_surd": "S4",
+    "rational_coefficients_unique_for_irrational_surd": "S4",
+    "nested_square_root_plus_form": "S4",
+    "nested_square_root_minus_form_ordered": "S4",
+    "nested_square_root_general_formula": "S4",
+    "sum_of_cubes_in_sum_and_product": "S6",
+    "power_sum_recurrence_two_variables": "S7",
+    "real_pair_with_given_sum_and_product_iff": "S4",
+    "reciprocal_sum_equals_reciprocal_of_sum_iff": "S4",
+    "fundamental_theorem_symmetric_polynomials": "S10",
+    "abs_sub_le_iff_closed_interval": "S4"
+  }
+}

@@ -1,0 +1,172 @@
+{
+"batch": "L17",
+"reviewed": 43,
+"ok_ids": [
+"sqrt_two_add_sqrt_three_irrational",
+"log_ten_two_irrational",
+"cos_twenty_degrees_irrational",
+"cube_root_two_irrational",
+"cube_root_two_rational_independence",
+"log_ten_two_between_bounds",
+"fourth_power_add_four_composite",
+"euler_quadratic_prime_run_fails_at_forty",
+"prime_square_add_two_prime",
+"two_pow_add_one_prime_exponent_power_of_two",
+"two_pow_sub_one_prime_exponent_prime",
+"fifth_power_sub_self_divisible_by_thirty",
+"consecutive_product_divisible_by_factorial",
+"integer_valued_quadratic_criterion",
+"three_unit_fractions_sum_one",
+"pythagorean_product_divisible_by_sixty",
+"no_rational_point_on_circle_radius_sqrt_three",
+"fibonacci_gcd_identity",
+"sum_of_factorials_perfect_square",
+"four_consecutive_product_not_square",
+"power_swap_equation_integer_solution",
+"infinitely_many_primes_three_mod_four",
+"harmonic_sum_not_integer",
+"integer_polynomial_odd_at_zero_one_no_root",
+"power_sums_integer_from_sum_and_product",
+"floor_two_add_sqrt_three_power_odd",
+"sqrt_two_sub_one_power_as_sqrt_difference",
+"regular_polygon_chord_product",
+"reciprocal_squares_partial_sum_bound",
+"harmonic_sum_log_bounds",
+"integral_power_over_one_add_x_tends_zero",
+"integral_identity_twenty_two_sevenths_minus_pi",
+"orthocenter_vector_from_circumcenter",
+"tetrahedron_opposite_edges_perpendicular",
+"triangle_side_product_inequality",
+"dice_product_multiple_of_six_count",
+"triangle_walk_return_probability"
+],
+"findings": [
+{
+"id": "sin_cos_one_degree_irrational",
+"home": "S6",
+"used": "S7",
+"severity": "minor",
+"tools": [
+{"tool": "数学的帰納法（cos nθ の有理性を全 n に伝える）と三項間漸化式", "stage": "S7", "where": "第1段落「帰納法により、すべての自然数 n で cos nθ は有理数」", "replaceable": true}
+],
+"fix": "必要な n は 30 と 15 までの有限個。加法定理から得る cos(n+1)θ = 2cosθ cos nθ − cos(n−1)θ を n=1,2,3,… の順に使うと次々に有理数と分かる、という書き方にすれば、帰納法と明記せずに済む（有限の鎖としての記述）。",
+"patch": {"answer": "$1^\\circ=\\dfrac{\\pi}{180}$ラジアンとする。実数$\\theta$について$\\cos\\theta$が有理数であるとする。加法定理から$\\cos(n+1)\\theta+\\cos(n-1)\\theta=2\\cos\\theta\\cos n\\theta$なので、$\\cos(n+1)\\theta=2\\cos\\theta\\cos n\\theta-\\cos(n-1)\\theta$である。$\\cos 0=1$と$\\cos\\theta$は有理数で、この右辺は連続する$2$項が有理数なら有理数になる。そこで$n=1,2,3,\\dots$の順にこの式を使うと、$\\cos 2\\theta,\\cos 3\\theta,\\dots$が次々に有理数と定まり、必要な自然数$n$について$\\cos n\\theta$は有理数である。\n$\\cos 1^\\circ$が有理数なら、$\\theta=1^\\circ$、$n=30$として$\\cos 30^\\circ=\\dfrac{\\sqrt{3}}{2}$が有理数となり、$\\sqrt{3}$が無理数であることに反する。$\\sin 1^\\circ$が有理数なら、$\\cos 2^\\circ=1-2\\sin^2 1^\\circ$が有理数なので、$\\theta=2^\\circ$、$n=15$として同じく$\\cos 30^\\circ$が有理数となり矛盾する。したがって$\\sin 1^\\circ$と$\\cos 1^\\circ$はともに無理数である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "exp_one_gt_two_point_seven",
+"home": "S8",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "e = Σ 1/k!（指数関数のべき級数展開、実質テイラー展開）", "stage": "S10", "where": "第1文「e=Σ_{k≥0} 1/k! の各項は正なので、e は最初の6項の和より大きい」", "replaceable": true}
+],
+"fix": "数III の範囲では e^x の導関数 (e^x)'=e^x と増加性だけで、x≥0 で e^x ≥ Σ_{k≤m} x^k/k! を m についての帰納法（S7）で示せる。これを m=5, x=1 に使えば同じ主張 e>2.7 が出る。",
+"patch": {"answer": "$e=\\exp 1$とし、$e^x$が増加関数であること、$(e^x)^{\\prime}=e^x$、$e^0=1$を用いる。$m\\geq 0$について$f_m(x)=e^x-\\sum_{k=0}^{m}\\dfrac{x^k}{k!}$とおき、$x\\geq 0$で$f_m(x)\\geq 0$であることを$m$についての帰納法で示す。$f_0(x)=e^x-1\\geq 0$は$e^x$が増加関数で$e^0=1$であることから従う。$f_m(0)=0$であり、$f_m^{\\prime}(x)=e^x-\\sum_{k=1}^{m}\\dfrac{x^{k-1}}{(k-1)!}=f_{m-1}(x)$なので、$x\\geq 0$で$f_{m-1}(x)\\geq 0$なら$f_m$は$x\\geq 0$で単調に増加し、$f_m(x)\\geq 0$である。\n$m=5$、$x=1$とすると$e\\geq 1+1+\\dfrac{1}{2}+\\dfrac{1}{6}+\\dfrac{1}{24}+\\dfrac{1}{120}=\\dfrac{163}{60}$である。$163>162=2.7\\cdot 60$より$\\dfrac{163}{60}>2.7$なので、$e>2.7$である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "pi_between_three_point_one_and_three_point_two",
+"home": "S4",
+"used": "S8",
+"severity": "major",
+"tools": [
+{"tool": "三角関数の加法定理", "stage": "S6", "where": "第2段落「加法定理より sin15°=…, cos15°=…」", "replaceable": true},
+{"tool": "半角の公式", "stage": "S6", "where": "第3段落「半角の公式 tan(θ/2)=(1−cosθ)/sinθ に θ=15° を代入」", "replaceable": true},
+{"tool": "0<x<π/2 での sin x < x < tan x（弧度法の不等式、数III の極限の準備で証明される）", "stage": "S8", "where": "第1段落、第2・3段落の x=π/12, π/24 への適用", "replaceable": true}
+],
+"fix": "円周率の評価は、半径1の円に内接・外接する正多角形の周と円周の比較（中学の円周＋数Iの三角比）で書ける。sin15°, tan15°, tan7.5° は、30°・15°の直角三角形に二等辺三角形を付け足す作図と三平方の定理で求まる。home を S4 としたのは題意が「π の数値評価」だけで、多角形の周と三角比で足りるため。home を S6 以上とみなすなら加法定理は許されるが、sin x<x<tan x は依然 S8 寄りである。",
+"patch": {"answer": "$\\pi$を円周率とする。円に内接する凸多角形の周は円周より短く、外接する凸多角形の周は円周より長いことを用いる。\n三角比を求める。$\\angle C=90^\\circ$、$\\angle A=30^\\circ$、$BC=1$、$AB=2$、$AC=\\sqrt{3}$の直角三角形$ABC$で、辺$CA$の$A$側への延長上に$AD=AB=2$となる点$D$をとる。$\\triangle ABD$は二等辺三角形で$\\angle BAC=30^\\circ$がその外角なので$\\angle D=15^\\circ$である。$CD=2+\\sqrt{3}$、$BD^2=1+(2+\\sqrt{3})^2=8+4\\sqrt{3}=(\\sqrt{6}+\\sqrt{2})^2$より$BD=\\sqrt{6}+\\sqrt{2}$なので、$\\sin 15^\\circ=\\dfrac{1}{\\sqrt{6}+\\sqrt{2}}=\\dfrac{\\sqrt{6}-\\sqrt{2}}{4}$、$\\tan 15^\\circ=\\dfrac{1}{2+\\sqrt{3}}$である。\n同じ作図を$\\angle A=15^\\circ$、$BC=1$の直角三角形に行う。$AC=2+\\sqrt{3}$、$AB=\\sqrt{6}+\\sqrt{2}$であり、$AD=AB$となる点$D$について$\\angle D=7.5^\\circ$、$CD=2+\\sqrt{3}+\\sqrt{6}+\\sqrt{2}$となる。したがって$\\tan 7.5^\\circ=\\dfrac{1}{2+\\sqrt{3}+\\sqrt{6}+\\sqrt{2}}=\\sqrt{6}+\\sqrt{2}-\\sqrt{3}-2$である。最後の等号は$(\\sqrt{6}+\\sqrt{2})^2-(2+\\sqrt{3})^2=1$による。\n単位円に内接する正$12$角形の周は$24\\sin 15^\\circ$で、円周$2\\pi$より短い。よって$\\pi>12\\sin 15^\\circ=3(\\sqrt{6}-\\sqrt{2})$である。$2.449^2<6$より$\\sqrt{6}>2.449$、$1.415^2>2$より$\\sqrt{2}<1.415$なので、$\\pi>3\\cdot 1.034>3.1$である。\n単位円に外接する正$24$角形の周は$48\\tan 7.5^\\circ$で、円周$2\\pi$より長い。よって$\\pi<24\\tan 7.5^\\circ$である。$2.45^2>6$より$\\sqrt{6}<2.45$、$\\sqrt{2}<1.415$、$1.732^2<3$より$\\sqrt{3}>1.732$なので、$\\tan 7.5^\\circ<0.133$である。よって$\\pi<24\\cdot 0.133=3.192<3.2$である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "exp_pi_gt_pi_exp",
+"home": "S8",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "e = Σ 1/k!（べき級数展開、実質テイラー展開）と k! ≥ 2^{k−1} による級数の評価", "stage": "S10", "where": "第2段落「e=Σ 1/k! で、k≥2 では k!≥2^{k-1} … なので e<3」", "replaceable": true}
+],
+"fix": "e<3 は log 3>1 と同値。接線型の不等式 1/x ≥ (4−x)/4（差は (x−2)²/(4x)）を [1,3] で積分すると ∫ 1/x dx > 1 が出る。数III の積分だけで足りる。log x < x−1 の導出（微分）と π>3（正六角形）は元のままでよい。",
+"patch": {"answer": "$e$を自然対数の底、$\\pi$を円周率とする。$x>0$、$x\\neq 1$では$\\log x<x-1$である。実際、$f(x)=x-1-\\log x$は$f^{\\prime}(x)=1-\\dfrac{1}{x}$より$x=1$でのみ最小値$0$をとる。\n$e<3$を示す。$\\log$は増加関数で$\\log e=1$なので、$\\log 3>1$を示せばよい。$x>0$で$\\dfrac{1}{x}-\\dfrac{4-x}{4}=\\dfrac{(x-2)^2}{4x}\\geq 0$であり、等号は$x=2$のときだけである。両辺は連続なので$1$から$3$まで積分すると、$\\log 3=\\int_1^3\\dfrac{dx}{x}>\\int_1^3\\dfrac{4-x}{4}\\,dx=\\left[x-\\dfrac{x^2}{8}\\right]_1^3=1$となる。よって$e<3$である。また円に内接する正六角形の周の長さ$6$は円周$2\\pi$より短いので$\\pi>3$である。よって$e<3<\\pi$であり、$\\dfrac{\\pi}{e}\\neq 1$なので、$x=\\dfrac{\\pi}{e}$を代入すると$\\log\\pi-1<\\dfrac{\\pi}{e}-1$、すなわち$e\\log\\pi<\\pi$を得る。指数関数は増加関数なので、$\\pi^e=\\exp(e\\log\\pi)<\\exp(\\pi)=e^\\pi$である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "abs_sin_multiple_angle_bound",
+"home": "S6",
+"used": "S7",
+"severity": "minor",
+"tools": [
+{"tool": "数学的帰納法（任意の自然数 n に対する不等式）", "stage": "S7", "where": "第1文「自然数 n についての帰納法で示す」と全体の構造", "replaceable": false}
+],
+"fix": "任意の n についての主張なので帰納法が本質的で、S6 の道具だけでは書き替えられない（telescoping は |sin nx| ≤ 2n|sin(x/2)| にしかならず、複素数は S9）。カードの題意が実質 S7 なので、home/level を数B相当に直すのが妥当。答案の変更は不要。",
+"keep_as_advanced": false
+},
+{
+"id": "triangle_sine_sum_upper_bound",
+"home": "S6",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "第2次導関数による凹凸の判定", "stage": "S8", "where": "第1文「(sin x)''=−sin x ≤ 0 なので上に凸」", "replaceable": true},
+{"tool": "イェンセンの不等式", "stage": "S10", "where": "第2文「イェンセンの不等式より…」", "replaceable": true}
+],
+"fix": "和積の公式 (S6) だけで書ける。sinA+sinB ≤ 2sin((A+B)/2)、sinC+sin(π/3) ≤ 2sin((C+π/3)/2) とし、u=(A+B)/2, v=(C+π/3)/2 に再び和積を使うと u+v=2π/3 から sinu+sinv ≤ 2sin(π/3)。4変数に拡げる標準的な手口で、同じ主張が出る。",
+"patch": {"answer": "$A,B,C$を$A+B+C=\\pi$をみたす正の実数とする。$A+B<\\pi$より$0<\\dfrac{A+B}{2}<\\dfrac{\\pi}{2}$であり、和積の公式から$\\sin A+\\sin B=2\\sin\\dfrac{A+B}{2}\\cos\\dfrac{A-B}{2}\\leq 2\\sin\\dfrac{A+B}{2}$である。同様に$0<C<\\pi$より$0<\\dfrac{C+\\pi/3}{2}<\\dfrac{2\\pi}{3}$なので$\\sin C+\\sin\\dfrac{\\pi}{3}\\leq 2\\sin\\dfrac{C+\\pi/3}{2}$である。\n$u=\\dfrac{A+B}{2}$、$v=\\dfrac{C+\\pi/3}{2}$とおくと$u+v=\\dfrac{2\\pi}{3}$であり、$\\sin u+\\sin v=2\\sin\\dfrac{u+v}{2}\\cos\\dfrac{u-v}{2}\\leq 2\\sin\\dfrac{\\pi}{3}$である。以上を合わせると$\\sin A+\\sin B+\\sin C+\\sin\\dfrac{\\pi}{3}\\leq 2(\\sin u+\\sin v)\\leq 4\\sin\\dfrac{\\pi}{3}$となり、$\\sin A+\\sin B+\\sin C\\leq 3\\sin\\dfrac{\\pi}{3}=\\dfrac{3\\sqrt{3}}{2}$を得る。\n"},
+"keep_as_advanced": true
+}
+],
+"systematic": [
+"全43カードが level=1・file=entrance_exam で、level から段階を決められない。home は statement と topic（特に「数列」の語）で決めた。topic の「数列」を根拠に S7 とした4枚（power_sums_integer_from_sum_and_product、floor_two_add_sqrt_three_power_odd、sqrt_two_sub_one_power_as_sqrt_difference、triangle_walk_return_probability）は、statement だけ見れば S3〜S6 でも書ける主張で、答案は帰納法と漸化式（S7）を使っている。home を statement だけで決める運用なら minor 扱いになる。",
+"e = Σ1/k!（テイラー展開、S10）を既知の事実として使う癖が2枚（exp_one_gt_two_point_seven、exp_pi_gt_pi_exp）にある。数III の範囲では (e^x)'=e^x と積分比較で代替できる。同じ癖が他バッチの e の評価カードにもないか確認すべき。",
+"log_ten_two_irrational と log_ten_two_between_bounds は、題意を「自然対数の比」と定義したため home が S8 になる。内容は常用対数（S6）で足りるので、常用対数のままの題意にすれば S6 に置ける。現状は違反なし。",
+"orthocenter_vector_from_circumcenter と tetrahedron_opposite_edges_perpendicular の題意が「実内積空間」と書かれ、表現は S10 だが内容は S9（ベクトルの内積）。答案は内積の双線形性しか使わず問題ない。",
+"two_pow_add_one_prime_exponent_power_of_two と two_pow_sub_one_prime_exponent_prime は「x+1 は x^m+1（m 奇数）を割り切る」「x−1 は x^b−1 を割り切る」を理由なしに使う。因数定理（S6）や等比数列の和（S7）で正当化する人もいるが、合同式（S5: x≡−1 なら x^m≡−1）で一行で書ける。初学者向けには一行の根拠を足すとよい。違反とはしなかった。",
+"整数の性質（S5）のカードは、合同式・互除法・素因数分解だけで書けており、高度な道具はなかった。"
+],
+"home_assignments": {
+"sqrt_two_add_sqrt_three_irrational": "S3",
+"log_ten_two_irrational": "S8",
+"sin_cos_one_degree_irrational": "S6",
+"cos_twenty_degrees_irrational": "S6",
+"cube_root_two_irrational": "S6",
+"cube_root_two_rational_independence": "S6",
+"exp_one_gt_two_point_seven": "S8",
+"pi_between_three_point_one_and_three_point_two": "S4",
+"log_ten_two_between_bounds": "S8",
+"exp_pi_gt_pi_exp": "S8",
+"fourth_power_add_four_composite": "S3",
+"euler_quadratic_prime_run_fails_at_forty": "S5",
+"prime_square_add_two_prime": "S5",
+"two_pow_add_one_prime_exponent_power_of_two": "S5",
+"two_pow_sub_one_prime_exponent_prime": "S5",
+"fifth_power_sub_self_divisible_by_thirty": "S5",
+"consecutive_product_divisible_by_factorial": "S5",
+"integer_valued_quadratic_criterion": "S4",
+"three_unit_fractions_sum_one": "S5",
+"pythagorean_product_divisible_by_sixty": "S5",
+"no_rational_point_on_circle_radius_sqrt_three": "S5",
+"fibonacci_gcd_identity": "S7",
+"sum_of_factorials_perfect_square": "S5",
+"four_consecutive_product_not_square": "S5",
+"power_swap_equation_integer_solution": "S5",
+"infinitely_many_primes_three_mod_four": "S5",
+"harmonic_sum_not_integer": "S5",
+"integer_polynomial_odd_at_zero_one_no_root": "S6",
+"power_sums_integer_from_sum_and_product": "S7",
+"floor_two_add_sqrt_three_power_odd": "S7",
+"sqrt_two_sub_one_power_as_sqrt_difference": "S7",
+"regular_polygon_chord_product": "S9",
+"abs_sin_multiple_angle_bound": "S6",
+"reciprocal_squares_partial_sum_bound": "S7",
+"harmonic_sum_log_bounds": "S8",
+"integral_power_over_one_add_x_tends_zero": "S8",
+"integral_identity_twenty_two_sevenths_minus_pi": "S8",
+"orthocenter_vector_from_circumcenter": "S9",
+"tetrahedron_opposite_edges_perpendicular": "S9",
+"triangle_side_product_inequality": "S6",
+"triangle_sine_sum_upper_bound": "S6",
+"dice_product_multiple_of_six_count": "S5",
+"triangle_walk_return_probability": "S7"
+}
+}

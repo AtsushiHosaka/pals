@@ -1,0 +1,95 @@
+{
+  "batch": "L7",
+  "reviewed": 49,
+  "ok_ids": [
+    "arith_general_term", "arith_sum_first_last", "arith_sum_first_diff", "arith_mean_iff", "arith_iff_linear_term",
+    "arith_sum_max_at_sign_change", "arith_symmetric_pair", "arith_every_other_step", "arith_common_terms_lcm",
+    "geom_general_term", "geom_sum_ne_one", "geom_mean_iff", "arith_geom_sum", "sum_natural_numbers",
+    "sum_squares_formula", "sum_cubes_nicomachus", "sum_linearity_with_constant", "sum_consecutive_product",
+    "sum_index_shift", "sum_range_difference", "periodic_sequence_sum", "telescoping_sum",
+    "difference_sequence_general_term", "partial_fraction_consecutive", "partial_fraction_arith",
+    "telescoping_sqrt_rationalize", "term_from_partial_sum", "quadratic_sum_arith_iff", "sum_linear_in_term_ratio",
+    "recur_fixed_point", "recur_first_order_solution", "recur_divide_by_power", "recur_power_forcing_distinct",
+    "recur_power_forcing_resonant", "recur_linear_forcing", "recur_reciprocal_transform", "recur_log_transform",
+    "three_term_factorization", "three_term_double_root", "three_term_uniqueness", "three_term_integer_valued",
+    "two_step_induction", "recur_invariant_interval", "recur_inequality_geometric_bound", "int_sub_dvd_pow_sub_pow",
+    "group_unique_block", "group_triangular_location", "group_sum_natural_numbers"
+  ],
+  "findings": [
+    {
+      "id": "sum_reverse_order",
+      "home": "S7",
+      "used": "S10",
+      "severity": "minor",
+      "tools": [
+        {
+          "tool": "全単射（写像の用語。高校の教科書には出ない）",
+          "stage": "S10",
+          "where": "答案の第3文「全単射である」",
+          "replaceable": true
+        }
+      ],
+      "fix": "写像の用語を使わず、項を実際に書き並べて「同じ項が逆順に並ぶだけ」と述べれば足りる。内容は元の論法と同じで、用語だけの問題。",
+      "patch": {
+        "answer": "$(a_k)$を実数列、$n$を自然数とする。$k=1,2,\\dots,n$に対する$a_{n+1-k}$を順に書くと、$a_n,\\ a_{n-1},\\ \\dots,\\ a_1$である。これは$a_1,\\ a_2,\\ \\dots,\\ a_n$を逆の順に並べたもので、同じ$n$個の項が一度ずつ現れる。有限個の数の和は加える順序によらないので、$\\sum_{k=1}^{n}a_{n+1-k}=\\sum_{k=1}^{n}a_k$である。\n"
+      },
+      "keep_as_advanced": false
+    }
+  ],
+  "systematic": [
+    "全カードが数B（S7）の数列単元で、道具の段階は S7 以内に収まっている。指導要領の段階表の粒度では違反は上記1件のみ。",
+    "段階表では帰納法と数列を同じ S7 とみなすため違反にならないが、実際の教科書の単元順では、等差・等比の一般項、Σの公式、階差数列、漸化式の各節が「数学的帰納法」の節より前にある。arith_general_term、arith_sum_first_last、arith_sum_first_diff、geom_general_term、sum_natural_numbers、sum_squares_formula、sum_cubes_nicomachus などは、標準解答が帰納法で書かれており、同じ章の初学者には未習の道具になる。上の段階表では検出できない順序の問題なので、章内の順序まで守る方針なら、これらの定義に近いカードは「項を書き並べる」型の解答に直す価値がある（本審査では段階表に従い違反とはしていない）。",
+    "sum_reverse_order のように、写像・全単射・単射などの大学入門の用語を一語使うだけの箇所が他のバッチにもありうる。用語の検索（全単射、写像、単射）で拾える。"
+  ],
+  "home_assignments": {
+    "arith_general_term": "S7",
+    "arith_sum_first_last": "S7",
+    "arith_sum_first_diff": "S7",
+    "arith_mean_iff": "S7",
+    "arith_iff_linear_term": "S7",
+    "arith_sum_max_at_sign_change": "S7",
+    "arith_symmetric_pair": "S7",
+    "arith_every_other_step": "S7",
+    "arith_common_terms_lcm": "S7",
+    "geom_general_term": "S7",
+    "geom_sum_ne_one": "S7",
+    "geom_mean_iff": "S7",
+    "arith_geom_sum": "S7",
+    "sum_natural_numbers": "S7",
+    "sum_squares_formula": "S7",
+    "sum_cubes_nicomachus": "S7",
+    "sum_linearity_with_constant": "S7",
+    "sum_consecutive_product": "S7",
+    "sum_index_shift": "S7",
+    "sum_range_difference": "S7",
+    "sum_reverse_order": "S7",
+    "periodic_sequence_sum": "S7",
+    "telescoping_sum": "S7",
+    "difference_sequence_general_term": "S7",
+    "partial_fraction_consecutive": "S7",
+    "partial_fraction_arith": "S7",
+    "telescoping_sqrt_rationalize": "S7",
+    "term_from_partial_sum": "S7",
+    "quadratic_sum_arith_iff": "S7",
+    "sum_linear_in_term_ratio": "S7",
+    "recur_fixed_point": "S7",
+    "recur_first_order_solution": "S7",
+    "recur_divide_by_power": "S7",
+    "recur_power_forcing_distinct": "S7",
+    "recur_power_forcing_resonant": "S7",
+    "recur_linear_forcing": "S7",
+    "recur_reciprocal_transform": "S7",
+    "recur_log_transform": "S7",
+    "three_term_factorization": "S7",
+    "three_term_double_root": "S7",
+    "three_term_uniqueness": "S7",
+    "three_term_integer_valued": "S7",
+    "two_step_induction": "S7",
+    "recur_invariant_interval": "S7",
+    "recur_inequality_geometric_bound": "S7",
+    "int_sub_dvd_pow_sub_pow": "S7",
+    "group_unique_block": "S7",
+    "group_triangular_location": "S7",
+    "group_sum_natural_numbers": "S7"
+  }
+}

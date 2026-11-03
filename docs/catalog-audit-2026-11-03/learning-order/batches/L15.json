@@ -1,0 +1,783 @@
+{
+ "batch": "L15",
+ "reviewed": 52,
+ "ok_ids": [
+  "inscribed_angle_same_side",
+  "inscribed_angle_same_side_converse",
+  "central_angle_twice_inscribed_same_side",
+  "central_angle_plus_twice_inscribed_opposite_side",
+  "cyclic_quadrilateral_opposite_angles_sum_pi",
+  "cyclic_quadrilateral_opposite_angles_converse",
+  "cyclic_quadrilateral_exterior_angle",
+  "chord_eq_two_radius_sin_inscribed_angle",
+  "equal_inscribed_angles_equal_chords",
+  "tangent_lengths_equal",
+  "tangents_center_line_bisects_angles",
+  "tangent_chord_angle",
+  "intersecting_chords_similar_ratio",
+  "two_circles_common_point_triangle_inequality",
+  "pitot_tangential_quadrilateral",
+  "triangle_incircle_tangent_length"
+ ],
+ "findings": [
+  {
+   "id": "thales_right_angle_iff_on_diameter_circle",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積（ベクトル）による ⟨A-X,B-X⟩=|XO|²-r² の展開",
+     "stage": "S9",
+     "where": "第2〜3段落。直角の判定を内積0に置き換えている",
+     "replaceable": true
+    }
+   ],
+   "fix": "二等辺三角形と内角の和（順）、点対称で作る長方形の対角線（逆）で書き替える。内積版は一般次元の復習用として別カードに残す。",
+   "patch": {
+    "answer": "$M$を$A,B$の中点、$r=AB/2$とする。$AB$を直径とする球面$s$は中心$M$、半径$r$の球面である。\n$X$が直線$AB$上にあるとき、$X\\neq A,B$なので$\\angle AXB$は$0$または$\\pi$であり、$\\pi/2$ではない。また直線$AB$上で$MX=r$となる点は$A,B$だけなので、$X\\in s$でもない。両辺とも成り立たないので同値は成り立つ。\n$X$が直線$AB$上にないとする。$A,B,X$を含む平面で考える。$M$もこの平面にある。\n$X\\in s$とする。$MX=MA=MB$なので、三角形$MAX$と$MBX$は二等辺三角形であり、$\\angle MXA=\\angle MAX$、$\\angle MXB=\\angle MBX$である。$M$は線分$AB$の内点なので$\\angle AXB=\\angle AXM+\\angle MXB=\\angle XAB+\\angle XBA$である。三角形$ABX$の内角の和より$2\\angle AXB=\\pi$であり、$\\angle AXB=\\pi/2$である。\n逆に$\\angle AXB=\\pi/2$とする。$X$について$M$と点対称な点を$X'$とすると、四角形$AXBX'$は対角線が互いに他を二等分するので平行四辺形であり、$\\angle AXB=\\pi/2$なので長方形である。長方形の対角線は等しいので$XX'=AB$であり、$MX=XX'/2=r$である。よって$X\\in s$である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "right_angle_on_circle_chord_is_diameter",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積による MA=MB=MX の導出",
+     "stage": "S9",
+     "where": "第2段落 ⟨A-X,B-X⟩=‖x‖²-‖a‖²",
+     "replaceable": true
+    },
+    {
+     "tool": "3点から等距離の点の一意性（垂直二等分線の交点）",
+     "stage": "S3",
+     "where": "第3段落。これは中学の範囲",
+     "replaceable": true
+    }
+   ],
+   "fix": "中点で点対称な点を取り、長方形の対角線の長さから MX=MA=MB を出す。",
+   "patch": {
+    "answer": "平面上の中心$O$の円の上に点$A,B,X$をとり、$X\\neq A,B$、$\\angle AXB=\\pi/2$とする。$A=B$なら$\\angle AXB=0$となるので$A\\neq B$であり、$\\angle AXB=\\pi/2$より$A,B,X$は一直線上にない。\n$M$を$A,B$の中点とし、$X$について$M$と点対称な点を$X'$とする。四角形$AXBX'$は対角線$AB,XX'$が互いに他を二等分するので平行四辺形であり、$\\angle AXB=\\pi/2$なので長方形である。長方形の対角線は等しいので$AB=XX'$であり、$MX=XX'/2=AB/2=MA=MB$である。\n$O$は$A,X$から等距離なので線分$AX$の垂直二等分線上にあり、$B,X$から等距離なので線分$BX$の垂直二等分線上にある。$M$も$MA=MX$、$MB=MX$なのでこの2直線上にある。$A,B,X$は一直線上にないので2直線は平行でなく、交点はただ1つである。よって$O=M$であり、$O$は線分$AB$の中点である。すなわち$AB$は直径である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "angle_on_diameter_inside_outside",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積による cos∠AXB の符号判定",
+     "stage": "S9",
+     "where": "第2段落 ⟨A-X,B-X⟩=XO²-r²",
+     "replaceable": true
+    }
+   ],
+   "fix": "余弦定理（数I）と中線定理で XO²-r² の符号に直す。直線AB上のXと A=B は場合分けで補う。内積版は別カードに残す。",
+   "patch": {
+    "answer": "$AB$は直径なので、$O$は$A,B$の中点であり$OA=OB=r$である。$A=B$のときは$r=0$、$O=A$で、$X\\neq A$より$\\angle AXB=0<\\pi/2$かつ$XO>0=r$なので、2つの同値はどちらも成り立つ。\n以下$A\\neq B$とする。$X$が直線$AB$上にあるとき、$X$が線分$AB$の内点なら$\\angle AXB=\\pi$かつ$XO<r$、外にあれば$\\angle AXB=0$かつ$XO>r$である。いずれの場合も2つの同値は成り立つ。\n$X$が直線$AB$上にないとき、$A,B,X$を含む平面で考える。三角形$XAB$に余弦定理を用いると$AB^2=XA^2+XB^2-2XA\\cdot XB\\cos\\angle AXB$である。$O$は$AB$の中点なので中線定理より$XA^2+XB^2=2XO^2+2r^2$であり、$AB^2=4r^2$である。よって$2XA\\cdot XB\\cos\\angle AXB=2XO^2+2r^2-4r^2=2(XO^2-r^2)$である。$XA\\cdot XB>0$なので、$\\cos\\angle AXB$の符号は$XO^2-r^2$の符号に等しい。\n$0<\\angle AXB<\\pi$なので、$\\cos\\angle AXB<0$は$\\angle AXB>\\pi/2$と同値で、$\\cos\\angle AXB>0$は$\\angle AXB<\\pi/2$と同値である。$XO,r\\geq0$なので$XO^2-r^2$の符号は$XO-r$の符号に等しい。以上で2つの同値が得られる。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "two_right_angles_on_segment_concyclic",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積による |UM|=r の導出",
+     "stage": "S9",
+     "where": "第2段落 0=⟨A-U,B-U⟩=‖u‖²-‖a‖²",
+     "replaceable": true
+    }
+   ],
+   "fix": "点対称で長方形を作り、対角線が等しいことから MU=AB/2 を出す。",
+   "patch": {
+    "answer": "$M$を$A,B$の中点、$r=AB/2$とする。$U$を$X$または$Y$とする。$\\angle AUB=\\pi/2$なので$A\\neq B$であり、$A,B,U$は一直線上にない。\n$U$について$M$と点対称な点を$U'$とすると、四角形$AUBU'$は対角線が互いに他を二等分するので平行四辺形であり、$\\angle AUB=\\pi/2$なので長方形である。長方形の対角線は等しいので$UU'=AB$であり、$MU=UU'/2=r$である。よって$X,Y$は中心$M$、半径$r$の球面の上にある。$A,B$もこの球面の上にあるので、4点は同一球面上にある。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "altitude_to_diameter_geometric_mean",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルによる H-O=tu の置換と成分計算",
+     "stage": "S9",
+     "where": "第1〜2段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "三平方の定理 XO²=XH²+HO² と、HA,HB が r∓HO であることから従う。",
+   "patch": {
+    "answer": "中心$O$、半径$r$の球面で$AB$は直径なので、$O$は$A,B$の中点であり$OA=OB=r$である。$H$は直線$AB$上の点で$XH\\perp AB$（$X=H$のときは$XH=0$）である。$O$も直線$AB$上にあるので、三平方の定理より$XO^2=XH^2+HO^2$である（$X=H$や$H=O$の場合も成り立つ）。$XO=r$なので$XH^2=r^2-HO^2$である。\n特に$HO\\leq r$なので、$H$は線分$AB$上にあり、$HA,HB$は$r-HO$と$r+HO$（順不同）である。したがって$HA\\cdot HB=r^2-HO^2=XH^2$である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "parallel_chords_equal_cross_chords",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積による距離の展開",
+     "stage": "S9",
+     "where": "第3〜4段落 ‖a+u‖²、‖c+ku‖² の展開",
+     "replaceable": true
+    }
+   ],
+   "fix": "平行な弦の垂直二等分線は共通で、中心を通る。この線に関する線対称が A↔B、C↔D を入れ替える。",
+   "patch": {
+    "answer": "直線$AB$と$CD$は平行なので、4点$A,B,C,D$は1つの平面にある。この平面と球面の共通部分は円であり、$A,B,C,D$はこの円の上にある。この円の中心を$P$とする。\n$\\ell$を線分$AB$の垂直二等分線とする。円の弦の垂直二等分線は中心を通るので$P$は$\\ell$上にある。$\\ell\\perp AB$で$CD\\parallel AB$なので$\\ell\\perp CD$である。中心$P$を通り弦$CD$に垂直な直線は弦$CD$を二等分するので、$\\ell$は線分$CD$の垂直二等分線でもある。\nしたがって$\\ell$に関する線対称で$A\\leftrightarrow B$、$C\\leftrightarrow D$となる。この対称で線分$AC$は線分$BD$に移るので、$AC=BD$である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "chord_midpoint_perpendicular_to_center_line",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積 ⟨a+b,b-a⟩=‖b‖²-‖a‖² の計算",
+     "stage": "S9",
+     "where": "第2段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "A=B や O=M の退化を分け、それ以外は二等辺三角形OABの底辺の中点への線が垂直、という中2の性質で示す。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O$の球面の上に点$A,B$をとり、$M$を$A,B$の中点とする。$\\langle O-M,B-A\\rangle=0$は、$A=B$または$O=M$であるか、直線$OM$と直線$AB$が垂直であることを意味する。\n$A=B$のとき$B-A=0$、$O=M$のとき$O-M=0$なので成り立つ。$A\\neq B$かつ$O\\neq M$とする。$O$が直線$AB$上にあるなら、$OA=OB$と$A\\neq B$より$O$は$A,B$の中点$M$になり、$O\\neq M$に反する。よって$O$は直線$AB$上にない。三角形$OAB$は$OA=OB$の二等辺三角形で、$M$は底辺$AB$の中点である。三角形$OAM$と$OBM$は3辺が等しいので合同で、$\\angle OMA=\\angle OMB$である。この2角の和は$\\pi$なので、どちらも$\\pi/2$であり、$OM\\perp AB$である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "perpendicular_from_center_bisects_chord",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積とベクトルの実数倍による H=M の導出",
+     "stage": "S9",
+     "where": "第2〜3段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "三平方の定理で HA²=OA²-OH²=OB²-OH²=HB² を出し、直線上で両端から等距離の点は中点、と書く。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O$の球面の上に相異なる点$A,B$をとり、直線$AB$上の点$H$は$O=H$であるか$OH\\perp AB$であるとする（これが$\\langle O-H,B-A\\rangle=0$の意味である）。\n$A,B$は直線$AB$上にあるので、三平方の定理より$OA^2=OH^2+HA^2$、$OB^2=OH^2+HB^2$である（$H=A$、$H=B$、$O=H$の退化した場合も成り立つ）。$OA=OB$なので$HA=HB$である。$H$は直線$AB$上の点で、$A\\neq B$なので、$A,B$から等距離にある直線上の点は中点だけである。よって$H$は$A,B$の中点である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "half_chord_center_distance_pythagoras",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルと中線定理（平行四辺形の法則）",
+     "stage": "S9",
+     "where": "第2段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "OM⊥AB と三平方の定理（円の弦の基本性質）で書く。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B$をとり、$M$を$A,B$の中点とする。\n$A=B$のとき$M=A$で$OM=r$、$AB=0$なので成り立つ。$A\\neq B$とする。$O$が直線$AB$上にあるなら、$OA=OB$より$O=M$で、$OM=0$、$AB/2=MA=OA=r$なので成り立つ。$O$が直線$AB$上にないなら、三角形$OAB$は二等辺三角形で$M$は底辺の中点なので$OM\\perp AB$である（3辺が等しい三角形$OAM,OBM$は合同で$\\angle OMA=\\angle OMB=\\pi/2$）。直角三角形$OMA$に三平方の定理を用いて$OM^2+MA^2=OA^2=r^2$であり、$MA=AB/2$なので$OM^2+(AB/2)^2=r^2$である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "equal_chords_iff_equal_center_distance",
+   "home": "S4",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルの平行四辺形の法則による OM²+(AB/2)²=r²",
+     "stage": "S9",
+     "where": "第2段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "OM²+(AB/2)²=r² を三平方の定理で示せば、後半の同値は答案どおりに続く。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B,C,D$をとり、$M,N$を$AB,CD$の中点とする。\nまず$OM^2+(AB/2)^2=r^2$を示す。$A=B$のとき$M=A$で$OM=r$、$AB=0$なので成り立つ。$A\\neq B$のとき、$O$が直線$AB$上にあれば$OA=OB$より$O=M$で、$AB/2=r$なので成り立つ。$O$が直線$AB$上になければ、二等辺三角形$OAB$で$OM\\perp AB$なので、直角三角形$OMA$に三平方の定理を用いて$OM^2+MA^2=OA^2=r^2$であり、$MA=AB/2$なので成り立つ。同様に$ON^2+(CD/2)^2=r^2$である。\nよって$AB=CD$なら$OM^2=ON^2$であり、距離は非負なので$OM=ON$である。逆に$OM=ON$なら$(AB/2)^2=(CD/2)^2$であり、$AB=CD$である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "equal_chords_iff_equal_central_angles",
+   "home": "S3",
+   "used": "S4",
+   "severity": "minor",
+   "tools": [
+    {
+     "tool": "余弦定理と cos の単射性（[0,π]）",
+     "stage": "S4",
+     "where": "第2〜3段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "弦の長さが 0, 2r, その間の3場合に分け、中間の場合は三角形の合同条件（3辺・2辺夾角）で示す。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r>0$の球面の上に点$A,B,C,D$をとる。球面上の2点$X,Y$を次の3つの場合に分ける。(i) $X=Y$のとき、$\\angle XOY=0$、$XY=0$である。(ii) $O$が$X,Y$の中点のとき、$\\angle XOY=\\pi$、$XY=2r$である。(iii) それ以外のとき、$O,X,Y$は一直線上にない（一直線上にあると、$OX=OY=r>0$より$X=Y$か(ii)になる）。このとき$0<\\angle XOY<\\pi$であり、$0<XY<2r$である（$XY=2r$は$O$が中点であることと同値で、$XY\\leq2r$は三角不等式による）。\n$\\angle XOY$の値（$0$、$\\pi$、その間）からも、$XY$の値（$0$、$2r$、その間）からも、$(X,Y)$がどの場合に属するかが決まる。したがって$AB=CD$と$\\angle AOB=\\angle COD$のどちらを仮定しても、$(A,B)$と$(C,D)$は同じ場合に属する。(i)なら両辺とも$0$、(ii)なら$AB=CD=2r$かつ$\\angle AOB=\\angle COD=\\pi$なので、結論は成り立つ。(iii)のとき、三角形$OAB$と$OCD$は$OA=OC$、$OB=OD$を満たす。$AB=CD$なら3辺が等しいので合同で、$\\angle AOB=\\angle COD$である。$\\angle AOB=\\angle COD$なら2辺とその間の角が等しいので合同で、$AB=CD$である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "chord_le_diameter_eq_iff",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "平行四辺形の法則（ベクトル）による等号条件",
+     "stage": "S9",
+     "where": "第2段落の逆向き",
+     "replaceable": true
+    }
+   ],
+   "fix": "三角形の2辺の和が残りの辺より大きいことと、その等号が一直線の場合に限ることで書く。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B$をとる。三角不等式より$AB\\leq AO+OB=2r$である。\n$AB$が直径、すなわち$O$が$A,B$の中点なら$AB=AO+OB=2r$である。逆に$AB=2r$とする。$A,O,B$が一直線上にないなら、三角形$AOB$で2辺の和は残りの辺より大きいので$AB<AO+OB=2r$となり矛盾する。よって一直線上にある。直線上で$AB=AO+OB$なら$O$は線分$AB$上にあり、$AO=OB=r$なので$O$は$A,B$の中点である。すなわち$AB$は直径である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "point_on_chord_strictly_between_iff_inside",
+   "home": "S4",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "パラメータ表示と内積の展開 ‖x+tu‖²",
+     "stage": "S9",
+     "where": "第1〜2段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "中点Mを用いた OP²=OM²+MP²（三平方）で HO<r を MH<MA に直す。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に相異なる点$A,B$をとり、$H$を直線$AB$上の点とする。$M$を$A,B$の中点とする。\n$O$が直線$AB$上にあれば、$OA=OB$と$A\\neq B$より$O=M$である。そうでなければ二等辺三角形$OAB$で$OM\\perp AB$である。どちらの場合も、直線$AB$上の任意の点$P$について、三平方の定理から$OP^2=OM^2+MP^2$である（$P=M$のときも成り立つ）。$P=A$として$r^2=OM^2+MA^2$、$P=H$として$HO^2=OM^2+MH^2$を得る。\n$HO,r\\geq0$なので、$HO<r$は$MH<MA$と同値である。直線$AB$上で、$M$は$A,B$の中点なので、$MH<MA$は$H$が$A$と$B$の間に真にあることと同値である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "tangent_iff_perpendicular_radius",
+   "home": "S3",
+   "used": "S9",
+   "severity": "note",
+   "tools": [
+    {
+     "tool": "内積による接線の定義と直角の判定",
+     "stage": "S9",
+     "where": "題意そのもの（接線を ⟨U-T,T-O⟩=0 で定義している）",
+     "replaceable": false
+    }
+   ],
+   "fix": "題意が内積で定義した接線に依存していて、答案はその定義の言い換えにとどまる。接線を『半径に垂直な直線』と幾何学的に定義し直すか、内積定義のままなら level を high に上げる。",
+   "keep_as_advanced": false
+  },
+  {
+   "id": "tangent_iff_unique_common_point",
+   "home": "S3",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積による直線と球面の共有点の二次方程式",
+     "stage": "S9",
+     "where": "第2〜3段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "接線上の他の点は三平方で円の外、接しない直線は垂線の足に関して接点と対称な点が第二の共有点、という中3の議論で書く。",
+   "patch": {
+    "answer": "$T=O$のとき、球面は点$T$だけなので共有点は$T$だけであり、接する条件も常に成り立つので同値は成り立つ。以下$T\\neq O$とする。直線$TX$と$O$を含む平面で考える。接するとは、直線が半径$OT$に垂直であることである。\n直線$TX$が$T$で接するとする。直線上の点$U\\neq T$について、三平方の定理から$OU^2=OT^2+TU^2>OT^2$なので、$U$は球面上にない。よって共有点は$T$だけである。\n逆に直線$TX$が$OT$に垂直でないとする。$O$から直線に下ろした垂線の足を$H$とすると$H\\neq T$である。直線上で$H$について$T$と対称な点$T'$をとると、$T'\\neq T$であり、$OH$が線分$TT'$の垂直二等分線になる（$H=O$のときは$O$が中点）ので$OT'=OT$である。よって$T'$も共有点であり、共有点は$T$だけではない。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "tangent_iff_length_sq_eq_power",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積による QO²=QT²+2⟨Q-T,T-O⟩+r² の展開",
+     "stage": "S9",
+     "where": "第2段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "三平方の定理とその逆で QO²=QT²+r² ⇔ ∠OTQ=π/2 と直し、O,T,Q が一直線上の場合は別に処理する。",
+   "patch": {
+    "answer": "$r=0$なら$T=O$で、直線$QT$は常に$T$で接し、$QT^2=QO^2-r^2$も成り立つので同値である。以下$r>0$とする。\n$O,T,Q$が一直線上にないとき、三角形$OTQ$について、三平方の定理とその逆により$QO^2=QT^2+TO^2$は$\\angle OTQ=\\pi/2$と同値である。$TO=r$なので、$QT^2=QO^2-r^2$は$\\angle OTQ=\\pi/2$、すなわち直線$QT$が半径$OT$に垂直であること（$T$で接すること）と同値である。\n$O,T,Q$が一直線上にあるとき、直線$QT$は直線$OT$に等しいので半径に垂直でなく、接しない。このとき$QO$は$QT+r$、$r-QT$、$QT-r$のいずれかに等しく、$QO^2-QT^2-r^2$は$2r\\,QT$または$-2r\\,QT$になる。$r>0$、$QT>0$なのでこれは$0$にならず、$QT^2=QO^2-r^2$も成り立たない。両辺とも成り立たないので同値は成り立つ。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "contact_chord_perpendicular_bisected_by_center_line",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積による等距離点の直交性、1次元空間の議論",
+     "stage": "S9",
+     "where": "第2〜3段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "Q と O はどちらも A,B から等距離なので AB の垂直二等分線上にあり、Q≠O から直線QOがそれに一致する。",
+   "patch": {
+    "answer": "平面上の中心$O$、半径$r>0$の円をとる。$A\\neq B$、$Q\\neq A,B$で、直線$QA$が$A$で、直線$QB$が$B$で接するとする。\n接線は半径に垂直なので、三平方の定理より$QA^2=QO^2-r^2=QB^2$であり、$QA=QB$である。また$OA=OB=r$である。線分$AB$の両端から等距離にある点は線分$AB$の垂直二等分線$\\ell$上にあるので、$Q,O$はともに$\\ell$上にある。$QO^2=QA^2+r^2>r^2$より$Q\\neq O$なので、直線$QO$は$\\ell$に一致する。よって直線$QO$は弦$AB$に垂直で、$AB$の中点を通る。すなわち$\\langle Q-O,B-A\\rangle=0$であり、$A,B$の中点は直線$QO$上にある。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "tangent_chord_angle_converse",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積による B が接線上にないことの確認",
+     "stage": "S9",
+     "where": "第2段落 ⟨B-A,A-O⟩=-½‖B-A‖²",
+     "replaceable": true
+    }
+   ],
+   "fix": "接線上の A 以外の点は三平方で円の外にある、という事実で B∉ℓ を示す。残りは答案のまま。",
+   "patch": {
+    "answer": "平面上の中心$O$の円の上に点$A,B,C$をとり、$A\\neq B$とする。$T,C$は直線$AB$の反対側にあり直線上になく、$\\angle TAB=\\angle ACB$とする。ここで直線が円に$A$で接するとは、半径$OA$に垂直な直線であることとする。\n$A\\neq B$より半径は正である。$A$を通り$OA$に垂直な直線を$\\ell$とする。$\\ell$は$A$で円に接する。$\\ell$上の$A$と異なる点$U$については、三平方の定理より$OU^2=OA^2+AU^2>OA^2$なので$U$は円上にない。よって$B\\neq A$は$\\ell$上にない。したがって$\\ell$は直線$AB$と$A$だけで交わり、$\\ell$上には$T$と同じ側の点$T'$がある。\n$T',C$は直線$AB$の反対側にあるので、接弦定理（$A$での接線上の点$T'$と円の上の点$C$が直線$AB$の反対側にあるとき$\\angle T'AB=\\angle ACB$）より、$\\angle T'AB=\\angle ACB=\\angle TAB$である。$T,T'$は直線$AB$の同じ側にあり、半直線$AB$となす角が等しいので、半直線$AT$と半直線$AT'$は一致する。したがって$T$は$\\ell$上にあり、直線$AT$は$\\ell$に等しい。よって直線$AT$は$A$で円に接する。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "foot_distance_eq_radius_iff_tangent",
+   "home": "S5",
+   "used": "S9",
+   "severity": "note",
+   "tools": [
+    {
+     "tool": "内積による垂線の足と接線の定義",
+     "stage": "S9",
+     "where": "仮定 ⟨O-H,Y-X⟩=0 と答案全体",
+     "replaceable": false
+    }
+   ],
+   "fix": "仮定と接線の定義が内積で書かれ、答案はその言い換えにとどまる。『Hは垂線の足、接するとは半径に垂直』という幾何学的な定義で書き直すと一行で終わる。",
+   "keep_as_advanced": false
+  },
+  {
+   "id": "power_value_inside_chord",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "パラメータ表示と内積の展開",
+     "stage": "S9",
+     "where": "第2段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "OM⊥AB と三平方で OP²=OM²+MP² を作り、HA·HB=MA²-MH² に帰着させる。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B$をとり、$H$は$A$と$B$の間に真にあるとする。$A\\neq B$であり、$M$を$A,B$の中点とする。\n$O$が直線$AB$上にあれば$OA=OB$より$O=M$であり、そうでなければ二等辺三角形$OAB$で$OM\\perp AB$である。どちらの場合も、直線$AB$上の点$P$について三平方の定理から$OP^2=OM^2+MP^2$である（$P=M$でも成り立つ）。$P=A$、$P=H$として$r^2=OM^2+MA^2$、$HO^2=OM^2+MH^2$を得る。\n$H$は$A,B$の間に真にあるので$x=MH$とおくと$0\\leq x<MA$であり、$HA,HB$は$MA-x$と$MA+x$（順不同）である。よって$HA\\cdot HB=MA^2-x^2=r^2-HO^2$である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "power_value_outside_secant",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "パラメータ表示と内積の展開",
+     "stage": "S9",
+     "where": "第2〜3段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "同じく OP²=OM²+MP² から HA·HB=MH²-MA²=HO²-r²。A=B は別扱い。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B$をとり、$H$は$A,B$のアフィン包に属し$HO\\geq r$とする。\n$A=B$のとき$H=A$で、$HA\\cdot HB=0$、$HO=r$なので$HA\\cdot HB=HO^2-r^2$が成り立つ。$A\\neq B$とし、$M$を$A,B$の中点とする。$O$が直線$AB$上にあれば$O=M$であり、そうでなければ二等辺三角形$OAB$で$OM\\perp AB$である。どちらの場合も、直線$AB$上の点$P$について三平方の定理から$OP^2=OM^2+MP^2$である。$P=A$、$P=H$として$r^2=OM^2+MA^2$、$HO^2=OM^2+MH^2$を得る。$HO\\geq r$より$MH\\geq MA$である。したがって$H$は線分$AB$の外または端点にあり、$HA,HB$は$MH-MA$と$MH+MA$（順不同）である。$HA\\cdot HB=MH^2-MA^2=HO^2-r^2$である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "tangent_secant_power",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積による QO²-r²=(t²-t)‖u‖² の展開",
+     "stage": "S9",
+     "where": "第3段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "接線の三平方 QO²=QT²+r² と、割線側の QA·QB=QO²-r²（OM⊥AB と三平方）を合わせる。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B$をとり、$Q$は$A,B$のアフィン包に属し、$Q\\neq T$で直線$QT$は$T$で接するとする。直線$QT$は半径$OT$に垂直なので、三平方の定理より$QO^2=QT^2+r^2$である。特に$QO\\geq r$である。\n$A=B$のとき$Q=A$は球面上にあり$QO=r$だが、$QT^2=QO^2-r^2=0$は$Q\\neq T$に反する。よってこの場合は起こらない。$A\\neq B$とし、$M$を$A,B$の中点とする。$O$が直線$AB$上にあれば$O=M$であり、そうでなければ二等辺三角形$OAB$で$OM\\perp AB$である。どちらの場合も、直線$AB$上の点$P$について三平方の定理から$OP^2=OM^2+MP^2$である。$P=A$、$P=Q$として$r^2=OM^2+MA^2$、$QO^2=OM^2+MQ^2$を得る。$QO\\geq r$より$MQ\\geq MA$なので、$QA,QB$は$MQ-MA$と$MQ+MA$（順不同）である。したがって$QA\\cdot QB=MQ^2-MA^2=QO^2-r^2=QT^2$である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "tangent_secant_converse",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積とパラメータによる w=QA·QB の導出",
+     "stage": "S9",
+     "where": "第2段落",
+     "replaceable": true
+    },
+    {
+     "tool": "内積による接線の判定",
+     "stage": "S9",
+     "where": "第3段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "割線の方べきの定理で QO²-r²=QA·QB とし、三平方の定理の逆で QT⊥OT を得る。O,T,Q 共線の場合は別に否定する。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B,T$をとり、$A$は$Q$と$B$の間に真にあり、$QT^2=QA\\cdot QB$とする。$A\\neq B$なので$r>0$である。\n$A$が$Q$と$B$の間に真にあるので、$Q$は線分$AB$の外にあり、$QA>0$、$QB>0$である。円の内部にある直線$AB$上の点は線分$AB$の内点だけなので、$QO\\geq r$である。方べきの定理（割線の形。$Q$が球面の外部または球面上にあるとき$QA\\cdot QB=QO^2-r^2$）より$QO^2-r^2=QA\\cdot QB$である。仮定と合わせて$QT^2=QO^2-r^2>0$、すなわち$Q\\neq T$で$QO^2=QT^2+TO^2$である。\n$O,T,Q$が一直線上にないなら、三平方の定理の逆より$\\angle OTQ=\\pi/2$なので、直線$QT$は$T$で接する。一直線上にあるとすると、$QO$は$QT+r$、$r-QT$、$QT-r$のいずれかに等しく、$QO^2-QT^2-r^2$は$2r\\,QT$または$-2r\\,QT$になる。$r>0$、$QT>0$なのでこれは$0$にならず、$QO^2=QT^2+TO^2$に反する。よって一直線上にはなく、直線$QT$は$T$で接する。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "intersecting_chords_converse",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積による D の球面上の確認",
+     "stage": "S9",
+     "where": "第3〜4段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "A,B,C を通る円と直線CHの第2交点 D' を取り、方べきの定理で HD'=HD から D=D'。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、点$H$は$A,B$の間と$C,D$の間に真にあり、$A,H,C$は一直線上になく、$AH\\cdot BH=CH\\cdot DH$とする。\n$A,B,C$は一直線上にない。一直線上なら$H,C$がともに直線$AB$上にあり、$A,H,C$が一直線上になるからである。$A,B,C$を含む平面を$P$とし、$P$上で$A,B,C$を通る円を$\\Gamma$とする。$H$は弦$AB$の内点なので$\\Gamma$の内部にある。$D$は直線$CH$上にあるので$P$上にある。\n直線$CH$は$\\Gamma$と$C$以外にもう1点$D'$で交わり、$H$は$C$と$D'$の間にある。交わる弦の定理（方べきの定理）より$CH\\cdot D'H=AH\\cdot BH=CH\\cdot DH$である。$CH>0$なので$D'H=DH$である。$D,D'$はどちらも$H$から見て$C$と反対側にあるので$D=D'$である。よって$D$は$\\Gamma$の上にあり、$A,B,C,D$は同一円周上にある。この円を大円とする球面を考えれば、4点は同一球面上にある。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "secants_converse",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積による D の球面上の確認",
+     "stage": "S9",
+     "where": "第3段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "A,B,C を通る円と直線QCの第2交点 D' を取り、方べきの定理で QD'=QD から D=D'。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、$A$は$Q$と$B$の間に、$C$は$Q$と$D$の間に真にあり、$Q,A,C$は一直線上になく、$QA\\cdot QB=QC\\cdot QD$とする。\n$A,B,C$は一直線上にない。一直線上なら$Q,C$がともに直線$AB$上にあり、$Q,A,C$が一直線上になるからである。$A,B,C$を含む平面を$P$とし、$P$上で$A,B,C$を通る円を$\\Gamma$とする。$Q$は直線$AB$上にあるので$P$上にある。$Q$は線分$AB$の外にあり、$\\Gamma$上にもない（$\\Gamma$上なら$Q=A$または$B$となるため）ので、$\\Gamma$の外部にある。$D$は直線$QC$上にあるので$P$上にある。\n直線$QC$と$\\Gamma$の共有点は$C$と、もう1点$D'$である（接するときは$D'=C$とする）。$Q$は外部の点なので、$C,D'$は$Q$から見て同じ側にある。方べきの定理より$QC\\cdot QD'=QA\\cdot QB=QC\\cdot QD$であり、$QC>0$なので$QD'=QD$である。$D,D'$はどちらも$Q$から出る同じ半直線上にあるので$D=D'$である。よって$D$は$\\Gamma$の上にあり、$A,B,C,D$は同一円周上にある。この円を大円とする球面を考えれば、4点は同一球面上にある。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "common_chord_perpendicular_bisected_by_center_line",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積と1次元空間の議論",
+     "stage": "S9",
+     "where": "第2〜3段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "O1,O2 は A,B から等距離なので垂直二等分線上にあり、O1≠O2 なので直線 O1O2 がそれに一致する。",
+   "patch": {
+    "answer": "平面上に中心$O_1\\neq O_2$の2円をとり、相異なる点$A,B$を共有するとする。$M$を$A,B$の中点とし、$\\ell$を線分$AB$の垂直二等分線とする。$O_1A=O_1B$、$O_2A=O_2B$なので、$O_1,O_2$はどちらも$\\ell$上にある。$O_1\\neq O_2$なので、直線$O_1O_2$は$\\ell$に一致する。よって直線$O_1O_2$は$AB$に垂直で、$AB$の中点$M$を通る。すなわち$\\langle O_2-O_1,B-A\\rangle=0$であり、$A,B$の中点は直線$O_1O_2$上にある。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "two_circles_at_most_two_common_points",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "原点を固定した内積による根軸の方程式（直線の方程式）",
+     "stage": "S9",
+     "where": "第3段落",
+     "replaceable": true
+    },
+    {
+     "tool": "パラメータ表示による直線と円の交点",
+     "stage": "S6",
+     "where": "第4段落 t(t-1)‖B-A‖²=0",
+     "replaceable": true
+    }
+   ],
+   "fix": "第3の共有点があれば、一直線上にない3点を通る円は1つなので2円が一致して矛盾、と書く。",
+   "patch": {
+    "answer": "平面上の相異なる2円が、相異なる点$A,B$と点$Q$をすべて共有するとし、$Q\\neq A$かつ$Q\\neq B$と仮定する。\n円と直線の共有点は高々2個なので、$A,B,Q$は一直線上にない。一直線上にない3点を通る円はただ1つである（中心は$AB$と$AQ$の垂直二等分線の交点で、この2直線は平行でないので1点に定まり、半径は中心から$A$までの距離に等しい）。2円はどちらも$A,B,Q$を通るので一致し、「2円は異なる」に反する。よって$Q=A$または$Q=B$である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "externally_tangent_iff_center_distance",
+   "home": "S5",
+   "used": "S9",
+   "severity": "minor",
+   "tools": [
+    {
+     "tool": "ベクトル記法による内分点",
+     "stage": "S9",
+     "where": "第3段落 T=O1+(r1/(r1+r2))(O2-O1)（推論は距離の加法だけ）",
+     "replaceable": true
+    }
+   ],
+   "fix": "内分点を『線分を r1:r2 に内分する点』と書けばよい。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2$の2つの球面をとる。外接するとは、共有点$T$で線分$O_1O_2$上にあるものが存在することである。\n外接するとき、$r_1=O_1T\\geq0$、$r_2=O_2T\\geq0$であり、$T$が線分上にあるので$O_1O_2=O_1T+TO_2=r_1+r_2$である。\n逆に$O_1O_2=r_1+r_2$、$r_1,r_2\\geq0$とする。$r_1+r_2=0$なら$r_1=r_2=0$、$O_1=O_2$であり、$T=O_1$が条件を満たす。$r_1+r_2>0$なら、線分$O_1O_2$を$r_1:r_2$に内分する点を$T$とする。$T$は線分上にあり、$O_1T=r_1$、$O_2T=r_2$である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "internally_tangent_iff_center_distance",
+   "home": "S5",
+   "used": "S9",
+   "severity": "minor",
+   "tools": [
+    {
+     "tool": "ベクトル記法による点の構成、単位ベクトル",
+     "stage": "S9",
+     "where": "第3段落 T=O1+r1·e、T=O2+(r2/d)(O1-O2)（推論は距離の加法だけ）",
+     "replaceable": true
+    }
+   ],
+   "fix": "半直線O2O1上で O2T=r2 となる点、と書き替える。",
+   "patch": {
+    "answer": "$0$でない実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2$の2つの球面をとる。第1が第2に内接するとは、共有点$T$で$O_1$が線分$O_2T$上にあるものが存在することである。\n内接するとき、$r_1,r_2\\geq0$であり、$O_2T=O_2O_1+O_1T$より$O_1O_2=r_2-r_1$である。\n逆に$O_1O_2=r_2-r_1$、$r_1,r_2\\geq0$とする。$O_1=O_2$なら$r_1=r_2$で2つの球面は一致する。空間が$0$でないので、$O_1$から距離$r_1$にある点$T$が存在し、$T$は共有点で、$O_1=O_2$は線分$O_2T$の端点にある。$O_1\\neq O_2$なら$d=O_1O_2>0$とし、半直線$O_2O_1$上に$O_2T=r_2$となる点$T$をとる。$r_2=r_1+d\\geq d$なので$O_1$は線分$O_2T$上にあり、$O_1T=r_2-d=r_1$である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "externally_tangent_unique_common_point",
+   "home": "S5",
+   "used": "S10",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積とコーシー・シュワルツの等号条件",
+     "stage": "S10",
+     "where": "第3段落（一般の内積空間のコーシー・シュワルツ）",
+     "replaceable": true
+    }
+   ],
+   "fix": "三角形の2辺の和が残りの辺より大きいことの等号（共線）で、共有点が線分O1O2上にあることを示す。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2>0$の2つの球面をとり、$d=O_1O_2=r_1+r_2$とする。$d>r_1$なので、線分$O_1O_2$上に$O_1T=r_1$となる点$T$がある。$TO_2=d-r_1=r_2$なので、$T$は共有点である。\n$Q$を共有点とする。$O_1Q=r_1$、$QO_2=r_2$より$O_1Q+QO_2=d=O_1O_2$である。$O_1,Q,O_2$が一直線上にないなら、三角形の2辺の和は残りの辺より大きいので$O_1Q+QO_2>O_1O_2$となり矛盾する。よって一直線上にある。直線上で$O_1Q+QO_2=O_1O_2$なら$Q$は線分$O_1O_2$上にあり、$O_1Q=r_1$なので$Q=T$である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "internally_tangent_unique_common_point",
+   "home": "S5",
+   "used": "S10",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積とコーシー・シュワルツの等号条件",
+     "stage": "S10",
+     "where": "第3段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "O2Q=O2O1+O1Q から O1 が線分 O2Q 上にあることを三角不等式の等号で出す。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$0<r_1<r_2$の2つの球面をとり、$d=O_1O_2=r_2-r_1>0$とする。半径$O_2O_1$の延長を考え、半直線$O_2O_1$上に$O_2T=r_2$となる点$T$をとる。$d<r_2$なので$O_1$は線分$O_2T$上にあり、$O_1T=r_2-d=r_1$である。よって$T$は共有点である。\n$Q$を共有点とする。$O_1Q=r_1$、$O_2Q=r_2=d+r_1$より$O_2Q=O_2O_1+O_1Q$である。$O_2,O_1,Q$が一直線上にないなら、三角形の2辺の和は残りの辺より大きいので$O_2Q<O_2O_1+O_1Q$となり矛盾する。よって一直線上にあり、$O_1$は線分$O_2Q$上にある。したがって$Q$は半直線$O_2O_1$上にあり、$O_2Q=r_2$なので$Q=T$である。\n"
+   },
+   "keep_as_advanced": true
+  },
+  {
+   "id": "common_tangent_at_contact_on_center_line",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルの実数倍と内積による直交性の移し替え",
+     "stage": "S9",
+     "where": "第2〜3段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "直線 TX は直線 O1O2 に垂直で、O2T は同じ直線上にある、と書く。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1>0,r_2$の2つの球面をとる。$T$は直線$O_1O_2$上で第2の球面の上にあり、$X\\neq T$、直線$TX$は第1の球面に$T$で接するとする。\n$r_1>0$より$T\\neq O_1$であり、$T$は直線$O_1O_2$上にある。直線$TX$は第1の球面に$T$で接するので、半径$O_1T$、すなわち直線$O_1O_2$に垂直である。$O_2$は直線$O_1O_2$上にあるので、$O_2=T$であるか、半径$O_2T$が直線$O_1O_2$に重なる。$O_2\\neq T$のとき、直線$TX$は半径$O_2T$に垂直である。$O_2=T$のとき$r_2=0$で、接する条件は常に成り立つ。どちらの場合も、直線$TX$は第2の球面に$T$で接する。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "two_circles_common_point_exists_in_plane",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "直角に回転したベクトル Jy、内積による座標的構成",
+     "stage": "S9",
+     "where": "第1〜3段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "3辺 d,r1,r2 の三角形の作図で T を取る。等号の3場合は線分上の点で補う。",
+   "patch": {
+    "answer": "平面上で、中心$O_1\\neq O_2$、半径$r_1,r_2>0$の2円をとり、$d=O_1O_2>0$は$|r_1-r_2|\\leq d\\leq r_1+r_2$を満たすとする。\n$|r_1-r_2|<d<r_1+r_2$のとき、3辺の長さが$d,r_1,r_2$の三角形が作図できる（三角形の成立条件）。その頂点を、長さ$d$の辺の両端が$O_1,O_2$になるようにとり、残りの頂点を$T$とすると、$TO_1=r_1$、$TO_2=r_2$である。\n$d=r_1+r_2$のとき、線分$O_1O_2$を$r_1:r_2$に内分する点を$T$とする。$d=r_2-r_1$のとき、半直線$O_2O_1$上に$O_2T=r_2$となる点$T$をとると、$O_1T=r_2-d=r_1$である。$d=r_1-r_2$のとき、半直線$O_1O_2$上に$O_1T=r_1$となる点$T$をとると、$O_2T=r_1-d=r_2$である。\nどの場合も$T$は2円の共有点である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "common_tangent_bisected_by_common_chord",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "内積によるべき乗の展開",
+     "stage": "S9",
+     "where": "第2段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "各球面について接線と割線の方べきの定理から HT1²=HA·HB=HT2²。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、2つの球面が点$A,B$を共有し、$T_1\\neq T_2$で直線$T_1T_2$は第1の球面に$T_1$で、第2の球面に$T_2$で接するとする。$H$は$A,B$のアフィン包と直線$T_1T_2$の両方に属するとする。\n$A=B$のとき$H=A$で、$H$は直線$T_1T_2$と第1の球面の共有点なので$H=T_1$である。同様に$H=T_2$となり、$T_1\\neq T_2$に反する。よってこの場合は起こらず、$A\\neq B$とする。\n$H\\neq T_1$のとき、直線$HT_1$は直線$T_1T_2$で、$T_1$で接するので、方べきの定理（接線と割線）より$HT_1^2=HA\\cdot HB$である。$H=T_1$のとき、$H$は第1の球面と直線$AB$の共有点なので$H=A$または$H=B$であり、$HT_1^2=0=HA\\cdot HB$である。同様に$HT_2^2=HA\\cdot HB$である。よって$HT_1=HT_2$である。$H$は直線$T_1T_2$上にあり、$T_1\\neq T_2$なので、$T_1,T_2$から等距離にある点は中点だけである。すなわち$H$は$T_1,T_2$の中点である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "external_common_tangent_length",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルの内積と比例の議論による ⟨u,v⟩=r1r2",
+     "stage": "S9",
+     "where": "第2〜3段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "半径が平行で同じ向きなので、長方形を作って直角三角形の三平方で書く。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2$の2つの球面をとり、$T_1\\neq T_2$の直線$T_1T_2$が第1に$T_1$で、第2に$T_2$で接し、$O_1,O_2$は直線の同じ側にあって直線上にないとする。\n$O_1,O_2$が直線の同じ側にあるので、4点$T_1,T_2,O_1,O_2$は1つの平面上にある。接線は半径に垂直なので$T_1O_1\\perp T_1T_2$、$T_2O_2\\perp T_1T_2$であり、$O_1,O_2$が同じ側にあるので、半径$T_1O_1$と$T_2O_2$は平行で同じ向きである。命題は添字の入れ替えで不変なので、$r_1\\geq r_2$としてよい。線分$T_1O_1$上に$T_1K=r_2$となる点$K$をとる。$T_1K$と$T_2O_2$は平行で長さが等しく同じ向きなので、四角形$KT_1T_2O_2$は平行四辺形であり、$\\angle KT_1T_2=\\pi/2$なので長方形である。よって$KO_2=T_1T_2$、$KO_2\\perp T_1O_1$であり、$KO_1=r_1-r_2$である。直角三角形$KO_2O_1$に三平方の定理を用いて（$K=O_1$のときは$r_1=r_2$で$O_1O_2=KO_2$）、$O_1O_2^2=T_1T_2^2+(r_1-r_2)^2$である。すなわち$T_1T_2^2=O_1O_2^2-(r_1-r_2)^2$である。\n"
+   },
+   "keep_as_advanced": false
+  },
+  {
+   "id": "internal_common_tangent_length",
+   "home": "S5",
+   "used": "S9",
+   "severity": "major",
+   "tools": [
+    {
+     "tool": "ベクトルの内積と比例の議論による ⟨u,v⟩=-r1r2",
+     "stage": "S9",
+     "where": "第2〜3段落",
+     "replaceable": true
+    }
+   ],
+   "fix": "半径が平行で反対向きなので、接点の先へ半径 r2 だけ延ばして長方形を作る。",
+   "patch": {
+    "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2$の2つの球面をとり、$T_1\\neq T_2$の直線$T_1T_2$が第1に$T_1$で、第2に$T_2$で接し、$O_1,O_2$は直線を含む平面で直線の両側にあって直線上にないとする。\n接線は半径に垂直なので$T_1O_1\\perp T_1T_2$、$T_2O_2\\perp T_1T_2$であり、$O_1,O_2$が反対側にあるので、半径$T_1O_1$と$T_2O_2$は平行で反対向きである。半直線$O_1T_1$を$T_1$の先へ延ばし、$T_1K=r_2$となる点$K$をとる。$K$は$O_2$と直線$T_1T_2$の同じ側にある。$T_1K$と$T_2O_2$は平行で長さが等しく同じ向きなので、四角形$KT_1T_2O_2$は平行四辺形であり、$\\angle KT_1T_2=\\pi/2$なので長方形である。よって$KO_2=T_1T_2$、$KO_2\\perp KO_1$であり、$T_1$は線分$KO_1$上にあるので$KO_1=r_2+r_1$である。直角三角形$KO_2O_1$に三平方の定理を用いて、$O_1O_2^2=T_1T_2^2+(r_1+r_2)^2$である。すなわち$T_1T_2^2=O_1O_2^2-(r_1+r_2)^2$である。\n"
+   },
+   "keep_as_advanced": false
+  }
+ ],
+ "systematic": [
+  "この単元の題意が『実内積空間上のアフィン空間』で書かれており、標準解答がほぼ毎回ベクトル・内積（S9）で組まれている。中3（円周角・弦・接線）と数A（方べき・接弦・2円の位置関係）の初学者向けカードとしては道具が数段階先に出ている。同じ内容は、二等辺三角形、三平方、OM⊥AB と OP²=OM²+MP²、三角不等式の等号、長方形の対角線、方べきの定理で書ける。",
+  "対策の核は『OM⊥AB（または O=M）かつ OP²=OM²+MP²（P は直線AB上）』の補題を1枚のカードにして、弦・接線・方べき・2円のカードがそれを引用する形にすること。今回のパッチも毎回この補題を再証明しているので、補題カード化すると各答案が短くなる。",
+  "内積版の一般次元の証明は、数C以降の復習用として別カードに分けて残す価値がある（keep_as_advanced=true）。ただし主張が『任意次元の球面』のままでは初学者向けの標準解答にならないので、初学者向けは『平面上の円』の主張に書き替える必要がある。",
+  "接線の定義（直線上の任意の点Uについて ⟨U-Z,Z-O'⟩=0）が接線を使う全カードの答案冒頭に内積の形で入っている。実際の推論は『接線は半径に垂直』と三平方だけのカード（tangent_lengths_equal、pitot、incircle など）が多い。これらは違反とはしなかったが、定義の一文を『半径に垂直な直線』に置き換えるだけで中3の道具に揃う。",
+  "中学のカード（inscribed_angle_*、central_angle_* など）が角を弧度法（π, 2π）で書いている。弧度法は数II（S6）の道具。題意の側がすでに π で書かれているため個別の違反にはしなかったが、中学向けは度数法（180°, 90°）に直すのが標準。",
+  "tangent_iff_perpendicular_radius と foot_distance_eq_radius_iff_tangent は、題意が内積で定義された接線の言い換えで、答案はほぼ定義の確認にとどまる（note）。定義を幾何学的に置き直すとカード自体がほぼ自明になるので、統合・削除も含めて検討が必要。",
+  "equal_chords_iff_equal_central_angles は余弦定理（S4）を中3のカードで使っている（minor）。弦の長さを 0・2r・その間に分け、合同条件で書けば S3 で完結する。"
+ ],
+ "home_assignments": {
+  "inscribed_angle_same_side": "S3",
+  "inscribed_angle_same_side_converse": "S3",
+  "central_angle_twice_inscribed_same_side": "S3",
+  "central_angle_plus_twice_inscribed_opposite_side": "S3",
+  "thales_right_angle_iff_on_diameter_circle": "S3",
+  "right_angle_on_circle_chord_is_diameter": "S3",
+  "angle_on_diameter_inside_outside": "S5",
+  "two_right_angles_on_segment_concyclic": "S5",
+  "altitude_to_diameter_geometric_mean": "S5",
+  "cyclic_quadrilateral_opposite_angles_sum_pi": "S5",
+  "cyclic_quadrilateral_opposite_angles_converse": "S5",
+  "cyclic_quadrilateral_exterior_angle": "S5",
+  "parallel_chords_equal_cross_chords": "S5",
+  "chord_eq_two_radius_sin_inscribed_angle": "S4",
+  "equal_inscribed_angles_equal_chords": "S4",
+  "chord_midpoint_perpendicular_to_center_line": "S3",
+  "perpendicular_from_center_bisects_chord": "S3",
+  "half_chord_center_distance_pythagoras": "S3",
+  "equal_chords_iff_equal_center_distance": "S4",
+  "equal_chords_iff_equal_central_angles": "S3",
+  "chord_le_diameter_eq_iff": "S3",
+  "point_on_chord_strictly_between_iff_inside": "S4",
+  "tangent_iff_perpendicular_radius": "S3",
+  "tangent_iff_unique_common_point": "S3",
+  "tangent_lengths_equal": "S3",
+  "tangent_iff_length_sq_eq_power": "S5",
+  "tangents_center_line_bisects_angles": "S3",
+  "contact_chord_perpendicular_bisected_by_center_line": "S5",
+  "tangent_chord_angle": "S5",
+  "tangent_chord_angle_converse": "S5",
+  "foot_distance_eq_radius_iff_tangent": "S5",
+  "power_value_inside_chord": "S5",
+  "power_value_outside_secant": "S5",
+  "tangent_secant_power": "S5",
+  "tangent_secant_converse": "S5",
+  "intersecting_chords_converse": "S5",
+  "secants_converse": "S5",
+  "intersecting_chords_similar_ratio": "S5",
+  "common_chord_perpendicular_bisected_by_center_line": "S5",
+  "two_circles_at_most_two_common_points": "S5",
+  "externally_tangent_iff_center_distance": "S5",
+  "internally_tangent_iff_center_distance": "S5",
+  "externally_tangent_unique_common_point": "S5",
+  "internally_tangent_unique_common_point": "S5",
+  "common_tangent_at_contact_on_center_line": "S5",
+  "two_circles_common_point_triangle_inequality": "S5",
+  "two_circles_common_point_exists_in_plane": "S5",
+  "common_tangent_bisected_by_common_chord": "S5",
+  "external_common_tangent_length": "S5",
+  "internal_common_tangent_length": "S5",
+  "pitot_tangential_quadrilateral": "S5",
+  "triangle_incircle_tangent_length": "S5"
+ }
+}

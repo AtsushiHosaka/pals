@@ -1,0 +1,260 @@
+{
+  "batch": "L11",
+  "reviewed": 53,
+  "ok_ids": [
+    "inner_bilinear_expansion",
+    "norm_sq_linear_combination",
+    "sum_diff_perpendicular_iff_equal_norm",
+    "minimal_norm_on_line_orthogonal",
+    "independent_coefficient_comparison",
+    "independent_pair_iff_not_parallel",
+    "internal_division_formula",
+    "external_division_formula",
+    "weighted_zero_sum_point_position",
+    "weighted_point_area_ratio",
+    "cevian_intersection_formula",
+    "collinear_iff_direction_multiple",
+    "line_ab_coefficient_sum_one",
+    "plane_abc_coefficient_sum_one",
+    "cos_angle_components",
+    "triangle_area_inner_formula",
+    "parallel_iff_determinant_zero",
+    "circle_diameter_inner_zero",
+    "space_line_symmetric_form",
+    "plane_equation_normal_form",
+    "line_plane_intersection_parameter",
+    "point_plane_distance",
+    "complex_norm_mul_div_pow",
+    "conj_eq_radius_sq_div",
+    "norm_sub_eq_norm_one_sub_conj_mul",
+    "polar_form_mul_div",
+    "polar_form_equality",
+    "arg_mul_div_mod_two_pi",
+    "arg_conj_inv",
+    "arg_pow_mod_two_pi",
+    "polar_form_pow",
+    "nth_roots_polar",
+    "rotation_about_point",
+    "perpendicular_iff_ratio_re_zero",
+    "collinear_iff_ratio_im_zero",
+    "angle_eq_abs_arg_ratio",
+    "equilateral_iff_sum_squares_eq",
+    "apollonius_circle_complex",
+    "root_of_unity_power_sum_divisibility",
+    "cos_sin_sum_regular_polygon",
+    "prod_one_sub_root_of_unity",
+    "pow_sub_one_factorization",
+    "conj_root_of_unity",
+    "cube_root_factorization_sum_cubes",
+    "root_of_unity_filter"
+  ],
+  "findings": [
+    {
+      "id": "triangle_region_coefficients",
+      "home": "S9",
+      "used": "S10",
+      "severity": "note",
+      "tools": [
+        {
+          "tool": "凸包（有限点集合の凸包は係数が非負で和が1の1次結合の全体、という特徴づけ）",
+          "stage": "S10",
+          "where": "題意そのもの、および答案の第2文",
+          "replaceable": false
+        }
+      ],
+      "fix": "題意が「凸包」という大学の概念で書かれている。高校では「三角形OABの周および内部」とし、s,t>=0かつs+t<=1が教科書の定理として使われる。題意を三角形の周と内部に書き替えるか、カードをS10扱いにする。答案は凸包の特徴づけを証明なしで引用しており、題意の定義に合わせたままでは書き替えられない。",
+      "keep_as_advanced": false
+    },
+    {
+      "id": "coplanar_iff_affine_combination",
+      "home": "S9",
+      "used": "S10",
+      "severity": "minor",
+      "tools": [
+        {
+          "tool": "部分空間・次元（線形代数）",
+          "stage": "S10",
+          "where": "答案の第2文以降。dim W, dim W' を比べる議論全体",
+          "replaceable": true
+        }
+      ],
+      "fix": "平面ベクトルの基本定理（1次独立な2ベクトルによる表示）で書き替える。",
+      "patch": {
+        "answer": "$\\vec a,\\vec b,\\vec c,\\vec p$ を実ベクトル空間のベクトルとし、$\\mathrm{A},\\mathrm{B},\\mathrm{C}$ は同一直線上にないとする。このとき $\\vec b-\\vec a$ と $\\vec c-\\vec a$ は平行でなく、1次独立である。$\\mathrm{A},\\mathrm{B},\\mathrm{C}$ を通る平面はただ一つあり、それを $\\alpha$ とする。4点が同一平面上にあるとは、$\\mathrm{P}$ が $\\alpha$ 上にあることである。$\\mathrm{P}$ が $\\alpha$ 上にあれば、$\\vec p-\\vec a$ は $\\alpha$ に平行なベクトルであり、$\\alpha$ 上の1次独立な $\\overrightarrow{\\mathrm{AB}},\\overrightarrow{\\mathrm{AC}}$ による表示（平面ベクトルの基本定理）から、実数 $s,t$ で $\\vec p-\\vec a=s(\\vec b-\\vec a)+t(\\vec c-\\vec a)$ と書ける。逆に $\\vec p=\\vec a+s(\\vec b-\\vec a)+t(\\vec c-\\vec a)$ と書けるなら、$\\mathrm{P}$ は $\\mathrm{A}$ を通り $\\overrightarrow{\\mathrm{AB}},\\overrightarrow{\\mathrm{AC}}$ に平行な平面、すなわち $\\alpha$ 上にあるので、4点は同一平面上にある。\n"
+      },
+      "keep_as_advanced": true
+    },
+    {
+      "id": "foot_of_perpendicular_to_plane_exists",
+      "home": "S9",
+      "used": "S10",
+      "severity": "minor",
+      "tools": [
+        {
+          "tool": "有限次元部分空間への直交分解（ヒルベルト空間・線形代数の射影定理）",
+          "stage": "S10",
+          "where": "答案の第2文",
+          "replaceable": true
+        }
+      ],
+      "fix": "垂線の足の条件を s,t の連立1次方程式に直し、1次独立の場合はクラメルの公式（判別式が正）、そうでない場合は1ベクトルへの射影で解く。",
+      "patch": {
+        "answer": "$\\vec a,\\vec b,\\vec p$ を実内積空間のベクトルとする。求める条件は $(\\vec p-s\\vec a-t\\vec b)\\cdot\\vec a=0$ かつ $(\\vec p-s\\vec a-t\\vec b)\\cdot\\vec b=0$ であり、これは連立方程式 $s|\\vec a|^2+t\\,\\vec a\\cdot\\vec b=\\vec p\\cdot\\vec a$、$s\\,\\vec a\\cdot\\vec b+t|\\vec b|^2=\\vec p\\cdot\\vec b$ と同値である。\n\n$\\vec a,\\vec b$ が1次独立のとき、両者は平行でないのでコーシー・シュワルツの不等式の等号は成り立たず、$D=|\\vec a|^2|\\vec b|^2-(\\vec a\\cdot\\vec b)^2>0$ である。係数の行列式が $D\\neq 0$ なので、連立方程式は解 $s=\\dfrac{(\\vec p\\cdot\\vec a)|\\vec b|^2-(\\vec p\\cdot\\vec b)(\\vec a\\cdot\\vec b)}{D}$、$t=\\dfrac{|\\vec a|^2(\\vec p\\cdot\\vec b)-(\\vec a\\cdot\\vec b)(\\vec p\\cdot\\vec a)}{D}$ をもつ。\n\n$\\vec a,\\vec b$ が1次独立でないときは次のとおり。$\\vec a\\neq\\vec 0$ で $\\vec b=k\\vec a$ なら、$t=0$、$s=\\dfrac{\\vec p\\cdot\\vec a}{|\\vec a|^2}$ とすると、第1式は $s|\\vec a|^2=\\vec p\\cdot\\vec a$ で成り立ち、第2式は $sk|\\vec a|^2=k\\,\\vec p\\cdot\\vec a=\\vec p\\cdot\\vec b$ で成り立つ。$\\vec a=\\vec 0$ で $\\vec b\\neq\\vec 0$ なら、$s=0$、$t=\\dfrac{\\vec p\\cdot\\vec b}{|\\vec b|^2}$ とすればよい。$\\vec a=\\vec b=\\vec 0$ なら両式とも $0=0$ で、任意の $s,t$ が解である。\n"
+      },
+      "keep_as_advanced": true
+    },
+    {
+      "id": "inner_eq_norm_norm_cos",
+      "home": "S9",
+      "used": "S10",
+      "severity": "note",
+      "tools": [
+        {
+          "tool": "arccos（逆三角関数は学習指導要領の範囲外）と一般の内積空間でのコーシー・シュワルツ",
+          "stage": "S10",
+          "where": "題意の仮定（なす角の定義）と答案の第2〜3文",
+          "replaceable": false
+        }
+      ],
+      "fix": "高校では a・b=|a||b|cosθ が内積の定義であり、このカードの主張自体が定義の言い換えになる。題意が抽象内積空間と arccos による角の定義に依存しており、level が高校では低すぎる。カードをS10扱いにするか、高校版（定義からの導出としてのみ）を別に用意する。",
+      "keep_as_advanced": false
+    },
+    {
+      "id": "inner_sign_acute_obtuse",
+      "home": "S9",
+      "used": "S10",
+      "severity": "minor",
+      "tools": [
+        {
+          "tool": "arccos と狭義単調減少（逆三角関数）",
+          "stage": "S10",
+          "where": "答案の第1文（θ=arccos…）、第4〜5文",
+          "replaceable": true
+        }
+      ],
+      "fix": "なす角を cosθ=(a・b)/(|a||b|)（0<=θ<=π）で扱い、単位円での cos の符号で書く。",
+      "patch": {
+        "answer": "$\\vec a,\\vec b$ を実内積空間の $\\vec 0$ でないベクトル、$\\theta$（$0\\le\\theta\\le\\pi$）をそのなす角とする。なす角は $\\cos\\theta=\\dfrac{\\vec a\\cdot\\vec b}{|\\vec a||\\vec b|}$ を満たす。$|\\vec a||\\vec b|>0$ なので、$\\vec a\\cdot\\vec b$ の符号は $\\cos\\theta$ の符号に等しい。$0\\le\\theta\\le\\pi$ の範囲では、$\\cos\\theta$ は単位円上の点の $x$ 座標であり、$\\theta<\\dfrac{\\pi}{2}$ のとき正、$\\theta=\\dfrac{\\pi}{2}$ のとき $0$、$\\theta>\\dfrac{\\pi}{2}$ のとき負である。よって $\\cos\\theta>0\\iff\\theta<\\dfrac{\\pi}{2}$、$\\cos\\theta<0\\iff\\theta>\\dfrac{\\pi}{2}$ となり、これらは主張の2つの同値である。\n"
+      },
+      "keep_as_advanced": false
+    },
+    {
+      "id": "angle_bisector_division_vector",
+      "home": "S9",
+      "used": "S10",
+      "severity": "minor",
+      "tools": [
+        {
+          "tool": "arccos（逆三角関数）",
+          "stage": "S10",
+          "where": "答案の最終文「なす角はこの値の arccos だから」",
+          "replaceable": true
+        }
+      ],
+      "fix": "最終文を、cosθ の値が等しく cos は 0<=θ<=π で単調に減少するから角が等しい、と書き替える。",
+      "patch": {
+        "answer": "$\\vec b,\\vec c$ を実内積空間の $\\vec 0$ でないベクトル、$\\vec d=\\dfrac{|\\vec c|\\vec b+|\\vec b|\\vec c}{|\\vec b|+|\\vec c|}\\neq\\vec 0$ とし、$L=|\\vec b|+|\\vec c|$ とおく。内積を計算すると $\\vec b\\cdot\\vec d=\\dfrac{|\\vec b|\\left(|\\vec b||\\vec c|+\\vec b\\cdot\\vec c\\right)}{L}$、$\\vec c\\cdot\\vec d=\\dfrac{|\\vec c|\\left(|\\vec b||\\vec c|+\\vec b\\cdot\\vec c\\right)}{L}$ である。よって $\\dfrac{\\vec b\\cdot\\vec d}{|\\vec b||\\vec d|}=\\dfrac{\\vec c\\cdot\\vec d}{|\\vec c||\\vec d|}=\\dfrac{|\\vec b||\\vec c|+\\vec b\\cdot\\vec c}{L|\\vec d|}$ である。$\\vec b$ と $\\vec d$ のなす角を $\\theta_1$、$\\vec c$ と $\\vec d$ のなす角を $\\theta_2$ とすると、$0\\le\\theta_1,\\theta_2\\le\\pi$ で $\\cos\\theta_1=\\dfrac{\\vec b\\cdot\\vec d}{|\\vec b||\\vec d|}$、$\\cos\\theta_2=\\dfrac{\\vec c\\cdot\\vec d}{|\\vec c||\\vec d|}$ である。両者は等しく、$\\cos$ は $0\\le\\theta\\le\\pi$ で単調に減少するので $\\theta_1=\\theta_2$ である。\n"
+      },
+      "keep_as_advanced": false
+    },
+    {
+      "id": "plane_parametric_iff_cross_normal",
+      "home": "S9",
+      "used": "S10",
+      "severity": "minor",
+      "tools": [
+        {
+          "tool": "外積（ベクトル積）と、それを使った恒等式 N w = A u + B v + (n・w) n（学習指導要領の範囲外）",
+          "stage": "S10",
+          "where": "答案の「逆に」以降（A, B の定義と恒等式）",
+          "replaceable": true
+        }
+      ],
+      "fix": "n の成分のどれかが0でないとして、そのとき2成分の連立方程式をクラメルの公式で解き、残る1成分を n・w=0 と n・u=n・v=0 から合わせる。",
+      "patch": {
+        "answer": "$u_i,v_i,x_0,y_0,z_0,x,y,z$ を実数とし、$\\vec n=(n_1,n_2,n_3)=(u_2v_3-u_3v_2,\\,u_3v_1-u_1v_3,\\,u_1v_2-u_2v_1)\\neq\\vec 0$ とする。$\\vec w=(x-x_0,y-y_0,z-z_0)$ とおく。成分を展開すると各項が打ち消し合い、$\\vec n\\cdot\\vec u=0$、$\\vec n\\cdot\\vec v=0$ である。よって $\\vec w=s\\vec u+t\\vec v$ なら $\\vec n\\cdot\\vec w=s\\,\\vec n\\cdot\\vec u+t\\,\\vec n\\cdot\\vec v=0$ である。逆に $\\vec n\\cdot\\vec w=0$ とする。$\\vec n\\neq\\vec 0$ なので $n_1,n_2,n_3$ のどれかは $0$ でない。$n_3\\neq 0$ の場合を示す（ほかの場合は成分の役割を入れ替えて同様である）。連立方程式 $su_1+tv_1=w_1$、$su_2+tv_2=w_2$ の係数の行列式は $u_1v_2-u_2v_1=n_3\\neq 0$ なので、解 $s,t$ がある。$\\vec w'=s\\vec u+t\\vec v$ とおくと、$w'_1=w_1$、$w'_2=w_2$ であり、上で示したことから $\\vec n\\cdot\\vec w'=0$ である。これと $\\vec n\\cdot\\vec w=0$ より $n_3w_3=-n_1w_1-n_2w_2=n_3w'_3$ となり、$n_3\\neq 0$ から $w'_3=w_3$ である。よって $\\vec w=s\\vec u+t\\vec v$ である。\n"
+      },
+      "keep_as_advanced": false
+    },
+    {
+      "id": "de_moivre_integer_exponent",
+      "home": "S9",
+      "used": "S10",
+      "severity": "minor",
+      "tools": [
+        {
+          "tool": "オイラーの公式 e^{it}=cos t + i sin t と複素指数関数の指数法則",
+          "stage": "S10",
+          "where": "答案の第2〜4文（答案全体）",
+          "replaceable": true
+        }
+      ],
+      "fix": "n>=1 を加法定理による帰納法、n=0 は自明、n<0 は逆数が cos(-θ)+i sin(-θ) になることから正の場合に帰着する。",
+      "patch": {
+        "answer": "$\\theta$ を実数、$n$ を整数とし、$u=\\cos\\theta+i\\sin\\theta$ とおく。$n=0$ のときは両辺とも $1$ である。$n\\ge 1$ のとき、$n$ についての帰納法で示す。$n=1$ は明らかである。$u^n=\\cos n\\theta+i\\sin n\\theta$ とすると、加法定理より $u^{n+1}=(\\cos n\\theta+i\\sin n\\theta)(\\cos\\theta+i\\sin\\theta)=\\cos(n+1)\\theta+i\\sin(n+1)\\theta$ である。$n<0$ のとき、$m=-n>0$ とする。$(\\cos\\theta+i\\sin\\theta)(\\cos\\theta-i\\sin\\theta)=\\cos^2\\theta+\\sin^2\\theta=1$ なので、$u^{-1}=\\cos(-\\theta)+i\\sin(-\\theta)$ である。これに $n\\ge 1$ の場合を適用すると、$u^n=(u^{-1})^m=\\cos(-m\\theta)+i\\sin(-m\\theta)=\\cos n\\theta+i\\sin n\\theta$ である。\n"
+      },
+      "keep_as_advanced": true
+    }
+  ],
+  "systematic": [
+    "題意が「実内積空間」「実ベクトル空間」の抽象的な言い方で書かれている。高校範囲は R^2・R^3 のベクトルで、抽象線形空間は S10 の枠組みである。このバッチのカードは、構文上は S10 的な言い方でも、答案の中身が高校の道具に収まるものは違反にしていない。",
+    "なす角を arccos で定義する答案が複数ある（inner_eq_norm_norm_cos、inner_sign_acute_obtuse、angle_bisector_division_vector）。逆三角関数は学習指導要領の範囲外で、高校では cosθ=(a・b)/(|a||b|) を内積と角の定義として扱う。なす角を扱うカードは、角を cosθ（0<=θ<=π）で定める書き方に統一する。",
+    "線形代数の語（部分空間・次元・直交分解）、外積、オイラーの公式で書かれた答案があった。いずれも、平面ベクトルの基本定理・連立方程式・加法定理による帰納法で置き換えられる。",
+    "triangle_region_coefficients は題意が「凸包」で述べられており、level の貼り方が高校では低すぎる。"
+  ],
+  "home_assignments": {
+    "inner_bilinear_expansion": "S9",
+    "norm_sq_linear_combination": "S9",
+    "sum_diff_perpendicular_iff_equal_norm": "S9",
+    "minimal_norm_on_line_orthogonal": "S9",
+    "independent_coefficient_comparison": "S9",
+    "independent_pair_iff_not_parallel": "S9",
+    "internal_division_formula": "S9",
+    "external_division_formula": "S9",
+    "weighted_zero_sum_point_position": "S9",
+    "weighted_point_area_ratio": "S9",
+    "cevian_intersection_formula": "S9",
+    "collinear_iff_direction_multiple": "S9",
+    "line_ab_coefficient_sum_one": "S9",
+    "triangle_region_coefficients": "S9",
+    "plane_abc_coefficient_sum_one": "S9",
+    "coplanar_iff_affine_combination": "S9",
+    "foot_of_perpendicular_to_plane_exists": "S9",
+    "inner_eq_norm_norm_cos": "S9",
+    "inner_sign_acute_obtuse": "S9",
+    "cos_angle_components": "S9",
+    "triangle_area_inner_formula": "S9",
+    "parallel_iff_determinant_zero": "S9",
+    "circle_diameter_inner_zero": "S9",
+    "angle_bisector_division_vector": "S9",
+    "space_line_symmetric_form": "S9",
+    "plane_equation_normal_form": "S9",
+    "plane_parametric_iff_cross_normal": "S9",
+    "line_plane_intersection_parameter": "S9",
+    "point_plane_distance": "S9",
+    "complex_norm_mul_div_pow": "S9",
+    "conj_eq_radius_sq_div": "S9",
+    "norm_sub_eq_norm_one_sub_conj_mul": "S9",
+    "polar_form_mul_div": "S9",
+    "polar_form_equality": "S9",
+    "arg_mul_div_mod_two_pi": "S9",
+    "arg_conj_inv": "S9",
+    "arg_pow_mod_two_pi": "S9",
+    "polar_form_pow": "S9",
+    "de_moivre_integer_exponent": "S9",
+    "nth_roots_polar": "S9",
+    "rotation_about_point": "S9",
+    "perpendicular_iff_ratio_re_zero": "S9",
+    "collinear_iff_ratio_im_zero": "S9",
+    "angle_eq_abs_arg_ratio": "S9",
+    "equilateral_iff_sum_squares_eq": "S9",
+    "apollonius_circle_complex": "S9",
+    "root_of_unity_power_sum_divisibility": "S9",
+    "cos_sin_sum_regular_polygon": "S9",
+    "prod_one_sub_root_of_unity": "S9",
+    "pow_sub_one_factorization": "S9",
+    "conj_root_of_unity": "S9",
+    "cube_root_factorization_sum_cubes": "S9",
+    "root_of_unity_filter": "S9"
+  }
+}

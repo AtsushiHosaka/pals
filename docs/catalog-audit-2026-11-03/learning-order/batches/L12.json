@@ -1,0 +1,214 @@
+{
+  "batch": "L12",
+  "reviewed": 34,
+  "ok_ids": [
+    "data_sum_deviation_zero",
+    "data_mean_between_bounds",
+    "data_exists_on_both_sides_of_mean",
+    "data_mean_affine_transform",
+    "data_mean_of_two_groups",
+    "data_variance_shortcut",
+    "data_variance_zero_iff_constant",
+    "data_variance_affine_transform",
+    "data_stddev_affine_transform",
+    "data_standardized_mean_variance",
+    "data_variance_of_two_groups",
+    "data_covariance_shortcut",
+    "data_covariance_affine_transform",
+    "data_variance_of_sum",
+    "data_correlation_affine_transform",
+    "data_correlation_abs_one_iff_linear",
+    "finset_card_union_two",
+    "finset_card_union_three",
+    "finset_card_neither_of_two",
+    "pred_forall_contrapositive",
+    "pred_not_forall_imp_counterexample",
+    "sufficient_iff_truth_set_subset",
+    "necessary_sufficient_iff_truth_set_eq",
+    "implication_cycle_iff",
+    "proof_by_contradiction_template",
+    "implication_by_contradiction_template",
+    "or_iff_not_left_imp_right",
+    "inner_zero_iff_right_angle"
+  ],
+  "findings": [
+    {
+      "id": "data_correlation_abs_le_one",
+      "home": "S4",
+      "used": "S8",
+      "severity": "major",
+      "tools": [
+        {
+          "tool": "n項和のコーシー・シュワルツの不等式（一般形）",
+          "stage": "S8",
+          "where": "第2段落の最初の式（偏差にコーシー・シュワルツを適用）",
+          "replaceable": true
+        }
+      ],
+      "fix": "相関係数の範囲は数Iのデータの分析の定理。偏差を標準偏差で割った p_i, q_i を作り、(p_i±q_i)^2 ≥ 0 を足し上げれば 2±2r ≥ 0 が出る。コーシー・シュワルツは不要で、平方の非負性だけで足りる。",
+      "patch": {
+        "answer": "$s$を空でない有限集合、$x_i,y_i\\ (i\\in s)$を実数とし、$n=|s|$とする。平均を$\\bar{x},\\bar{y}$とし、$V_x=\\frac{1}{n}\\sum_{i\\in s}(x_i-\\bar{x})^2>0$、$V_y=\\frac{1}{n}\\sum_{i\\in s}(y_i-\\bar{y})^2>0$、$C=\\frac{1}{n}\\sum_{i\\in s}(x_i-\\bar{x})(y_i-\\bar{y})$、$r=\\frac{C}{\\sqrt{V_x}\\sqrt{V_y}}$とおく。\n偏差を標準偏差で割って$p_i=\\frac{x_i-\\bar{x}}{\\sqrt{V_x}}$、$q_i=\\frac{y_i-\\bar{y}}{\\sqrt{V_y}}$とおく。$(\\sqrt{V_x})^2=V_x$なので$\\frac{1}{n}\\sum_{i\\in s}p_i^2=\\frac{V_x}{V_x}=1$であり、同様に$\\frac{1}{n}\\sum_{i\\in s}q_i^2=1$である。また$\\frac{1}{n}\\sum_{i\\in s}p_iq_i=\\frac{C}{\\sqrt{V_x}\\sqrt{V_y}}=r$である。\n全ての$i\\in s$で$(p_i-q_i)^2\\geq0$なので、足して$n$で割ると$0\\leq\\frac{1}{n}\\sum_{i\\in s}(p_i^2-2p_iq_i+q_i^2)=1-2r+1=2-2r$となり、$r\\leq1$を得る。同様に$(p_i+q_i)^2\\geq0$から$0\\leq2+2r$となり、$r\\geq-1$を得る。よって$|r|\\leq1$である。\n"
+      },
+      "keep_as_advanced": false
+    },
+    {
+      "id": "law_of_cosines_angle",
+      "home": "S4",
+      "used": "S10",
+      "severity": "note",
+      "tools": [
+        {
+          "tool": "実内積空間・アフィン空間（内積の展開、角を内積で定義）",
+          "stage": "S10",
+          "where": "題意そのもの。答案は ‖u-v‖^2 の内積展開で全体が進む",
+          "replaceable": false
+        },
+        {
+          "tool": "ベクトルの内積",
+          "stage": "S9",
+          "where": "第2段落以降すべて",
+          "replaceable": false
+        }
+      ],
+      "fix": "題意が抽象内積空間で書かれており、教科書の余弦定理（数I、三角比、S4）とは別物。level=high のままでは初学者に出る。平面三角形の余弦定理（頂点から垂線を下ろして三平方の定理を使う）は別カードとして用意し、このカードは数C以降（既習者向け）に回す。答案は題意に対して適切なので patch は付けない。",
+      "keep_as_advanced": true
+    },
+    {
+      "id": "pythagoras_angle_iff",
+      "home": "S3",
+      "used": "S10",
+      "severity": "note",
+      "tools": [
+        {
+          "tool": "余弦定理（本カード群のもの）",
+          "stage": "S4",
+          "where": "第2段落の最初の式。教科書では余弦定理は三平方の定理を使って示すので、順序が逆になっている",
+          "replaceable": false
+        },
+        {
+          "tool": "実内積空間・アフィン空間の角の定義",
+          "stage": "S10",
+          "where": "題意そのもの",
+          "replaceable": false
+        }
+      ],
+      "fix": "題意が抽象内積空間で、教科書の三平方の定理とその逆（中3、S3）とは別物。平面での三平方の定理と逆（相似または面積による証明、逆は同じ長さの辺を持つ直角三角形との合同）を別カードとして立て、このカードは既習者向けに回す。また、余弦定理を前提にして三平方を導くため、教科書の順序とは逆であることを明記するとよい。",
+      "keep_as_advanced": true
+    },
+    {
+      "id": "triangle_angle_sum",
+      "home": "S2",
+      "used": "S10",
+      "severity": "note",
+      "tools": [
+        {
+          "tool": "実内積空間・アフィン空間、内積を保つ線形同型",
+          "stage": "S10",
+          "where": "第3段落（2次元部分空間から C への線形同型 T）",
+          "replaceable": false
+        },
+        {
+          "tool": "複素数の偏角・極形式・虚部による向きの判定",
+          "stage": "S9",
+          "where": "第4〜第6段落（z_1 z_2 z_3 = -1 から偏角の和を出す）",
+          "replaceable": false
+        },
+        {
+          "tool": "双線形形式 D の交代性",
+          "stage": "S10",
+          "where": "第4段落",
+          "replaceable": false
+        }
+      ],
+      "fix": "level=middle だが題意は抽象内積空間で、答案は複素平面の偏角まで使う。中学の「三角形の内角の和」（平行線と角、S2）の標準解答は、辺に平行な補助線を引いて錯角・同位角を使うもの。題意が抽象内積空間なのでこのカードの答案は妥当だが、level を high 以上に直し、別に平面の内角の和（平行線の性質による証明）を middle カードとして立てるのが妥当。答案は主張を弱めずに書き替えられないため patch は付けない。",
+      "keep_as_advanced": true
+    },
+    {
+      "id": "ptolemy_cyclic_quadrilateral",
+      "home": "S5",
+      "used": "S9",
+      "severity": "note",
+      "tools": [
+        {
+          "tool": "ベクトルと内積による長さの計算（単位ベクトル e, f と t=<e,f>）",
+          "stage": "S9",
+          "where": "第2段落以降すべて（第2段階の4つの辺の2乗）",
+          "replaceable": false
+        },
+        {
+          "tool": "実内積空間・球面（題意の設定）",
+          "stage": "S10",
+          "where": "題意そのもの",
+          "replaceable": false
+        }
+      ],
+      "fix": "教科書のトレミーの定理（数A、図形の性質の発展、S5）は円に内接する四角形で、相似な三角形（円周角、方べきの定理）を使う綜合幾何が標準。題意が球面・内積空間なのでこの答案は妥当だが、level の貼り方が高校初学者向けではない。平面の円に内接する四角形版を別カードとして立て、このカードは既習者向けとして残す。patch は付けない（題意が抽象内積空間のため）。",
+      "keep_as_advanced": true
+    },
+    {
+      "id": "power_of_a_point_lines",
+      "home": "S5",
+      "used": "S9",
+      "severity": "note",
+      "tools": [
+        {
+          "tool": "ベクトルと内積による計算（w=p-o, v=b-a, <w,v>）",
+          "stage": "S9",
+          "where": "第2段落以降すべて",
+          "replaceable": false
+        },
+        {
+          "tool": "実内積空間・アフィン包・球面（題意の設定）",
+          "stage": "S10",
+          "where": "題意そのもの",
+          "replaceable": false
+        }
+      ],
+      "fix": "教科書の方べきの定理（数A、円の性質、S5）は円と2本の割線／接線で、相似な三角形（円周角）から導く。このカードは抽象内積空間で書かれており、題意に対して答案は妥当。平面の円での方べきの定理を別カード（相似による証明）として立て、このカードは既習者向けとして残す。patch は付けない。",
+      "keep_as_advanced": true
+    }
+  ],
+  "systematic": [
+    "データの分析17枚（school_data_logic の data_*）はすべて、題意も答案も有限集合上の Σ 記法で書かれている。Σ は数B（数列、S7）で初めて習う記号で、数Iの教科書は x_1+…+x_n と書く。論理は数Iの代数だけで閉じているため個別には違反に数えなかったが、数I向けのカードとして出すなら、記法の注意書きか、x_1+…+x_n 版の併記が望ましい。",
+    "データの分析のうち、道具が範囲を越えたのは data_correlation_abs_le_one のコーシー・シュワルツのみ。同じ単元の data_correlation_abs_one_iff_linear は、平方和が0なら各項が0という論法で書かれており、標準的で適切。コーシー・シュワルツを使わない版の書き方が既にある。",
+    "geometry_homotopy の6枚は、題意が実内積空間・アフィン空間・球面で書かれている。教科書の単元は中2（内角の和）、中3（三平方）、数I（余弦定理）、数A（方べきの定理・トレミー）で、level 表示（middle または high）と題意の抽象度が合わない。答案は題意に対して妥当だが、初学者向けの標準解答としては置けない。各単元の平面版を別カードとして立て、このバッチの5枚は既習者向けとして残す案を推奨する。inner_zero_iff_right_angle は単元が数C（内積）で答案が定義を展開するだけなので、違反とはしなかった。",
+    "pythagoras_angle_iff は余弦定理（S4）から三平方の定理（S3）を導いており、教科書の順序（三平方→余弦定理）が逆になっている。抽象内積空間では角が内積で定義されるため循環ではないが、学習順序の観点では注意が必要。",
+    "集合の要素の個数（finset_card_*）、命題と条件・背理法・対偶のカード群は、集合の基本操作と論理だけで書かれており、問題なし。"
+  ],
+  "home_assignments": {
+    "data_sum_deviation_zero": "S4",
+    "data_mean_between_bounds": "S4",
+    "data_exists_on_both_sides_of_mean": "S4",
+    "data_mean_affine_transform": "S4",
+    "data_mean_of_two_groups": "S4",
+    "data_variance_shortcut": "S4",
+    "data_variance_zero_iff_constant": "S4",
+    "data_variance_affine_transform": "S4",
+    "data_stddev_affine_transform": "S4",
+    "data_standardized_mean_variance": "S4",
+    "data_variance_of_two_groups": "S4",
+    "data_covariance_shortcut": "S4",
+    "data_covariance_affine_transform": "S4",
+    "data_variance_of_sum": "S4",
+    "data_correlation_abs_le_one": "S4",
+    "data_correlation_affine_transform": "S4",
+    "data_correlation_abs_one_iff_linear": "S4",
+    "finset_card_union_two": "S5",
+    "finset_card_union_three": "S5",
+    "finset_card_neither_of_two": "S5",
+    "pred_forall_contrapositive": "S4",
+    "pred_not_forall_imp_counterexample": "S4",
+    "sufficient_iff_truth_set_subset": "S4",
+    "necessary_sufficient_iff_truth_set_eq": "S4",
+    "implication_cycle_iff": "S4",
+    "proof_by_contradiction_template": "S4",
+    "implication_by_contradiction_template": "S4",
+    "or_iff_not_left_imp_right": "S4",
+    "law_of_cosines_angle": "S4",
+    "pythagoras_angle_iff": "S3",
+    "triangle_angle_sum": "S2",
+    "ptolemy_cyclic_quadrilateral": "S5",
+    "power_of_a_point_lines": "S5",
+    "inner_zero_iff_right_angle": "S9"
+  }
+}

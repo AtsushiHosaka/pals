@@ -1,0 +1,84 @@
+{
+"batch": "L6",
+"reviewed": 60,
+"ok_ids": ["sin_sq_add_cos_sq","one_add_tan_sq","sin_mul_cos_of_add_eq","sin_cos_bounds","sin_eq_sqrt_of_mem_interval","sin_cos_pi_div_two_sub","tan_pi_div_two_sub","sin_cos_tan_pi_sub","sin_cos_shift_half_pi_pi","angle_sum_pi_sin_cos","sin_cos_add_two_int_pi","tan_add_int_mul_pi","sin_cos_tan_parity","sin_cos_int_mul_pi","sinusoid_period","sin_period_ge_two_pi","sin_cos_sub","tan_add_formula","tan_sub_formula","tan_mul_tan_eq_one_iff","sin_cos_add_mul_sub","sin_cos_eq_iff_two_pi","sin_double_angle","cos_double_angle_forms","tan_double_angle","half_angle_squares","half_angle_sqrt","tan_half_substitution","sin_triple_angle","cos_triple_angle","sin_add_sin","sin_sub_sin","cos_add_cos","cos_sub_cos","sin_mul_cos_product_to_sum","cos_mul_cos_product_to_sum","sin_mul_sin_product_to_sum","sum_cos_sin_multiples","harmonic_addition","sin_cos_combination_bound","quadratic_form_sin_cos_double_angle","sin_eq_zero_iff","cos_eq_zero_iff","tan_domain_iff","sin_eq_sin_iff","cos_eq_cos_iff","tan_eq_tan_iff","sin_strict_mono_interval","cos_strict_anti_interval","tan_lt_tan_iff","sin_ge_iff_on_interval","cos_ge_iff_on_interval","angle_sum_pi_tan_identity"],
+"findings": [
+{
+"id": "exists_angle_of_unit_circle",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [{"tool": "中間値の定理（cosの連続性を使う）", "stage": "S8", "where": "第3文「中間値の定理により cos t = a となる t がとれる」", "replaceable": true}],
+"fix": "三角関数の定義（単位円上の点は動径の角で表される）そのものが主張なので、定義から直接示せる。同じカタログの harmonic_addition も同じ書き方をしている。",
+"patch": {"answer": "$a,b$を$a^2+b^2=1$をみたす実数とする。点$P(a,b)$は原点を中心とする単位円上にある。$x$軸の正の部分から動径$OP$への回転角を$\\theta$とすると、三角関数の定義より$\\cos\\theta=a$、$\\sin\\theta=b$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "cos_nat_mul_polynomial",
+"home": "S6",
+"used": "S7",
+"severity": "note",
+"tools": [{"tool": "数学的帰納法（任意のnに対する漸化的構成）", "stage": "S7", "where": "答案冒頭「nに関する帰納法で示す」と P_{n+2}=2uP_{n+1}-P_n", "replaceable": false}],
+"fix": "題意が任意の n に対する多項式の存在であり、帰納法なしには書けない。答案の問題ではなく level 指定の問題。数B（数列・帰納法）以降の内容として扱うのが妥当。",
+"keep_as_advanced": false
+},
+{
+"id": "exists_sin_cos_combination_iff",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [{"tool": "中間値の定理（sinの連続性）", "stage": "S8", "where": "逆向きの後半「sinの連続性と…中間値の定理から sin y = c/r となる y がとれる」", "replaceable": true}],
+"fix": "sin y = c/r となる y の存在は、単位円上の点 (√(1-(c/r)^2), c/r) の動径の角として定義から得られる。",
+"patch": {"answer": "$a,b,c$を実数とする。$a\\sin x+b\\cos x=c$となる$x$があれば、$(a\\sin x+b\\cos x)^2+(a\\cos x-b\\sin x)^2=a^2+b^2$より$c^2\\leq a^2+b^2$である。逆に$c^2\\leq a^2+b^2$とする。$a=b=0$なら$c=0$であり、どの$x$も解である。そうでないとき$r=\\sqrt{a^2+b^2}>0$とおくと、合成により実数$\\alpha$がとれて、任意の$x$で$a\\sin x+b\\cos x=r\\sin(x+\\alpha)$である。$|c/r|\\leq1$なので、点$\\left(\\sqrt{1-(c/r)^2},\\,c/r\\right)$は単位円上にある。この点の動径の角を$y$とすると、三角関数の定義より$\\sin y=c/r$である。$x=y-\\alpha$とおくと$a\\sin x+b\\cos x=r\\sin y=c$である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "exists_unique_sin_principal",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [{"tool": "中間値の定理（sinの連続性）", "stage": "S8", "where": "存在の部分「中間値の定理により区間[-π/2,π/2]に sin x = a の解がある」", "replaceable": true}],
+"fix": "存在は単位円上の点 (√(1-a^2), a) の動径の角（x座標が0以上なので[-π/2,π/2]にとれる）から得る。一意性の部分は和積の公式のみで既習範囲。",
+"patch": {"answer": "$a$を$-1\\leq a\\leq1$をみたす実数とする。点$(\\sqrt{1-a^2},\\,a)$は単位円上にあり、その$x$座標は$0$以上である。$x$座標が$0$以上の動径は$-\\pi/2\\leq x\\leq\\pi/2$の範囲の角で表せるので、この点の動径の角を$x\\in[-\\pi/2,\\pi/2]$にとると、三角関数の定義より$\\sin x=a$である。一意性を示す。$-\\pi/2\\leq x<y\\leq\\pi/2$なら和積の公式より$\\sin y-\\sin x=2\\cos\\dfrac{x+y}{2}\\sin\\dfrac{y-x}{2}$であり、$-\\pi/2<(x+y)/2<\\pi/2$、$0<(y-x)/2\\leq\\pi/2$からこれは正である。よって$\\sin$はこの区間で狭義に増加し、解はただ一つである。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "exists_unique_cos_principal",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [{"tool": "中間値の定理（cosの連続性）", "stage": "S8", "where": "存在の部分「中間値の定理により区間[0,π]に cos x = a の解がある」", "replaceable": true}],
+"fix": "存在は単位円上の点 (a, √(1-a^2)) の動径の角（y座標が0以上なので[0,π]にとれる）から得る。一意性の部分は既習範囲。",
+"patch": {"answer": "$a$を$-1\\leq a\\leq1$をみたす実数とする。点$(a,\\,\\sqrt{1-a^2})$は単位円上にあり、その$y$座標は$0$以上である。$y$座標が$0$以上の動径は$0\\leq x\\leq\\pi$の範囲の角で表せるので、この点の動径の角を$x\\in[0,\\pi]$にとると、三角関数の定義より$\\cos x=a$である。一意性を示す。$0\\leq x<y\\leq\\pi$なら和積の公式より$\\cos x-\\cos y=2\\sin\\dfrac{x+y}{2}\\sin\\dfrac{y-x}{2}$であり、$0<(x+y)/2<\\pi$、$0<(y-x)/2\\leq\\pi/2$からこれは正である。よって$\\cos$はこの区間で狭義に減少し、解はただ一つである。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "exists_unique_tan_principal",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [{"tool": "中間値の定理（cosの連続性）", "stage": "S8", "where": "存在の部分「中間値の定理により cos x = 1/r となる x∈[0,π] がとれる」", "replaceable": true}],
+"fix": "点 (1/r, a/r) は単位円上で x座標が正なので、その動径の角を(-π/2,π/2)にとれば tan x = a。一意性の部分は既習範囲。",
+"patch": {"answer": "$a$を実数とする。$r=\\sqrt{1+a^2}$とおくと$(1/r)^2+(a/r)^2=1$であり、点$(1/r,\\,a/r)$は単位円上にある。その$x$座標は正なので、この点の動径の角を$-\\pi/2<x<\\pi/2$にとれる。定義より$\\cos x=1/r$、$\\sin x=a/r$であるから、$\\tan x=a$である。一意性を示す。$-\\pi/2<x<y<\\pi/2$なら$\\tan y-\\tan x=\\dfrac{\\sin(y-x)}{\\cos x\\cos y}$であり、$0<y-x<\\pi$から分子は正、$\\cos x,\\cos y>0$から分母も正である。よって$\\tan$はこの区間で狭義に増加し、解はただ一つである。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "range_comp_sin_cos",
+"home": "S6",
+"used": "S8",
+"severity": "major",
+"tools": [{"tool": "中間値の定理（sin, cosの連続性）", "stage": "S8", "where": "逆向きの部分「中間値の定理により sin x = t となる x がとれる」と cos の同様の議論", "replaceable": true}],
+"fix": "-1≤t≤1 に対する sin x = t, cos x = t の解の存在は、単位円上の点 (√(1-t^2), t), (t, √(1-t^2)) の動径の角で得る。",
+"patch": {"answer": "$f$を実数値関数、$y$を実数とする。$f(\\sin x)=y$となる$x$があれば、$t=\\sin x$は$-1\\leq t\\leq1$と$f(t)=y$をみたす。逆に$-1\\leq t\\leq1$かつ$f(t)=y$となる$t$があるとする。点$(\\sqrt{1-t^2},\\,t)$は単位円上にあるので、その動径の角を$x$とすると、三角関数の定義より$\\sin x=t$である。この$x$について$f(\\sin x)=y$である。$\\cos$については、単位円上の点$(t,\\sqrt{1-t^2})$の動径の角を$x$とすれば$\\cos x=t$となり、同様に示せる。\n"},
+"keep_as_advanced": false
+}
+],
+"systematic": [
+"sin, cos, tan の「値の存在」（全射性、主値の存在）を中間値の定理（数III）で示す答案が6枚ある。数IIでは単位円上の点と動径の角の対応（三角関数の定義）で足りる。同じカタログの harmonic_addition はすでにその書き方をしている。",
+"加法定理・倍角・和積・積和は数II（S6）で、これらを使う答案は問題ない。単調性（sin_strict_mono_interval など）も和積の公式による符号判定で書かれており、微分を使っていない点は良い。",
+"全カードのlevelは high だが、題意が実数 x とラジアンを含むため home は S6（数II）とした。『三角比』という topic 名のカードでも、題意は一般角なので S4 ではない。"
+],
+"home_assignments": {
+"sin_sq_add_cos_sq":"S6","one_add_tan_sq":"S6","sin_mul_cos_of_add_eq":"S6","sin_cos_bounds":"S6","sin_eq_sqrt_of_mem_interval":"S6","exists_angle_of_unit_circle":"S6","sin_cos_pi_div_two_sub":"S6","tan_pi_div_two_sub":"S6","sin_cos_tan_pi_sub":"S6","sin_cos_shift_half_pi_pi":"S6","angle_sum_pi_sin_cos":"S6","sin_cos_add_two_int_pi":"S6","tan_add_int_mul_pi":"S6","sin_cos_tan_parity":"S6","sin_cos_int_mul_pi":"S6","sinusoid_period":"S6","sin_period_ge_two_pi":"S6","sin_cos_sub":"S6","tan_add_formula":"S6","tan_sub_formula":"S6","tan_mul_tan_eq_one_iff":"S6","sin_cos_add_mul_sub":"S6","sin_cos_eq_iff_two_pi":"S6","sin_double_angle":"S6","cos_double_angle_forms":"S6","tan_double_angle":"S6","half_angle_squares":"S6","half_angle_sqrt":"S6","tan_half_substitution":"S6","sin_triple_angle":"S6","cos_triple_angle":"S6","cos_nat_mul_polynomial":"S6","sin_add_sin":"S6","sin_sub_sin":"S6","cos_add_cos":"S6","cos_sub_cos":"S6","sin_mul_cos_product_to_sum":"S6","cos_mul_cos_product_to_sum":"S6","sin_mul_sin_product_to_sum":"S6","sum_cos_sin_multiples":"S7","harmonic_addition":"S6","sin_cos_combination_bound":"S6","exists_sin_cos_combination_iff":"S6","quadratic_form_sin_cos_double_angle":"S6","sin_eq_zero_iff":"S6","cos_eq_zero_iff":"S6","tan_domain_iff":"S6","sin_eq_sin_iff":"S6","cos_eq_cos_iff":"S6","tan_eq_tan_iff":"S6","exists_unique_sin_principal":"S6","exists_unique_cos_principal":"S6","exists_unique_tan_principal":"S6","sin_strict_mono_interval":"S6","cos_strict_anti_interval":"S6","tan_lt_tan_iff":"S6","sin_ge_iff_on_interval":"S6","cos_ge_iff_on_interval":"S6","range_comp_sin_cos":"S6","angle_sum_pi_tan_identity":"S6"
+}
+}

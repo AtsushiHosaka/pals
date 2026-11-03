@@ -1,0 +1,501 @@
+{
+"batch": "L13",
+"reviewed": 43,
+"ok_ids": [
+"angle_addition_point_on_segment",
+"convex_quadrilateral_angle_sum",
+"heron_sine_form",
+"varignon_rectangle_rhombus_criteria",
+"tetrahedron_opposite_edges_perpendicular_iff",
+"tetrahedron_bimedians_concurrent",
+"tetrahedron_centroid_three_to_one"
+],
+"findings": [
+{
+"id": "alternate_angles_of_parallel",
+"home": "S2",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトル（DC=kAB、なす角、向きの符号）", "stage": "S9", "where": "第1段落から第3段落の全体", "replaceable": false}
+],
+"fix": "錯角の相等は中2で『平行線の性質』として証明なしに認める事実（平行線公準と同値）で、教科書に別の標準証明がない。標準解答にするなら公理扱いとして『平行線の性質より』の1行にするか、ベクトルによる導出を数C以降の別カードに移す。",
+"keep_as_advanced": true
+},
+{
+"id": "parallel_of_alternate_angles",
+"home": "S2",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "有向角と向きの符号（教科書範囲外）", "stage": "S10", "where": "第2段落から第3段落（有向角の符号の比較、有向角の加法）", "replaceable": false},
+{"tool": "ベクトル（-CD、-CA の反転、正の倍）", "stage": "S9", "where": "第3段落", "replaceable": false}
+],
+"fix": "錯角が等しければ平行は、中2で『平行線になるための条件』として証明なしに認める。有向角は高校課程にもない。標準解答にするなら認める事実として扱い、現在の証明は高度な別カードに移す。",
+"keep_as_advanced": true
+},
+{
+"id": "corresponding_angles_of_parallel",
+"home": "S2",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトル（CD=kAB、なす角が正の倍で不変）", "stage": "S9", "where": "全段落", "replaceable": false}
+],
+"fix": "同位角の相等は中2で証明なしに認める平行線の性質そのもの。標準解答は『平行線の性質より』とし、ベクトル証明は別カードに残す。",
+"keep_as_advanced": true
+},
+{
+"id": "parallel_of_corresponding_angles",
+"home": "S2",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "有向角と向きの符号（教科書範囲外）", "stage": "S10", "where": "第3段落全体", "replaceable": false},
+{"tool": "ベクトル（AC=-CA、反転）", "stage": "S9", "where": "第2段落", "replaceable": false}
+],
+"fix": "同位角が等しければ平行は、中2で証明なしに認める平行線になるための条件。標準解答は認める事実として扱い、有向角による証明は別カードに移す。",
+"keep_as_advanced": true
+},
+{
+"id": "parallel_of_common_perpendicular",
+"home": "S2",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "直交補空間と部分空間の次元（線形代数）", "stage": "S10", "where": "第1文後半（EFに直交するベクトル全体は1次元）", "replaceable": true},
+{"tool": "ベクトルの内積と平行", "stage": "S9", "where": "全体", "replaceable": true}
+],
+"fix": "共通の垂線は、同位角が両方90度という平行線の条件で書き替えられる。patchを参照。",
+"patch": {"answer": "$A,B,C,D,E,F$を平面上の点とし、$A\\neq B$、$C\\neq D$、$E\\neq F$で、直線$AB$と直線$CD$はともに直線$EF$に垂直とする。垂直な2直線は交わるので、直線$AB$と直線$EF$の交点を$P$、直線$CD$と直線$EF$の交点を$Q$とする。\n\n$P=Q$のとき、点$P$を通り直線$EF$に垂直な直線はただ1本なので、直線$AB$と直線$CD$は一致する。\n\n$P\\neq Q$のとき、直線$EF$が2直線$AB$、$CD$を横切るとき、同位角はどちらも$90^\\circ$で等しい。同位角が等しいから、直線$AB$と直線$CD$は平行である（平行線になるための条件）。\n\nどちらの場合も、直線$AB$と直線$CD$は平行（一致を含む）である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "parallelogram_properties",
+"home": "S2",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトル（位置ベクトル、なす角の反転不変）", "stage": "S9", "where": "全段落（対辺、中点、対角のすべて）", "replaceable": true}
+],
+"fix": "中2の標準は、対角線で2つの三角形に分けて合同条件（2角夾辺）と錯角で対辺・対角を示し、対角線の中点は三角形の合同で示す。ただし題意がAB=DCのベクトル等式で、共線の退化も含むため、同じ主張を保つ書き替えは10行を超える。題意を『2組の対辺が平行な四角形』に直してから書き替えるのが妥当。",
+"keep_as_advanced": true
+},
+{
+"id": "parallelogram_of_diagonals_bisect",
+"home": "S2",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "位置ベクトル", "stage": "S9", "where": "全体", "replaceable": true}
+],
+"fix": "中2の標準は『対角線が互いの中点で交わる→対頂角と2辺夾角で合同→錯角が等しい→平行四辺形』。結論がベクトル等式で退化も含むため同じ主張のまま置換できない。題意を『平行四辺形である』に直してから合同で書く。",
+"keep_as_advanced": false
+},
+{
+"id": "parallelogram_of_two_pairs_parallel",
+"home": "S2",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの線形独立と係数比較", "stage": "S9", "where": "第1段落から第2段落", "replaceable": true}
+],
+"fix": "平行四辺形の定義から対辺が等しいことを示すのが中2の標準で、対角線ACで2つの三角形に分け、錯角と共通辺により2角夾辺で合同を示す。ただし結論がベクトル等式（向きを含む）のため同じ主張のままでは書き替えられない。題意を中学の言い方に直してから書く。",
+"keep_as_advanced": true
+},
+{
+"id": "parallelogram_of_one_pair_parallel_equal",
+"home": "S2",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトル（DC=kAB、k=-1の排除）", "stage": "S9", "where": "全段落", "replaceable": true}
+],
+"fix": "中2の標準は、対角線ACを引き、AB=CD、錯角、ACの共通で2辺夾角の合同を作って平行四辺形を示す。反対側の仮定が向きを決める役をしているが、ベクトル等式の結論には中学の言い方がないため、題意を直してから書き替える。",
+"keep_as_advanced": true
+},
+{
+"id": "parallelogram_of_two_pairs_equal",
+"home": "S2",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "コーシー・シュワルツの不等式の等号条件", "stage": "S10", "where": "第3段落（st-m^2>0）", "replaceable": true},
+{"tool": "ベクトルの内積と1次独立による連立", "stage": "S9", "where": "第2段落から第5段落", "replaceable": true}
+],
+"fix": "中2の標準は、対角線ACで分けた△ABCと△CDAを3辺が等しいとして合同にし、錯角から平行を得る。反対側の仮定で凸の配置を固定する。同じ主張を保つ書き替えはベクトル等式の結論のため難しく、題意を直したうえで合同で書くのが妥当。現在の答案は計算が長く初学者向けではない。",
+"keep_as_advanced": true
+},
+{
+"id": "rectangle_diagonals_equal",
+"home": "S2",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの内積による展開", "stage": "S9", "where": "第1段落から第3段落", "replaceable": true}
+],
+"fix": "平行四辺形の性質と同側内角、合同で書き替えられる。patchを参照。",
+"patch": {"answer": "$A,B,C,D$を点とし、$A\\neq B$、$A\\neq D$、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$\\angle DAB=\\pi/2$とする。$\\angle DAB=\\pi/2$より$A,B,D$は同一直線上にない。$\\overrightarrow{AB}=\\overrightarrow{DC}$より四角形$ABCD$は平行四辺形で、$AB=DC$、$AD=BC$、$AD\\parallel BC$である。\n\n$AD\\parallel BC$より同側内角の和は$\\pi$なので、$\\angle ABC=\\pi-\\angle DAB=\\pi/2$である。平行四辺形の対角は等しいから、$\\angle BCD=\\angle DAB=\\pi/2$、$\\angle CDA=\\angle ABC=\\pi/2$である。\n\n三角形$ABC$と三角形$BAD$で、$AB=BA$（共通）、$BC=AD$、$\\angle ABC=\\angle BAD=\\pi/2$なので、2辺とその間の角が等しく合同である。よって$AC=BD$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "rectangle_of_equal_diagonals",
+"home": "S2",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの内積による展開", "stage": "S9", "where": "全体", "replaceable": true}
+],
+"fix": "平行四辺形の性質、3辺相等による合同、同側内角で書き替えられる。patchを参照。",
+"patch": {"answer": "$A,B,C,D$を点とし、$A\\neq B$、$A\\neq D$、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$AC=BD$とする。\n\nまず$A,B,D$が同一直線上にないことを示す。同一直線上にあるとして、$A$を原点とする数直線で$B$の座標を$b$、$D$の座標を$d$（$b,d\\neq0$）とおくと、$C$の座標は$b+d$で、$AC=|b+d|$、$BD=|d-b|$である。これらが等しいと$bd=0$となり、$b,d\\neq0$に反する。\n\nよって四角形$ABCD$は平行四辺形で、$AD=BC$、$AD\\parallel BC$である。三角形$ABD$と三角形$BAC$で、$AB=BA$（共通）、$AD=BC$、$BD=AC$なので、3組の辺が等しく合同であり、$\\angle DAB=\\angle CBA$である。$AD\\parallel BC$より同側内角の和は$\\pi$なので$\\angle DAB+\\angle CBA=\\pi$である。したがって$\\angle DAB=\\pi/2$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "rhombus_diagonals_perpendicular",
+"home": "S2",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの内積（和と差の積）", "stage": "S9", "where": "全体", "replaceable": true}
+],
+"fix": "平行四辺形の対角線の中点と二等辺三角形の中線が底辺に垂直であることで書き替えられる。patchを参照。",
+"patch": {"answer": "$A,B,C,D$を点とし、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$AB=AD$とする。\n\n$B=D$のときは$\\overrightarrow{BD}=\\vec{0}$、$A=C$のときは$\\overrightarrow{AC}=\\vec{0}$なので、内積は$0$である。以下$B\\neq D$かつ$A\\neq C$とする。$A,B,D$が同一直線上にあるとすると、$AB=AD$かつ$B\\neq D$より$A$は$BD$の中点となり、$C$は$A$と一致して$A\\neq C$に反する。したがって$A,B,D$は同一直線上にない。\n\nこのとき$\\overrightarrow{AB}=\\overrightarrow{DC}$より四角形$ABCD$は平行四辺形で、対角線$AC$と$BD$は互いの中点$M$で交わる。三角形$ABD$は$AB=AD$の二等辺三角形で、$M$は底辺$BD$の中点だから、$AM\\perp BD$である。直線$AM$は直線$AC$なので、$AC\\perp BD$、すなわち$\\overrightarrow{AC}\\cdot\\overrightarrow{BD}=0$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "rhombus_of_perpendicular_diagonals",
+"home": "S2",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの内積（和と差の積）", "stage": "S9", "where": "全体", "replaceable": true}
+],
+"fix": "対角線の中点と、垂直二等分線上の点は両端から等距離という性質で書き替えられる。patchを参照。",
+"patch": {"answer": "$A,B,C,D$を点とし、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$\\overrightarrow{AC}\\cdot\\overrightarrow{BD}=0$とする。\n\n$B=D$のときは$AB=AD$が明らかである。$A=C$のときは$\\overrightarrow{AB}=\\overrightarrow{DC}=\\overrightarrow{DA}$より$A$が$BD$の中点となり、$AB=AD$である。以下$B\\neq D$かつ$A\\neq C$とする。$A,B,D$が同一直線上にあるとすると、$\\overrightarrow{AC}$と$\\overrightarrow{BD}$はこの直線に平行な零でないベクトルとなり、内積は$0$にならない。したがって$A,B,D$は同一直線上にない。\n\nこのとき四角形$ABCD$は平行四辺形で、対角線$AC$と$BD$は互いの中点$M$で交わる。$AC\\perp BD$より$AM\\perp BD$である。三角形$AMB$と三角形$AMD$で、$AM$は共通、$BM=DM$、$\\angle AMB=\\angle AMD=\\pi/2$なので合同であり、$AB=AD$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "rhombus_diagonal_bisects_angle",
+"home": "S2",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの内積と逆余弦によるなす角", "stage": "S9", "where": "第2段落", "replaceable": true}
+],
+"fix": "平行四辺形の対辺が等しいことと3辺相等の合同で書き替えられる。patchを参照。",
+"patch": {"answer": "$A,B,C,D$を点とし、$A,B,D$は同一直線上になく、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$AB=AD$とする。四角形$ABCD$は平行四辺形なので、$BC=AD$、$DC=AB$である。$AB=AD$とあわせて、$AB=BC=CD=DA$となる。\n\n三角形$ABC$と三角形$ADC$で、$AB=AD$、$BC=DC$、$AC$は共通なので、3組の辺が等しく合同である。よって$\\angle BAC=\\angle DAC=\\angle CAD$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "square_diagonal_length_and_angle",
+"home": "S3",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの内積と余弦（逆余弦）", "stage": "S9", "where": "第1段落から第3段落", "replaceable": true}
+],
+"fix": "三平方の定理と直角二等辺三角形の底角で書き替えられる。patchを参照。",
+"patch": {"answer": "$A,B,C,D$を点とし、$A\\neq B$、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$AB=AD$、$\\angle DAB=\\pi/2$とする。$\\angle DAB=\\pi/2$より$A,B,D$は同一直線上になく、四角形$ABCD$は平行四辺形で、$BC=AD=AB$、$BC\\parallel AD$である。\n\n同側内角の和は$\\pi$だから、$\\angle ABC=\\pi-\\angle DAB=\\pi/2$である。三角形$ABC$は$\\angle ABC=\\pi/2$、$AB=BC$の直角二等辺三角形である。三平方の定理より$AC^2=AB^2+BC^2=2AB^2$なので、$AC=\\sqrt{2}\\,AB$である。\n\n二等辺三角形の底角は等しく、三角形の内角の和は$\\pi$だから、$\\angle BAC=\\angle BCA=(\\pi-\\pi/2)/2=\\pi/4$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "trapezoid_midline",
+"home": "S3",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトル（位置ベクトルと向きの符号の判定）", "stage": "S9", "where": "全段落", "replaceable": true}
+],
+"fix": "中3の標準は、辺DNを延長して直線ABとの交点Eをとり、△NCD≡△NBE（対頂角、BN=CN、錯角）でN=DEの中点、BE=DCを得て、△ADEで中点連結定理を使い MN∥AE、MN=AE/2=(AB+DC)/2 とする。反対側の仮定がEの位置（Bの先）を決める部分の厳密な扱いが中学では曖昧になり、主張を保った10行以内の書き替えにならないためpatchは付けない。",
+"keep_as_advanced": true
+},
+{
+"id": "isosceles_trapezoid_diagonals_base_angles",
+"home": "S2",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの内積による展開と余弦", "stage": "S9", "where": "第3段落から第5段落", "replaceable": true}
+],
+"fix": "中学の標準は、上底の両端から下底に垂線を下ろして合同な直角三角形を作り底角の相等を得る。その後△ABCと△BADの合同（2辺夾角）で対角線の相等を得る。AB≠DCの場合分けと配置の扱いで10行を超えるためpatchは付けない。",
+"keep_as_advanced": true
+},
+{
+"id": "varignon_parallelogram",
+"home": "S3",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "位置ベクトルによる中点計算", "stage": "S9", "where": "全段落", "replaceable": true}
+],
+"fix": "中3の標準は中点連結定理を△ABCと△CDAに使う（PQ∥AC、PQ=AC/2、SR∥AC、SR=AC/2、△BCDで QR=BD/2）。空間の任意の4点の三角形は平面上にあるのでそのまま使える。ただし結論『PQ=SR』がベクトル等式で退化も含むため、同じ主張を保つpatchは付けない。",
+"keep_as_advanced": true
+},
+{
+"id": "convex_polygon_interior_angle_sum",
+"home": "S2",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "有向角と符号（教科書範囲外）", "stage": "S10", "where": "第1段落から第5段落", "replaceable": true},
+{"tool": "数学的帰納法", "stage": "S7", "where": "第3段落以降", "replaceable": true}
+],
+"fix": "凸多角形は1つの頂点から対角線で三角形に分ける（中2の標準解答）。ただし凸の定義がカード独自の有向角の符号条件で、教科書の凸の概念とずれる点に注意。patchを参照。",
+"patch": {"answer": "$p_0,\\dots,p_{n+2}$が凸$(n+3)$角形の頂点をなすとする。頂点$p_0$から他の頂点へ対角線を引くと、多角形は$n+1$個の三角形$p_0p_ip_{i+1}$（$i=1,\\dots,n+1$）に分かれる。\n\n各頂点の内角は、その頂点に集まる三角形の角の和に等しい。$p_1$と$p_{n+2}$の内角はそれぞれ1つの三角形の角、$p_2,\\dots,p_{n+1}$の内角は隣り合う2つの三角形の角の和（角の加法）、$p_0$の内角は$n+1$個の三角形の$p_0$での角の和である。したがって多角形の内角の和は、$n+1$個の三角形の内角の和の合計に等しい。\n\n三角形の内角の和は$\\pi$なので、多角形の内角の和は$(n+1)\\pi$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "convex_polygon_exterior_angle_sum",
+"home": "S2",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "有向角と符号（教科書範囲外）", "stage": "S10", "where": "第2段落以降", "replaceable": true},
+{"tool": "数学的帰納法", "stage": "S7", "where": "第3段落", "replaceable": true}
+],
+"fix": "内角の和を三角形に分けて求め、頂点数×π から引く（中2の標準）。カード独自の凸の定義と教科書の凸の概念のずれに注意。patchを参照。",
+"patch": {"answer": "$p_0,\\dots,p_{n+2}$が凸$(n+3)$角形の頂点をなすとする。\n\nまず内角の和が$(n+1)\\pi$であることを示す。頂点$p_0$から他の頂点へ対角線を引くと、多角形は$n+1$個の三角形$p_0p_ip_{i+1}$（$i=1,\\dots,n+1$）に分かれる。各頂点の内角は、その頂点に集まる三角形の角の和に等しいので（角の加法）、多角形の内角の和は$n+1$個の三角形の内角の和の合計に等しい。三角形の内角の和は$\\pi$なので、内角の和は$(n+1)\\pi$である。\n\n頂点は$n+3$個あり、各頂点の外角は$\\pi$から内角を引いたものなので、外角の和は$(n+3)\\pi-(n+1)\\pi=2\\pi$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "triangle_area_sine",
+"home": "S4",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "線形写像による面積変換（行列式の絶対値倍）", "stage": "S10", "where": "第3段落", "replaceable": true},
+{"tool": "ベクトルの成分と内積、ラグランジュの恒等式", "stage": "S9", "where": "第4段落", "replaceable": true},
+{"tool": "凸結合による凸包の記述（ルベーグ測度としての面積）", "stage": "S10", "where": "第2段落", "replaceable": true}
+],
+"fix": "数Iの標準は、底辺×高さ÷2に、高さ=AC sin∠BACを三角比で入れる。patchを参照（面積=底辺×高さ÷2を既知とする）。",
+"patch": {"answer": "$A,B,C$を平面上の点とし、三角形$ABC$の面積を$S$、$\\theta=\\angle BAC$とする。三角形の面積は、既知の公式『底辺×高さ÷2』で与えられるものとする。\n\n$A=B$または$A=C$のときは、凸包が線分または1点で$S=0$であり、$AB\\cdot AC=0$なので右辺も$0$である。3点が同一直線上にあるときは$S=0$で、$\\theta=0$または$\\pi$より$\\sin\\theta=0$なので右辺も$0$である。\n\n以下、3点は同一直線上にないとする。$C$から直線$AB$に下ろした垂線の足を$H$とする。$\\theta<\\pi/2$のとき、$H$は半直線$AB$上にあり、直角三角形$ACH$で三角比の定義から$CH=AC\\sin\\theta$である。$\\theta=\\pi/2$のとき、$H=A$で$CH=AC=AC\\sin\\theta$である。$\\theta>\\pi/2$のとき、$H$は$A$について$B$と反対側にあり、直角三角形$ACH$で$\\angle CAH=\\pi-\\theta$だから、$CH=AC\\sin(\\pi-\\theta)=AC\\sin\\theta$である。\n\nよって底辺を$AB$、高さを$CH$として、$S=\\frac{1}{2}AB\\cdot CH=\\frac{1}{2}AB\\cdot AC\\sin\\angle BAC$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "heron_formula_area",
+"home": "S4",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "線形写像による面積変換（行列式の絶対値倍）", "stage": "S10", "where": "第2段落", "replaceable": true},
+{"tool": "ベクトルの成分とラグランジュの恒等式", "stage": "S9", "where": "第2段落", "replaceable": true}
+],
+"fix": "面積=1/2 bc sinθ を底辺×高さ÷2と三角比で示し、後半（余弦定理による消去）はそのまま使える。patchを参照。",
+"patch": {"answer": "$A,B,C$を平面上の点とし、$a=BC$、$b=CA$、$c=AB$、$s=(a+b+c)/2$、$\\theta=\\angle BAC$とする。三角形の面積$S$は、既知の公式『底辺×高さ÷2』で与えられるものとする。\n\nまず$S=\\frac{1}{2}bc\\sin\\theta$を示す。$A=B$、$A=C$、または3点が同一直線上のときは、両辺とも$0$である。それ以外のとき、$C$から直線$AB$に下ろした垂線の足を$H$とすると、$\\theta$が鋭角・直角・鈍角のいずれでも$CH=b\\sin\\theta$である（鈍角のときは$\\angle CAH=\\pi-\\theta$と$\\sin(\\pi-\\theta)=\\sin\\theta$を使う）。よって$S=\\frac{1}{2}c\\cdot CH=\\frac{1}{2}bc\\sin\\theta$である。\n\n次に、余弦定理より$2bc\\cos\\theta=b^2+c^2-a^2$である（$bc=0$のときは$a=b$または$a=c$なので両辺とも$0$である）。また$\\sin\\theta\\geq0$である。$\\sin^2\\theta=1-\\cos^2\\theta$より、$\\left(\\frac{1}{2}bc\\sin\\theta\\right)^2=\\frac{1}{4}b^2c^2-\\frac{1}{16}(b^2+c^2-a^2)^2=\\frac{1}{16}(a+b+c)(-a+b+c)(a-b+c)(a+b-c)=s(s-a)(s-b)(s-c)$である。\n\n面積は$0$以上なので、平方根をとって結論を得る。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "triangle_area_base_height",
+"home": "S1",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "線形写像による面積変換（行列式）と行列式の双線形性・交代性", "stage": "S10", "where": "第2段落から第3段落", "replaceable": true},
+{"tool": "ベクトルの内積とラグランジュの恒等式", "stage": "S9", "where": "第4段落", "replaceable": true}
+],
+"fix": "題意が三角形の面積公式そのもの（小学校で既習）で、面積を凸包のルベーグ測度とした定義から導く形になっている。中学の標準は、長方形を対角線で2等分する直角三角形の面積に分解する。patchを参照。題意の面積の定義（ルベーグ測度）自体が高校範囲外である。",
+"patch": {"answer": "$A,B,C,H$を平面上の点とし、$B\\neq C$、$H$は直線$BC$上にあり$HA\\perp BC$（$A$が直線$BC$上なら$H=A$）とする。面積の基本性質（長方形の面積は縦×横、合同な図形の面積は等しい、面積は加法的）を用いる。$h=AH$とおく。\n\n$H\\neq A$のとき、直線$BC$上の点$X$($X\\neq H$)に対して直角三角形$AHX$は、$AH$と$HX$を隣り合う2辺とする長方形を対角線で切った2つの合同な三角形の1つなので、面積は$\\frac{1}{2}h\\cdot HX$である。$X=H$のときは面積$0$で同じ式が成り立つ。\n\n$H$が線分$BC$上にあるとき、三角形$ABC$は直角三角形$AHB$と$AHC$に分かれるので、面積は$\\frac{1}{2}h(HB+HC)=\\frac{1}{2}h\\cdot BC$である。$H$が線分$BC$の外にあるとき、$H$に近い方の端点を$B$とすると、三角形$ABC$は直角三角形$AHC$から$AHB$を除いたものなので、面積は$\\frac{1}{2}h(HC-HB)=\\frac{1}{2}h\\cdot BC$である。$C$の方が近いときも同様である。\n\n$H=A$のときは$A$が直線$BC$上にあり、三角形は線分になって面積は$0$、$AH=0$なので成り立つ。したがって面積は$\\frac{1}{2}BC\\cdot AH$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "area_ratio_common_vertex_base_line",
+"home": "S2",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "線形写像による面積変換（行列式）", "stage": "S10", "where": "第2段落", "replaceable": true},
+{"tool": "行列式の双線形性", "stage": "S9", "where": "第3段落", "replaceable": true}
+],
+"fix": "高さが等しい三角形の面積は底辺に比例する、という中学の考え方で足りる。patchを参照。",
+"patch": {"answer": "$A,B,C,D$を平面上の点とし、$B\\neq C$、$D$は直線$BC$上にあるとする。三角形の面積は『底辺×高さ÷2』で与えられるものとし、$S$と書く。$A$から直線$BC$に下ろした垂線の長さを$h$とする（$A$が直線$BC$上なら$h=0$）。\n\n$B,D,C$は同じ直線$BC$上にあるので、三角形$ABD$は底辺$BD$、高さ$h$で$S(ABD)=\\frac{1}{2}BD\\cdot h$である（$B=D$のときは両辺とも$0$）。同様に三角形$ADC$は底辺$DC$、高さ$h$で$S(ADC)=\\frac{1}{2}DC\\cdot h$である。\n\nしたがって$S(ABD)\\cdot DC=\\frac{1}{2}BD\\cdot DC\\cdot h=S(ADC)\\cdot BD$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "area_equal_same_base_parallel",
+"home": "S2",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "線形写像による面積変換と行列式の展開", "stage": "S10", "where": "第2段落から第3段落", "replaceable": true}
+],
+"fix": "等積変形は、平行線の間隔が一定であることと底辺×高さ÷2で示すのが中2の標準。patchを参照。",
+"patch": {"answer": "$A,A',B,C$を平面上の点とし、$A\\neq A'$、$B\\neq C$、直線$AA'$と直線$BC$は平行とする。三角形の面積は『底辺×高さ÷2』で与えられるものとする。\n\n平行な2直線の間隔は一定なので、$A$と$A'$から直線$BC$までの距離は等しい（直線$AA'$が直線$BC$と一致する場合は、どちらも$0$である）。この距離を$h$とすると、三角形$ABC$と三角形$A'BC$はどちらも底辺$BC$、高さ$h$なので、面積はともに$\\frac{1}{2}BC\\cdot h$である。よって2つの面積は等しい。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "area_ratio_shared_angle",
+"home": "S4",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "線形写像による面積変換（行列式）", "stage": "S10", "where": "第2段落", "replaceable": true},
+{"tool": "行列式の双線形性", "stage": "S9", "where": "第3段落", "replaceable": true}
+],
+"fix": "数Iの面積公式 S=1/2 xy sinθ を2つの三角形に適用し、共有する角の正弦が等しいことを使う。patchを参照。",
+"patch": {"answer": "$A,B,C,B',C'$を平面上の点とし、$A\\neq B$、$A\\neq C$、$B'$は直線$AB$上、$C'$は直線$AC$上にあるとする。三角形の面積$S$は、公式$S(XYZ)=\\frac{1}{2}XY\\cdot XZ\\sin\\angle YXZ$（3点が同一直線上でも、両辺は$0$）を用いる。\n\n$B'=A$または$C'=A$のときは、$AB'\\cdot AC'=0$で、三角形$AB'C'$は線分または点なので$S(AB'C')=0$であり、両辺とも$0$である。以下$B'\\neq A$、$C'\\neq A$とする。$B'$は直線$AB$上、$C'$は直線$AC$上の$A$と異なる点だから、半直線$AB'$は半直線$AB$かその反対向きであり、$AC'$も同様である。したがって$\\angle B'AC'$は$\\angle BAC$または$\\pi-\\angle BAC$に等しく、どちらの場合も$\\sin\\angle B'AC'=\\sin\\angle BAC$である。\n\nよって$S(AB'C')=\\frac{1}{2}AB'\\cdot AC'\\sin\\angle BAC$、$S(ABC)=\\frac{1}{2}AB\\cdot AC\\sin\\angle BAC$である。したがって$S(AB'C')\\cdot AB\\cdot AC=\\frac{1}{2}AB'\\cdot AC'\\cdot AB\\cdot AC\\sin\\angle BAC=S(ABC)\\cdot AB'\\cdot AC'$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "area_similar_triangles_ratio_square",
+"home": "S3",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "線形写像による面積変換（行列式）", "stage": "S10", "where": "第2段落", "replaceable": true},
+{"tool": "余弦定理とヘロンの公式", "stage": "S4", "where": "第2段落から第3段落", "replaceable": true}
+],
+"fix": "中3の標準は、相似な三角形の底辺・高さがともにk倍になることから面積比k^2を得る。patchを参照。",
+"patch": {"answer": "$A,B,C,D,E,F$を平面上の点、$k>0$とし、$DE=k\\,AB$、$DF=k\\,AC$、$EF=k\\,BC$とする。三角形の面積は『底辺×高さ÷2』で与えられるものとする。\n\n$A,B,C$が同一直線上にあるとき、3辺のうち1つは他の2つの和に等しい。三角形$DEF$の各辺は$k$倍なので同じ関係が成り立ち、$D,E,F$も同一直線上にある。面積はどちらも$0$で、$0=k^2\\cdot0$である。以下、$A,B,C$は三角形をなすとする。このとき$D,E,F$も三角形をなし、3組の辺の比が等しいから、$\\triangle ABC\\sim\\triangle DEF$（相似比$1:k$）である。\n\n$A$から直線$BC$に下ろした垂線の足を$H$、$D$から直線$EF$に下ろした垂線の足を$H'$とする。相似より$\\angle B=\\angle E$である。$\\angle B$が鋭角のとき直角三角形$ABH$と$DEH'$は$\\angle B=\\angle E$で2角が等しく相似、鈍角のときは$\\angle ABH=\\angle DEH'=\\pi-\\angle B$で相似、直角のときは$H=B$、$H'=E$で$AH=AB$、$DH'=DE$である。いずれも$DH':AH=DE:AB=k:1$である。\n\nしたがって$S(DEF)=\\frac{1}{2}EF\\cdot DH'=\\frac{1}{2}(k\\,BC)(k\\,AH)=k^2\\cdot\\frac{1}{2}BC\\cdot AH=k^2S(ABC)$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "parallelogram_area",
+"home": "S4",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "線形写像による面積変換（行列式）と単位正方形の像", "stage": "S10", "where": "第2段落から第3段落", "replaceable": true},
+{"tool": "ベクトル成分とラグランジュの恒等式", "stage": "S9", "where": "第3段落", "replaceable": true}
+],
+"fix": "平行四辺形を対角線で合同な2つの三角形に分け、数Iの面積公式を使う。patchを参照。",
+"patch": {"answer": "$A,B,C,D$を平面上の点とし、$\\overrightarrow{AB}=\\overrightarrow{DC}$とする。三角形の面積$S$は、公式$S(XYZ)=\\frac{1}{2}XY\\cdot XZ\\sin\\angle YXZ$を用いる。\n\n$A=B$、$A=D$、または$A,B,D$が同一直線上にあるときは、4点の凸包は線分または1点で面積は$0$であり、$AB\\cdot AD=0$または$\\sin\\angle BAD=0$なので右辺も$0$である。\n\n以下、$A,B,D$は同一直線上にないとする。四角形$ABCD$は平行四辺形で、対角線$BD$により2つの三角形$ABD$、$CDB$に分かれる。この2つは3辺が等しく合同である。よって面積は$2S(ABD)=2\\cdot\\frac{1}{2}AB\\cdot AD\\sin\\angle BAD=AB\\cdot AD\\sin\\angle BAD$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "three_perpendiculars",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの内積による分解", "stage": "S9", "where": "第2段落全体", "replaceable": true}
+],
+"fix": "数Aの標準は、BC⊥HA、BC⊥HBから直線BCが平面AHBに垂直になり、AB⊥BC を得る（線と平面の垂直条件）。patchを参照。",
+"patch": {"answer": "平面$\\alpha$と点$A,H,B,C$をとり、$H,B,C$は$\\alpha$上にあり、$B\\neq C$で、$HA$は$\\alpha$に垂直、$HB\\perp BC$とする。\n\n$A=H$のときは$AB=HB\\perp BC$で成り立つ。$H=B$のときは$AB=AH$が$\\alpha$に垂直で、$\\alpha$上の$BC$に垂直なので成り立つ。以下$A\\neq H$、$H\\neq B$とする。このとき$A,H,B$は同一直線上にない（同一直線上なら$HA\\parallel HB$となるが、$HA$は$\\alpha$上の$HB$に垂直なので矛盾）。\n\n$HA$は$\\alpha$に垂直で、$BC$は$\\alpha$上の直線だから$BC\\perp HA$である。また仮定より$BC\\perp HB$である。$BC$は平面$AHB$上の交わる2直線$HA$、$HB$に垂直なので、平面$AHB$に垂直である。直線$AB$は平面$AHB$上にあるから、$BC\\perp AB$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "three_perpendiculars_converse_foot",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの内積による分解", "stage": "S9", "where": "第2段落全体", "replaceable": true}
+],
+"fix": "数Aの標準は、BC⊥HA、BC⊥ABから直線BCが平面AHBに垂直になり、HB⊥BC を得る。patchを参照。",
+"patch": {"answer": "平面$\\alpha$と点$A,H,B,C$をとり、$H,B,C$は$\\alpha$上にあり、$B\\neq C$で、$HA$は$\\alpha$に垂直、$AB\\perp BC$とする。\n\n$A=H$のときは$HB=AB\\perp BC$で成り立つ。$H=B$のときは$\\overrightarrow{BH}=\\vec{0}$で成り立つ。以下$A\\neq H$、$H\\neq B$とする。このとき$A,H,B$は同一直線上にない（同一直線上なら$HA\\parallel HB$となるが、$HA$は$\\alpha$上の$HB$に垂直なので矛盾）。\n\n$HA$は$\\alpha$に垂直で、$BC$は$\\alpha$上の直線だから$BC\\perp HA$である。また仮定より$BC\\perp AB$である。$BC$は平面$AHB$上の交わる2直線$AH$、$AB$に垂直なので、平面$AHB$に垂直である。直線$HB$は平面$AHB$上にあるから、$BC\\perp HB$である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "three_perpendiculars_converse_plane",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの内積と線形結合", "stage": "S9", "where": "第1段落から第2段落", "replaceable": true}
+],
+"fix": "数Aの標準は、線と平面の垂直条件を2回使う。patchを参照。",
+"patch": {"answer": "$A,H,B,C$を点とし、$H,B,C$は同一直線上になく、$AB\\perp BC$、$HB\\perp BC$、$AH\\perp HB$とする。$H\\neq B$である。\n\n$A=H$のときは$\\overrightarrow{HA}=\\vec{0}$で成り立つ。以下$A\\neq H$とする。$A,B,H$が同一直線上にあるとすると$HA\\parallel HB$となるが、$AH\\perp HB$に反する。したがって$A,B,H$は同一直線上にない。\n\n$BC$は平面$ABH$上の交わる2直線$BA$、$BH$に垂直なので、平面$ABH$に垂直である。よって$BC\\perp AH$である。直線$AH$は、平面$HBC$上の交わる2直線$HB$、$HC$のうち$HB$に垂直であり、また$BC$に垂直（$BC\\perp AH$）である。$HB$と$BC$は$B$で交わる平面$HBC$上の2直線なので、直線$AH$は平面$HBC$に垂直である。\n"},
+"keep_as_advanced": true
+},
+{
+"id": "line_perpendicular_plane_criterion",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの線形結合と内積の線形性", "stage": "S9", "where": "第2段落全体", "replaceable": true}
+],
+"fix": "線と平面の垂直条件そのものを示すカード。教科書は合同な三角形による長い議論か、証明を省く扱いで、10行以内の書き替えはない。標準解答にするなら level を数C（空間ベクトル）に上げるか、教科書どおり『垂直条件』として認める扱いにする。ベクトルの証明は復習向けに残す価値がある。",
+"keep_as_advanced": true
+},
+{
+"id": "lines_perpendicular_to_plane_parallel",
+"home": "S5",
+"used": "S10",
+"severity": "major",
+"tools": [
+{"tool": "直交補空間と次元（線形代数）", "stage": "S10", "where": "第2段落全体", "replaceable": true}
+],
+"fix": "数Aの標準は、2直線を含む平面を作り、平面上で2直線がともに平面αとの交点で垂直になること、または垂線の一意性から示す。10行を超えるため方針のみ。現在の答案は『直交補空間の次元が1』を使い、線形代数の範囲である。",
+"keep_as_advanced": true
+},
+{
+"id": "foot_of_perpendicular_shortest",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの内積による展開", "stage": "S9", "where": "第2段落全体", "replaceable": true}
+],
+"fix": "∠AHX=90°の直角三角形に三平方の定理（中3）を使う。patchを参照。",
+"patch": {"answer": "平面$\\alpha$と点$A,H,X$をとり、$H,X$は$\\alpha$上にあり、$HA$は$\\alpha$に垂直とする。\n\n$H=X$のときは$AX=AH$、$HX=0$で成り立つ。$A=H$のときは$AX=HX$、$AH=0$で成り立つ。以下$A\\neq H$、$X\\neq H$とする。$HA$は$\\alpha$に垂直で、直線$HX$は$\\alpha$上にあるから、$\\angle AHX=\\pi/2$である。直角三角形$AHX$に三平方の定理を使うと、$AX^2=AH^2+HX^2$である。$HX^2\\geq0$より$AH^2\\leq AX^2$であり、長さは$0$以上なので$AH\\leq AX$である。\n"},
+"keep_as_advanced": false
+},
+{
+"id": "slant_equal_iff_foot_equal",
+"home": "S5",
+"used": "S9",
+"severity": "major",
+"tools": [
+{"tool": "ベクトルの内積による展開", "stage": "S9", "where": "第2段落", "replaceable": true}
+],
+"fix": "直角三角形AHXの三平方の定理で AX^2=AH^2+HX^2 を示す。patchを参照。",
+"patch": {"answer": "平面$\\alpha$と点$A,H,B,C,D$をとり、$H,B,C,D$は$\\alpha$上にあり、$HA$は$\\alpha$に垂直とする。\n\n$\\alpha$上の任意の点$X$について、$AX^2=AH^2+HX^2$が成り立つ。実際、$H=X$または$A=H$のときは明らかで、そうでないときは$\\angle AHX=\\pi/2$の直角三角形$AHX$に三平方の定理を使う。\n\nしたがって$\\alpha$上の2点$X,Y$について、$AX^2=AY^2$と$HX^2=HY^2$は同値である。長さは$0$以上なので、$AX=AY$と$HX=HY$は同値である。これを$(X,Y)=(B,C)$と$(C,D)$に使えば、$AB=AC=AD$と$HB=HC=HD$が同値であることを得る。\n"},
+"keep_as_advanced": false
+}
+],
+"systematic": [
+"geometry_plane の level=middle カードは、題意（平行四辺形をAB=DCのベクトル等式で定義）も答案もベクトル・内積・有向角で書かれている。中学の標準である合同・錯角・三平方・中点連結の証明は一つも使われていない。",
+"平行線の同位角・錯角の4枚は、教科書でも証明なしで認める事実であり、置き換えるべき中学の証明が存在しない。公理扱いにするか、level を引き上げる必要がある。",
+"面積カードは、面積を『凸包のルベーグ測度』と定義し、線形写像の行列式で解く（S10）。教科書は底辺×高さ÷2を既知として三角比・相似で進める。9枚すべて同じ構造の系統的問題で、既知の面積公式を前提とするpatchで書き替えられる。題意のルベーグ測度による定義そのものが高校範囲外。",
+"空間図形（三垂線・垂線の足）のカードは、答案が空間ベクトルの内積分解（S9）に依存している。数Aの線と平面の垂直条件と三平方の定理で標準解答が書ける。ただし垂直条件そのものを示す line_perpendicular_plane_criterion は、教科書でも証明が長く、別扱いが必要。",
+"多角形の内角・外角の和は、カード独自の『凸』の定義（有向角の符号）と帰納法に依存し、中2の標準（対角線で三角形に分ける）から大きく離れている。教科書の凸の概念とのずれがあるため、patchの正当性は『凸多角形は対角線で三角形に分けられる』を既知とすることに依存する。",
+"四面体の対辺・重心・対辺の中点のカード（tetrahedron_*）は、題意の単元が数C（空間ベクトル）にあたると判断してS9を home とした。数Aの空間図形と中点連結定理で書けるとする別の判断もありうる。",
+"反対側・同じ側の仮定は、ベクトルの向き（k>0）を固定するために使われており、中学の合同の議論にはない。この仮定を入れた中学向けの書き替えは、凸の配置の扱いが曖昧になり、10行以内で同じ主張を保てないものが多い。"
+],
+"home_assignments": {
+"alternate_angles_of_parallel": "S2",
+"parallel_of_alternate_angles": "S2",
+"corresponding_angles_of_parallel": "S2",
+"parallel_of_corresponding_angles": "S2",
+"parallel_of_common_perpendicular": "S2",
+"parallelogram_properties": "S2",
+"parallelogram_of_diagonals_bisect": "S2",
+"parallelogram_of_two_pairs_parallel": "S2",
+"parallelogram_of_one_pair_parallel_equal": "S2",
+"parallelogram_of_two_pairs_equal": "S2",
+"rectangle_diagonals_equal": "S2",
+"rectangle_of_equal_diagonals": "S2",
+"rhombus_diagonals_perpendicular": "S2",
+"rhombus_of_perpendicular_diagonals": "S2",
+"rhombus_diagonal_bisects_angle": "S2",
+"square_diagonal_length_and_angle": "S3",
+"trapezoid_midline": "S3",
+"isosceles_trapezoid_diagonals_base_angles": "S2",
+"varignon_parallelogram": "S3",
+"varignon_rectangle_rhombus_criteria": "S9",
+"angle_addition_point_on_segment": "S2",
+"convex_quadrilateral_angle_sum": "S2",
+"convex_polygon_interior_angle_sum": "S2",
+"convex_polygon_exterior_angle_sum": "S2",
+"triangle_area_sine": "S4",
+"heron_sine_form": "S4",
+"heron_formula_area": "S4",
+"triangle_area_base_height": "S1",
+"area_ratio_common_vertex_base_line": "S2",
+"area_equal_same_base_parallel": "S2",
+"area_ratio_shared_angle": "S4",
+"area_similar_triangles_ratio_square": "S3",
+"parallelogram_area": "S4",
+"three_perpendiculars": "S5",
+"three_perpendiculars_converse_foot": "S5",
+"three_perpendiculars_converse_plane": "S5",
+"line_perpendicular_plane_criterion": "S5",
+"lines_perpendicular_to_plane_parallel": "S5",
+"foot_of_perpendicular_shortest": "S5",
+"slant_equal_iff_foot_equal": "S5",
+"tetrahedron_opposite_edges_perpendicular_iff": "S9",
+"tetrahedron_bimedians_concurrent": "S9",
+"tetrahedron_centroid_three_to_one": "S9"
+}
+}

@@ -1,0 +1,224 @@
+{
+  "batch": "L9",
+  "reviewed": 59,
+  "ok_ids": [
+    "prob_uniform_union_add_inter",
+    "prob_uniform_union_three",
+    "prob_uniform_at_least_one_family",
+    "prob_uniform_exactly_one_of_two",
+    "prob_uniform_inter_lower_bound",
+    "prob_uniform_disjoint_family_sum",
+    "cond_prob_uniform_ratio",
+    "cond_prob_uniform_mul",
+    "cond_prob_uniform_chain",
+    "total_prob_uniform_two",
+    "total_prob_uniform_partition",
+    "bayes_uniform_partition",
+    "bayes_uniform_simple",
+    "indep_uniform_iff_cond",
+    "indep_uniform_compl",
+    "trial_product_independent",
+    "trials_product_family",
+    "trials_two_coordinates_independent",
+    "trials_at_least_once",
+    "trials_exactly_k_times",
+    "binomial_prob_increase_iff",
+    "trials_first_occurrence",
+    "trials_maximum_value",
+    "expectation_uniform_linear",
+    "expectation_uniform_count_events",
+    "expectation_uniform_distribution_form",
+    "expectation_uniform_tail_sum",
+    "expectation_product_trials_mul",
+    "expectation_uniform_total",
+    "expectation_trials_success_count",
+    "expectation_uniform_attains_mean",
+    "card_dependent_choice_product",
+    "card_injections_falling_factorial",
+    "falling_factorial_mul_factorial",
+    "falling_factorial_eq_factorial_mul_choose",
+    "circular_permutation_count",
+    "word_contains_letter_count",
+    "surjection_onto_two_count",
+    "prob_all_distinct_assignment",
+    "k_subsets_containing_fixed_set",
+    "hypergeometric_count",
+    "binary_words_fixed_ones_count",
+    "multiset_combination_count",
+    "nat_solutions_count",
+    "positive_solutions_count",
+    "strictly_increasing_sequences_count",
+    "binom_consecutive_ratio",
+    "binom_choose_twice",
+    "binom_increase_iff",
+    "even_size_subsets_count",
+    "trinomial_coeff_product_binom"
+  ],
+  "findings": [
+    {
+      "id": "prob_uniform_range",
+      "home": "S2",
+      "used": "S5",
+      "severity": "note",
+      "tools": [
+        {"tool": "集合記号（Ω, A⊆Ω）と要素数 |A|（教科書の n(A)）", "stage": "S5", "where": "題意と答案の全体（A⊆Ω から 0≤|A|≤|Ω|）", "replaceable": false}
+      ],
+      "fix": "答案の論法（0≤|A|≤|Ω| を |Ω| で割る）は中2の確率の初歩で足りる。ただし題意が集合記号と要素数 |A| で書かれており、集合は数I、要素数 n(A) は数Aで初めて導入される。level: middle の貼り方か、題意の表現のどちらかを見直す。答案の道具の問題ではない。",
+      "keep_as_advanced": false
+    },
+    {
+      "id": "prob_uniform_compl",
+      "home": "S2",
+      "used": "S5",
+      "severity": "note",
+      "tools": [
+        {"tool": "集合記号（補集合 Ω∖A, 余事象の上線）と要素数 |A|", "stage": "S5", "where": "題意と答案の全体（|A|+|Ā|=|Ω| を割る）", "replaceable": false}
+      ],
+      "fix": "答案は「起こる場合の数と起こらない場合の数の和が全体」という中2の論法で足りる。題意が補集合記号と要素数 |A| で書かれており、集合は数I、n(A) は数Aで導入される。level: middle の貼り方か題意の表現を見直す。答案の道具の問題ではない。",
+      "keep_as_advanced": false
+    },
+    {
+      "id": "binomial_prob_sum_one",
+      "home": "S5",
+      "used": "S6",
+      "severity": "note",
+      "tools": [
+        {"tool": "二項定理", "stage": "S6", "where": "答案2文目（(p+(1-p))^n の展開）", "replaceable": false}
+      ],
+      "fix": "題意は任意の実数 p についての恒等式で、実質が二項定理そのもの（数II）。数Aの反復試行の範囲で書けるのは 0≤p≤1 の確率の議論（ちょうど k 回の事象が標本空間を分割する）だけで、これは主張を弱める。したがって答案の書き替えはできない。このカードは数IIの二項定理の系として置き直すか、確率版（0≤p≤1）を別カードにする。",
+      "keep_as_advanced": false
+    },
+    {
+      "id": "multinomial_theorem",
+      "home": "S6",
+      "used": "S10",
+      "severity": "note",
+      "tools": [
+        {"tool": "可換半環（抽象代数の対象）", "stage": "S10", "where": "題意の仮定（f_i は可換半環の元）", "replaceable": false}
+      ],
+      "fix": "答案の道具（分配法則、同じものを含む順列 S5）は多項定理の標準的な学習段階の範囲内。ただし題意が可換半環で述べられており、高校範囲外の語彙。初学者向けには実数（または多項式）の文字 f_i に限定した形を標準とし、半環版は別カードにする。",
+      "keep_as_advanced": false
+    },
+    {
+      "id": "trinomial_expansion",
+      "home": "S6",
+      "used": "S10",
+      "severity": "note",
+      "tools": [
+        {"tool": "可換半環（抽象代数の対象）", "stage": "S10", "where": "題意の仮定（x,y,z は可換半環の元）", "replaceable": false}
+      ],
+      "fix": "答案の道具（二項定理を2回、S6）は題意と同じ段階で問題ない。ただし題意が可換半環で述べられており、高校範囲外の語彙。実数（または多項式）の文字に限定した形を標準とし、半環版は別カードにする。",
+      "keep_as_advanced": false
+    },
+    {
+      "id": "card_disjoint_family_sum",
+      "home": "S5",
+      "used": "S7",
+      "severity": "major",
+      "tools": [
+        {"tool": "数学的帰納法（|I| についての帰納法）", "stage": "S7", "where": "答案2文目以降（|I| についての帰納法で示す、帰納法の仮定）", "replaceable": true}
+      ],
+      "fix": "和の法則（2集合版）を1つずつ加える操作として書けば、帰納法を名指さずに同じ主張を示せる。以下のパッチで置き換える。",
+      "patch": {
+        "answer": "$I$を有限集合とし、$A_i\\ (i\\in I)$をどの2つも共通部分をもたない有限集合とする。共通部分をもたない2つの有限集合$X,Y$については、和の法則（基本形）より$|X\\cup Y|=|X|+|Y|$である。$I$の添字を1つずつ順に取り上げ、和集合に$A_i$を加えていく。新しく加える$A_i$は、これまでに加えたどの集合とも共通部分をもたないので、それまでの和集合とも共通部分をもたない。したがって、$A_i$を加えるたびに和集合の要素数はちょうど$|A_i|$だけ増える。すべての添字を加え終えたとき、要素数は増加分の合計$\\sum_{i\\in I}|A_i|$に等しい。$I$が空なら両辺とも$0$である。"
+      },
+      "keep_as_advanced": false
+    },
+    {
+      "id": "lot_drawing_position_fair",
+      "home": "S5",
+      "used": "S10",
+      "severity": "major",
+      "tools": [
+        {"tool": "互換と置換の左からの合成（群の演算・群作用による全単射）", "stage": "S10", "where": "答案4〜5文目（互換 τ を左から合成する写像 σ→τσ が S_a から S_b への全単射）", "replaceable": true}
+      ],
+      "fix": "σ(i)=a となる置換は、残りの n-1 個の対応を決める順列の数 (n-1)! で直接数えられる。互換の合成は不要。以下のパッチで置き換える。",
+      "patch": {
+        "answer": "$\\alpha$を有限で空でない集合、$n=|\\alpha|$とし、$i\\in\\alpha$、$W\\subseteq\\alpha$とする。$\\alpha$の置換$\\sigma$は$n!$個あり、同様に確からしいとする。$a\\in\\alpha$を1つ決め、$\\sigma(i)=a$となる置換の個数を数える。$i$の行き先が$a$に決まっていて、残りの$n-1$個の要素$\\alpha\\setminus\\{i\\}$を残りの$n-1$個の値$\\alpha\\setminus\\{a\\}$に1対1に割り当てる方法は、$n-1$個の異なるものを並べる順列の数に等しく$(n-1)!$通りである。この個数は$a$によらない。$\\sigma(i)\\in W$となる置換は、$\\sigma(i)=a$となる置換を$a\\in W$について重なりなく集めたものなので、その個数は$|W|\\,(n-1)!$である。これを$n!$で割ると$\\dfrac{|W|(n-1)!}{n!}=\\dfrac{|W|}{n}$となり、$i$によらず$|W|/|\\alpha|$である。"
+      },
+      "keep_as_advanced": false
+    },
+    {
+      "id": "words_given_letter_counts_multinomial",
+      "home": "S5",
+      "used": "S10",
+      "severity": "major",
+      "tools": [
+        {"tool": "置換の合成と固定部分群（群作用の軌道・安定部分群の議論）", "stage": "S10", "where": "答案3〜6文目（ω0∘σ、σ τ^{-1} が ω0 を保つ、ω0 を保つ置換の個数 Πc_i!）", "replaceable": true}
+      ],
+      "fix": "教科書の標準論法「同じ文字に番号を付けて区別すれば |α|! 通り。番号を外すと各並びが Πc_i! 回ずつ重複する」で足りる。以下のパッチで置き換える。",
+      "patch": {
+        "answer": "$\\alpha,\\iota$を有限集合とし、$c:\\iota\\to\\mathbb{N}$は$\\sum_i c_i=|\\alpha|$を満たすとする。$X$を、各$i$がちょうど$c_i$回現れる写像$\\omega:\\alpha\\to\\iota$全体とし、$N=|X|$とする。文字$i$が現れる$c_i$個の位置に$1,\\dots,c_i$の番号を1つずつ付けて、同じ文字を区別することを考える。$\\omega\\in X$を1つ決めると、各文字$i$について番号の付け方は$c_i!$通りあり、文字ごとの付け方は互いに影響しないので、積の法則より$\\omega$への番号の付け方は全部で$\\prod_i c_i!$通りである。一方、番号付きの文字$(i,j)$（$i\\in\\iota$、$1\\leq j\\leq c_i$）は全部で$\\sum_i c_i=|\\alpha|$個あり、どれも区別できる。これらを$\\alpha$の各位置に1つずつ置く置き方は$|\\alpha|!$通りである。この置き方は、番号を外した並び$\\omega\\in X$と$\\omega$への番号の付け方の組と、過不足なく1対1に対応する。よって$|\\alpha|!=\\sum_{\\omega\\in X}\\prod_i c_i!=N\\prod_i c_i!$を得る。"
+      },
+      "keep_as_advanced": false
+    }
+  ],
+  "systematic": [
+    "確率・場合の数のカード全体が、題意を Ω・|A|・Σ・Π・添字集合 I・写像（単射・全射・全単射）・置換の形式で書いている。これは記法の一般化であり、答案が使う定理は S5 の範囲に収まっているため、個別の違反とはしていない。初学者向けの表示では n(A)・U・場合分けの言い方に直す余地がある。",
+    "確率変数 X を使うカード（期待値の線形性・分布表示・裾の和・全期待値など）は、題意が数B（S7）の統計的推測の語彙で書かれている。home を S7 として扱い、答案は有限和の操作だけで足りている。",
+    "二項定理・多項定理に関わる3枚は、題意が数IIの二項定理（S6）に属する。そのうち反復試行の確率の和（binomial_prob_sum_one）は数Aの確率ファイルに置かれており、実数 p の恒等式としては二項定理が本質で、数Aの道具では主張を保ったまま書き替えられない。配置（学年）の見直し対象。",
+    "答案は他カードの結論（積の法則、和の法則の一般形、二項係数の恒等式）を前提にしている。card_disjoint_family_sum は帰納法を名指ししていたが、上の書き替えで除いた。同様に、他の単元でも「一般形の有限集合の和」を帰納法で示す答案が出る場合は S7 と数える。",
+    "高校範囲外の群論的な道具（置換の合成・互換・安定部分群）を数Aの組合せ論の答案で使うパターンが2枚あった（lot_drawing_position_fair, words_given_letter_counts_multinomial）。標準解は「順列の数で直接数える」「区別して数えて重複で割る」で書け、どちらも書き替え済み。"
+  ],
+  "home_assignments": {
+    "prob_uniform_range": "S2",
+    "prob_uniform_compl": "S2",
+    "prob_uniform_union_add_inter": "S5",
+    "prob_uniform_union_three": "S5",
+    "prob_uniform_at_least_one_family": "S5",
+    "prob_uniform_exactly_one_of_two": "S5",
+    "prob_uniform_inter_lower_bound": "S5",
+    "prob_uniform_disjoint_family_sum": "S5",
+    "cond_prob_uniform_ratio": "S5",
+    "cond_prob_uniform_mul": "S5",
+    "cond_prob_uniform_chain": "S5",
+    "total_prob_uniform_two": "S5",
+    "total_prob_uniform_partition": "S5",
+    "bayes_uniform_partition": "S5",
+    "bayes_uniform_simple": "S5",
+    "indep_uniform_iff_cond": "S5",
+    "indep_uniform_compl": "S5",
+    "trial_product_independent": "S5",
+    "trials_product_family": "S5",
+    "trials_two_coordinates_independent": "S5",
+    "trials_at_least_once": "S5",
+    "trials_exactly_k_times": "S5",
+    "binomial_prob_increase_iff": "S5",
+    "binomial_prob_sum_one": "S5",
+    "trials_first_occurrence": "S5",
+    "trials_maximum_value": "S5",
+    "expectation_uniform_linear": "S7",
+    "expectation_uniform_count_events": "S5",
+    "expectation_uniform_distribution_form": "S7",
+    "expectation_uniform_tail_sum": "S7",
+    "expectation_product_trials_mul": "S7",
+    "expectation_uniform_total": "S7",
+    "expectation_trials_success_count": "S5",
+    "expectation_uniform_attains_mean": "S7",
+    "card_disjoint_family_sum": "S5",
+    "card_dependent_choice_product": "S5",
+    "card_injections_falling_factorial": "S5",
+    "falling_factorial_mul_factorial": "S5",
+    "falling_factorial_eq_factorial_mul_choose": "S5",
+    "circular_permutation_count": "S5",
+    "lot_drawing_position_fair": "S5",
+    "word_contains_letter_count": "S5",
+    "surjection_onto_two_count": "S5",
+    "prob_all_distinct_assignment": "S5",
+    "k_subsets_containing_fixed_set": "S5",
+    "hypergeometric_count": "S5",
+    "binary_words_fixed_ones_count": "S5",
+    "words_given_letter_counts_multinomial": "S5",
+    "multiset_combination_count": "S5",
+    "nat_solutions_count": "S5",
+    "positive_solutions_count": "S5",
+    "strictly_increasing_sequences_count": "S5",
+    "binom_consecutive_ratio": "S5",
+    "binom_choose_twice": "S5",
+    "binom_increase_iff": "S5",
+    "even_size_subsets_count": "S5",
+    "trinomial_coeff_product_binom": "S6",
+    "multinomial_theorem": "S6",
+    "trinomial_expansion": "S6"
+  }
+}
