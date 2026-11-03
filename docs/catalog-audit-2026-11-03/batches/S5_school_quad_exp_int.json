@@ -1,0 +1,502 @@
+{
+ "batch": "S5_school_quad_exp_int",
+ "domains": [
+  "school_quadratic",
+  "school_exp_log",
+  "school_integers"
+ ],
+ "reviewed": 137,
+ "ok_ids": [
+  "complete_square_general",
+  "quadratic_min_at_vertex_unique",
+  "quadratic_max_at_vertex_unique",
+  "quadratic_range_convex",
+  "symmetric_about_line_iff_axis",
+  "equal_values_midpoint_on_axis",
+  "quadratic_monotone_each_side_of_axis",
+  "vertex_form_coefficients",
+  "concave_quadratic_nonneg_from_endpoints",
+  "quadratic_formula",
+  "quadratic_formula_even_linear_coefficient",
+  "shifted_square_equation",
+  "factored_quadratic_roots",
+  "other_root_from_one_root",
+  "real_root_iff_discriminant_nonneg",
+  "unique_root_iff_discriminant_zero",
+  "rational_root_iff_discriminant_square",
+  "odd_coefficients_no_rational_root",
+  "conjugate_surd_root",
+  "root_difference_from_discriminant",
+  "quadratic_positive_everywhere_iff",
+  "quadratic_nonneg_everywhere_iff_general",
+  "homogeneous_quadratic_positive_definite_iff",
+  "parabola_line_tangent_iff_discriminant",
+  "parabola_above_tangent_line",
+  "parabola_chord_slope",
+  "three_roots_force_zero_polynomial",
+  "parabola_through_three_points",
+  "sign_change_unique_root_between",
+  "factored_inequality_between_and_outside",
+  "negative_leading_inequality_between",
+  "factored_inequality_closed_interval",
+  "double_root_inequality",
+  "quadratic_inequality_by_discriminant",
+  "square_less_than_iff_between",
+  "inequality_solution_set_determines_coefficients",
+  "both_roots_greater_than_iff",
+  "both_roots_in_open_interval_iff",
+  "roots_straddle_iff_value_negative",
+  "both_roots_positive_iff_coefficients",
+  "opposite_sign_roots_iff",
+  "vieta_sum_product_iff_factorization",
+  "vieta_for_two_distinct_roots",
+  "quadratic_factorization_by_formula",
+  "translation_moves_vertex",
+  "translate_iff_same_leading_coefficient",
+  "reflection_across_vertical_line",
+  "reflection_across_horizontal_line",
+  "even_quadratic_iff_no_linear_term",
+  "rpow_add_exponent_law",
+  "rpow_mul_exponent_law",
+  "mul_rpow_base_law",
+  "nth_root_unique_nonneg_solution",
+  "even_root_of_even_power_abs",
+  "rational_exponent_as_root_of_power",
+  "power_function_lt_iff_positive_exponent",
+  "exp_lt_iff_base_gt_one",
+  "exp_lt_iff_base_lt_one",
+  "exp_eq_iff_exponent_eq",
+  "exp_eq_positive_has_unique_solution",
+  "exp_quadratic_substitution_positive",
+  "exp_lt_const_iff_base_gt_one",
+  "exp_lt_const_iff_base_lt_one",
+  "exp_factored_quadratic_inequality",
+  "reciprocal_exponent_sum_common_value",
+  "logb_eq_iff_rpow_eq_definition",
+  "rpow_logb_cancel",
+  "logb_div_positive",
+  "logb_chain_product",
+  "logb_lt_iff_base_gt_one",
+  "logb_lt_iff_base_lt_one",
+  "logb_eq_iff_arguments_eq",
+  "logb_pos_iff_sign_product",
+  "logb_sum_equation_under_true_number_condition",
+  "logb_quadratic_substitution",
+  "logb_compare_different_bases",
+  "power_compare_via_logb",
+  "digit_count_iff_log_bounds_any_base",
+  "digit_count_of_power_floor_any_base",
+  "dvd_add_iff_right",
+  "coprime_mul_dvd",
+  "add_dvd_pow_add_pow_odd",
+  "prime_dvd_of_dvd_pow",
+  "divisor_count_two_primes",
+  "even_add_iff_same_parity",
+  "odd_mul_iff",
+  "common_divisor_dvd_gcd",
+  "common_multiple_dvd_lcm",
+  "gcd_mul_left",
+  "gcd_cofactors_coprime",
+  "coprime_mul_iff",
+  "coprime_pow_pow",
+  "coprime_add_mul",
+  "euclidean_algorithm",
+  "coprime_mul_eq_mul_param",
+  "linear_diophantine_general_solution_coprime",
+  "linear_diophantine_general_solution",
+  "base_expansion_exists_unique",
+  "digit_length_iff_pow_bounds",
+  "digit_sum_congruent_mod_base_sub_one",
+  "alternating_digit_sum_congruent_mod_base_add_one",
+  "low_digits_remainder",
+  "finite_base_expansion_iff",
+  "congruence_pow",
+  "congruence_polynomial_eval",
+  "congruence_cancel_gcd",
+  "coprime_multiple_residues_permute",
+  "three_consecutive_product_multiple_of_six",
+  "consecutive_integers_exactly_one_multiple",
+  "square_mod_three",
+  "square_mod_four",
+  "odd_square_mod_eight",
+  "no_square_between_consecutive_squares",
+  "prime_three_mod_four_dvd_sum_of_squares"
+ ],
+ "findings": [
+  {
+   "domain": "school_quadratic",
+   "id": "product_with_fixed_sum_maximum",
+   "severity": "minor",
+   "codes": [
+    "MISLABEL",
+    "DUPLICATE"
+   ],
+   "issue": "level=middle is wrong: completing the square for extremum of xy under x+y=s is Math I (high). Also overlaps school_algebra_basics real_pair_with_given_sum_and_product_iff and school_inequalities sq_add_sq_ge_two_mul (4xy<=(x+y)^2 with equality iff x=y); keep only if cited as the 'fixed sum' extremum form.",
+   "patch": {
+    "level": "high"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_quadratic",
+   "id": "root_power_sum_recurrence",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Same pattern as school_algebra_basics power_sum_recurrence_two_variables (x+y=s, xy=p => S_{n+2}=sS_{n+1}-pS_n); here only the coefficient form a,b,c is used and p=q is allowed (text says 'solutions p,q', not 'the two roots'). Fine to keep, but hard_negative/statement should note that p,q are any two solutions, not necessarily distinct.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_quadratic",
+   "id": "quadratic_coefficients_unique",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Degree-2 special case of school_polynomials coefficient_comparison_for_polynomial_identity (general n). The statement does not say it is the special form, so a reviewer may reuse it wrongly for general degree. Label it.",
+   "patch": {
+    "statement": "2次式に限った形（一般の次数の係数比較は別カード）として、すべての実数$x$で$ax^2+bx+c=dx^2+ex+f$が成り立つならば、$a=d,\\ b=e,\\ c=f$である。",
+    "statement_en": "Degree-2 special form of coefficient comparison: if a x² + b x + c = d x² + e x + f for every real x, then a = d, b = e and c = f."
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_quadratic",
+   "id": "common_root_resultant_condition",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative counterexample (x^2+1=0 twice) fails only because the roots are not real, so it suggests the converse holds over C. It does not: a=d=0,b=1,c=0,e=1,f=1 gives (af-dc)^2=0=(ae-db)(bf-ec) but x=0 and x+1=0 share no root in any field.",
+   "patch": {
+    "hard_negative": {
+     "statement": "$(af-dc)^2=(ae-db)(bf-ec)$ならば、2つの方程式は共通の解をもつ。",
+     "reason": "逆は成り立たない。$a=d=0,\\ b=1,\\ c=0,\\ e=1,\\ f=1$では$(af-dc)^2=0$、$(ae-db)(bf-ec)=0\\cdot 1=0$で等式が成り立つが、$x=0$と$x+1=0$に共通の解はない。実数か複素数かに関係なく成り立つ反例である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_quadratic",
+   "id": "root_count_by_discriminant",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath states the D<0 case as size(set)=0 and relies on size for a possibly infinite set; emptiness should be (= S emptyset) (emptyset is a built-in). Target is faithful (ncard is only used where the value is 1 or 2, and D<0 uses =∅, so no junk value).",
+   "patch": {
+    "openmath": "(forall (a b c) (-> (!= a 0) (and (-> (> (- (^ b 2) (* 4 a c)) 0) (= (size (suchthat R (lambda (x) (= (+ (* a (^ x 2)) (* b x) c) 0)))) 2)) (-> (= (- (^ b 2) (* 4 a c)) 0) (= (size (suchthat R (lambda (x) (= (+ (* a (^ x 2)) (* b x) c) 0)))) 1)) (-> (< (- (^ b 2) (* 4 a c)) 0) (= (suchthat R (lambda (x) (= (+ (* a (^ x 2)) (* b x) c) 0))) emptyset)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_quadratic",
+   "id": "convex_quadratic_min_on_interval_cases",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Faithful, but 'minimum value on [s,t]' is encoded as three raw f(p)<=f(x) implications; no reusable extremum concept (IsLeast/IsGreatest of the image of [s,t]), and the concave (a<0) counterpart and the 'min = f(v)' value form are missing, so interval max/min problems with a<0 or with a parameter-dependent axis are not retrievable. Propose Lean form IsLeast (f '' Set.Icc s t) (f v) per case (and analogous IsGreatest for a<0) and OM via a shared extremum symbol.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_quadratic",
+   "id": "convex_quadratic_max_at_farther_endpoint",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Same remark as convex_quadratic_min_on_interval_cases: only the a>0 case; no a<0 (concave) max-at-vertex/min-at-farther-endpoint version; extremum not encoded as an extremum concept.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_exp_log",
+   "id": "logb_mul_positive",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative (M=N=-2, 'log_a(-2) undefined') is not false under Mathlib: Real.logb_neg_eq_logb gives logb a ((-2)*(-2)) = logb a (-2) + logb a (-2) (compiled). A Lean/junk-aware reuse check accepts it. Replace by a claim false in both readings.",
+   "patch": {
+    "hard_negative": {
+     "statement": "$a>0$、$a\\neq 1$、$M,N>0$のとき、$\\log_a(M+N)=\\log_aM+\\log_aN$である。",
+     "reason": "和の対数と積の対数を取り違えている。$a=2,\\ M=N=1$では左辺は$\\log_22=1$、右辺は$0+0=0$である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_exp_log",
+   "id": "logb_rpow_power_positive",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative (M=-2, p=2: right side 'undefined') is true in Mathlib ((-2)^(2:ℝ)=4 and logb a (-2)=logb a 2). Use a claim that is false in both readings.",
+   "patch": {
+    "hard_negative": {
+     "statement": "$a>0$、$a\\neq 1$、$M>0$のとき、任意の実数$p$について$\\log_a(M^p)=(\\log_aM)^p$である。",
+     "reason": "指数$p$は対数の前に係数として出るのであり、対数の冪にはならない。$a=2,\\ M=2,\\ p=3$では左辺は$\\log_28=3$、右辺は$1^3=1$である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_exp_log",
+   "id": "logb_even_power_abs",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative says log_a x is undefined for x<0, but in Mathlib logb a x = logb a |x| so 'log_a(x^{2n}) = 2n log_a x' is TRUE for x≠0 (compiled check of the |x| version). Target itself is faithful (x≠0 and n≥1 are stated; no junk used). Use a false-in-both-readings negative.",
+   "patch": {
+    "hard_negative": {
+     "statement": "$a>0$、$a\\neq 1$、$x\\neq 0$、$n$を正の整数とするとき、$\\log_a(x^{2n})=n\\log_a|x|$である。",
+     "reason": "指数の$2$を落としている。$a=2,\\ x=2,\\ n=1$では左辺は$\\log_24=2$、右辺は$\\log_22=1$である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_exp_log",
+   "id": "logb_change_of_base",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD",
+    "OM_FORMAT"
+   ],
+   "issue": "(1) hard_negative a=1 is true under junk values (logb 1 b = 0 and x/0 = 0 on both sides). (2) OpenMath unfolds log_a b to ln b / ln a, so the card becomes the field identity (x/y) = (x/z)/(y/z) over ln values: the 'log to base a' concept is erased and any such identity gives the same shape. Add a vocabulary symbol logb(a,x) (OpenMath transc1.log has base first) to school_exp_log.yaml and use it here and in the other logb cards.",
+   "patch": {
+    "hard_negative": {
+     "statement": "$a,c>0$、$a\\neq 1$、$c\\neq 1$、$b>0$のとき、$\\log_ab=\\dfrac{\\log_cb}{\\log_ac}$である。",
+     "reason": "分母が逆である。$a=2,\\ b=4,\\ c=8$では左辺は$2$、右辺は$\\dfrac{\\log_84}{\\log_28}=\\dfrac{2/3}{3}=\\dfrac29$である。"
+    },
+    "openmath": "(forall (a b c) (-> (and (in a R) (in b R) (in c R) (> a 0) (!= a 1) (> b 0) (> c 0) (!= c 1)) (= (logb a b) (/ (logb c b) (logb c a)))))",
+    "_vocabulary_to_add": "logb: {args: [term, term], returns: term, meaning: \"logarithm of x to base a, argument order (a, x)\"}"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_exp_log",
+   "id": "logb_power_base_power_argument",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative m=0 is true under junk values (logb (a^0) b = logb 1 b = 0 and (1/0)*… = 0). Replace by a false-in-both claim. Target and OM are faithful (a^m≠1 follows from a≠1, m≠0).",
+   "patch": {
+    "hard_negative": {
+     "statement": "$a>0$、$a\\neq 1$、$b>0$、$m\\neq 0$のとき、$0$でない任意の実数$n$について$\\log_{a^m}(b^n)=\\dfrac{m}{n}\\log_ab$である。",
+     "reason": "$m$と$n$が逆である。$a=b=2,\\ m=1,\\ n=2$では左辺は$\\log_24=2$、右辺は$\\dfrac12$である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_exp_log",
+   "id": "digit_count_iff_common_log_bounds",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE",
+    "OM_FORMAT"
+   ],
+   "issue": "Base-10 special case of digit_count_iff_log_bounds_any_base; the statement does not say it is the special form. OpenMath uses decimal_digit_count(K), a symbol that duplicates digit_length(10,K) already defined in the same yaml (two names for one concept, hurting retrieval).",
+   "patch": {
+    "statement": "底が$10$の場合に限った形（一般の底は別カード）として、正の整数$N$と$0$以上の整数$d$について、$N$の十進表記が$d+1$桁であることと$d\\leq\\log_{10}N<d+1$であることは同値である。",
+    "statement_en": "Base-ten special form (general base is a separate card). For a positive integer N and a nonnegative integer d, the decimal expansion of N has d + 1 digits if and only if d ≤ log_10 N < d + 1.",
+    "openmath": "(forall (K d) (-> (and (in K N) (in d N) (>= K 1)) (<-> (= (digit_length 10 K) (+ d 1)) (and (<= d (/ (ln K) (ln 10))) (< (/ (ln K) (ln 10)) (+ d 1))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_exp_log",
+   "id": "digit_count_of_power_floor_formula",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE",
+    "OM_FORMAT"
+   ],
+   "issue": "Base-10 special case of digit_count_of_power_floor_any_base, unlabelled; decimal_digit_count again duplicates digit_length 10. Target is faithful (a>=1 so the argument of the natural floor is >=0 and a^n>=1, no junk).",
+   "patch": {
+    "statement": "底が$10$の場合に限った形（一般の底は別カード）として、正の整数$a$と$0$以上の整数$n$について、$a^n$の十進表記の桁数は$\\lfloor n\\log_{10}a\\rfloor+1$である。",
+    "statement_en": "Base-ten special form (general base is a separate card). For a positive integer a and a nonnegative integer n, the decimal expansion of a^n has ⌊n log_10 a⌋ + 1 digits.",
+    "openmath": "(forall (a n) (-> (and (in a N) (in n N) (>= a 1)) (= (digit_length 10 (^ a n)) (+ (floor (* n (/ (ln a) (ln 10)))) 1))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_exp_log",
+   "id": "leading_digit_iff_common_log_bounds",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH",
+    "ANSWER_WRONG"
+   ],
+   "issue": "The statement (and answer) assert, beyond the Lean target, that for 1<=m<=9 the first condition means 'N has k+1 digits with leading digit m'. That claim is true but is not in the target (target only proves the interval/log equivalence) and the answer asserts it without proof. Drop the remark or formalise it (e.g. Nat.digits).",
+   "patch": {
+    "statement": "正の整数$N,m$と$0$以上の整数$k$について、$m\\cdot 10^k\\leq N<(m+1)\\cdot 10^k$であることと、$\\log_{10}m\\leq\\log_{10}N-k<\\log_{10}(m+1)$であることは同値である。",
+    "statement_en": "For positive integers N, m and a nonnegative integer k, m·10^k ≤ N < (m+1)·10^k if and only if log_10 m ≤ log_10 N - k < log_10(m+1).",
+    "answer": "$N,m$を正の整数、$k$を$0$以上の整数とする。関数$u\\mapsto\\log_{10}u$は$u>0$で狭義増加なので、$m\\cdot 10^k\\leq N<(m+1)\\cdot 10^k$は$\\log_{10}(m\\cdot 10^k)\\leq\\log_{10}N<\\log_{10}((m+1)\\cdot 10^k)$と同値である。積の対数の公式と$\\log_{10}10^k=k$より、これは$\\log_{10}m+k\\leq\\log_{10}N<\\log_{10}(m+1)+k$と同じである。各辺から$k$を引くと示すべき不等式を得る。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_exp_log",
+   "id": "first_nonzero_decimal_iff_common_log_bounds",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH",
+    "ANSWER_WRONG"
+   ],
+   "issue": "Same issue: the sentence 'the first condition means the first nonzero digit of x is at the k-th decimal place' is outside the target and is asserted in the answer without proof.",
+   "patch": {
+    "statement": "実数$x>0$と正の整数$k$について、$10^{-k}\\leq x<10^{1-k}$であることと$-k\\leq\\log_{10}x<1-k$であることは同値である。",
+    "statement_en": "For a real x > 0 and a positive integer k, 10^(-k) ≤ x < 10^(1-k) if and only if -k ≤ log_10 x < 1 - k.",
+    "answer": "$x>0$とし、$k$を正の整数とする。関数$u\\mapsto\\log_{10}u$は$u>0$で狭義増加であり、実数$t$について$\\log_{10}10^t=t$である。不等式$10^{-k}\\leq x<10^{1-k}$の各辺に$\\log_{10}$を適用すると、これは$-k\\leq\\log_{10}x<1-k$と同値である。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_integers",
+   "id": "pow_dvd_pow_iff",
+   "severity": "minor",
+   "codes": [
+    "ANSWER_WRONG"
+   ],
+   "issue": "Statement is over ℤ (negatives allowed) but the answer argues with prime-factorisation exponents of a and b directly; signs are never handled (exponent of p in a negative integer). Gap for negative a,b; fix by passing to |a|,|b|.",
+   "patch": {
+    "answer": "$a,b$を整数、$n$を正の整数とする。$b=ac$（$c$は整数）ならば$b^n=a^nc^n$なので、$a^n$は$b^n$を割り切る。\n逆に$a^n$が$b^n$を割り切るとする。$a=0$ならば$b^n=0$なので$b=0$であり、$a$は$b$を割り切る。$b=0$ならば$a$は$0$を割り切る。\n$a,b$がともに$0$でないとき、整除は符号によらないので$|a|,|b|$で考える（$|a|^n=|a^n|$、$|b|^n=|b^n|$であり、$|a|\\mid|b|$と$a\\mid b$は同値である）。素数$p$について$|a|,|b|$の素因数分解における$p$の指数を$e,f$とする。$|a|^n,|b|^n$における$p$の指数は$ne,nf$であり、仮定から$ne\\leq nf$、すなわち$e\\leq f$である。これがすべての素数$p$で成り立つので、$|a|$は$|b|$を割り切り、したがって$a$は$b$を割り切る。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_integers",
+   "id": "gcd_lcm_cofactor_iff",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "The card includes a=0 or b=0 (target is over ℕ with Nat.lcm 0 b = 0, e.g. a=0,b=g=1 gives l=0 on both sides), but unlike common_multiple_dvd_lcm the lcm(a,0)=0 convention is not stated in the assumptions.",
+   "patch": {
+    "assumptions": [
+     "$a,b,l$は$0$以上の整数",
+     "$g$は正の整数",
+     "$a=0$または$b=0$のとき$\\mathrm{lcm}(a,b)=0$とする"
+    ]
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_integers",
+   "id": "congruence_iff_same_remainder",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "Statement allows negative a,b but never fixes the meaning of 'remainder'. Target uses Int.emod (0<=r<n); OpenMath states 0<=r<n; the Japanese text should say so (truncating-division remainders differ for negatives).",
+   "patch": {
+    "statement": "整数$a,b$と正の整数$n$について、$a,b$を$n$で割った余り（$0$以上$n$未満の値。$a,b$が負でもよい）が等しいことは、$n$が$a-b$を割り切ることと同値である。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_integers",
+   "id": "difference_of_two_squares_iff",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "n may be negative; 'remainder on division by 4' is not fixed to the 0..3 convention (target: n % 4 with Int.emod; OpenMath avoids % by using ¬∃k n=4k+2, which is the same under that convention).",
+   "patch": {
+    "statement": "整数$n$（負でもよい）が$x^2-y^2$（$x,y$は整数）の形に表せることは、$n$を$4$で割った余り（$0$以上$4$未満の値）が$2$でないことと同値である。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_integers",
+   "id": "three_dvd_sum_of_squares",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE",
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "p=3 instance of prime_three_mod_four_dvd_sum_of_squares (3 ≡ 3 mod 4). Useful as an elementary named pattern (mod-3 squares), but the statement does not say it is the special form.",
+   "patch": {
+    "statement": "$3$に限った形（$4$で割って$3$余る素数$p$の一般形は別カード）として、整数$a,b$について、$a^2+b^2$が$3$の倍数ならば、$a,b$はともに$3$の倍数である。",
+    "statement_en": "Special case p = 3 of the p ≡ 3 (mod 4) statement. If integers a and b are such that a² + b² is divisible by 3, then both a and b are divisible by 3."
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_integers",
+   "id": "coprime_mul_eq_square",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "Exponent 2 is not essential: coprime a*b = c^n implies a and b are n-th powers (Mathlib exists_eq_pow_of_mul_eq_pow, ℕ has Subsingleton units). The general form subsumes the square case (n=2) used for Pythagorean triples. Patch compiled with only propext/Classical.choice/Quot.sound.",
+   "patch": {
+    "statement": "互いに素な$0$以上の整数$a,b$の積が$c^n$（$c,n$は$0$以上の整数）の形ならば、$a,b$はともに$n$乗数である。$n=2$とすれば、互いに素な数の積が平方数のとき、両方とも平方数である。",
+    "statement_en": "If coprime natural numbers a and b satisfy ab = c^n for natural numbers c and n, then a and b are both perfect n-th powers; n = 2 gives the square case.",
+    "assumptions": [
+     "$a,b,c,n$は$0$以上の整数",
+     "$\\gcd(a,b)=1$",
+     "$ab=c^n$"
+    ],
+    "quantifiers": [
+     "任意の$0$以上の整数$a,b,c,n$"
+    ],
+    "conclusion": "$a=s^n,\\ b=t^n$となる$0$以上の整数$s,t$が存在する。",
+    "openmath": "(forall (a b c n) (-> (and (in a N) (in b N) (in c N) (in n N) (= (gcd a b) 1) (= (* a b) (^ c n))) (and (exists (s) (and (in s N) (= a (^ s n)))) (exists (t) (and (in t N) (= b (^ t n)))))))",
+    "hard_negative": {
+     "statement": "$0$以上の整数$a,b$の積が$c^n$の形ならば、$a,b$はともに$n$乗数である。",
+     "reason": "互いに素の仮定を外すと成り立たない。$n=2,\\ a=2,\\ b=8$では$ab=16=4^2$だが、$2$は平方数でない。"
+    },
+    "target": "∀ (a b c n : ℕ), Nat.Coprime a b → a * b = c ^ n → (∃ s : ℕ, a = s ^ n) ∧ (∃ t : ℕ, b = t ^ n)",
+    "proof": "by\n  intro a b c n hab h\n  refine ⟨exists_eq_pow_of_mul_eq_pow (isUnit_iff_eq_one.mpr hab) h, ?_⟩\n  exact exists_eq_pow_of_mul_eq_pow (isUnit_iff_eq_one.mpr (Nat.Coprime.symm hab)) (by rw [mul_comm]; exact h)",
+    "answer": "$a,b,c,n$を$0$以上の整数とし、$\\gcd(a,b)=1$、$ab=c^n$とする。$a$が$n$乗数であることを示す（$b$は$a,b$を入れ替えて同様に示せる）。\n$n=0$のとき$ab=1$なので$a=b=1=1^0$である。以下$n\\geq 1$とする。$a=0$ならば$\\gcd(0,b)=b=1$なので$a=0^n$、$b=1^n$である。$b=0$の場合も同様である。\n$a,b$がともに正のとき、素数$p$が$a$を割り切るとする。$\\gcd(a,b)=1$より$p$は$b$を割り切らないので、$a$における$p$の指数は$ab=c^n$における$p$の指数に等しく、これは$c$における$p$の指数の$n$倍である。よって$a$のすべての素因数の指数は$n$の倍数であり、$a$は$n$乗数である。"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "school_integers",
+   "id": "consecutive_product_even",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "k=2 instance of 'k! divides a product of k consecutive integers' (entrance_exam consecutive_product_divisible_by_factorial covers ℕ, general k). Kept as a named pattern, but the statement does not say it is the 2-term special form and no ℤ general-k card exists.",
+   "patch": {
+    "statement": "連続する個数を$2$個に限った形として、整数$n$について、連続する二つの整数の積$n(n+1)$は偶数である。",
+    "statement_en": "Two-term special form. For every integer n, the product n(n + 1) of two consecutive integers is even."
+   },
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "No target-level defect found in the 137 cards: all hypotheses (a≠0, a>0/a≠1, base≠1, positive arguments, k≥1, n≠0, positive moduli) are stated, ℕ-subtraction never occurs, % is only used with positive moduli, Nat.floor only on nonnegative arguments, Nat.digits only with N≥1 or a≥1, ncard only where the value is 1 or 2. Remaining issues are reuse-quality, not correctness.",
+  "Hard negatives in exp_log that rely on 'log of a non-positive number / base 1 / m=0 is undefined' (logb_mul_positive, logb_rpow_power_positive, logb_even_power_abs, logb_change_of_base, logb_power_base_power_argument; also reciprocal_exponent_sum_common_value k=1, logb_sum_equation_under_true_number_condition) are TRUE under Mathlib junk values (Real.logb_neg_eq_logb, logb 1 x = 0, x/0 = 0; checked in Lean). Prefer negatives that are false in both the textbook and the Lean reading.",
+  "exp_log OpenMath writes log_a x as (/ (ln x) (ln a)) everywhere, so log_a is not a retrievable concept and change-of-base/chain/power-of-base cards degenerate to field identities in ln; digits use two names (decimal_digit_count vs digit_length 10). Add logb(a,x) to school_exp_log.yaml and drop decimal_digit_count.",
+  "school_integers encodes every divisibility/parity statement as an explicit ∃ although core.yaml defines dvd; fine for generic_now tier but inconsistent with number_theory and loses the 'divides' concept. 'Remainder' for negative integers is never fixed to 0<=r<n in the Japanese text (difference_of_two_squares_iff, congruence_iff_same_remainder).",
+  "Special/general pairs are often present but not always labelled as special (digit count base 10 vs base b, p=3 vs p≡3 mod 4, coprime vs general linear Diophantine [labelled], 2- and 3-term consecutive products, odd-exponent/even-exponent [labelled]). Quadratic domain is otherwise consistently general (a,b,c vary) and constants appear only where intended (mod 3/4/8 squares, digit counts); it is also heavily a>0-only (a<0 and a≠0 variants missing for extrema, root location, inequalities).",
+  "Overlap inside quadratic: unique_root_iff_discriminant_zero, root_count_by_discriminant and parabola_line_tangent_iff_discriminant restate the D=0/∃! pattern three times; real_root_iff_discriminant_nonneg plus quadratic_formula plus quadratic_factorization_by_formula are partly derivable from each other. Acceptable, but retrieval will return clusters."
+ ],
+ "missing_neighbors": [
+  "[quadratic] a<0 / general-a counterparts: min of concave quadratic on [s,t] at farther endpoint, max at vertex, and extremum value forms IsLeast/IsGreatest (f '' Icc s t) (f v); image of [s,t] under a quadratic equals [min,max].",
+  "[quadratic] Root location beyond a>0: both roots less than k; k strictly between roots for any a≠0 (a·f(k)<0); both roots in (k,l) for a<0; general-k a≠0 form of both_roots_greater_than (D≥0, k<-b/(2a), a·f(k)>0); exactly one root in (k,l) with f(k)f(l)≥0 boundary cases.",
+  "[quadratic] Complete sign table of a x^2+bx+c for a≷0 with D<0, D=0, D>0 (solution sets of >0, ≥0, <0, ≤0; strict negativity everywhere iff a<0∧D<0); only D>0 (a>0) and the all-x cases are present, D=0 and a<0 closed intervals are missing.",
+  "[quadratic] Parameter-dependent existence without a≠0: (∃x, ax²+bx+c=0) ↔ (a=0∧(b≠0∨c=0)) ∨ (a≠0∧D≥0), and solution count including the degenerate a=0 case; nonneg-everywhere is covered (…_general) but ∃root and ∀x>0/<0 general-a versions are not.",
+  "[quadratic] Symmetric functions of the roots via Vieta: p²+q²=(p+q)²-2pq, (p-q)²=(p+q)²-4pq, p³+q³, 1/p+1/q, and constructing the equation with roots αk, α+k, 1/α, α². Also vertex/axis of a(x-p)(x-q) is (p+q)/2 and f(x)=a(x-h)²+k has extremum k at x=h (vertex form read-off).",
+  "[quadratic] Two curves: intersection of two parabolas / parabola with line chord length √(1+m²)·√D/|a| (card only has the x-distance), and condition for ax²+bx+c≥0 on an interval [s,t] (parameter conditions via axis position).",
+  "[exp_log] log_a(a^x)=x (Real.logb_rpow), log_a 1=0, log_a a=1, log_a(1/M)=-log_a M (Real.logb_inv), log_{1/a} M = -log_a M (Real.logb_inv_base?), and base-e laws ln(MN), ln(M/N), ln(M^p) as cards of their own (only logb versions here; calculus_single has log_of_product).",
+  "[exp_log] Exponent laws with negative/difference exponents and quotients: a^(-x)=1/a^x, a^(x-y)=a^x/a^y, (a/b)^x=a^x/b^x (Real.rpow_neg, rpow_sub, div_rpow); non-strict and reversed exponential/log inequalities (a^x>b, a^x≤b, log_a x<c ⇔ x<a^c for both bases: Real.logb_lt_iff_lt_rpow).",
+  "[exp_log] Odd real roots of negative numbers (∛(-8)=-2; Real.rpow is junk for negative bases), a^x<b^x reversal for x<0, a>1∧x>0⇒a^x>1, and growth/decay (doubling time t=ln2/ln a, compound interest) as parameterised statements.",
+  "[integers] ℤ-conventions: Int.emod/ediv characterisation (0≤a%b<|b|, a=b*(a/b)+a%b for negative a,b), a∣b∧b∣a ↔ a=±b, a∣b∧b≠0 ⇒ |a|≤|b|, ac∣bc∧c≠0 ⇒ a∣b, Int.gcd_mul_left (gcd(ca,cb)=|c|gcd(a,b)) and gcd with sign handling; gcd_mul_left here is ℕ-only.",
+  "[integers] a-b ∣ a^n-b^n for all n (cited inside the congruence_pow answer but not a card), squares mod 8 ∈{0,1,4}, mod 5 ∈{0,1,4}, cubes mod 9 ∈{0,1,8}, fourth powers mod 16 ∈{0,1}; Even(ab) ↔ Even a ∨ Even b, Even(n²)↔Even n.",
+  "[integers] General divisor count τ(∏p_i^{e_i})=∏(e_i+1) (card is two primes only) and σ, Legendre v_p(n!)=Σ⌊n/p^i⌋ (trailing zeros of n!), number of multiples of k up to n is ⌊n/k⌋, general k-term consecutive product divisible by k! over ℤ, Frobenius/McNugget for coprime a,b."
+ ]
+}

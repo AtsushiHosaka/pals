@@ -1,0 +1,395 @@
+{
+ "batch": "U1_commalg_modules",
+ "domains": [
+  "commutative_algebra",
+  "modules_categories"
+ ],
+ "reviewed": 78,
+ "ok_ids": [
+  "localization_at_prime_is_local",
+  "localization_prime_correspondence",
+  "localization_preserves_exactness",
+  "nakayama_local_ring",
+  "nakayama_generators_modulo_maximal",
+  "hilbert_basis_multivariate",
+  "artinian_domain_is_field",
+  "artinian_iff_noetherian_dim_zero",
+  "radical_eq_intersection_of_primes",
+  "primary_ideal_radical_is_prime",
+  "maximal_radical_implies_primary",
+  "lasker_noether_primary_decomposition",
+  "integral_elements_closed_add_mul",
+  "integral_extension_field_iff",
+  "lying_over_theorem",
+  "going_up_theorem",
+  "integral_extension_incomparability",
+  "noether_normalization",
+  "hilbert_nullstellensatz",
+  "maximal_ideals_are_point_ideals",
+  "krull_intersection_theorem",
+  "pid_krull_dimension_one",
+  "krull_dimension_of_field_is_zero",
+  "dvr_ideals_are_powers_of_uniformizer",
+  "valuation_ring_element_or_inverse",
+  "dedekind_unique_prime_factorization_of_ideals",
+  "dedekind_localization_is_dvr",
+  "spectrum_is_quasi_compact",
+  "spectrum_closed_point_iff_maximal",
+  "spectrum_closed_sets_are_zero_loci",
+  "adic_complete_ideal_in_jacobson",
+  "adic_completion_of_noetherian_is_flat",
+  "quotient_module_universal_property",
+  "quotient_submodule_correspondence",
+  "exact_with_zero_map",
+  "cokernel_iso_of_right_exact",
+  "splitting_lemma_modules",
+  "module_quotient_of_free",
+  "projective_lifting_property",
+  "projective_iff_summand_of_free",
+  "flat_tensor_preserves_exact",
+  "tensor_right_exact",
+  "noetherian_extension",
+  "artinian_injective_endomorphism_surjective",
+  "schur_lemma_modules",
+  "simple_endomorphism_is_unit",
+  "semisimple_iff_sum_of_simples",
+  "inverse_morphism_unique",
+  "mono_with_section_is_iso",
+  "fully_faithful_reflects_isomorphism",
+  "natural_transformation_iso_iff_components",
+  "left_adjoint_unique",
+  "right_adjoint_preserves_limits",
+  "yoneda_lemma",
+  "yoneda_embedding_fully_faithful",
+  "equivalence_iff_quasi_inverse"
+ ],
+ "findings": [
+  {
+   "domain": "commutative_algebra",
+   "id": "associated_primes_finite",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "Mathlib's associatedPrimes is the radical variant (prime I with I = radical of Ann(x), see Mathlib/RingTheory/Ideal/AssociatedPrime/Basic.lean), not the classical Ann(x)=P that the Japanese text and answer use. Under the Noetherian hypothesis the two coincide (isAssociatedPrime_iff), so the card is true, but the answer proves the classical statement and never mentions the equivalence.",
+   "patch": {
+    "answer_note": "Add one sentence to the answer: for Noetherian R, a prime P is associated iff P=Ann(x) for some x (if P=rad Ann(x) then Ann(x) is primary, so Ass(Rx)={P})."
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "commutative_algebra",
+   "id": "zero_divisors_union_associated_primes",
+   "severity": "minor",
+   "codes": [
+    "OTHER",
+    "OM_FORMAT",
+    "NEGATIVE_BAD"
+   ],
+   "issue": "(1) Same radical-variant caveat for associatedPrimes as in associated_primes_finite; in the hard_negative, Ass(R) is empty only for the classical definition (with Mathlib's radical definition the nilradical (x_1,x_2,...) is associated to x_1), so the negative must say it uses the classical Ann(x). The prime is written '(x_i)' ambiguously. (2) OpenMath uses overloaded '*' for scalar action and a bare '0' for the zero of M with no carrier information.",
+   "patch": {
+    "openmath": "(forall (R M r) (-> (and (comm_ring R) (noetherian_ring R) (module_over M R) (in r R)) (<-> (exists (x) (and (in x M) (!= x (module_zero M)) (= (module_smul r x) (module_zero M)))) (exists (P) (and (in P (associated_primes R M)) (in r P))))))",
+    "hard_negative": {
+     "statement": "ネーターでない可換環上でも、零因子全体は(Ann(x)=Pの形で定まる)随伴素イデアルの和集合に等しい。",
+     "reason": "R=k[x_1,x_2,…]/(x_1^2,x_2^2,…)の唯一の素イデアル$(x_1,x_2,\\dots)$はどの元$a$の零化イデアル$\\operatorname{Ann}(a)$にもならない(0でない$a$に現れない変数$x_j$を掛けると0にならない)。よってAnn(x)の形の随伴素イデアルは存在しないが、x_1は零因子である。"
+    },
+    "vocabulary_additions": "module_zero: {args: [term], returns: term, meaning: \"zero element of the module M\"}; module_smul: {args: [term, term], returns: term, meaning: \"scalar multiple r x in a module\"}"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "commutative_algebra",
+   "id": "integral_over_integral_closure_is_integral",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD",
+    "ANSWER_WRONG"
+   ],
+   "issue": "hard_negative is about integrally closed domains (R=Z[sqrt-3] not normal), not a nearby variant of 'integral over C implies integral over R'. The answer asserts that R[c_0..c_{n-1}] is a finitely generated R-module without argument.",
+   "patch": {
+    "hard_negative": {
+     "statement": "$x$が$R$の$A$における整閉包$C$上で代数的(非モニックな多項式の根)であれば、$x$は$R$上整である。",
+     "reason": "モニックの仮定が必要である。$R=\\mathbb{Z}$, $A=\\mathbb{Q}$では$C=\\mathbb{Z}$で、$x=1/2$は$2x-1=0$を満たす($\\mathbb{Z}$係数の非モニック式の根)が、$\\mathbb{Z}$上整でない。"
+    },
+    "answer": "$R,A$を可換環、$A$を$R$代数、$C$を$R$上整な$A$の元全体とし、$x\\in A$は$C$上整とする。\n$x$は$C$係数のモニック多項式の根であり、その係数を$c_0,\\dots,c_{n-1}$とする。各$c_i$は$R$上整である。$R_0=R$, $R_{k+1}=R_k[c_k]$($k=0,\\dots,n-1$)とおく。$c_k$は$R$上整なので$R_k$上整であり、その整方程式の次数を$d_k$とすると、$R_{k+1}$は$1,c_k,\\dots,c_k^{d_k-1}$で生成される$R_k$加群である。有限生成加群上の有限生成加群は、生成元どうしの積を生成元に取れば有限生成なので、$R'=R_n=R[c_0,\\dots,c_{n-1}]$は有限生成$R$加群である。$x$は$R'$上整なので、$R'[x]$は$1,x,\\dots,x^{n-1}$で生成される$R'$加群であり、したがって有限生成$R$加群である。\n$R'[x]$は$1$を含む部分$R$代数なので、行列式の議論を使う。生成元$b_1,\\dots,b_k$について$xb_i=\\sum_ja_{ij}b_j$($a_{ij}\\in R$の像)と書くと、$\\det(xE-(a_{ij}))$がすべての$b_i$を消すので$0$である($1$は$b_i$の線形結合だから)。これは$x$についてのモニックな方程式なので、$x$は$R$上整である。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "commutative_algebra",
+   "id": "dedekind_contains_iff_divides",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath uses the core symbol dvd (meaning 'a divides b', used for integers) on ideals with no carrier information; the ideal product that defines divisibility is erased, so the same OpenMath as for integer divisibility vs. containment would appear. Encode as exists L with J = I*L using an explicit ideal product symbol.",
+   "patch": {
+    "openmath": "(forall (A I J) (-> (and (dedekind_domain A) (ideal_of I A) (ideal_of J A)) (<-> (exists (L) (and (ideal_of L A) (= J (ideal_mul I L)))) (subset J I))))",
+    "vocabulary_additions": "ideal_mul: {args: [term, term], returns: term, meaning: \"product ideal IJ\"}"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "first_isomorphism_modules",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Same pattern as linear_basic.first_isomorphism (field special case); this module version over a ring is the general form. Keep this one and drop or cross-link the field special case.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "second_isomorphism_modules",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Same pattern as linear_basic.second_isomorphism (K-vector spaces); this ring-module version is the general form. Keep one.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "third_isomorphism_modules",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Same pattern as linear_basic.third_isomorphism (K-vector spaces); this ring-module version is the general form. Keep one.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "five_lemma_modules",
+   "severity": "major",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OpenMath types only i3 as module_hom. f1..f4, g1..g4, i1, i2, i4, i5 are untyped and M1,M2,M4,M5,N1,N2,N4,N5 occur only in is_module, so domains/codomains of the diagram maps are erased: as written the OpenMath is a (false) statement about arbitrary maps and cannot be told apart from a permuted diagram.",
+   "patch": {
+    "openmath": "(forall (R M1 M2 M3 M4 M5 N1 N2 N3 N4 N5 f1 f2 f3 f4 g1 g2 g3 g4 i1 i2 i3 i4 i5) (-> (and (is_ring R) (is_module R M1) (is_module R M2) (is_module R M3) (is_module R M4) (is_module R M5) (is_module R N1) (is_module R N2) (is_module R N3) (is_module R N4) (is_module R N5) (module_hom f1 R M1 M2) (module_hom f2 R M2 M3) (module_hom f3 R M3 M4) (module_hom f4 R M4 M5) (module_hom g1 R N1 N2) (module_hom g2 R N2 N3) (module_hom g3 R N3 N4) (module_hom g4 R N4 N5) (module_hom i1 R M1 N1) (module_hom i2 R M2 N2) (module_hom i3 R M3 N3) (module_hom i4 R M4 N4) (module_hom i5 R M5 N5) (exact_pair f1 f2) (exact_pair f2 f3) (exact_pair f3 f4) (exact_pair g1 g2) (exact_pair g2 g3) (exact_pair g3 g4) (= (map_compose g1 i1) (map_compose i2 f1)) (= (map_compose g2 i2) (map_compose i3 f2)) (= (map_compose g3 i3) (map_compose i4 f3)) (= (map_compose g4 i4) (map_compose i5 f4)) (surjective_map i1) (bijective_map i2) (bijective_map i4) (injective_map i5)) (bijective_map i3)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "short_five_lemma_modules",
+   "severity": "major",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OpenMath types only b as module_hom; f,g,fp,gp,a,c are untyped, and A,C,Ap,Cp occur only in is_module, so the diagram structure is erased (statement about arbitrary maps).",
+   "patch": {
+    "openmath": "(forall (R A B C Ap Bp Cp f g fp gp a b c) (-> (and (is_ring R) (is_module R A) (is_module R B) (is_module R C) (is_module R Ap) (is_module R Bp) (is_module R Cp) (module_hom f R A B) (module_hom g R B C) (module_hom fp R Ap Bp) (module_hom gp R Bp Cp) (module_hom a R A Ap) (module_hom b R B Bp) (module_hom c R C Cp) (injective_map f) (exact_pair f g) (surjective_map g) (injective_map fp) (exact_pair fp gp) (surjective_map gp) (= (map_compose fp a) (map_compose b f)) (= (map_compose gp b) (map_compose c g)) (bijective_map a) (bijective_map c)) (bijective_map b)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "snake_lemma_modules",
+   "severity": "major",
+   "codes": [
+    "OM_LEAN_MISMATCH",
+    "NEGATIVE_BAD",
+    "OTHER"
+   ],
+   "issue": "OpenMath types none of f1,f2,g1,g2,i1..i3,u2,u3,p1,p2,F,G as module_hom (only the conclusion's d), so M1..M3,N1..N3,K2,C2 occur only in is_module and the diagram wiring is lost. The hard_negative is a vague construction claim ('same delta can be defined') without a concrete counterexample to the conclusion. Also CommRing is an unneeded restriction (holds over any ring; other cards in this domain use Ring).",
+   "patch": {
+    "openmath": "(forall (R M1 M2 M3 N1 N2 N3 K2 K3 C1 C2 f1 f2 g1 g2 i1 i2 i3 u2 u3 p1 p2 F G) (-> (and (is_comm_ring R) (is_module R M1) (is_module R M2) (is_module R M3) (is_module R N1) (is_module R N2) (is_module R N3) (is_module R K2) (is_module R K3) (is_module R C1) (is_module R C2) (module_hom f1 R M1 M2) (module_hom f2 R M2 M3) (module_hom g1 R N1 N2) (module_hom g2 R N2 N3) (module_hom i1 R M1 N1) (module_hom i2 R M2 N2) (module_hom i3 R M3 N3) (module_hom u2 R K2 M2) (module_hom u3 R K3 M3) (module_hom p1 R N1 C1) (module_hom p2 R N2 C2) (module_hom F R K2 K3) (module_hom G R C1 C2) (exact_pair f1 f2) (surjective_map f2) (injective_map g1) (exact_pair g1 g2) (= (map_compose g1 i1) (map_compose i2 f1)) (= (map_compose g2 i2) (map_compose i3 f2)) (exact_pair u2 i2) (exact_pair u3 i3) (injective_map u3) (exact_pair i1 p1) (exact_pair i2 p2) (surjective_map p1) (= (map_compose f2 u2) (map_compose u3 F)) (= (map_compose G p1) (map_compose p2 g1))) (exists (d) (and (module_hom d R K3 C1) (exact_pair F d) (exact_pair d G)))))",
+    "hard_negative": {
+     "statement": "$f_2$が全射でなくても、同じ結論($\\ker\\delta=\\operatorname{im}F$かつ$\\ker G=\\operatorname{im}\\delta$を満たす$\\delta:K_3\\to C_1$の存在)が成り立つ。",
+     "reason": "$f_2$の全射性が必要である。$M_1=M_2=0$, $M_3=\\mathbb{Z}$, $N_1=N_2=N_3=0$、縦の写像はすべて零とすると、行は$M_2,N_2$で完全で$g_1$は単射である。$K_3=\\mathbb{Z}$, $K_2=C_1=C_2=0$, $F=0$なので$\\ker\\delta=\\operatorname{im}F=0$が必要だが、$\\delta:\\mathbb{Z}\\to0$の核は$\\mathbb{Z}$である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "hom_covariant_left_exact",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "X is bound but used only in is_module; (post_compose f) does not mention X, so Hom(X,-) is not encoded and the same OpenMath serves any X (or no X). Add X as an argument of post_compose.",
+   "patch": {
+    "openmath": "(forall (R A B C X f g) (-> (and (is_ring R) (is_module R A) (is_module R B) (is_module R C) (is_module R X) (module_hom f R A B) (module_hom g R B C) (injective_map f) (exact_pair f g)) (and (injective_map (post_compose X f)) (exact_pair (post_compose X f) (post_compose X g)))))",
+    "vocabulary_additions": "post_compose: {args: [term, term], returns: term, meaning: \"the map k to f after k between Hom(X,A) and Hom(X,B), in the order X f\"}"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "free_projective_flat_chain",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "Two independent reusable lemmas (free => projective, projective => flat) are packed into one conjunction; a proof citing one gets a card that proves both. Also 'projective => flat' holds over any ring, the commutativity is only a Lean/Module.Flat convention. Consider splitting.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "injective_module_embedding_splits",
+   "severity": "minor",
+   "codes": [
+    "OTHER",
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Lean target and text restrict M to the universe of Q (Module.Injective is universe-restricted); the classical fact holds for all M. OpenMath drops the universe condition and so states the stronger classical claim; the 'answer' is just the definition applied to g=id.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "structure_theorem_pid_modules",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH",
+    "WEAK_OR_OVERNAMED"
+   ],
+   "issue": "OpenMath quantifies the index i unguarded ((forall (i) (-> (< i m) ...))) so i ranges over all numbers below m, not 0..m-1 (Lean uses Fin m). The card proves only the existence half of the structure theorem; uniqueness of (n, p_i^{e_i}) is not claimed, and e_j may be 0.",
+   "patch": {
+    "openmath": "(forall (R M) (-> (and (is_pid R) (is_module R M) (finitely_generated_module R M)) (exists (n m p e) (and (in n N) (in m N) (forall (i) (-> (and (in i N) (< i m)) (irreducible_element (seq_value p i) R))) (module_iso R M (direct_sum_modules (free_rank_module R n) (prime_power_quotient_sum R p e m)))))))",
+    "statement": "$R$を単項イデアル整域、$M$を有限生成$R$加群とする。ある自然数$n,m$と既約元$p_1,\\dots,p_m$、自然数$e_1,\\dots,e_m$により$M\\cong R^n\\oplus\\bigoplus_{j=1}^mR/(p_j^{e_j})$となる(構造定理の存在部分。一意性は主張しない)。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "quotient_by_torsion_is_torsion_free",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "The Japanese statement does not say which torsion is meant; Lean's Submodule.torsion uses non-zero-divisors (the answer does too). Over a ring with zero divisors 'killed by some non-zero element' would not even be a submodule.",
+   "patch": {
+    "statement": "$R$を可換環、$M$を$R$加群とし、$T(M)$を、ある非零因子$a\\in R$で$ax=0$となる$x\\in M$全体のなす部分加群とする。$M/T(M)$に対する同じ意味のねじれ部分加群$T(M/T(M))$は$0$である。",
+    "statement_en": "For a module M over a commutative ring, let T(N) denote the submodule of elements killed by some non-zero-divisor of R. Then T(M/T(M)) = 0."
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "tensor_universal_property",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Same pattern as linear_advanced.tensor_product_universal_property (field case); this commutative-ring version is the general form. Keep one. OpenMath also leaves m,n unguarded in the forall for pure tensors.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "semisimple_submodule_has_complement",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE",
+    "OTHER"
+   ],
+   "issue": "In this Mathlib, IsSemisimpleModule is defined as ComplementedLattice (Submodule R M), so the Lean target is the definition itself; the card is also exactly the 'sum of simples => complemented' half of semisimple_iff_sum_of_simples. The JA never fixes the definition (answer discusses both). Merge into semisimple_iff_sum_of_simples or drop.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "limit_cone_unique_up_to_iso",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative says 'sets A != B' have different products A x B and B x A, but A x B = B x A as sets when e.g. A=empty, B nonempty. Needs concrete nonempty sets.",
+   "patch": {
+    "hard_negative": {
+     "statement": "同じ図式の極限錐の頂点は(同型でなく)等しい。",
+     "reason": "一意なのは同型を除いてである。$A=\\{0\\}$, $B=\\{1\\}$の積の頂点として$\\{(0,1)\\}$も$\\{(1,0)\\}$(射影を入れ替えたもの)も取れるが、集合として異なる。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "adjunction_hom_bijection",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD",
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "hard_negative reason ('this states G -| F') gives no counterexample that the claim fails. OpenMath's forall (f) is not restricted to f in Hom(F(X),Y).",
+   "patch": {
+    "hard_negative": {
+     "statement": "随伴$F\\dashv G$があれば、$G(X)$から$Y$への射と$X$から$F(Y)$への射の間にも自然な全単射がある。",
+     "reason": "これは$G\\dashv F$を述べており$F\\dashv G$からは従わない。忘却関手$U:\\mathbf{Top}\\to\\mathbf{Set}$は離散位相を与える$D$の右随伴だが、$X=\\mathbb{R}$, $Y=\\{0,1\\}$では$\\mathrm{Hom}_{\\mathbf{Set}}(U(X),Y)$は$2^{|\\mathbb{R}|}$個、$\\mathrm{Hom}_{\\mathbf{Top}}(X,D(Y))$は定数写像の$2$個で、全単射がない。"
+    },
+    "openmath": "(forall (C D F G X Y) (-> (and (is_category C) (is_category D) (functor_between F C D) (functor_between G D C) (adjoint_pair F G) (object_of X C) (object_of Y D)) (exists (e) (and (bijection_between e (hom_set (functor_on_object F X) Y) (hom_set X (functor_on_object G Y))) (forall (f) (-> (in f (hom_set (functor_on_object F X) Y)) (= (fn_value e f) (cat_compose (functor_on_morphism G f) (adjunction_unit F G X)))))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "pullback_of_mono_is_mono",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "C, X, Y, Z are not linked: (object_of X C) etc. are missing, so the morphisms f,g float free of the category and of each other's objects.",
+   "patch": {
+    "openmath": "(forall (C X Y Z f g) (-> (and (is_category C) (object_of X C) (object_of Y C) (object_of Z C) (morphism_between f X Z) (morphism_between g Y Z) (mono_morphism f)) (mono_morphism (pullback_projection_right f g))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "abelian_mono_epi_is_iso",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "f is not tied to C (no object_of / morphism_between), so abelian_category C is disconnected from mono_morphism f and epi_morphism f.",
+   "patch": {
+    "openmath": "(forall (C X Y f) (-> (and (abelian_category C) (object_of X C) (object_of Y C) (morphism_between f X Y) (mono_morphism f) (epi_morphism f)) (iso_morphism f)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "modules_categories",
+   "id": "abelian_mono_iff_kernel_zero",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "f is not tied to C (no object_of / morphism_between), so abelian_category C is disconnected from f.",
+   "patch": {
+    "openmath": "(forall (C X Y f) (-> (and (abelian_category C) (object_of X C) (object_of Y C) (morphism_between f X Y)) (<-> (mono_morphism f) (= (kernel_inclusion f) zero_morphism_cat))))"
+   },
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "Diagram-heavy cards (five_lemma, short_five, snake, abelian_*, pullback_of_mono) omit module_hom/object_of guards, so the OpenMath loses the wiring of maps to objects; the other cards guard correctly, so a mechanical 'every map/morphism variable gets module_hom/morphism_between' lint would catch these.",
+  "Two parallel vocabularies for the same concepts: is_comm_ring/comm_ring, is_module/module_over, is_submodule/submodule_of, is_pid/principal_ideal_domain, zero_module (constant) vs zero_module_of (predicate); unify names so cross-domain retrieval matches.",
+  "Mathlib specifics matter: associatedPrimes is the radical variant, IsSemisimpleModule is ComplementedLattice, Module.Projective is 'summand of free on P', Module.Injective is universe-restricted, IsEquivalence = Full+Faithful+EssSurj; several cards are literally definitions or differ from the textbook notion unless the hypotheses (Noetherian) are used, and answers define the notion inconsistently (projective = lifting in cards 13 and 15, = summand of free in card 14).",
+  "Hard negatives are mostly sound counterexamples (I checked each); the weak ones lack a concrete witness (snake, adjunction_hom_bijection, limit_cone_unique, integral_over_integral_closure).",
+  "Cross-domain overlap: first/second/third_isomorphism_modules and tensor_universal_property generalize linear_basic / linear_advanced field cards; nakayama_local_ring is a special case of ring_theory.nakayama_lemma (still worth keeping as the citeable local form).",
+  "Snapshot mismatch: batch said 91 cards, snapshot contains 78 (commutative_algebra 36, modules_categories 42); all 78 were reviewed. No Lean targets were changed, so nothing was compiled."
+ ],
+ "missing_neighbors": [
+  "Nakayama with determinant trick: M f.g., I M = M => exists a in 1+I with a M = 0 (Submodule.exists_sub_one_mem_and_smul_eq_zero_of_fg_of_le_smul)",
+  "Determinant trick / Cayley-Hamilton: f.g. faithful module over R[x] => x integral (Module.End.isIntegral or IsIntegral.of_mem_of_fg), used in cards 14, 15, 28, 30",
+  "Transitivity of integrality and finite-type+integral => finite (Algebra.IsIntegral.trans, Algebra.IsIntegral.finite)",
+  "Prime avoidance (Ideal.subset_union_prime) and finiteness of minimal primes of a Noetherian ring (Ideal.finite_minimalPrimes_of_isNoetherianRing)",
+  "Localization of a Noetherian ring is Noetherian; local-global principle: M = 0 iff M_m = 0 for all maximal m",
+  "Artin-Rees lemma as a standalone card (Ideal.exists_pow_inf_eq_pow_smul)",
+  "Zariski's lemma: a field that is a finitely generated K-algebra is finite over K (used by Nullstellensatz)",
+  "Krull's principal ideal / height theorem and going-down for integrally closed domains",
+  "Hom(-,X) is left exact contravariantly (Hom(B,X)->Hom(A,X) for A->B->C->0) and Hom(P,-) exact iff P projective",
+  "Baer criterion for injective modules (Module.Baer.injective) and Hom/tensor adjunction (TensorProduct.lift, tensor associativity/commutativity)",
+  "Left adjoints preserve colimits (dual of right_adjoint_preserves_limits); triangle identities; Yoneda: Hom(-,X) ≅ Hom(-,Y) => X ≅ Y",
+  "Flat over a domain implies torsion-free; localization S^{-1}R is flat over R (IsLocalization.flat)"
+ ]
+}

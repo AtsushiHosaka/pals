@@ -1,0 +1,347 @@
+{
+ "batch": "U4_linear",
+ "domains": [
+  "linear_basic",
+  "linear_advanced"
+ ],
+ "reviewed": 107,
+ "ok_ids": [
+  "subspace_inter_closed",
+  "subspace_sum_mem_iff",
+  "dimension_formula",
+  "direct_sum_dimension",
+  "subspace_eq_of_le_of_finrank_le",
+  "subspaces_meet_of_large_dim",
+  "li_cons_iff",
+  "li_card_le_finrank",
+  "steinitz_exchange",
+  "span_exchange",
+  "basis_coordinates_unique",
+  "basis_card_invariant",
+  "li_extends_to_basis",
+  "li_card_eq_finrank_spans",
+  "iso_iff_finrank_eq",
+  "injective_preserves_li",
+  "inj_iff_surj_of_equal_dim",
+  "kernel_nontrivial_of_dim_lt",
+  "quotient_dimension",
+  "matrix_mul_assoc",
+  "transpose_mul",
+  "trace_mul_comm_rect",
+  "trace_similarity",
+  "det_zero_iff_nontrivial_kernel",
+  "rank_mul_le_min",
+  "row_rank_eq_column_rank",
+  "rank_invariant_left_mul",
+  "rank_sum_le_of_mul_eq_zero",
+  "solution_space_dimension",
+  "linear_system_solvable_iff_in_col_span",
+  "linear_system_solution_structure",
+  "underdetermined_homogeneous",
+  "invertible_system_unique_solution",
+  "rouche_capelli",
+  "det_row_linear",
+  "det_swap_rows",
+  "det_equal_rows_zero",
+  "det_mul",
+  "det_transpose",
+  "det_scalar_mul",
+  "det_upper_triangular",
+  "adjugate_product",
+  "cramer_rule",
+  "vandermonde_ne_zero_iff",
+  "block_upper_triangular_det",
+  "eigenvectors_distinct_independent",
+  "eigenvalue_of_left_inverse",
+  "zero_eigenvalue_iff_not_injective",
+  "diagonalizable_iff_eigenspaces_span",
+  "idempotent_map_diagonalizable",
+  "squarefree_minpoly_diagonalizable",
+  "exists_eigenvalue_alg_closed",
+  "cayley_hamilton_matrix",
+  "coprime_polynomials_kernel_decomposition",
+  "generalized_eigenspaces_span",
+  "generalized_eigenvector_implies_eigenvalue",
+  "invariant_hyperplane_alg_closed",
+  "fitting_lemma",
+  "nilpotent_eigenvalue_zero",
+  "nilpotent_power_dimension_zero",
+  "nilpotent_trace_zero",
+  "cauchy_schwarz_equality_case",
+  "triangle_inequality_inner",
+  "pythagoras_iff_orthogonal",
+  "polarization_general",
+  "orthogonal_nonzero_family_independent",
+  "double_orthogonal_complement",
+  "orthogonal_decomposition_dimension",
+  "orthogonal_projection_minimizes_distance",
+  "orthogonal_projection_characterization",
+  "adjoint_of_composition",
+  "kernel_adjoint_orthogonal_range",
+  "self_adjoint_eigenvalue_real",
+  "self_adjoint_eigenvectors_orthogonal",
+  "spectral_theorem_self_adjoint",
+  "normal_operator_norm_adjoint",
+  "orthogonal_matrix_preserves_dot_product",
+  "orthogonal_matrix_determinant",
+  "isometry_eigenvalue_norm_one",
+  "positive_definite_iff_eigenvalues_positive",
+  "quadratic_form_associated_bilinear",
+  "symmetric_bilinear_orthogonal_basis",
+  "sylvester_law_of_inertia",
+  "annihilator_dimension_formula",
+  "double_dual_canonical_bijective",
+  "pure_tensor_nonzero",
+  "exterior_power_dimension",
+  "exterior_algebra_anticommute"
+ ],
+ "findings": [
+  {
+   "domain": "linear_basic",
+   "id": "left_inverse_is_right_inverse",
+   "severity": "major",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OpenMath drops the hypothesis that A and B are square of the same order (and the field K). With matrix_mul / identity_matrix (size fixed by context) it asserts AB=I -> BA=I for arbitrary rectangular A,B, which is exactly the false claim used as the card's own hard_negative; a different (false) theorem gets the identical OpenMath.",
+   "patch": {
+    "openmath": "(forall (K A B) (-> (and (matrix_over_field A K) (matrix_over_field B K) (= (matrix_row_count A) (matrix_column_count A)) (= (matrix_row_count B) (matrix_row_count A)) (= (matrix_column_count B) (matrix_row_count A)) (= (matrix_mul A B) identity_matrix)) (= (matrix_mul B A) identity_matrix)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_advanced",
+   "id": "distinct_eigenvalues_give_eigenbasis",
+   "severity": "major",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "In the OpenMath n is only tied to dim V; the families mu and v are not required to have n members. For an injective family with m<n members the conclusion (a basis b indexed like mu with f b_i = mu_i b_i) is false, so the OpenMath states a false generalisation; the Lean target uses Fin n for mu and v.",
+   "patch": {
+    "openmath": "(forall (K V f n mu v) (-> (and (fd_vector_space K V) (endomorphism K V f) (= (dim_of K V) n) (= (size mu) n) (family_injective mu) (forall (i) (eigenvector_of f (fn_value mu i) (fn_value v i)))) (exists (b) (and (is_basis_family K V b) (forall (i) (= (fn_value f (fn_value b i)) (smul (fn_value mu i) (fn_value b i))))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_basic",
+   "id": "li_iff_sum_zero",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "(finite_set v) is applied to the family v, conflating a finite index set with a finite set of values; the index set of c and of the inner forall (i) is never stated, so OpenMath cannot distinguish 'finite family' from 'family with finitely many distinct values'. Same pattern in li_card_le_finrank, li_card_eq_finrank_spans, basis_coordinates_unique, basis_card_invariant.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_advanced",
+   "id": "gram_schmidt_orthonormalization",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "The bound variable n never occurs in the body: the OpenMath quantifies over any linearly independent family v (no length n, no ordered index), whereas the Lean target is for v : Fin n -> E. Tie n to the family size.",
+   "patch": {
+    "openmath": "(forall (K E n v) (-> (and (inner_product_space_over K E) (= (size v) n) (linearly_independent_family v)) (exists (u) (and (orthonormal_family u E) (forall (k) (= (family_span_upto u k) (family_span_upto v k)))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_advanced",
+   "id": "orthonormal_set_extends_to_basis",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "The whole conclusion is hidden in the card-specific predicate family_extends_to_onb (used only here), so retrieval cannot see 'orthonormal', 'basis' or 'contains v'. Spell it out with reusable symbols (needs linear_span added to linear_advanced.yaml with the same signature as linear_basic, since domain checks load only core + own vocabulary); then drop family_extends_to_onb.",
+   "patch": {
+    "openmath": "(forall (K E v) (-> (and (fd_inner_product_space K E) (orthonormal_set v E)) (exists (u) (and (subset v u) (orthonormal_set u E) (= (linear_span u) (whole_space E))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_basic",
+   "id": "vandermonde_det",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD",
+    "OM_FORMAT"
+   ],
+   "issue": "hard_negative reason (v_1=v_2=1, n=2 gives product 2) is not a counterexample in characteristic 2, where v_j-v_i = v_j+v_i and the false formula coincides with the true one; the claim is over arbitrary fields so the reason must fix K=Q. OpenMath uses the ad-hoc symbol vandermonde_difference_product (used only in this card) for prod_{i<j}(v_j-v_i); a built-in product over index pairs would be reusable; also K and n are not bound.",
+   "patch": {
+    "hard_negative": {
+     "statement": "ファンデルモンドの行列式はΠ_{i<j}(v_i+v_j)である。",
+     "reason": "有理数体では成り立たない。n=2, v=(1,2)とすると行列式は2-1=1だが、積は1+2=3である。標数2では$v_j-v_i=v_j+v_i$となり両者は一致するので、反例には体を指定する必要がある。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_basic",
+   "id": "gauss_diagonalization",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "row_addition_product is a card-specific predicate and is reused for the right (column) factor M although its meaning says 'row addition'. Prefer a reusable name such as transvection_product (product of elementary matrices I+c e_ij, i != j) and use it for both factors.",
+   "patch": {
+    "openmath": "(forall (K A) (-> (matrix_over_field A K) (exists (L M D) (and (transvection_product L) (transvection_product M) (diagonal_matrix D) (= (matrix_mul (matrix_mul L A) M) D)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_basic",
+   "id": "cofactor_expansion_row",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "(sum (matrix_order A) (lambda (j) ...)) passes a bare integer as the summation range of arith1.sum, so the index range (0..n vs 1..n) is unspecified, while the Lean target sums over Fin (n+1). Use an explicit integer interval (e.g. interval1 integer interval 1..matrix_order A). Same pattern in cofactor_mismatch_zero.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_basic",
+   "id": "cofactor_mismatch_zero",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE",
+    "OM_FORMAT"
+   ],
+   "issue": "The statement is the off-diagonal entry of A*adj A = det A * I and the answer just cites adjugate_product (whose answer proves this very fact); it adds nothing a proof would cite separately. OpenMath uses sum over a bare matrix_order (index range unspecified).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_basic",
+   "id": "inverse_by_adjugate",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "Matrix.inv is defined in Mathlib as (det)^-1 * adjugate, so the Lean target is the definition unfolded and is true even without det A != 0 (junk value 0 = 0 at det 0). The hypothesis is harmless but the Lean statement does not itself certify that the right-hand side is an inverse; consider concluding A * ((det A)^-1 • adj A) = 1 and ((det A)^-1 • adj A) * A = 1.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_advanced",
+   "id": "jordan_chevalley_decomposition",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED"
+   ],
+   "issue": "Named after the Jordan-Chevalley decomposition, but only existence of n,s in K[f] is stated; the theorem's content also includes uniqueness of the commuting nilpotent+semisimple pair (the hard_negative itself talks about uniqueness). Rename (e.g. ..._exists) or add uniqueness.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_advanced",
+   "id": "similar_matrices_same_charpoly",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Identity matrix is the numeral 1 (basic vocabulary has identity_matrix), op_comp is an overloaded symbol with no carrier info, K is used for a commutative ring but nothing says 'commutative ring', and the card id says 'similar' while the statement is the more general QP=1 form.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_advanced",
+   "id": "cauchy_schwarz_inner",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Same Lean statement as functional_analysis/cauchy_schwarz_inner_product_space (RCLike, inner product space, ‖inner x y‖ ≤ ‖x‖‖y‖); the two cards are identical modulo OpenMath naming.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_advanced",
+   "id": "tensor_product_universal_property",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Field-case special case of modules_categories/tensor_universal_property (CommRing R); the general card already yields it.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_basic",
+   "id": "first_isomorphism",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Vector-space special case of modules_categories/first_isomorphism_modules (R-modules; Ring R); same pattern, differing only in K being a field. Keep only if a field-specific entry point is wanted.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_basic",
+   "id": "second_isomorphism",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Vector-space special case of modules_categories/second_isomorphism_modules (R-modules; Ring R); same pattern, differing only in K being a field. Keep only if a field-specific entry point is wanted.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_basic",
+   "id": "third_isomorphism",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Vector-space special case of modules_categories/third_isomorphism_modules (R-modules; Ring R); same pattern, differing only in K being a field. Keep only if a field-specific entry point is wanted.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_basic",
+   "id": "invertible_iff_det_ne_zero",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Field case of ring_theory/matrix_unit_iff_det_unit (CommRing, IsUnit A <-> IsUnit det A).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "linear_advanced",
+   "id": "polarization_real",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Instance K = R of polarization_general (where the imaginary unit is 0).",
+   "patch": null,
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "Two parallel, inconsistent vocabularies for the same concepts: vector_space_over(V,K) vs vector_space(K,V), finite_dim_space vs fd_vector_space, dimension vs dim_of, subspace_of vs subspace_in, basis_family vs is_basis_family, linear_map_between vs linear_map_over, matrix_mul vs op_comp, matrix_vector_mul vs matrix_vector, injective_function vs injective_map, complementary_subspaces vs is_complement, inter vs subspace_inter; advanced cards also write the zero vector/operator/matrix and identity as numerals 0/1 although zero_vector/zero_matrix/identity_matrix exist. Retrieval keys for the same fact will not match across the two domains; unify before publishing.",
+  "Determinant/trace/transpose/associativity cards fix `Field K` (OpenMath often omits K and squareness altogether and relies on matrix_det presupposing a square matrix) although the facts hold over commutative rings/semirings; reuse over Z-matrices is blocked and ring_theory already holds the CommRing versions (matrix_unit_iff_det_unit). Only left_inverse_is_right_inverse lost a hypothesis this way.",
+  "Finite families are encoded as (finite_set v) / (size v) on the family itself, conflating index type and set of values; the Lean side uses [Fintype ι] where [Finite ι] would be more reusable (Fintype is needed only where Fintype.card or a sum appears).",
+  "Junk-value audit is clean: every finrank/rank target carries FiniteDimensional, Fintype or Fin n; no Nat.card; Set.ncard only on finite subsets of Fin n (Sylvester); every inverse/quotient/division (A⁻¹, μ⁻¹, /det A, /4) is guarded by det≠0, μ≠0 or a real field. All hard_negatives checked are genuinely false/different (one with a char-2 gap: vandermonde_det).",
+  "Cross-domain overlap: field-case copies of module/comm-ring results already in modules_categories, ring_theory and functional_analysis (isomorphism theorems, tensor universal property, det-unit criterion, Cauchy-Schwarz)."
+ ],
+ "missing_neighbors": [
+  "Sylvester rank inequality: rank A + rank B ≤ rank(AB) + n (Matrix.rank_mul_le / Sylvester); only the upper bound rank(AB) ≤ min is present.",
+  "Rank subadditivity rank(A+B) ≤ rank A + rank B (Matrix.rank_add_le).",
+  "Monotone dimension: S ≤ T in a finite-dimensional space gives finrank S ≤ finrank T (Submodule.finrank_mono); injective f gives finrank V ≤ finrank W, surjective gives finrank W ≤ finrank V (LinearMap.finrank_le_finrank_of_injective).",
+  "Every spanning set contains a basis / every vector space has a basis (Module.Basis.ofVectorSpace, exists_linearIndependent) which the answers cite informally.",
+  "det(A^{-1}) = (det A)^{-1} and det of a conjugate P A P^{-1} (Matrix.det_nonsing_inv, det_conj).",
+  "Trace and determinant as sum/product of eigenvalues over an algebraically closed field (Matrix.trace_eq_sum_roots_charpoly, det_eq_prod_roots_charpoly).",
+  "Spectral theorem for normal operators over C, and IsSymmetric <-> self-adjoint (LinearMap.IsSymmetric.eigenvectorBasis, IsSelfAdjoint).",
+  "Orthogonal projection facts: starProjection is idempotent, self-adjoint, lands in S, and x - Px ∈ Sᗮ (Submodule.starProjection_apply_mem, IsStarProjection); Bessel inequality for orthonormal families.",
+  "Real case ker(AᵀA) = ker A and rank(AᵀA) = rank A (Matrix.rank_transpose_mul_self).",
+  "Commuting diagonalizable operators are simultaneously diagonalizable (LinearMap.IsSymmetric.iSup_iInf_eq_top_of_commute / Module.End.iSup_iInf_maxGenEigenspace_eq_top_of_forall_mapsTo).",
+  "Complex Schur / triangularisation: every operator on a nonzero finite-dimensional space over an algebraically closed field has a basis in which it is upper triangular.",
+  "Dimension of a generalised eigenspace equals the algebraic multiplicity (root multiplicity in charpoly); Fintype-free finiteness of one basis given another finite basis (Module.Basis.finite_index_of_rank_lt_aleph0)."
+ ]
+}

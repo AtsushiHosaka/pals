@@ -1,0 +1,423 @@
+{
+ "batch": "U8_topology",
+ "domains": [
+  "topology_general",
+  "geometry_homotopy"
+ ],
+ "reviewed": 95,
+ "ok_ids": [
+  "open_finite_inter",
+  "open_iff_local_open_nbhd",
+  "metric_closed_iff_seq_limits",
+  "closure_smallest_closed",
+  "mem_closure_iff_open_meets",
+  "closure_union_eq",
+  "interior_compl_eq",
+  "closed_iff_closure_eq",
+  "frontier_eq_closure_inter",
+  "continuous_iff_preimage_closed",
+  "continuous_iff_image_closure",
+  "metric_continuous_epsilon_delta",
+  "continuous_ext_on_dense",
+  "homeomorph_image_open_iff",
+  "compact_to_hausdorff_homeomorphism",
+  "basis_open_iff",
+  "second_countable_separable",
+  "separable_metric_second_countable",
+  "lindelof_second_countable",
+  "subspace_open_iff",
+  "product_map_continuous_iff",
+  "closure_of_product",
+  "quotient_map_universal_property",
+  "compact_open_cover_finite",
+  "compact_closed_subset",
+  "compact_continuous_image",
+  "compact_in_hausdorff_closed",
+  "tychonoff_theorem",
+  "metric_compact_closed_bounded",
+  "compact_hausdorff_normal",
+  "compact_closed_positive_distance",
+  "metric_compact_iff_sequentially_compact",
+  "heine_borel_euclidean",
+  "lebesgue_number_lemma_metric",
+  "connected_continuous_image",
+  "connected_union_common_point",
+  "connected_between_closure",
+  "connected_product_two",
+  "real_connected_iff_interval",
+  "path_connected_is_connected",
+  "path_connected_continuous_image",
+  "clopen_in_connected",
+  "t1_iff_singleton_closed",
+  "metric_space_normal",
+  "tietze_extension",
+  "metric_balls_open_closed",
+  "cauchy_convergent_subsequence",
+  "closed_subset_of_complete",
+  "complete_subset_is_closed",
+  "baire_category_theorem",
+  "baire_closed_cover_interior",
+  "metric_totally_bounded_iff",
+  "compact_iff_totally_bounded_complete",
+  "homotopic_maps_equivalence",
+  "contractible_iff_id_nullhomotopic",
+  "maps_into_contractible_homotopic",
+  "straight_line_homotopy",
+  "homotopy_equivalence_relation",
+  "path_homotopy_concat",
+  "path_concat_assoc_homotopic",
+  "path_identity_inverse_homotopic",
+  "fundamental_group_basepoint_iso",
+  "simply_connected_iff_loops",
+  "contractible_simply_connected",
+  "simply_connected_paths_unique",
+  "mfderiv_chain_rule",
+  "mfderiv_id_const",
+  "smooth_bump_exists",
+  "mazur_ulam_surjective_isometry",
+  "isometry_preserves_angle",
+  "convex_interior_closure",
+  "curve_displacement_le_speed_integral"
+ ],
+ "findings": [
+  {
+   "domain": "topology_general",
+   "id": "extreme_value_theorem",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Same id and same theorem as calculus_single/extreme_value_theorem, which is the special case X=ℝ, K=[a,b]. The general compact-set form (IsCompact K, ContinuousOn f K) is faithful, but both cards would be retrieved for the same query; keep one named card and make the other a pointer (or drop the interval form).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "topology_general",
+   "id": "heine_cantor_metric",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Special case (CompactSpace X, Continuous f) of real_analysis/heine_cantor (IsCompact S, ContinuousOn f S → UniformContinuousOn f S). Target is faithful; the real_analysis form is the more reusable one.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "topology_general",
+   "id": "uniform_limit_continuous",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE",
+    "OM_FORMAT"
+   ],
+   "issue": "Id collides with real_analysis/uniform_limit_continuous (ℝ→ℝ, ContinuousOn S version); this card is the general topological version, so it subsumes it. OM `tends_uniformly F f` has no carrier argument, so the metric space Y is only visible through `metric_space Y`.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "topology_general",
+   "id": "banach_fixed_point",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Strictly stronger than fourier_convex_numeric/banach_fixed_point_real_constant (∃! fixed point); this card additionally gives convergence of iterates. Same hypotheses. Keep this and drop/point the other, or say in `statement` which form is intended.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "topology_general",
+   "id": "hausdorff_sequence_limit_unique",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OM ties neither the sequence a nor the limits L,M to X (seq_tends_to has no space argument); X occurs only in hausdorff_space X. The hypotheses 'a is a sequence in X' is missing, so the OM does not encode the topological space of the convergence.",
+   "patch": {
+    "openmath": "(forall (X a L M) (-> (and (hausdorff_space X) (forall (n) (in (seq_value a n) X)) (in L X) (in M X) (seq_tends_to a L) (seq_tends_to a M)) (= L M)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "topology_general",
+   "id": "metric_continuous_iff_seq",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OM quantifies over all sequences a and points L with no link to X (and `fn_value f L` is applied to an L not known to be in X); Lean target has a : ℕ → X, L : X. Add membership hypotheses.",
+   "patch": {
+    "openmath": "(forall (X Y f) (-> (and (metric_space X) (metric_space Y)) (<-> (continuous_between X Y f) (forall (a L) (-> (and (forall (n) (in (seq_value a n) X)) (in L X) (seq_tends_to a L)) (seq_tends_to (function_compose_map f a) (fn_value f L)))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "topology_general",
+   "id": "urysohn_lemma",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative reason is a valid argument but not a concrete counterexample ('there exist non-normal Hausdorff spaces'). Name one (Sorgenfrey plane) and show the mechanism.",
+   "patch": {
+    "hard_negative": {
+     "statement": "ハウスドルフ空間の交わらない閉集合は、常に連続関数で分離できる。",
+     "reason": "連続関数$f$で$A$上$0$、$B$上$1$なら、$f^{-1}([0,1/2))$と$f^{-1}((1/2,1])$は$A,B$を分離する交わらない開集合になる。したがって全ての交わらない閉集合の組が連続関数で分離できるなら空間は正規である。ゾルゲンフライ平面はハウスドルフだが正規でないので、分離できない閉集合の組が存在する。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "topology_general",
+   "id": "compact_finite_intersection_property",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Lean ⋂ over u=∅ is univ, so the hypothesis for u=∅ silently forces K nonempty; the vocabulary meaning of family_inter does not fix the empty-family convention, so the OM's hypothesis for u=∅ is ambiguous. Add the (implied) K≠∅ explicitly.",
+   "patch": {
+    "openmath": "(forall (X K I C) (-> (and (compact_in X K) (!= K emptyset) (forall (i) (-> (in i I) (closed_in X (fn_value C i)))) (forall (u) (-> (and (subset u I) (finite_set u)) (!= (inter K (family_inter u C)) emptyset)))) (!= (inter K (family_inter I C)) emptyset)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_homotopy",
+   "id": "fundamental_group_map_functorial",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OM never says f and g are continuous maps (f ∈ C(X,Y), g ∈ C(Y,Z)), unlike the other homotopy cards; Lean target has f : C(X,Y), g : C(Y,Z). As written the OM claims functoriality of induced_hom for arbitrary functions.",
+   "patch": {
+    "openmath": "(forall (X Y Z f g x p) (-> (and (in f (continuous_maps X Y)) (in g (continuous_maps Y Z)) (in x X) (in p (fundamental_group X x))) (and (= (fn_value (induced_hom (map_compose g f) x) p) (fn_value (induced_hom g (fn_value f x)) (fn_value (induced_hom f x) p))) (= (fn_value (induced_hom (identity_map X) x) p) p))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_homotopy",
+   "id": "covering_path_lifting",
+   "severity": "major",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OM drops continuity: c (the path) and the lift h are not required continuous, nor domain [0,1]; the uniqueness clause (∀ k, p∘k=c ∧ k0=e → k=h) then ranges over ALL functions and is false (alter a lift at one point to another point of the fibre). Lean target is ∃! among C(unitInterval,E). Mathlib's IsCoveringMap does not require surjectivity (empty fibres allowed); the answer's definition matches that.",
+   "patch": {
+    "openmath": "(forall (E X p c e) (-> (and (covering_map p) (in c (continuous_maps unit_interval X)) (in e E) (= (fn_value c 0) (fn_value p e))) (exists (h) (and (in h (continuous_maps unit_interval E)) (= (map_compose p h) c) (= (fn_value h 0) e) (forall (k) (-> (and (in k (continuous_maps unit_interval E)) (= (map_compose p k) c) (= (fn_value k 0) e)) (= k h)))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_homotopy",
+   "id": "covering_lift_uniqueness",
+   "severity": "major",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OM omits continuity of g and h (Lean: Continuous g₁, Continuous g₂). Without it the stated proposition is false for arbitrary set maps A→E (change one value inside the fibre). OM would also be identical for the false non-continuous version.",
+   "patch": {
+    "openmath": "(forall (A E p g h a) (-> (and (covering_map p) (preconnected_space A) (in g (continuous_maps A E)) (in h (continuous_maps A E)) (= (map_compose p g) (map_compose p h)) (in a A) (= (fn_value g a) (fn_value h a))) (= g h)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_homotopy",
+   "id": "chart_contains_point",
+   "severity": "minor",
+   "codes": [
+    "OTHER",
+    "OM_FORMAT"
+   ],
+   "issue": "Reduces to the structure axioms of a charted space (mem_chart_source, open_source, mem_chart_target, open_target); the answer is 'by definition'. True and faithful but a definition restatement, not a reusable lemma; consider dropping. OM `chart_at M x` omits the model space H and uses open_set for both M and H.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_homotopy",
+   "id": "mfderiv_eq_fderiv_normed",
+   "severity": "minor",
+   "codes": [
+    "JUNK_VALUE",
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Second conjunct mfderiv = fderiv is unconditional, so at points where f is not differentiable it holds only because both are 0 by convention (answer admits this). Condition it on differentiability. OM also drops 'E,F normed spaces' so the same OM would read as a claim about arbitrary charted spaces.",
+   "patch": {
+    "statement": "ノルム空間を自分自身をモデルとする多様体と見ると、多様体としての微分可能性はフレシェ微分可能性と同値であり、$x$でフレシェ微分可能なとき、接写像はフレシェ微分に一致する。",
+    "statement_en": "For a map f between real normed spaces viewed as manifolds over themselves, manifold differentiability at x is equivalent to Fréchet differentiability at x, and when f is Fréchet differentiable at x the tangent map equals the Fréchet derivative.",
+    "conclusion": "$f$の$x$での多様体としての微分可能性はフレシェ微分可能性と同値であり、$f$が$x$でフレシェ微分可能なら$x$での接写像はフレシェ微分に等しい。",
+    "target": "∀ (E E' : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] [NormedAddCommGroup E'] [NormedSpace ℝ E'] (f : E → E') (x : E), (MDifferentiableAt (modelWithCornersSelf ℝ E) (modelWithCornersSelf ℝ E') f x ↔ DifferentiableAt ℝ f x) ∧ (DifferentiableAt ℝ f x → mfderiv (modelWithCornersSelf ℝ E) (modelWithCornersSelf ℝ E') f x = fderiv ℝ f x)",
+    "proof": "by\n  intro E E' _ _ _ _ f x\n  exact ⟨mdifferentiableAt_iff_differentiableAt, fun _ => mfderiv_eq_fderiv⟩",
+    "openmath": "(forall (E F f x) (-> (and (normed_space E) (normed_space F)) (and (<-> (mdifferentiable_at f x) (frechet_differentiable_at f x)) (-> (frechet_differentiable_at f x) (= (mfderiv f x) (frechet_derivative f x))))))",
+    "answer": "$E,F$を実ノルム空間、$f:E\\to F$を写像、$x\\in E$とする。$E,F$を自分自身をモデルとする多様体と見るとき、モデルとチャートはともに恒等写像であり、$\\operatorname{range}I=E$である。したがって$f$の座標表示は$f$自身である。\n多様体としての微分可能性の定義は、$f$が$x$で連続で、座標表示が$\\operatorname{range}I$内で微分可能であることである。ここでは「$f$が$x$で連続で、かつ$f$が$x$でフレシェ微分可能」となる。フレシェ微分可能なら連続なので、これはフレシェ微分可能性と同値である。\n$f$が$x$でフレシェ微分可能なとき、接写像は座標表示の$\\operatorname{range}I=E$内での微分なので、$f$の$x$でのフレシェ微分に等しい。\n"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "geometry_homotopy",
+   "id": "smooth_partition_of_unity_exists",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OM drops 'model space finite-dimensional' (smooth_manifold M has no model argument), so the identical OM would encode the false infinite-dimensional version. Target and answer are faithful (matches Mathlib's SmoothPartitionOfUnity.exists_isSubordinate hypotheses). Fix needs a model-aware symbol, e.g. smooth_manifold with args (M, E) plus finite_dim_space E.",
+   "patch": {
+    "openmath": "(forall (E M S U) (-> (and (finite_dim_space E) (smooth_manifold M E) (hausdorff_space M) (sigma_compact_space M) (closed_set S) (open_cover_of U S)) (exists (f) (and (smooth_partition_of_unity f S) (subordinate_to f U)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_homotopy",
+   "id": "law_of_cosines_angle",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD",
+    "MISLABEL",
+    "DUPLICATE"
+   ],
+   "issue": "hard_negative is ill-posed: in a general normed space the angle ∠abc is not defined, so 'the same equality holds' is not a precise false claim. Replace by the sign-flipped law (concrete counterexample). Level 2 is inconsistent with geometry_triangle (middle/high for the same facts); near-duplicate of geometry_triangle/cos_angle_from_three_sides (cos solved form, with a≠b, c≠b).",
+   "patch": {
+    "hard_negative": {
+     "statement": "余弦定理の符号を取り違えた等式$|ac|^2=|ab|^2+|cb|^2+2|ab||cb|\\cos\\angle abc$が常に成り立つ。",
+     "reason": "正三角形で$|ab|=|cb|=|ac|=1$、$\\angle abc=\\pi/3$とすると、左辺は$1$、右辺は$1+1+2\\cdot\\frac12=3$であり一致しない。"
+    },
+    "level": "high"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_homotopy",
+   "id": "parallelogram_law_norm",
+   "severity": "major",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OM states ∀x y, ‖x+y‖²+‖x-y‖²=2(‖x‖²+‖y‖²) with no inner-product-space hypothesis (only norm and arithmetic symbols), i.e. it is literally the false normed-space version; the card's own hard_negative would produce the identical OpenMath. Add inner_product_space V (symbol exists in functional_analysis/fourier_convex_numeric vocabularies with args [term]; add the same entry to geometry_homotopy.yaml).",
+   "patch": {
+    "openmath": "(forall (V x y) (-> (and (inner_product_space V) (in x V) (in y V)) (= (+ (^ (norm (+ x y)) 2) (^ (norm (- x y)) 2)) (* 2 (+ (^ (norm x) 2) (^ (norm y) 2))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_homotopy",
+   "id": "pythagoras_angle_iff",
+   "severity": "minor",
+   "codes": [
+    "MISLABEL",
+    "OM_FORMAT"
+   ],
+   "issue": "Level 2 vs geometry_triangle convention (high for angle/side-square equivalences). OM uses `pi_constant` while core.yaml defines `pi` (3 vocabularies use `pi`, 2 use `pi_constant`). Note: Mathlib's lemma needs no a≠b, c≠b (degenerate case holds by angle convention); the extra hypotheses are harmless and give the meaningful geometric form.",
+   "patch": {
+    "level": "high",
+    "openmath": "(forall (a b c) (-> (and (!= a b) (!= c b)) (<-> (= (^ (dist_of a c) 2) (+ (^ (dist_of a b) 2) (^ (dist_of c b) 2))) (= (euclid_angle a b c) (/ pi 2)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_homotopy",
+   "id": "triangle_angle_sum",
+   "severity": "minor",
+   "codes": [
+    "MISLABEL",
+    "OM_FORMAT"
+   ],
+   "issue": "Middle-school fact stated at level 2 (geometry_triangle uses middle for exterior-angle sum). OM uses `pi_constant` instead of core `pi`. Statement/target faithful.",
+   "patch": {
+    "level": "middle",
+    "openmath": "(forall (a b c) (-> (and (!= a b) (!= b c) (!= c a)) (= (+ (euclid_angle a b c) (euclid_angle b c a) (euclid_angle c a b)) pi)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_homotopy",
+   "id": "ptolemy_cyclic_quadrilateral",
+   "severity": "minor",
+   "codes": [
+    "MISLABEL",
+    "OM_FORMAT"
+   ],
+   "issue": "Faithful (matches Mathlib mul_dist_add_mul_dist_eq_mul_dist_of_cospherical; hypotheses satisfiable, e.g. square inscribed in a circle with p its centre; answer algebra checked). Level 3 vs high convention; `pi_constant` vs core `pi`.",
+   "patch": {
+    "level": "high",
+    "openmath": "(forall (a b c d p) (-> (and (cospherical_points (set a b c d)) (= (euclid_angle a p c) pi) (= (euclid_angle b p d) pi)) (= (+ (* (dist_of a b) (dist_of c d)) (* (dist_of b c) (dist_of d a))) (* (dist_of a c) (dist_of b d)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_homotopy",
+   "id": "power_of_a_point_lines",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE",
+    "TEXT_LEAN_MISMATCH",
+    "MISLABEL",
+    "OM_FORMAT"
+   ],
+   "issue": "Overlaps geometry_circle power_value_inside_chord / power_value_outside_secant / intersecting_chords_similar_ratio (this is the combined cospherical form). statement_en says 'the line through a,b' but the target uses affineSpan{a,b}, which is a point when a=b (the Japanese says アフィン包 and the answer covers a=b). `on_line` meaning also presumes a line. Level 2 vs high.",
+   "patch": {
+    "statement_en": "If points a, b, c, d lie on a common sphere and p lies in the affine span of {a,b} and in the affine span of {c,d} (a line when the two points differ, a single point otherwise), then |ap||bp| = |cp||dp|.",
+    "level": "high"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_homotopy",
+   "id": "inner_zero_iff_right_angle",
+   "severity": "minor",
+   "codes": [
+    "MISLABEL",
+    "OM_FORMAT"
+   ],
+   "issue": "OM `(!= x 0)` uses the numeral 0 for the zero vector (overloaded constant); `pi_constant` vs core `pi`. Level 2 vs high (cf. school_vectors_complex/inner_sign_acute_obtuse, its complementary card). Faithful.",
+   "patch": {
+    "level": "high",
+    "openmath": "(forall (x y) (-> (and (!= x 0) (!= y 0)) (<-> (= (inner_product x y) 0) (= (vector_angle x y) (/ pi 2)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_homotopy",
+   "id": "convex_set_contractible",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OM `(contractible_space S)` for a set S hides the 'subspace topology' that the statement stresses; topology_general has `subspace_topology_on X A` for exactly this. Target (Mathlib Convex.contractibleSpace hypotheses: ContinuousAdd, ContinuousSMul ℝ) is faithful.",
+   "patch": {
+    "openmath": "(forall (E S) (-> (and (topological_vector_space E) (subset S E) (convex_set S) (!= S emptyset)) (contractible_space (subspace_topology_on E S))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_homotopy",
+   "id": "arc_length_additive_chord_bound",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "statement_en says 'a metric space' but target is PseudoEMetricSpace with eVariationOn (ENNReal-valued, correct: no junk). Japanese text states this correctly.",
+   "patch": {
+    "statement_en": "For a map f from ℝ to a pseudo-extended-metric space (distances may be ∞ or 0 between distinct points; ordinary metric spaces included) and a ≤ b ≤ c, the total variation (arc length) satisfies L(a,b) + L(b,c) = L(a,c) in [0,∞], and d(f(a), f(c)) ≤ L(a,c)."
+   },
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "OpenMath often drops typing/continuity/carrier hypotheses: geometry_homotopy covering_path_lifting, covering_lift_uniqueness, fundamental_group_map_functorial omit 'is a continuous map' (uniqueness clauses become false); parallelogram_law_norm omits inner_product_space; seq_tends_to, open_ball, tends_uniformly, mdifferentiable_at carry no space/model argument. Retrieval of a false variant would yield the same XML.",
+  "Vocabulary is inconsistent across files: image_of/preimage_of (topology_general; used in continuous_iff_image_closure, homeomorph_image_open_iff, compact_continuous_image, connected_continuous_image, path_connected_continuous_image) duplicate builtin `image` (set1.map, which other domains use as (image (lambda (x) ...) S)); pi (core) vs pi_constant; open_in/closed_in/interior_in/closure_in vs open_set/closed_set/interior_of/closure_of; continuous_between/continuous_on_set vs builtin continuous_on; space X is used as its own carrier set in (setdiff X S), (= S X).",
+  "geometry_homotopy is a grab-bag: only 16/34 cards are homotopy/fundamental group/covering (these are genuine, faithful Mathlib notions: Homotopic, Path.Homotopic, FundamentalGroup, IsCoveringMap, ContractibleSpace; none is vacuous), the rest are manifolds, Euclidean geometry, convex sets, curves. The Euclidean cards use levels 2-3 where geometry_triangle/circle use middle/high, and overlap them (law of cosines, power of a point).",
+  "topology_general Lean targets are faithful everywhere checked: IsCompact (set) vs CompactSpace used correctly, T2Space only where Hausdorff is needed, ContinuousOn only in extreme_value_theorem (matches 'continuous on K'), nhds/Tendsto only in sequence cards; no junk-value dependence. Answers are complete and hard negatives valid; remaining defects are OpenMath encoding and cross-domain near-duplicates (extreme_value_theorem, heine_cantor, uniform_limit_continuous, banach_fixed_point)."
+ ],
+ "missing_neighbors": [
+  "Continuous map from compact space to T2 space is closed: Continuous.isClosedMap (used implicitly in compact_to_hausdorff_homeomorphism)",
+  "Local characterisation of continuity/openness via nhds: isOpen_iff_mem_nhds, mem_closure_iff_nhds, continuous_iff_continuousAt",
+  "Sequential characterisations beyond metric spaces: FrechetUrysohnSpace / FirstCountableTopology: mem_closure_iff_seq_limit, continuous_iff_seqContinuous",
+  "Finite unions / closed-in-compact: Set.Finite.isCompact, IsCompact.union, IsCompact.inter_right",
+  "Connected spaces and IVT: IsPreconnected.intermediate_value, isPreconnected_Icc, connectedComponent is closed/clopen",
+  "Urysohn for compact/closed disjoint sets in locally compact Hausdorff: exists_continuous_zero_one_of_isCompact",
+  "Baire category for locally compact Hausdorff (BaireSpace): dense_iInter_of_isOpen_nat",
+  "Homotopy composition: ContinuousMap.Homotopic.comp (used in answers, no card)",
+  "Homotopy lifting property: IsCoveringMap.liftHomotopy, and injectivity of p_* on π1: IsCoveringMap.injective_path_homotopic_map",
+  "Homotopy equivalence induces isomorphism on π1; π1(X×Y) ≅ π1(X)×π1(Y); retract implies π1 injection (no-retraction route to Brouwer)",
+  "π1(S¹) ≅ ℤ and covering ℝ→S¹ is a covering map",
+  "Lipschitz/contraction facts: LipschitzWith.continuous, ContractingWith.fixedPoint (Banach in K:ℝ≥0 form)"
+ ]
+}

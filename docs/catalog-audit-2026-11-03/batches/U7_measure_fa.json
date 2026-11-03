@@ -1,0 +1,404 @@
+{
+ "batch": "U7_measure_fa",
+ "domains": [
+  "measure_integration",
+  "functional_analysis"
+ ],
+ "reviewed": 102,
+ "ok_ids": [
+  "sigma_algebra_countable_inter",
+  "sigma_algebra_limsup_measurable",
+  "measurable_of_halfline_preimages",
+  "continuous_real_function_measurable",
+  "measurable_add_and_mul",
+  "measurable_comparison_set",
+  "measurable_pointwise_limit",
+  "monotone_real_function_measurable",
+  "measurable_indicator_restriction",
+  "measure_monotone",
+  "measure_countable_subadditive",
+  "measure_of_difference",
+  "measure_union_add_inter",
+  "measure_continuity_from_below",
+  "measure_continuity_from_above",
+  "lebesgue_measure_of_interval",
+  "lebesgue_countable_set_null",
+  "lebesgue_translation_invariance",
+  "lebesgue_dilation_formula",
+  "lebesgue_null_set_empty_interior",
+  "borel_cantelli_limsup_null",
+  "borel_cantelli_almost_all_finitely_many",
+  "ae_countable_conjunction",
+  "null_sets_countable_union",
+  "ae_equal_continuous_functions_equal",
+  "integral_congr_almost_everywhere",
+  "monotone_convergence_theorem",
+  "fatou_lemma",
+  "lintegral_of_series",
+  "markov_inequality",
+  "nonneg_integral_zero_implies_ae_zero",
+  "tonelli_theorem",
+  "fubini_theorem",
+  "lp_inclusion_on_finite_measure",
+  "lp_space_complete",
+  "in_measure_convergence_subsequence_ae",
+  "egorov_theorem",
+  "radon_nikodym_theorem",
+  "hahn_decomposition_theorem",
+  "jordan_decomposition_theorem",
+  "linear_continuous_iff_bounded",
+  "linear_continuous_of_continuous_at_zero",
+  "operator_norm_bound_at_point",
+  "operator_norm_le_iff",
+  "operator_norm_comp_le",
+  "operator_norm_sup_unit_ball",
+  "bounded_operator_space_complete",
+  "absolutely_summable_implies_summable",
+  "complete_iff_absolutely_summable_converges",
+  "finite_dimensional_normed_space_complete",
+  "finite_dimensional_closed_ball_compact",
+  "linear_map_on_finite_dimensional_continuous",
+  "finite_dimensional_subspace_closed",
+  "riesz_lemma_almost_orthogonal",
+  "open_mapping_theorem",
+  "closed_graph_theorem",
+  "banach_steinhaus_uniform_boundedness",
+  "banach_alaoglu_theorem",
+  "riesz_representation_theorem",
+  "bounded_inverse_theorem",
+  "surjective_operator_preimage_norm_bound",
+  "exists_norming_functional",
+  "canonical_embedding_isometric",
+  "nearest_point_closed_convex_hilbert",
+  "projection_theorem_orthogonal_decomposition",
+  "best_approximation_iff_orthogonal",
+  "double_orthogonal_complement_closed_subspace",
+  "bessel_inequality_orthonormal_family",
+  "exists_complete_orthonormal_system",
+  "adjoint_exists_unique",
+  "adjoint_cstar_identity",
+  "orthogonal_range_eq_kernel_adjoint",
+  "compact_operator_composition_with_bounded",
+  "finite_rank_bounded_operator_compact",
+  "neumann_series_invertibility",
+  "invertible_operators_open",
+  "operator_spectrum_iff_not_bijective",
+  "spectrum_compact_banach_algebra",
+  "spectrum_nonempty_banach_algebra",
+  "spectrum_and_spectral_radius_norm_bound"
+ ],
+ "findings": [
+  {
+   "domain": "measure_integration",
+   "id": "simple_function_approximation",
+   "severity": "major",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OpenMath drops both the nonnegativity ([0,inf]-valued) and the finite-valued conditions that the Lean target (f : α → ENNReal, φ n x ≠ ⊤) and the Japanese text carry. With measurable_fn carrying no codomain, the same OM read for a signed real f (e.g. f(x)=-x^2 on R) is a false theorem (an increasing finite-range sequence cannot approach an unbounded-below f), so retrieval can wrongly justify the signed case.",
+   "patch": {
+    "openmath": "(forall (f) (-> (and (measurable_fn f) (forall (x) (<= 0 (fn_value f x)))) (exists (p) (and (forall (n) (and (simple_fn (seq_value p n)) (forall (x) (< (fn_value (seq_value p n) x) extended_infinity)))) (fn_seq_increasing p) (pointwise_tends_to p f)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "measure_integration",
+   "id": "measurable_sequence_supremum",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OM has no codomain information: measurable_fn of fn_seq_sup is encoded identically for real-valued and [0,inf]-valued f_n, whereas the card is specifically about ENNReal (sup may be infinite). Add a nonnegativity/extended-valued marker (or an extended-valued measurable symbol).",
+   "patch": {
+    "openmath": "(forall (f) (-> (forall (n) (and (measurable_fn (seq_value f n)) (forall (x) (<= 0 (fn_value (seq_value f n) x))))) (measurable_fn (fn_seq_sup f))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "measure_integration",
+   "id": "continuity_from_above_counterexample",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT",
+    "OTHER"
+   ],
+   "issue": "Example card, not a reusable lemma: it restates the hard_negative of measure_continuity_from_above. OM uses the card-specific constant nat_half_lines next to half_line_right n (two representations of the same sequence), so the structure (decreasing, empty intersection) is hidden in a constant. Consider dropping the card or encoding explicitly.",
+   "patch": {
+    "openmath": "(and (forall (n) (-> (in n N) (= (measure_of lebesgue_measure (half_line_right n)) extended_infinity))) (forall (n m) (-> (and (in n N) (in m N) (<= n m)) (subset (half_line_right m) (half_line_right n)))) (forall (x) (-> (in x R) (exists (n) (and (in n N) (notin x (half_line_right n)))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "measure_integration",
+   "id": "pointwise_limit_integral_counterexample",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD",
+    "OM_FORMAT",
+    "OTHER"
+   ],
+   "issue": "Example card (duplicates the hard_negative of fatou_lemma and dominated_convergence_theorem). Its hard_negative merely restates the card and its reason says 'ここで示した', which is not self-contained. OM hides the sequence in ad-hoc constants unit_bump_seq / zero_function.",
+   "patch": {
+    "hard_negative": {
+     "statement": "各点で$f$に収束する非負可測関数列$f_n$について、積分も$\\int f\\,d\\mu$に収束する。",
+     "reason": "$f_n=1_{(n,n+1]}$は各点で$0$に収束するが、$\\int f_n\\,d\\mu=1$は$\\int 0\\,d\\mu=0$に収束しない。優関数または単調性が必要である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "measure_integration",
+   "id": "dominated_convergence_theorem",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Lean and text assume F_n only a.e.-equal to a measurable function (AEStronglyMeasurable); OM says measurable_fn (everywhere measurable), i.e. a weaker theorem than the target. Needs a vocabulary symbol ae_measurable_fn {args:[term,term], returns: prop, meaning: 'f equals a measurable function a.e. w.r.t. mu'}. No junk problem: F_n, f are integrable by domination so the Bochner integrals are genuine.",
+   "patch": {
+    "openmath": "(forall (mu F f g) (-> (and (is_measure mu) (forall (n) (ae_measurable_fn (seq_value F n) mu)) (integrable_fn g mu) (forall (n) (ae_le mu (fn_abs (seq_value F n)) g)) (ae_fn_seq_tends_to mu F f)) (seq_tends_to (integral_seq F mu) (integral_wrt (lambda (x) (fn_value f x)) mu))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "measure_integration",
+   "id": "integrable_of_dominated",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Lean hypothesis is AEStronglyMeasurable f; OM uses measurable_fn f (stronger). Use the proposed ae_measurable_fn symbol.",
+   "patch": {
+    "openmath": "(forall (mu f g) (-> (and (ae_measurable_fn f mu) (integrable_fn g mu) (ae_le mu (fn_abs f) g)) (integrable_fn f mu)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "measure_integration",
+   "id": "minkowski_inequality",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Lean/text assume only a.e.-strong measurability (and use ENNReal eLpNorm, so no junk); OM requires measurable_fn f and measurable_fn g.",
+   "patch": {
+    "openmath": "(forall (mu p f g) (-> (and (is_measure mu) (<= 1 p) (ae_measurable_fn f mu) (ae_measurable_fn g mu)) (<= (lp_norm (pointwise_sum f g) p mu) (+ (lp_norm f p mu) (lp_norm g p mu)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "measure_integration",
+   "id": "ae_convergence_implies_in_measure",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Lean/text: each f_n is AEStronglyMeasurable; OM: measurable_fn (seq_value f n). Weaker theorem in OM than in the target.",
+   "patch": {
+    "openmath": "(forall (mu f g) (-> (and (finite_measure mu) (forall (n) (ae_measurable_fn (seq_value f n) mu)) (ae_fn_seq_tends_to mu f g)) (tends_in_measure f g mu)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "measure_integration",
+   "id": "product_measure_of_rectangle",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "statement_en drops the hypotheses that make the Lean target correct: ν σ-finite, A and B arbitrary (not necessarily measurable) subsets with the outer-measure convention, and 0·∞=0. As written it reads as the trivial measurable-rectangle statement (and false for non-σ-finite ν). The Lean target (μ.prod ν)(A ×ˢ B) = μ A * ν B with [SigmaFinite ν] is correct; Japanese text is fine.",
+   "patch": {
+    "statement_en": "Let μ be a measure on α and ν a σ-finite measure on β. For arbitrary subsets A ⊂ α and B ⊂ β (the measure of an arbitrary set is the infimum over measurable supersets, and 0·∞ = 0), (μ×ν)(A×B) = μ(A)·ν(B)."
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "measure_integration",
+   "id": "lebesgue_decomposition_theorem",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OM never states that the singular part s is a (nonnegative) measure (Lean: s : Measure α). exists s with mutually_singular and mu = s + with_density gives a weaker proposition if s may be signed. Add (is_measure s).",
+   "patch": {
+    "openmath": "(forall (mu nu) (-> (and (sigma_finite_measure mu) (sigma_finite_measure nu)) (exists (s f) (and (is_measure s) (mutually_singular s nu) (measurable_fn f) (= mu (+ s (with_density nu f)))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "measure_integration",
+   "id": "holder_inequality",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED"
+   ],
+   "issue": "Named Hölder but only the a.e.-nonnegative real-valued case with 1<p,q<∞; the usual statement is ∫|fg| ≤ ‖f‖_p‖g‖_q including p=1,q=∞ and signed/complex f,g (Mathlib: eLpNorm_smul_le_mul_eLpNorm / lintegral_mul_le_Lp_mul_Lq). Target is correct (Real.HolderConjugate = 1/p+1/q=1, p,q>0; no junk since MemLp makes both sides finite). Rename 'nonnegative case' or add the |fg| form.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "measure_integration",
+   "id": "lebesgue_differentiation_theorem",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED",
+    "OM_FORMAT"
+   ],
+   "issue": "Named theorem but only 1-D with symmetric closed intervals; textbook form is R^n (or any uniformly locally doubling measure: Mathlib IsUnifLocDoublingMeasure.ae_tendsto_average) with shrinking balls/nice sets. OM uses a single-purpose predicate ae_ball_average_converges that bakes the whole conclusion into one symbol (no radius, no integral), so it is not reusable. Target itself (LocallyIntegrable, average over closedBall, nhdsWithin 0 (Ioi 0)) is correct with no junk (balls have measure 2r in (0,∞)).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "functional_analysis",
+   "id": "cauchy_schwarz_inner_product_space",
+   "severity": "major",
+   "codes": [
+    "DUPLICATE",
+    "MISLABEL"
+   ],
+   "issue": "Target is identical (up to binder order) to linear_advanced.cauchy_schwarz_inner: ∀ 𝕜 E [RCLike 𝕜] ..., ‖inner 𝕜 x y‖ ≤ ‖x‖*‖y‖. Remove one of the two. Also a famous named inequality labelled gap (named is capped at 15% per domain, which this domain already reaches with 7/50).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "functional_analysis",
+   "id": "norm_equivalence_finite_dimensional",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED",
+    "OM_FORMAT"
+   ],
+   "issue": "Only real vector spaces, although the surrounding cards (continuity, finite-dim completeness) use K ∈ {R,C}; the general reusable fact is for RCLike 𝕜 (Seminorm 𝕜 E). OM symbol seminorm_definite (meaning 'p is a norm on E') is a card-specific name for the standard notion norm-on-vector-space and is used nowhere else; hypotheses are encoded as 'seminorm' + 'definite' via a vague symbol. Lean target itself is correct (E may be {0}; C=D=1).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "functional_analysis",
+   "id": "compact_unit_ball_implies_finite_dimensional",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative hypothesis ('closed unit ball is bounded and closed') holds in every normed space, so the claim reduces to 'every normed space is finite-dimensional'; the reason names no counterexample.",
+   "patch": {
+    "hard_negative": {
+     "statement": "閉単位球が有界閉集合であるノルム空間は有限次元である。",
+     "reason": "閉単位球は任意のノルム空間で有界閉集合なので、この仮定は常に成り立つ。ℓ²は無限次元であり、正規直交系$(e_n)$は$\\|e_n-e_m\\|=\\sqrt2$を満たして収束部分列をもたないので、閉単位球はコンパクトでない。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "functional_analysis",
+   "id": "hahn_banach_norm_preserving_extension",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED"
+   ],
+   "issue": "Named Hahn–Banach but states only the norm-preserving corollary for bounded functionals on normed spaces; the core reusable fact (extension dominated by a sublinear functional, Mathlib exists_extension_of_le_sublinear) is absent from the batch (the answer proves it internally but the card does not state it). Target and answer are correct (complex case handled).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "functional_analysis",
+   "id": "parseval_identity_hilbert_basis",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "Target takes b : HilbertBasis ι 𝕜 E, a data structure (isometric equivalence with ℓ²(ι)) that implicitly forces completeness and has no [CompleteSpace E]; the text defines the complete orthonormal system as an orthonormal family with dense span in a Hilbert space. Equivalent, but a user holding (b, Orthonormal, dense span) must first build the HilbertBasis (HilbertBasis.mk), so reuse is awkward. Patched target states the text's hypotheses directly (verified).",
+   "patch": {
+    "target": "∀ (𝕜 : Type*) [RCLike 𝕜] (E ι : Type*) [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [CompleteSpace E] (b : ι → E), Orthonormal 𝕜 b → (Submodule.span 𝕜 (Set.range b)).topologicalClosure = ⊤ → ∀ x : E, HasSum (fun i => ‖inner 𝕜 (b i) x‖ ^ 2) (‖x‖ ^ 2)\n",
+    "proof": "by\n  intro 𝕜 _ E ι _ _ _ b hb hd x\n  have hs : ⊤ ≤ (Submodule.span 𝕜 (Set.range b)).topologicalClosure := le_of_eq hd.symm\n  have hB : ⇑(HilbertBasis.mk hb hs) = b := HilbertBasis.coe_mk hb hs\n  have h := RCLike.hasSum_re 𝕜 ((HilbertBasis.mk hb hs).hasSum_inner_mul_inner x x)\n  rw [hB] at h\n  have h1 : (fun i => RCLike.re (inner 𝕜 x (b i) * inner 𝕜 (b i) x)) =\n      fun i => ‖inner 𝕜 (b i) x‖ ^ 2 := by\n    funext i\n    rw [← inner_conj_symm x (b i), RCLike.conj_mul, ← RCLike.ofReal_pow, RCLike.ofReal_re]\n  rw [h1, inner_self_eq_norm_sq] at h\n  exact h\n"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "functional_analysis",
+   "id": "hilbert_basis_fourier_expansion",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "Same issue as parseval_identity_hilbert_basis: target uses the HilbertBasis structure (hidden completeness) while the text speaks of an orthonormal family with dense span. Patched target states the text's hypotheses (verified).",
+   "patch": {
+    "target": "∀ (𝕜 : Type*) [RCLike 𝕜] (E ι : Type*) [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [CompleteSpace E] (b : ι → E), Orthonormal 𝕜 b → (Submodule.span 𝕜 (Set.range b)).topologicalClosure = ⊤ → ∀ x : E, HasSum (fun i => (inner 𝕜 (b i) x) • b i) x\n",
+    "proof": "by\n  intro 𝕜 _ E ι _ _ _ b hb hd x\n  have hs : ⊤ ≤ (Submodule.span 𝕜 (Set.range b)).topologicalClosure := le_of_eq hd.symm\n  have hB : ⇑(HilbertBasis.mk hb hs) = b := HilbertBasis.coe_mk hb hs\n  have h := (HilbertBasis.mk hb hs).hasSum_repr x\n  simp only [HilbertBasis.repr_apply_apply, hB] at h\n  exact h\n"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "functional_analysis",
+   "id": "adjoint_norm_eq",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative is a strawman ('T*=T for all bounded operators'), not a nearby false generalisation of ‖T*‖=‖T‖. The natural nearby false claim is that the norm equality forces T*=T.",
+   "patch": {
+    "hard_negative": {
+     "statement": "$\\|T^*\\|=\\|T\\|$が成り立つのは$T^*=T$のときに限る。",
+     "reason": "$\\mathbb{C}$上の$T(z)=iz$では$T^*(z)=-iz$で$T^*\\neq T$だが、$\\|T^*\\|=\\|T\\|=1$である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "functional_analysis",
+   "id": "pointwise_limit_of_operators_bounded",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OM indexes the sequence of operators with (fn_value g n) whereas sequences elsewhere use seq_value; bounded_operator/pointwise_tends_to are fine. Use seq_value for consistency so retrieval over sequences matches.",
+   "patch": {
+    "openmath": "(forall (E F g f) (-> (and (banach_space E) (normed_space F) (forall (n) (bounded_operator (seq_value g n) E F)) (pointwise_tends_to g f)) (bounded_operator f E F)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "functional_analysis",
+   "id": "compact_operators_closed_under_norm_limit",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Same inconsistency: (fn_value S n) for a sequence of operators; use seq_value.",
+   "patch": {
+    "openmath": "(forall (E F S T) (-> (and (normed_space E) (banach_space F) (forall (n) (compact_operator (seq_value S n))) (operator_tends_to S T)) (compact_operator T)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "functional_analysis",
+   "id": "gelfand_spectral_radius_formula",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OM writes the element power as (^ a n), reusing the arith1 real power for an algebra element, and (/ 1 n) is undefined at n=0 inside the lambda; the exponent/index convention (n ≥ 1) is not encoded. Target is correct (no NormOneClass needed; ofReal/ENNReal spectralRadius handles A={0}).",
+   "patch": null,
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "OpenMath encodings of measurability carry no σ-algebra and no codomain (measurable_set/measurable_fn take one argument), and there is no ae-measurable symbol; so real-valued, extended-valued, Borel and a.e.-measurable statements collapse to the same OM (simple_function_approximation, DCT, Minkowski, integrable_of_dominated). Add ae_measurable_fn and an extended/nonneg-valued marker, or carrier arguments.",
+  "Ad-hoc single-use vocabulary symbols hide structure: ae_eventually_outside, ae_holds_all_indices, ae_ball_average_converges, nat_half_lines, unit_bump_seq, lintegral_seq_sup/liminf, integral_seq, measure_seq, set_seq_*, fn_seq_*, seminorm_definite. Prefer lambda-based reusable forms (ae_holds over a term_function, sup/liminf via binders) and consistent seq_value vs fn_value use; also fn_continuous (MI) vs continuous_map (FA) name the same notion, and `norm` is overloaded for vectors, functionals and operators without carrier.",
+  "Lean targets are uniformly sound on the junk-value axis: ENNReal subtraction/ofReal/toReal appear only under finiteness or sign hypotheses (measure_of_difference, lebesgue_measure_of_interval, dilation, egorov, jordan), integrals of possibly non-integrable maps are guarded by Integrable/MemLp hypotheses, and σ-finiteness/completeness hypotheses are present exactly where the hard_negatives show they are needed (Tonelli, Fubini, Radon–Nikodym, product-rectangle, open mapping, closed graph, Riesz representation, adjoint).",
+  "statement_en for the many measure-of-arbitrary-subset cards (measure_monotone, subadditivity, continuity, Borel–Cantelli, null unions) omits the outer-measure extension convention that the Japanese text states, so the English reads as a statement about measurable sets only while the Lean claims it for all sets; harmless but inconsistent. The 'named' quota is met at 7/52 and 7/50 only because Tonelli, Minkowski, Borel–Cantelli, Egorov, Bessel, Parseval, Hahn/Jordan decomposition, Cauchy–Schwarz, Neumann series and Riesz lemma are labelled textbook/gap.",
+  "Two 'counterexample' cards (continuity_from_above_counterexample, pointwise_limit_integral_counterexample) restate hard_negatives of neighbouring cards and are poor reusable lemmas; hard_negative reasons elsewhere are accurate (all the numeric/counterexample checks I redid hold: Tonelli diagonal 1 vs 0, Fubini π/4 vs -π/4, Phillips c0 in ℓ∞, identity on (F,‖·‖+|φ|), typewriter sequence)."
+ ],
+ "missing_neighbors": [
+  "Monotonicity/linearity of integrals: MeasureTheory.integral_mono_ae, integral_add, norm_integral_le_integral_norm, lintegral_mono, lintegral_add_left",
+  "Countable additivity of measure for disjoint measurable sets (measure_iUnion) and measure_union_le (finite subadditivity) as separate gap cards",
+  "Markov/Chebyshev for real integrable functions: mul_meas_ge_le_integral_of_nonneg, meas_ge_le_lintegral_div",
+  "Differentiation / continuity under the integral sign: hasDerivAt_integral_of_dominated_loc_of_deriv_le, continuous_of_dominated",
+  "Change of variables / pushforward: MeasureTheory.integral_map, lintegral_map, Real.integral_comp_mul_left",
+  "Measure uniqueness via π-λ (Measure.ext_of_generateFrom_of_iUnion) and measurability of sections (measurable_prod_mk_left, Measurable.lintegral_prod_right)",
+  "L^p convergence implies convergence in measure and a.e.-convergent subsequence; Vitali convergence theorem; Lusin theorem",
+  "Chain rule / uniqueness for Radon–Nikodym derivative (Measure.rnDeriv_withDensity, ae uniqueness of density)",
+  "Analytic Hahn–Banach: extension dominated by a sublinear functional (exists_extension_of_le_sublinear) and geometric separation of convex sets",
+  "Closed range theorem / dual of a normed space is complete (StrongDual complete), quotient norm completeness",
+  "Orthogonal projection facts: projection is self-adjoint idempotent, K ⊕ K^⊥ = E, adjoint of adjoint (T** = T), unitary preserves inner product",
+  "Spectral theory of compact operators: spectral theorem for compact self-adjoint operators / Fredholm alternative; Gelfand–Mazur"
+ ]
+}

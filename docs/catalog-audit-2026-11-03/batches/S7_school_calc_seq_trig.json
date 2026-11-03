@@ -1,0 +1,387 @@
+{
+ "batch": "S7_school_calc_seq_trig",
+ "domains": [
+  "school_calculus",
+  "school_sequences",
+  "school_trigonometry"
+ ],
+ "reviewed": 160,
+ "ok_ids": [
+  "polynomial_sum_derivative",
+  "function_power_derivative",
+  "sqrt_composite_derivative",
+  "sin_cos_affine_derivative",
+  "exponential_base_derivative",
+  "log_abs_composite_derivative",
+  "cubic_minus_tangent_factorization",
+  "convex_function_above_tangent",
+  "cubic_monotone_iff_discriminant",
+  "cubic_local_extremum_iff_discriminant",
+  "derivative_comparison_inequality",
+  "unique_root_of_positive_derivative",
+  "max_at_endpoint_or_critical_point",
+  "max_at_derivative_sign_change",
+  "integral_adjacent_intervals",
+  "polynomial_definite_integral",
+  "integral_sin_power_reduction",
+  "integral_reflection",
+  "antitone_sum_integral_bounds",
+  "derivative_of_integral_x_minus_t",
+  "integral_equation_constant_term",
+  "integral_equation_from_upper_limit",
+  "integral_function_power_times_derivative",
+  "integral_affine_power",
+  "integral_semicircle",
+  "integral_one_over_sum_of_squares",
+  "integral_log_formula",
+  "integral_x_mul_derivative",
+  "integral_exp_mul_sin",
+  "area_split_at_crossing",
+  "area_parabola_and_line",
+  "area_parabola_and_tangent",
+  "area_parabola_two_tangents",
+  "integral_inverse_function_identity",
+  "geometric_sequence_convergence_criterion",
+  "rational_sequence_limit",
+  "sqrt_quadratic_sub_x_limit",
+  "pow_div_factorial_limit",
+  "numerator_vanishes_when_denominator_does",
+  "one_sub_cos_limit",
+  "exp_log_difference_quotient_limit",
+  "telescoping_sum_limit",
+  "geometric_series_tail",
+  "arithmetic_geometric_series",
+  "integral_power_product_general",
+  "arith_general_term",
+  "arith_sum_first_last",
+  "arith_sum_first_diff",
+  "arith_mean_iff",
+  "arith_iff_linear_term",
+  "arith_sum_max_at_sign_change",
+  "arith_symmetric_pair",
+  "arith_every_other_step",
+  "geom_general_term",
+  "geom_sum_ne_one",
+  "geom_mean_iff",
+  "arith_geom_sum",
+  "sum_natural_numbers",
+  "sum_squares_formula",
+  "sum_cubes_nicomachus",
+  "sum_linearity_with_constant",
+  "sum_index_shift",
+  "sum_range_difference",
+  "sum_reverse_order",
+  "periodic_sequence_sum",
+  "telescoping_sum",
+  "difference_sequence_general_term",
+  "partial_fraction_consecutive",
+  "partial_fraction_arith",
+  "term_from_partial_sum",
+  "quadratic_sum_arith_iff",
+  "sum_linear_in_term_ratio",
+  "recur_fixed_point",
+  "recur_first_order_solution",
+  "recur_divide_by_power",
+  "recur_power_forcing_distinct",
+  "recur_power_forcing_resonant",
+  "recur_linear_forcing",
+  "recur_reciprocal_transform",
+  "recur_log_transform",
+  "three_term_factorization",
+  "three_term_double_root",
+  "three_term_uniqueness",
+  "three_term_integer_valued",
+  "two_step_induction",
+  "recur_invariant_interval",
+  "recur_inequality_geometric_bound",
+  "int_sub_dvd_pow_sub_pow",
+  "group_unique_block",
+  "group_triangular_location",
+  "sin_sq_add_cos_sq",
+  "one_add_tan_sq",
+  "sin_mul_cos_of_add_eq",
+  "sin_cos_bounds",
+  "sin_eq_sqrt_of_mem_interval",
+  "exists_angle_of_unit_circle",
+  "sin_cos_pi_div_two_sub",
+  "sin_cos_tan_pi_sub",
+  "sin_cos_shift_half_pi_pi",
+  "angle_sum_pi_sin_cos",
+  "sin_cos_add_two_int_pi",
+  "tan_add_int_mul_pi",
+  "sin_cos_tan_parity",
+  "sin_cos_int_mul_pi",
+  "sin_period_ge_two_pi",
+  "sin_cos_sub",
+  "tan_sub_formula",
+  "tan_mul_tan_eq_one_iff",
+  "sin_cos_add_mul_sub",
+  "sin_cos_eq_iff_two_pi",
+  "sin_double_angle",
+  "cos_double_angle_forms",
+  "half_angle_squares",
+  "half_angle_sqrt",
+  "tan_half_substitution",
+  "sin_triple_angle",
+  "cos_triple_angle",
+  "cos_nat_mul_polynomial",
+  "sin_add_sin",
+  "sin_sub_sin",
+  "cos_add_cos",
+  "cos_sub_cos",
+  "sin_mul_cos_product_to_sum",
+  "cos_mul_cos_product_to_sum",
+  "sin_mul_sin_product_to_sum",
+  "sum_cos_sin_multiples",
+  "harmonic_addition",
+  "sin_cos_combination_bound",
+  "exists_sin_cos_combination_iff",
+  "quadratic_form_sin_cos_double_angle",
+  "sin_eq_zero_iff",
+  "cos_eq_zero_iff",
+  "sin_eq_sin_iff",
+  "cos_eq_cos_iff",
+  "tan_eq_tan_iff",
+  "exists_unique_sin_principal",
+  "exists_unique_cos_principal",
+  "exists_unique_tan_principal",
+  "sin_strict_mono_interval",
+  "cos_strict_anti_interval",
+  "tan_lt_tan_iff",
+  "sin_ge_iff_on_interval",
+  "cos_ge_iff_on_interval",
+  "range_comp_sin_cos",
+  "angle_sum_pi_tan_identity"
+ ],
+ "findings": [
+  {
+   "domain": "school_trigonometry",
+   "id": "tan_pi_div_two_sub",
+   "severity": "major",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative drops the sin x != 0 hypothesis and claims failure because tan x is undefined, but the dropped-hypothesis statement forall x, cos x != 0 -> tan(pi/2-x)=1/tan x compiles in Lean (Real.tan = sin/cos, x/0=0, so both sides are 0); I verified it. The negative is therefore a theorem of the target language, not a false claim. Replace by a genuinely false nearby claim.",
+   "patch": {
+    "hard_negative": {
+     "statement": "$\\sin x\\neq0$かつ$\\cos x\\neq0$をみたす実数$x$について$\\tan\\left(\\dfrac{\\pi}{2}-x\\right)=\\tan x$である。",
+     "reason": "余角では正接は逆数になる。$x=\\pi/6$では$\\tan(\\pi/3)=\\sqrt{3}$だが$\\tan(\\pi/6)=1/\\sqrt{3}$であり一致しない。等しくなるのは$\\tan x=\\pm1$のときに限る。"
+    }
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "school_trigonometry",
+   "id": "tan_add_formula",
+   "severity": "major",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative drops cos(x+y)!=0 and says 'denominator 0 and tan(pi/2) undefined', but forall x y, cos x!=0 -> cos y!=0 -> tan(x+y)=(tan x+tan y)/(1-tan x tan y) is provable in Lean (1-tan x tan y = cos(x+y)/(cos x cos y), so when cos(x+y)=0 both sides are 0 by x/0=0); verified by compiling. The hypothesis is only a mathematical domain condition, so the negative is true as formalised. Use a false sign-variant instead.",
+   "patch": {
+    "hard_negative": {
+     "statement": "$\\cos x\\neq0$、$\\cos y\\neq0$、$\\cos(x+y)\\neq0$のとき$\\tan(x+y)=\\dfrac{\\tan x+\\tan y}{1+\\tan x\\tan y}$である。",
+     "reason": "分母の符号が違う。$x=y=\\pi/6$では$\\tan(\\pi/3)=\\sqrt{3}$だが、右辺は$\\dfrac{2/\\sqrt3}{4/3}=\\dfrac{\\sqrt3}{2}$である。"
+    }
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "school_trigonometry",
+   "id": "tan_double_angle",
+   "severity": "major",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative drops cos 2x != 0 and appeals to undefinedness at x=pi/4, but forall x, cos x!=0 -> tan 2x = 2 tan x/(1-tan^2 x) is a Lean theorem (junk 0=0 at cos 2x=0; compiled). The negative is not false as formalised. Replace by a sign error.",
+   "patch": {
+    "hard_negative": {
+     "statement": "$\\cos x\\neq0$、$\\cos2x\\neq0$のとき$\\tan2x=\\dfrac{2\\tan x}{1+\\tan^2x}$である。",
+     "reason": "分母の符号が違う。$x=\\pi/6$では$\\tan(\\pi/3)=\\sqrt{3}$だが、右辺は$\\dfrac{2/\\sqrt3}{4/3}=\\dfrac{\\sqrt3}{2}$である。$1+\\tan^2x=1/\\cos^2x$は正接の倍角の分母ではない。"
+    }
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "school_trigonometry",
+   "id": "tan_domain_iff",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE",
+    "OM_FORMAT"
+   ],
+   "issue": "Target is exactly the negation of cos_eq_zero_iff (cos x != 0 <-> forall n, x != pi/2+n*pi); the 'tan is defined' claim is not encoded since Real.tan is total, and the OpenMath has no tan symbol, so retrieval for tan domain conditions gets a cos-only fact. Drop it or fold into cos_eq_zero_iff.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_trigonometry",
+   "id": "sinusoid_period",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED"
+   ],
+   "issue": "Only shows that shifting by 2pi/omega leaves a sin(omega x+b) unchanged (a is irrelevant, omega<0 gives a negative 'period', no minimality). Named 'period' it can be mis-cited for the school fact 'the period is 2pi/|omega|'. Say so in the statement; add a minimal-period card (see missing_neighbors).",
+   "patch": {
+    "statement": "実数$a,\\omega,b,x$について$\\omega\\neq0$のとき、$a\\sin\\left(\\omega\\left(x+\\dfrac{2\\pi}{\\omega}\\right)+b\\right)=a\\sin(\\omega x+b)$である。すなわち$2\\pi/\\omega$は周期の一つであり、最小周期が$2\\pi/|\\omega|$であるという主張は含まない。",
+    "statement_en": "For real a, ω, b, x with ω ≠ 0, a sin(ω(x + 2π/ω) + b) = a sin(ωx + b). This says 2π/ω is a period; it does not claim minimality (least period 2π/|ω|)."
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_calculus",
+   "id": "tangent_line_equation_form",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "Hypothesis HasDerivAt f u a is never used: the claim is pure algebra on (m,n,f a,u). Named/described as a tangent-line characterisation, it carries no derivative content, so it can be cited as 'the tangent line is y=f(a)+u(x-a)' without the proof that this line is the tangent. Acceptable as a gap lemma but the text should say the hypothesis only fixes the meaning of u.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_calculus",
+   "id": "integral_sixth_formula",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "Special case m=n=1 of integral_power_product_general, but the statement does not say it is the special form (AUTHORING requires saying which form). Keep as named 6分の1公式, but label it.",
+   "patch": {
+    "statement": "実数$\\alpha,\\beta$について、$\\int_\\alpha^\\beta(x-\\alpha)(x-\\beta)\\,dx=-\\dfrac{(\\beta-\\alpha)^3}{6}$である。これは$\\int_\\alpha^\\beta(x-\\alpha)^m(x-\\beta)^n\\,dx$の$m=n=1$の特殊形（6分の1公式）である。",
+    "statement_en": "For real α and β, ∫_α^β (x-α)(x-β) dx = -(β-α)^3/6. This is the special case m = n = 1 of ∫_α^β (x-α)^m (x-β)^n dx (the 1/6 formula)."
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_calculus",
+   "id": "integral_twelfth_formula",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT",
+    "DUPLICATE"
+   ],
+   "issue": "Special case m=2,n=1 of integral_power_product_general (-(-1)^1 2!1!/4! = -1/12), unlabeled as special. Keep only if the 12分の1公式 is wanted as a named pattern, and then label it.",
+   "patch": {
+    "statement": "実数$\\alpha,\\beta$について、$\\int_\\alpha^\\beta(x-\\alpha)^2(x-\\beta)\\,dx=-\\dfrac{(\\beta-\\alpha)^4}{12}$である。これは$\\int_\\alpha^\\beta(x-\\alpha)^m(x-\\beta)^n\\,dx$の$m=2,\\ n=1$の特殊形（12分の1公式）である。",
+    "statement_en": "For real α and β, ∫_α^β (x-α)^2 (x-β) dx = -(β-α)^4/12. This is the special case m = 2, n = 1 of ∫_α^β (x-α)^m (x-β)^n dx (the 1/12 formula)."
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_calculus",
+   "id": "linear_recurrence_limit",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OpenMath quantifies (forall (n) (= (seq_value a (+ n 1)) ...)) with no (in n N) guard (all sibling sequence cards guard n), so n ranges over arbitrary terms while Lean has n : N. Add the guard.",
+   "patch": {
+    "openmath": "(forall (a r s) (-> (and (< (abs r) 1) (forall (n) (-> (in n N) (= (seq_value a (+ n 1)) (+ (* r (seq_value a n)) s))))) (seq_tends_to a (/ s (- 1 r)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_calculus",
+   "id": "contraction_recurrence_limit",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Same as linear_recurrence_limit: the inner (forall (n) ...) in the OpenMath is unguarded by (in n N), so the hypothesis is stated for non-natural n while Lean has n : N.",
+   "patch": {
+    "openmath": "(forall (a L r) (-> (and (<= 0 r) (< r 1) (forall (n) (-> (in n N) (<= (abs (- (seq_value a (+ n 1)) L)) (* r (abs (- (seq_value a n) L))))))) (seq_tends_to a L)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_calculus",
+   "id": "geometric_series_convergence_criterion",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "Japanese says the series 'converges' (school meaning: partial sums converge) but target and OpenMath use Summable / real_series_summable (unconditional = absolute convergence in R). The 'converges => |r|<1' direction is thus weaker in Lean than in the text, while the answer proves the stronger partial-sum version. Say 絶対収束 in the text, or restate with Tendsto of partial sums.",
+   "patch": {
+    "statement": "$a\\neq 0$のとき、無限等比級数$\\sum_{n=0}^{\\infty}ar^n$が絶対収束する（実数項の級数として無条件に和をもつ）ことと$|r|<1$であることは同値である。",
+    "statement_en": "For a ≠ 0, the series ∑ a r^n is summable (absolutely convergent) if and only if |r| < 1.",
+    "conclusion": "$\\sum_{n=0}^{\\infty}ar^n$が絶対収束することと$|r|<1$は同値である。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_sequences",
+   "id": "sum_consecutive_product",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath writes the inner product as (product (oriented_interval 0 (- m 1)) ...), whose upper bound is -1 for m=0 (empty product only by convention) and uses a real-interval symbol for an integer index set; Lean uses Finset.range m. Encode with natural_range, matching the Lean index set.",
+   "patch": {
+    "openmath": "(forall (m n) (-> (and (in m N) (in n N)) (= (sum (oriented_interval 1 n) (lambda (k) (product (natural_range m) (lambda (i) (+ k i))))) (/ (product (natural_range (+ m 1)) (lambda (i) (+ n i))) (+ m 1)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_sequences",
+   "id": "arith_common_terms_lcm",
+   "severity": "minor",
+   "codes": [
+    "OTHER",
+    "WEAK_OR_OVERNAMED"
+   ],
+   "issue": "Topic says common terms of arithmetic sequences, but i,j range over all integers (two-sided progressions). For sequences (a_n)_{n>=1} the common terms also need the indices to be >=1, which the card does not give; a proof about 'common terms of two sequences' would misuse it. The text is honest (i,j integers) but the topic/name is not.",
+   "patch": {
+    "topic": "整数全体を添字とする等差数列・共通項",
+    "statement": "正の整数$d,e$と整数$p,q$について、$x$が$p+di$と$q+ej$（$i,j$は負も含む任意の整数）の両方の形に表されるとき、同じく両方の形に表される整数$y$は、$y-x$が$d,e$の最小公倍数で割り切れる整数全体である。添字を正に限った数列の共通項では、添字の下限の条件が別に必要である。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_sequences",
+   "id": "telescoping_sqrt_rationalize",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "Sum of 1/(sqrt k + sqrt(k+1)) is the c_k=k case of sum 1/(sqrt c_k+sqrt c_{k+1}) = (sqrt c_{n+1}-sqrt c_1)/d for an arithmetic sequence c_k>0 with difference d; the statement does not mark it as the special form (sibling partial_fraction_consecutive does).",
+   "patch": {
+    "statement": "自然数$n$について、$\\sum_{k=1}^{n}\\dfrac{1}{\\sqrt{k}+\\sqrt{k+1}}=\\sqrt{n+1}-1$が成り立つ。これは公差$1$の等差数列$c_k=k$についての特殊形である。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_sequences",
+   "id": "group_sum_natural_numbers",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "Special case 'group m has m terms' (c_m=m) of group_unique_block; the statement does not mark it as special unlike group_triangular_location.",
+   "patch": {
+    "statement": "自然数の列$1,2,3,\\dots$を第$m$群が$m$項となるように区切るという特殊な群数列では、第$m$群は$\\dfrac{m(m-1)}{2}+j$（$1\\leq j\\leq m$）からなり、その和は$\\dfrac{m(m^2+1)}{2}$である。"
+   },
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "Index-set encoding is inconsistent: sequences use (sum (oriented_interval 1 n) ...) for Finset.Icc 1 n, calculus/trig use natural_range with a +1 shift for Finset.range. oriented_interval is a real, oriented interval1 symbol; integer-only meaning and empty ranges (n=0, upper bound m-1=-1) rely on convention. Pick one integer-range symbol/convention for the whole school catalog.",
+  "No card has deriv/integral junk: all use HasDerivAt/IntervalIntegrable or continuity/differentiability hypotheses; every ℕ subtraction (n-1, 2*m-1, n+1-k, m-1) is guarded by n>=1, m>=1 or k<=n. The junk risk is concentrated in the tan cards, where Real.tan and x/0=0 make dropped-hypothesis negatives true (tan_pi_div_two_sub, tan_add_formula, tan_double_angle; tan_add_int_mul_pi and the domain hypotheses of these cards are also logically redundant in Lean but are right as mathematical domain conditions).",
+  "OpenMath overloads: ^ is used for ℕ-power, ℤ-power (cos nπ=(-1)^n, n integer) and real power (a^x) with no carrier info; (in n N) does not say whether 0 is in N; limits are encoded by both seq_tends_to and seq_limit_of(lambda), sometimes in the same card (telescoping_sum_limit).",
+  "Natural-number wording: many cards say 自然数 (Japanese school meaning n>=1) while Lean quantifies n : ℕ including 0, others say 0以上の整数; harmless (stronger statement) but should be uniform.",
+  "Cards on a 'closed interval between a and b' (integral_function_power_times_derivative, integral_x_mul_derivative, integral_inverse_function_identity) assume HasDerivAt at the endpoints (two-sided), slightly stronger than textbook one-sided differentiability on [a,b]; fine for f : R -> R but not stated.",
+  "Special-form cards are inconsistently labelled: partial_fraction_consecutive, group_triangular_location and area_parabola_and_line say 'special form' in the statement, while integral_sixth/twelfth_formula, telescoping_sqrt_rationalize, group_sum_natural_numbers do not."
+ ],
+ "missing_neighbors": [
+  "Principal-value identities: sin(arcsin x)=x (|x|<=1), arcsin(sin x)=x on [-pi/2,pi/2] (Real.arcsin_sin), arccos(cos x)=x on [0,pi] (Real.arccos_cos), arcsin x+arccos x=pi/2, tan(arctan x)=x (Real.tan_arctan), arctan(1/x)=pi/2-arctan x for x>0 (Real.arctan_inv_of_pos); the batch has exists_unique_*_principal but nothing about arcsin/arccos/arctan.",
+  "Three-term recurrence with distinct roots: alpha != beta, a_{n+2}=(alpha+beta)a_{n+1}-alpha*beta*a_n => exists A B, a_n=A*alpha^n+B*beta^n (completes three_term_factorization / three_term_double_root; Binet).",
+  "Trig inequalities: 2x/pi <= sin x on [0,pi/2] (Real.mul_le_sin), sin x < x for x>0 (Real.sin_lt), x < tan x on (0,pi/2) (Real.lt_tan).",
+  "Least period: for omega != 0 the least positive period of sin(omega x+b) is 2pi/|omega|, and tan has least period pi (generalises sin_period_ge_two_pi).",
+  "Real-power and quotient derivative rules: HasDerivAt (fun y => y^s) (s*x^(s-1)) x for x>0 (Real.hasDerivAt_rpow_const), and f/g with g a != 0, general (not constant-base) f(x)^g(x).",
+  "Basic integrals with parameters: int_s^t e^(ax+b), int_s^t sin(ax+b) and cos(ax+b) (a != 0), int_s^t 1/x = log(t/s) for s,t>0, int_s^t x^p (p != -1, s,t>0).",
+  "Sequence limits: r^n*n^k -> 0 for |r|<1 (tendsto_pow_const_mul_const_pow_of_abs_lt_one), a^(1/n)->1 (a>0), n^(1/n)->1, (1+x/n)^n -> exp x.",
+  "Explicit Chebyshev form: cos(n x)=T_n(cos x) (Polynomial.Chebyshev.T_real_cos) and the recurrence P_{n+2}=2uP_{n+1}-P_n as a statement, not only existence of P.",
+  "Sum formulas in general form: sum_{k=1}^n k^p for fixed p as a lemma, sum_{k=1}^n 1/(k(k+1)(k+2)), and the finite geometric sum for r=1 (n*a) completing geom_sum_ne_one.",
+  "Mean value theorem / Rolle in practical form (exists c in (a,b), f(b)-f(a)=f'(c)(b-a)) and monotone <=> f'>=0 on an interval, which several answers here cite; check calculus_single covers them with HasDerivAt on Ioo and continuity on Icc."
+ ]
+}

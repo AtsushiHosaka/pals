@@ -1,0 +1,521 @@
+{
+ "batch": "U9_multi_ode_fourier",
+ "domains": [
+  "multivariable",
+  "ode",
+  "fourier_convex_numeric"
+ ],
+ "reviewed": 107,
+ "ok_ids": [
+  "continuous_iff_components",
+  "fderiv_little_o",
+  "differentiable_implies_continuous",
+  "product_rule",
+  "chain_rule",
+  "curve_chain_rule",
+  "fderiv_iff_components",
+  "directional_derivative",
+  "total_differential_formula",
+  "gradient_inner_fderiv",
+  "gradient_components",
+  "gradient_along_curve",
+  "gradient_steepest_ascent",
+  "local_extremum_gradient_zero",
+  "local_extremum_directional_zero",
+  "mean_value_inequality",
+  "zero_derivative_constant_on_connected",
+  "schwarz_mixed_partials",
+  "gradient_field_is_curl_free",
+  "inverse_function_theorem",
+  "derivative_of_local_inverse",
+  "implicit_function_theorem",
+  "lagrange_multiplier",
+  "continuous_on_box_integrable",
+  "fubini_continuous_on_box",
+  "separated_double_integral",
+  "gaussian_integral",
+  "green_theorem_rectangle",
+  "gradient_line_integral",
+  "exp_solution_iff",
+  "homogeneous_linear_formula",
+  "integrating_factor_derivative",
+  "linear_first_order_solution_formula",
+  "separable_first_integral",
+  "logistic_solution_check",
+  "comparison_exponential_upper_bound",
+  "gronwall_integral_inequality",
+  "gronwall_norm_bound",
+  "ode_uniqueness_lipschitz",
+  "ode_continuous_dependence",
+  "non_uniqueness_without_lipschitz",
+  "characteristic_root_exponential_solution",
+  "double_root_solution",
+  "complex_root_solution",
+  "superposition_inhomogeneous",
+  "second_order_solution_space_subspace",
+  "second_order_constant_coefficient_uniqueness",
+  "distinct_real_roots_general_solution",
+  "abel_wronskian_identity",
+  "wronskian_nonzero_implies_independent",
+  "harmonic_oscillator_energy_conservation",
+  "harmonic_oscillator_general_solution",
+  "damped_oscillator_energy_decreasing",
+  "matrix_exponential_add_commuting",
+  "amgm_finite_family",
+  "cauchy_schwarz_finite_sum",
+  "holder_finite_sum",
+  "minkowski_finite_sum",
+  "young_conjugate_exponents",
+  "young_epsilon_form",
+  "bernoulli_natural_power",
+  "jensen_finite_convex",
+  "rectangle_rule_lipschitz_error",
+  "convex_family_intersection",
+  "convex_function_sublevel_set",
+  "convex_local_min_is_global",
+  "strict_convex_unique_minimizer",
+  "convex_first_order_lower_bound",
+  "convex_variational_inequality",
+  "hahn_banach_point_closed_convex",
+  "convex_hull_minimal",
+  "caratheodory_finite_dimension",
+  "contraction_iteration_error_bound",
+  "derivative_bound_unique_fixed_point",
+  "lagrange_interpolation_unique",
+  "fourier_exponential_orthogonality",
+  "cosine_system_orthogonality",
+  "fourier_coefficient_integration_by_parts",
+  "parseval_interval",
+  "fourier_series_pointwise_summable_coefficients",
+  "fourier_transform_uniform_bound"
+ ],
+ "findings": [
+  {
+   "domain": "fourier_convex_numeric",
+   "id": "amgm_two_variables",
+   "severity": "major",
+   "codes": [
+    "WEAK_OR_OVERNAMED",
+    "DUPLICATE"
+   ],
+   "issue": "n=2 special case of amgm_finite_family (same domain) and also contained in school_inequalities.means_chain_two (sqrt(ab) <= (a+b)/2). statement/statement_en do not say which form this is, and the hard_negative (drop the sqrt) does not sit on the 2-variable/n-variable boundary, so a reviewer can reuse it for 3+ variables. Keep as the named 2-variable pattern but state the boundary.",
+   "patch": {
+    "statement": "（2変数の場合）非負実数$a,b$について$\\sqrt{ab}\\leq\\frac{a+b}{2}$が成り立つ。$n$個の場合は別のカード（相加相乗平均の有限族）で扱う。",
+    "statement_en": "(Two-variable form; the n-variable form is a separate card.) For nonnegative reals a and b, sqrt(ab) ≤ (a+b)/2.",
+    "hard_negative": {
+     "statement": "3つの非負実数$a,b,c$についても$\\sqrt{abc}\\leq\\frac{a+b+c}{3}$が成り立つ。",
+     "reason": "指数は項数$n$に応じて$1/n$でなければならず、2変数版の形をそのまま3変数に流用できない。$a=b=c=4$では左辺$\\sqrt{64}=8$、右辺$4$で偽である。3個以上の場合は有限族版を使う。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "fourier_convex_numeric",
+   "id": "cauchy_schwarz_two_dimensional",
+   "severity": "major",
+   "codes": [
+    "WEAK_OR_OVERNAMED",
+    "DUPLICATE"
+   ],
+   "issue": "n=2 special case of cauchy_schwarz_finite_sum (same domain); also overlaps school_inequalities.cauchy_schwarz_three_terms and functional_analysis.cauchy_schwarz_inner_product_space. Text does not say which form it is and the hard_negative (drop the cross term) is not on the component-count boundary.",
+   "patch": {
+    "statement": "（2成分の場合）実数$a,b,c,d$について$(ac+bd)^2\\leq(a^2+b^2)(c^2+d^2)$が成り立つ。成分数が一般の有限和は別のカード（コーシー＝シュワルツの有限和版）で扱う。",
+    "statement_en": "(Two-component form; the general finite-sum form is a separate card.) For real numbers a,b,c,d, (ac+bd)^2 ≤ (a^2+b^2)(c^2+d^2).",
+    "hard_negative": {
+     "statement": "3成分の積和$ac+bd+ef$についても$(ac+bd+ef)^2\\leq(a^2+b^2)(c^2+d^2)$が成り立つ。",
+     "reason": "右辺の和の項数は成分数に合わせる必要がある。$a=b=c=d=0$、$e=f=1$では左辺$1$、右辺$0$で偽である。成分数が一般の場合は有限和版を使う。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "fourier_convex_numeric",
+   "id": "banach_fixed_point_real_constant",
+   "severity": "major",
+   "codes": [
+    "DUPLICATE",
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Same target (up to the iterate-convergence conjunct) as topology_general.banach_fixed_point, which is strictly stronger: this card is subsumed, so drop it or keep only as a retrieval alias. OpenMath omits the Nonempty hypothesis and never restricts x,y to X (binders range over everything), so it asserts a false statement for X empty; Lean has [Nonempty X] and f : X -> X.",
+   "patch": {
+    "openmath": "(forall (X f K) (-> (and (metric_space X) (complete_space X) (exists (z) (in z X)) (>= K 0) (< K 1) (forall (x y) (-> (and (in x X) (in y X)) (<= (dist_of (fn_value f x) (fn_value f y)) (* K (dist_of x y)))))) (exists (x) (and (in x X) (= (fn_value f x) x) (forall (y) (-> (and (in y X) (= (fn_value f y) y)) (= y x)))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "fourier_convex_numeric",
+   "id": "composite_trapezoid_error_bound",
+   "severity": "major",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Lean (and text) use the interval between a and b (Set.uIcc), so a>b is covered. OpenMath uses (closed_interval a b), which is empty for a>b: the C2 and |f''|<=z hypotheses become vacuous and the OpenMath then claims the error bound for arbitrary f when a>b, which is false. Encode the interval between a and b explicitly.",
+   "patch": {
+    "openmath": "(forall (f a b z m lo hi) (-> (and (<= lo hi) (or (and (= lo a) (= hi b)) (and (= lo b) (= hi a))) (twice_continuously_differentiable_on f (closed_interval lo hi)) (forall (x) (-> (in x (closed_interval lo hi)) (<= (abs (second_derivative_within f (closed_interval lo hi) x)) z))) (in m N) (> m 0)) (<= (abs (- (trapezoid_sum f m a b) (interval_integral a b (lambda (x) (fn_value f x))))) (/ (* (^ (abs (- b a)) 3) z) (* 12 (^ m 2))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "fourier_convex_numeric",
+   "id": "fourier_coefficient_explicit_formula",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH",
+    "JUNK_VALUE"
+   ],
+   "issue": "Text and quantifiers assume f integrable on (a,b], but target and OpenMath have no such hypothesis. The Lean equation holds for every f only because fourierCoeffOn is defined by the same integral (junk 0 when non-integrable), so the card is a definitional unfolding. Add the hypothesis to Lean and OpenMath so all three agree.",
+   "patch": {
+    "target": "∀ (a b : ℝ) (hab : a < b) (f : ℝ → ℂ) (n : ℤ), MeasureTheory.IntegrableOn f (Set.Ioc a b) → fourierCoeffOn hab f n = ((1 / (b - a) : ℝ) : ℂ) * ∫ x in a..b, Complex.exp (2 * Real.pi * Complex.I * ((-n : ℤ) : ℂ) * x / ((b - a : ℝ) : ℂ)) * f x",
+    "proof": "by\n  intro a b hab f n _\n  rw [fourierCoeffOn_eq_integral f n hab, Complex.real_smul]\n  congr 1\n  refine intervalIntegral.integral_congr (fun x _ => ?_)\n  simp only [smul_eq_mul, fourier_coe_apply]\n",
+    "openmath": "(forall (a b f n) (-> (and (< a b) (in n Z) (interval_integrable_fn f a b)) (= (fourier_coeff_on f a b n) (* (/ 1 (- b a)) (interval_integral a b (lambda (x) (* (exp (/ (* 2 pi complex_i (neg n) x) (- b a))) (fn_value f x))))))))"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "fourier_convex_numeric",
+   "id": "fourier_modes_orthonormal_l2",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath hides the whole content in card-specific constants (fourier_l2_family T, l2_circle_space T); the definition e_n = exp(2 pi i n x / T) never appears, so any other orthonormality claim for a different family would look identical. Express the family via the reusable fourier_mode_circle T n x and a generic L2 space of the circle.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "fourier_convex_numeric",
+   "id": "fourier_coefficient_l1_bound",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative is about decay rate (Riemann-Lebesgue territory), not about the bound |c_n| <= ||f||_1 the card states, and its reason has no witness. A nearby false variant is the unnormalised measure.",
+   "patch": {
+    "hard_negative": {
+     "statement": "測度を長さ$T$のルベーグ測度（総質量$T$）にしても$|c_n(f)|\\leq\\int_0^T|f(x)|\\,dx$が成り立つ。",
+     "reason": "$c_n$は正規化された測度で定義されるので、非正規化の積分は$T$倍される。$T<1$、$f\\equiv1$、$n=0$では$c_0(f)=1$だが$\\int_0^T1\\,dx=T<1$で偽である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "fourier_convex_numeric",
+   "id": "riemann_lebesgue_real_line",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative is ill-posed rather than false: for non-integrable bounded f the integral is not defined (in Lean it is the junk 0, so the formal version is even true). Use a nearby claim that is genuinely false.",
+   "patch": {
+    "hard_negative": {
+     "statement": "$f$が可積分ならばそのフーリエ変換$\\widehat{f}$も$\\mathbb{R}$上で可積分である。",
+     "reason": "リーマン＝ルベーグの補題は$0$への収束だけを保証する。$f=1_{[0,1]}$では$|\\widehat{f}(w)|=|\\sin(\\pi w)|/(\\pi|w|)$であり、これは$\\mathbb{R}$上で可積分でない。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "fourier_convex_numeric",
+   "id": "poisson_summation_power_decay",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative reason says counterexamples are 'known' without a witness. A concrete continuous integrable f whose periodization diverges is easy to give.",
+   "patch": {
+    "hard_negative": {
+     "statement": "$f$が連続で可積分でさえあれば、減衰条件なしにポアソン和公式が成り立つ。",
+     "reason": "周期化$\\sum_nf(x+n)$が発散しうる。$\\varphi$を台が$[-1,1]$の連続な山型関数で$\\varphi(0)=1$とし、$f(x)=\\sum_{k\\geq1}k\\,\\varphi(k^3(x-k))$とおくと、$f$は連続で$\\int f=O(\\sum k^{-2})<\\infty$だが、$\\sum_nf(n)=\\sum_kk$は発散する。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "fourier_convex_numeric",
+   "id": "krein_milman_theorem",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "reason says only that the convex hull of extreme points need not be closed in infinite dimension, with no example. Give one.",
+   "patch": {
+    "hard_negative": {
+     "statement": "コンパクト凸集合はその端点全体の凸包に等しい（閉包は不要である）。",
+     "reason": "閉包は外せない。$\\ell^2$で$s=\\overline{\\mathrm{conv}}(\\{0\\}\\cup\\{e_n/n\\mid n\\geq1\\})$はコンパクト凸で、端点は$\\{0\\}\\cup\\{e_n/n\\}$に含まれる。$x=\\sum_{n\\geq1}2^{-n}(e_n/n)$は$s$の点だが非零成分が無限個あり、端点の有限凸結合では書けないので$\\operatorname{conv}(\\operatorname{ext}s)$に属さない。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "fourier_convex_numeric",
+   "id": "newton_step_convex_bracket",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Uses has_derivative_at (real function) and convex_function_on_line, ad hoc synonyms of has_deriv_at (ode/multivariable vocab) and convex_function_on f R. Reuse the shared symbols so retrieval connects with other derivative/convexity cards.",
+   "patch": {
+    "openmath": "(forall (f x r d) (-> (and (convex_function_on f R) (= (fn_value f r) 0) (has_deriv_at (lambda (s) (fn_value f s)) d x) (> d 0) (>= (fn_value f x) 0)) (and (<= r (- x (/ (fn_value f x) d))) (<= (- x (/ (fn_value f x) d)) x))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "fourier_convex_numeric",
+   "id": "bisection_midpoint_error",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED"
+   ],
+   "issue": "Named after the bisection method but states only that widths halve and x lies in [a_n,b_n]; no nestedness, no function or sign change. The content is a width-decay identity. Rename/retopic (e.g. halving_interval_midpoint_error) or add nestedness.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "fourier_convex_numeric",
+   "id": "bessel_inequality_finite",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Finite-s corollary of functional_analysis.bessel_inequality_orthonormal_family (which gives Summable and tsum <= ||x||^2 over RCLike). Fine as the finite-sum pattern, but the statement should say it is the finite form.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "ode",
+   "id": "picard_lindelof_existence",
+   "severity": "major",
+   "codes": [
+    "TEXT_LEAN_MISMATCH",
+    "WEAK_OR_OVERNAMED",
+    "OM_FORMAT"
+   ],
+   "issue": "Hypotheses are correct (K-Lipschitz in x and continuous in t on the ball, ||f||<=L, L*max(...)<=a) and the conclusion is a true existence statement (no uniqueness claimed). But the conclusion omits that alpha stays in closedBall x0 a, which the answer proves and the hard_negative is about ('solution exists inside the ball'); the hard_negative is therefore not a negation of anything the card claims. Also OpenMath has_deriv_within_at is used as (f d S x) while the vocabulary meaning reads (f d x S). Patch gives a hard_negative that matches the card (drop the time-width condition); strengthening the target with alpha t in the ball needs internal FunSpace lemmas, not attempted.",
+   "patch": {
+    "hard_negative": {
+     "statement": "閉球上のリプシッツ性・連続性・有界性があれば、時間幅の条件$L\\max(t_{\\max}-t_0,t_0-t_{\\min})\\leq a$がなくても、全区間$I$上の解が存在する。",
+     "reason": "時間幅の条件は外せない。$E=\\mathbb{R}$、$x_0=0$、$a=1$、$L=1$、$K=0$、$I=[0,2]$、$t_0=0$、$f(t,x)=1$（$x\\leq1$）、$f(t,x)=0$（$x>1$）とする。閉球$[-1,1]$上では$f\\equiv1$で全ての仮定が成り立つが、$[0,2]$上の解はない。解は$t\\leq1$で$x=t$であり、$t=1$での微分係数は$f(1,1)=1$なので$t>1$で$x>1$となり、そこでは$x'=0$となって矛盾する。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "ode",
+   "id": "matrix_exponential_neg_inverse",
+   "severity": "minor",
+   "codes": [
+    "JUNK_VALUE"
+   ],
+   "issue": "Target uses Matrix.inv ((exp A)⁻¹), the nonsingular-inverse which is the junk value 0 for singular matrices; the equation is true only because exp A is invertible. State the two-sided identities instead (verified). OpenMath matrix_inverse presupposes invertibility, so it can stay or add an identity-matrix constant.",
+   "patch": {
+    "target": "∀ (m : Type*) [Fintype m] [DecidableEq m] (A : Matrix m m ℝ), NormedSpace.exp A * NormedSpace.exp (-A) = 1 ∧ NormedSpace.exp (-A) * NormedSpace.exp A = 1",
+    "proof": "by\n  intro m _ _ A\n  have h1 : Commute A (-A) := (Commute.refl A).neg_right\n  have h2 := Matrix.exp_add_of_commute A (-A) h1\n  have h3 := Matrix.exp_add_of_commute (-A) A h1.symm\n  rw [add_neg_cancel, NormedSpace.exp_zero] at h2\n  rw [neg_add_cancel, NormedSpace.exp_zero] at h3\n  exact ⟨h2.symm, h3.symm⟩\n"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "ode",
+   "id": "matrix_exponential_derivative",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative says the formula fails 'if A(t), A'(t) do not commute' but gives no witness (and non-commutation is sufficient-for-failure only in general). Give an explicit counterexample.",
+   "patch": {
+    "hard_negative": {
+     "statement": "行列値関数$A(t)$が微分可能なら、$\\exp(A(t))$の微分係数は常に$A'(t)\\exp(A(t))$である。",
+     "reason": "$A(t)$と$A'(t)$が可換でなければ一般に成り立たない。$A(t)=N+tM$、$N=\\begin{pmatrix}0&1\\\\0&0\\end{pmatrix}$、$M=\\begin{pmatrix}0&0\\\\1&0\\end{pmatrix}$の$t=0$では微分係数は$\\int_0^1e^{sN}Me^{(1-s)N}ds=M+\\frac{NM+MN}{2}+\\frac{NMN}{6}$だが、$A'(0)\\exp(A(0))=M(I+N)=M+MN$で、差は$\\frac{NM-MN}{2}+\\frac{N}{6}\\neq0$である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "ode",
+   "id": "matrix_exponential_solves_linear_system",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "Same weakness as matrix_exponential_derivative: the reason asserts failure for non-commuting A(t) without a witness (note the claim x'=A(t)x for x=exp(∫A)x0 already holds at t=0, so the counterexample must use t≠0, e.g. A(s)=N+sM at t=1).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "multivariable",
+   "id": "partials_exist_not_continuous",
+   "severity": "minor",
+   "codes": [
+    "JUNK_VALUE"
+   ],
+   "issue": "Target defines f by p.1*p.2/(p.1^2+p.2^2) on all of R^2 and so relies on Lean's 0/0=0 for f(0,0)=0; the text states f(0,0)=0 explicitly but the Lean never does. The OpenMath already quantifies over f with f(0,0)=0 and the defining equation for (x,y)≠(0,0). Make the target match (verified).",
+   "patch": {
+    "statement": "$f:\\mathbb{R}^2\\to\\mathbb{R}$が$f(0,0)=0$かつ$(x,y)\\neq(0,0)$で$f(x,y)=xy/(x^2+y^2)$を満たすとき、$f$は原点で両方の偏微分係数が$0$であるが、原点で連続でない。",
+    "statement_en": "If f : R^2 -> R satisfies f(0,0) = 0 and f(x,y) = xy/(x^2+y^2) for (x,y) ≠ (0,0), then both partial derivatives of f at the origin equal 0, but f is not continuous at the origin.",
+    "assumptions": [
+     "$f(0,0)=0$",
+     "$(x,y)\\neq(0,0)$で$f(x,y)=xy/(x^2+y^2)$"
+    ],
+    "quantifiers": [
+     "任意の$f:\\mathbb{R}^2\\to\\mathbb{R}$"
+    ],
+    "target": "∀ (f : ℝ × ℝ → ℝ), f (0, 0) = 0 → (∀ x y : ℝ, (x ≠ 0 ∨ y ≠ 0) → f (x, y) = x * y / (x ^ 2 + y ^ 2)) → HasDerivAt (fun x : ℝ => f (x, 0)) 0 0 ∧ HasDerivAt (fun y : ℝ => f (0, y)) 0 0 ∧ ¬ ContinuousAt f (0, 0)",
+    "proof": "by\n  intro f h0 h\n  have hx : ∀ x : ℝ, f (x, 0) = 0 := by\n    intro x\n    by_cases hx : x = 0\n    · subst hx; exact h0\n    · rw [h x 0 (Or.inl hx)]; simp\n  have hy : ∀ y : ℝ, f (0, y) = 0 := by\n    intro y\n    by_cases hy : y = 0\n    · subst hy; exact h0\n    · rw [h 0 y (Or.inr hy)]; simp\n  refine ⟨?_, ?_, ?_⟩\n  · have : (fun x : ℝ => f (x, 0)) = fun _ => (0 : ℝ) := funext hx\n    rw [this]; exact hasDerivAt_const _ _\n  · have : (fun y : ℝ => f (0, y)) = fun _ => (0 : ℝ) := funext hy\n    rw [this]; exact hasDerivAt_const _ _\n  · intro hc\n    have hc' : Filter.Tendsto (fun t : ℝ => (t, t)) (nhdsWithin 0 {0}ᶜ) (nhds ((0 : ℝ), (0 : ℝ))) := by\n      have : ContinuousAt (fun t : ℝ => (t, t)) 0 := by fun_prop\n      exact this.tendsto.mono_left nhdsWithin_le_nhds\n    have h3 := hc.tendsto.comp hc'\n    have hev : (fun t : ℝ => (1 / 2 : ℝ)) =ᶠ[nhdsWithin 0 {0}ᶜ] (f ∘ fun t : ℝ => (t, t)) := by\n      filter_upwards [self_mem_nhdsWithin] with t ht\n      have ht' : t ≠ 0 := ht\n      simp only [Function.comp]\n      rw [h t t (Or.inl ht')]\n      field_simp\n      ring\n    have h4 := tendsto_nhds_unique (h3.congr' hev.symm) tendsto_const_nhds\n    rw [h0] at h4\n    norm_num at h4\n",
+    "answer": "$f:\\mathbb{R}^2\\to\\mathbb{R}$が$f(0,0)=0$を満たし、$(x,y)\\neq(0,0)$では$f(x,y)=xy/(x^2+y^2)$を満たすとする。\n\n全ての$x$で$f(x,0)=0$、全ての$y$で$f(0,y)=0$である。これらの$1$変数関数は定数なので、原点での偏微分係数はどちらも$0$である。\n\n一方、$t\\neq0$では$f(t,t)=t^2/(2t^2)=1/2$である。$t\\to0$で$(t,t)$は原点に近づくが、$f(t,t)$は$1/2$のままであり、$f(0,0)=0$に収束しない。したがって$f$は原点で連続でない。\n"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "multivariable",
+   "id": "euler_homogeneous_function",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED",
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "Degree restricted to k in N (t^k via Monoid.npow). Euler's identity L(x)=k f(x) holds for every real degree k (t^k = rpow for t>0), which is the form a proof would cite (e.g. degree 1/2 or p-homogeneous norms). Generalise k to a real; OpenMath loses (in k N). Verified.",
+   "patch": {
+    "statement": "実ノルム空間$E$上の実数値関数$f$と実数$k$について、全ての$t>0$と$y\\in E$で$f(ty)=t^kf(y)$が成り立ち、$f$の点$x$での微分が$L$ならば、$L(x)=kf(x)$である（オイラーの同次関数定理）。",
+    "statement_en": "If f : E -> R on a real normed space satisfies f(ty) = t^k f(y) for all t > 0 and y in E, with real k, and f has derivative L at x, then L(x) = k f(x) (Euler's homogeneous function theorem).",
+    "assumptions": [
+     "$E$は実ノルム空間",
+     "$k\\in\\mathbb{R}$",
+     "全ての$t>0$と$y\\in E$で$f(ty)=t^kf(y)$",
+     "$f$の$x$での微分は$L$"
+    ],
+    "quantifiers": [
+     "任意の$f:E\\to\\mathbb{R}$、$k\\in\\mathbb{R}$、$x\\in E$、有界線形写像$L$"
+    ],
+    "target": "∀ (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] (f : E → ℝ) (k : ℝ) (x : E) (L : E →L[ℝ] ℝ), (∀ t : ℝ, 0 < t → ∀ y : E, f (t • y) = t ^ k * f y) → HasFDerivAt f L x → L x = k * f x",
+    "proof": "by\n  intro E _ _ f k x L hom hL\n  have h1 : HasDerivAt (fun t : ℝ => t • x) x 1 := by\n    simpa using (hasDerivAt_id (1 : ℝ)).smul_const x\n  have hL' : HasFDerivAt f L ((1 : ℝ) • x) := by simpa using hL\n  have h2 : HasDerivAt (fun t : ℝ => f (t • x)) (L x) 1 := hL'.comp_hasDerivAt 1 h1\n  have h3 := (Real.hasDerivAt_rpow_const (x := (1 : ℝ)) (p := k) (Or.inl one_ne_zero)).mul_const (f x)\n  have h4 : (fun t : ℝ => f (t • x)) =ᶠ[nhds 1] fun t : ℝ => t ^ k * f x := by\n    filter_upwards [lt_mem_nhds (one_pos : (0 : ℝ) < 1)] with t ht\n    exact hom t ht x\n  have h5 := h2.unique (h3.congr_of_eventuallyEq h4)\n  simpa using h5\n",
+    "openmath": "(forall (E f k x L) (-> (and (normed_space E) (in k R) (homogeneous_of_degree f k) (has_fderiv_at f L x)) (= (fn_value L x) (* k (fn_value f x)))))",
+    "answer": "$E$を実ノルム空間、$k\\in\\mathbb{R}$とし、$f:E\\to\\mathbb{R}$は全ての$t>0$と$y\\in E$で$f(ty)=t^kf(y)$を満たすとする（$t>0$に対し$t^k=e^{k\\ln t}$）。$x\\in E$での$f$の微分を$L$とする。\n\n$h(t)=f(tx)$とおく。$t\\mapsto tx$の$t=1$での微分係数は$x$であり、$t=1$で点$x$を通る。連鎖律より$h'(1)=L(x)$である。一方、$t>0$では$h(t)=t^kf(x)$であり、$t\\mapsto t^k$の$t=1$での微分係数は$k$なので、$h'(1)=kf(x)$である。したがって$L(x)=kf(x)$である。\n"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "multivariable",
+   "id": "gaussian_integral_plane",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "b=1 instance of the reusable fact ∫_{R^2} exp(-b(x^2+y^2)) = π/b (b>0), which is what the Gaussian/polar proofs actually cite. Generalise (verified).",
+   "patch": {
+    "statement": "$b>0$のとき、$\\int_{\\mathbb{R}^2}\\exp(-b(x^2+y^2))\\,dx\\,dy=\\pi/b$である。",
+    "statement_en": "For b > 0, the integral of exp(-b(x^2+y^2)) over the plane equals π/b.",
+    "assumptions": [
+     "$b>0$"
+    ],
+    "quantifiers": [
+     "任意の$b\\in\\mathbb{R}$"
+    ],
+    "conclusion": "$\\int_{\\mathbb{R}^2}\\exp(-b(x^2+y^2))\\,dx\\,dy=\\pi/b$である。",
+    "target": "∀ b : ℝ, 0 < b → (∫ z : ℝ × ℝ, Real.exp (-(b * (z.1 ^ 2 + z.2 ^ 2)))) = Real.pi / b",
+    "proof": "by\n  intro b hb\n  have h : (fun z : ℝ × ℝ => Real.exp (-(b * (z.1 ^ 2 + z.2 ^ 2)))) =\n      fun z : ℝ × ℝ => Real.exp (-b * z.1 ^ 2) * Real.exp (-b * z.2 ^ 2) := by\n    funext z\n    rw [← Real.exp_add]\n    congr 1\n    ring\n  rw [h, MeasureTheory.Measure.volume_eq_prod]\n  rw [MeasureTheory.integral_prod_mul (fun x : ℝ => Real.exp (-b * x ^ 2)) (fun y : ℝ => Real.exp (-b * y ^ 2))]\n  rw [integral_gaussian b]\n  exact Real.mul_self_sqrt (div_nonneg Real.pi_pos.le hb.le)\n",
+    "openmath": "(forall (b) (-> (> b 0) (= (integral_whole_space (lambda (z) (exp (neg (* b (+ (^ (first_coord z) 2) (^ (second_coord z) 2))))))) (/ pi b))))",
+    "hard_negative": {
+     "statement": "$b>0$のとき$\\int_{\\mathbb{R}^2}\\exp(-b(x^2+y^2))\\,dx\\,dy=\\sqrt{\\pi/b}$である。",
+     "reason": "$\\sqrt{\\pi/b}$は1次元の積分の値である。2次元では2つの1次元積分の積になるので$\\pi/b$である。$b=1$では$\\pi\\neq\\sqrt{\\pi}$である。"
+    },
+    "answer": "$b>0$とする。$\\exp(-b(x^2+y^2))=\\exp(-bx^2)\\exp(-by^2)$である。$\\exp(-bx^2)$は$\\mathbb{R}$上で可積分なので、トネリの定理よりこの関数は$\\mathbb{R}^2$上で可積分である。\n\nフビニの定理より、重積分は$(\\int_{\\mathbb{R}}\\exp(-bx^2)\\,dx)(\\int_{\\mathbb{R}}\\exp(-by^2)\\,dy)$に等しい。ガウス積分の公式（$b>0$なら$\\int_{\\mathbb{R}}\\exp(-bx^2)\\,dx=\\sqrt{\\pi/b}$）より、各因子は$\\sqrt{\\pi/b}$である。したがって重積分は$\\sqrt{\\pi/b}\\cdot\\sqrt{\\pi/b}=\\pi/b$である。\n"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "multivariable",
+   "id": "c1_partials_imply_differentiable",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "Stated only for f : R^2 -> R. The C1 criterion is the reusable fact in R^n / finite products of normed spaces (same proof coordinate by coordinate); the n=2 form cannot be cited for n variables.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "multivariable",
+   "id": "partials_from_total_derivative",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE",
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "n=2 instance of directional_derivative (v=(1,0),(0,1)) and total_differential_formula (n general). Keep only if a proof wants the R×R coordinate form; otherwise drop or say 'two-variable form' with a boundary hard_negative.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "multivariable",
+   "id": "divergence_theorem_box",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD",
+    "OM_FORMAT"
+   ],
+   "issue": "hard_negative ('F=0 on the boundary implies F≡0') is a strawman, not a nearby claim. OpenMath hides the whole right-hand side in the card-specific box_boundary_flux and drops the dimension n+1 (n unused). Patch gives a nearby sign error as hard_negative.",
+   "patch": {
+    "hard_negative": {
+     "statement": "面$x_i=a_i$上の積分を引かずに足しても成り立つ。すなわち$\\int_{[a,b]}\\operatorname{div}F=\\sum_i\\bigl(\\int_{x_i=b_i}F_i+\\int_{x_i=a_i}F_i\\bigr)$である。",
+     "reason": "向かい合う面の寄与は引き算でなければならない。$n=0$、$[0,1]$上で$F\\equiv1$（$\\operatorname{div}F=0$）では左辺$0$、右辺$F(1)+F(0)=2$で偽である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "multivariable",
+   "id": "polar_coordinates_jacobian",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath uses the 0-ary card-specific constant polar_map, which hides the definition (r cos t, r sin t); also used only in this card and polar_coordinates_integral. Encode with an explicit lambda/ordered_pair.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "multivariable",
+   "id": "polar_coordinates_integral",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Card-specific constants polar_map and polar_domain stand in for the substance of the statement ((0,∞)×(-π,π) and (r cos t, r sin t)); a different region or map would be indistinguishable. Write them out with product_set/open_interval/ordered_pair.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "multivariable",
+   "id": "change_of_variables",
+   "severity": "minor",
+   "codes": [
+    "ANSWER_WRONG"
+   ],
+   "issue": "Answer is openly an outline and cites the measure identity λ(f(A)) = ∫_A |det f'| (*) without proof; (*) is essentially the whole theorem, so a learner gets only the measure-theoretic bookkeeping. Acceptable under AUTHORING only if the cited step is stated exactly (it is) but consider marking it as area-formula-based or adding that proof.",
+   "patch": null,
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "ODE existence/uniqueness are stated correctly: uniqueness/continuous dependence use global x-Lipschitz with uniform constant K for every t and only right-derivatives on [a,b) (no spurious t-regularity); Picard-Lindelof has ball-Lipschitz, t-continuity, boundedness and the time-width condition (only flaw: conclusion lacks alpha in ball). Counterexamples (2*sqrt|y|, t|t|) check out. All fderiv/deriv/iteratedDerivWithin uses in these 107 cards are guarded by Differentiable/ContDiff/HasDerivAt hypotheses (no junk-value reliance); the junk occurrences are 0/0 (partials_exist_not_continuous), Matrix.inv (matrix_exponential_neg_inverse) and the integral-in-definition fourierCoeffOn.",
+  "OpenMath erases structure in many cards: index binders (forall (i) ...) have no range (continuous_iff_components, total_differential_formula, gradient_components, divergence_theorem_box), dimension variables n/m are bound but unused, real/complex scalar field is not recorded (normed_space/hilbert_space/inner_product_space 'over R or C' while targets are ℝ or ℂ), and norm/+/- are overloaded over vectors, operators and reals. A theorem over a different field or index range would give the same OpenMath.",
+  "Synonym symbols for one concept across vocabulary files: has_deriv_at (term_function f) / has_derivative_at / has_deriv_within_at (argument order (f d x s) in the meaning vs (f d s x) in use) / has_right_deriv_at; has_fderiv_at / has_frechet_derivative_at; continuous_map / fn_continuous_real / continuous_on_set_fn; convex_function_on_line vs convex_function_on f R. has_derivative_at is documented for real functions but applied to C-valued f (fourier_coefficient_integration_by_parts). Normalise to one symbol per concept.",
+  "Card-specific constants hide the statement in OpenMath (polar_map, polar_domain, box_boundary_flux, fourier_l2_family, l2_circle_space, trapezoid_sum, fourier_coeff_on); only generic-definition symbols (fourier_mode_circle T n x, ordered_pair, lambda) make the proposition retrievable and distinguishable.",
+  "Many hard_negatives are strawmen or have a reason without a witness (divergence_theorem_box, fourier_coefficient_l1_bound, riemann_lebesgue_real_line, poisson_summation_power_decay, krein_milman_theorem, matrix_exponential_*). Prefer a nearby false variant with an explicit counterexample.",
+  "Special-form vs general-form pairs lack boundary statements: amgm_two_variables / cauchy_schwarz_two_dimensional vs amgm_finite_family / cauchy_schwarz_finite_sum (same domain) and school_inequalities means_chain_two, amgm_three_product_form, cauchy_schwarz_three_terms; also n=2 coordinate forms in multivariable (partials_from_total_derivative, c1_partials_imply_differentiable) and finite-sum forms of holder/minkowski/jensen/bessel/fubini vs the measure-theoretic cards elsewhere. banach_fixed_point_real_constant is subsumed by topology_general.banach_fixed_point.",
+  "ode_uniqueness_lipschitz / ode_continuous_dependence / gronwall_norm_bound: K is NNReal in Lean but OpenMath has bare K without K>=0 (harmless: K<0 is unsatisfiable for nontrivial E); uniqueness is a corollary of continuous dependence (set f(a)=g(a)), kept as separate named patterns."
+ ],
+ "missing_neighbors": [
+  "Local-Lipschitz ODE uniqueness on a set: LipschitzOnWith K (v t) s, solutions with values in s agree (Mathlib ODE_solution_unique_of_mem_Icc / ODE_solution_unique).",
+  "Picard-Lindelöf with the solution staying in the ball (alpha t ∈ closedBall x0 a), and existence+uniqueness together (IsPicardLindelof.exists_eq_forall_mem_Icc_hasDerivWithinAt, ODE_solution_unique_of_mem_Icc).",
+  "Gronwall with variable coefficient / integral form u(t) <= c + ∫ K(s) u(s) ds (gronwallBound, norm_le_gronwallBound_of_norm_deriv_right_le).",
+  "Linear systems x' = A(t) x: existence/uniqueness and Wronskian (Liouville) formula det Φ' = tr A · det Φ; second-order variable-coefficient uniqueness.",
+  "Weighted AM-GM (Real.geom_mean_le_arith_mean_weighted) and real-exponent Bernoulli (one_add_mul_self_le_rpow_one_add) as the general forms behind the 2-variable/natural-power cards.",
+  "Jensen for convex functions on a real vector space / finite weights over a Finset (ConvexOn.map_sum_le) and its equality case with StrictConvexOn.",
+  "Fourier orthogonality for sin·sin and sin·cos on [-π,π] (integral_sin_mul_sin, integral_cos_mul_sin pattern) and Bessel/Parseval with infinite families (Orthonormal.tsum_inner_products_le).",
+  "IsLocalExtr.fderiv_eq_zero on a normed space (local extremum ⇒ fderiv f a = 0) and second-order condition (Hessian) for local minimum in R^n.",
+  "Symmetry of second derivatives for general normed spaces (second_derivative_symmetric / ContDiffAt.isSymmSndFDerivAt), the form Schwarz proofs cite.",
+  "Convexity from second derivative: f'' >= 0 on an interval ⇔ ConvexOn (convexOn_of_deriv2_nonneg), and convex function continuity on open interval.",
+  "Simpson/midpoint-rule error bounds and Newton iteration quadratic convergence (analogues of composite_trapezoid_error_bound).",
+  "Fixed-point iteration for locally contracting maps on a closed ball (ContractingWith on a closed subset) with a-priori/a-posteriori error bounds."
+ ]
+}

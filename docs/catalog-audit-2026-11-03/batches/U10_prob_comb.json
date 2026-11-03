@@ -1,0 +1,395 @@
+{
+ "batch": "U10_prob_comb",
+ "domains": [
+  "probability_statistics",
+  "combinatorics_graphs"
+ ],
+ "reviewed": 96,
+ "ok_ids": [
+  "prob_compl",
+  "prob_union_add_inter",
+  "total_probability_two",
+  "total_probability_partition",
+  "bayes_theorem",
+  "indep_set_iff_mul",
+  "indep_event_cond_eq",
+  "indep_fun_comp",
+  "expectation_linear",
+  "expectation_mono_ae",
+  "expectation_indicator",
+  "expectation_indep_mul",
+  "variance_eq_sub",
+  "variance_affine",
+  "variance_add_covariance",
+  "variance_zero_ae_const",
+  "mse_decomposition",
+  "covariance_eq_sub",
+  "covariance_indep_zero",
+  "covariance_cauchy_schwarz",
+  "sq_expectation_le",
+  "jensen_inequality",
+  "mgf_indep_add",
+  "weak_law_large_numbers",
+  "uniform_on_finset_prob",
+  "binomial_mean_finite",
+  "binomial_variance_finite",
+  "integral_condexp",
+  "condexp_tower",
+  "condexp_pull_out",
+  "condexp_indep_eq",
+  "martingale_expectation_const",
+  "submartingale_expectation_mono",
+  "sample_variance_algebra",
+  "card_union_add_card_inter",
+  "card_union_three_sets",
+  "card_cartesian_product",
+  "card_function_set",
+  "card_powerset",
+  "card_permutations",
+  "card_k_element_subsets",
+  "pascal_identity",
+  "binom_symmetry",
+  "binom_factorial_formula",
+  "binom_absorption",
+  "binomial_theorem",
+  "sum_binomials",
+  "alternating_sum_binomials",
+  "hockey_stick_identity",
+  "sum_squares_binomials",
+  "vandermonde_identity",
+  "multinomial_factorial_identity",
+  "inclusion_exclusion_principle",
+  "derangements_explicit_formula",
+  "pigeonhole_fiber_bound",
+  "pigeonhole_congruent_integers",
+  "double_counting_relation",
+  "catalan_central_binomial",
+  "fibonacci_partial_sum",
+  "cassini_identity",
+  "second_order_linear_recurrence_solution",
+  "handshake_degree_sum",
+  "even_number_odd_degree_vertices",
+  "two_vertices_same_degree",
+  "tree_edge_count",
+  "tree_unique_path_characterization",
+  "tree_has_leaf",
+  "connected_graph_edge_lower_bound",
+  "bipartite_iff_closed_walks_even",
+  "eulerian_circuit_even_degrees",
+  "eulerian_trail_odd_degree_count",
+  "ramsey_three_three_six",
+  "hall_marriage_theorem",
+  "sperner_theorem",
+  "chain_antichain_meet_at_most_once",
+  "antichain_size_le_chain_cover"
+ ],
+ "findings": [
+  {
+   "domain": "probability_statistics",
+   "id": "markov_inequality",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath symbol `tail_event` (meaning: the event {X >= c}) collides with the standard probability notion of a tail event (0-1 law); a retrieval hit for 'tail event' would reuse this card wrongly. Rename to a level-set symbol such as `ge_event` (or encode as (suchthat Omega (lambda (w) (>= (fn_value X w) c)))). Statement itself is faithful (finite measure, mu.real of a possibly non-measurable set is still exact).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "probability_statistics",
+   "id": "chebyshev_inequality",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath symbol `tail_event` (meaning: the event {X >= c}) collides with the standard probability notion of a tail event (0-1 law); a retrieval hit for 'tail event' would reuse this card wrongly. Rename to a level-set symbol such as `ge_event` (or encode as (suchthat Omega (lambda (w) (>= (fn_value X w) c)))). Statement itself is faithful (finite measure, mu.real of a possibly non-measurable set is still exact).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "probability_statistics",
+   "id": "chernoff_bound",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath symbol `tail_event` (meaning: the event {X >= c}) collides with the standard probability notion of a tail event (0-1 law); a retrieval hit for 'tail event' would reuse this card wrongly. Rename to a level-set symbol such as `ge_event` (or encode as (suchthat Omega (lambda (w) (>= (fn_value X w) c)))). Statement itself is faithful (finite measure, mu.real of a possibly non-measurable set is still exact).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "probability_statistics",
+   "id": "gaussian_mean_variance",
+   "severity": "minor",
+   "codes": [
+    "JUNK_VALUE",
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "target asserts `∫ x ∂gaussianReal m v = m` without integrability; Bochner integral of a non-integrable function is 0, so for m=0 this conjunct would hold even if the law were not integrable. The card is saved only because the variance conjunct (=v) forces L^2 when v>0, and v=0 is a Dirac mass. A reuser wanting 'N(m,v) has finite second moment' cannot extract it. Add MemLp id 2 as a conjunct (Mathlib: memLp_id_gaussianReal); OM already has expectation/variance symbols, add square_integrable_rv.",
+   "patch": {
+    "target": "∀ (m : ℝ) (v : NNReal), MeasureTheory.MemLp id 2 (ProbabilityTheory.gaussianReal m v) ∧ ∫ x, x ∂(ProbabilityTheory.gaussianReal m v) = m ∧ ProbabilityTheory.variance (fun x => x) (ProbabilityTheory.gaussianReal m v) = v",
+    "proof": "by\n  intro m v\n  exact ⟨ProbabilityTheory.memLp_id_gaussianReal 2, ProbabilityTheory.integral_id_gaussianReal, ProbabilityTheory.variance_fun_id_gaussianReal⟩",
+    "conclusion": "$N(m,v)$は2乗可積分で、期待値は$m$、分散は$v$である。",
+    "statement_en": "The normal distribution with parameters m and v ≥ 0 is square-integrable, has mean m and variance v.",
+    "openmath": "(forall (m v) (-> (>= v 0) (and (square_integrable_rv identity_rv (gaussian_measure m v)) (= (expectation (gaussian_measure m v) identity_rv) m) (= (variance (gaussian_measure m v) identity_rv) v))))"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "probability_statistics",
+   "id": "gaussian_indep_add",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Lean has v₁ v₂ : NNReal and the Japanese text says v_i ≥ 0, but the OpenMath quantifies v1 v2 over arbitrary terms with no (>= v 0) guard (card gaussian_mean_variance does include the guard). For negative v the symbol gaussian_measure is undefined, so the OM asserts more than the target.",
+   "patch": {
+    "openmath": "(forall (P X Y m1 m2 v1 v2) (-> (and (probability_measure P) (>= v1 0) (>= v2 0) (indep_rv P X Y) (has_law P X (gaussian_measure m1 v1)) (has_law P Y (gaussian_measure m2 v2))) (has_law P (+ X Y) (gaussian_measure (+ m1 m2) (+ v1 v2)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "probability_statistics",
+   "id": "variance_indep_sum",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Lean requires pairwise independence only for i,j in the finset s (Set.Pairwise ↑s); OM uses (pairwise_indep_rv P X), i.e. the whole family X, which is a stronger hypothesis, so OM encodes a weaker theorem. Restrict to s using the existing indep_rv.",
+   "patch": {
+    "openmath": "(forall (P s X) (-> (and (probability_measure P) (finite_set s) (forall (i) (-> (in i s) (square_integrable_rv (seq_value X i) P))) (forall (i j) (-> (and (in i s) (in j s) (!= i j)) (indep_rv P (seq_value X i) (seq_value X j))))) (= (variance P (sum s (lambda (i) (seq_value X i)))) (sum s (lambda (i) (variance P (seq_value X i)))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "probability_statistics",
+   "id": "sample_variance_unbiased",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Same as variance_indep_sum: Lean has Set.Pairwise on range n only, OM uses pairwise_indep_rv on the whole sequence X (stronger hypothesis). Also the OM states n>=2 with real subtraction (- n 1), which is fine.",
+   "patch": {
+    "openmath": "(forall (P X n m v) (-> (and (probability_measure P) (>= n 2) (forall (i j) (-> (and (in i (finset_range n)) (in j (finset_range n)) (!= i j)) (indep_rv P (seq_value X i) (seq_value X j)))) (forall (i) (-> (in i (finset_range n)) (and (square_integrable_rv (seq_value X i) P) (= (expectation P (seq_value X i)) m) (= (variance P (seq_value X i)) v))))) (= (expectation P (/ (sum (finset_range n) (lambda (i) (^ (- (seq_value X i) (/ (partial_sum_rv X n) n)) 2))) (- n 1))) v)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "probability_statistics",
+   "id": "poisson_limit_binomial",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OM relies on two card-specific symbols (binomial_rate_seq, binomial_prob_seq) that exist only to avoid a lambda inside seq_tends_to. Better: a reusable binomial_measure (Bin(n,p)) plus a limit-of-lambda predicate, so the same vocabulary serves other binomial/Poisson cards.",
+   "patch": {
+    "openmath": "(forall (p r k) (-> (and (forall (n) (-> (in n N) (and (<= 0 (seq_value p n)) (<= (seq_value p n) 1)))) (>= r 0) (in k N) (real_tends_to (lambda (n) (* n (seq_value p n))) r)) (real_tends_to (lambda (n) (prob (binomial_measure n (seq_value p n)) (set k))) (prob (poisson_measure r) (set k)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "probability_statistics",
+   "id": "borel_cantelli_second",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Divergence of an infinite series is encoded as the finite-sum symbol `sum` over N equal to `positive_infinity`; `prob` here is the ENNReal measure (Lean uses μ (A n) and ∑' in ENNReal) while in most other cards `prob` is the real μ.real, with no marker for the difference. Lean statement itself is faithful (ENNReal tsum has no junk).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "probability_statistics",
+   "id": "central_limit_theorem",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT",
+    "NEGATIVE_BAD"
+   ],
+   "issue": "(1) OM carries idle hypotheses (probability_measure Q, has_law Q Y ...) but its conclusion is dist_tends_to to the Gaussian measure, not to Y; Lean's Y-on-another-space formulation is a Mathlib artefact, so OM and Lean say the same only modulo 'such Y exists'. (2) hard_negative: Cauchy has no mean, so the centring n·E[X_0] in the claim is undefined; use a finite-mean infinite-variance law instead.",
+   "patch": {
+    "hard_negative": {
+     "statement": "独立同分布列$(X_i)$が可積分で分散が無限でも、同じ正規化$\\frac{1}{\\sqrt{n}}\\left(\\sum_{i<n}X_i-nE[X_0]\\right)$は正規分布に法則収束する。",
+     "reason": "$P(X_0>x)=x^{-3/2}$ ($x\\geq1$)は平均$3$をもつが分散は無限である。この場合$(\\sum_{i<n}X_i-nE[X_0])$は$n^{2/3}$のオーダーで揺れるので、$\\sqrt{n}$で割った列は緊密でなく、どんな正規分布にも法則収束しない。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "probability_statistics",
+   "id": "indep_event_compl",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative (A⊥B, A⊥C ⇒ A⊥B∩C) is a correct counterexample but concerns pairwise vs mutual independence, not the boundary of 'independence passes to complements'. Use a false variant of the actual claim.",
+   "patch": {
+    "hard_negative": {
+     "statement": "互いに素な事象$A,B$（$P(A)>0$、$P(B)>0$）について、$A$と$B^c$は独立である。",
+     "reason": "$P(A\\cap B^c)=P(A)$だが$P(A)P(B^c)=P(A)(1-P(B))<P(A)$なので独立でない。補集合に移せるのは、$A$と$B$がもともと独立な場合である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "probability_statistics",
+   "id": "sample_mean_unbiased",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative is about the variance of the sample mean, a different quantity from the card (unbiasedness of the mean without independence); not a boundary of this statement. Better: drop the common-mean hypothesis.",
+   "patch": {
+    "hard_negative": {
+     "statement": "各$X_i$が可積分であれば、期待値が共通でなくても標本平均の期待値は$E[X_0]$である。",
+     "reason": "$n=2$、$E[X_0]=0$、$E[X_1]=2$なら標本平均の期待値は$1\\neq E[X_0]$である。共通の期待値$m$の仮定が必要である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "probability_statistics",
+   "id": "strong_law_large_numbers",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative reason ('sample mean is Cauchy again, does not converge to a constant') does not by itself refute 'sample mean converges a.s.' (to a non-constant). Add the 0-1-law step: an a.s. limit of i.i.d. sample means is a tail variable hence constant, but the Cauchy sample mean is Cauchy.",
+   "patch": {
+    "hard_negative": {
+     "statement": "可積分性を仮定しなくても、独立同分布な実確率変数列の標本平均はほとんど確実に収束する。",
+     "reason": "標準コーシー分布の独立同分布列では標本平均$\\frac1n\\sum_{i<n}X_i$の分布が再び標準コーシー分布で、$n$によらない。ほとんど確実に収束するなら極限は末尾事象に可測でコルモゴロフの0-1法則により定数だが、コーシー分布は定数でない。よって収束しない。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "probability_statistics",
+   "id": "prob_union_bound_finite",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "statement_en omits the two facts that make the Lean target what it is: P is a probability measure and the A_i need not be measurable (P(S) is the outer measure value, μ.real S = (μ S).toReal, finite so no ENNReal junk). A reader of the English draft would assume measurable sets.",
+   "patch": {
+    "statement_en": "For a probability measure P and a finite family of arbitrary (not necessarily measurable) subsets A_i of the sample space, P(⋃_{i∈s} A_i) ≤ Σ_{i∈s} P(A_i), where P of a non-measurable set means its outer measure."
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "probability_statistics",
+   "id": "cond_mul_rule",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "statement_en says only 'if A has positive probability, P(B|A)P(A)=P(A∩B)' and omits that B is arbitrary (outer measure) and that P(B|A) is Mathlib's cond (= P(A∩B)/P(A)). As written the card is the definition of conditional probability re-stated; fine as a citable gap but the English should say so. Hypothesis 0 < μ.real A is exact (no toReal junk because the measure is finite).",
+   "patch": {
+    "statement_en": "For a probability measure P, a measurable event A with P(A) > 0 and an arbitrary set B, the conditional probability P(B|A) := P(A∩B)/P(A) satisfies P(B|A)·P(A) = P(A∩B) (P of a non-measurable set is its outer measure)."
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "probability_statistics",
+   "id": "doob_martingale",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Ad-hoc symbol doob_process (process n -> E[Y|F_n]) is used only here; martingale takes a term for the process, so a lambda cannot be passed. Encode through an existing term-level construction, e.g. add a reusable sequence constructor or a generic (seq_of (lambda (n) ...)) term, instead of a card-specific name.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "combinatorics_graphs",
+   "id": "weighted_sum_binomials",
+   "severity": "minor",
+   "codes": [
+    "OTHER",
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "Statement is the shifted form with N=n+1 (Σ_{k≤n+1} k·C(n+1,k)=(n+1)·2^n), chosen to dodge ℕ-subtraction in n·2^(n-1). The shift is an artefact: a proof citing 'Σ k C(N,k)=N 2^(N-1)' must match N=n+1 first. Equivalent shift-free form valid for all n: 2·Σ_{k≤n} k·C(n,k)=n·2^n.",
+   "patch": {
+    "statement": "自然数$n$について$2\\sum_{k=0}^{n}k\\binom{n}{k}=n\\,2^n$である。",
+    "statement_en": "For a natural number n, 2·Σ_{k=0}^{n} k·C(n, k) = n·2^n.",
+    "assumptions": [
+     "$n$は自然数"
+    ],
+    "quantifiers": [
+     "任意の自然数$n$"
+    ],
+    "conclusion": "$2\\sum_{k=0}^{n}k\\binom{n}{k}=n\\,2^n$が成り立つ。",
+    "openmath": "(forall (n) (-> (in n N) (= (* 2 (sum (integer_range 0 n) (lambda (k) (* k (binom n k))))) (* n (^ 2 n)))))",
+    "hard_negative": {
+     "statement": "$\\sum_{k=0}^{n}k\\binom{n}{k}=n\\,2^n$である。",
+     "reason": "$n=1$では左辺が$1$、右辺が$2$である。$2$倍した左辺が$n2^n$に等しく、$2$倍を落とすと$n2^{n-1}$になる。"
+    },
+    "target": "∀ n : ℕ, 2 * ∑ k ∈ Finset.range (n + 1), k * n.choose k = n * 2 ^ n",
+    "proof": "by\n  intro n\n  cases n with\n  | zero => simp\n  | succ n =>\n    rw [Nat.sum_range_mul_choose]\n    simp only [Nat.add_sub_cancel, pow_succ]\n    ring",
+    "answer": "$n$を自然数とし、$\\binom{n}{k}$を$n$元集合の$k$元部分集合の個数とする。$n$元集合$X$の部分集合$S$と$S$の元$x$の組$(S,x)$の個数を二通りに数える。$S$を先に選ぶと、$|S|=k$のとき$x$は$k$通りなので、総数は$\\sum_{k=0}^{n}k\\binom{n}{k}$である。$x$を先に選ぶと$n$通りで、$S\\setminus\\{x\\}$は$X\\setminus\\{x\\}$の任意の部分集合なので$2^{n-1}$通りである（$n\\geq1$）。よって$n\\geq1$のとき総数は$n2^{n-1}$であり、両辺を$2$倍して$2\\sum_{k=0}^{n}k\\binom{n}{k}=n2^n$を得る。$n=0$では両辺とも$0$である。"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "combinatorics_graphs",
+   "id": "turan_edge_bound",
+   "severity": "minor",
+   "codes": [
+    "JUNK_VALUE",
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "Target uses ℕ floor division and truncated subtraction: (n^2 - s^2)*(r-1)/(2*r). No junk is triggered (s ≤ n, r>0) and the division is exact (n^2-s^2=qr(qr+2s) gives q(qr+2s)(r-1)/2 ∈ ℕ), but the text/OM state a real fraction, and exactness is not part of the target. Stating the bound over ℚ (derived from the ℕ version, compiled) matches the text without relying on ℕ division. Note it is only the upper bound, not the extremal-graph part of Turán's theorem; the name is acceptable but statement_en could say 'upper bound'.",
+   "patch": {
+    "target": "∀ (V : Type*) [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj] (r : ℕ), 0 < r → G.CliqueFree (r + 1) → (G.edgeFinset.card : ℚ) ≤ (((Fintype.card V ^ 2 - (Fintype.card V % r) ^ 2) * (r - 1) : ℕ) : ℚ) / ((2 * r : ℕ) : ℚ) + (((Fintype.card V % r).choose 2 : ℕ) : ℚ)",
+    "proof": "by\n  intro V _ G _ r hr h\n  have h1 : G.edgeFinset.card ≤ ((Fintype.card V ^ 2 - (Fintype.card V % r) ^ 2) * (r - 1)) / (2 * r) + (Fintype.card V % r).choose 2 := h.card_edgeFinset_le\n  have h2 : ((((Fintype.card V ^ 2 - (Fintype.card V % r) ^ 2) * (r - 1)) / (2 * r) : ℕ) : ℚ) ≤ (((Fintype.card V ^ 2 - (Fintype.card V % r) ^ 2) * (r - 1) : ℕ) : ℚ) / ((2 * r : ℕ) : ℚ) := Nat.cast_div_le\n  have h3 : (G.edgeFinset.card : ℚ) ≤ ((((Fintype.card V ^ 2 - (Fintype.card V % r) ^ 2) * (r - 1)) / (2 * r) : ℕ) : ℚ) + (((Fintype.card V % r).choose 2 : ℕ) : ℚ) := by exact_mod_cast h1\n  linarith"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "combinatorics_graphs",
+   "id": "power_series_negative_binomial",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT",
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "The ring S is bound by (comm_ring S) but never occurs in the equation: formal_power_series_mk and power_series_x carry no carrier argument, so the same OpenMath is produced for a power-series identity over any ring/any variable and S is dangling. Add the coefficient ring as an argument (vocabulary: formal_power_series_mk args [term, term_function], power_series_x args [term]).",
+   "patch": {
+    "openmath": "(forall (S d) (-> (and (comm_ring S) (in d N)) (= (* (formal_power_series_mk S (lambda (n) (binom (+ d n) d))) (^ (- 1 (power_series_x S)) (+ d 1))) 1)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "combinatorics_graphs",
+   "id": "pigeonhole_injective_fail",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "n=1 case of pigeonhole_fiber_bound (|B|·1<|A| gives a fibre with >1 elements, i.e. two distinct x,y with f x=f y). Both are standard citable forms, so keep only if the 'two points collide' form is wanted for retrieval; otherwise merge.",
+   "patch": null,
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "Finiteness in combinatorics OMs is encoded as (in (size A) N), while probability OMs use finite_set; indexed unions use three symbols for one concept (union_over, union_all in probability; indexed_union_over in combinatorics) and families use seq_value (probability) vs family_value (combinatorics). Pick one symbol per concept across vocabularies.",
+  "Hypotheses 'pairwise/mutual independent on a finset s' are erased to whole-family predicates (pairwise_indep_rv P X) in OM (variance_indep_sum, sample_variance_unbiased); restricting to the index set must be explicit.",
+  "prob is overloaded: real-valued (μ.real) in most probability cards, ENNReal-valued in borel_cantelli_second / uniform_on_finset_prob / poisson_limit_binomial; tail_event misnames the level event {X>=c}.",
+  "Junk handling is generally good in this batch: every conditional-probability card assumes 0 < μ.real A, every variance/covariance card assumes MemLp 2, every expectation card assumes Integrable (no unguarded toReal or ∫ junk); combinatorial cards use Finset/Fintype so no Nat.card/ncard-on-infinite junk, and graph cards that allow infinite graphs (tree_unique_path, bipartite) correctly avoid Fintype/DecidableRel while finite ones add harmless [DecidableRel G.Adj] binders (reuse needs `classical`).",
+  "Several hard_negatives are true misconceptions about a neighbouring concept (independence pairwise vs mutual, variance instead of mean, converse relations between convergence modes) rather than a dropped hypothesis of the card itself; the counterexamples are correct but not boundary cases."
+ ],
+ "missing_neighbors": [
+  "Borel–Cantelli first lemma: Σ μ(A_n)<∞ → μ(limsup A_n)=0 (Mathlib measure_limsup_eq_zero); the SLLN answer cites it, but the batch has only the second lemma.",
+  "Law of total expectation / total variance: E[X]=E[E[X|G]] exists, but Var(X)=E[Var(X|G)]+Var(E[X|G]) is absent.",
+  "Variance of the sample mean for independent identically distributed variables: Var((1/n)ΣX_i)=σ²/n (a one-line consequence of variance_indep_sum, used by sample_variance_unbiased).",
+  "Cauchy–Schwarz / Hölder for expectations E|XY| ≤ (E X²)^{1/2}(E Y²)^{1/2} (integral_mul_le_Lp_mul_Lq).",
+  "Hoeffding's inequality / Hoeffding's lemma for bounded independent summands (ProbabilityTheory.measure_sum_ge_le_of_iIndepFun).",
+  "Binomial distribution as a measure: mean n·p and variance n·p(1-p) of ProbabilityTheory.binomial n p (the batch has only the algebraic sums), plus Poisson and geometric mean/variance.",
+  "Kolmogorov 0-1 law and independence of disjoint blocks of an independent family (iIndepFun.indepFun_finset).",
+  "Forest edge count |E|=|V|-c for acyclic graphs and Cayley's formula n^(n-2) for labelled trees; spanning tree existence for connected graphs.",
+  "Mantel/Turán equality case (r=2: bipartite K_{n/2,n/2}) and chromatic bound χ(G) ≤ Δ(G)+1.",
+  "Derangement recurrence d(n+2)=(n+1)(d(n)+d(n+1)) and Stirling numbers of the second kind basics.",
+  "Dilworth / Mirsky and Erdős–Szekeres (the chain/antichain cards give only the easy direction).",
+  "Complement conditional probability P(A^c|B)=1-P(A|B) for P(B)>0 and chain rule P(A∩B∩C)=P(A)P(B|A)P(C|A∩B) in general (measure) form."
+ ]
+}

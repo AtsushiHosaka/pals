@@ -1,0 +1,341 @@
+{
+ "batch": "S8_school_counting_prob",
+ "domains": [
+  "school_counting_probability"
+ ],
+ "reviewed": 59,
+ "ok_ids": [
+  "prob_uniform_range",
+  "prob_uniform_compl",
+  "prob_uniform_union_add_inter",
+  "prob_uniform_union_three",
+  "prob_uniform_at_least_one_family",
+  "prob_uniform_exactly_one_of_two",
+  "prob_uniform_inter_lower_bound",
+  "prob_uniform_disjoint_family_sum",
+  "cond_prob_uniform_ratio",
+  "indep_uniform_compl",
+  "trial_product_independent",
+  "trials_product_family",
+  "trials_two_coordinates_independent",
+  "trials_at_least_once",
+  "trials_exactly_k_times",
+  "binomial_prob_increase_iff",
+  "binomial_prob_sum_one",
+  "trials_first_occurrence",
+  "expectation_uniform_linear",
+  "expectation_uniform_distribution_form",
+  "expectation_uniform_tail_sum",
+  "expectation_product_trials_mul",
+  "expectation_trials_success_count",
+  "expectation_uniform_attains_mean",
+  "card_disjoint_family_sum",
+  "card_dependent_choice_product",
+  "card_injections_falling_factorial",
+  "circular_permutation_count",
+  "lot_drawing_position_fair",
+  "word_contains_letter_count",
+  "surjection_onto_two_count",
+  "prob_all_distinct_assignment",
+  "k_subsets_containing_fixed_set",
+  "hypergeometric_count",
+  "binary_words_fixed_ones_count",
+  "words_given_letter_counts_multinomial",
+  "multiset_combination_count",
+  "nat_solutions_count",
+  "binom_consecutive_ratio",
+  "binom_choose_twice",
+  "binom_increase_iff",
+  "even_size_subsets_count",
+  "multinomial_theorem",
+  "trinomial_expansion"
+ ],
+ "findings": [
+  {
+   "domain": "school_counting_probability",
+   "id": "positive_solutions_count",
+   "severity": "minor",
+   "codes": [
+    "JUNK_VALUE"
+   ],
+   "issue": "Target says Set.ncard S = r.choose n. For r<n the right side is 0, and ncard = 0 also holds for an infinite set, so the target never asserts that S is empty although the answer says 'no solutions'. S is finite; the Lean statement just does not say so. Patched target adds Set.Finite S as a conjunct (compiled, same allowed axioms).",
+   "patch": {
+    "target": "∀ n r : ℕ, {x : Fin (n + 1) → ℕ | (∀ i, 1 ≤ x i) ∧ ∑ i, x i = r + 1}.Finite ∧ {x : Fin (n + 1) → ℕ | (∀ i, 1 ≤ x i) ∧ ∑ i, x i = r + 1}.ncard = r.choose n",
+    "proof": "by\n  intro n r\n  refine ⟨?_, ?_⟩\n  · refine (Set.finite_Iic (fun _ : Fin (n + 1) => r + 1)).subset ?_\n    intro x hx i\n    have h1 : x i ≤ ∑ j, x j := Finset.single_le_sum (f := x) (fun j _ => Nat.zero_le _) (Finset.mem_univ i)\n    have h2 : ∑ j, x j = r + 1 := hx.2\n    show x i ≤ r + 1\n    omega\n  · show Set.ncard {x : Fin (n + 1) → ℕ | (∀ i, 1 ≤ x i) ∧ ∑ i, x i = r + 1} = r.choose n\n    by_cases hr : r < n\n    · rw [Nat.choose_eq_zero_of_lt hr]\n      have : {x : Fin (n + 1) → ℕ | (∀ i, 1 ≤ x i) ∧ ∑ i, x i = r + 1} = ∅ := by\n        ext x\n        simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and]\n        intro hx hs\n        have : ∑ i : Fin (n + 1), 1 ≤ ∑ i, x i := Finset.sum_le_sum fun i _ => hx i\n        simp at this\n        omega\n      rw [this, Set.ncard_empty]\n    · obtain ⟨d, rfl⟩ : ∃ d, r = n + d := ⟨r - n, by omega⟩\n      have hcount : Set.ncard {y : Fin (n + 1) → ℕ | ∑ i, y i = d} = (n + d).choose n := by\n        have h1 : Nat.card {P : Fin (n + 1) → ℕ // ∑ i, P i = d} = Nat.card (Sym (Fin (n + 1)) d) := Nat.card_congr (Sym.equivNatSumOfFintype (Fin (n + 1)) d).symm\n        have h2 : Nat.card (Sym (Fin (n + 1)) d) = (n + d).choose d := by\n          rw [Nat.card_eq_fintype_card, Sym.card_sym_eq_choose, Fintype.card_fin]\n          congr 1\n          omega\n        rw [← Nat.card_coe_set_eq]\n        change Nat.card {P : Fin (n + 1) → ℕ // ∑ i, P i = d} = _\n        rw [h1, h2]\n        exact (Nat.choose_symm_add).symm\n      rw [← hcount]\n      have hsum : ∀ y : Fin (n + 1) → ℕ, ∑ i, (y i + 1) = ∑ i, y i + (n + 1) := by\n        intro y\n        rw [Finset.sum_add_distrib]\n        simp\n      have himg : {x : Fin (n + 1) → ℕ | (∀ i, 1 ≤ x i) ∧ ∑ i, x i = n + d + 1} = (fun y i => y i + 1) '' {y : Fin (n + 1) → ℕ | ∑ i, y i = d} := by\n        ext x\n        simp only [Set.mem_setOf_eq, Set.mem_image]\n        constructor\n        · rintro ⟨hx, hs⟩\n          refine ⟨fun i => x i - 1, ?_, ?_⟩\n          · have e : ∑ i, ((x i - 1) + 1) = n + d + 1 := by\n              rw [← hs]\n              exact Finset.sum_congr rfl fun i _ => Nat.sub_add_cancel (hx i)\n            rw [hsum] at e\n            show ∑ i, (x i - 1) = d\n            omega\n          · funext i\n            exact Nat.sub_add_cancel (hx i)\n        · rintro ⟨y, hy, rfl⟩\n          refine ⟨fun i => Nat.le_add_left 1 (y i), ?_⟩\n          rw [hsum, hy]\n          omega\n      rw [himg]\n      refine Set.ncard_image_of_injective _ ?_\n      intro y y' h\n      funext i\n      have := congrFun h i\n      simpa using this\n  \n",
+    "conclusion": "解の集合は有限で、その個数は$\\binom{r}{n}$である（$r<n$のときは解が存在しない）。",
+    "statement_en": "For natural numbers n and r, the set of tuples of positive integers (x_0,...,x_n) with x_0+...+x_n=r+1 is finite and has C(r,n) elements (in particular it is empty when r<n)."
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "school_counting_probability",
+   "id": "trials_maximum_value",
+   "severity": "minor",
+   "codes": [
+    "JUNK_VALUE"
+   ],
+   "issue": "n is allowed to be 0. 'The maximum of the outcomes is k' is meaningless for an empty tuple; the Lean filter (all<=k and exists =k) returns 0, and the formula gives 0 only through 0^0=1 at k=0 (and (k+1)^0-k^0=0 in general). True but accidental. Add 0<n (patched target and proof compile).",
+   "patch": {
+    "target": "∀ (m n k : ℕ), 0 < n → k < m → ((Finset.univ.filter (fun ω : Fin n → Fin m => (∀ i, (ω i : ℕ) ≤ k) ∧ ∃ i, (ω i : ℕ) = k)).card : ℝ) / Fintype.card (Fin n → Fin m) = (((k : ℝ) + 1) ^ n - (k : ℝ) ^ n) / (m : ℝ) ^ n",
+    "proof": "by\n  intro m n k _ hk\n  have cnt : ∀ c : ℕ, c ≤ m → (Finset.univ.filter (fun ω : Fin n → Fin m => ∀ i, (ω i : ℕ) < c)).card = c ^ n := by\n    intro c hc\n    have e : Finset.univ.filter (fun ω : Fin n → Fin m => ∀ i, (ω i : ℕ) < c) = Fintype.piFinset (fun _ => Finset.univ.filter (fun x : Fin m => (x : ℕ) < c)) := by\n      ext ω; simp\n    have ec : (Finset.univ.filter (fun x : Fin m => (x : ℕ) < c)).card = c := by\n      rw [Fin.card_filter_val_lt]\n      exact min_eq_right hc\n    rw [e, Fintype.card_piFinset, Finset.prod_const, ec, Finset.card_univ, Fintype.card_fin]\n  have h1 := cnt (k + 1) hk\n  have h2 := cnt k hk.le\n  have hs : Finset.univ.filter (fun ω : Fin n → Fin m => ∀ i, (ω i : ℕ) < k + 1) = Finset.univ.filter (fun ω : Fin n → Fin m => (∀ i, (ω i : ℕ) ≤ k) ∧ ∃ i, (ω i : ℕ) = k) ∪ Finset.univ.filter (fun ω : Fin n → Fin m => ∀ i, (ω i : ℕ) < k) := by\n    ext ω\n    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union]\n    constructor\n    · intro hω\n      by_cases he : ∃ i, (ω i : ℕ) = k\n      · exact Or.inl ⟨fun i => Nat.le_of_lt_succ (hω i), he⟩\n      · refine Or.inr fun i => ?_\n        have := hω i\n        have hne : (ω i : ℕ) ≠ k := fun h => he ⟨i, h⟩\n        omega\n    · rintro (⟨h, _⟩ | h) i\n      · exact Nat.lt_succ_of_le (h i)\n      · exact Nat.lt_succ_of_lt (h i)\n  have hd : Disjoint (Finset.univ.filter (fun ω : Fin n → Fin m => (∀ i, (ω i : ℕ) ≤ k) ∧ ∃ i, (ω i : ℕ) = k)) (Finset.univ.filter (fun ω : Fin n → Fin m => ∀ i, (ω i : ℕ) < k)) := by\n    rw [Finset.disjoint_left]\n    intro ω hω hω'\n    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hω hω'\n    obtain ⟨_, i, hi⟩ := hω\n    have := hω' i\n    omega\n  have hc := Finset.card_union_of_disjoint hd\n  rw [← hs, h1, h2] at hc\n  have hc' : ((k : ℝ) + 1) ^ n = ((Finset.univ.filter (fun ω : Fin n → Fin m => (∀ i, (ω i : ℕ) ≤ k) ∧ ∃ i, (ω i : ℕ) = k)).card : ℝ) + (k : ℝ) ^ n := by\n    exact_mod_cast hc\n  rw [Fintype.card_fun, Fintype.card_fin, Fintype.card_fin]\n  push_cast\n  congr 1\n  linarith\n",
+    "openmath": "(forall (m n k) (-> (and (in m N) (in n N) (> n 0) (in k N) (< k m)) (= (/ (size (suchthat (function_set (integer_range 1 n) (integer_range 0 (- m 1))) (lambda (w) (and (forall (i) (-> (in i (integer_range 1 n)) (<= (fn_value w i) k))) (exists (i) (and (in i (integer_range 1 n)) (= (fn_value w i) k))))))) (size (function_set (integer_range 1 n) (integer_range 0 (- m 1))))) (/ (- (^ (+ k 1) n) (^ k n)) (^ m n)))))",
+    "assumptions": [
+     "$m,n,k$は自然数で$n\\geq1$",
+     "$k<m$",
+     "$\\omega\\in\\{0,\\dots,m-1\\}^n$の各要素は同様に確からしい"
+    ],
+    "quantifiers": [
+     "$n\\geq1$、$k<m$を満たす任意の自然数$m,n,k$"
+    ],
+    "statement_en": "In n >= 1 independent trials, each uniform on {0, 1, ..., m-1}, for k < m the probability that the maximum of the outcomes equals k is ((k+1)^n - k^n)/m^n."
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "school_counting_probability",
+   "id": "cond_prob_uniform_mul",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Same pattern as cond_prob_uniform_ratio: with P_A(B):=|A∩B|/|A|, both cards are the single identity |A∩B|/|Ω| = (|A|/|Ω|)(|A∩B|/|A|) rearranged. Keep one as the named 乗法定理 (this one) and drop or repurpose cond_prob_uniform_ratio, or make it the bridge to P(A∩B)/P(A) explicitly.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_counting_probability",
+   "id": "cond_prob_uniform_chain",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "Japanese statement/assumptions use P_X(Y) and P(E) without defining them (only statement_en and the answer say P_X(Y)=|X∩Y|/|X|). A reader taking P_A(B):=P(A∩B)/P(A) gets an equivalent but unstated reading; the card should carry the counting definition that the Lean target uses.",
+   "patch": {
+    "assumptions": [
+     "$\\Omega$は有限で空でない標本空間",
+     "$A,B,C\\subseteq\\Omega$",
+     "$A\\cap B\\neq\\emptyset$",
+     "事象$E$の確率は$P(E)=|E|/|\\Omega|$、空でない事象$X$について$P_X(Y)=|X\\cap Y|/|X|$と定める"
+    ]
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_counting_probability",
+   "id": "total_prob_uniform_two",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "Japanese statement/assumptions use P_X(Y) and P(E) without defining them (only statement_en and the answer say P_X(Y)=|X∩Y|/|X|). A reader taking P_A(B):=P(A∩B)/P(A) gets an equivalent but unstated reading; the card should carry the counting definition that the Lean target uses.",
+   "patch": {
+    "assumptions": [
+     "$\\Omega$は有限で空でない標本空間",
+     "$A,B\\subseteq\\Omega$",
+     "$A\\neq\\emptyset$",
+     "$\\overline{A}\\neq\\emptyset$",
+     "事象$E$の確率は$P(E)=|E|/|\\Omega|$、空でない事象$X$について$P_X(Y)=|X\\cap Y|/|X|$と定める"
+    ]
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_counting_probability",
+   "id": "total_prob_uniform_partition",
+   "severity": "minor",
+   "codes": [
+    "OTHER",
+    "NEGATIVE_BAD"
+   ],
+   "issue": "Japanese statement/assumptions use P_X(Y) and P(E) without defining them (only statement_en and the answer say P_X(Y)=|X∩Y|/|X|). A reader taking P_A(B):=P(A∩B)/P(A) gets an equivalent but unstated reading; the card should carry the counting definition that the Lean target uses. Also the hard_negative reason 'A_1=A_2=Ω gives 2P(B)' is a counterexample only when P(B)>0; state it.",
+   "patch": {
+    "assumptions": [
+     "$\\Omega$は有限で空でない標本空間",
+     "$I$は有限集合",
+     "各$A_i$は空でない",
+     "$i\\neq j$なら$A_i\\cap A_j=\\emptyset$",
+     "$\\bigcup_{i\\in I}A_i=\\Omega$",
+     "事象$E$の確率は$P(E)=|E|/|\\Omega|$、空でない事象$X$について$P_X(Y)=|X\\cap Y|/|X|$と定める"
+    ],
+    "hard_negative": {
+     "statement": "事象$A_i$が$\\Omega$を覆うだけで排反でなくても、$P(B)=\\sum_{i\\in I}P(A_i)P_{A_i}(B)$である。",
+     "reason": "重なりがあると$B$の要素が重複して数えられる。$A_1=A_2=\\Omega$で$B\\neq\\emptyset$なら右辺は$2P(B)\\neq P(B)$になる。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_counting_probability",
+   "id": "bayes_uniform_partition",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "Japanese statement/assumptions use P_X(Y) and P(E) without defining them (only statement_en and the answer say P_X(Y)=|X∩Y|/|X|). A reader taking P_A(B):=P(A∩B)/P(A) gets an equivalent but unstated reading; the card should carry the counting definition that the Lean target uses.",
+   "patch": {
+    "assumptions": [
+     "$\\Omega$は有限で空でない標本空間",
+     "$I$は有限集合で$k\\in I$",
+     "各$A_i$は空でない",
+     "$i\\neq j$なら$A_i\\cap A_j=\\emptyset$",
+     "$\\bigcup_{i\\in I}A_i=\\Omega$",
+     "$B\\neq\\emptyset$",
+     "事象$E$の確率は$P(E)=|E|/|\\Omega|$、空でない事象$X$について$P_X(Y)=|X\\cap Y|/|X|$と定める"
+    ]
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_counting_probability",
+   "id": "bayes_uniform_simple",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "Japanese statement/assumptions use P_X(Y) and P(E) without defining them (only statement_en and the answer say P_X(Y)=|X∩Y|/|X|). A reader taking P_A(B):=P(A∩B)/P(A) gets an equivalent but unstated reading; the card should carry the counting definition that the Lean target uses.",
+   "patch": {
+    "assumptions": [
+     "$\\Omega$は有限で空でない標本空間",
+     "$A,B\\subseteq\\Omega$",
+     "$A,B$は空でない",
+     "事象$E$の確率は$P(E)=|E|/|\\Omega|$、空でない事象$X$について$P_X(Y)=|X\\cap Y|/|X|$と定める"
+    ]
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_counting_probability",
+   "id": "indep_uniform_iff_cond",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "P_A(B) is not defined in the Japanese text (only in statement_en and the answer); the target uses |A∩B|/|A|. Add the definition to assumptions.",
+   "patch": {
+    "assumptions": [
+     "$\\Omega$は有限で空でない標本空間",
+     "$A,B\\subseteq\\Omega$",
+     "$A\\neq\\emptyset$",
+     "事象$E$の確率は$P(E)=|E|/|\\Omega|$、$P_A(B)=|A\\cap B|/|A|$と定める"
+    ]
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_counting_probability",
+   "id": "expectation_uniform_count_events",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative ('the formula holds only for independent A_i') is false as intended, but the reason's example A_1=A_2=A is non-independent only if 0<P(A)<1 (for P(A)=0 or 1 the pair is independent), which the reason does not state.",
+   "patch": {
+    "hard_negative": {
+     "statement": "この公式は事象$A_i$が独立なときに限って成り立つ。",
+     "reason": "独立性は不要である。$0<P(A)<1$の事象$A$について$A_1=A_2=A$とすると、$P(A\\cap A)=P(A)\\neq P(A)^2$なので独立ではないが、起こる個数は$\\omega\\in A$で$2$、それ以外で$0$であり、期待値は$2P(A)=P(A_1)+P(A_2)$である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_counting_probability",
+   "id": "expectation_uniform_total",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "Japanese text uses E[X] and E[X|A] without defining them (statement_en and answer do: uniform average over Ω and over A). E[X|A] in particular is the counting average, not a Mathlib/measure-theoretic conditional expectation, so it must be stated.",
+   "patch": {
+    "assumptions": [
+     "$\\Omega$は有限で空でない標本空間",
+     "$X:\\Omega\\to\\mathbb{R}$",
+     "$A\\neq\\emptyset$",
+     "$\\overline{A}\\neq\\emptyset$",
+     "事象$E$の確率は$P(E)=|E|/|\\Omega|$、期待値は$E[X]=\\frac{1}{|\\Omega|}\\sum_{\\omega\\in\\Omega}X(\\omega)$、空でない$B$について$E[X\\mid B]=\\frac{1}{|B|}\\sum_{\\omega\\in B}X(\\omega)$と定める"
+    ]
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_counting_probability",
+   "id": "falling_factorial_mul_factorial",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "nPk is not defined in the Japanese text; the target uses descFactorial n k = n(n-1)...(n-k+1). The answer defines it, the statement and assumptions do not.",
+   "patch": {
+    "assumptions": [
+     "$n,k$は自然数",
+     "$k\\leq n$",
+     "${}_{n}\\mathrm{P}_{k}=n(n-1)\\cdots(n-k+1)$（$k$個の積。$k=0$なら$1$、$k>n$なら積に$0$が現れて$0$）と定める"
+    ]
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_counting_probability",
+   "id": "falling_factorial_eq_factorial_mul_choose",
+   "severity": "minor",
+   "codes": [
+    "ANSWER_WRONG"
+   ],
+   "issue": "nPk is never defined in statement, assumptions or answer; the answer silently switches to 'number of ordered selections' and never links it to the product n(n-1)...(n-k+1) that the target (descFactorial) means. Gap, not an error.",
+   "patch": {
+    "assumptions": [
+     "$n,k$は自然数",
+     "${}_{n}\\mathrm{P}_{k}=n(n-1)\\cdots(n-k+1)$（$k$個の積。$k=0$なら$1$、$k>n$なら積に$0$が現れて$0$）と定める"
+    ],
+    "answer": "$n,k$を自然数とする。${}_{n}\\mathrm{P}_{k}=n(n-1)\\cdots(n-k+1)$とおく。これは$n$個から$k$個を選んで並べる順列の数に等しい（$1$番目から$k$番目までの選び方が$n,n-1,\\dots,n-k+1$通りで、積の法則による）。$k>n$なら${}_{n}\\mathrm{P}_{k}=0$、$\\binom{n}{k}=0$で両辺は$0$である。$k\\leq n$のとき、$n$個の異なるものから$k$個を選んで並べる順列を、並べるものの集合で分類する。$k$個の集合の選び方は$\\binom{n}{k}$通りであり、選んだ$k$個の並べ方はそれぞれ$k!$通りである。積の法則より${}_{n}\\mathrm{P}_{k}=\\binom{n}{k}k!$である。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_counting_probability",
+   "id": "strictly_increasing_sequences_count",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "strictly_increasing_fn is a one-use predicate symbol; strict monotonicity can be written with built-in < and forall, which keeps the structure visible and makes the encoding reusable (only binom remains non-standard).",
+   "patch": {
+    "openmath": "(forall (n k) (-> (and (in n N) (in k N)) (= (size (suchthat (function_set (integer_range 1 k) (integer_range 0 (- n 1))) (lambda (a) (forall (i j) (-> (and (in i (integer_range 1 k)) (in j (integer_range 1 k)) (< i j)) (< (fn_value a i) (fn_value a j))))))) (binom n k))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_counting_probability",
+   "id": "trinomial_coeff_product_binom",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE",
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "Three-part case of existing combinatorics_graphs/multinomial_factorial_identity (∏ (f i)! · multinomial = (Σ f i)!) and of words_given_letter_counts_multinomial in this batch; the constant 3 is not the point and the card never mentions a multinomial coefficient. Keep only if the 3-factor binomial-product form is deliberately kept for 数学A; otherwise drop or replace with the general recursion multinomial (insert a s) f = C(f a + Σ_s f, f a) · multinomial s f.",
+   "patch": null,
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "No Lean/text defect found in the 59 targets: every real division is guarded by Nonempty/nonzero-card hypotheses, every ℕ subtraction is guarded (k≤n, s≤k≤n, Nonempty S, T⊆S), choose/descFactorial vanish correctly for k>n, 0! cases are consistent, and elaborated coercions (checked with pp.coercions) are ℝ-division at the leaves. Only residual junk reliance: Set.ncard in positive_solutions_count.",
+  "Probability is modelled as a raw ratio |E|/|Ω| (and E[X], P_A(B) as counting averages) on a Fintype, never as Mathlib uniformOn/PMF or a probability measure. Faithful for the school model, but every card inlines the ratio in OpenMath instead of reusing prob/cond_prob/expectation/uniform_measure_on from probability_statistics.yaml, so retrieval will not link school and measure-theoretic versions (bayes, total probability, independence-of-complement, linearity of E all exist there as separate cards).",
+  "Vocabulary fragmentation across files: binom (counting) vs binomial_coefficient (probability_statistics), indexed_union_over vs union_over, integer_range vs finset_range; several one-use symbols (strictly_increasing_fn, circular_arrangement_classes, dependent_pair_set, weak_compositions, pair_first/second) hide structure in the symbol.",
+  "Japanese statement/assumptions often omit the counting definitions of P_X(Y), E[X], E[X|A] that the Lean target uses (they appear only in statement_en and the answer).",
+  "Redundant algebraic variants: cond_prob_uniform_ratio/mul, falling_factorial_mul_factorial/…_choose together with combinatorics_graphs/binom_factorial_formula (any two imply the third), trinomial_coeff_product_binom vs multinomial_factorial_identity.",
+  "Constants are handled well: general parametric forms (n,k,r,m,s variables) throughout; remaining constants (2 groups in surjection_onto_two_count, 3 terms in trinomial_*) are named school patterns, kept; general surjection-count form is missing (see neighbors)."
+ ],
+ "missing_neighbors": [
+  "Monotonicity and Boole/union bound in the uniform model: A⊆B → P(A)≤P(B); P(⋃_{i∈I}A_i) ≤ Σ P(A_i); P(A∩B) ≤ min(P(A),P(B)) (Finset.card_le_card, Finset.card_biUnion_le).",
+  "Inclusion–exclusion for finitely many events in probability form, P(⋃A_i)=Σ_{∅≠T}(-1)^{|T|+1}P(⋂_{i∈T}A_i) (Finset.inclusion_exclusion_card_biUnion; only the count form exists in combinatorics_graphs), and the 3-set 'none of A,B,C' count.",
+  "Derangements (完全順列) in the school form: D_n = Σ_{k≤n}(-1)^k n!/k!, D_{n+2}=(n+1)(D_n+D_{n+1}), probability of no fixed point (card_derangements_eq_numDerangements, numDerangements_sum, card_derangements_fin_add_two); only the explicit formula exists in combinatorics_graphs.",
+  "General surjection count |Surj(A,B)| = Σ_{j=0}^{|B|}(-1)^j C(|B|,j)(|B|-j)^{|A|} (and 3-box case 3^n-3·2^n+3); no Mathlib lemma found by grep, needs inclusion–exclusion.",
+  "Unlabelled grouping (組分け): (2n)!/(2^n n!) perfect pairings, groups of equal size m·k: (mk)!/((k!)^m m!); and labelled groups of given sizes (multinomial, partly covered by words_given_letter_counts_multinomial).",
+  "Adjacency arrangements: k specified items adjacent → (n-k+1)!·k!; no two of k specified items adjacent → (n-k)!·C(n-k+1,k).",
+  "k-subsets of {1..n} with no two consecutive elements: C(n-k+1,k); also shortest lattice paths through a given point C(a+b,a)·C(c+d,c) and paths avoiding a point (subtraction).",
+  "Hypergeometric probability C(a,j)C(b,k-j)/C(a+b,k) and Σ_j of it = 1 (Vandermonde, in combinatorics_graphs), i.e. the probability form of hypergeometric_count.",
+  "Variance in the uniform model: V(X)=E[X²]-(E[X])², V(aX+b)=a²V(X), E(aX+b)=aE(X)+b, V(X+Y)=V(X)+V(Y) for X(ω1),Y(ω2) on a product space, binomial V=np(1-p) via counting (probability_statistics has measure versions binomial_variance_finite).",
+  "Conditional probability as a probability: P_A(B^c)=1-P_A(B), P_A(B∪C)=P_A(B)+P_A(C)-P_A(B∩C) for P(A)>0; chain rule for n events; mutual independence of three events (P(A∩B∩C)=P(A)P(B)P(C)) and pairwise-but-not-mutual counterexample.",
+  "Statistics 数学B 統計的な推測: sample mean E(X̄)=m, V(X̄)=σ²/n for independent identically distributed draws, standardisation E((X-m)/σ)=0, V=1; normal approximation to B(n,p) (Mathlib has ProbabilityTheory CLT / PMF.binomial, not school-level cards).",
+  "Binomial mode: P_k is maximal at k=⌊(n+1)p⌋ (corollary of binomial_prob_increase_iff) and Σ_k k·C(n,k)p^k(1-p)^{n-k}=np with real p (exists as probability_statistics/binomial_mean_finite; the school domain only has the uniform-model version expectation_trials_success_count)."
+ ]
+}

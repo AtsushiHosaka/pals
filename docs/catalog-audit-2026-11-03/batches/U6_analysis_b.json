@@ -1,0 +1,472 @@
+{
+ "batch": "U6_analysis_b",
+ "domains": [
+  "complex_analysis",
+  "advanced_undergrad"
+ ],
+ "reviewed": 78,
+ "ok_ids": [
+  "conj_mul_self_eq_norm_sq",
+  "inv_eq_conj_div_norm_sq",
+  "re_im_norm_bounds",
+  "norm_exp_eq_exp_re",
+  "complex_cos_exp_formula",
+  "de_moivre_formula",
+  "root_of_unity_norm_one",
+  "root_of_unity_geometric_sum_zero",
+  "polar_form",
+  "exp_principal_log",
+  "principal_log_derivative",
+  "cauchy_riemann_necessary",
+  "conj_not_complex_differentiable",
+  "const_of_zero_complex_derivative",
+  "circle_integral_zpow_vanishes",
+  "cauchy_integral_theorem_disc",
+  "cauchy_estimate_iterated_derivative",
+  "liouville_theorem",
+  "entire_constant_of_limit_at_infinity",
+  "entire_bounded_below_constant",
+  "holomorphic_implies_analytic",
+  "taylor_series_on_disc",
+  "derivative_of_holomorphic_is_holomorphic",
+  "maximum_modulus_principle",
+  "modulus_bounded_by_boundary",
+  "constant_real_part_implies_constant",
+  "schwarz_lemma",
+  "schwarz_lemma_equality",
+  "holomorphic_zero_factor",
+  "holomorphic_series_m_test",
+  "primitive_on_disc",
+  "maschke_invariant_complement",
+  "character_is_class_function",
+  "lie_bracket_anticommutative",
+  "lie_derived_series_antitone",
+  "solvable_lie_algebra_surjective_image",
+  "engel_nilpotent_iff_ad_nilpotent",
+  "ring_of_integers_is_dedekind",
+  "class_group_of_number_field_finite",
+  "class_number_one_iff_pid",
+  "field_norm_of_base_element",
+  "integer_unit_iff_norm_abs_one",
+  "padic_norm_ultrametric",
+  "padic_norm_sum_of_distinct_norms",
+  "padic_integer_unit_iff_norm_one",
+  "padic_numbers_complete",
+  "hensel_lifting_padic_integers",
+  "dirichlet_primes_in_progression",
+  "elliptic_curve_points_group_law",
+  "first_order_compactness",
+  "godel_beta_function_coding"
+ ],
+ "findings": [
+  {
+   "domain": "complex_analysis",
+   "id": "open_mapping_theorem",
+   "severity": "critical",
+   "codes": [
+    "DUPLICATE",
+    "OTHER"
+   ],
+   "issue": "Same id `open_mapping_theorem` also exists in functional_analysis (Banach open mapping theorem, a different theorem). An id-keyed DB will overwrite or reject one of them, and a reuse query could return the wrong theorem. Rename this one to `holomorphic_open_mapping_theorem` and the other to `banach_open_mapping_theorem`; the content here is otherwise faithful (matches Mathlib's AnalyticOnNhd.is_constant_or_isOpen).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "complex_analysis",
+   "id": "fundamental_theorem_of_algebra",
+   "severity": "major",
+   "codes": [
+    "DUPLICATE",
+    "OM_FORMAT"
+   ],
+   "issue": "Same id exists in field_galois (target is the conjunction 'root existence and IsAlgClosed ℂ'). Duplicate id and overlapping content; keep one card (suggest keeping this clean hypothesis form as `complex_polynomial_has_root`, or drop it and let field_galois own the id). The two OpenMath encodings also use different symbols for the same concepts (complex_polynomial/polynomial_degree here vs polynomial_over/poly_degree there), so identical theorems get different retrieval XML.",
+   "patch": {
+    "openmath": "(forall (f) (-> (and (polynomial_over f C) (> (poly_degree f) 0)) (exists (z) (and (in z C) (= (poly_eval f z) 0)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "complex_analysis",
+   "id": "riemann_removable_singularity",
+   "severity": "major",
+   "codes": [
+    "WEAK_OR_OVERNAMED"
+   ],
+   "issue": "Hypothesis is boundedness on ALL of s∖{c}, not near c as in Riemann's theorem. Typical uses (e.g. sin z / z on ℂ∖{0}, which is unbounded on ℂ∖{0}) cannot cite this card directly. Patch uses local boundedness near c (Mathlib Complex.differentiableOn_update_limUnder_of_isLittleO); compiled.",
+   "patch": {
+    "statement": "開集合$s\\subset\\mathbb{C}$の点$c$について、$f$が$s\\setminus\\{c\\}$で正則であり、$c$の近くで($c$自身を除いて)有界ならば、$s$全体で正則で$s\\setminus\\{c\\}$で$f$に一致する関数$g$が存在する(リーマンの除去可能特異点定理)。",
+    "statement_en": "If s is an open set containing c, f is holomorphic on s minus {c}, and f is bounded on some punctured neighbourhood of c, then there is a function g holomorphic on s that agrees with f on s minus {c}.",
+    "assumptions": [
+     "$s\\subset\\mathbb{C}$は開集合",
+     "$c\\in s$",
+     "$f$は$s\\setminus\\{c\\}$で正則",
+     "ある$M\\in\\mathbb{R}$と$\\rho>0$があり、$0<|z-c|<\\rho$を満たす全ての$z$で$|f(z)|\\leq M$"
+    ],
+    "quantifiers": [
+     "任意の関数$f:\\mathbb{C}\\to\\mathbb{C}$",
+     "任意の集合$s\\subset\\mathbb{C}$",
+     "任意の$c\\in\\mathbb{C}$",
+     "ある関数$g:\\mathbb{C}\\to\\mathbb{C}$"
+    ],
+    "openmath": "(forall (f s c) (-> (and (open_set s) (in c s) (holomorphic_on f (setdiff s (set c))) (exists (M r) (and (> r 0) (forall (z) (-> (and (in z (open_disc c r)) (!= z c)) (<= (abs (fn_value f z)) M)))))) (exists (g) (and (holomorphic_on g s) (forall (z) (-> (in z (setdiff s (set c))) (= (fn_value g z) (fn_value f z))))))))",
+    "target": "∀ (f : ℂ → ℂ) (s : Set ℂ) (c : ℂ), IsOpen s → c ∈ s → DifferentiableOn ℂ f (s \\ {c}) → (∃ M : ℝ, ∀ᶠ z in nhdsWithin c {c}ᶜ, ‖f z‖ ≤ M) → ∃ g : ℂ → ℂ, DifferentiableOn ℂ g s ∧ ∀ z ∈ s \\ {c}, g z = f z",
+    "proof": "by\n  intro f s c hs hc hd hb\n  obtain ⟨M, hM⟩ := hb\n  refine ⟨Function.update f c (Filter.limUnder (nhdsWithin c {c}ᶜ) f), ?_, ?_⟩\n  · apply Complex.differentiableOn_update_limUnder_of_isLittleO (hs.mem_nhds hc) hd\n    apply Filter.IsBoundedUnder.isLittleO_sub_self_inv\n    refine ⟨M + ‖f c‖, Filter.eventually_map.2 (hM.mono fun z hz => ?_)⟩\n    exact norm_sub_le_of_le hz le_rfl\n  · intro z hz\n    exact Function.update_of_ne (fun h => hz.2 (by simp [h])) _ _",
+    "answer": "$s\\subset\\mathbb{C}$を開集合、$c\\in s$とし、$f$は$s\\setminus\\{c\\}$で正則で、ある$M\\in\\mathbb{R}$と$\\rho_0>0$について$0<|z-c|<\\rho_0$なら$|f(z)|\\leq M$であるとする。$s$は開集合なので、開円板$D=\\{z\\mid|z-c|<\\rho\\}$が$s$に含まれ$0<\\rho\\leq\\rho_0$となる$\\rho$がとれる。このとき$D\\setminus\\{c\\}$上で$|f|\\leq M$である。\n$z\\neq c$で$h(z)=(z-c)^2 f(z)$、$h(c)=0$と定める。$h$は$s\\setminus\\{c\\}$で正則である。また$z\\in D\\setminus\\{c\\}$で$\\left|\\frac{h(z)-h(c)}{z-c}\\right|=|z-c||f(z)|\\leq M|z-c|$なので、$h$は$c$でも複素微分可能で$h'(c)=0$である。よって$h$は$s$全体で正則である。\n$D$上でテイラー展開により$h(z)=\\sum_{n\\geq 0}a_n(z-c)^n$と書ける。$a_0=h(c)=0$、$a_1=h'(c)=0$である。$k(z)=\\sum_{n\\geq 2}a_n(z-c)^{n-2}$は$D$で収束するべき級数なので正則であり、$h(z)=(z-c)^2 k(z)$である。$z\\in D\\setminus\\{c\\}$では$k(z)=f(z)$である。\n$z\\in s\\setminus\\{c\\}$で$g(z)=f(z)$、$g(c)=k(c)$と定める。$s\\setminus\\{c\\}$は開集合なので$g$はそこで正則であり、$D$上で$g=k$なので$c$でも正則である。よって$g$が求める関数である。"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "complex_analysis",
+   "id": "cauchy_riemann_sufficient",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED",
+    "MISLABEL"
+   ],
+   "issue": "Id/topic promise the Cauchy-Riemann sufficient condition (u_x=v_y, u_y=-v_x with real differentiability ⇒ holomorphic), but the target is the operator form 'ℂ-differentiable ⇔ ℝ-differentiable ∧ Df(i)=i·Df(1)' (an iff, nothing about u,v). A proof needing the coordinate CR criterion will not find it. Rename id (e.g. `complex_differentiable_iff_real_differentiable_complex_linear`) or relabel topic; add the coordinate-form card (see missing_neighbors).",
+   "patch": {
+    "topic": "複素微分・実微分可能性と複素線形性(コーシー・リーマン条件の作用素形)"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "complex_analysis",
+   "id": "euler_formula",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "Stated only for real θ, while the neighbouring cards (de_moivre_formula answer, complex_cos_exp_formula) use e^{iw}=cos w+i sin w for complex w with no card providing it. Same power-series proof; Mathlib has it for all complex z (Complex.exp_mul_I). Real form is a corollary.",
+   "patch": {
+    "statement": "複素数$z$について、$e^{iz}=\\cos z+i\\sin z$が成り立つ。",
+    "statement_en": "For every complex number z, exp(iz) = cos z + i sin z.",
+    "assumptions": [
+     "$z\\in\\mathbb{C}$"
+    ],
+    "quantifiers": [
+     "任意の$z\\in\\mathbb{C}$"
+    ],
+    "conclusion": "$e^{iz}=\\cos z+i\\sin z$が成り立つ。",
+    "openmath": "(forall (z) (-> (in z C) (= (exp (* z complex_imaginary_unit)) (+ (cos z) (* complex_imaginary_unit (sin z))))))",
+    "target": "∀ (z : ℂ), Complex.exp (z * Complex.I) = Complex.cos z + Complex.sin z * Complex.I",
+    "proof": "by\n  intro z\n  exact Complex.exp_mul_I z",
+    "answer": "$z\\in\\mathbb{C}$とする。絶対収束するべき級数$e^w=\\sum_{n\\geq 0}w^n/n!$に$w=iz$を代入する。$i^{2m}=(-1)^m$、$i^{2m+1}=(-1)^m i$であり、絶対収束するので偶数次と奇数次の項に分けてよい。すると$e^{iz}=\\sum_{m\\geq 0}(-1)^m z^{2m}/(2m)!+i\\sum_{m\\geq 0}(-1)^m z^{2m+1}/(2m+1)!$となる。右辺の二つの和は、複素数の余弦と正弦をべき級数$\\cos z=\\sum_{m\\geq 0}(-1)^m z^{2m}/(2m)!$、$\\sin z=\\sum_{m\\geq 0}(-1)^m z^{2m+1}/(2m+1)!$で定めたものに等しいので、等式が成り立つ。"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "complex_analysis",
+   "id": "exp_eq_one_iff",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath uses the ad-hoc constant `pi_constant`, which duplicates core.yaml `pi` (same meaning). Retrieval splits identical π facts across two symbols (7 cards here use pi_constant). Use `pi`; no other change.",
+   "patch": {
+    "openmath": "(forall (z) (-> (in z C) (<-> (= (exp z) 1) (exists (n) (and (in n Z) (= z (* n (* 2 (* pi complex_imaginary_unit)))))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "complex_analysis",
+   "id": "principal_log_exp",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath uses the ad-hoc constant `pi_constant`, which duplicates core.yaml `pi` (same meaning). Retrieval splits identical π facts across two symbols (7 cards here use pi_constant). Use `pi`; no other change.",
+   "patch": {
+    "openmath": "(forall (z) (-> (and (in z C) (< (neg pi) (imag_part z)) (<= (imag_part z) pi)) (= (principal_log (exp z)) z)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "complex_analysis",
+   "id": "circle_integral_simple_pole",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath uses the ad-hoc constant `pi_constant`, which duplicates core.yaml `pi` (same meaning). Retrieval splits identical π facts across two symbols (7 cards here use pi_constant). Use `pi`; no other change.",
+   "patch": {
+    "openmath": "(forall (c w R) (-> (in w (open_disc c R)) (= (circle_integral (lambda (z) (/ 1 (- z w))) c R) (* 2 (* pi complex_imaginary_unit)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "complex_analysis",
+   "id": "circle_integral_ml_bound",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath uses the ad-hoc constant `pi_constant`, which duplicates core.yaml `pi` (same meaning). Retrieval splits identical π facts across two symbols (7 cards here use pi_constant). Use `pi`; no other change.",
+   "patch": {
+    "openmath": "(forall (f c R B) (-> (and (>= R 0) (continuous_on_set f (circle_set c R)) (forall (z) (-> (in z (circle_set c R)) (<= (abs (fn_value f z)) B)))) (<= (abs (circle_integral (lambda (z) (fn_value f z)) c R)) (* 2 (* pi (* R B))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "complex_analysis",
+   "id": "cauchy_integral_formula_disc",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath uses the ad-hoc constant `pi_constant`, which duplicates core.yaml `pi` (same meaning). Retrieval splits identical π facts across two symbols (7 cards here use pi_constant). Use `pi`; no other change.",
+   "patch": {
+    "openmath": "(forall (f c w R) (-> (and (> R 0) (holomorphic_on f (open_disc c R)) (continuous_on_set f (closed_disc c R)) (in w (open_disc c R))) (= (circle_integral (lambda (z) (/ (fn_value f z) (- z w))) c R) (* 2 (* pi (* complex_imaginary_unit (fn_value f w)))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "complex_analysis",
+   "id": "cauchy_derivative_formula",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath uses the ad-hoc constant `pi_constant`, which duplicates core.yaml `pi` (same meaning). Retrieval splits identical π facts across two symbols (7 cards here use pi_constant). Use `pi`; no other change.",
+   "patch": {
+    "openmath": "(forall (f U c w R) (-> (and (open_set U) (subset (closed_disc c R) U) (holomorphic_on f U) (in w (open_disc c R))) (= (complex_deriv f w) (/ (circle_integral (lambda (z) (/ (fn_value f z) (^ (- z w) 2))) c R) (* 2 (* pi complex_imaginary_unit))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "complex_analysis",
+   "id": "roots_of_unity_explicit",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT",
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OM writes the exponent as 2π·i·(/ k n) with k,n ∈ N; read as ℕ-division it is a different (false) statement with identical OpenMath, whereas the target divides in ℂ. Also uses pi_constant instead of core `pi`. Put the division on the complex numerator.",
+   "patch": {
+    "openmath": "(forall (n z) (-> (and (in n N) (> n 0) (in z C)) (<-> (= (^ z n) 1) (exists (k) (and (in k N) (< k n) (= z (exp (/ (* 2 (* pi (* complex_imaginary_unit k))) n))))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "complex_analysis",
+   "id": "holomorphic_mean_value_property",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "`circle_mean` is a single-use symbol that hides the integral and parametrisation, so the OpenMath cannot be matched against other integral statements. Spell out with interval_integral (add it to complex_analysis.yaml with the calculus_single signature) and core `pi`.",
+   "patch": {
+    "openmath": "(forall (f c R) (-> (and (> R 0) (holomorphic_on f (open_disc c R)) (continuous_on_set f (closed_disc c R))) (= (fn_value f c) (* (/ 1 (* 2 pi)) (interval_integral 0 (* 2 pi) (lambda (t) (fn_value f (+ c (* R (exp (* complex_imaginary_unit t)))))))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "complex_analysis",
+   "id": "isolated_zeros",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "`eventually_zero_near` / `eventually_nonzero_punctured` are single-use predicates that bake the neighbourhood quantifier into the symbol. Prefer an explicit (exists (r) (and (> r 0) (forall (z) (-> (in z (open_disc a r)) ...)))) disjunction with open_disc, so the radius binder is visible and reusable.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "complex_analysis",
+   "id": "identity_theorem",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "`accumulation_point_of_agreement` is a single-use predicate. Better: `(in a (set_closure (setdiff (suchthat ...) (set a))))` over the agreement set, or a generic `accumulation_point` of a set, reusable for isolated-zero and uniqueness statements.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "complex_analysis",
+   "id": "weierstrass_locally_uniform_limit",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "`derivative_sequence` and `derivative_function` are single-use higher-order symbols; use `(lambda (n) (lambda (z) (complex_deriv (seq_value F n) z)))` / `(lambda (z) (complex_deriv f z))`. `locally_uniform_limit` is a reasonable reusable concept and should be reused by other cards.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "advanced_undergrad",
+   "id": "schur_intertwiner_bijective_or_zero",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Target and text are for a Monoid G (groups included), but the OpenMath asserts `(group G)`, so the encoded statement is narrower and monoid queries do not match. Add `monoid: {args: [term], returns: prop, meaning: \"G is a monoid\"}` to advanced_undergrad.yaml and use it.",
+   "patch": {
+    "openmath": "(forall (k G V W r s f) (-> (and (field k) (monoid G) (linear_representation r k G V) (linear_representation s k G W) (irreducible_representation r) (irreducible_representation s) (intertwining_map f r s)) (or (bijective f) (= f 0))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "advanced_undergrad",
+   "id": "schur_endomorphism_is_scalar",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Target and text are for a Monoid G (groups included), but the OpenMath asserts `(group G)`, so the encoded statement is narrower and monoid queries do not match. Add `monoid: {args: [term], returns: prop, meaning: \"G is a monoid\"}` to advanced_undergrad.yaml and use it.",
+   "patch": {
+    "openmath": "(forall (k G V r f) (-> (and (field k) (algebraically_closed k) (monoid G) (finite_dim_space V) (linear_representation r k G V) (irreducible_representation r) (intertwining_map f r r)) (exists (c) (and (in c k) (forall (v) (-> (in v V) (= (fn_value f v) (scalar_action c v))))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "advanced_undergrad",
+   "id": "homology_map_functorial",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Target assumes [K.HasHomology i] [L.HasHomology i] [M.HasHomology i] (stated in the Japanese assumptions) but the OpenMath drops them, so the encoded claim is stronger than the proved one. Add a `has_homology` symbol (args K i). Complex shape and ZeroMorphisms are also erased but cannot be encoded with current vocabulary.",
+   "patch": {
+    "openmath": "(forall (C K L M f g i) (-> (and (homological_complex K C) (homological_complex L C) (homological_complex M C) (has_homology K i) (has_homology L i) (has_homology M i) (chain_map f K L) (chain_map g L M)) (and (= (homology_map (morphism_comp f g) i) (morphism_comp (homology_map f i) (homology_map g i))) (= (homology_map (identity_morphism K) i) (identity_morphism (homology_object K i))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "advanced_undergrad",
+   "id": "homotopic_chain_maps_same_homology",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Same issue as homology_map_functorial: the HasHomology hypotheses of the target are missing from the OpenMath.",
+   "patch": {
+    "openmath": "(forall (C K L f g i) (-> (and (preadditive_category C) (homological_complex K C) (homological_complex L C) (has_homology K i) (has_homology L i) (chain_map f K L) (chain_map g K L) (chain_homotopic f g)) (= (homology_map f i) (homology_map g i))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "advanced_undergrad",
+   "id": "lie_jacobi_cyclic_sum",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "statement_en says 'derived here from the Leibniz form of the axiom', which is proof method in the claim; the target is just the Jacobi identity in any LieRing (Leibniz is the axiom there, so the Japanese assumption is redundant).",
+   "patch": {
+    "statement_en": "In a Lie ring L, [x,[y,z]] + [y,[z,x]] + [z,[x,y]] = 0 for all x, y, z (the Jacobi identity).",
+    "assumptions": [
+     "$L$はリー環"
+    ]
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "advanced_undergrad",
+   "id": "lie_ideal_bracket_le_inf",
+   "severity": "minor",
+   "codes": [
+    "ANSWER_WRONG"
+   ],
+   "issue": "Answer calls [I,J] the 'submodule generated by the brackets'; in the target ⁅I,J⁆ is the Lie ideal generated by them. Containment is still true, but the closing step needs I∩J to be an ideal, not just a submodule.",
+   "patch": {
+    "answer": "$L$を可換環$R$上のリー代数、$I,J$を$L$のイデアルとする。$[I,J]$は$[x,y]$($x\\in I$, $y\\in J$)をすべて含む最小のイデアルである。$x\\in I$, $y\\in J$とする。$J$はイデアルなので$[x,y]\\in J$である。反可換性より$[x,y]=-[y,x]$であり、$I$はイデアルなので$[y,x]\\in I$である。よって$[x,y]\\in I\\cap J$である。$I$と$J$がともにイデアルなので$I\\cap J$もイデアルである。したがって$[x,y]$をすべて含む最小のイデアル$[I,J]$は$I\\cap J$に含まれる。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "advanced_undergrad",
+   "id": "cyclotomic_norm_zeta_sub_one",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "「$\\mathbb{Q}$の$p$次円分拡大」reads as 'degree p' (the field has degree p-1); the target is IsCyclotomicExtension {p} ℚ K, i.e. the p-th cyclotomic field. Reword (also in the first sentence of the answer).",
+   "patch": {
+    "statement": "$p$を奇素数、$K$を$\\mathbb{Q}$に$1$の原始$p$乗根を添加した円分体(第$p$円分体)、$\\zeta$を$K$の原始$p$乗根とする。整数環における$\\zeta-1$の$\\mathbb{Z}$へのノルムは$p$である。",
+    "assumptions": [
+     "$p$は奇素数",
+     "$K$は$\\mathbb{Q}$の第$p$円分体",
+     "$\\zeta$は$K$の原始$p$乗根"
+    ]
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "advanced_undergrad",
+   "id": "cyclotomic_integers_are_z_zeta",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "Same wording problem: 「$n$次円分拡大」 suggests degree n; target is the n-th cyclotomic field ℚ(ζ_n) of degree φ(n). Reword statement, assumptions and the first sentence of the answer.",
+   "patch": {
+    "statement": "$n$を正の整数、$K$を$\\mathbb{Q}$に$1$の原始$n$乗根を添加した円分体(第$n$円分体)、$\\zeta$を$K$の原始$n$乗根とする。$K$の元が代数的整数であることは、$\\mathbb{Z}[\\zeta]$に属することと同値である。",
+    "assumptions": [
+     "$n$は正の整数",
+     "$K$は$\\mathbb{Q}$の第$n$円分体",
+     "$\\zeta$は$K$の原始$n$乗根"
+    ]
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "advanced_undergrad",
+   "id": "lowenheim_skolem_up_and_down",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "The hard-negative reason speaks of 'a sentence' saying uncountably many constants are distinct; no single sentence does that. The correct argument: each c_i≠c_j is a sentence true in M, so an elementarily equivalent structure must contain uncountably many elements.",
+   "patch": {
+    "hard_negative": {
+     "statement": "無限構造Mと任意の無限基数κに対し、Mと初等同値で濃度κの構造がある。言語の濃度は問わない。",
+     "reason": "言語が非可算個の定数記号$c_i$をもち、$M$で$c_i\\neq c_j$($i\\neq j$)がすべて成り立つとする。各$c_i\\neq c_j$は$M$で成り立つ文なので、$M$と初等同値な構造はこれらをすべて満たし、非可算でなければならない。よって$\\kappa=\\aleph_0$では成り立たない。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "advanced_undergrad",
+   "id": "long_exact_homology_sequence",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED"
+   ],
+   "issue": "Only asserts ∃δ making three 3-term pieces exact; δ is not identified with the canonical connecting morphism and naturality/the full sequence are absent. Proofs that cite 'the connecting homomorphism' cannot use this directly. Acceptable if renamed `exists_connecting_morphism_exact` or strengthened to use ShortExact.δ.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "advanced_undergrad",
+   "id": "character_orthogonality_irreducible",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "`group_average_inner_product` and `order_invertible_in` are single-purpose symbols hiding the sum over G and the character values; the formula |G|^{-1} Σ χ_ρ(g)χ_σ(g^{-1}) is not visible in the OpenMath, so other character-sum statements cannot match it. Prefer an explicit sum (arith1 sum over G) of rep_character products.",
+   "patch": null,
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "Duplicate ids across domains: fundamental_theorem_of_algebra (field_galois) and open_mapping_theorem (functional_analysis, a different theorem). No other id of this batch collides with another domain.",
+  "OpenMath vocabulary fragmentation: pi vs pi_constant (core vs complex_analysis), complex_imaginary_unit vs complex_i, poly_degree/polynomial_degree, complex_polynomial vs polynomial_over; and many single-use predicates (circle_mean, eventually_zero_near, accumulation_point_of_agreement, derivative_sequence, group_average_inner_product) that bury the quantifier structure.",
+  "OpenMath drops implicit structure present in the Lean target (monoid vs group in Schur, HasHomology and complex shape in homological algebra, ℕ vs ℂ division), so different theorems can share identical retrieval XML.",
+  "Mathematical content is otherwise sound: all 78 targets are faithful to their Japanese/English text, no junk-value dependence found (all circle integrals have R>0 or continuity/integrability by hypothesis, deriv/iteratedDeriv only on open sets where differentiable, Complex.log/arg branch conditions are explicit), hard negatives verified with explicit counterexamples, and answers are complete with no Lean/Mathlib leakage.",
+  "Textual wording of 'n次円分拡大' for the n-th cyclotomic field recurs (2 cards) and is misleading."
+ ],
+ "missing_neighbors": [
+  "Cauchy-Riemann coordinate sufficient criterion: f real-differentiable at z with u_x=v_y and u_y=-v_x ⇒ complex differentiable (Mathlib: differentiableAt_iff_restrictScalars / HasFDerivAt.complexOfReal... via fderiv ℝ).",
+  "Converse of holomorphic_implies_analytic: analytic (convergent power series) ⇒ holomorphic (AnalyticOnNhd.differentiableOn) and termwise differentiation of power series.",
+  "General exp periodicity: exp z = exp w ↔ ∃ n:ℤ, z = w + n·2πi (Complex.exp_eq_exp_iff_exists_int); generalises exp_eq_one_iff.",
+  "Log laws with branch condition: Log(zw)=Log z+Log w iff Im Log z+Im Log w ∈ (-π,π]; Complex.log_mul / arg_mul_coe_angle; Log(z⁻¹) and Log(conj z) off the negative axis.",
+  "Cauchy integral theorem off a countable set / on convex open sets: Complex.circleIntegral_eq_zero_of_differentiable_on_off_countable and the annulus version (basis for Laurent series).",
+  "Cauchy integral formula for all derivatives with iteratedDeriv n (n!/(2πi)∮ f/(z-w)^(n+1)); the batch only has n=1 and the estimate.",
+  "Schwarz-Pick lemma / Schwarz lemma on a disc of radius R (|f(z)| ≤ M|z|/R) and Phragmén-Lindelöf.",
+  "Morera's theorem (continuous with vanishing triangle/disc integrals ⇒ holomorphic).",
+  "Laurent/Casorati-Weierstrass: essential singularity image is dense; pole characterisation |f|→∞.",
+  "Representation-theory neighbours of Maschke/orthogonality: Σ (dim ρ_i)^2 = |G| and number of irreducible characters = number of conjugacy classes (algebraically closed, char ∤ |G|).",
+  "Algebraic number theory: Minkowski bound / Dirichlet unit theorem, and Dedekind: O_K/I finite for I ≠ 0 (Ideal.finite_quotient...).",
+  "Homological algebra: snake lemma and five lemma in an abelian category (ShortComplex.SnakeInput), mapping cone long exact sequence."
+ ]
+}

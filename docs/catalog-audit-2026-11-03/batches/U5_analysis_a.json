@@ -1,0 +1,454 @@
+{
+ "batch": "U5_analysis_a",
+ "domains": [
+  "real_analysis",
+  "calculus_single"
+ ],
+ "reviewed": 107,
+ "ok_ids": [
+  "real_sup_exists",
+  "real_inf_exists",
+  "is_lub_iff_eps",
+  "lub_approx_sequence",
+  "nested_intervals",
+  "archimedean_property",
+  "le_of_forall_pos_add",
+  "rational_density",
+  "seq_limit_eps",
+  "seq_limit_add_mul",
+  "seq_limit_le",
+  "convergent_seq_bounded",
+  "bounded_mul_null_seq",
+  "monotone_convergence",
+  "bolzano_weierstrass",
+  "cauchy_iff_convergent",
+  "cauchy_eps",
+  "cauchy_bounded",
+  "limsup_liminf_of_tendsto",
+  "tendsto_of_liminf_eq_limsup",
+  "series_terms_tend_zero",
+  "series_comparison",
+  "absolute_convergence",
+  "ratio_test",
+  "alternating_series_test",
+  "geometric_series",
+  "harmonic_divergence",
+  "rearrangement_absolute",
+  "uniform_convergence_eps",
+  "pow_not_uniform",
+  "weierstrass_m_test",
+  "term_by_term_derivative",
+  "term_by_term_integral",
+  "uniform_limit_integral",
+  "dini_theorem",
+  "abel_power_series_lemma",
+  "power_series_uniform_on_interval",
+  "uniform_continuity_eps",
+  "square_not_uniform_continuous",
+  "continuous_pos_near",
+  "compact_positive_min",
+  "continuous_bump_function",
+  "weierstrass_approximation",
+  "arzela_ascoli",
+  "limit_epsilon_delta",
+  "limit_preserves_weak_order",
+  "limit_sequential_criterion",
+  "continuity_epsilon_delta",
+  "continuity_iff_one_sided_limits",
+  "monotone_bounded_limit_at_infinity",
+  "intermediate_value_theorem",
+  "continuous_bounded_on_closed_interval",
+  "continuous_injective_strictly_monotone",
+  "quotient_rule",
+  "power_rule_natural",
+  "real_power_derivative",
+  "exp_composite_derivative",
+  "trig_derivatives_sin_cos",
+  "arctan_derivative",
+  "rolle_theorem",
+  "mean_value_theorem",
+  "local_extremum_derivative_zero",
+  "nonnegative_derivative_monotone",
+  "zero_derivative_constant",
+  "same_derivative_differ_by_constant",
+  "lipschitz_from_derivative_bound",
+  "first_derivative_test_minimum",
+  "taylor_lagrange_remainder",
+  "taylor_second_order",
+  "add_one_le_exp",
+  "log_le_sub_one",
+  "abs_sin_le_abs",
+  "cos_quadratic_lower_bound",
+  "limit_sin_over_x",
+  "limit_one_add_div_rpow",
+  "limit_x_log_x_at_zero",
+  "fundamental_theorem_first",
+  "fundamental_theorem_second",
+  "integral_monotone",
+  "integral_two_sided_bound",
+  "improper_integral_exp_neg",
+  "improper_integral_power_at_infinity",
+  "improper_integral_power_at_zero",
+  "improper_power_diverges_at_infinity",
+  "improper_comparison_test"
+ ],
+ "findings": [
+  {
+   "domain": "real_analysis",
+   "id": "eventually_lt_of_limsup_lt",
+   "severity": "major",
+   "codes": [
+    "JUNK_VALUE",
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "Only 'bounded above' is assumed. In Lean, Filter.limsup on a real sequence that is unbounded below is the junk value sInf univ = 0 (checked: limsup(-n)=0). So for a_n=-n the target only covers c>0, while the text/answer claim every c (limsup=-infinity). The answer's remark about B unbounded below hides this. Fix: assume |a_n| <= M (as the sibling cards limsup_liminf_of_tendsto and tendsto_of_liminf_eq_limsup do).",
+   "patch": {
+    "statement": "有界な実数列の上極限が$c$より小さいなら、十分先の全ての項は$c$より小さい。",
+    "statement_en": "If the limit superior of a bounded real sequence is less than c, then all sufficiently late terms are less than c.",
+    "assumptions": [
+     "全ての$n$で$|a_n|\\leq M$",
+     "$\\limsup_n a_n<c$"
+    ],
+    "openmath": "(forall (a M c) (-> (and (forall (n) (<= (abs (seq_value a n)) M)) (< (seq_limsup a) c)) (exists (K) (forall (n) (-> (>= n K) (< (seq_value a n) c))))))",
+    "target": "∀ (a : ℕ → ℝ) (M c : ℝ), (∀ n, |a n| ≤ M) → Filter.limsup a Filter.atTop < c → ∃ N : ℕ, ∀ n : ℕ, N ≤ n → a n < c",
+    "proof": "by\n  intro a M c h h₁\n  have hu : Filter.IsBoundedUnder (· ≤ ·) Filter.atTop a :=\n    Filter.isBoundedUnder_of ⟨M, fun n => (abs_le.mp (h n)).2⟩\n  have h₂ := Filter.eventually_lt_of_limsup_lt h₁ hu\n  obtain ⟨N, hN⟩ := Filter.eventually_atTop.1 h₂\n  exact ⟨N, fun n hn => hN n hn⟩\n",
+    "answer": "$(a_n)$を実数列、$M,c\\in\\mathbb{R}$とし、全ての$n$で$|a_n|\\leq M$とする。$B$を、ある$N$について「$n\\geq N$なら$a_n\\leq b$」が成り立つ実数$b$全体の集合とする。上極限は$B$の下限である。$M\\in B$なので$B$は空でない。また$b\\in B$なら十分大きい$n$で$-M\\leq a_n\\leq b$なので$-M\\leq b$であり、$B$は下に有界である。\n$\\limsup_n a_n<c$とすると、$c$は$B$の下界ではない。したがって$b<c$となる$b\\in B$がある。$b\\in B$より、ある$N$があり、$n\\geq N$なら$a_n\\leq b<c$である。\n"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "real_analysis",
+   "id": "radius_of_convergence",
+   "severity": "major",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Target uses R : ENNReal (R=infinity allowed). The OpenMath has (exists (r) ...) with r an unrestricted term: no r>=0 range and no R=infinity case. For a=0 (series converges for all x) no finite r works, so the OpenMath proposition is false while the Lean target is true. Encode as a disjunction: finite r>=0, or summable everywhere.",
+   "patch": {
+    "openmath": "(forall (a) (or (exists (r) (and (>= r 0) (forall (x) (-> (< (abs x) r) (real_series_summable (lambda (n) (abs (* (seq_value a n) (^ x n))))))) (forall (x) (-> (< r (abs x)) (not (exists (S) (seq_fn_tends_to (lambda (K) (real_partial_sum (lambda (n) (* (seq_value a n) (^ x n))) K)) S))))))) (forall (x) (real_series_summable (lambda (n) (abs (* (seq_value a n) (^ x n))))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "real_analysis",
+   "id": "cauchy_product",
+   "severity": "major",
+   "codes": [
+    "ANSWER_WRONG"
+   ],
+   "issue": "The answer defines A,B as the signed sums of a_n, b_n but then bounds sum |c_n| by (sum|a_k|)(sum|b_l|) <= AB and uses A,B as bounds for absolute tails. These inequalities are false for signed A,B (e.g. a_n=-(1/2)^n). They need A'=sum|a_n|, B'=sum|b_n|. Statement, target, OpenMath are fine (HasSum-style, n-k only used with k<=n so no truncated subtraction).",
+   "patch": {
+    "answer": "$(a_n),(b_n)$を実数列とし、$\\sum_n|a_n|$と$\\sum_n|b_n|$が収束するとする。$A'=\\sum_n|a_n|$、$B'=\\sum_n|b_n|$、$A=\\sum_n a_n$、$B=\\sum_n b_n$とおき、$c_n=\\sum_{k\\leq n}a_kb_{n-k}$とする。\nまず$\\sum_n c_n$の絶対収束を示す。$\\sum_{n\\leq N}|c_n|\\leq\\sum_{n\\leq N}\\sum_{k+l=n}|a_k||b_l|\\leq(\\sum_{k\\leq N}|a_k|)(\\sum_{l\\leq N}|b_l|)\\leq A'B'$である。部分和は上に有界な単調増加列なので、$\\sum_n|c_n|$は収束する。絶対収束する級数は収束するので、$\\sum_n c_n$は収束する。\n次に和を求める。$A_N=\\sum_{k\\leq N}a_k$、$B_N=\\sum_{l\\leq N}b_l$、$C_N=\\sum_{n\\leq N}c_n$とおくと、$A_NB_N-C_N$は$k,l\\leq N$かつ$k+l>N$を満たす組$(k,l)$についての$a_kb_l$の和である。$m=\\lfloor N/2\\rfloor$とする。そのような組では$k>m$または$l>m$なので、$|A_NB_N-C_N|\\leq(\\sum_{k>m}|a_k|)B'+A'(\\sum_{l>m}|b_l|)$である。右辺は$N\\to\\infty$で$0$に収束する。$A_NB_N\\to AB$なので、$C_N$も$AB$に収束する。すなわち$\\sum_n c_n=AB$である。\n"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "real_analysis",
+   "id": "heine_cantor",
+   "severity": "major",
+   "codes": [
+    "OM_LEAN_MISMATCH",
+    "DUPLICATE"
+   ],
+   "issue": "Lean quantifies over metric spaces X,Y ([MetricSpace X] [MetricSpace Y]) and a compact S in X. The OpenMath drops both metric_space hypotheses and carriers, so the identical OpenMath would also encode the R->R special case (structure erased). Also overlaps topology_general.heine_cantor_metric (global version) - state that this is the 'continuous on a compact subset' form.",
+   "patch": {
+    "openmath": "(forall (X Y f S) (-> (and (metric_space X) (metric_space Y) (compact_in X S) (continuous_between (subspace_topology_on X S) Y f)) (uniformly_continuous_map (subspace_topology_on X S) Y f)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "real_analysis",
+   "id": "lub_add",
+   "severity": "minor",
+   "codes": [
+    "MISLABEL"
+   ],
+   "issue": "topic says 和集合の上限 (supremum of a union) but the card is about the sumset {x+y}. Everything else (target, OpenMath, hard_negative S=T=[-2,1] with product set sup 4) checks out; IsLUB forces nonemptiness so no junk.",
+   "patch": {
+    "topic": "上限・集合の和（和集合ではない）の上限"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "real_analysis",
+   "id": "root_test",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED"
+   ],
+   "issue": "Named as the Cauchy root test but only proves the l<1 half and only for a limit l (not limsup); the sibling ratio_test card has both l<1 and l>1 halves. The divergence half (l>1 => partial sums do not converge) is what a proof would also cite. Suggest adding the l>1 conjunct (as in ratio_test) or renaming to root_test_convergent. Not Lean-checked.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "real_analysis",
+   "id": "uniform_limit_continuous",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE",
+    "OTHER"
+   ],
+   "issue": "Same id as topology_general.uniform_limit_continuous but a different statement (ContinuousOn on S for R->R versus global Continuous X->Y metric). Statement, target, OpenMath, hard_negative (x^n on [0,1]) are correct. Rename (e.g. uniform_limit_continuous_on_real) so ids and reuse lookups do not collide.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "real_analysis",
+   "id": "continuous_agree_on_rationals",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Special case of topology_general.continuous_ext_on_dense (dense subset, Hausdorff target). Correct and fine as a small citeable gap, but the statement should say it is the R/Q special form; keep hard_negative on the continuity boundary (already so).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "real_analysis",
+   "id": "lipschitz_uniform_continuous",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative claims about a function on R but the counterexample sqrt(x) is given on [0,1]; it is not a function R->R and does not refute the R statement as written. Use sqrt|x|.",
+   "patch": {
+    "hard_negative": {
+     "statement": "一様連続な関数$f:\\mathbb{R}\\to\\mathbb{R}$はリプシッツ連続である。",
+     "reason": "$f(x)=\\sqrt{|x|}$は一様連続（$|\\sqrt{|x|}-\\sqrt{|y|}|\\leq\\sqrt{|x-y|}$）だが、$0$の近くで$f(h)/h=1/\\sqrt{h}$が非有界なので、どの$K$でも$|f(x)-f(y)|\\leq K|x-y|$を満たさない。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "calculus_single",
+   "id": "fixed_point_unit_interval",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "The constants 0,1 are not the point; the reusable fact is for any [a,b] (a<=b). Lean-checked general form below (intermediate_value_Icc' on f x - x). Keep the unit-interval form only if a proof cites it by name.",
+   "patch": {
+    "statement": "$a\\leq b$とし、$f:\\mathbb{R}\\to\\mathbb{R}$が$[a,b]$で連続で$f([a,b])\\subset[a,b]$ならば、$f(c)=c$となる$c\\in[a,b]$が存在する。",
+    "statement_en": "If a ≤ b, f is continuous on [a,b] and maps [a,b] into itself, then f has a fixed point c in [a,b].",
+    "assumptions": [
+     "$a\\leq b$",
+     "$f$は$[a,b]$で連続",
+     "$x\\in[a,b]$ならば$f(x)\\in[a,b]$"
+    ],
+    "quantifiers": [
+     "任意の$f:\\mathbb{R}\\to\\mathbb{R}$と$a,b\\in\\mathbb{R}$",
+     "ある$c\\in[a,b]$"
+    ],
+    "conclusion": "$f(c)=c$となる$c\\in[a,b]$が存在する。",
+    "openmath": "(forall (f a b) (-> (and (<= a b) (fn_continuous_on (lambda (x) (fn_value f x)) (closed_interval a b)) (forall (x) (-> (in x (closed_interval a b)) (in (fn_value f x) (closed_interval a b))))) (exists (c) (and (in c (closed_interval a b)) (= (fn_value f c) c)))))",
+    "target": "∀ (f : ℝ → ℝ) (a b : ℝ), a ≤ b → ContinuousOn f (Set.Icc a b) → (∀ x ∈ Set.Icc a b, f x ∈ Set.Icc a b) → ∃ c ∈ Set.Icc a b, f c = c",
+    "proof": "by\n  intro f a b hab hf hm\n  have hg : ContinuousOn (fun x => f x - x) (Set.Icc a b) := hf.sub continuousOn_id\n  have h0 := (hm a (Set.left_mem_Icc.mpr hab)).1\n  have h1 := (hm b (Set.right_mem_Icc.mpr hab)).2\n  obtain ⟨c, hc, e⟩ := intermediate_value_Icc' hab hg (show (0 : ℝ) ∈ Set.Icc (f b - b) (f a - a) from ⟨by linarith, by linarith⟩)\n  exact ⟨c, hc, by simpa [sub_eq_zero] using e⟩\n",
+    "answer": "$a\\leq b$とし、$f:\\mathbb{R}\\to\\mathbb{R}$は$[a,b]$で連続で、$x\\in[a,b]$ならば$f(x)\\in[a,b]$を満たすとする。$g(x)=f(x)-x$とおくと、$g$は$[a,b]$で連続である。$f(a)\\geq a$より$g(a)\\geq0$であり、$f(b)\\leq b$より$g(b)\\leq0$である。中間値の定理（$[a,b]$で連続な関数は$g(a)$と$g(b)$の間の値を$[a,b]$上でとる）より、$g(c)=0$となる$c\\in[a,b]$が存在する。この$c$が$f(c)=c$を満たす。\n",
+    "hard_negative": {
+     "statement": "$f$が開区間$(a,b)$で連続で$(a,b)$を$(a,b)$の中へ写すならば不動点をもつ。",
+     "reason": "$a<b$のとき$f(x)=(x+a)/2$は$(a,b)$を$(a,b)$の中へ写す連続関数だが、不動点は$a$だけで$(a,b)$に属さない。閉区間であることが必要である。"
+    }
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "calculus_single",
+   "id": "second_derivative_test_maximum",
+   "severity": "minor",
+   "codes": [
+    "JUNK_VALUE",
+    "TEXT_LEAN_MISMATCH",
+    "OM_FORMAT"
+   ],
+   "issue": "Target uses Mathlib's deriv f (value 0 where f is not differentiable) and (deriv f) differentiable at a; every sibling card uses the explicit-derivative pattern HasDerivAt f (g x) x. The result is still true (u<0 forces deriv f x /= 0 near a, hence differentiable), but the Lean target does NOT assume the 'f differentiable near a' hypothesis that the statement/assumptions list, and the OpenMath needs the ad hoc deriv_value. Rewrite with g, matching the text (Lean-checked).",
+   "patch": {
+    "statement": "$\\delta>0$とし、$f,g:\\mathbb{R}\\to\\mathbb{R}$について、$|x-a|<\\delta$の各点$x$で$f$の微分係数が$g(x)$であり、$g(a)=0$で、$g$の$a$での微分係数$u$が負ならば、$f$は$a$で極大をとる。",
+    "statement_en": "If δ > 0, f has derivative g(x) at every x with |x-a| < δ, g(a) = 0, and g has derivative u < 0 at a, then f has a local maximum at a.",
+    "assumptions": [
+     "$\\delta>0$",
+     "$|x-a|<\\delta$の各点$x$で$f$の微分係数は$g(x)$",
+     "$g(a)=0$",
+     "$g$の$a$での微分係数は$u$",
+     "$u<0$"
+    ],
+    "quantifiers": [
+     "任意の$f,g:\\mathbb{R}\\to\\mathbb{R}$と$a,u,\\delta\\in\\mathbb{R}$"
+    ],
+    "openmath": "(forall (f g a u d) (-> (and (> d 0) (forall (x) (-> (< (abs (- x a)) d) (has_deriv_at (lambda (t) (fn_value f t)) (fn_value g x) x))) (= (fn_value g a) 0) (has_deriv_at (lambda (x) (fn_value g x)) u a) (< u 0)) (local_max_at (lambda (x) (fn_value f x)) a)))",
+    "target": "∀ (f g : ℝ → ℝ) (a u δ : ℝ), 0 < δ → (∀ x : ℝ, |x - a| < δ → HasDerivAt f (g x) x) → g a = 0 → HasDerivAt g u a → u < 0 → IsLocalMax f a",
+    "proof": "by\n  intro f g a u δ hδ hf hg0 hg hu\n  have hnear : ∀ x : ℝ, |x - a| < δ → deriv f x = g x := fun x hx => (hf x hx).deriv\n  have hev : deriv f =ᶠ[nhds a] g := by\n    have : ∀ᶠ x in nhds a, |x - a| < δ := by\n      have : Metric.ball a δ ∈ nhds a := Metric.ball_mem_nhds a hδ\n      filter_upwards [this] with x hx\n      simpa [Real.dist_eq] using hx\n    filter_upwards [this] with x hx using hnear x hx\n  have h2 : HasDerivAt (deriv f) u a := hg.congr_of_eventuallyEq hev\n  have h0 : deriv f a = 0 := by rw [hnear a (by simpa using hδ), hg0]\n  have hca : ContinuousAt f a := (hf a (by simpa using hδ)).continuousAt\n  exact isLocalMax_of_deriv_deriv_neg (by rw [h2.deriv]; exact hu) h0 hca\n",
+    "answer": "$\\delta>0$とし、$f,g:\\mathbb{R}\\to\\mathbb{R}$、$a,u\\in\\mathbb{R}$とする。$|x-a|<\\delta$の各点$x$で$f$の微分係数は$g(x)$であり、$g(a)=0$、$g$の$a$での微分係数は$u<0$であるとする。\n$g(a)=0$より、$x\\to a$で$g(x)/(x-a)=(g(x)-g(a))/(x-a)\\to u<0$である。よってある$\\delta'\\in(0,\\delta]$があって、$0<|x-a|<\\delta'$で$g(x)/(x-a)<0$となる。すなわち$(a-\\delta',a)$で$g>0$、$(a,a+\\delta')$で$g<0$である。\n$x\\in(a-\\delta',a)$なら、$f$は$[x,a]$で微分可能なので連続であり、平均値の定理より$f(a)-f(x)=g(c)(a-x)$となる$c\\in(x,a)$がある。$g(c)>0$より$f(x)<f(a)$である。$x\\in(a,a+\\delta')$なら、同様に$f(x)-f(a)=g(c)(x-a)$となる$c\\in(a,x)$があり、$g(c)<0$より$f(x)<f(a)$である。よって$f$は$a$で極大をとる。\n"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "calculus_single",
+   "id": "limit_unique",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative talks about f whose domain has no points near a; for f:R->R (the card's setting) that situation cannot occur, so it is not checkable as a nearby false claim. Use the standard confusion: the limit equals f(a).",
+   "patch": {
+    "hard_negative": {
+     "statement": "$x\\to a$（$x\\neq a$）で$f(x)\\to L$ならば、$L=f(a)$である。",
+     "reason": "$x\\neq0$で$f(x)=0$、$f(0)=1$とすると、$x\\to0$（$x\\neq0$）の極限は$0$だが$f(0)=1$である。この極限は$a$での値と無関係である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "calculus_single",
+   "id": "log_composite_derivative",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative 'log f(x) is differentiable at a when f(a)<0' is true under the target's own semantics: Mathlib's Real.log is log|x|, so HasDerivAt (log o f) (u/f a) a holds for every f a /= 0. Only the mathematical-textbook reading makes it false. Use f(a)=0, which fails in both readings.",
+   "patch": {
+    "hard_negative": {
+     "statement": "$f$が$a$で微分可能で$f(a)\\geq0$ならば、$x\\mapsto\\log f(x)$は$a$で微分可能である。",
+     "reason": "$f(x)=x$、$a=0$では$f(a)=0$で、$\\log x$は$0$の近くで$-\\infty$へ発散するので$0$で微分可能でない。$f(a)>0$という仮定が必要である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "calculus_single",
+   "id": "integral_logarithmic_derivative",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD",
+    "JUNK_VALUE"
+   ],
+   "issue": "hard_negative f=x, g=1 on [-1,1]: in Lean the integral of the non-integrable 1/x is junk 0 and log 1 - log(-1)=0 (Real.log(-1)=0), so the 'false' formula evaluates TRUE. Choose an interval where the junk values disagree: [0,2] (integral junk 0, log 2 - log 0 = log 2).",
+   "patch": {
+    "hard_negative": {
+     "statement": "$f$が閉区間内で$0$になっても同じ公式が成り立つ。",
+     "reason": "$f(x)=x$、$g(x)=1$、区間$[0,2]$では、$1/x$は$0$の近くで積分可能でなく、$\\log f(0)$も定義されない。分母が$0$になる点では公式は意味をもたない。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "calculus_single",
+   "id": "riemann_sum_convergence",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "Counterexample (Dirichlet) is valid but the reason mixes up two different sums ('rational partition points give 1, irrational give 0'); an equal partition of [0,1] has only the points k/(n+1), all rational. Make the argument concrete: all left sums equal 1 while the integral is 0.",
+   "patch": {
+    "hard_negative": {
+     "statement": "$f$が$[a,b]$で有界であれば、等分の左端点リーマン和は常に積分に収束する。",
+     "reason": "$[0,1]$上のディリクレ関数（有理数で$1$、無理数で$0$）は有界である。分点$k/(n+1)$は全て有理数なので左端点リーマン和は常に$1$だが、積分は$0$である。連続性（または積分可能性）が必要である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "calculus_single",
+   "id": "monotone_right_limit_exists",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "infimum_on_right is a one-use ad hoc term symbol. Reusable encoding: the right limit m exists and m is the greatest lower bound (is_glb, already in real_analysis vocabulary) of the image set. Equivalent to the Lean sInf (f '' Ioi a) because that set is nonempty and bounded below by f a.",
+   "patch": {
+    "openmath": "(forall (f a) (-> (fn_monotone (lambda (x) (fn_value f x))) (exists (m S) (and (forall (y) (<-> (in y S) (exists (x) (and (> x a) (= y (fn_value f x)))))) (is_glb S m) (fn_right_limit_at (lambda (x) (fn_value f x)) a m)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "calculus_single",
+   "id": "chain_rule",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Same id as multivariable.chain_rule (HasFDerivAt on normed spaces). The R->R HasDerivAt version is a special case of it; both are correct. Rename (e.g. chain_rule_has_deriv_at) and say 'one variable' in the statement to avoid the special/general mis-reuse the README warns about.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "calculus_single",
+   "id": "product_rule",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Same id as multivariable.product_rule (HasFDerivAt). One-variable special case; correct. Rename (e.g. product_rule_has_deriv_at).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "calculus_single",
+   "id": "differentiable_implies_continuous",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Same id as multivariable.differentiable_implies_continuous (Frechet, normed spaces). One-variable HasDerivAt special case; correct. Rename (e.g. has_deriv_at_continuous_at).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "calculus_single",
+   "id": "extreme_value_theorem",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Same id as topology_general.extreme_value_theorem (compact set in a topological space). This is the [a,b] special case; correct, but rename (e.g. extreme_value_theorem_closed_interval) and note it is the interval form.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "calculus_single",
+   "id": "log_of_product",
+   "severity": "minor",
+   "codes": [
+    "MISLABEL",
+    "DUPLICATE"
+   ],
+   "issue": "Elementary identity (natural log, positive x,y) filed under single-variable calculus; it is the base-e case of school_exp_log.logb_mul_positive. Fine as a gap lemma but belongs with exp/log; consider dropping or moving.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "calculus_single",
+   "id": "sin_cos_addition",
+   "severity": "minor",
+   "codes": [
+    "MISLABEL",
+    "OM_FORMAT"
+   ],
+   "issue": "Trigonometric addition formulas belong to school_trigonometry (which already has sin_cos_sub), not single-variable calculus; the card also bundles two identities in one OpenMath conjunction. Consider moving and splitting.",
+   "patch": null,
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "Hard negatives are sometimes true under Lean/Mathlib semantics (Real.log = log|x|, junk integral 0) or about a different setting than the card (log_composite_derivative, integral_logarithmic_derivative, limit_unique, lipschitz_uniform_continuous): check each hard_negative against the target's own semantics, not only the textbook reading.",
+  "Sequence/derivative symbols are inconsistent: seq_tends_to (with seq_value), seq_fn_tends_to (lambda) and seq_limit_of (calculus_single) all mean 'sequence converges'; has_deriv_at is documented as 'at a with derivative u' in real_analysis.yaml but 'arguments f, u, a' in calculus_single.yaml (the cards use f,u,a). Fix the meaning string and unify sequence-limit naming.",
+  "Five ids collide across domains with generalized/special versions (chain_rule, product_rule, differentiable_implies_continuous, extreme_value_theorem, uniform_limit_continuous); rename and mark the form (one-variable / closed interval / ContinuousOn S).",
+  "Definition-unfolding cards (seq_limit_eps, cauchy_eps, uniform_convergence_eps, uniform_continuity_eps, limit_epsilon_delta, continuity_epsilon_delta) have answers that prove equivalence to Mathlib's filter/uniformity definition, so a learner holding the epsilon definition sees an almost vacuous argument; say explicitly that in R the neighbourhood/entourage basis is the epsilon-ball.",
+  "Junk-value hazards are otherwise handled well: deriv, tsum and integrals appear only with explicit HasDerivAt/Summable/IntegrableOn hypotheses; the one genuine leak is Filter.limsup/liminf in R without boundedness (eventually_lt_of_limsup_lt).",
+  "Improper integrals use IntegrableOn (absolute integrability) plus a value; OpenMath uses narrow half-line symbols integrable_on_ioi/integral_ioi, so intervals like (0,1] use interval_integrable instead. Conditionally convergent improper integrals are not covered, and no general integrable_on/integral_over symbol exists.",
+  "Several cards bundle 2-3 facts (add+mul limits, sin+cos derivative, ratio-test halves, exp_neg three claims): fine for correctness, coarse for retrieval."
+ ],
+ "missing_neighbors": [
+  "Squeeze theorem for sequences and for function limits (tendsto_of_tendsto_of_tendsto_of_le_of_le)",
+  "Subsequence of a convergent sequence converges to the same limit (Filter.Tendsto.comp with StrictMono.tendsto_atTop)",
+  "Heine-Borel in R: closed and bounded implies compact (Metric.isCompact_of_isClosed_isBounded)",
+  "L'Hopital's rule and Cauchy's mean value theorem (exists_ratio_hasDerivAt_eq_ratio_slope)",
+  "Derivative of an inverse function (HasDerivAt.of_local_left_inverse)",
+  "Integration by parts and substitution for interval integrals (intervalIntegral.integral_mul_deriv_eq_deriv_mul, integral_comp_mul_deriv)",
+  "Integral test for series / compare sum with improper integral (AntitoneOn.sum_le_integral)",
+  "d'Alembert/Cauchy tests with limsup and the divergence halves (limsup form of the root test)",
+  "Leibniz alternating series error bound |S - S_n| <= a_{n+1}",
+  "Conditionally convergent improper integral, e.g. integral of sin x / x on (0,inf), and Dirichlet/Abel test",
+  "Continuous image of an interval is an interval; odd-degree real polynomial has a real root (consequence of IVT)",
+  "Convexity from f'' >= 0 (or monotone f') and Jensen/tangent-line inequality; differentiation under the integral sign / dominated convergence exchange"
+ ]
+}

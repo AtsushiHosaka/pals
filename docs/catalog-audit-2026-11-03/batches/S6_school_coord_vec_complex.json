@@ -1,0 +1,354 @@
+{
+ "batch": "S6_school_coord_vec_complex",
+ "domains": [
+  "school_analytic_geometry",
+  "school_vectors_complex"
+ ],
+ "reviewed": 107,
+ "ok_ids": [
+  "dist_euclidean_plane_coordinates",
+  "coordinate_distance_triangle_inequality",
+  "right_angle_iff_pythagoras_coordinates",
+  "median_theorem_coordinates",
+  "internal_division_iff_ratio_equation",
+  "external_division_iff_ratio_equation",
+  "segment_point_distance_scale",
+  "line_two_points_iff_parametric",
+  "line_two_points_slope_form_iff",
+  "collinear_iff_determinant_zero",
+  "line_equation_unique_up_to_scalar",
+  "lines_cross_unique_intersection",
+  "lines_zero_det_disjoint_or_equal",
+  "slope_lines_perpendicular_iff_product_minus_one",
+  "general_lines_perpendicular_iff_normals_orthogonal",
+  "foot_of_perpendicular_formula",
+  "point_line_distance_formula",
+  "segment_meets_line_iff_sign_product",
+  "reflection_across_line_formula",
+  "circle_general_form_positive_center_radius",
+  "circle_general_form_nonpositive_degenerate",
+  "circle_center_radius_determined_by_set",
+  "circle_through_three_noncollinear_points_unique",
+  "circle_diameter_form_iff_right_angle_dot",
+  "line_meets_circle_iff_dist_le_radius",
+  "line_tangent_circle_iff_dist_eq_radius",
+  "line_secant_circle_iff_dist_lt_radius",
+  "circle_tangent_at_point",
+  "tangent_direction_iff_perpendicular_to_radius",
+  "tangent_length_sq_eq_power",
+  "tangent_contact_exists_iff_outside",
+  "chord_length_sq_formula",
+  "radical_axis_common_points",
+  "two_circles_meet_iff_triangle_inequality",
+  "circles_externally_tangent_unique_point",
+  "perpendicular_bisector_locus",
+  "apollonius_circle_locus",
+  "angle_bisector_equal_distance_locus",
+  "linear_function_on_triangle_le_max_vertices",
+  "disc_in_half_plane_iff",
+  "disc_in_disc_iff",
+  "dist_to_circle_max_min",
+  "parabola_tangents_sweep_region",
+  "parabola_focus_directrix_iff_standard",
+  "ellipse_focal_sum_iff_standard",
+  "hyperbola_focal_difference_iff_standard",
+  "conic_eccentricity_iff_standard",
+  "ellipse_focal_radius",
+  "ellipse_parametrization_cos_sin",
+  "inner_bilinear_expansion",
+  "norm_sq_linear_combination",
+  "sum_diff_perpendicular_iff_equal_norm",
+  "minimal_norm_on_line_orthogonal",
+  "independent_coefficient_comparison",
+  "independent_pair_iff_not_parallel",
+  "weighted_zero_sum_point_position",
+  "weighted_point_area_ratio",
+  "cevian_intersection_formula",
+  "collinear_iff_direction_multiple",
+  "line_ab_coefficient_sum_one",
+  "triangle_region_coefficients",
+  "plane_abc_coefficient_sum_one",
+  "coplanar_iff_affine_combination",
+  "foot_of_perpendicular_to_plane_exists",
+  "inner_sign_acute_obtuse",
+  "cos_angle_components",
+  "parallel_iff_determinant_zero",
+  "circle_diameter_inner_zero",
+  "angle_bisector_division_vector",
+  "space_line_symmetric_form",
+  "plane_parametric_iff_cross_normal",
+  "point_plane_distance",
+  "norm_sub_eq_norm_one_sub_conj_mul",
+  "polar_form_mul_div",
+  "polar_form_equality",
+  "arg_mul_div_mod_two_pi",
+  "arg_conj_inv",
+  "arg_pow_mod_two_pi",
+  "polar_form_pow",
+  "de_moivre_integer_exponent",
+  "nth_roots_polar",
+  "rotation_about_point",
+  "collinear_iff_ratio_im_zero",
+  "angle_eq_abs_arg_ratio",
+  "equilateral_iff_sum_squares_eq",
+  "root_of_unity_power_sum_divisibility",
+  "cos_sin_sum_regular_polygon",
+  "prod_one_sub_root_of_unity",
+  "pow_sub_one_factorization",
+  "conj_root_of_unity",
+  "cube_root_factorization_sum_cubes",
+  "root_of_unity_filter"
+ ],
+ "findings": [
+  {
+   "domain": "school_vectors_complex",
+   "id": "internal_division_formula",
+   "severity": "major",
+   "codes": [
+    "WEAK_OR_OVERNAMED",
+    "TARGET_UNFAITHFUL"
+   ],
+   "issue": "Target proves only formula => (P on segment AB and n*AP=m*PB). The reusable fact named 'internal_division_formula' is the converse: P on AB with m:n ratio => p=(na+mb)/(m+n); a proof citing this card cannot derive the position vector. The hard_negative itself assumes the ratio=>formula direction.",
+   "patch": {
+    "statement": "実内積空間の点$\\mathrm{A},\\mathrm{B},\\mathrm{P}$の位置ベクトルを$\\vec a,\\vec b,\\vec p$とし、$m,n>0$とする。$\\mathrm{P}$が線分$\\mathrm{AB}$上にあり$n\\,\\mathrm{AP}=m\\,\\mathrm{PB}$を満たす（すなわち$\\mathrm{P}$が線分$\\mathrm{AB}$を$m:n$に内分する）ことと、$\\vec p=\\dfrac{n\\vec a+m\\vec b}{m+n}$であることは同値である。",
+    "statement_en": "Let a, b, p be vectors in a real inner product space and m, n > 0. Then p lies on the segment from a to b with n|p-a| = m|b-p| if and only if p = (na+mb)/(m+n).",
+    "conclusion": "$\\mathrm{P}$が線分$\\mathrm{AB}$上にあり$n|\\vec p-\\vec a|=m|\\vec b-\\vec p|$であることと、$\\vec p=\\dfrac{n\\vec a+m\\vec b}{m+n}$であることは同値である。",
+    "openmath": "(forall (V a b p m n) (-> (and (inner_product_space_over R V) (in a V) (in b V) (in p V) (in m R) (in n R) (> m 0) (> n 0)) (<-> (and (in_segment p a b) (= (* n (norm (- p a))) (* m (norm (- b p))))) (= p (+ (smul (/ n (+ m n)) a) (smul (/ m (+ m n)) b))))))",
+    "target": "∀ (V : Type*) [NormedAddCommGroup V] [InnerProductSpace ℝ V] (a b P : V) (m n : ℝ), 0 < m → 0 < n → ((P ∈ segment ℝ a b ∧ n * ‖P - a‖ = m * ‖b - P‖) ↔ P = (n / (m + n)) • a + (m / (m + n)) • b)",
+    "proof": "by\n  intro V _ _ a b P m n hm hn\n  have hmn : m + n ≠ 0 := by positivity\n  constructor\n  · rintro ⟨⟨x, y, hx, hy, hxy, hP⟩, h⟩\n    have hy' : y = 1 - x := by linarith\n    subst hP\n    subst hy'\n    have h1 : x • a + (1 - x) • b - a = (1 - x) • (b - a) := by module\n    have h2 : b - (x • a + (1 - x) • b) = x • (b - a) := by module\n    rw [h1, h2, norm_smul, norm_smul, Real.norm_of_nonneg hx, Real.norm_of_nonneg hy] at h\n    by_cases hab : ‖b - a‖ = 0\n    · have hba : b = a := by\n        have := norm_eq_zero.mp hab\n        exact sub_eq_zero.mp this\n      subst hba\n      match_scalars <;> field_simp <;> ring\n    · have hxy : n * (1 - x) = m * x := by\n        have : n * (1 - x) * ‖b - a‖ = m * x * ‖b - a‖ := by linarith\n        exact mul_right_cancel₀ hab this\n      have hx' : x = n / (m + n) := by\n        field_simp\n        linarith\n      subst hx'\n      match_scalars <;> field_simp <;> ring\n  · intro h\n    subst h\n    have hn' : 0 ≤ n / (m + n) := by positivity\n    have hm' : 0 ≤ m / (m + n) := by positivity\n    have hsum : n / (m + n) + m / (m + n) = 1 := by field_simp; ring\n    refine ⟨⟨n / (m + n), m / (m + n), hn', hm', hsum, rfl⟩, ?_⟩\n    have h1 : (n / (m + n)) • a + (m / (m + n)) • b - a = (m / (m + n)) • (b - a) := by\n      match_scalars <;> field_simp <;> ring\n    have h2 : b - ((n / (m + n)) • a + (m / (m + n)) • b) = (n / (m + n)) • (b - a) := by\n      match_scalars <;> field_simp <;> ring\n    rw [h1, h2, norm_smul, norm_smul, Real.norm_of_nonneg hn', Real.norm_of_nonneg hm']\n    field_simp\n",
+    "answer": "$\\vec a,\\vec b,\\vec p$を実内積空間のベクトル、$m,n>0$とする。\n\n（右から左）$\\vec p=\\dfrac{n\\vec a+m\\vec b}{m+n}$とする。係数$\\dfrac{n}{m+n},\\dfrac{m}{m+n}$は正で和が$1$なので、$\\vec p$は線分$\\mathrm{AB}$上にある。また$\\vec p-\\vec a=\\dfrac{m}{m+n}(\\vec b-\\vec a)$、$\\vec b-\\vec p=\\dfrac{n}{m+n}(\\vec b-\\vec a)$なので、$n|\\vec p-\\vec a|=\\dfrac{mn}{m+n}|\\vec b-\\vec a|=m|\\vec b-\\vec p|$である。\n\n（左から右）$\\vec p$が線分$\\mathrm{AB}$上にあるので、$0\\le\\lambda\\le1$の$\\lambda$で$\\vec p=\\vec a+\\lambda(\\vec b-\\vec a)$と書ける。このとき$|\\vec p-\\vec a|=\\lambda|\\vec b-\\vec a|$、$|\\vec b-\\vec p|=(1-\\lambda)|\\vec b-\\vec a|$なので、条件$n|\\vec p-\\vec a|=m|\\vec b-\\vec p|$は$\\{n\\lambda-m(1-\\lambda)\\}|\\vec b-\\vec a|=0$となる。$\\vec a=\\vec b$なら$\\vec p=\\vec a$であり、$\\dfrac{n\\vec a+m\\vec b}{m+n}=\\vec a$でもある。$\\vec a\\ne\\vec b$なら$n\\lambda=m(1-\\lambda)$より$\\lambda=\\dfrac{m}{m+n}$であり、$\\vec p=\\dfrac{n}{m+n}\\vec a+\\dfrac{m}{m+n}\\vec b$を得る。"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "school_vectors_complex",
+   "id": "external_division_formula",
+   "severity": "major",
+   "codes": [
+    "WEAK_OR_OVERNAMED",
+    "TARGET_UNFAITHFUL"
+   ],
+   "issue": "Same defect as internal_division_formula: only formula => ratio relation is proved. The useful direction (n(p-a)=m(p-b) => p=(-na+mb)/(m-n)) is absent although the card is named a formula. The norm equation is a trivial corollary and can be dropped.",
+   "patch": {
+    "statement": "実内積空間の点$\\mathrm{A},\\mathrm{B},\\mathrm{P}$の位置ベクトルを$\\vec a,\\vec b,\\vec p$とし、$m,n>0$、$m\\neq n$とする。$n(\\vec p-\\vec a)=m(\\vec p-\\vec b)$（すなわち$\\mathrm{P}$が線分$\\mathrm{AB}$を$m:n$に外分する）ことと、$\\vec p=\\dfrac{-n\\vec a+m\\vec b}{m-n}$であることは同値である。",
+    "statement_en": "Let a, b, p be vectors in a real inner product space, m, n > 0, m ≠ n. Then n(p-a) = m(p-b) if and only if p = (-na+mb)/(m-n).",
+    "conclusion": "$n(\\vec p-\\vec a)=m(\\vec p-\\vec b)$と$\\vec p=\\dfrac{-n\\vec a+m\\vec b}{m-n}$は同値である。",
+    "openmath": "(forall (V a b p m n) (-> (and (inner_product_space_over R V) (in a V) (in b V) (in p V) (in m R) (in n R) (> m 0) (> n 0) (!= m n)) (<-> (= p (+ (smul (/ (neg n) (- m n)) a) (smul (/ m (- m n)) b))) (= (smul n (- p a)) (smul m (- p b))))))",
+    "target": "∀ (V : Type*) [NormedAddCommGroup V] [InnerProductSpace ℝ V] (a b P : V) (m n : ℝ), 0 < m → 0 < n → m ≠ n → (P = (-n / (m - n)) • a + (m / (m - n)) • b ↔ n • (P - a) = m • (P - b))",
+    "proof": "by\n  intro V _ _ a b P m n hm hn hne\n  have hd : m - n ≠ 0 := sub_ne_zero.mpr hne\n  constructor\n  · intro h\n    subst h\n    match_scalars <;> field_simp <;> ring\n  · intro h\n    have h3 : n • (P - a) - m • (P - b) = 0 := by rw [h]; simp\n    have h' : (m - n) • P = (-n) • a + m • b := by\n      calc (m - n) • P = (-n) • a + m • b - (n • (P - a) - m • (P - b)) := by module\n        _ = (-n) • a + m • b := by rw [h3, sub_zero]\n    have : P = (m - n)⁻¹ • ((m - n) • P) := by rw [smul_smul, inv_mul_cancel₀ hd, one_smul]\n    rw [this, h']\n    match_scalars <;> field_simp\n",
+    "answer": "$\\vec a,\\vec b,\\vec p$を実内積空間のベクトル、$m,n>0$、$m\\neq n$とする。$m-n\\ne0$である。$n(\\vec p-\\vec a)=m(\\vec p-\\vec b)$を整理すると$(m-n)\\vec p=m\\vec b-n\\vec a$となる。$m-n\\ne0$なので、これは$\\vec p=\\dfrac{-n\\vec a+m\\vec b}{m-n}$と同値である（各変形は逆にたどれる）。"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "school_vectors_complex",
+   "id": "perpendicular_iff_ratio_re_zero",
+   "severity": "major",
+   "codes": [
+    "OM_LEAN_MISMATCH",
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath writes (inner_product (- b a) (- c a)) for complex numbers with no carrier. The Lean statement uses the REAL inner product Re(conj(b-a)(c-a)); a reader of the OpenMath would take the Hermitian complex product conj(b-a)(c-a), for which '=0' is a different (here false) statement. Spell out the real inner product.",
+   "patch": {
+    "statement_en": "For complex numbers a ≠ b and c, the real inner product Re(conj(b-a)(c-a)) of the plane vectors b-a and c-a vanishes if and only if Re((c-a)/(b-a)) = 0.",
+    "openmath": "(forall (a b c) (-> (and (in a C) (in b C) (in c C) (!= a b)) (<-> (= (real_part (* (complex_conj (- b a)) (- c a))) 0) (= (real_part (/ (- c a) (- b a))) 0))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_vectors_complex",
+   "id": "inner_eq_norm_norm_cos",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "The angle is defined (answer and Mathlib) as arccos(a.b/(|a||b|)), so the card is a definitional unfolding plus Cauchy-Schwarz, not the geometric fact (angle measured geometrically vs inner product). Say so in the statement, and keep the geometric link to the law of cosines / coordinate cards.",
+   "patch": {
+    "assumptions": [
+     "$\\vec a\\neq\\vec 0$、$\\vec b\\neq\\vec 0$",
+     "$\\theta=\\arccos\\dfrac{\\vec a\\cdot\\vec b}{|\\vec a||\\vec b|}$（なす角の定義）"
+    ]
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_vectors_complex",
+   "id": "triangle_area_inner_formula",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED"
+   ],
+   "issue": "Named/described as a triangle-area formula, but the target is only the identity (1/2)|a||b| sin(angle) = (1/2)sqrt(|a|^2|b|^2-(a.b)^2); no area appears. A real area statement exists in geometry_plane.triangle_area_sine (volume of convexHull). State the card as an identity between two expressions.",
+   "patch": {
+    "statement": "実内積空間の$\\vec 0$でないベクトル$\\vec a,\\vec b$のなす角を$\\theta$とすると、三角形の面積の2つの公式の値は一致する。すなわち（面積そのものは扱わず、2式の等式として）$\\dfrac12|\\vec a||\\vec b|\\sin\\theta=\\dfrac12\\sqrt{|\\vec a|^2|\\vec b|^2-(\\vec a\\cdot\\vec b)^2}$が成り立つ。",
+    "statement_en": "For nonzero vectors a, b in a real inner product space with angle θ, the two area expressions agree: (1/2)|a||b| sin θ = (1/2)√(|a|²|b|² - (a·b)²) (the card states this identity only, not that either expression is an area)."
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_vectors_complex",
+   "id": "plane_equation_normal_form",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "statement adds 'つまり (a,b,c) は平面上の2点を結ぶベクトルに垂直である', which is neither in the target nor the conclusion nor proved in the answer.",
+   "patch": {
+    "statement": "点$(x_0,y_0,z_0)$が平面$ax+by+cz+d=0$上にあるとき、点$(x,y,z)$がこの平面上にあることと、$a(x-x_0)+b(y-y_0)+c(z-z_0)=0$であることは同値である。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_vectors_complex",
+   "id": "line_plane_intersection_parameter",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "statement ends with '特に交点はただ1つである', which is not in the Lean target or conclusion (only uniqueness of the parameter t is proved; distinct points need (l,m,n)!=0, which follows from al+bm+cn!=0 but is not argued).",
+   "patch": {
+    "statement": "直線$(x_0+tl,\\,y_0+tm,\\,z_0+tn)$と平面$ax+by+cz+d=0$について$al+bm+cn\\neq 0$とする。このとき、$t$に対応する点が平面上にあることと、$t=-\\dfrac{ax_0+by_0+cz_0+d}{al+bm+cn}$であることは同値である。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_vectors_complex",
+   "id": "complex_norm_mul_div_pow",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "Bundles three independent Mathlib-level lemmas (norm_mul, norm_div, norm_pow) in one conjunction; a proof citing only |zw|=|z||w| retrieves a three-fact card. Also the w!=0 guard on the quotient is unnecessary in Lean (0/0 junk is consistent) but harmless.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_vectors_complex",
+   "id": "conj_eq_radius_sq_div",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Direct restatement of complex_analysis.inv_eq_conj_div_norm_sq / conj_mul_self_eq_norm_sq with r=|z| (conj z = r^2/z <=> z^-1 = conj z/|z|^2). Keep only if the school-level phrasing |z|=1 => conj z = 1/z is wanted.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_vectors_complex",
+   "id": "apollonius_circle_complex",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Same pattern as school_analytic_geometry.apollonius_circle_locus (n=1, m=k) transported to C with |.|; a coordinate/complex representation variant. Acceptable only if each statement says which form it is.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_analytic_geometry",
+   "id": "linear_form_max_on_disc",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "Stated only for discs centred at the origin; the general fact (centre (p,q)) is what a proof would cite, and the hard_negative already points at it. General form verified in Lean (p=q=0 recovers this card; card disc_in_half_plane_iff is its dual).",
+   "patch": {
+    "statement": "$r\\ge0$、$a,b,p,q$を実数とする。円板$(x-p)^2+(y-q)^2\\le r^2$における$ax+by$の最大値は$ap+bq+r\\sqrt{a^2+b^2}$である（$p=q=0$なら$r\\sqrt{a^2+b^2}$）。",
+    "statement_en": "For r≥0 and real a,b,p,q, the maximum of ax+by over the disc (x-p)^2+(y-q)^2≤r^2 equals ap+bq+r√(a^2+b^2).",
+    "assumptions": [
+     "$r\\ge0$",
+     "$a,b,p,q$は実数"
+    ],
+    "quantifiers": [
+     "任意の実数$a,b,p,q,r$"
+    ],
+    "conclusion": "最大値は$ap+bq+r\\sqrt{a^2+b^2}$である。",
+    "openmath": "(forall (a b p q r) (-> (>= r 0) (and (exists (x y) (and (<= (+ (^ (- x p) 2) (^ (- y q) 2)) (^ r 2)) (= (+ (+ (* a p) (* b q)) (* r (root (+ (^ a 2) (^ b 2)) 2))) (+ (* a x) (* b y))))) (forall (x y) (-> (<= (+ (^ (- x p) 2) (^ (- y q) 2)) (^ r 2)) (<= (+ (* a x) (* b y)) (+ (+ (* a p) (* b q)) (* r (root (+ (^ a 2) (^ b 2)) 2)))))))))",
+    "hard_negative": {
+     "statement": "中心が$(p,q)$の円板でも最大値は$r\\sqrt{a^2+b^2}$である。",
+     "reason": "中心での値$ap+bq$が加わる。$(x-1)^2+y^2\\le1$での$x$の最大値は$2$であるが、この式は$1$を与える。"
+    },
+    "target": "∀ (a b p q r : ℝ), 0 ≤ r → IsGreatest {s : ℝ | ∃ x y : ℝ, (x - p) ^ 2 + (y - q) ^ 2 ≤ r ^ 2 ∧ s = a * x + b * y} (a * p + b * q + r * Real.sqrt (a ^ 2 + b ^ 2))",
+    "proof": "by\n  intro a b p q r hr\n  have hS : 0 ≤ Real.sqrt (a ^ 2 + b ^ 2) := Real.sqrt_nonneg _\n  have hSS : Real.sqrt (a ^ 2 + b ^ 2) ^ 2 = a ^ 2 + b ^ 2 := Real.sq_sqrt (by positivity)\n  constructor\n  · by_cases h0 : Real.sqrt (a ^ 2 + b ^ 2) = 0\n    · have ha : a = 0 := by nlinarith [sq_nonneg a, sq_nonneg b]\n      have hb : b = 0 := by nlinarith [sq_nonneg a, sq_nonneg b]\n      refine ⟨p, q, by simp; positivity, ?_⟩\n      rw [h0, ha, hb]; ring\n    · have hpos : 0 < Real.sqrt (a ^ 2 + b ^ 2) := lt_of_le_of_ne hS (Ne.symm h0)\n      refine ⟨p + r * a / Real.sqrt (a ^ 2 + b ^ 2), q + r * b / Real.sqrt (a ^ 2 + b ^ 2), ?_, ?_⟩\n      · have : (r * a / Real.sqrt (a ^ 2 + b ^ 2)) ^ 2 + (r * b / Real.sqrt (a ^ 2 + b ^ 2)) ^ 2 = r ^ 2 := by\n          field_simp\n          rw [hSS]\n        nlinarith [this]\n      · field_simp\n        nlinarith [hSS]\n  · rintro s ⟨x, y, hxy, rfl⟩\n    have h1 : (a * (x - p) + b * (y - q)) ^ 2 ≤ (a ^ 2 + b ^ 2) * r ^ 2 := by\n      nlinarith [sq_nonneg (a * (y - q) - b * (x - p)), mul_le_mul_of_nonneg_left hxy (by positivity : (0:ℝ) ≤ a ^ 2 + b ^ 2)]\n    have h2 : a * (x - p) + b * (y - q) ≤ Real.sqrt (a ^ 2 + b ^ 2) * r := by\n      apply abs_le_of_sq_le_sq' _ (by positivity) |>.2\n      nlinarith [hSS]\n    nlinarith [h2]\n",
+    "answer": "$a,b,p,q,r$を実数とし、$r\\ge0$とする。$S=\\sqrt{a^2+b^2}$とおく。\n\n上からの評価。円板内の点$(x,y)$について$u=x-p$、$v=y-q$とおくと$u^2+v^2\\le r^2$である。$(a^2+b^2)(u^2+v^2)-(au+bv)^2=(av-bu)^2\\ge0$より$(au+bv)^2\\le S^2r^2$であり、$rS\\ge0$なので$au+bv\\le rS$である。よって$ax+by=ap+bq+(au+bv)\\le ap+bq+rS$である。\n\n等号をとる点。$S=0$なら$a=b=0$であり、中心$(p,q)$で$ax+by=0=ap+bq+rS$である。$S>0$なら点$\\left(p+\\frac{ra}{S},q+\\frac{rb}{S}\\right)$は$u^2+v^2=r^2$を満たし、そこでの値は$ap+bq+\\frac{r(a^2+b^2)}{S}=ap+bq+rS$である。"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "school_analytic_geometry",
+   "id": "triangle_area_cross_product_formula",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED"
+   ],
+   "issue": "Described as 'the two area formulas agree' but no area is formalised; target is the 2-D Lagrange identity under sqrt. State it as an identity (real area: geometry_plane.triangle_area_sine).",
+   "patch": {
+    "statement": "実数$a_1,a_2,b_1,b_2$について、ベクトル$(a_1,a_2)$、$(b_1,b_2)$の作る三角形の面積の2つの公式の値は一致する。すなわち（面積そのものは扱わず、2式の等式として）$\\frac12\\sqrt{(a_1^2+a_2^2)(b_1^2+b_2^2)-(a_1b_1+a_2b_2)^2}=\\frac12|a_1b_2-a_2b_1|$である。",
+    "statement_en": "For real a1,a2,b1,b2, the two triangle-area expressions agree: (1/2)√((a1²+a2²)(b1²+b2²)-(a1b1+a2b2)²) = (1/2)|a1b2-a2b1| (identity only; no area is defined)."
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_analytic_geometry",
+   "id": "homothety_image_of_circle_locus",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "statement adds 'k=1/2 なら定点と円上の点の中点の軌跡である', absent from statement_en, conclusion, target and answer.",
+   "patch": {
+    "statement": "$k\\ne0$とする。点$(x_0,y_0)$が円$(x-a)^2+(y-b)^2=r^2$の上を動くとき、定点$(p,q)$を中心に$k$倍した点$(x,y)=(p+k(x_0-p),q+k(y_0-q))$の全体は、方程式$(x-(p+k(a-p)))^2+(y-(q+k(b-q)))^2=(kr)^2$で表される。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_analytic_geometry",
+   "id": "quadratic_graph_vertex_form_focus_directrix",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative says the focus is (h,k+1/a), but the reason only shows the TRUE focus works at (1,1); it never shows the wrong focus fails. Use the vertex: for y=x^2 the vertex (0,0) is on the parabola and 1/4 from the true focus and directrix, but 1 from (0,1) vs 1/4 from y=-1/4.",
+   "patch": {
+    "hard_negative": {
+     "statement": "焦点は$\\left(h,k+\\frac{1}{a}\\right)$である。",
+     "reason": "焦点と頂点の距離は$\\frac{1}{4|a|}$である。$y=x^2$の頂点$(0,0)$はグラフ上にあり、点$\\left(0,\\frac14\\right)$と直線$y=-\\frac14$からの距離はともに$\\frac14$である。一方、$(0,1)$までの距離は$1$であり、直線$y=-\\frac14$までの距離$\\frac14$と異なる。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_analytic_geometry",
+   "id": "centroid_divides_medians_two_one",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Target and OpenMath are six ring-identities on coordinates: no median, midpoint or centroid concept appears (core vocabulary has midpoint_of, centroid_of, plane_point), so retrieval by 'centroid' cannot match and any identical-looking identity would encode identically.",
+   "patch": null,
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "Vector cards (school_vectors_complex 0-23) never bind vectors/scalars to their carrier: OpenMath has (inner_product_space_over R V) but no (in a V)/(in p R), and the zero vector is the numeral 0 ((!= b 0), (= ... 0)). Fix: add (in a V) conjuncts, write nonzero as (!= (norm b) 0) or (!= b (smul 0 b)).",
+  "Representation is sound: coordinate cards use plain real coordinates (R x R only as a tuple in two exists-unique statements, never with norm/dist); the only Euclidean-distance card uses EuclideanSpace R (Fin 2); complex cards use inner R on C (Re(conj w z)) and Complex.arg in (-pi,pi], matching principal_arg. No sup-norm hazard found.",
+  "Coordinate geometry cards spell geometric notions as expanded polynomials although core.yaml has on_line/on_circle/midpoint_of/centroid_of/dist_of; only card 0 uses dist_of. Retrieval by concept is lost; acceptable only because the Lean targets are also expanded.",
+  "Same pattern is repeated in coordinate, vector and complex form (internal division, diameter circle, Apollonius, collinearity, perpendicular, point-line/plane distance); each statement must say its form, otherwise reviewers reuse the wrong one.",
+  "'Formula' cards sometimes prove only formula => property (vector internal/external division) while the useful direction is ratio => formula; 'area' cards (ana 8, vec 20) are algebraic identities with no area.",
+  "Hard negatives and answers are otherwise accurate (all 107 counterexamples checked; answers complete). Hypotheses nonzero/b!=0 are sometimes redundant in Lean (vec 5, 17, 18, 20; ana 5 distinctness) - harmless."
+ ],
+ "missing_neighbors": [
+  "Complex.arg_mul (arg(zw)=arg z+arg w when the sum lies in (-pi,pi]); Complex.arg_real_mul / arg_pos_real_mul (r>0)",
+  "|z+w|^2=|z|^2+|w|^2+2Re(z conj w) and equality case of the complex triangle inequality",
+  "Rotation/similarity in the complex plane: (c-a)/(b-a)=(f-d)/(e-d) iff triangles similar (same orientation); multiplication by a unit complex number is an isometry",
+  "Circle in complex form z=a+r e^{i theta}, |z-a|=r, and the parametrisation x=a+r cos t, y=b+r sin t",
+  "n-dimensional point-hyperplane distance |<a,x>+d|/|a| (general inner product space; Metric.infDist form), generalising ana point_line_distance and vec point_plane_distance",
+  "3-D cross product: u x v orthogonal to u,v and |u x v|^2=|u|^2|v|^2-(u.v)^2 (Matrix.crossProduct)",
+  "Tangent line of ellipse/hyperbola/parabola at a point (x0 x/a^2+y0 y/b^2=1 etc.) and hyperbola asymptotes",
+  "Hyperbola parametrisation x=a cosh t, y=b sinh t (one branch) alongside the ellipse cos/sin card",
+  "Angle between two lines via slopes/normal vectors: cos theta=|aa'+bb'|/(sqrt(a^2+b^2)sqrt(a'^2+b'^2)) (acute angle form)",
+  "Weighted centroid in n points (Finset.centerMass) with area/ratio consequences; Ceva/Menelaus in vector form",
+  "Sine/cosine law and polar<->Cartesian conversion in coordinates (x=r cos t, y=r sin t, r=sqrt(x^2+y^2))",
+  "Lagrange identity / Cauchy-Schwarz in R^3 coordinates (exists in 2-D as fourier_convex_numeric.cauchy_schwarz_two_dimensional)"
+ ]
+}

@@ -1,0 +1,835 @@
+{
+ "batch": "S1_logic_entrance",
+ "domains": [
+  "logic_sets",
+  "school_data_logic",
+  "entrance_exam"
+ ],
+ "reviewed": 121,
+ "ok_ids": [
+  "abs_sin_multiple_angle_bound",
+  "axiom_of_choice",
+  "bijective_iff_inverse",
+  "cantor_no_surjection_powerset",
+  "cantor_schroeder_bernstein",
+  "cardinal_comparability",
+  "classes_form_partition",
+  "consecutive_product_divisible_by_factorial",
+  "cube_root_two_rational_independence",
+  "dice_product_multiple_of_six_count",
+  "equiv_class_eq_iff",
+  "equiv_classes_eq_or_disjoint",
+  "euler_quadratic_prime_run_fails_at_forty",
+  "fibonacci_gcd_identity",
+  "fifth_power_sub_self_divisible_by_thirty",
+  "finite_nonempty_has_maximal",
+  "floor_two_add_sqrt_three_power_odd",
+  "four_consecutive_product_not_square",
+  "fourth_power_add_four_composite",
+  "greatest_is_maximal",
+  "harmonic_sum_log_bounds",
+  "image_inter_injective",
+  "image_inter_subset",
+  "image_subset_iff_preimage",
+  "image_union",
+  "infinitely_many_primes_three_mod_four",
+  "injective_comp",
+  "injective_iff_left_inverse",
+  "injective_iff_preimage_image",
+  "integer_polynomial_odd_at_zero_one_no_root",
+  "integer_valued_quadratic_criterion",
+  "integral_identity_twenty_two_sevenths_minus_pi",
+  "integral_power_over_one_add_x_tends_zero",
+  "map_factors_through_kernel",
+  "maximal_is_greatest_of_linear",
+  "nat_well_ordering",
+  "necessary_sufficient_iff_truth_set_eq",
+  "ordinal_set_has_least",
+  "orthocenter_vector_from_circumcenter",
+  "partition_gives_equivalence",
+  "power_sums_integer_from_sum_and_product",
+  "preimage_set_operations",
+  "quotient_lift_unique",
+  "rationals_countable",
+  "reciprocal_squares_partial_sum_bound",
+  "set_de_morgan",
+  "set_distributive",
+  "sin_cos_one_degree_irrational",
+  "sqrt_two_sub_one_power_as_sqrt_difference",
+  "strong_induction",
+  "subset_iff_inter_and_union",
+  "sufficient_iff_truth_set_subset",
+  "surjective_comp",
+  "surjective_iff_image_preimage",
+  "surjective_iff_right_inverse",
+  "tetrahedron_opposite_edges_perpendicular",
+  "triangle_side_product_inequality",
+  "triangle_sine_sum_upper_bound",
+  "triangle_walk_return_probability",
+  "two_pow_add_one_prime_exponent_power_of_two",
+  "two_pow_sub_one_prime_exponent_prime",
+  "well_founded_induction",
+  "well_ordering_theorem",
+  "zorn_for_subsets",
+  "zorn_lemma"
+ ],
+ "findings": [
+  {
+   "domain": "logic_sets",
+   "id": "contrapositive_iff",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath binds P,Q as sets plus a dummy element a and writes (in a P); Lean has P Q : Prop, so the OM states a pointwise membership statement for arbitrary sets, not the propositional law. Use a propositional-truth symbol (needs vocab entry proposition_holds: args [term], returns prop, meaning 'the proposition P is true').",
+   "patch": {
+    "openmath": "(forall (P Q) (<-> (-> (proposition_holds P) (proposition_holds Q)) (-> (not (proposition_holds Q)) (not (proposition_holds P)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "logic_sets",
+   "id": "prop_de_morgan",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Same hack as contrapositive_iff: propositions encoded as (in a P) with a dummy element a. Use proposition_holds (new vocab symbol, args [term], returns prop).",
+   "patch": {
+    "openmath": "(forall (P Q) (and (<-> (not (and (proposition_holds P) (proposition_holds Q))) (or (not (proposition_holds P)) (not (proposition_holds Q)))) (<-> (not (or (proposition_holds P) (proposition_holds Q))) (and (not (proposition_holds P)) (not (proposition_holds Q))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "logic_sets",
+   "id": "not_forall_iff_exists_not",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Carrier type alpha is dropped: x is quantified over everything and the predicate is a set P (in x P). Add an explicit carrier A and use holds_at (already in school_data_logic vocab) so ranges are bounded and predicate encoding is consistent with the school_data_logic cards.",
+   "patch": {
+    "openmath": "(forall (A P) (<-> (not (forall (x) (-> (in x A) (holds_at P x)))) (exists (x) (and (in x A) (not (holds_at P x))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "logic_sets",
+   "id": "not_exists_iff_forall_not",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Same carrier-dropping / predicate-as-set encoding as not_forall_iff_exists_not.",
+   "patch": {
+    "openmath": "(forall (A P) (<-> (not (exists (x) (and (in x A) (holds_at P x)))) (forall (x) (-> (in x A) (not (holds_at P x))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "logic_sets",
+   "id": "exists_forall_implies_forall_exists",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "alpha and beta are not in the OM: x and y range over everything. In Lean the outer y must lie in beta (which may differ in emptiness from alpha), so carriers matter. Add A,B guards.",
+   "patch": {
+    "openmath": "(forall (A B R) (-> (exists (y) (and (in y B) (forall (x) (-> (in x A) (relates R x y))))) (forall (x) (-> (in x A) (exists (y) (and (in y B) (relates R x y)))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "logic_sets",
+   "id": "indexed_de_morgan",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "complement has no ambient set and indexed_union/indexed_inter (lambda only) do not carry the index set, so the empty-index case and the ambient type are invisible. Prefer indexed_union/indexed_inter with args [term, term_function] (index set, family) and setdiff X (...) with an explicit ambient X; note intersection over an empty index set must be defined as X in the vocabulary meaning.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "logic_sets",
+   "id": "left_right_inverse_eq",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "No map_between/carrier guards: x and y range over everything and f,g,h are untyped, so domain/codomain information that the Lean statement carries is erased.",
+   "patch": {
+    "openmath": "(forall (A B f g h) (-> (and (map_between f A B) (map_between g B A) (map_between h B A) (forall (x) (-> (in x A) (= (fn_value g (fn_value f x)) x))) (forall (y) (-> (in y B) (= (fn_value f (fn_value h y)) y)))) (= g h)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "logic_sets",
+   "id": "countable_union_of_countable",
+   "severity": "major",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "indexed_union takes only a lambda, so the index set I never appears in the union: the OM unions A_i over an unspecified index range while I is used only as a guard on i. Read literally the OM allows i outside I with unconstrained A_i, or equally the same OM would be produced for the false 'arbitrary index set' variant (the hard_negative) once the guard is dropped. The index set must be an argument of indexed_union (change vocab to args [term, term_function]; indexed_de_morgan must change in step).",
+   "patch": {
+    "openmath": "(forall (I A) (-> (and (countable I) (forall (i) (-> (in i I) (countable (fn_value A i))))) (countable (indexed_union I (lambda (i) (fn_value A i))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "logic_sets",
+   "id": "reals_uncountable",
+   "severity": "minor",
+   "codes": [
+    "ANSWER_WRONG"
+   ],
+   "issue": "Answer shows no surjection N->R exists and then concludes |N|<|R| without saying why that suffices (|R|<=|N| gives an injection R->N and hence, as R is nonempty, a surjection N->R). One-sentence gap.",
+   "patch": {
+    "answer": "自然数全体$\\mathbb{N}$と実数全体$\\mathbb{R}$の濃度を比べる。\n$\\mathbb{N}\\subseteq\\mathbb{R}$より$|\\mathbb{N}|\\leq|\\mathbb{R}|$なので、全射$\\mathbb{N}\\to\\mathbb{R}$がないことを示せばよい（$|\\mathbb{R}|\\leq|\\mathbb{N}|$なら単射$\\mathbb{R}\\to\\mathbb{N}$があり、$\\mathbb{R}$は空でないのでその左逆写像から全射$\\mathbb{N}\\to\\mathbb{R}$が得られるため）。実数列$(x_n)_{n\\in\\mathbb{N}}$を任意にとる。\n閉区間の列$I_0\\supseteq I_1\\supseteq\\cdots$を、長さが正で$x_n\\notin I_n$となるように順に選ぶ。$I_{-1}=[0,1]$とする。$I_{n-1}=[a,b]$（$a<b$）まで定まったとき、$[a,a+(b-a)/3]$と$[b-(b-a)/3,b]$は交わらないので、少なくとも一方は$x_n$を含まない。その一方を$I_n$とする。\n実数の完備性（区間縮小法）により、$\\bigcap_n I_n$は空でない。その元は$x_n\\notin I_n$よりどの$x_n$とも異なる。よって$n\\mapsto x_n$は全射でなく、$|\\mathbb{N}|<|\\mathbb{R}|$である。\n"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "logic_sets",
+   "id": "shifted_base_induction",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH",
+    "NEGATIVE_BAD"
+   ],
+   "issue": "Japanese statement 「$k\\leq n$の全ての$n$で$P(n)$ならば$P(n+1)$」 can be read as 'if P holds for all n>=k then P(n+1)'; Lean is (forall n>=k, P n -> P (n+1)). Hard negative counterexample (P(n) := n>=k, fails below k) needs k>=1; for k=0 the claim is true.",
+   "patch": {
+    "statement": "自然数$k$と自然数上の述語$P$について、$P(k)$が成り立ち、かつ$k\\leq n$を満たす全ての$n$について「$P(n)$ならば$P(n+1)$」が成り立つならば、$k\\leq n$を満たす全ての$n$で$P(n)$が成り立つ。",
+    "hard_negative": {
+     "statement": "同じ仮定のもとで、全ての自然数$n$（$k$未満も含む）で$P(n)$が成り立つ。",
+     "reason": "$k$未満の$n$については何も言えない。$k\\geq1$のとき、$P(n)$を「$n\\geq k$」とすると仮定は成り立つが、$P(0)$は偽である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "logic_sets",
+   "id": "ordinal_zero_succ_or_limit",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "(+ b 1) uses arith1 plus for ordinal successor; arith1.plus is commutative, ordinal addition is not. Use a dedicated ordinal_add (or ordinal_succ) symbol.",
+   "patch": {
+    "openmath": "(forall (a) (-> (is_ordinal a) (or (= a 0) (exists (b) (and (is_ordinal b) (= a (ordinal_add b 1)))) (limit_ordinal a))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "logic_sets",
+   "id": "ordinal_add_not_commutative",
+   "severity": "major",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "The OM asserts (= (+ 1 omega) omega) and (!= (+ omega 1) omega) with arith1 plus, which the CD declares commutative: read with standard OpenMath semantics the encoding is self-contradictory, and retrieval cannot tell ordinal from numeric addition. Introduce ordinal_add (non-commutative) and use it; likewise carriers for 1.",
+   "patch": {
+    "openmath": "(and (= (ordinal_add 1 omega_ordinal) omega_ordinal) (!= (ordinal_add omega_ordinal 1) omega_ordinal))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "logic_sets",
+   "id": "infinite_cardinal_add_mul",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Cardinal sum/product encoded with arith1 + and *, guarded only by is_cardinal; a statement a+b=max(a,b) with arith1 symbols looks false in numeric arithmetic. Dedicated cardinal_add / cardinal_mul symbols (or carrier-tagged) would avoid wrong reuse.",
+   "patch": {
+    "openmath": "(forall (a b) (-> (and (is_cardinal a) (is_cardinal b) (<= aleph_zero a) (<= aleph_zero b)) (and (-> (<= a b) (and (= (cardinal_add a b) b) (= (cardinal_mul a b) b))) (-> (<= b a) (and (= (cardinal_add a b) a) (= (cardinal_mul a b) a))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "logic_sets",
+   "id": "cardinal_power_laws",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Cardinal power laws written with arith1 ^, +, *: a^(b+c)=a^b*a^c is a numeric identity too, but a^(b*c)=(a^b)^c etc. are retrieved for numbers and cardinals alike; add cardinal_pow/cardinal_add/cardinal_mul so the carrier is explicit (Lean statement is for Cardinal only).",
+   "patch": {
+    "openmath": "(forall (a b c) (-> (and (is_cardinal a) (is_cardinal b) (is_cardinal c)) (and (= (cardinal_pow a (cardinal_add b c)) (cardinal_mul (cardinal_pow a b) (cardinal_pow a c))) (= (cardinal_pow a (cardinal_mul b c)) (cardinal_pow (cardinal_pow a b) c)) (= (cardinal_pow (cardinal_mul a b) c) (cardinal_mul (cardinal_pow a c) (cardinal_pow b c))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_sum_deviation_zero",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s x m) (-> (and (finite_set s) (!= s emptyset) (= m (/ (sum s (lambda (i) (fn_value x i))) (size s)))) (= (sum s (lambda (i) (- (fn_value x i) m))) 0)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_mean_between_bounds",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s x a b m) (-> (and (finite_set s) (!= s emptyset) (forall (i) (-> (in i s) (and (<= a (fn_value x i)) (<= (fn_value x i) b)))) (= m (/ (sum s (lambda (i) (fn_value x i))) (size s)))) (and (<= a m) (<= m b))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_exists_on_both_sides_of_mean",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s x m) (-> (and (finite_set s) (!= s emptyset) (= m (/ (sum s (lambda (i) (fn_value x i))) (size s)))) (and (exists (i) (and (in i s) (<= m (fn_value x i)))) (exists (j) (and (in j s) (<= (fn_value x j) m))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_mean_affine_transform",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s x y a b mx my) (-> (and (finite_set s) (!= s emptyset) (forall (i) (-> (in i s) (= (fn_value y i) (+ (* a (fn_value x i)) b)))) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s)))) (= my (+ (* a mx) b))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_mean_of_two_groups",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s t x m1 m2) (-> (and (finite_set s) (!= s emptyset) (finite_set t) (!= t emptyset) (= (inter s t) emptyset) (= m1 (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= m2 (/ (sum t (lambda (i) (fn_value x i))) (size t)))) (= (/ (sum (union s t) (lambda (i) (fn_value x i))) (size (union s t))) (/ (+ (* (size s) m1) (* (size t) m2)) (+ (size s) (size t))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_variance_shortcut",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s x m V) (-> (and (finite_set s) (!= s emptyset) (= m (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= V (/ (sum s (lambda (i) (^ (- (fn_value x i) m) 2))) (size s)))) (= V (- (/ (sum s (lambda (i) (^ (fn_value x i) 2))) (size s)) (^ m 2)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_variance_zero_iff_constant",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s x m V) (-> (and (finite_set s) (!= s emptyset) (= m (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= V (/ (sum s (lambda (i) (^ (- (fn_value x i) m) 2))) (size s)))) (and (>= V 0) (<-> (= V 0) (forall (i) (-> (in i s) (= (fn_value x i) m)))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_variance_affine_transform",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s x y a b mx my Vx Vy) (-> (and (finite_set s) (!= s emptyset) (forall (i) (-> (in i s) (= (fn_value y i) (+ (* a (fn_value x i)) b)))) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s))) (= Vx (/ (sum s (lambda (i) (^ (- (fn_value x i) mx) 2))) (size s))) (= Vy (/ (sum s (lambda (i) (^ (- (fn_value y i) my) 2))) (size s)))) (= Vy (* (^ a 2) Vx))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_stddev_affine_transform",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s x y a b mx my Vx Vy) (-> (and (finite_set s) (!= s emptyset) (forall (i) (-> (in i s) (= (fn_value y i) (+ (* a (fn_value x i)) b)))) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s))) (= Vx (/ (sum s (lambda (i) (^ (- (fn_value x i) mx) 2))) (size s))) (= Vy (/ (sum s (lambda (i) (^ (- (fn_value y i) my) 2))) (size s)))) (= (root Vy 2) (* (abs a) (root Vx 2)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_standardized_mean_variance",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s x z m V mz Vz) (-> (and (finite_set s) (!= s emptyset) (> V 0) (= m (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= V (/ (sum s (lambda (i) (^ (- (fn_value x i) m) 2))) (size s))) (forall (i) (-> (in i s) (= (fn_value z i) (/ (- (fn_value x i) m) (root V 2))))) (= mz (/ (sum s (lambda (i) (fn_value z i))) (size s))) (= Vz (/ (sum s (lambda (i) (^ (- (fn_value z i) mz) 2))) (size s)))) (and (= mz 0) (= Vz 1))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_variance_of_two_groups",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s t x m1 m2 V1 V2 M W) (-> (and (finite_set s) (!= s emptyset) (finite_set t) (!= t emptyset) (= (inter s t) emptyset) (= m1 (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= m2 (/ (sum t (lambda (i) (fn_value x i))) (size t))) (= V1 (/ (sum s (lambda (i) (^ (- (fn_value x i) m1) 2))) (size s))) (= V2 (/ (sum t (lambda (i) (^ (- (fn_value x i) m2) 2))) (size t))) (= M (/ (sum (union s t) (lambda (i) (fn_value x i))) (size (union s t)))) (= W (/ (sum (union s t) (lambda (i) (^ (- (fn_value x i) M) 2))) (size (union s t))))) (= W (+ (/ (+ (* (size s) V1) (* (size t) V2)) (+ (size s) (size t))) (/ (* (* (size s) (size t)) (^ (- m1 m2) 2)) (^ (+ (size s) (size t)) 2))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_covariance_shortcut",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s x y mx my c) (-> (and (finite_set s) (!= s emptyset) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s))) (= c (/ (sum s (lambda (i) (* (- (fn_value x i) mx) (- (fn_value y i) my)))) (size s)))) (= c (- (/ (sum s (lambda (i) (* (fn_value x i) (fn_value y i)))) (size s)) (* mx my)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_covariance_affine_transform",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s x y u v a b c d mx my mu mv Cxy Cuv) (-> (and (finite_set s) (!= s emptyset) (forall (i) (-> (in i s) (and (= (fn_value u i) (+ (* a (fn_value x i)) b)) (= (fn_value v i) (+ (* c (fn_value y i)) d))))) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s))) (= mu (/ (sum s (lambda (i) (fn_value u i))) (size s))) (= mv (/ (sum s (lambda (i) (fn_value v i))) (size s))) (= Cxy (/ (sum s (lambda (i) (* (- (fn_value x i) mx) (- (fn_value y i) my)))) (size s))) (= Cuv (/ (sum s (lambda (i) (* (- (fn_value u i) mu) (- (fn_value v i) mv)))) (size s)))) (= Cuv (* (* a c) Cxy))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_variance_of_sum",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s x y z mx my mz Vx Vy Vz c) (-> (and (finite_set s) (!= s emptyset) (forall (i) (-> (in i s) (= (fn_value z i) (+ (fn_value x i) (fn_value y i))))) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s))) (= mz (/ (sum s (lambda (i) (fn_value z i))) (size s))) (= Vx (/ (sum s (lambda (i) (^ (- (fn_value x i) mx) 2))) (size s))) (= Vy (/ (sum s (lambda (i) (^ (- (fn_value y i) my) 2))) (size s))) (= Vz (/ (sum s (lambda (i) (^ (- (fn_value z i) mz) 2))) (size s))) (= c (/ (sum s (lambda (i) (* (- (fn_value x i) mx) (- (fn_value y i) my)))) (size s)))) (= Vz (+ (+ Vx (* 2 c)) Vy))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_correlation_abs_le_one",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s x y mx my Vx Vy c r) (-> (and (finite_set s) (!= s emptyset) (> Vx 0) (> Vy 0) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s))) (= Vx (/ (sum s (lambda (i) (^ (- (fn_value x i) mx) 2))) (size s))) (= Vy (/ (sum s (lambda (i) (^ (- (fn_value y i) my) 2))) (size s))) (= c (/ (sum s (lambda (i) (* (- (fn_value x i) mx) (- (fn_value y i) my)))) (size s))) (= r (/ c (* (root Vx 2) (root Vy 2))))) (<= (abs r) 1)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_correlation_affine_transform",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s x y u v a b c d mx my mu mv Vx Vy Vu Vv Cxy Cuv r t) (-> (and (finite_set s) (!= s emptyset) (> Vx 0) (> Vy 0) (forall (i) (-> (in i s) (and (= (fn_value u i) (+ (* a (fn_value x i)) b)) (= (fn_value v i) (+ (* c (fn_value y i)) d))))) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s))) (= mu (/ (sum s (lambda (i) (fn_value u i))) (size s))) (= mv (/ (sum s (lambda (i) (fn_value v i))) (size s))) (= Vx (/ (sum s (lambda (i) (^ (- (fn_value x i) mx) 2))) (size s))) (= Vy (/ (sum s (lambda (i) (^ (- (fn_value y i) my) 2))) (size s))) (= Vu (/ (sum s (lambda (i) (^ (- (fn_value u i) mu) 2))) (size s))) (= Vv (/ (sum s (lambda (i) (^ (- (fn_value v i) mv) 2))) (size s))) (= Cxy (/ (sum s (lambda (i) (* (- (fn_value x i) mx) (- (fn_value y i) my)))) (size s))) (= Cuv (/ (sum s (lambda (i) (* (- (fn_value u i) mu) (- (fn_value v i) mv)))) (size s))) (= r (/ Cxy (* (root Vx 2) (root Vy 2)))) (= t (/ Cuv (* (root Vu 2) (root Vv 2))))) (and (-> (> (* a c) 0) (= t r)) (-> (< (* a c) 0) (= t (neg r))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "data_correlation_abs_one_iff_linear",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated.",
+   "patch": {
+    "openmath": "(forall (s x y mx my Vx Vy c r) (-> (and (finite_set s) (!= s emptyset) (> Vx 0) (> Vy 0) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s))) (= Vx (/ (sum s (lambda (i) (^ (- (fn_value x i) mx) 2))) (size s))) (= Vy (/ (sum s (lambda (i) (^ (- (fn_value y i) my) 2))) (size s))) (= c (/ (sum s (lambda (i) (* (- (fn_value x i) mx) (- (fn_value y i) my)))) (size s))) (= r (/ c (* (root Vx 2) (root Vy 2))))) (<-> (= (abs r) 1) (exists (k) (forall (i) (-> (in i s) (= (- (fn_value y i) my) (* k (- (fn_value x i) mx)))))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "finset_card_union_two",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE",
+    "OM_FORMAT"
+   ],
+   "issue": "Same fact as combinatorics_graphs/card_union_add_card_inter (and the n=2 case of combinatorics_graphs/inclusion_exclusion_principle), only rearranged; also uses up the 'named' quota. Drop or merge. OM finiteness idiom (in (size A) N) -> finite_set A.",
+   "patch": {
+    "openmath": "(forall (A B) (-> (and (finite_set A) (finite_set B)) (= (size (union A B)) (- (+ (size A) (size B)) (size (inter A B))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "finset_card_union_three",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE",
+    "WEAK_OR_OVERNAMED",
+    "OM_FORMAT"
+   ],
+   "issue": "Duplicate of combinatorics_graphs/card_union_three_sets and the n=3 case of combinatorics_graphs/inclusion_exclusion_principle; labelled named 'inclusion-exclusion' but proves only n=3. Drop or re-label gap/textbook. OM finiteness idiom -> finite_set.",
+   "patch": {
+    "openmath": "(forall (A B D) (-> (and (finite_set A) (finite_set B) (finite_set D)) (= (size (union (union A B) D)) (+ (- (- (- (+ (+ (size A) (size B)) (size D)) (size (inter A B))) (size (inter B D))) (size (inter D A))) (size (inter (inter A B) D))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "finset_card_neither_of_two",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finiteness is encoded as (in (size s) N) (size lands in N), an ad-hoc idiom; the existing reusable concept finite_set (logic_sets vocab, args [term]) says the same and is retrievable. Index carrier and real-valuedness of x_i are also not stated. (Lean states it in Z, so no truncation issue.)",
+   "patch": {
+    "openmath": "(forall (U A B) (-> (and (finite_set U) (subset A U) (subset B U)) (= (size (setdiff U (union A B))) (+ (- (- (size U) (size A)) (size B)) (size (inter A B))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "pred_forall_contrapositive",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT",
+    "DUPLICATE"
+   ],
+   "issue": "Predicates encoded as sets with unbounded x; other cards in this domain use holds_at with a carrier. Also the forall-wrapped version of logic_sets/contrapositive_iff (pattern duplicate, acceptable as the school-level predicate form but say so).",
+   "patch": {
+    "openmath": "(forall (A P Q) (<-> (forall (x) (-> (in x A) (-> (holds_at P x) (holds_at Q x)))) (forall (x) (-> (in x A) (-> (not (holds_at Q x)) (not (holds_at P x)))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "pred_not_forall_imp_counterexample",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Predicates as sets with unbounded x; inconsistent with sufficient_iff_truth_set_subset which uses holds_at. Use carrier A and holds_at.",
+   "patch": {
+    "openmath": "(forall (A P Q) (<-> (not (forall (x) (-> (in x A) (-> (holds_at P x) (holds_at Q x))))) (exists (x) (and (in x A) (and (holds_at P x) (not (holds_at Q x)))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "implication_cycle_iff",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Propositions encoded as (in a A) with a dummy element a (different theorem shape from the Prop statement). Use proposition_holds.",
+   "patch": {
+    "openmath": "(forall (P Q R) (-> (and (-> (proposition_holds P) (proposition_holds Q)) (-> (proposition_holds Q) (proposition_holds R)) (-> (proposition_holds R) (proposition_holds P))) (and (<-> (proposition_holds P) (proposition_holds Q)) (<-> (proposition_holds Q) (proposition_holds R)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "proof_by_contradiction_template",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Propositions encoded as (in a A) with a dummy element a. Use proposition_holds.",
+   "patch": {
+    "openmath": "(forall (P Q) (-> (and (-> (not (proposition_holds P)) (proposition_holds Q)) (-> (not (proposition_holds P)) (not (proposition_holds Q)))) (proposition_holds P)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "implication_by_contradiction_template",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Propositions encoded as (in a A) with a dummy element a. Use proposition_holds.",
+   "patch": {
+    "openmath": "(forall (P Q R) (-> (and (-> (and (proposition_holds P) (not (proposition_holds Q))) (proposition_holds R)) (-> (and (proposition_holds P) (not (proposition_holds Q))) (not (proposition_holds R)))) (-> (proposition_holds P) (proposition_holds Q))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_data_logic",
+   "id": "or_iff_not_left_imp_right",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Propositions encoded as (in a A) with a dummy element a. Use proposition_holds.",
+   "patch": {
+    "openmath": "(forall (P Q) (<-> (or (proposition_holds P) (proposition_holds Q)) (-> (not (proposition_holds P)) (proposition_holds Q))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "entrance_exam",
+   "id": "sqrt_two_add_sqrt_three_irrational",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "The Recipe `statement` is a question or imperative ('...か。', '...を示せ。', '...をすべて求めよ。') instead of the proposition that the target proves (the conclusion field already states it). A statement that is not an assertion retrieves and reads poorly and does not match statement_en. Mathematics and Lean target are correct.",
+   "patch": {
+    "statement": "$\\sqrt{2}+\\sqrt{3}$は無理数である。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "entrance_exam",
+   "id": "log_ten_two_irrational",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "The Recipe `statement` is a question or imperative ('...か。', '...を示せ。', '...をすべて求めよ。') instead of the proposition that the target proves (the conclusion field already states it). A statement that is not an assertion retrieves and reads poorly and does not match statement_en. Mathematics and Lean target are correct.",
+   "patch": {
+    "statement": "$\\log_{10}2=\\dfrac{\\log 2}{\\log 10}$（$\\log$は自然対数）は無理数である。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "entrance_exam",
+   "id": "cos_twenty_degrees_irrational",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "The Recipe `statement` is a question or imperative ('...か。', '...を示せ。', '...をすべて求めよ。') instead of the proposition that the target proves (the conclusion field already states it). A statement that is not an assertion retrieves and reads poorly and does not match statement_en. Mathematics and Lean target are correct.",
+   "patch": {
+    "statement": "$\\cos 20^\\circ$は無理数である。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "entrance_exam",
+   "id": "cube_root_two_irrational",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "The Recipe `statement` is a question or imperative ('...か。', '...を示せ。', '...をすべて求めよ。') instead of the proposition that the target proves (the conclusion field already states it). A statement that is not an assertion retrieves and reads poorly and does not match statement_en. Mathematics and Lean target are correct.",
+   "patch": {
+    "statement": "$2$の$3$乗根は無理数である。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "entrance_exam",
+   "id": "exp_one_gt_two_point_seven",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "The Recipe `statement` is a question or imperative ('...か。', '...を示せ。', '...をすべて求めよ。') instead of the proposition that the target proves (the conclusion field already states it). A statement that is not an assertion retrieves and reads poorly and does not match statement_en. Mathematics and Lean target are correct.",
+   "patch": {
+    "statement": "自然対数の底$e$は$e>2.7$をみたす。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "entrance_exam",
+   "id": "pi_between_three_point_one_and_three_point_two",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "The Recipe `statement` is a question or imperative ('...か。', '...を示せ。', '...をすべて求めよ。') instead of the proposition that the target proves (the conclusion field already states it). A statement that is not an assertion retrieves and reads poorly and does not match statement_en. Mathematics and Lean target are correct.",
+   "patch": {
+    "statement": "円周率$\\pi$は$3.1<\\pi<3.2$をみたす。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "entrance_exam",
+   "id": "log_ten_two_between_bounds",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "The Recipe `statement` is a question or imperative ('...か。', '...を示せ。', '...をすべて求めよ。') instead of the proposition that the target proves (the conclusion field already states it). A statement that is not an assertion retrieves and reads poorly and does not match statement_en. Mathematics and Lean target are correct.",
+   "patch": {
+    "statement": "$\\dfrac{3}{10}<\\log_{10}2<\\dfrac{1}{3}$である。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "entrance_exam",
+   "id": "exp_pi_gt_pi_exp",
+   "severity": "minor",
+   "codes": [
+    "OTHER",
+    "ANSWER_WRONG"
+   ],
+   "issue": "The Recipe `statement` is a question or imperative ('...か。', '...を示せ。', '...をすべて求めよ。') instead of the proposition that the target proves (the conclusion field already states it). A statement that is not an assertion retrieves and reads poorly and does not match statement_en. Mathematics and Lean target are correct. In addition the answer uses '$\\pi>3>e$' (needed for pi/e != 1) without proving e<3 or pi>3: an unproved step presented as complete.",
+   "patch": {
+    "statement": "$\\pi^e<e^\\pi$である。",
+    "answer": "$e$を自然対数の底、$\\pi$を円周率とする。$x>0$、$x\\neq 1$では$\\log x<x-1$である。実際、$f(x)=x-1-\\log x$は$f^{\\prime}(x)=1-\\dfrac{1}{x}$より$x=1$でのみ最小値$0$をとる。\n$e=\\sum_{k\\geq 0}\\dfrac{1}{k!}$で、$k\\geq 2$では$k!\\geq 2^{k-1}$（$k\\geq 3$では真に大きい）なので$e<1+1+\\dfrac{1}{2}+\\dfrac{1}{4}+\\cdots=3$である。また円に内接する正六角形の周の長さ$6$は円周$2\\pi$より短いので$\\pi>3$である。よって$e<3<\\pi$であり、$\\dfrac{\\pi}{e}\\neq 1$なので、$x=\\dfrac{\\pi}{e}$を代入すると$\\log\\pi-1<\\dfrac{\\pi}{e}-1$、すなわち$e\\log\\pi<\\pi$を得る。指数関数は増加関数なので、$\\pi^e=\\exp(e\\log\\pi)<\\exp(\\pi)=e^\\pi$である。\n"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "entrance_exam",
+   "id": "prime_square_add_two_prime",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "The Recipe `statement` is a question or imperative ('...か。', '...を示せ。', '...をすべて求めよ。') instead of the proposition that the target proves (the conclusion field already states it). A statement that is not an assertion retrieves and reads poorly and does not match statement_en. Mathematics and Lean target are correct.",
+   "patch": {
+    "statement": "素数$p$について、$p^2+2$が素数であることと$p=3$であることは同値である。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "entrance_exam",
+   "id": "three_unit_fractions_sum_one",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "The Recipe `statement` is a question or imperative ('...か。', '...を示せ。', '...をすべて求めよ。') instead of the proposition that the target proves (the conclusion field already states it). A statement that is not an assertion retrieves and reads poorly and does not match statement_en. Mathematics and Lean target are correct.",
+   "patch": {
+    "statement": "$a\\leq b\\leq c$をみたす正の整数について、$\\dfrac{1}{a}+\\dfrac{1}{b}+\\dfrac{1}{c}=1$となるのは$(a,b,c)=(2,3,6),(2,4,4),(3,3,3)$のときに限る。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "entrance_exam",
+   "id": "no_rational_point_on_circle_radius_sqrt_three",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "The Recipe `statement` is a question or imperative ('...か。', '...を示せ。', '...をすべて求めよ。') instead of the proposition that the target proves (the conclusion field already states it). A statement that is not an assertion retrieves and reads poorly and does not match statement_en. Mathematics and Lean target are correct.",
+   "patch": {
+    "statement": "$x^2+y^2=3$をみたす有理数$x,y$は存在しない。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "entrance_exam",
+   "id": "sum_of_factorials_perfect_square",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "The Recipe `statement` is a question or imperative ('...か。', '...を示せ。', '...をすべて求めよ。') instead of the proposition that the target proves (the conclusion field already states it). A statement that is not an assertion retrieves and reads poorly and does not match statement_en. Mathematics and Lean target are correct.",
+   "patch": {
+    "statement": "正の整数$n$について、$1!+2!+\\dots+n!$が平方数となるのは$n=1$または$n=3$のときに限る。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "entrance_exam",
+   "id": "power_swap_equation_integer_solution",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "The Recipe `statement` is a question or imperative ('...か。', '...を示せ。', '...をすべて求めよ。') instead of the proposition that the target proves (the conclusion field already states it). A statement that is not an assertion retrieves and reads poorly and does not match statement_en. Mathematics and Lean target are correct.",
+   "patch": {
+    "statement": "$a<b$をみたす正の整数$a,b$について、$a^b=b^a$となるのは$(a,b)=(2,4)$のときに限る。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "entrance_exam",
+   "id": "harmonic_sum_not_integer",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "The Recipe `statement` is a question or imperative ('...か。', '...を示せ。', '...をすべて求めよ。') instead of the proposition that the target proves (the conclusion field already states it). A statement that is not an assertion retrieves and reads poorly and does not match statement_en. Mathematics and Lean target are correct.",
+   "patch": {
+    "statement": "$n\\geq 2$のとき、$1+\\dfrac{1}{2}+\\dots+\\dfrac{1}{n}$は整数でない。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "entrance_exam",
+   "id": "pythagorean_product_divisible_by_sixty",
+   "severity": "major",
+   "codes": [
+    "ANSWER_WRONG"
+   ],
+   "issue": "Learner-facing answer writes the false congruence 『$1+1\\equiv 1\\pmod 3$』 as the contradiction; the correct statement is a^2+b^2 = 2 (mod 3) versus c^2 = 1 (mod 3). Rest of the proof (mod 5, mod 4 cases, coprimality) is correct and complete.",
+   "patch": {
+    "answer": "$a,b,c$を$a^2+b^2=c^2$をみたす整数とする。$3,4,5$が$abc$を割り切ることを順に示す。\n$3$で割り切れない整数の平方は$3$を法として$1$である。$a,b,c$がどれも$3$で割り切れないと左辺は$1+1\\equiv 2\\pmod 3$、右辺は$c^2\\equiv 1\\pmod 3$となって合わないので、$3$は$abc$を割り切る。\n$5$で割り切れない整数の平方は$5$を法として$\\pm 1$である。$a,b,c$がどれも$5$で割り切れないと、左辺は$5$を法として$0$か$\\pm 2$であり、$c^2\\equiv\\pm 1$に合わない。よって$5$は$abc$を割り切る。\n$a,b$がともに奇数なら$c^2\\equiv 2\\pmod 4$となり不合理である。$a,b$がともに偶数なら$4$は$ab$を割り切る。一方だけが偶数の場合、対称性より$a$を偶数として$b,c$は奇数である。奇数の平方は$8$を法として$1$なので$a^2=c^2-b^2\\equiv 0\\pmod 8$であり、$4$は$a$を割り切る。いずれの場合も$4$は$abc$を割り切る。\n$3,4,5$は互いに素なので、$60$は$abc$を割り切る。\n"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "entrance_exam",
+   "id": "regular_polygon_chord_product",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Second conjunct of school_vectors_complex/prod_one_sub_root_of_unity (product of |1-zeta^k| = n for a primitive n-th root) with zeta=exp(2 pi i/n); the card is the unit-circle instance of that fact. Keep only if cross-reference is intended.",
+   "patch": null,
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "OpenMath encodes propositional and predicate variables inconsistently: propositions as (in a P) with a dummy element, predicates as sets with unbounded x, elsewhere holds_at/relates; carriers (alpha, beta) are dropped. Proposed fix: vocab symbol proposition_holds (args [term]) for Prop variables, and holds_at/relates always with an explicit carrier guard.",
+  "Overloaded arith1 symbols (+, *, ^) are reused for ordinals and cardinals without carrier info (ordinal_add_not_commutative asserts 1+w=w and w+1!=w with a commutative CD symbol); indexed_union/indexed_inter take only a lambda and so lose the index set (countable_union_of_countable is unfaithful). Use ordinal_add, cardinal_add/mul/pow and indexed_union with args [term, term_function].",
+  "Finiteness is encoded as (in (size s) N) in all 20 school_data_logic data/counting cards; use the reusable finite_set concept instead.",
+  "All 43 entrance_exam cards are kind=textbook, level=1 (undergraduate year), though the problems are high-school level (should be level high) and none is gap; the statement field is a question or imperative in 14 of them (patched). Mathematics was verified: every claimed identity, bound and finite table (Euler n^2+n+41 mod p for p=3..37, 2^a/3^b counts, 22/7-pi polynomial identity) checks out, and no Lean junk-value dependence was found (all divisions have positivity side conditions, ℕ-subtraction cases are safe, counts are stated additively).",
+  "Cross-domain duplicates: finset_card_union_two/three vs combinatorics_graphs card_union_add_card_inter/card_union_three_sets/inclusion_exclusion_principle; regular_polygon_chord_product vs school_vectors_complex prod_one_sub_root_of_unity; school pred_forall_contrapositive vs logic_sets contrapositive_iff.",
+  "Hard negatives were checked case by case with concrete counterexamples and are all genuinely false and nearby; targets, texts and answers are otherwise faithful (no TARGET_UNFAITHFUL, VACUOUS or JUNK_VALUE found in this batch). Lean targets were not changed, so no Lean runs were needed."
+ ],
+ "missing_neighbors": [
+  "Sophie Germain identity a^4+4b^4=(a^2+2ab+2b^2)(a^2-2ab+2b^2) (general form behind fourth_power_add_four_composite)",
+  "Cauchy-Schwarz for finite sums over a Finset (Finset.sum_mul_sq_le_sq_mul_sq / inner_mul_le_norm_mul_norm), cited by data_correlation_abs_le_one",
+  "General Setoid kernel lift: Quotient.lift / Setoid.ker uniqueness and Quotient.mk surjective (Quotient.exists_rep)",
+  "Composition cancellation: g∘f injective -> f injective; g∘f surjective -> g surjective (Function.Injective.of_comp / Function.Surjective.of_comp)",
+  "Indexed image/preimage laws Set.image_iUnion, Set.preimage_iUnion, Set.preimage_iInter, Set.image_diff (injective)",
+  "Cardinal.mul_eq_self (c*c=c for infinite c) and Cardinal.add_eq_max, the core fact behind infinite_cardinal_add_mul",
+  "Hartogs / exists ordinal with no injection into a set (Ordinal.card / Cardinal.lift ... used inside the Zorn proof)",
+  "Nat.fib_add (F_{m+n}=F_m F_{n+1}+F_{m-1} F_n) as a standalone lemma",
+  "No rational solution of x^2+y^2=m for m ≡ 3 (mod 4) (general form of no_rational_point_on_circle_radius_sqrt_three; Nat.Prime.sq_add_sq / ZMod squares)",
+  "Dirichlet-free primes in progressions 4k+3 / Euclid-type infinitude for residue 3 mod 4 as a general 'prime factor in the class' lemma",
+  "Weighted mean / Jensen inequality for Finset sums (generalising data_mean_of_two_groups) and variance nonnegativity as Finset lemma",
+  "Rank-style lemma: nonempty well-founded relation has a minimal element (WellFounded.has_min), used by well_founded_induction and nat_well_ordering"
+ ]
+}

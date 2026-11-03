@@ -1,0 +1,524 @@
+{
+ "batch": "U2_ring_group",
+ "domains": [
+  "ring_theory",
+  "group_theory"
+ ],
+ "reviewed": 111,
+ "ok_ids": [
+  "comap_prime_ideal",
+  "ideal_top_iff_contains_unit",
+  "coprime_ideals_inf_eq_mul",
+  "principal_ideal_le_iff_dvd",
+  "quotient_mk_eq_iff_sub_mem",
+  "first_isomorphism_theorem_ring",
+  "third_isomorphism_theorem_ring",
+  "coprime_ideals_simultaneous_congruence",
+  "quotient_domain_iff_prime",
+  "quotient_field_iff_maximal",
+  "maximal_ideal_is_prime",
+  "exists_maximal_ideal_containing",
+  "nonunit_in_maximal_ideal",
+  "prime_ideal_contains_product",
+  "finite_domain_is_field",
+  "unit_add_nilpotent_is_unit",
+  "prime_element_irreducible",
+  "pid_irreducible_is_prime",
+  "ufd_irreducible_iff_prime",
+  "two_irreducible_not_prime_z_sqrt_neg5",
+  "pid_is_ufd",
+  "pid_nonzero_prime_is_maximal",
+  "polynomial_ring_over_ufd_is_ufd",
+  "polynomial_remainder_theorem",
+  "polynomial_factor_theorem",
+  "gauss_lemma_primitive_product",
+  "monic_irreducible_of_reduction",
+  "low_degree_irreducible_iff_no_root",
+  "polynomial_quotient_field_iff_irreducible",
+  "domain_characteristic_prime_or_zero",
+  "add_pow_prime_characteristic",
+  "frobenius_injective_reduced",
+  "fraction_field_element_as_quotient",
+  "nilradical_eq_inter_primes",
+  "jacobson_radical_mem_iff",
+  "nakayama_lemma",
+  "domain_idempotent_zero_or_one",
+  "idempotent_ideal_decomposition",
+  "hilbert_basis_theorem",
+  "subgroup_one_step_test",
+  "finite_closed_subset_is_subgroup",
+  "subgroup_union_iff_comparable",
+  "subgroup_product_iff_permutable",
+  "left_cosets_eq_or_disjoint",
+  "lagrange_theorem",
+  "element_order_dvd_group_order",
+  "prime_order_group_facts",
+  "index_tower_law",
+  "coprime_order_subgroups_trivial_intersection",
+  "exponent_two_group_is_abelian",
+  "cyclic_group_abelian_subgroups_quotients",
+  "finite_cyclic_unique_subgroup_of_each_order",
+  "cyclic_center_quotient_implies_abelian",
+  "normal_iff_left_coset_eq_right_coset",
+  "index_two_subgroup_is_normal",
+  "kernel_normal_and_injective_iff_trivial",
+  "normal_subgroup_under_hom",
+  "disjoint_normal_subgroups_commute",
+  "quotient_abelian_iff_contains_commutator",
+  "third_isomorphism_theorem",
+  "correspondence_theorem",
+  "abelian_iff_center_top_iff_commutator_trivial",
+  "action_orbits_eq_or_disjoint",
+  "orbit_stabilizer_theorem",
+  "burnside_lemma",
+  "class_equation",
+  "nontrivial_p_group_has_nontrivial_center",
+  "order_prime_square_group_is_abelian",
+  "cauchy_theorem",
+  "sylow_second_theorem",
+  "sylow_third_theorem",
+  "unique_sylow_subgroup_is_normal",
+  "hom_from_simple_group_trivial_or_injective",
+  "abelian_group_simple_iff_prime_order",
+  "transpositions_generate_symmetric_group",
+  "three_cycles_generate_alternating_group",
+  "internal_direct_product",
+  "internal_semidirect_product",
+  "solvable_iff_normal_and_quotient_solvable",
+  "finite_p_group_is_nilpotent",
+  "nilpotent_group_solvable_with_nontrivial_center",
+  "finite_group_has_simple_quotient"
+ ],
+ "findings": [
+  {
+   "domain": "ring_theory",
+   "id": "noetherian_iff_ideals_fg",
+   "severity": "major",
+   "codes": [
+    "TARGET_UNFAITHFUL",
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "Text says 'Noetherian (ACC on ideals) iff every ideal is finitely generated', but in Mathlib IsNoetherianRing R is by definition 'every ideal is FG' (class IsNoetherian: noetherian : forall s, s.FG; isNoetherianRing_iff_ideal_fg is just isNoetherianRing_iff.trans isNoetherian_def). The target is therefore definitional and does not contain the ACC<->FG content the card is named for; the OM hides it behind the atomic symbol noetherian_ring. Patch states ACC explicitly (checked with Lean).",
+   "patch": {
+    "target": "∀ (R : Type*) [CommRing R], (∀ I : ℕ → Ideal R, Monotone I → ∃ N, ∀ m, N ≤ m → I N = I m) ↔ ∀ I : Ideal R, I.FG\n",
+    "proof": "by\n  intro R _\n  rw [← isNoetherianRing_iff_ideal_fg, isNoetherianRing_iff, ← monotone_stabilizes_iff_noetherian]\n  constructor\n  · intro h f\n    exact h f f.monotone\n  · intro h I hI\n    exact h ⟨I, hI⟩\n",
+    "statement": "可換環$R$について、イデアルの任意の昇鎖$I_0\\subseteq I_1\\subseteq\\cdots$がある番号から先で一定になること（昇鎖条件）と、$R$のすべてのイデアルが有限生成であることは同値である。",
+    "statement_en": "For a commutative ring R, every ascending chain of ideals I_0 ⊆ I_1 ⊆ ... is eventually constant if and only if every ideal of R is finitely generated.",
+    "conclusion": "イデアルの昇鎖条件が成り立つことと、$R$のすべてのイデアルが有限生成であることは同値である。",
+    "openmath": "(forall (R) (-> (comm_ring R) (<-> (forall (I) (-> (and (forall (n) (-> (in n N) (ideal_of (seq_value I n) R))) (forall (n) (-> (in n N) (subset (seq_value I n) (seq_value I (+ n 1)))))) (exists (k) (and (in k N) (forall (m) (-> (and (in m N) (<= k m)) (= (seq_value I k) (seq_value I m)))))))) (forall (J) (-> (ideal_of J R) (finitely_generated_ideal J))))))"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "ring_theory",
+   "id": "quotient_lift_unique",
+   "severity": "major",
+   "codes": [
+    "OTHER",
+    "DUPLICATE"
+   ],
+   "issue": "Card id collides with logic_sets/quotient_lift_unique (set-theoretic lift through a setoid quotient). Same id in two domains will clash as a DB/manifest key; the two are different facts (ring hom vs plain map).",
+   "patch": {
+    "id": "ring_quotient_lift_unique"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "ring_theory",
+   "id": "quotient_ideal_correspondence",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED"
+   ],
+   "issue": "Named 'correspondence' but states only one composite identity pi^-1(pi(J))=J; the other half pi(pi^-1(K))=K (what makes it a bijection) is missing. Patch adds it (Lean-checked).",
+   "patch": {
+    "statement": "可換環$R$のイデアル$I$と自然な射影$\\pi:R\\to R/I$について、$I\\subseteq J$を満たす$R$の任意のイデアル$J$で$\\pi^{-1}(\\pi(J))=J$であり、$R/I$の任意のイデアル$K$で$\\pi(\\pi^{-1}(K))=K$である。",
+    "statement_en": "Let I be an ideal of a commutative ring R with projection π: R → R/I. For every ideal J ⊇ I of R, π⁻¹(π(J)) = J, and for every ideal K of R/I, π(π⁻¹(K)) = K.",
+    "assumptions": [
+     "$R$は可換環",
+     "$I$は$R$のイデアル",
+     "$\\pi:R\\to R/I$は自然な射影"
+    ],
+    "quantifiers": [
+     "任意の可換環$R$とそのイデアル$I$",
+     "$I\\subseteq J$を満たす任意のイデアル$J\\subseteq R$",
+     "$R/I$の任意のイデアル$K$"
+    ],
+    "conclusion": "$I\\subseteq J$なら$\\pi^{-1}(\\pi(J))=J$であり、$R/I$の任意のイデアル$K$で$\\pi(\\pi^{-1}(K))=K$である。",
+    "target": "∀ (R : Type*) [CommRing R] (I : Ideal R), (∀ J : Ideal R, I ≤ J → (J.map (Ideal.Quotient.mk I)).comap (Ideal.Quotient.mk I) = J) ∧ (∀ K : Ideal (R ⧸ I), (K.comap (Ideal.Quotient.mk I)).map (Ideal.Quotient.mk I) = K)\n",
+    "proof": "by\n  intro R _ I\n  refine ⟨fun J h => ?_, fun K => ?_⟩\n  · rw [Ideal.comap_map_of_surjective _ Ideal.Quotient.mk_surjective, ← RingHom.ker_eq_comap_bot, Ideal.mk_ker]\n    exact sup_eq_left.mpr h\n  · exact Ideal.map_comap_of_surjective _ Ideal.Quotient.mk_surjective K\n",
+    "answer": "$R$を可換環、$I\\subseteq J$を$R$のイデアル、$\\pi:R\\to R/I$を自然な射影とする。$\\pi$は全射なので、$\\pi(J)$は$R/I$のイデアルであり、$J$の元の剰余類の全体である。\n\n$j\\in J$なら$\\pi(j)\\in\\pi(J)$なので、$J\\subseteq\\pi^{-1}(\\pi(J))$である。\n\n逆に$x\\in\\pi^{-1}(\\pi(J))$とする。$\\pi(x)=\\pi(j)$となる$j\\in J$があるので、$x-j\\in I\\subseteq J$である。したがって$x=(x-j)+j\\in J$である。\n\n次に$K$を$R/I$のイデアルとする。$y\\in K$なら、$\\pi$は全射なので$y=\\pi(x)$となる$x\\in R$がある。$\\pi(x)=y\\in K$より$x\\in\\pi^{-1}(K)$なので$y\\in\\pi(\\pi^{-1}(K))$である。逆に$\\pi(\\pi^{-1}(K))$の元は$\\pi(x)$（$\\pi(x)\\in K$）の形なので$K$に属する。よって$\\pi(\\pi^{-1}(K))=K$である。\n",
+    "openmath": "(forall (R I) (-> (and (comm_ring R) (ideal_of I R)) (and (forall (J) (-> (and (ideal_of J R) (subset I J)) (= (ideal_comap (ring_quotient_map I) (ideal_map (ring_quotient_map I) J)) J))) (forall (K) (-> (ideal_of K (quotient_ring R I)) (= (ideal_map (ring_quotient_map I) (ideal_comap (ring_quotient_map I) K)) K))))))"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "ring_theory",
+   "id": "chinese_remainder_two_ideals",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Ring product R/I x R/J is encoded with set1.cartesian_product (a set product, no ring structure) and the pair is taken apart with (fn_value pair 1)/(fn_value pair 2), an ad-hoc projection convention. Better: a ring_product term and an explicit pair term (new vocab: ring_product(A,B), pair(a,b)).",
+   "patch": {
+    "openmath": "(forall (R I J) (-> (and (comm_ring R) (ideal_of I R) (ideal_of J R) (= (ideal_sum I J) (unit_ideal R))) (exists (e) (and (ring_iso e (quotient_ring R (inter I J)) (ring_product (quotient_ring R I) (quotient_ring R J))) (forall (x) (= (fn_value e (residue_class (inter I J) x)) (pair (residue_class I x) (residue_class J x))))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "ring_theory",
+   "id": "primitive_irreducible_over_int_iff_rat",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH",
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "OM writes (irreducible_element f (polynomial_ring Q)) with f in Z[X]: the map Z[X]->Q[X] (Polynomial.map (Int.castRingHom Q)) is erased. Also special to Z/Q; the reusable form is any UFD/GCD domain R with fraction field K (Mathlib IsPrimitive.irreducible_iff_irreducible_map_fraction_map).",
+   "patch": {
+    "openmath": "(forall (f) (-> (and (in f (polynomial_ring Z)) (primitive_polynomial f)) (<-> (irreducible_element f (polynomial_ring Z)) (irreducible_element (poly_map (canonical_ring_hom Z Q) f) (polynomial_ring Q)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "ring_theory",
+   "id": "eisenstein_integer_monic_over_rat",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OM has (in p P) = p is a positive prime (set P of primes), but the target is Prime p for p : Z (also -p) and the text says 'prime element, or -1 times a prime'. The coefficient index n is quantified over the whole universe, and the Z[X]->Q[X] map is erased as in the primitive card.",
+   "patch": {
+    "openmath": "(forall (f p) (-> (and (in f (polynomial_ring Z)) (monic_polynomial f) (> (poly_degree f) 0) (prime_element p Z) (forall (n) (-> (and (in n N) (< n (poly_degree f))) (dvd p (poly_coeff f n)))) (not (dvd (^ p 2) (poly_coeff f 0)))) (irreducible_element (poly_map (canonical_ring_hom Z Q) f) (polynomial_ring Q))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "ring_theory",
+   "id": "eisenstein_criterion_prime_ideal",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Coefficient index n is quantified with no (in n N) guard (ranges over all terms, not only naturals); P^2 uses arith1.power on an ideal, undefined in the vocabulary. Use ideal_product P P.",
+   "patch": {
+    "openmath": "(forall (R P f) (-> (and (integral_domain R) (prime_ideal P R) (in f (polynomial_ring R)) (primitive_polynomial f) (> (poly_degree f) 0) (notin (poly_leading_coeff f) P) (forall (n) (-> (and (in n N) (< n (poly_degree f))) (in (poly_coeff f n) P))) (notin (poly_coeff f 0) (ideal_product P P))) (irreducible_element f (polynomial_ring R))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "ring_theory",
+   "id": "polynomial_root_count_le_degree",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Target takes S : Finset R and text says finite subset, but OM only has (subset S R) and (size S): finiteness is not asserted, so (size S) is undefined for infinite S.",
+   "patch": {
+    "openmath": "(forall (R f S) (-> (and (integral_domain R) (in f (polynomial_ring R)) (!= f 0) (subset S R) (finite_set S) (forall (a) (-> (in a S) (= (poly_eval f a) 0)))) (<= (size S) (poly_degree f))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "ring_theory",
+   "id": "matrix_unit_iff_det_unit",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Target has [Fintype n] (finite index type, needed for det); OM binds an unrestricted n with no finiteness hypothesis.",
+   "patch": {
+    "openmath": "(forall (n R A) (-> (and (comm_ring R) (finite_set n) (in A (matrix_ring n R))) (<-> (unit_element A (matrix_ring n R)) (unit_element (matrix_det A) R))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "ring_theory",
+   "id": "matrix_ring_nonzero_square_zero",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Same as matrix_unit_iff_det_unit: Fintype n of the target is missing from the OM.",
+   "patch": {
+    "openmath": "(forall (n R i j) (-> (and (comm_ring R) (nontrivial_ring R) (finite_set n) (in i n) (in j n) (!= i j)) (exists (A) (and (in A (matrix_ring n R)) (!= A 0) (= (* A A) 0)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "ring_theory",
+   "id": "noetherian_ascending_chain_stabilizes",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Card-specific symbol ideal_sequence_term instead of core seq_value; n,m range over the whole universe (no (in n N)); comm_ring R missing.",
+   "patch": {
+    "openmath": "(forall (R I) (-> (and (comm_ring R) (noetherian_ring R) (forall (n) (-> (in n N) (and (ideal_of (seq_value I n) R) (subset (seq_value I n) (seq_value I (+ n 1))))))) (exists (k) (and (in k N) (forall (m) (-> (and (in m N) (<= k m)) (= (seq_value I k) (seq_value I m))))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "ring_theory",
+   "id": "euclidean_domain_is_pid",
+   "severity": "minor",
+   "codes": [
+    "ANSWER_WRONG"
+   ],
+   "issue": "Mathlib's EuclideanDomain uses an arbitrary well-founded relation r, not an N-valued delta; the answer fixes delta : R\\{0} -> N, so it proves only the special case of the target. The argument is identical with 'minimal element of a well-founded relation'.",
+   "patch": {
+    "answer": "$R$をユークリッド整域とする。すなわち$R$は整域で、$R$上に整礎な関係$\\prec$（無限に下る列を持たない関係）があり、任意の$x\\in R$と$d\\neq 0$について、$x=dq+r$かつ「$r=0$または$r\\prec d$」を満たす$q,r\\in R$が存在する。ふつうは自然数値の関数$\\delta$を使い、$r\\prec d$を$\\delta(r)<\\delta(d)$とする。\n\n$I$を$R$のイデアルとする。$I=\\{0\\}$なら$I=(0)$である。$I\\neq\\{0\\}$なら、$I$の$0$でない元の集合は空でなく$\\prec$が整礎なので、$\\prec$について極小な元$d$がある。$(d)\\subseteq I$は明らかである。\n\n$x\\in I$をとり、$x=dq+r$と割る。$r=x-dq\\in I$である。$r\\neq 0$なら$r\\prec d$となり、$d$の極小性に反する。よって$r=0$であり、$x\\in(d)$である。したがって$I=(d)$である。\n"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "ring_theory",
+   "id": "polynomial_monic_division",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "poly_degree is used for Lean's degree (WithBot) here but for natDegree elsewhere (root-count, low-degree cards) with no convention for the zero polynomial; (< (poly_degree r) (poly_degree g)) is unspecified when r=0. Make the zero case explicit.",
+   "patch": {
+    "openmath": "(forall (R f g) (-> (and (comm_ring R) (nontrivial_ring R) (in f (polynomial_ring R)) (in g (polynomial_ring R)) (monic_polynomial g)) (exists (q r) (and (= f (+ (* g q) r)) (or (= r 0) (< (poly_degree r) (poly_degree g)))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "ring_theory",
+   "id": "ring_hom_injective_iff_ker_bot",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Card-specific predicate ring_hom_injective (also in fraction_field_universal_property); injective_function (group vocabulary) is the reusable concept.",
+   "patch": {
+    "openmath": "(forall (R S f) (-> (and (comm_ring R) (comm_ring S) (ring_hom f R S)) (<-> (injective_function f) (= (ring_kernel f) (zero_ideal R)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "ring_theory",
+   "id": "fraction_field_universal_property",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Same card-specific ring_hom_injective; use injective_function.",
+   "patch": {
+    "openmath": "(forall (A K L g) (-> (and (integral_domain A) (fraction_field_of K A) (is_field L) (ring_hom g A L) (injective_function g)) (exists (h) (and (ring_hom h K L) (forall (a) (-> (in a A) (= (fn_value h (fn_value (fraction_embedding A K) a)) (fn_value g a)))) (forall (k) (-> (and (ring_hom k K L) (forall (a) (-> (in a A) (= (fn_value k (fn_value (fraction_embedding A K) a)) (fn_value g a))))) (= k h)))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "group_theory",
+   "id": "left_coset_eq_iff_inv_mul_mem",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "The hard negative is false (ab^-1 in H is the right-coset condition) but the reason gives no counterexample. Concrete one: S3, H={e,(1 2)}, a=(1 3), b=(1 3)(1 2): bH=aH but ab^-1=(2 3) not in H.",
+   "patch": {
+    "hard_negative": {
+     "statement": "群$G$の部分群$H$と$a,b\\in G$について、$aH=bH$であることと$ab^{-1}\\in H$であることは同値である。",
+     "reason": "$ab^{-1}\\in H$は右剰余類の等式$Ha=Hb$に対応する条件である。$G=S_3$、$H=\\{e,(1\\ 2)\\}$、$a=(1\\ 3)$、$b=(1\\ 3)(1\\ 2)$とすると、$b=a(1\\ 2)$より$aH=bH$であるが、$ab^{-1}=(1\\ 3)(1\\ 2)(1\\ 3)=(2\\ 3)\\notin H$である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "group_theory",
+   "id": "second_isomorphism_theorem",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "The hard negative is ill-formed rather than false: without normality HK/K is not a group, and the reason gives no counterexample to a precise claim. Replace with a well-formed false claim with a concrete counterexample.",
+   "patch": {
+    "hard_negative": {
+     "statement": "群$G$の部分群$H$と正規部分群$N$について、$H/(H\\cap N)\\cong G/N$である。",
+     "reason": "右辺は$HN/N$でなければならない。$G=S_3$、$H=\\{e\\}$、$N=A_3$とすると、$H/(H\\cap N)$は自明群であるが、$G/N$は位数$2$の群なので同型でない。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "group_theory",
+   "id": "sylow_first_theorem",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "Japanese statement also asserts 'in particular a Sylow p-subgroup exists'; the target only gives a subgroup of order p^n (Sylow existence is a corollary taking n maximal, not stated in Lean/OM).",
+   "patch": {
+    "statement": "シローの第一定理。$p$を素数とする。有限群$G$の位数を$p^n$が割り切るなら、位数$p^n$の部分群が存在する。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "group_theory",
+   "id": "alternating_group_simple",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH",
+    "ANSWER_WRONG"
+   ],
+   "issue": "Target has Fintype X but OM only has (>= (size X) 5) (an infinite X also satisfies it). The answer uses 'A is generated by 3-cycles' without proof (it is a separate card); give the two-line justification.",
+   "patch": {
+    "openmath": "(forall (X) (-> (and (finite_set X) (>= (size X) 5)) (simple_group (alternating_group X))))",
+    "answer": "$X$を$|X|\\geq5$の有限集合、$A=A(X)$を交代群とする。$A$は3サイクルを含むので自明でない。$N\\neq\\{1\\}$を$A$の正規部分群として、$N=A$を示す。3サイクルとは長さ$3$の巡回置換のことである。\n\n$N$が3サイクルを1つ含めば$N=A$であることを示す。$A$は3サイクル全体で生成される。実際、偶置換は偶数個の互換の積であり、置換を右から合成すると、共通の点を持つ2つの互換は$(a\\ b)(a\\ c)=(a\\ c\\ b)$、互いに素な2つの互換は$(a\\ b)(c\\ d)=(a\\ c\\ b)(a\\ c\\ d)$と3サイクルの積に書ける。また3サイクル$(a\\ b\\ c)$と$(a'\\ b'\\ c')$について、$a,b,c$をそれぞれ$a',b',c'$に移す置換$\\sigma$をとると、$\\sigma(a\\ b\\ c)\\sigma^{-1}=(a'\\ b'\\ c')$である。$\\sigma$が奇置換なら、$a,b,c$以外の2点$d,e$をとって$\\sigma(d\\ e)$に取り替える。$(d\\ e)$は$(a\\ b\\ c)$と可換なので同じ等式が成り立ち、$\\sigma(d\\ e)$は偶置換である。よって3サイクルはすべて$A$の中で共役であり、$N$はそのすべてを含む。\n\n$N$が3サイクルを含むことを示す。$\\sigma\\in N\\setminus\\{1\\}$を固定点の個数が最大の元とし、$\\sigma$が3サイクルでないと仮定して矛盾を導く。$\\sigma$を互いに素な巡回置換の積に分解すると、次のどちらかである。\n\n場合1：$\\sigma$は長さ$3$以上の巡回置換を含む。$\\sigma$が動かす点が$3$個なら$\\sigma$は3サイクルであり、$4$個なら長さ$4$の巡回置換で奇置換であるから、どちらも起こらない。よって$\\sigma$は$5$個以上の点を動かす。動かす相異なる点$a,b,c,d,e$を$\\sigma(a)=b$、$\\sigma(b)=c$となるようにとる。\n\n場合2：$\\sigma$は互いに素な互換の積である。$\\sigma$は偶置換なので、互換は$2$個以上ある。$\\sigma(a)=b$、$\\sigma(b)=a$、$\\sigma(c)=d$、$\\sigma(d)=c$となる相異なる$a,b,c,d$をとり、$|X|\\geq5$なので他の点$e$をとる。\n\nどちらの場合も$\\tau=(c\\ d\\ e)\\in A$とおき、$\\sigma'=\\tau\\sigma\\tau^{-1}\\in N$、$\\rho=\\sigma^{-1}\\sigma'\\in N$とする。場合1では$\\sigma'(b)=\\tau(\\sigma(b))=\\tau(c)=d\\neq c=\\sigma(b)$である。場合2では$\\sigma'(d)=\\tau(\\sigma(c))=\\tau(d)=e\\neq c=\\sigma(d)$である。よって$\\rho\\neq1$である。\n\n$\\rho$の固定点を数える。$\\sigma$の固定点$x$が$c,d,e$のいずれでもなければ、$\\tau$も$\\sigma$も$x$を固定するので$\\rho(x)=x$である。場合1では$c,d,e$は$\\sigma$に動かされるので、$\\sigma$の固定点はすべて$\\rho$の固定点である。さらに$\\sigma'(a)=\\tau(\\sigma(a))=\\tau(b)=b$より$\\rho(a)=a$であり、$a$は$\\sigma$に動かされる点である。よって$\\rho$の固定点は$\\sigma$より多い。場合2では$\\sigma$の固定点のうち失う可能性があるのは$e$だけである。一方$\\sigma'(a)=b$、$\\sigma'(b)=a$より$\\rho(a)=a$、$\\rho(b)=b$であり、$a,b$は$\\sigma$に動かされる点である。よって$\\rho$の固定点は$\\sigma$より多い。どちらも$\\sigma$の選び方に矛盾する。\n\nしたがって$\\sigma$は3サイクルであり、$N=A$である。\n"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "group_theory",
+   "id": "alternating_group_index_and_order",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Fintype X of the target is not asserted in the OM.",
+   "patch": {
+    "openmath": "(forall (X) (-> (and (finite_set X) (>= (size X) 2)) (and (normal_subgroup (alternating_group X) (symmetric_group X)) (= (subgroup_index (alternating_group X) (symmetric_group X)) 2) (= (* 2 (size (alternating_group X))) (size (symmetric_group X))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "group_theory",
+   "id": "symmetric_group_not_solvable",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Text/target are about S_n (Fin n, n>=5); the OM quantifies over any X with (size X)>=5, including infinite X, relying on the vocabulary meaning 'finite set'. Add finiteness.",
+   "patch": {
+    "openmath": "(forall (X) (-> (and (finite_set X) (>= (size X) 5)) (not (solvable_group (symmetric_group X)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "group_theory",
+   "id": "sign_of_transposition_and_cycle",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT",
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OM has no carrier set X (target: Fintype X): transposition/cycle_permutation/permutation_sign/cycle_length apply to a bare permutation t, c with no set or finiteness. Tie t and c to (symmetric_group X) with X finite.",
+   "patch": {
+    "openmath": "(forall (X t c) (-> (and (finite_set X) (in t (symmetric_group X)) (in c (symmetric_group X))) (and (-> (transposition t) (= (permutation_sign t) -1)) (-> (cycle_permutation c) (= (permutation_sign c) (^ -1 (- (cycle_length c) 1)))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "group_theory",
+   "id": "finite_abelian_group_structure",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT",
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Card-specific symbol prime_power_cyclic_sum(p,e) hides that the family is finite: p,e are sequences with 'forall i, p_i prime' over the whole universe and no length. Target has an explicit Fintype index. Add a length k (vocab: prime_power_cyclic_sum(k,p,e)) and guard i.",
+   "patch": {
+    "openmath": "(forall (G) (-> (and (finite_group G) (abelian_group G)) (exists (k p e) (and (in k N) (forall (i) (-> (and (in i N) (< i k)) (and (in (seq_value p i) P) (in (seq_value e i) N)))) (isomorphic_groups G (prime_power_cyclic_sum k p e))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "group_theory",
+   "id": "pow_eq_one_iff_order_dvd",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "'Finite order' is encoded as (element_order g) > 0, which silently relies on Lean's orderOf = 0 for infinite order; the vocabulary meaning of element_order says nothing about that, so a reader could take it as 'infinite'. State finite order as 'some positive power is the identity'.",
+   "patch": {
+    "openmath": "(forall (G g n) (-> (and (group G) (in g G) (in n N)) (and (-> (exists (m) (and (in m N) (> m 0) (= (group_pow g m) (group_identity G)))) (<-> (= (group_pow g n) (group_identity G)) (dvd (element_order g) n))) (-> (not (exists (m) (and (in m N) (> m 0) (= (group_pow g m) (group_identity G))))) (<-> (= (group_pow g n) (group_identity G)) (= n 0))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "group_theory",
+   "id": "order_of_power_formula",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finite order encoded via (exists m>0, element_order g = m), i.e. relies on element_order being a number for every element; use the intrinsic condition g^m = 1.",
+   "patch": {
+    "openmath": "(forall (G g n) (-> (and (group G) (in g G) (in n N) (exists (m) (and (in m N) (> m 0) (= (group_pow g m) (group_identity G))))) (= (element_order (group_pow g n)) (/ (element_order g) (gcd (element_order g) n)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "group_theory",
+   "id": "commuting_coprime_order_product",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Finite order encoded as (> (element_order a) 0): for infinite order element_order is unspecified in the vocabulary (Lean junk value 0). Use the intrinsic condition.",
+   "patch": {
+    "openmath": "(forall (G a b) (-> (and (group G) (in a G) (in b G) (= (group_mul a b) (group_mul b a)) (exists (m) (and (in m N) (> m 0) (= (group_pow a m) (group_identity G)))) (exists (m) (and (in m N) (> m 0) (= (group_pow b m) (group_identity G)))) (= (gcd (element_order a) (element_order b)) 1)) (= (element_order (group_mul a b)) (* (element_order a) (element_order b)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "group_theory",
+   "id": "abelianization_universal_property",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "The class of x in G/[G,G] (an element of the quotient) is written (left_coset x ...), which is the coset as a SET; the vocabulary has quotient_map (projection) for this. Same conflation in first_isomorphism_theorem.",
+   "patch": {
+    "openmath": "(forall (G A f) (-> (and (group G) (abelian_group A) (group_hom f G A)) (exists (g) (and (group_hom g (abelianization G) A) (forall (x) (-> (in x G) (= (fn_value g (fn_value (quotient_map G (commutator_subgroup G)) x)) (fn_value f x)))) (forall (h) (-> (and (group_hom h (abelianization G) A) (forall (x) (-> (in x G) (= (fn_value h (fn_value (quotient_map G (commutator_subgroup G)) x)) (fn_value f x))))) (= h g)))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "group_theory",
+   "id": "first_isomorphism_theorem",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Element x ker f of G/ker f encoded as the set (left_coset x (group_kernel f)); use (fn_value (quotient_map G (group_kernel f)) x).",
+   "patch": {
+    "openmath": "(forall (f G H) (-> (group_hom f G H) (exists (e) (and (group_iso e (quotient_group G (group_kernel f)) (group_image f)) (forall (x) (-> (in x G) (= (fn_value e (fn_value (quotient_map G (group_kernel f)) x)) (fn_value f x))))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "group_theory",
+   "id": "cayley_theorem",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Vocabulary meaning of symmetric_group is 'symmetric group on a finite set X', but Cayley applies to arbitrary G (Equiv.Perm G, G possibly infinite). Fix the vocab meaning to 'group of all bijections of X'; OM text is fine.",
+   "patch": null,
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "OpenMath binder hygiene: many OMs omit finiteness hypotheses the Lean target carries (Finset/Fintype/Finite: root count, matrix cards, A_n/S_n cards, sign card, abelian structure) or quantify indices (n, m, i) over the whole universe with no (in n N) guard; the vocabulary symbols (size, symmetric_group, alternating_group) only mean the right thing for finite sets.",
+  "Overloaded or ambiguous vocabulary without carrier/convention: poly_degree (degree vs natDegree, zero polynomial), element_order (infinite order = 0 convention used as 'finite order' test in 3 cards), ring_characteristic (argument order not stated; cards use (R p)), transposition/cycle_permutation (no carrier), symmetric_group meaning says finite. Add 'in the order (...)' notes and carrier arguments.",
+  "Card-specific or conflated encodings: ring_hom_injective (use injective_function), ideal_sequence_term (use seq_value), prime_power_cyclic_sum, cartesian used for a ring product, left_coset used for an element of G/N (use quotient_map / residue_class), implicit Z[X]->Q[X] map erased in two cards. Also single-letter binders R,N,P,Q,Z,C collide with built-in set constants (they shadow them; legal but fragile).",
+  "Lean definitions that unfold to the claim: IsNoetherianRing R is by definition 'all ideals FG', so an 'ACC iff FG' target (noetherian_iff_ideals_fg) is trivial; audit other Mathlib notions (IsPGroup, IsSolvable, Group.IsNilpotent, IsSimpleGroup, IsCyclic) for the same issue when text defines them differently. Group iso theorems use Nonempty (≃*) with no naturality, while the ring versions state the compatibility map (inconsistent strength).",
+  "Quality is otherwise high: all 111 targets are faithful to their text, hard negatives are real counterexamples (two reasons are weak), answers are complete proofs. Named share: ring 8/54 (14.8%, at the cap), group 7/57; Cayley and the finite-abelian structure theorem are named-class theorems kept as textbook to stay under the 15% cap. One cross-domain id collision (quotient_lift_unique)."
+ ],
+ "missing_neighbors": [
+  "p-group fixed-point congruence |X| ≡ |X^P| (mod p) for a p-group acting on a finite set (Mathlib MulAction.card_modEq_card_fixedPoints); cited inside the three Sylow answers and Cauchy/McKay but not a card",
+  "Product formula |HK|·|H∩K| = |H|·|K| for finite subgroups (and HK=G when |H||K|=|G|, H∩K=1)",
+  "Normalizer/centralizer: N_G(H)/C_G(H) embeds in Aut(H); Sylow p-subgroup normal in its normalizer (Mathlib Sylow.normalizer_*)",
+  "Surjective first isomorphism theorems: G/ker f ≅ H for surjective f (QuotientGroup.quotientKerEquivOfSurjective) and R/ker f ≅ S (RingHom.quotientKerEquivOfSurjective); neither is a card though both are what proofs cite",
+  "CRT for finitely many pairwise coprime ideals R/⋂I_i ≅ ∏R/I_i (Ideal.quotientInfRingEquivPiQuotient)",
+  "Polynomial quotient: (R/I)[X] ≅ R[X]/IR[X], so R[X]/(I) is a domain when I is prime (Ideal.polynomialQuotientEquivQuotientPolynomial); used in the Gauss/Eisenstein answers",
+  "Radical of an ideal is the intersection of primes containing it (Ideal.radical_eq_sInf) and prime avoidance (Ideal.subset_union_prime)",
+  "Fermat/Frobenius in prime characteristic: frobenius is a ring hom, a^p=a in ZMod p (ZMod.pow_card), and finite field of char p has p^n elements",
+  "Cyclic groups: number of elements of order d in a cyclic group is φ(d) (IsCyclic.card_orderOf_eq_totient) and Σ_{d|n}φ(d)=n; finite subgroup of the unit group of a field is cyclic",
+  "Orders under homomorphisms: ord(f(g)) divides ord(g); |f(G)| divides gcd(|G|,|H|); homomorphism between coprime-order groups is trivial",
+  "Conjugacy: size of the conjugacy class equals the index of the centralizer (ConjClasses / MulAction.card_orbit_mul_card_stabilizer for conjugation action); centralizer of an element contains it",
+  "Local-ring and unit facts: in a local ring non-units form the maximal ideal; 1+nilradical ⊆ units (cf. unit_add_nilpotent), Jacobson radical vs units for I ≤ J(R)"
+ ]
+}

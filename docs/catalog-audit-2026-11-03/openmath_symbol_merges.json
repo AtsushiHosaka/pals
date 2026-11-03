@@ -1,0 +1,818 @@
+[
+ {
+  "from": "pals2:commutative_ring",
+  "to": "pals2:comm_ring",
+  "reason": "same meaning (R is a commutative ring), both unary; comm_ring is the majority spelling (60 cards)",
+  "confidence": "high",
+  "cards_affected": 4
+ },
+ {
+  "from": "pals2:is_comm_ring",
+  "to": "pals2:comm_ring",
+  "reason": "same meaning, both unary",
+  "confidence": "high",
+  "cards_affected": 6
+ },
+ {
+  "from": "pals2:binomial",
+  "to": "pals2:binom",
+  "reason": "binomial coefficient (n,k), same arg order",
+  "confidence": "high",
+  "cards_affected": 2
+ },
+ {
+  "from": "pals2:binomial_coefficient",
+  "to": "pals2:binom",
+  "reason": "binomial coefficient (n,k), same arg order",
+  "confidence": "high",
+  "cards_affected": 2
+ },
+ {
+  "from": "pals2:pi_constant",
+  "to": "pals2:pi",
+  "reason": "same constant; pi has 90 cards vs 11",
+  "confidence": "high",
+  "cards_affected": 11
+ },
+ {
+  "from": "pals2:complex_i",
+  "to": "pals2:complex_imaginary_unit",
+  "reason": "same constant i; the other has 23 cards vs 7",
+  "confidence": "high",
+  "cards_affected": 7
+ },
+ {
+  "from": "pals2:conjugate",
+  "to": "pals2:complex_conj",
+  "reason": "complex conjugate, unary both",
+  "confidence": "high",
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:extension_degree",
+  "to": "pals2:ext_degree",
+  "reason": "field extension degree, both (extension, base)",
+  "confidence": "high",
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:alg_closed_field",
+  "to": "pals2:algebraically_closed",
+  "reason": "K is algebraically closed, unary both",
+  "confidence": "high",
+  "cards_affected": 4
+ },
+ {
+  "from": "pals2:bijective_map",
+  "to": "pals2:bijective",
+  "reason": "f is bijective, unary both",
+  "confidence": "high",
+  "cards_affected": 6
+ },
+ {
+  "from": "pals2:injective_function",
+  "to": "pals2:injective",
+  "reason": "f is injective, unary both",
+  "confidence": "high",
+  "cards_affected": 6
+ },
+ {
+  "from": "pals2:injective_map",
+  "to": "pals2:injective",
+  "reason": "f is injective, unary both",
+  "confidence": "high",
+  "cards_affected": 9
+ },
+ {
+  "from": "pals2:surjective_function",
+  "to": "pals2:surjective",
+  "reason": "f is surjective, unary both",
+  "confidence": "high",
+  "cards_affected": 2
+ },
+ {
+  "from": "pals2:surjective_map",
+  "to": "pals2:surjective",
+  "reason": "f is surjective, unary both",
+  "confidence": "high",
+  "cards_affected": 10
+ },
+ {
+  "from": "pals2:injective_on_set",
+  "to": "pals2:injective_on",
+  "reason": "f injective on S, both (f, S)",
+  "confidence": "high",
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:group_isomorphic",
+  "to": "pals2:isomorphic_groups",
+  "reason": "groups G and H isomorphic, both (G, H)",
+  "confidence": "high",
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:has_frechet_derivative_at",
+  "to": "pals2:has_fderiv_at",
+  "reason": "Frechet derivative, both (f, L, a)",
+  "confidence": "high",
+  "cards_affected": 2
+ },
+ {
+  "from": "pals2:frechet_derivative",
+  "to": "pals2:fderiv_at",
+  "reason": "Frechet derivative, both (f, x)",
+  "confidence": "high",
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:scalar_multiple",
+  "to": "pals2:smul",
+  "reason": "scalar multiple c v, both (scalar, vector)",
+  "confidence": "high",
+  "cards_affected": 7
+ },
+ {
+  "from": "pals2:scalar_action",
+  "to": "pals2:smul",
+  "reason": "scalar multiple c v, both (scalar, vector)",
+  "confidence": "high",
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:matrix_vector",
+  "to": "pals2:matrix_vector_mul",
+  "reason": "matrix times vector, both (A, x)",
+  "confidence": "high",
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:map_kernel",
+  "to": "pals2:kernel",
+  "reason": "kernel of a linear map, unary both",
+  "confidence": "high",
+  "cards_affected": 2
+ },
+ {
+  "from": "pals2:fn_comp",
+  "to": "pals2:map_compose",
+  "reason": "composition 'g after f', both (g, f)",
+  "confidence": "high",
+  "cards_affected": 2
+ },
+ {
+  "from": "pals2:function_compose_map",
+  "to": "pals2:map_compose",
+  "reason": "composition 'g after f', both (g, f)",
+  "confidence": "high",
+  "cards_affected": 5
+ },
+ {
+  "from": "pals2:operator_comp",
+  "to": "pals2:op_comp",
+  "reason": "composition 'S after T', both (g, f)",
+  "confidence": "high",
+  "cards_affected": 5
+ },
+ {
+  "from": "pals2:morphism_comp",
+  "to": "pals2:cat_compose",
+  "reason": "same composite but morphism_comp takes (f, g) = first f then g, cat_compose takes (g, f): silent argument-order conflict",
+  "confidence": "high",
+  "arg_permutation": [
+   1,
+   0
+  ],
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:family_union",
+  "to": "pals2:indexed_union_over",
+  "reason": "union of an indexed family, both (index set, family)",
+  "confidence": "high",
+  "cards_affected": 5
+ },
+ {
+  "from": "pals2:union_over",
+  "to": "pals2:indexed_union_over",
+  "reason": "union of A_i over i in s, both (index set, family)",
+  "confidence": "high",
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:family_inter",
+  "to": "pals2:indexed_inter_over",
+  "reason": "intersection of an indexed family, both (index set, family)",
+  "confidence": "high",
+  "cards_affected": 3
+ },
+ {
+  "from": "pals2:family_value",
+  "to": "pals2:fn_value",
+  "reason": "member S_i of an indexed family is application of the family to i, both (family, index)",
+  "confidence": "high",
+  "cards_affected": 11
+ },
+ {
+  "from": "pals2:finset_range",
+  "to": "pals2:natural_range",
+  "reason": "index set {0..n-1}, unary both",
+  "confidence": "high",
+  "cards_affected": 5
+ },
+ {
+  "from": "pals2:countable",
+  "to": "pals2:countable_set",
+  "reason": "S is countable; countable_set has 3 cards vs 1",
+  "confidence": "high",
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:set_interior",
+  "to": "pals2:interior_of",
+  "reason": "topological interior, unary both",
+  "confidence": "high",
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:set_closure",
+  "to": "pals2:closure_of",
+  "reason": "topological closure, unary both",
+  "confidence": "high",
+  "cards_affected": 2
+ },
+ {
+  "from": "pals2:polynomial_degree",
+  "to": "pals2:poly_degree",
+  "reason": "degree of polynomial, unary both",
+  "confidence": "high",
+  "cards_affected": 3
+ },
+ {
+  "from": "pals2:polynomial_eval",
+  "to": "pals2:poly_eval",
+  "reason": "polynomial value at a, both (f, a)",
+  "confidence": "high",
+  "cards_affected": 7
+ },
+ {
+  "from": "pals2:seq_limit_of",
+  "to": "pals2:seq_fn_tends_to",
+  "reason": "sequence given by a lambda tends to L, both (lambda, L)",
+  "confidence": "high",
+  "cards_affected": 6
+ },
+ {
+  "from": "pals2:series_sum_fn",
+  "to": "pals2:real_series_sum",
+  "reason": "sum of the series given by a lambda, both (lambda)",
+  "confidence": "high",
+  "cards_affected": 5
+ },
+ {
+  "from": "pals2:series_summable_fn",
+  "to": "pals2:real_series_summable",
+  "reason": "series given by a lambda is summable, both (lambda)",
+  "confidence": "high",
+  "cards_affected": 4
+ },
+ {
+  "from": "pals2:series_has_sum",
+  "to": "pals2:has_sum_fn",
+  "reason": "series given by a lambda sums to s, both (lambda, s)",
+  "confidence": "high",
+  "cards_affected": 2
+ },
+ {
+  "from": "pals2:continuous_on_set_fn",
+  "to": "pals2:fn_continuous_on",
+  "reason": "f continuous on S with f a lambda, both (lambda, S)",
+  "confidence": "high",
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:linear_operator",
+  "to": "pals2:linear_map_between",
+  "reason": "T is a linear map from E to F, both (map, source, target)",
+  "confidence": "high",
+  "cards_affected": 4
+ },
+ {
+  "from": "pals2:finite_dim_space",
+  "to": "pals1:finite_dimensional",
+  "reason": "pals1:finite_dimensional is deployed and unary; same concept (verified in openmath.py _SUPPORTED_SYMBOLS)",
+  "confidence": "high",
+  "cards_affected": 22
+ },
+ {
+  "from": "pals2:vector_finrank",
+  "to": "pals1:dimension",
+  "reason": "pals1:dimension is deployed and unary; 12 cards already use it",
+  "confidence": "high",
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:dim_of",
+  "to": "pals1:dimension",
+  "reason": "pals1:dimension is deployed; dim_of(K,V) differs only by the explicit field K (drop arg 0 and carry K through the vector_space_over predicate)",
+  "confidence": "medium",
+  "arg_permutation": [
+   1
+  ],
+  "cards_affected": 6
+ },
+ {
+  "from": "pals2:compact_set",
+  "to": "pals1:compact",
+  "reason": "pals1:compact is deployed and unary; same concept (verified in openmath.py)",
+  "confidence": "medium",
+  "cards_affected": 7
+ },
+ {
+  "from": "pals2:vector_space",
+  "to": "pals2:vector_space_over",
+  "reason": "same meaning; vector_space takes (K, V), vector_space_over takes (V, K): silent argument-order conflict",
+  "confidence": "high",
+  "arg_permutation": [
+   1,
+   0
+  ],
+  "cards_affected": 11
+ },
+ {
+  "from": "pals2:module_over",
+  "to": "pals2:is_module",
+  "reason": "same meaning; module_over takes (M, R), is_module takes (R, M): silent argument-order conflict. If the naming policy drops is_, rename is_module to module_over with the same swap instead.",
+  "confidence": "high",
+  "arg_permutation": [
+   1,
+   0
+  ],
+  "cards_affected": 8
+ },
+ {
+  "from": "pals2:submodule_of",
+  "to": "pals2:is_submodule",
+  "reason": "same meaning, both (N, M)",
+  "confidence": "high",
+  "cards_affected": 3
+ },
+ {
+  "from": "pals2:is_field",
+  "to": "pals2:field",
+  "reason": "K is a field vs 'commutative ring R is a field'; both unary; Lean IsField vs Field differ only in the instance",
+  "confidence": "medium",
+  "cards_affected": 13
+ },
+ {
+  "from": "pals2:fd_vector_space",
+  "to": "[pals2:vector_space_over(V,K), pals1:finite_dimensional(V)]",
+  "reason": "composite of two atoms already in the vocabulary; replace by the conjunction (rewrite, not a rename)",
+  "confidence": "medium",
+  "kind": "rewrite",
+  "arg_permutation": [
+   1,
+   0
+  ],
+  "cards_affected": 14
+ },
+ {
+  "from": "pals2:fd_inner_product_space",
+  "to": "[pals2:inner_product_space_over(K,E), pals1:finite_dimensional(E)]",
+  "reason": "composite of two atoms; replace by the conjunction",
+  "confidence": "medium",
+  "kind": "rewrite",
+  "cards_affected": 9
+ },
+ {
+  "from": "pals2:inner_product_space",
+  "to": "pals2:inner_product_space_over",
+  "reason": "same concept; the unary form hides the scalar field K (RCLike in Lean), so the arity differs: card text must be edited by hand to supply K",
+  "confidence": "medium",
+  "kind": "add_arg",
+  "cards_affected": 4
+ },
+ {
+  "from": "pals2:normed_space_real",
+  "to": "pals2:normed_space",
+  "reason": "real case of normed_space (meaning says 'over R or C'); carrier would live in the instance annotation",
+  "confidence": "medium",
+  "cards_affected": 3
+ },
+ {
+  "from": "pals2:measurable_event",
+  "to": "pals2:measurable_set",
+  "reason": "'measurable set of the sample space' vs 'measurable set'; ambient space implicit in both",
+  "confidence": "medium",
+  "cards_affected": 11
+ },
+ {
+  "from": "pals2:measurable_map",
+  "to": "pals2:measurable_fn",
+  "reason": "same concept, unary both",
+  "confidence": "medium",
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:cat_identity",
+  "to": "pals2:identity_map",
+  "reason": "identity of X, unary both",
+  "confidence": "medium",
+  "cards_affected": 3
+ },
+ {
+  "from": "pals2:identity_morphism",
+  "to": "pals2:identity_map",
+  "reason": "identity of X, unary both",
+  "confidence": "medium",
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:bijective_on",
+  "to": "pals2:bijection_between",
+  "reason": "f is a bijection from E to F, both (f, E, F); note one card (topology_general_compact_to_hausdorff_hom) calls bijection_between with (X Y f) against the declared (e A B)",
+  "confidence": "medium",
+  "cards_affected": 2
+ },
+ {
+  "from": "pals2:closed_disc",
+  "to": "pals2:closed_ball",
+  "reason": "disc is the ball of the complex plane; carrier belongs to the ambient space",
+  "confidence": "medium",
+  "cards_affected": 5
+ },
+ {
+  "from": "pals2:open_disc",
+  "to": "pals2:open_ball",
+  "reason": "disc is the ball of the complex plane; carrier belongs to the ambient space",
+  "confidence": "medium",
+  "cards_affected": 10
+ },
+ {
+  "from": "pals2:has_derivative_at",
+  "to": "pals2:has_deriv_at",
+  "reason": "real derivative; has_derivative_at takes f as a bare term, has_deriv_at takes lambda (eta-expand f)",
+  "confidence": "medium",
+  "kind": "rewrite",
+  "cards_affected": 3
+ },
+ {
+  "from": "pals2:has_complex_deriv_at",
+  "to": "pals2:has_deriv_at",
+  "reason": "same shape over C; carrier belongs to the binder",
+  "confidence": "medium",
+  "kind": "rewrite",
+  "cards_affected": 3
+ },
+ {
+  "from": "pals2:matrix_scale",
+  "to": "pals2:smul",
+  "reason": "scalar multiple cA is smul(c, A)",
+  "confidence": "medium",
+  "cards_affected": 5
+ },
+ {
+  "from": "pals2:matrix_rank",
+  "to": "pals1:rank",
+  "reason": "pals1:rank is deployed and unary; matrix_rank is the same notion for a matrix",
+  "confidence": "medium",
+  "cards_affected": 5
+ },
+ {
+  "from": "pals2:op_comp",
+  "to": "pals2:map_compose",
+  "reason": "op_comp is overloaded (linear-map composition and matrix product in one symbol); merge with map_compose and keep matrix_mul separate",
+  "confidence": "medium",
+  "cards_affected": 7
+ },
+ {
+  "from": "pals2:cat_compose",
+  "to": "pals2:map_compose",
+  "reason": "composition of morphisms; category carrier belongs to the instance annotation",
+  "confidence": "medium",
+  "cards_affected": 4
+ },
+ {
+  "from": "pals2:complex_polynomial",
+  "to": "pals2:polynomial_over",
+  "reason": "polynomial_over(p, C) already expresses the carrier",
+  "confidence": "medium",
+  "kind": "rewrite",
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:real_polynomial",
+  "to": "pals2:polynomial_over",
+  "reason": "polynomial_over(p, R) already expresses the carrier",
+  "confidence": "medium",
+  "kind": "rewrite",
+  "cards_affected": 3
+ },
+ {
+  "from": "pals2:range_sum",
+  "to": "arith1:sum",
+  "reason": "range_sum(n,g) = sum over natural_range(n) of lambda g (arith1:sum is deployed with a term_function argument)",
+  "confidence": "medium",
+  "kind": "rewrite",
+  "cards_affected": 5
+ },
+ {
+  "from": "pals2:real_partial_sum",
+  "to": "arith1:sum",
+  "reason": "partial sum of the first N terms = sum over natural_range(N)",
+  "confidence": "medium",
+  "kind": "rewrite",
+  "cards_affected": 10
+ },
+ {
+  "from": "pals2:ico_product",
+  "to": "arith1:product",
+  "reason": "finite product over a <= k < b",
+  "confidence": "medium",
+  "kind": "rewrite",
+  "cards_affected": 2
+ },
+ {
+  "from": "pals2:product_set",
+  "to": "set1:cartesian_product",
+  "reason": "set1:cartesian_product is deployed (verified in openmath.py) and binary here",
+  "confidence": "high",
+  "cards_affected": 5
+ },
+ {
+  "from": "pals2:singleton_set",
+  "to": "set1:set",
+  "reason": "set1:set is deployed (verified in openmath.py), n-ary",
+  "confidence": "high",
+  "cards_affected": 2
+ },
+ {
+  "from": "pals2:image_of",
+  "to": "set1:map",
+  "reason": "set1:map is deployed with sorts (term_function, term); image_of(f,s) = map(lambda..., s)",
+  "confidence": "medium",
+  "kind": "rewrite",
+  "cards_affected": 6
+ },
+ {
+  "from": "pals2:pi",
+  "to": "nums1:pi",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 90
+ },
+ {
+  "from": "pals2:complex_imaginary_unit",
+  "to": "nums1:i",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 23
+ },
+ {
+  "from": "pals2:factorial",
+  "to": "integer1:factorial",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 18
+ },
+ {
+  "from": "pals2:binom",
+  "to": "combinat1:binomial",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 32
+ },
+ {
+  "from": "pals2:floor",
+  "to": "rounding1:floor",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 3
+ },
+ {
+  "from": "pals2:euler_phi",
+  "to": "integer2:euler",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 7
+ },
+ {
+  "from": "pals2:real_part",
+  "to": "complex1:real",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 7
+ },
+ {
+  "from": "pals2:imag_part",
+  "to": "complex1:imaginary",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 8
+ },
+ {
+  "from": "pals2:complex_conj",
+  "to": "complex1:conjugate",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 11
+ },
+ {
+  "from": "pals2:principal_arg",
+  "to": "complex1:argument",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 6
+ },
+ {
+  "from": "pals2:max_of",
+  "to": "minmax1:max",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:matrix_det",
+  "to": "linalg1:determinant",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 21
+ },
+ {
+  "from": "pals2:matrix_transpose",
+  "to": "linalg1:transpose",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 4
+ },
+ {
+  "from": "pals2:inner_product",
+  "to": "linalg1:scalarproduct",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 41
+ },
+ {
+  "from": "pals2:closed_interval",
+  "to": "interval1:interval_cc",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 35
+ },
+ {
+  "from": "pals2:open_interval",
+  "to": "interval1:interval_oo",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 10
+ },
+ {
+  "from": "pals2:half_open_interval",
+  "to": "interval1:interval_co",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 3
+ },
+ {
+  "from": "pals2:map_compose",
+  "to": "fns1:left_compose",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 15
+ },
+ {
+  "from": "pals2:identity_map",
+  "to": "fns1:identity",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 9
+ },
+ {
+  "from": "pals2:range_of",
+  "to": "fns1:range",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 5
+ },
+ {
+  "from": "pals2:gradient_at",
+  "to": "veccalc1:grad",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 5
+ },
+ {
+  "from": "pals2:divergence_at",
+  "to": "veccalc1:divergence",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:poly_degree",
+  "to": "polynomial1:degree",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 12
+ },
+ {
+  "from": "pals2:poly_leading_coeff",
+  "to": "polynomial1:leading_coefficient",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 3
+ },
+ {
+  "from": "pals2:fibonacci",
+  "to": "combinat1:fibonacci",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 3
+ },
+ {
+  "from": "pals2:nat_div",
+  "to": "integer1:quotient",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 1
+ },
+ {
+  "from": "pals2:nat_mod",
+  "to": "integer1:remainder",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 2
+ },
+ {
+  "from": "pals2:dvd",
+  "to": "integer1:factorof",
+  "reason": "duplicates a standard OpenMath CD symbol (from memory, verify against the published CD before use)",
+  "confidence": "medium",
+  "kind": "std_cd_candidate",
+  "verified_in_repo": false,
+  "cards_affected": 28
+ },
+ {
+  "from": "pals2:interval_integral",
+  "to": "calculus1:defint",
+  "reason": "calculus1:defint is deployed but its lambda argument is rejected by the sort table; fixing the registered sorts for defint (like arith1:sum) would remove 46 uses of a private symbol",
+  "confidence": "medium",
+  "kind": "validator_gap",
+  "verified_in_repo": true,
+  "cards_affected": 46
+ }
+]

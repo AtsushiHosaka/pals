@@ -1,0 +1,232 @@
+{
+ "batch": "U3_field_nt",
+ "domains": [
+  "field_galois",
+  "number_theory"
+ ],
+ "reviewed": 88,
+ "ok_ids": [
+  "field_tower_law",
+  "field_element_degree_divides_extension_degree",
+  "minpoly_irreducible_of_algebraic",
+  "minpoly_dvd_of_root",
+  "minpoly_unique_monic_irreducible",
+  "simple_extension_degree_eq_minpoly_degree",
+  "finite_extension_is_algebraic",
+  "algebraic_extension_transitive",
+  "adjoin_root_of_irreducible",
+  "splitting_field_exists_unique",
+  "algebraic_closure_exists_unique",
+  "algebraically_closed_no_proper_algebraic_extension",
+  "splitting_field_is_normal",
+  "perfect_field_of_char_zero_or_finite",
+  "algebraic_extension_of_perfect_field_is_separable",
+  "perfect_field_iff_frobenius_surjective",
+  "primitive_element_theorem",
+  "finite_field_exists_unique",
+  "finite_field_units_cyclic",
+  "finite_field_frobenius_generates_galois_group",
+  "galois_group_order_eq_degree",
+  "fundamental_theorem_of_galois_theory",
+  "galois_fixed_elements_lie_in_base_field",
+  "artin_fixed_field_theorem",
+  "splitting_field_of_separable_polynomial_is_galois",
+  "galois_correspondence_normal_subgroups",
+  "cyclotomic_product_over_divisors_and_degree",
+  "cyclotomic_root_iff_primitive_root",
+  "cyclotomic_polynomial_irreducible_over_rationals",
+  "rational_cyclotomic_extension_galois_group",
+  "galois_group_of_x_pow_sub_c_solvable",
+  "fundamental_theorem_of_algebra",
+  "element_degree_in_two_power_extension_is_two_power",
+  "cube_root_of_two_not_in_two_power_extension",
+  "dvd_linear_combination",
+  "division_algorithm",
+  "gcd_euclid_step",
+  "bezout",
+  "linear_diophantine_solvable",
+  "coprime_dvd_of_dvd_mul",
+  "euclid_lemma",
+  "exists_prime_factor",
+  "composite_prime_factor_sq_le",
+  "infinite_primes",
+  "fundamental_theorem_of_arithmetic",
+  "prime_dvd_binomial",
+  "congruence_add_mul",
+  "congruence_cancel",
+  "inverse_mod_iff_coprime",
+  "chinese_remainder",
+  "fermat_little",
+  "fermat_pow_prime",
+  "freshman_dream",
+  "euler_theorem",
+  "totient_prime_pow",
+  "totient_mul_coprime",
+  "sum_totient_divisors",
+  "sq_eq_one_mod_prime",
+  "wilson_theorem",
+  "order_dvd_iff",
+  "order_dvd_totient",
+  "euler_criterion",
+  "legendre_eq_pow",
+  "legendre_mul",
+  "neg_one_quadratic_residue",
+  "two_quadratic_residue",
+  "quadratic_reciprocity",
+  "two_squares_prime",
+  "two_squares_criterion",
+  "not_sum_two_squares_three_mod_four",
+  "moebius_inversion",
+  "moebius_divisor_sum",
+  "divisor_power_sum_multiplicative",
+  "pell_existence",
+  "pell_composition",
+  "gaussian_division",
+  "gaussian_prime_iff",
+  "infinite_descent",
+  "fermat_four_descent",
+  "bertrand_postulate"
+ ],
+ "findings": [
+  {
+   "domain": "field_galois",
+   "id": "algebraic_elements_closed_under_field_operations",
+   "severity": "minor",
+   "codes": [
+    "JUNK_VALUE",
+    "OM_LEAN_MISMATCH",
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "The x^{-1} conjunct relies on Lean's 0⁻¹=0 (trivially algebraic at x=0). The text patches this with a 'convention' assumption, but the OpenMath (/ 1 x) has no such convention (1/0 undefined), so text/OM/target do not agree on the x=0 case. State x≠0 → x⁻¹ algebraic instead.",
+   "patch": {
+    "statement": "$x,y$が体$F$上代数的ならば、$x+y$、$xy$、$-x$も$F$上代数的である。また$x\\neq 0$ならば$x^{-1}$も$F$上代数的である。",
+    "statement_en": "If x and y are algebraic over a field F, then x+y, xy and -x are algebraic over F, and x⁻¹ is algebraic over F whenever x ≠ 0.",
+    "assumptions": [
+     "$E$は体$F$の拡大体",
+     "$x,y\\in E$は$F$上代数的"
+    ],
+    "conclusion": "$x+y$、$xy$、$-x$は$F$上代数的であり、$x\\neq 0$ならば$x^{-1}$も$F$上代数的である。",
+    "answer": "$E$を体$F$の拡大体、$x,y\\in E$を$F$上代数的な元とする。\n\n$x$は$F$上代数的なので$[F(x):F]$は有限である。$y$は$F$上代数的なので$F(x)$上でも代数的であり、$[F(x,y):F(x)]$も有限である。次数公式より$[F(x,y):F]$は有限である。\n\n$F(x,y)$は体なので、$x+y$、$xy$、$-x$はすべて$F(x,y)$の元であり、$x\\neq 0$なら$x^{-1}$も$F(x,y)$の元である。有限次拡大の元は代数的なので、これらは$F$上代数的である。\n",
+    "openmath": "(forall (F E x y) (-> (and (field_extension E F) (in x E) (in y E) (algebraic_over x F) (algebraic_over y F)) (and (algebraic_over (+ x y) F) (algebraic_over (* x y) F) (algebraic_over (neg x) F) (-> (!= x 0) (algebraic_over (/ 1 x) F)))))",
+    "target": "∀ (F E : Type*) [Field F] [Field E] [Algebra F E] (x y : E), IsAlgebraic F x → IsAlgebraic F y → IsAlgebraic F (x + y) ∧ IsAlgebraic F (x * y) ∧ IsAlgebraic F (-x) ∧ (x ≠ 0 → IsAlgebraic F x⁻¹)",
+    "proof": "by\n  intro F E _ _ _ x y hx hy\n  exact ⟨hx.add hy, hx.mul hy, hx.neg, fun _ => hx.inv⟩"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "field_galois",
+   "id": "irreducible_separable_iff_derivative_ne_zero",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "Hard-negative counterexample (X-1)^2 with f'=2(X-1)≠0 only works when char≠2 (in char 2, f'=0), but the negative states no base field. Fix F=Q.",
+   "patch": {
+    "hard_negative": {
+     "statement": "$\\mathbb{Q}$上の任意の多項式$f$について、$f'\\neq 0$ならば$f$は分離的である。",
+     "reason": "既約性が必要である。$f=(X-1)^2\\in\\mathbb{Q}[X]$は$f'=2(X-1)\\neq 0$だが、$\\gcd(f,f')=X-1$が定数でないので分離的でない。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "field_galois",
+   "id": "normal_extension_conjugates_transitive",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT",
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "OpenMath uses galois_group (meaning Gal(E/F)) for the group of F-automorphisms of a merely normal (possibly inseparable, so non-Galois) extension; the symbol meaning is violated and Aut/Gal would be conflated in retrieval. Use a dedicated Aut symbol (new vocabulary: aut_group_over {args:[term,term], returns: term, meaning: 'the group of F-automorphisms of E, in the order (E, F)'}).",
+   "patch": {
+    "openmath": "(forall (F E x y) (-> (and (normal_extension E F) (in x E) (in y E) (= (minimal_polynomial x F) (minimal_polynomial y F))) (exists (s) (and (in s (aut_group_over E F)) (= (automorphism_apply s x) y)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "field_galois",
+   "id": "abel_ruffini_solvable_by_radicals_implies_solvable_group",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED",
+    "NEGATIVE_BAD",
+    "MISLABEL"
+   ],
+   "issue": "Marked kind=named (Abel-Ruffini) but the target is only the Galois-solvability direction (Mathlib solvableByRad.isSolvable'), not the unsolvability of the quintic; the text admits this, so relabel. The hard_negative ('non-solvable Galois group irreducible polynomials have no root') is a strawman: roots always exist in the splitting field, so it is not a nearby claim. Replace with the dropped-irreducibility variant (checked: X(X^5-4X+2) has root 0 and Galois group S_5).",
+   "patch": {
+    "kind": "textbook",
+    "hard_negative": {
+     "statement": "$q\\in F[X]$が既約でなくても、$q(x)=0$を満たす$x\\in E$がべき根で解けるならば$q$のガロア群は可解である。",
+     "reason": "既約性が必要である。$F=\\mathbb{Q}$、$x=0$、$q=X(X^5-4X+2)$とすると、$x\\in F$は自明にべき根で解け$q(0)=0$だが、$q$の分解体は$X^5-4X+2$の分解体であり、そのガロア群$S_5$は可解でない。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "field_galois",
+   "id": "galois_fixed_field_fixing_subgroup_round_trip",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Both conjuncts are contained in fundamental_theorem_of_galois_theory (the equivalence e with e K = Fix K and e.symm H = fixedField H gives exactly these round trips). Acceptable as a smaller citable gap lemma; no change needed unless the catalog wants to avoid overlap.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "number_theory",
+   "id": "gcd_mul_lcm",
+   "severity": "minor",
+   "codes": [
+    "JUNK_VALUE",
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "For a=0 or b=0 the identity holds only through the Lean convention lcm(a,0)=0 (gcd(0,b)=b, product 0). The Japanese text states the convention but statement_en claims the identity for all natural numbers without it.",
+   "patch": {
+    "statement_en": "For natural numbers a and b, gcd(a, b) · lcm(a, b) = ab, where lcm(a, b) = 0 by convention if a = 0 or b = 0."
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "number_theory",
+   "id": "coprime_iff_bezout",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "This is the c=1 instance of linear_diophantine_solvable (∃x,y ax+by=c ↔ gcd(a,b)∣c) combined with gcd∣1 ↔ gcd=1. Acceptable because 'gcd=1 iff Bezout 1' is a named pattern proofs cite; keep, but keep the statement saying it is the special form.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "number_theory",
+   "id": "primitive_root_prime",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Special case K=ZMod p of field_galois/finite_field_units_cyclic (whose proof it repeats). Worth keeping because number-theory proofs cite the explicit order p-1 form, but the two cards should be cross-linked.",
+   "patch": null,
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "Mathlib-faithfulness is high in this batch: every target uses the right Mathlib notion (Normal, IsGalois, PerfectField, solvableByRad, legendreSym, ZMOD/MOD with n=0 and gcd(0,0) handled) and no card is vacuous; the only real junk-value dependency is 0⁻¹ in algebraic_elements_closed_under_field_operations.",
+  "number_theory OpenMath encodes divisibility/congruence by existential witnesses in most cards but uses the dvd symbol in others (binomial, Euler, Wilson, order cards, two-squares), and there is no congruence symbol at all; retrieval for 'a ≡ b (mod n)' has nothing reusable. Suggest one convention (dvd, plus a congruent_mod(a,b,n) vocabulary symbol).",
+  "Hard negatives are strong overall (each re-checked with the stated counterexample); weak spots are those that omit the base field/characteristic (irreducible_separable_iff_derivative_ne_zero) or are strawmen (abel_ruffini card). Level labels for elementary number theory (divisibility, gcd, congruences, Euclid) are all 1 although the content is Japanese high-school (high); consider 'high' for these."
+ ],
+ "missing_neighbors": [
+  "Primitive Pythagorean triple parametrization (Mathlib PythagoreanTriple.coprime_classification), cited without a card in fermat_four_descent",
+  "Gauss's lemma for the Legendre symbol (ZMod.gauss_lemma), cited in two_quadratic_residue",
+  "Legendre's formula for v_p(n!) (Nat.Prime.multiplicity_factorial / Nat.factorization_factorial) and v_p(ab)=v_p(a)+v_p(b)",
+  "Primorial bound ∏_{p≤n} p ≤ 4^n (primorial_le_4_pow) and C(2n,n) ≥ 4^n/(2n+1)",
+  "Chinese remainder theorem for pairwise coprime families / Nat.chineseRemainderOfList",
+  "Product of coprime numbers is a square only if each is a square (Nat.sq_of_coprime / Int.sq_of_coprime)",
+  "Every element x of a finite field of size q satisfies x^q = x (FiniteField.pow_card); subfields of F_{p^n} correspond to divisors m∣n",
+  "Degree of minimal polynomial is 1 iff x∈F (minpoly.natDegree_eq_one_iff); [E:F]=2, char≠2 ⇒ E=F(√a)",
+  "Separable finite extension: number of F-embeddings into an algebraic closure equals the degree (Algebra.IsSeparable.card_algHom_eq_finrank); Dedekind independence of characters",
+  "Finitely generated by algebraic elements ⇒ finite extension (IntermediateField.finiteDimensional_adjoin)",
+  "Abel-Ruffini itself: exists_not_solvable_by_rad (X^5-4X+2 root not solvable by radicals); Eisenstein criterion for irreducibility of X^p-a and Φ_p",
+  "Order of a unit divides |units| (Lagrange) and sum of orders: ∑_{d∣n} #{elements of order d}=n in a cyclic group of order n"
+ ]
+}

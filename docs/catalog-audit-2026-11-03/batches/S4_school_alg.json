@@ -1,0 +1,502 @@
+{
+ "batch": "S4_school_alg",
+ "domains": [
+  "school_algebra_basics",
+  "school_polynomials",
+  "school_inequalities"
+ ],
+ "reviewed": 131,
+ "ok_ids": [
+  "fraction_add_general_denominators",
+  "exponent_laws_natural_power",
+  "power_quotient_of_exponent_le",
+  "product_zero_iff_factor_zero",
+  "squares_equal_iff_equal_or_negative",
+  "difference_of_squares_factorization",
+  "sum_and_difference_of_cubes_factorization",
+  "cross_multiplication_factorization",
+  "three_cubes_minus_triple_product_factorization",
+  "power_difference_factorization_general",
+  "sophie_germain_identity",
+  "linear_equation_solution_formula",
+  "linear_equation_solution_classification",
+  "two_variable_system_explicit_solution",
+  "two_variable_system_unique_iff_determinant",
+  "two_variable_system_degenerate_solvability",
+  "two_variable_system_degenerate_solution_line",
+  "homogeneous_two_variable_nontrivial_iff_determinant",
+  "proportion_iff_common_ratio",
+  "proportion_swap_inner_terms",
+  "continued_ratio_iff_cross_products",
+  "abs_value_cases_by_sign",
+  "abs_of_product_and_quotient",
+  "triangle_inequality_real_numbers",
+  "triangle_equality_iff_product_nonneg",
+  "reverse_triangle_inequality_real_numbers",
+  "abs_eq_iff_with_sign_condition",
+  "abs_less_and_greater_iff_intervals",
+  "abs_two_points_sum_piecewise",
+  "abs_two_points_sum_equals_distance_iff_between",
+  "sqrt_of_square_is_abs",
+  "sqrt_eq_iff_nonneg_and_square",
+  "sqrt_mul_sqrt_of_nonneg",
+  "sqrt_lt_sqrt_iff_of_nonneg",
+  "sqrt_of_sum_le_sum_of_sqrts",
+  "rationalize_denominator_two_square_roots",
+  "rationalize_denominator_linear_in_surd",
+  "rational_coefficients_unique_for_irrational_surd",
+  "nested_square_root_plus_form",
+  "nested_square_root_general_formula",
+  "sum_of_cubes_in_sum_and_product",
+  "power_sum_recurrence_two_variables",
+  "reciprocal_sum_equals_reciprocal_of_sum_iff",
+  "abs_sub_le_iff_closed_interval",
+  "factor_theorem_linear_ax_plus_b",
+  "double_root_iff_value_and_derivative_vanish",
+  "division_value_at_root_of_divisor",
+  "product_over_distinct_roots_divides",
+  "real_linear_coefficients_fixed_by_nonreal_value",
+  "coefficient_comparison_for_polynomial_identity",
+  "polynomials_equal_on_infinite_set",
+  "identity_linear_in_parameter",
+  "partial_fraction_two_distinct_linear",
+  "rational_root_theorem",
+  "monic_integer_polynomial_rational_root_is_integer",
+  "cubic_vieta_formulas",
+  "cubic_from_elementary_symmetric_values",
+  "cubic_root_power_sum_recurrence",
+  "omega_cube_is_one",
+  "omega_conjugate_is_square",
+  "omega_power_sum_by_residue_mod_three",
+  "cube_difference_factors_with_omega",
+  "complex_equality_real_imaginary_parts",
+  "complex_product_and_quotient_formula",
+  "conjugate_respects_arithmetic",
+  "real_or_pure_imaginary_by_conjugate",
+  "square_roots_of_negative_real",
+  "real_quadratic_negative_discriminant_roots",
+  "real_quadratic_nonreal_root_iff_negative_discriminant",
+  "conjugate_root_theorem_real_polynomial",
+  "real_quadratic_factor_from_nonreal_root",
+  "linear_combination_of_equal_ratios",
+  "cyclic_fraction_sum_with_product_one",
+  "cubes_sum_equals_three_product_iff",
+  "one_of_three_equals_one_from_sum_of_reciprocals",
+  "lagrange_identity_two_squares",
+  "ineq_mul_sign_rule",
+  "range_of_sum_and_difference",
+  "ineq_mul_nonneg_bounds",
+  "ineq_reciprocal_same_sign",
+  "compare_abs_squares",
+  "compare_powers_nonneg",
+  "compare_fractions_cross_multiply",
+  "mediant_between",
+  "linear_ineq_by_coeff_sign",
+  "linear_ineq_degenerate_coeff",
+  "linear_system_solvable_iff",
+  "natural_solutions_count_range",
+  "abs_closer_to_left_point",
+  "abs_sum_three_points_median",
+  "abs_add_lt_one_add_mul",
+  "abs_ratio_subadditive",
+  "sq_add_sq_ge_two_mul",
+  "ratio_sum_ge_two",
+  "amgm_three_cube_form",
+  "amgm_three_product_form",
+  "pairwise_products_le_squares",
+  "cauchy_schwarz_three_terms",
+  "cauchy_schwarz_three_equality_iff",
+  "titu_three_terms",
+  "nesbitt_inequality",
+  "rearrangement_two_pairs",
+  "rearrangement_finite",
+  "chebyshev_finite",
+  "min_linear_plus_reciprocal",
+  "min_square_plus_split_reciprocal",
+  "min_sum_squares_on_plane",
+  "max_linear_on_sphere",
+  "sum_mul_sum_reciprocal_ge_count_sq"
+ ],
+ "findings": [
+  {
+   "domain": "school_algebra_basics",
+   "id": "square_eq_square_iff",
+   "severity": "major",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Same proposition as squares_equal_iff_equal_or_negative with the variables renamed (x,a for a,b): identical Lean target shape and identical OpenMath up to renaming. Keep one card; drop this one.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_algebra_basics",
+   "id": "nested_square_root_minus_form_ordered",
+   "severity": "major",
+   "codes": [
+    "WEAK_OR_OVERNAMED"
+   ],
+   "issue": "Restricted to a>=b although the real reusable fact holds for all a,b>=0 with an absolute value: sqrt(a+b-2sqrt(ab)) = |sqrt a - sqrt b|. A proof facing unordered a,b cannot cite the restricted form, and a reviewer may misapply it. Replace by the general form (verified).",
+   "patch": {
+    "statement": "実数$a,b\\geq 0$について$\\sqrt{a+b-2\\sqrt{ab}}=|\\sqrt{a}-\\sqrt{b}|$である。大小が分かっていれば絶対値は外れ、$a\\geq b$なら$\\sqrt{a}-\\sqrt{b}$、$a\\leq b$なら$\\sqrt{b}-\\sqrt{a}$に等しい。",
+    "statement_en": "For real a, b ≥ 0, √(a + b - 2√(ab)) = |√a - √b|. If a ≥ b this is √a - √b, and if a ≤ b it is √b - √a.",
+    "assumptions": [
+     "$a,b$は実数",
+     "$a\\geq 0$かつ$b\\geq 0$"
+    ],
+    "quantifiers": [
+     "任意の実数$a,b$"
+    ],
+    "conclusion": "$\\sqrt{a+b-2\\sqrt{ab}}=|\\sqrt{a}-\\sqrt{b}|$が成り立つ。",
+    "openmath": "(forall (a b) (-> (and (>= a 0) (>= b 0)) (= (root (- (+ a b) (* 2 (root (* a b) 2))) 2) (abs (- (root a 2) (root b 2))))))",
+    "hard_negative": {
+     "statement": "$a,b\\geq 0$の大小によらず$\\sqrt{a+b-2\\sqrt{ab}}=\\sqrt{a}-\\sqrt{b}$である。",
+     "reason": "$a=1$、$b=4$なら左辺は$\\sqrt{5-4}=1$、右辺は$-1$である。絶対値を付けなければ$a\\geq b$が必要である。"
+    },
+    "target": "∀ a b : ℝ, 0 ≤ a → 0 ≤ b → Real.sqrt (a + b - 2 * Real.sqrt (a * b)) = |Real.sqrt a - Real.sqrt b|",
+    "proof": "by\n  intro a b ha hb\n  have hs := Real.sq_sqrt ha\n  have ht := Real.sq_sqrt hb\n  rw [Real.sqrt_mul ha]\n  have h : a + b - 2 * (Real.sqrt a * Real.sqrt b) = (Real.sqrt a - Real.sqrt b) ^ 2 := by\n    linear_combination -hs - ht\n  rw [h, Real.sqrt_sq_eq_abs]",
+    "answer": "$a,b$を$0$以上の実数とする。$\\sqrt{ab}=\\sqrt{a}\\sqrt{b}$なので、$a+b-2\\sqrt{ab}=(\\sqrt{a})^2+(\\sqrt{b})^2-2\\sqrt{a}\\sqrt{b}=(\\sqrt{a}-\\sqrt{b})^2$である。任意の実数$u$について$\\sqrt{u^2}=|u|$なので、$\\sqrt{a+b-2\\sqrt{ab}}=|\\sqrt{a}-\\sqrt{b}|$を得る。"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "school_polynomials",
+   "id": "reciprocal_quartic_substitution",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "Leading coefficient fixed to 1 (statement admits 'x^4の係数が1の場合の形'). General form with free leading coefficient a (a=0 allowed, no extra hypothesis) is the reusable pattern: ax^4+bx^3+cx^2+bx+a=0 <-> at^2+bt+c-2a=0 for t=x+1/x. Verified.",
+   "patch": {
+    "statement": "実数$a,b,c$と$0$でない実数$x$について、$t=x+\\frac{1}{x}$とおくと、相反方程式$ax^4+bx^3+cx^2+bx+a=0$は$at^2+bt+c-2a=0$と同値である。",
+    "statement_en": "For real a, b, c and real x ≠ 0, with t = x + 1/x, a x^4 + b x^3 + c x^2 + b x + a = 0 if and only if a t^2 + b t + c - 2a = 0.",
+    "assumptions": [
+     "$a,b,c,x$は実数で$x\\neq 0$",
+     "$t=x+\\frac{1}{x}$"
+    ],
+    "quantifiers": [
+     "任意の実数$a,b,c$と$0$でない実数$x$"
+    ],
+    "conclusion": "$ax^4+bx^3+cx^2+bx+a=0$と$at^2+bt+c-2a=0$は同値である。",
+    "openmath": "(forall (a b c x) (-> (and (in a R) (in b R) (in c R) (in x R) (!= x 0)) (<-> (= (+ (+ (+ (+ (* a (^ x 4)) (* b (^ x 3))) (* c (^ x 2))) (* b x)) a) 0) (= (- (+ (+ (* a (^ (+ x (/ 1 x)) 2)) (* b (+ x (/ 1 x)))) c) (* 2 a)) 0))))",
+    "target": "∀ (a b c x : ℝ), x ≠ 0 → (a * x ^ 4 + b * x ^ 3 + c * x ^ 2 + b * x + a = 0 ↔ a * (x + 1 / x) ^ 2 + b * (x + 1 / x) + c - 2 * a = 0)",
+    "proof": "by\n  intro a b c x hx\n  have key : a * x ^ 4 + b * x ^ 3 + c * x ^ 2 + b * x + a = x ^ 2 * (a * (x + 1 / x) ^ 2 + b * (x + 1 / x) + c - 2 * a) := by\n    field_simp\n    ring\n  rw [key, mul_eq_zero]\n  constructor\n  · rintro (h | h)\n    · exact absurd h (pow_ne_zero 2 hx)\n    · exact h\n  · exact Or.inr",
+    "hard_negative": {
+     "statement": "$at^2+bt+c-2a=0$に実数解$t$があれば、もとの方程式にも実数解$x$がある。",
+     "reason": "$x+\\frac{1}{x}=t$が実数解をもつのは$|t|\\geq 2$のときだけである。$a=1,\\ b=0,\\ c=2$では$t^2=0$の実数解$t=0$があるが、もとの方程式$x^4+2x^2+1=0$は$(x^2+1)^2=0$となり実数解をもたない。"
+    },
+    "answer": "$a,b,c$を実数、$x$を$0$でない実数とし、$t=x+\\frac{1}{x}$とおく。$t^2=x^2+2+\\frac{1}{x^2}$なので、$x^2(at^2+bt+c-2a)=x^2\\left(ax^2+\\frac{a}{x^2}+bx+\\frac{b}{x}+c\\right)=ax^4+bx^3+cx^2+bx+a$である。$x^2\\neq 0$だから、左辺が$0$であることと$at^2+bt+c-2a=0$は同値である。"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "school_polynomials",
+   "id": "real_cubic_factorization_from_nonreal_root",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "Monic cubic only (statement says so). General leading coefficient a is the natural form: third root is -b/a-2p. Verified general version.",
+   "patch": {
+    "statement": "実数$a,b,c,d,p,q$が$a\\neq 0$、$q\\neq 0$を満たし、虚数$p+qi$が$ax^3+bx^2+cx+d=0$の解なら、すべての実数$x$で$ax^3+bx^2+cx+d=a\\left\\{x-\\left(-\\frac{b}{a}-2p\\right)\\right\\}(x^2-2px+p^2+q^2)$である。",
+    "statement_en": "For real a, b, c, d, p, q with a ≠ 0 and q ≠ 0, if p + qi is a root of a x^3 + b x^2 + c x + d = 0 then a x^3 + b x^2 + c x + d = a (x - (-b/a - 2p))(x^2 - 2px + p^2 + q^2) for every real x.",
+    "assumptions": [
+     "$a,b,c,d,p,q$は実数で$a\\neq 0$、$q\\neq 0$",
+     "$p+qi$は$ax^3+bx^2+cx+d=0$の解"
+    ],
+    "quantifiers": [
+     "任意の実数$a,b,c,d,p,q,x$"
+    ],
+    "conclusion": "$ax^3+bx^2+cx+d=a\\left\\{x-\\left(-\\frac{b}{a}-2p\\right)\\right\\}(x^2-2px+p^2+q^2)$が成り立つ。",
+    "openmath": "(forall (a b c d p q x) (-> (and (in a R) (in b R) (in c R) (in d R) (in p R) (in q R) (in x R) (!= a 0) (!= q 0) (= (+ (+ (+ (* a (^ (+ p (* q complex_imaginary_unit)) 3)) (* b (^ (+ p (* q complex_imaginary_unit)) 2))) (* c (+ p (* q complex_imaginary_unit)))) d) 0)) (= (+ (+ (+ (* a (^ x 3)) (* b (^ x 2))) (* c x)) d) (* (* a (- x (- (/ (neg b) a) (* 2 p)))) (+ (+ (- (^ x 2) (* (* 2 p) x)) (^ p 2)) (^ q 2))))))",
+    "target": "∀ (a b c d p q : ℝ), a ≠ 0 → q ≠ 0 → (a : ℂ) * ((p : ℂ) + q * Complex.I) ^ 3 + b * ((p : ℂ) + q * Complex.I) ^ 2 + c * ((p : ℂ) + q * Complex.I) + d = 0 → ∀ x : ℝ, a * x ^ 3 + b * x ^ 2 + c * x + d = a * (x - (-b / a - 2 * p)) * (x ^ 2 - 2 * p * x + p ^ 2 + q ^ 2)",
+    "proof": "by\n  intro a b c d p q ha hq h x\n  have e : (a : ℂ) * ((p : ℂ) + q * Complex.I) ^ 3 + b * ((p : ℂ) + q * Complex.I) ^ 2 + c * ((p : ℂ) + q * Complex.I) + d = ((a * (p ^ 3 - 3 * p * q ^ 2) + b * (p ^ 2 - q ^ 2) + c * p + d : ℝ) : ℂ) + ((q * (a * (3 * p ^ 2 - q ^ 2) + 2 * b * p + c) : ℝ) : ℂ) * Complex.I := by\n    push_cast\n    linear_combination ((a : ℂ) * (3 * (p : ℂ) * q ^ 2 + (q : ℂ) ^ 3 * Complex.I) + (b : ℂ) * q ^ 2) * Complex.I_sq\n  rw [e] at h\n  have hre := congrArg Complex.re h\n  have him := congrArg Complex.im h\n  simp only [Complex.add_re, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im, Complex.zero_re, Complex.add_im, Complex.mul_im, Complex.zero_im] at hre him\n  have hI : a * (3 * p ^ 2 - q ^ 2) + 2 * b * p + c = 0 := by\n    have h1 : q * (a * (3 * p ^ 2 - q ^ 2) + 2 * b * p + c) = 0 := by linarith\n    exact (mul_eq_zero.mp h1).resolve_left hq\n  have hR : a * (p ^ 3 - 3 * p * q ^ 2) + b * (p ^ 2 - q ^ 2) + c * p + d = 0 := by linarith\n  have h3 : a * (x - (-b / a - 2 * p)) = a * x + b + 2 * a * p := by\n    field_simp\n    ring\n  rw [h3]\n  linear_combination x * hI + hR - p * hI",
+    "answer": "$a,b,c,d,p,q$を$a\\neq 0$、$q\\neq 0$を満たす実数とし、$p+qi$が$ax^3+bx^2+cx+d=0$の解であるとする。代入して実部と虚部を比べると、$a(p^3-3pq^2)+b(p^2-q^2)+cp+d=0$と$q\\{a(3p^2-q^2)+2bp+c\\}=0$を得る。$q\\neq 0$より$c=-a(3p^2-q^2)-2bp$であり、これを第1式に代入すると$d=(2ap+b)(p^2+q^2)$となる。\n一方、$a\\left\\{x+\\frac{b}{a}+2p\\right\\}(x^2-2px+p^2+q^2)=(ax+b+2ap)(x^2-2px+p^2+q^2)$を展開すると、$ax^3+bx^2+\\{a(p^2+q^2)-2p(b+2ap)\\}x+(b+2ap)(p^2+q^2)$となる。$x$の係数は$a(q^2-3p^2)-2bp=c$、定数項は$d$に等しいので、これは$ax^3+bx^2+cx+d$である。"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "school_polynomials",
+   "id": "common_root_of_two_monic_quadratics",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "Leading coefficient fixed to 1; the fact only uses that both quadratics have the same x^2 coefficient. Generalise to a common coefficient m (any complex m). Verified.",
+   "patch": {
+    "statement": "複素数$m,p,q,r,s$が$p\\neq r$を満たし、複素数$\\alpha$が$m\\alpha^2+p\\alpha+q=0$と$m\\alpha^2+r\\alpha+s=0$をともに満たすなら、$\\alpha=\\frac{s-q}{p-r}$である。2次の係数が共通の値$m$である形で、$m=1$が典型例である。",
+    "statement_en": "For complex m, p, q, r, s with p ≠ r, a common root α of m x^2 + p x + q = 0 and m x^2 + r x + s = 0 equals (s-q)/(p-r). The two quadratics share the x^2 coefficient m.",
+    "assumptions": [
+     "$m,p,q,r,s$は複素数で$p\\neq r$",
+     "$\\alpha$は$m\\alpha^2+p\\alpha+q=0$と$m\\alpha^2+r\\alpha+s=0$を満たす複素数"
+    ],
+    "quantifiers": [
+     "任意の複素数$m,p,q,r,s,\\alpha$"
+    ],
+    "conclusion": "$\\alpha=\\frac{s-q}{p-r}$である。",
+    "openmath": "(forall (m p q r s a) (-> (and (in m C) (in p C) (in q C) (in r C) (in s C) (in a C) (!= p r) (= (+ (+ (* m (^ a 2)) (* p a)) q) 0) (= (+ (+ (* m (^ a 2)) (* r a)) s) 0)) (= a (/ (- s q) (- p r)))))",
+    "target": "∀ (m p q r s α : ℂ), p ≠ r → m * α ^ 2 + p * α + q = 0 → m * α ^ 2 + r * α + s = 0 → α = (s - q) / (p - r)",
+    "proof": "by\n  intro m p q r s α hpr h₁ h₂\n  rw [eq_div_iff (sub_ne_zero.mpr hpr)]\n  linear_combination h₁ - h₂",
+    "answer": "$m,p,q,r,s$を$p\\neq r$を満たす複素数とし、$\\alpha$を$m\\alpha^2+p\\alpha+q=0$と$m\\alpha^2+r\\alpha+s=0$を満たす複素数とする。2式を引くと$m\\alpha^2$が消えて$(p-r)\\alpha+q-s=0$である。$p-r\\neq 0$なので$\\alpha=\\frac{s-q}{p-r}$を得る。"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "school_inequalities",
+   "id": "min_x_plus_inv_on_ray",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT"
+   ],
+   "issue": "Fixed coefficient 1 in x+1/x and c>=1. The pattern 'AM-GM equality point outside the range, so minimum at the boundary' is x+k/x on x>=c with c>=sqrt k; k=1 is a special case. Verified general form.",
+   "patch": {
+    "statement": "正の実数$k$と$c\\geq\\sqrt{k}$を満たす実数$c$について、$x\\geq c$の範囲で$x+\\dfrac{k}{x}$の最小値は$c+\\dfrac{k}{c}$である。$k=1$のとき$c\\geq 1$の場合に当たる。",
+    "statement_en": "For positive real k and real c ≥ √k, the minimum of x + k/x over x ≥ c is c + k/c. The case k = 1 is c ≥ 1.",
+    "assumptions": [
+     "$k$は正の実数",
+     "$c$は実数で$c\\geq\\sqrt{k}$",
+     "$x\\geq c$"
+    ],
+    "quantifiers": [
+     "任意の正の実数$k$と$c\\geq\\sqrt{k}$"
+    ],
+    "conclusion": "$x\\geq c$の範囲で$x+\\dfrac{k}{x}$の最小値は$c+\\dfrac{k}{c}$である。",
+    "openmath": "(forall (k c) (-> (and (> k 0) (>= c (root k 2))) (and (forall (x) (-> (>= x c) (<= (+ c (/ k c)) (+ x (/ k x))))) (exists (x) (and (>= x c) (= (+ x (/ k x)) (+ c (/ k c))))))))",
+    "hard_negative": {
+     "statement": "$k>0$、$c\\geq\\sqrt{k}$のとき、$x\\geq c$の範囲で$x+\\dfrac{k}{x}$の最小値は$2\\sqrt{k}$である。",
+     "reason": "$2\\sqrt{k}$を与える$x=\\sqrt{k}$は$c>\\sqrt{k}$なら範囲の外にある。$k=1$、$c=2$では$x\\geq 2$で$x+\\frac{1}{x}\\geq\\frac{5}{2}>2$である。"
+    },
+    "target": "∀ k c : ℝ, 0 < k → Real.sqrt k ≤ c → IsLeast {y : ℝ | ∃ x : ℝ, c ≤ x ∧ y = x + k / x} (c + k / c)",
+    "proof": "by\n  intro k c hk hc\n  have hs : 0 < Real.sqrt k := Real.sqrt_pos.mpr hk\n  have hc0 : 0 < c := lt_of_lt_of_le hs hc\n  have hkc : k ≤ c * c := by\n    have := Real.sq_sqrt hk.le\n    nlinarith\n  constructor\n  · exact ⟨c, le_rfl, rfl⟩\n  · rintro y ⟨x, hx, rfl⟩\n    have hx0 : 0 < x := by linarith\n    have key : x + k / x - (c + k / c) = (x - c) * (x * c - k) / (x * c) := by\n      field_simp\n      ring\n    have h1 : 0 ≤ x * c - k := by nlinarith\n    have h2 : 0 ≤ (x - c) * (x * c - k) / (x * c) :=\n      div_nonneg (mul_nonneg (sub_nonneg.2 hx) h1) (mul_pos hx0 hc0).le\n    linarith",
+    "answer": "$k$を正の実数、$c$を$c\\geq\\sqrt{k}$を満たす実数とし、$x\\geq c$とする。$c\\geq\\sqrt{k}>0$なので$c>0$、$x>0$であり、$c^2\\geq k$である。$x+\\dfrac{k}{x}-\\left(c+\\dfrac{k}{c}\\right)=\\dfrac{(x-c)(xc-k)}{xc}$が成り立つ。$x-c\\geq 0$であり、$xc\\geq c^2\\geq k$より$xc-k\\geq 0$なので、右辺は$0$以上である。また$x=c$のとき値は$c+\\dfrac{k}{c}$に等しい。よって最小値は$c+\\dfrac{k}{c}$である。"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "school_polynomials",
+   "id": "componendo_dividendo",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative drops a≠b but its failure is only 'undefined'; if a=b then a/b=1=c/d so c=d and both sides are 0/0, which equals in Lean (junk value), so the claim is not a counterexample. Use a genuinely false nearby identity.",
+   "patch": {
+    "hard_negative": {
+     "statement": "$\\dfrac{a}{b}=\\dfrac{c}{d}$なら$\\dfrac{a+b}{a-b}=\\dfrac{c-d}{c+d}$である。",
+     "reason": "$a=2,b=1,c=4,d=2$のとき$\\dfrac{a}{b}=\\dfrac{c}{d}=2$だが、左辺は$\\dfrac{3}{1}=3$、右辺は$\\dfrac{2}{6}=\\dfrac{1}{3}$である。分子は$c+d$、分母は$c-d$でなければならない。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_algebra_basics",
+   "id": "proportion_iff_cross_product",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "hard_negative counterexample b=d=0 relies on the fraction being undefined; in Lean both sides 0/0=0 hold, so it is not a false statement under the target's semantics. Use a clean false variant (ab=cd instead of ad=bc).",
+   "patch": {
+    "hard_negative": {
+     "statement": "$\\dfrac{a}{b}=\\dfrac{c}{d}$であることと$ab=cd$であることは同値である。",
+     "reason": "$a=1,b=2,c=2,d=1$のとき$ab=cd=2$だが、$\\dfrac{a}{b}=\\dfrac{1}{2}$、$\\dfrac{c}{d}=2$で等しくない。外項の積と内項の積は$ad=bc$である。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_algebra_basics",
+   "id": "real_pair_with_given_sum_and_product_iff",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OpenMath existential (exists (x y) ...) and (forall (s p)) are untyped; the statement is false over C (always solvable) and over Q, so a different theorem would give the same OpenMath. Bind the carrier R.",
+   "patch": {
+    "openmath": "(forall (s p) (-> (and (in s R) (in p R)) (<-> (exists (x y) (and (in x R) (in y R) (= (+ x y) s) (= (* x y) p))) (<= (* 4 p) (^ s 2)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_polynomials",
+   "id": "remainder_by_linear_ax_plus_b",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "Text claims 'the remainder is ...', but the Lean target and conclusion only give existence of Q with P = divisor*Q + low-degree term; the degree bound and uniqueness (which make it 'the remainder') are not part of the target. Reword so the claim equals the target and cite uniqueness separately.",
+   "patch": {
+    "statement": "$a\\neq 0$のとき、実数係数の整式$P(x)$は、ある整式$Q(x)$を用いて$P(x)=(ax+b)Q(x)+P\\left(-\\frac{b}{a}\\right)$と表せる。$P(-b/a)$は定数で次数が$ax+b$より低いので、これが$P(x)$を$ax+b$で割った余りに当たる（余りの一意性は整式の除法の一意性による）。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_polynomials",
+   "id": "remainder_by_two_distinct_linear_factors",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "Text claims 'the remainder is ...', but the Lean target and conclusion only give existence of Q with P = divisor*Q + low-degree term; the degree bound and uniqueness (which make it 'the remainder') are not part of the target. Reword so the claim equals the target and cite uniqueness separately.",
+   "patch": {
+    "statement": "$a\\neq b$のとき、実数係数の整式$P(x)$は、ある整式$Q(x)$により$P(x)=(x-a)(x-b)Q(x)+\\frac{P(a)-P(b)}{a-b}(x-a)+P(a)$と表せる。$\\frac{P(a)-P(b)}{a-b}(x-a)+P(a)$は次数が$1$以下で$(x-a)(x-b)$より低いので、これが$(x-a)(x-b)$で割った余りに当たる（余りの一意性は整式の除法の一意性による）。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_polynomials",
+   "id": "remainder_by_square_of_linear",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH"
+   ],
+   "issue": "Text claims 'the remainder is ...', but the Lean target and conclusion only give existence of Q with P = divisor*Q + low-degree term; the degree bound and uniqueness (which make it 'the remainder') are not part of the target. Reword so the claim equals the target and cite uniqueness separately.",
+   "patch": {
+    "statement": "実数係数の整式$P(x)$と実数$a$について、ある整式$Q(x)$により$P(x)=(x-a)^2Q(x)+P'(a)(x-a)+P(a)$と表せる。$P'(a)(x-a)+P(a)$は次数が$1$以下で$(x-a)^2$より低いので、これが$(x-a)^2$で割った余りに当たる（余りの一意性は整式の除法の一意性による）。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_polynomials",
+   "id": "polynomial_division_uniqueness",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "(!= B 0) compares a polynomial with the integer literal 0, and (poly_degree R1) < (poly_degree B) has no meaning for R1=0 (degree is -infinity; the text says 0 counts as smaller). Use the zero polynomial constant; the degree convention for 0 stays implicit.",
+   "patch": {
+    "openmath": "(forall (B Q1 Q2 R1 R2) (-> (and (polynomial_over B R) (polynomial_over Q1 R) (polynomial_over Q2 R) (polynomial_over R1 R) (polynomial_over R2 R) (!= B (poly_const 0)) (< (poly_degree R1) (poly_degree B)) (< (poly_degree R2) (poly_degree B)) (= (+ (* B Q1) R1) (+ (* B Q2) R2))) (and (= Q1 Q2) (= R1 R2))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_algebra_basics",
+   "id": "fundamental_theorem_symmetric_polynomials",
+   "severity": "minor",
+   "codes": [
+    "MISLABEL",
+    "OM_FORMAT"
+   ],
+   "issue": "Level 'high' is wrong for the n-variable theorem over a ring (university algebra); school use is n=2,3 only. OpenMath also erases the coefficient ring (R) and uses two card-specific symbols (symmetric_polynomial, polynomial_in_elementary_symmetric), so the same OpenMath would encode the theorem over Q, C or Z; carry the ring as an argument.",
+   "patch": {
+    "level": "2"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_polynomials",
+   "id": "even_odd_coefficient_sums_by_evaluation",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "poly_even_coeff_sum / poly_odd_coeff_sum are card-specific opaque symbols: the OpenMath is just 'P(1)+P(-1))/2 = poly_even_coeff_sum' with the meaning only in the vocabulary. Better to encode via poly_coeff and a sum over natural_range with a parity condition (or an exists over even-index witnesses) so the statement is self-contained.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_inequalities",
+   "id": "reciprocal_sum_three",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT",
+    "DUPLICATE"
+   ],
+   "issue": "n=3 special case of sum_mul_sum_reciprocal_ge_count_sq (same batch, general n). Acceptable as a named school form only if each is wanted; the statement labels the form but the general card already covers it.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_inequalities",
+   "id": "rearrangement_three_terms",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT",
+    "DUPLICATE"
+   ],
+   "issue": "n=3 instance of rearrangement_finite (same batch). Keep only if exam-style explicit 3-term form is wanted; otherwise redundant.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_inequalities",
+   "id": "chebyshev_three_terms",
+   "severity": "minor",
+   "codes": [
+    "SPECIAL_CONSTANT",
+    "DUPLICATE"
+   ],
+   "issue": "n=3 same-order instance of chebyshev_finite (same batch).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_algebra_basics",
+   "id": "two_variable_system_no_solution_ratio_form",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED",
+    "DUPLICATE"
+   ],
+   "issue": "Restricted to c,d,f nonzero and ratio hypotheses; under them ad=bc and af-ce=cf(a/c-e/f)!=0, so it is subsumed by two_variable_system_degenerate_solvability (which covers all cases with (a,b)!=0). Low reuse value.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_inequalities",
+   "id": "amgm_three_equality_iff",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Follows from cubes_sum_equals_three_product_iff (school_polynomials, real a,b,c: sum=0 or a=b=c) plus nonnegativity; near-duplicate pattern with extra hypothesis only.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_inequalities",
+   "id": "means_chain_two",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Middle inequality is exactly fourier_convex_numeric.amgm_two_variables; the bundle of three inequalities hurts retrieval granularity (HM<=GM, GM<=AM, AM<=QM are separately citable).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "school_polynomials",
+   "id": "odd_power_sum_polynomial_factor",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Same pattern as school_integers.add_dvd_pow_add_pow_odd (x+y | x^n+y^n, n odd) in the integer carrier; the polynomial form implies it by evaluation. Keep one general commutative-ring statement if possible (Mathlib Odd.add_dvd_pow_add_pow).",
+   "patch": null,
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "OpenMath variables are mostly untyped (forall (a b ...)) in school_algebra_basics and school_inequalities, while school_polynomials writes redundant (in a R); existentials such as 'exists (x y)' leave the carrier open, so R-only statements (real_pair_with_given_sum_and_product_iff) and field-generic ones share encodings. Decide one convention (carrier bound only where truth depends on it).",
+  "Constants are mostly well handled (general parametric forms); remaining special forms are 'monic' (leading coefficient 1: reciprocal_quartic, real_cubic, common_root), x+1/x, and n=3 instances next to general-n cards (reciprocal_sum_three, rearrangement_three_terms, chebyshev_three_terms).",
+  "Hard negatives that rely on 'the fraction is undefined' (componendo, proportion cross product) are not false under Lean's junk division (0/0=0); prefer a false nearby identity with a numeric counterexample.",
+  "Several cards bundle 2-4 conclusions in one conjunction (exponent laws, cubes sum/difference, means chain, abs product/quotient, conjugate arithmetic); retrieval granularity and reuse would be better with the pieces separable, or at least named in the statement.",
+  "Domain boundaries blur: absolute-value inequalities live in both school_algebra_basics and school_inequalities; near-duplicates with other domains (amgm_two_variables, add_dvd_pow_add_pow_odd, school_quadratic discriminant cards) are not cross-referenced.",
+  "Statements say 'the remainder is ...' while targets only assert existence of a quotient; uniqueness/degree live in a separate card.",
+  "No wrong-theorem or vacuous cards found: every Lean target, text and answer checked against the claimed fact; answers are complete proofs, hypotheses (a≠0, positivity, denominators) are present and necessary."
+ ],
+ "missing_neighbors": [
+  "Remainder/factor theorem in monic form over R: ∀ P c, ∃ Q, P=(X-C c)*Q+C(P.eval c) (school form of Polynomial.mod_X_sub_C_eq_C_eval / dvd_iff_isRoot); only the ax+b forms exist in this batch.",
+  "Existence of polynomial division: ∀ P B≠0, ∃ Q R, P=B*Q+R ∧ R.degree<B.degree (Polynomial.div_add_mod / EuclideanDomain); only uniqueness is present.",
+  "Quadratic Vieta over C and general-degree Vieta (Polynomial.coeff_eq_esymm_roots_of_card, Multiset.prod_X_sub_C_coeff).",
+  "n-variable and weighted AM-GM (Real.geom_mean_le_arith_mean, Real.geom_mean_le_arith_mean_weighted); n-term cards here are only n=2,3.",
+  "Cauchy-Schwarz over Finset (Finset.sum_mul_sq_le_sq_mul_sq) and Engel/Titu form (Finset.sq_sum_div_le_sum_sq_div), of which the 3-term cards are instances.",
+  "Integer-exponent laws for a≠0: a^m/a^n=a^(m-n), a^(m+n)=a^m a^n for m,n∈Z (zpow_add₀, zpow_sub₀); current card needs n≤m in N.",
+  "Bernoulli inequality (1+x)^n ≥ 1+nx for x≥-1 (one_add_mul_le_pow) and binomial theorem expansion (add_pow).",
+  "Triangle inequality for finite sums |Σ a_i| ≤ Σ|a_i| (Finset.abs_sum_le_sum_abs).",
+  "Lagrange identity for n terms / Brahmagupta-Fibonacci as ‖zw‖=‖z‖‖w‖ in C (the 2-term card is only the special case).",
+  "Power sums via Newton/Vieta for quadratic: x²+y²=s²-2p and x^n+y^n integrality from integer s,p (entrance_exam has only the Z-valued form).",
+  "Two-variable symmetric: for real x,y with x+y=s, xy=p, characterisation of x,y as roots of t²-st+p (converse of Vieta quadratic).",
+  "Generalised cyclic/discriminant: ax²+bx+c complex roots conjugate pair when real discriminant<0 stated as factorisation a(x-z)(x-conj z)."
+ ]
+}

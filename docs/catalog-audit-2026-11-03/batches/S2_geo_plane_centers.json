@@ -1,0 +1,461 @@
+{
+ "batch": "S2_geo_plane_centers",
+ "domains": [
+  "geometry_plane",
+  "geometry_centers"
+ ],
+ "reviewed": 83,
+ "ok_ids": [
+  "alternate_angles_of_parallel",
+  "altitude_feet_concyclic",
+  "angle_addition_point_on_segment",
+  "angle_at_incenter",
+  "area_eq_inradius_times_semiperimeter",
+  "area_equal_same_base_parallel",
+  "area_ratio_common_vertex_base_line",
+  "area_ratio_shared_angle",
+  "area_similar_triangles_ratio_square",
+  "centroid_divides_median_two_to_one",
+  "centroid_eq_circumcenter_iff_equilateral",
+  "centroid_iff_vector_sum_zero",
+  "centroid_leibniz_sum_of_squares",
+  "ceva_unsigned_ratio_form",
+  "circumcenter_right_triangle_hypotenuse_midpoint",
+  "convex_quadrilateral_angle_sum",
+  "corresponding_angles_of_parallel",
+  "euler_distance_circumcenter_orthocenter",
+  "euler_line",
+  "excenter_equidistant_and_touchpoint_positions",
+  "excenter_internal_and_external_bisectors",
+  "excircle_tangent_length_is_semiperimeter",
+  "foot_of_perpendicular_shortest",
+  "heron_formula_area",
+  "heron_sine_form",
+  "incenter_touchpoint_and_angle_bisector",
+  "incenter_weighted_vector_sum",
+  "interior_bisectors_concurrent_at_incenter",
+  "isosceles_trapezoid_diagonals_base_angles",
+  "law_of_sines_circumradius",
+  "menelaus_unsigned_ratio_form",
+  "nine_point_circle",
+  "orthocenter_reflection_on_circumcircle",
+  "orthocenter_right_triangle_vertex",
+  "orthocenter_unique_from_two_altitudes",
+  "orthocentric_system_swap_vertex",
+  "parallelogram_area",
+  "parallelogram_of_diagonals_bisect",
+  "parallelogram_of_one_pair_parallel_equal",
+  "parallelogram_of_two_pairs_equal",
+  "parallelogram_of_two_pairs_parallel",
+  "parallelogram_properties",
+  "perp_bisectors_concurrent_at_circumcenter",
+  "rectangle_diagonals_equal",
+  "rectangle_of_equal_diagonals",
+  "rhombus_diagonal_bisects_angle",
+  "side_product_eq_four_circumradius_area",
+  "slant_equal_iff_foot_equal",
+  "square_diagonal_length_and_angle",
+  "tetrahedron_bimedians_concurrent",
+  "three_perpendiculars_identity",
+  "trapezoid_midline",
+  "triangle_area_sine",
+  "varignon_parallelogram",
+  "vertex_orthocenter_side_circumradius_identity",
+  "vertex_orthocenter_twice_circumcenter_midpoint"
+ ],
+ "findings": [
+  {
+   "domain": "geometry_plane",
+   "id": "parallel_of_common_perpendicular",
+   "severity": "major",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Lean target assumes [Fact (finrank V = 2)] but the OpenMath has no plane hypothesis (euclidean_plane_ambient is available and used by other cards). As encoded, the OM states 'two lines perpendicular to a third are parallel' in arbitrary dimension, which is false (the card's own hard_negative in R^3), so a retrieval hit would carry a false proposition.",
+   "patch": {
+    "openmath": "(forall (a b c d e f) (-> (and euclidean_plane_ambient (!= a b) (!= c d) (!= e f) (perpendicular_lines a b e f) (perpendicular_lines c d e f)) (parallel_lines a b c d)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_plane",
+   "id": "lines_perpendicular_to_plane_parallel",
+   "severity": "major",
+   "codes": [
+    "OM_LEAN_MISMATCH",
+    "OM_FORMAT"
+   ],
+   "issue": "Lean needs [Fact (finrank V = 3)], but the OpenMath drops the dimension-3 hypothesis, so it encodes a statement that is false in R^4 (the card's own hard_negative). There is no vocabulary symbol for 'ambient dimension 3'. Also perpendicular_lines is used where Lean uses vanishing inner products (nonzero directions are given here, so that part is fine). Fix: generalize euclidean_plane_ambient to a parameterised symbol euclidean_ambient_dimension (args [term], returns prop; euclidean_plane_ambient := (euclidean_ambient_dimension 2)) and add it.",
+   "patch": {
+    "openmath": "(forall (a b c d x y z) (-> (and (euclidean_ambient_dimension 3) (!= a b) (!= c d) (not (collinear_points x y z)) (perpendicular_lines a b x y) (perpendicular_lines a b x z) (perpendicular_lines c d x y) (perpendicular_lines c d x z)) (parallel_lines a b c d)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_plane",
+   "id": "parallel_of_alternate_angles",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH",
+    "OTHER"
+   ],
+   "issue": "Lean carries [Fact (finrank V = 2)] but OM omits it (OM is identical in shape to the forward card, so the ambient restriction is invisible). Moreover the hypothesis is not needed: SOppSide of a line forces B, D and the line to be coplanar, so the converse holds in any dimension; the forward card is already stated for general V P. Either drop the Fact (reusable in 3D proofs) or add euclidean_plane_ambient to the OM.",
+   "patch": {
+    "openmath": "(forall (a b c d) (-> (and euclidean_plane_ambient (!= a c) (opposite_side_of_line b d a c) (= (euclid_angle b a c) (euclid_angle d c a))) (parallel_lines a b d c)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_plane",
+   "id": "parallel_of_corresponding_angles",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH",
+    "OTHER"
+   ],
+   "issue": "Same as parallel_of_alternate_angles: [Fact (finrank V = 2)] in Lean is not mirrored in the OM and is mathematically unnecessary (SSameSide forces coplanarity). Drop the Fact or add euclidean_plane_ambient to the OM.",
+   "patch": {
+    "openmath": "(forall (a b c d e) (-> (and euclidean_plane_ambient (strictly_between e a c) (same_side_of_line b d a c) (= (euclid_angle e a b) (euclid_angle a c d))) (parallel_lines a b c d)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_plane",
+   "id": "rhombus_diagonals_perpendicular",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Lean states vanishing inner product of AC and BD (A=C is allowed, then it is trivially true), but the OM uses perpendicular_lines, which presupposes two genuine lines. Other cards in the batch already encode the same notion as (= (inner_product (- ..) (- ..)) 0). Use one convention.",
+   "patch": {
+    "openmath": "(forall (a b c d) (-> (and (parallelogram a b c d) (= (dist_of a b) (dist_of a d))) (= (inner_product (- c a) (- d b)) 0)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_plane",
+   "id": "rhombus_of_perpendicular_diagonals",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Hypothesis in Lean is inner(AC,BD)=0 (degenerate A=C or B=D allowed); OM uses perpendicular_lines (needs distinct endpoints), so the OM hypothesis is strictly stronger than the Lean one. Use inner_product form.",
+   "patch": {
+    "openmath": "(forall (a b c d) (-> (and (parallelogram a b c d) (= (inner_product (- c a) (- d b)) 0)) (= (dist_of a b) (dist_of a d))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_plane",
+   "id": "varignon_rectangle_rhombus_criteria",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Lean uses inner(PQ,QR)=0 and inner(AC,BD)=0 (degenerate segments allowed, e.g. P=Q); OM uses perpendicular_lines on midpoints, which is undefined when midpoints coincide. Use inner_product form.",
+   "patch": {
+    "openmath": "(forall (a b c d) (and (<-> (= (inner_product (- (midpoint_of b c) (midpoint_of a b)) (- (midpoint_of c d) (midpoint_of b c))) 0) (= (inner_product (- c a) (- d b)) 0)) (<-> (= (dist_of (midpoint_of a b) (midpoint_of b c)) (dist_of (midpoint_of b c) (midpoint_of c d))) (= (dist_of a c) (dist_of b d)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_plane",
+   "id": "triangle_area_base_height",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Lean allows A=H (A on line BC, area 0) because it uses inner(HA,BC)=0; OM uses perpendicular_lines h a b c, which excludes that case. Use inner_product form.",
+   "patch": {
+    "openmath": "(forall (a b c h) (-> (and (!= b c) (on_line h b c) (= (inner_product (- a h) (- c b)) 0)) (= (triangle_area a b c) (* (/ 1 2) (dist_of b c) (dist_of a h)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_plane",
+   "id": "three_perpendiculars",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Lean hypotheses/conclusion are inner-product equations (H=B or A=H allowed); OM uses perpendicular_lines h b b c / a b b c, which presuppose H!=B, A!=B. Use inner_product form; perpendicular_to_subspace is acceptable.",
+   "patch": {
+    "openmath": "(forall (s a h b c) (-> (and (in_affine_subspace h s) (in_affine_subspace b s) (in_affine_subspace c s) (!= b c) (perpendicular_to_subspace a h s) (= (inner_product (- h b) (- c b)) 0)) (= (inner_product (- a b) (- c b)) 0)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_plane",
+   "id": "three_perpendiculars_converse_foot",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Same convention issue as three_perpendiculars: inner-product equations in Lean, perpendicular_lines in OM.",
+   "patch": {
+    "openmath": "(forall (s a h b c) (-> (and (in_affine_subspace h s) (in_affine_subspace b s) (in_affine_subspace c s) (!= b c) (perpendicular_to_subspace a h s) (= (inner_product (- a b) (- c b)) 0)) (= (inner_product (- h b) (- c b)) 0)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_plane",
+   "id": "three_perpendiculars_converse_plane",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT",
+    "DUPLICATE"
+   ],
+   "issue": "(1) perpendicular_lines vs inner products (A=H, H=B allowed in Lean). (2) Content is a one-line corollary of line_perpendicular_plane_criterion (take O=H; HA.BC = BA.BC - BH.BC = 0 first): same linear-algebra fact 'a vector orthogonal to two independent vectors is orthogonal to their span'. Keep only if the three-perpendiculars phrasing is wanted; otherwise merge.",
+   "patch": {
+    "openmath": "(forall (a h b c) (-> (and (not (collinear_points h b c)) (= (inner_product (- a b) (- c b)) 0) (= (inner_product (- h b) (- c b)) 0) (= (inner_product (- a h) (- h b)) 0)) (perpendicular_to_plane a h h b c)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_plane",
+   "id": "line_perpendicular_plane_criterion",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Lean uses inner products (A=O allowed, then conclusion trivial); OM uses perpendicular_lines. Use inner_product form.",
+   "patch": {
+    "openmath": "(forall (a o b c x y) (-> (and (not (collinear_points o b c)) (= (inner_product (- a o) (- b o)) 0) (= (inner_product (- a o) (- c o)) 0) (on_plane x o b c) (on_plane y o b c)) (= (inner_product (- a o) (- y x)) 0)))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_plane",
+   "id": "tetrahedron_opposite_edges_perpendicular_iff",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Lean: inner(AB,CD)=0 <-> AC^2+BD^2=AD^2+BC^2 for ALL points including A=B or C=D (then both sides hold). OM uses perpendicular_lines a b c d, undefined for A=B, so the OM iff is ill-defined in degenerate cases. Use inner_product form (this is the reusable 'perpendicularity via squared distances' identity).",
+   "patch": {
+    "openmath": "(forall (a b c d) (<-> (= (inner_product (- b a) (- d c)) 0) (= (+ (^ (dist_of a c) 2) (^ (dist_of b d) 2)) (+ (^ (dist_of a d) 2) (^ (dist_of b c) 2)))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_plane",
+   "id": "convex_polygon_interior_angle_sum",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "OM is just a restatement through card-specific symbols convex_polygon_points / polygon_interior_angle_sum, whose vocabulary meaning contains the whole theorem and the n+3 index shift and the 'positive orientation' (oriented plane) convention; nothing in the OM exposes the oriented plane (no euclidean_plane_ambient) or the angle sum structure, and the symbols are used by only these two cards. A better encoding needs a generic finite sum symbol (e.g. sum/arith1 sum over an interval) plus euclid_angle terms and an oriented-angle-sign hypothesis; at least add euclidean_plane_ambient.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_plane",
+   "id": "convex_polygon_exterior_angle_sum",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Same as convex_polygon_interior_angle_sum: ad-hoc polygon_exterior_angle_sum / convex_polygon_points hide the structure; oriented-plane hypothesis not visible in the OM. Also logically a one-line corollary of the interior card ((n+3)pi - (n+1)pi); fine as a textbook card.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_plane",
+   "id": "tetrahedron_centroid_three_to_one",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT",
+    "OTHER"
+   ],
+   "issue": "Faithful, but the OM nests division_point/midpoint_of to re-derive 'face centroid' and never names the tetrahedron centroid; a proof wanting 'centroid of 4 points = quarter sum' would not find it. Better: state with a 4-point centroid (Finset.univ.centroid ℝ ![A,B,C,D] / Affine.Simplex.centroid) and its 3:1 division of vertex-to-opposite-face-centroid. Also the Japanese/English text defines the face centroid as the 2:1 point, i.e. the card never mentions that the common point is the centroid.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_centers",
+   "id": "nine_point_center_and_radius",
+   "severity": "major",
+   "codes": [
+    "TARGET_UNFAITHFUL",
+    "TEXT_LEAN_MISMATCH",
+    "WEAK_OR_OVERNAMED"
+   ],
+   "issue": "Mathlib's Affine.Simplex.ninePointCircle is DEFINED by center = ((n+1)/n)•(G-O)+O and radius = R/n, so the Lean target is only the Euler-line algebra O,G,N plus H-O=3(G-O). The Japanese text/answer claim something else: the circle through the three side midpoints has that centre and radius (uniqueness of the circle through the midpoints). The target never mentions midpoints, so the card overclaims relative to Lean and the answer proves a different fact. Patch restates the real theorem (any sphere centred in the plane of ABC through the three side midpoints has centre midpoint(O,H) and radius R/2) and is Lean-verified using ninePointCircle_eq_circumsphere_medial. OpenMath no longer needs the ad-hoc nine_point_center/nine_point_radius symbols (on_circle, on_plane are in vocabulary).",
+   "patch": {
+    "statement": "三角形$ABC$の平面上に中心をもち、3辺の中点を通る円は、中心が外心$O$と垂心$H$を結ぶ線分の中点で、半径が外接円の半径$R$の$\\frac{1}{2}$である（九点円の中心と半径）。",
+    "statement_en": "Let S be a sphere (circle in the plane) whose centre lies in the plane of triangle ABC and which passes through the midpoints of the three sides. Then its centre is the midpoint of the circumcenter O and the orthocenter H, and its radius is R/2 where R is the circumradius.",
+    "assumptions": [
+     "$A,B,C$は同一直線上にない3点",
+     "円（球面）$S$の中心は平面$ABC$上にある",
+     "$S$は3辺$BC,CA,AB$の中点を通る",
+     "$O,H,R$は外心、垂心、外接円の半径"
+    ],
+    "quantifiers": [
+     "任意の三角形$ABC$と、3辺の中点を通り中心が平面$ABC$上にある円$S$"
+    ],
+    "conclusion": "$S$の中心は$OH$の中点で、半径は$\\frac{R}{2}$である。",
+    "openmath": "(forall (a b c o r) (-> (and (not (collinear_points a b c)) (on_plane o a b c) (on_circle (midpoint_of b c) o r) (on_circle (midpoint_of c a) o r) (on_circle (midpoint_of a b) o r)) (and (= o (midpoint_of (circumcenter_of a b c) (orthocenter_of a b c))) (= r (/ (circumradius_of a b c) 2)))))",
+    "target": "∀ (V P : Type*) [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricSpace P] [NormedAddTorsor V P] (t : Affine.Triangle ℝ P) (S : EuclideanGeometry.Sphere P), S.center ∈ affineSpan ℝ (Set.range t.points) → (∀ j k : Fin 3, j ≠ k → midpoint ℝ (t.points j) (t.points k) ∈ S) → S.center = midpoint ℝ t.circumcenter t.orthocenter ∧ S.radius = t.circumradius / 2\n",
+    "proof": "by\n  intro V P _ _ _ _ t S hc hm\n  have hmid : ∀ i j k : Fin 3, i ≠ j → i ≠ k → j ≠ k → t.faceOppositeCentroid i = midpoint ℝ (t.points j) (t.points k) := by\n    intro i j k hij hik hjk\n    rw [Affine.Simplex.faceOppositeCentroid_eq_affineCombination]\n    have hs : ({i}ᶜ : Finset (Fin 3)) = {j, k} := by\n      fin_cases i <;> fin_cases j <;> fin_cases k <;> simp_all <;> decide\n    rw [hs, Finset.affineCombination_eq_weightedVSubOfPoint_vadd_of_sum_eq_one _ _ _ (by rw [Finset.sum_pair hjk]; norm_num) (t.points j), Finset.weightedVSubOfPoint_apply, Finset.sum_pair hjk]\n    simp [midpoint, AffineMap.lineMap_apply]\n  have hS : S = t.medial.circumsphere := by\n    apply (t.medial.circumsphere_unique_dist_eq).2 S\n    constructor\n    · rw [Affine.Simplex.affineSpan_range_medial]; exact hc\n    · rw [Set.range_subset_iff]\n      intro i\n      rw [Affine.Simplex.medial_points]\n      have hi : i = 0 ∨ i = 1 ∨ i = 2 := by fin_cases i <;> simp\n      rcases hi with rfl | rfl | rfl\n      · rw [hmid 0 1 2 (by decide) (by decide) (by decide)]; exact hm 1 2 (by decide)\n      · rw [hmid 1 0 2 (by decide) (by decide) (by decide)]; exact hm 0 2 (by decide)\n      · rw [hmid 2 0 1 (by decide) (by decide) (by decide)]; exact hm 0 1 (by decide)\n  have hN : S = t.ninePointCircle := by\n    rw [hS, ← Affine.Simplex.ninePointCircle_eq_circumsphere_medial]\n  rw [hN]\n  constructor\n  · rw [Affine.Simplex.ninePointCircle_center, Affine.Triangle.orthocenter_eq_smul_vsub_vadd_circumcenter]\n    rw [midpoint, AffineMap.lineMap_apply]\n    simp [Affine.Simplex.centroid]\n    rw [smul_smul]\n    congr 1\n    norm_num\n  · rw [Affine.Simplex.ninePointCircle_radius]; norm_num\n"
+   },
+   "lean_compiled": true
+  },
+  {
+   "domain": "geometry_centers",
+   "id": "circumcenter_equidistant_on_perp_bisectors",
+   "severity": "minor",
+   "codes": [
+    "TEXT_LEAN_MISMATCH",
+    "OTHER"
+   ],
+   "issue": "Text says 'perpendicular bisector (line)', but the target is stated in arbitrary V P where AffineSubspace.perpBisector is a hyperplane (the answer itself says 'in space, a perpendicular bisector plane'). Also the content is nearly definitional (circumsphere equidistance), so the card is of low value as a 'textbook' fact; the useful form is the uniqueness card perp_bisectors_concurrent_at_circumcenter.",
+   "patch": {
+    "statement": "三角形$ABC$の外心を$O$、外接円の半径を$R$とすると、$OA=OB=OC=R$であり、$O$は各2頂点を結ぶ線分の垂直二等分線（空間では垂直二等分面）の上にある。",
+    "conclusion": "$OA=OB=OC=R$であり、$O$は3組の2頂点の垂直二等分線（面）上にある。"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_centers",
+   "id": "orthocenter_on_altitudes",
+   "severity": "minor",
+   "codes": [
+    "OM_LEAN_MISMATCH"
+   ],
+   "issue": "Lean conclusion has two parts: H ∈ altitude i AND inner(H-A_i, B_j-C_k)=0. The OM keeps only the inner-product part; in dimension >2 that alone does not put H on the altitude (a hyperplane), so the 'lies on the altitude from each vertex' half of the card is not encoded. Add on_line with altitude_foot.",
+   "patch": {
+    "openmath": "(forall (a b c) (-> (not (collinear_points a b c)) (and (on_line (orthocenter_of a b c) a (altitude_foot a b c)) (= (inner_product (- (orthocenter_of a b c) a) (- b c)) 0))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_centers",
+   "id": "medians_concurrent_at_centroid",
+   "severity": "minor",
+   "codes": [
+    "NEGATIVE_BAD"
+   ],
+   "issue": "The hard_negative ('a point on exactly two median lines can be a vertex') is not a nearby mis-generalisation of concurrency: it is a contrived claim whose refutation is 'a vertex is not on another median'. A genuinely nearby false claim is that cevians through arbitrary side points are concurrent. Counterexample verified: A=(0,0),B=(1,0),C=(0,1), D=mid BC, E=mid CA, F=(3/4,0): AD and BE meet at (1/3,1/3), but CF at x=1/3 has y=5/9.",
+   "patch": {
+    "hard_negative": {
+     "statement": "三角形の各頂点と対辺上の任意の点を結ぶ3本の直線は、いつでも1点で交わる。",
+     "reason": "$A=(0,0)$、$B=(1,0)$、$C=(0,1)$、$D=BC$の中点、$E=CA$の中点、$F=(3/4,0)$とする。直線$AD$と$BE$は$(1/3,1/3)$で交わるが、直線$CF$は$x=1/3$で$y=5/9\\neq 1/3$なので、この点を通らない。共点になるには中点（一般にはチェバの条件）が要る。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_centers",
+   "id": "menelaus_theorem",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Faithful, but D,E,F are written as (+ (* (- 1 r) b) (* r c)) i.e. arithmetic on points (meaningful only in a vector space), although the vocabulary already has division_point a b r = a + r(b-a), exactly Lean's lineMap. Using it makes the OM ambient-independent and consistent with the tetrahedron card.",
+   "patch": {
+    "openmath": "(forall (a b c r s t) (-> (and (not (collinear_points a b c)) (collinear_points (division_point b c r) (division_point c a s) (division_point a b t))) (= (* (* r s) t) (neg (* (* (- 1 r) (- 1 s)) (- 1 t))))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_centers",
+   "id": "menelaus_converse",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT"
+   ],
+   "issue": "Same as menelaus_theorem: use division_point for D,E,F instead of point arithmetic. (Note the card correctly has no non-collinearity hypothesis; the statement is true for arbitrary A,B,C.)",
+   "patch": {
+    "openmath": "(forall (a b c r s t) (-> (= (* (* r s) t) (neg (* (* (- 1 r) (- 1 s)) (- 1 t)))) (collinear_points (division_point b c r) (division_point c a s) (division_point a b t))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_centers",
+   "id": "ceva_theorem",
+   "severity": "minor",
+   "codes": [
+    "OM_FORMAT",
+    "NEGATIVE_BAD"
+   ],
+   "issue": "(1) OM uses point arithmetic; use division_point. (2) The hard_negative's counter-example only works through a vanishing denominator (s=1 gives 1/0, undefined/0 in Lean), so it does not show a clean failure of the product=1 identity. Cleaner nearby false claim: the product equals -1 (the Menelaus sign) under concurrency; at the centroid r=s=t=1/2 every factor is 1, so the product is 1, not -1.",
+   "patch": {
+    "openmath": "(forall (a b c p r s t) (-> (and (not (collinear_points a b c)) (!= r 0) (!= s 0) (!= t 0) (on_line p a (division_point b c r)) (on_line p b (division_point c a s)) (on_line p c (division_point a b t))) (= (* (* (/ r (- 1 r)) (/ s (- 1 s))) (/ t (- 1 t))) 1)))",
+    "hard_negative": {
+     "statement": "チェバの定理の積は$\\frac{r}{1-r}\\cdot\\frac{s}{1-s}\\cdot\\frac{t}{1-t}=-1$である（メネラウスの定理の符号）。",
+     "reason": "$r=s=t=\\frac{1}{2}$（$D,E,F$が各辺の中点）では3直線$AD,BE,CF$は重心で交わり、各因子は$1$なので積は$1$であって$-1$ではない。$-1$になるのは$D,E,F$が同一直線上にあるときである。"
+    }
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_centers",
+   "id": "ceva_converse",
+   "severity": "minor",
+   "codes": [
+    "WEAK_OR_OVERNAMED",
+    "OM_FORMAT"
+   ],
+   "issue": "Named as the converse of Ceva, but the hypotheses assume the point p ∈ AD ∩ BE already exists; the textbook converse concludes that AD, BE, CF are concurrent OR all parallel (the parallel case, AD ∥ BE, is not addressed). The card is the honest 'third line passes through the intersection' lemma; the statement says so, but the name/topic overclaim slightly. Also OM uses point arithmetic (use division_point).",
+   "patch": {
+    "openmath": "(forall (a b c p r s t) (-> (and (not (collinear_points a b c)) (= (* (* (/ r (- 1 r)) (/ s (- 1 s))) (/ t (- 1 t))) 1) (on_line p a (division_point b c r)) (on_line p b (division_point c a s))) (on_line p c (division_point a b t))))"
+   },
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_centers",
+   "id": "simson_line",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "Stated in the concrete model EuclideanSpace ℝ (Fin 2) with explicit coordinates-free hypotheses; AUTHORING asks for elementary geometry in general V P with [Fact (finrank V = 2)] (here the dimension hypothesis is essential: Simson fails in 3D for cospherical points), so the card cannot be cited for an abstract plane. Faithful otherwise (feet are given by membership + inner-product, cospherical in the plane = concyclic).",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_centers",
+   "id": "vertex_incenter_excenter_collinear",
+   "severity": "minor",
+   "codes": [
+    "OTHER"
+   ],
+   "issue": "[Fact (finrank V = 2)] is unnecessary: I, I_a and A all lie in the plane of the triangle and are collinear in any dimension (both lie on the internal bisector of A). Dropping it makes the card reusable in 3D settings; OM then should drop euclidean_plane_ambient too.",
+   "patch": null,
+   "lean_compiled": null
+  },
+  {
+   "domain": "geometry_centers",
+   "id": "incircle_tangent_length",
+   "severity": "minor",
+   "codes": [
+    "DUPLICATE"
+   ],
+   "issue": "Same fact as geometry_circle/triangle_incircle_tangent_length (2AF = AB+AC-BC), stated there for any circle tangent to the three side lines at points of the sides, here via Mathlib's incircle touchpoints. Not harmful (different hypotheses, the other is more reusable for proof sketches), but flag as near-duplicate; the answer here additionally takes 'touch points lie inside the sides' as a known property.",
+   "patch": null,
+   "lean_compiled": null
+  }
+ ],
+ "systemic": [
+  "OpenMath perpendicularity convention is inconsistent: some cards encode orthogonality as (= (inner_product (- ..) (- ..)) 0) (matching Lean's inner = 0, degenerate points allowed), others as perpendicular_lines (presupposes two genuine lines). Pick the inner_product form wherever Lean uses inner; keep perpendicular_lines only with explicit != hypotheses.",
+  "Ambient-dimension hypotheses [Fact (finrank V = n)] are only partly mirrored in OpenMath (only euclidean_plane_ambient exists, no 3D, no 'oriented'); two cards encode statements that are false without the hypothesis. Generalise to (euclidean_ambient_dimension n) and audit every Fact-bearing card. Conversely, several plane-only Lean statements (converse angle cards, vertex_incenter_excenter) hold in any dimension and could drop the Fact.",
+  "Cards on Mathlib-defined centres (Triangle.circumcenter/incenter/excenter {i}/touchpoint/orthocenter/ninePointCircle) were checked against the Mathlib definitions: excenter {i} is the excenter opposite vertex i, touchpoint s j lies on the face opposite j, orthocenter/altitude are as expected; but ninePointCircle is formula-defined (card nine_point_center_and_radius overclaims), and circumcenter_equidistant is near-definitional. Answers should say which defining property is used.",
+  "Eight centres answers repeat the same OH = a+b+c paragraph verbatim (orthocenter via circumcenter); factor it into one cited card (cf. entrance_exam/orthocenter_vector_from_circumcenter, Mathlib orthocenter_vsub_circumcenter_eq_sum_vsub). Likewise ~7 area cards repeat the 'standard triangle under a linear map' derivation; add one card area(convexHull{A,B,C}) = 1/2 |det(B-A,C-A)| and cite it.",
+  "Ceva/Menelaus family is textbook-correct and not junk-dependent: signed forms are stated multiplicatively (r s t = -(1-r)(1-s)(1-t)) or with nonzero denominators forced by 'product = 1'; OM should use division_point instead of point arithmetic. Only ceva_converse is weaker than the textbook (assumes the intersection point exists).",
+  "All 83 hard_negatives were checked (explicit counterexample or direct argument); all are false and nearby except medians_concurrent_at_centroid (contrived) and ceva_theorem (relies on 1/0). All elementary-angle statements use unoriented angles with the needed A≠B etc. non-degeneracy or the degenerate case is covered by lengths 0; I found no hypothesis-unsatisfiable (vacuous) or junk-value-dependent target (angle with zero vector is always multiplied by a zero length or excluded)."
+ ],
+ "missing_neighbors": [
+  "Affine.Triangle circumcenter characterisation: p ∈ affineSpan, equidistant from the three vertices → p = t.circumcenter (Mathlib Affine.Simplex.eq_circumcenter_of_dist_eq)",
+  "Sylvester/Euler: t.orthocenter -ᵥ t.circumcenter = ∑ i, (t.points i -ᵥ t.circumcenter) (Affine.Triangle.orthocenter_vsub_circumcenter_eq_sum_vsub), to be cited by the orthocenter/Euler/nine-point cards",
+  "Collinear ℝ {circumcenter, centroid, orthocenter} (Euler line as a collinearity statement, with the degenerate equilateral case)",
+  "Simson line converse: feet of perpendiculars from X collinear → X lies on the circumcircle (iff form)",
+  "Incenter as affine combination (aA+bB+cC)/(a+b+c) and uniqueness: point equidistant from the three side lines inside the triangle is the incenter",
+  "Area of triangle/convex hull of 3 points in ℝ² = (1/2)|det(B-A, C-A)| (shared lemma for the nine area cards)",
+  "AffineSubspace.Parallel characterisation for lines: line[A,B] ∥ line[C,D] ↔ ∃ k≠0, D -ᵥ C = k • (B -ᵥ A) (given A≠B, C≠D)",
+  "Oriented triangle angle sum: ∡ABC + ∡BCA + ∡CAB = π (EuclideanGeometry.oangle_add_oangle_add_oangle_eq_pi) as the basis for polygon angle-sum cards",
+  "Gergonne/Nagel concurrency (cevians to incircle/excircle touchpoints), a standard Ceva application",
+  "Trigonometric Ceva (sin BAD/sin DAC ...=1) and area-ratio forms of Ceva/Menelaus",
+  "Medial triangle: circumcenter of the medial triangle = nine-point centre, orthocenter of medial triangle = circumcenter of ABC",
+  "Tetrahedron: Monge point / orthocentric tetrahedron criterion (opposite edges perpendicular pairwise), Affine.Simplex.mongePoint cards"
+ ]
+}
