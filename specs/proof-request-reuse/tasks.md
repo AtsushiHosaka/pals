@@ -90,7 +90,7 @@ Executed evidence and remaining gates: `docs/recipe-first-implementation-2026-10
 Authority: the user explicitly requested reuse of the existing natural-power
 continuity Recipe, a public answer within ten seconds and independent work in
 parallel. Baseline is the actual sequence-9 release, API `adda209` and worker
-`d58b60d`. This additive change affects PFR-010/016–018 and LRC-018/020; it does
+`d58b60d`. This additive change affects PFR-010/016–018 and LRC-018/038; it does
 not authorize weaker proof evidence or an unverified fixed answer.
 
 - [x] Diagnose the actual slow request: the power Recipe was retrieved and passed all scope checks; independent answer correspondence rejected it before new DSP generation. Record the missing rejection-rationale evidence as a diagnostic gap.

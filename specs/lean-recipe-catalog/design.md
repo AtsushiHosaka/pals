@@ -2,7 +2,7 @@
 
 ## Scope and traceability
 
-This design implements `LRC-001`–`LRC-026` and `LRC-030`–`LRC-037`. LRC-001–LRC-013 preserve the existing formal proof-job selector; LRC-014–LRC-018 add Recipe-first natural-request reuse. It adds a `pals-api` internal-only catalog service
+This design implements `LRC-001`–`LRC-027` and `LRC-030`–`LRC-039`. LRC-001–LRC-013 preserve the existing formal proof-job selector; LRC-014–LRC-018 add Recipe-first natural-request reuse. It adds a `pals-api` internal-only catalog service
 backed by isolated local PostgreSQL schemas. `pals-agent` calls that service through a private
 RecipeSelection port; it does not connect to the database. The generic Draft tables, PFI and typed-Draft catalog are unchanged. Proof-request answer evidence uses the separate PFR contract.
 
@@ -495,7 +495,7 @@ A correctly configured empty eligible catalog returns an empty candidate list. U
 
 ### Complete bounded catalog batch
 
-LRC-026/PFR-019 adds a claim-fenced complete-catalog read for independent semantic
+LRC-039/PFR-019 adds a claim-fenced complete-catalog read for independent semantic
 review. The selector checks every eligible entry's existing signed review, actual
 Lean target/source and admission compiler receipt, under the active language and
 toolchain. At most 32 entries and 2 MiB are returned with an API-owned completeness
@@ -509,7 +509,7 @@ PFR-019 defines the full scope, polarity, billing, historical-read and negative 
 ### Request correspondence and settlement
 
 The ordinary model-reviewed branch below and the separately discriminated
-PFR-018/LRC-025 exact-input branch and PFR-019/LRC-026 complete-batch dual-review branch are separately discriminated correspondence contracts.
+PFR-018/LRC-038 exact-input branch and PFR-019/LRC-039 complete-batch dual-review branch are separately discriminated correspondence contracts.
 Both retain the same current-catalog, compiler, answer and lifecycle checks.
 
 In the ordinary branch, the assessment compares the pre-extracted request signature to each candidate's full description and actual source. It distinguishes same statement from a consequence, generalization or substitution. A separate stateless session independently reviews the exact original request/confirmed premises, source and stored answer; it cannot rely on the assessor's verdict. Both may run concurrently over the same bounded batch but must independently select the exact same candidate and pass all checks. An explicit method request must agree with the entry and Lean; an unspecified method imposes no extra constraint. Unknown or conflicting dimensions are not `same`.
@@ -540,7 +540,7 @@ conventions. The descriptor pins the precise target and Recipe revision as well
 as entry/source/answer/compiler/toolchain identities. Normal retrieval and live
 admission/review/lifecycle/source checks still run; the profile never publishes
 new metadata or treats an unverified string as a proof. See the full eligibility
-and negative rules in PFR-018 and LRC-025.
+and negative rules in PFR-018 and LRC-038.
 
 `catalog_reuse` settlement carries `answer.lean.entry_sha256` and `answer.lean.answer_sha256` alongside Recipe/source/target/toolchain/compiler-receipt identity and the closed correspondence evidence. In one claim-fenced API transaction, resolve the live Recipe/entry, recompute all canonical and byte digests, re-read the exact stored answer, verify active toolchain and independent review bindings, and persist only those DB-stored answer/source bytes. Use the existing lifecycle lock so retirement cannot race with answer settlement. No Draft revalidation, generator call, linked job or compiler call occurs. Valid different/uncertain reviews or intact ineligible entries may use `formal(dsp)`; forged evidence or altered immutable source/answer/receipt fails explicitly.
 
@@ -583,7 +583,23 @@ Order: API first (new route, old route kept), then worker. A new worker on an ol
 
 ### False-reuse boundary
 
-The two judges, their prompt gates and consensus rules are unchanged; only the sentence describing what the catalog input is differs, because the input is no longer a complete catalog. A larger catalog places the nearest variant of a request in the window more often, so scale increases how often the judges face a near miss. The benchmark reproduces one resulting false reuse, so the catalog must not grow past its current published size until LRC-T019 passes. The gaps found by earlier review remain open: both judges use the same model with near-identical prompts, and `request_scope` and convention choices are not compared by consensus on this route.
+A larger catalog places the nearest variant of a request in the window more often, so scale increases how often the judges face a near miss. The window itself does not admit anything: reuse depends on the judges below.
+
+## Semantic judges (LRC-025–LRC-027)
+
+The assessment runs on `gpt-6-luna` and the review on `gpt-6.1-terra`, both at low effort, in parallel over the same window. Two Luna judges failed together: with the scope gate and a premise audit they still reused the wrong card on the recorded ambiguous question 3 times in 50, while the Terra review approved 0 of the same 125 near-miss windows. The cost is about 15,700 utilization tokens per paid review against 3,150 before, and the median time does not rise because the review finishes first.
+
+The policy carries a scope gate. An open number of terms, dimension, index set or domain stays open, and a candidate's fixed value cannot fill it. Reuse needs a candidate covering every reading a learner could reasonably mean; otherwise the judge returns `needs_input` or `miss`. A request stating the scope, or a standard name or notation fixing it, is outside the gate.
+
+Consensus requires both judges to approve the same Recipe revision with the same tasks and polarity. Applied readings are the union of both judges' relevant conventions, each of which must already be known. `request_scope` is not compared: the wording differs on correct reuse, and on the recorded false reuse both judges wrote the same narrow scope, so comparing it would refuse good answers without catching the failure. Judges do not choose a reading, so there is no choice to compare.
+
+The union needs the different-model review. Between two Luna judges, the old equality check happened to block most of their joint false approvals of a dropped-hypothesis question (1 of 30 reused with it, 7 of 30 without), and that protection is lost.
+
+Options measured and not adopted: an adversarial review prompt, the request placed before the catalog, the output schema reordered so scope precedes the verdict, Luna at medium effort for the review, a premise audit paragraph, and `gpt-5.4-nano` or `gpt-5.4-mini` as the review model. See [the benchmark](../../docs/recipe-retrieval-scale-2026-11-02.md).
+
+A judge's copy of `source_target_sha256` is not identity. Recipe id and revision select the entry, the receipt stores the computed digest, and only a digest naming another shown entry conflicts. A rejection carrying stray selection fields selects nothing. Neither case fails the request.
+
+The API accepts Luna or Terra for the review, so existing receipts stay valid, and the union is equal to the old rule when both lists match. Deploy the API before the worker.
 
 ## Failure handling
 

@@ -42,17 +42,17 @@ Executed evidence and remaining gates: `docs/recipe-first-implementation-2026-10
 
 ## 2026-11-01 Exact-input reuse latency
 
-- [x] LRC-025 scope: independently reviewed complete natural-power question forms bind the existing admitted Recipe, source, target, stored Japanese answer, compiler receipt and toolchain. This does not admit or publish a new Recipe/Draft.
-- [x] LRC-018/025: API-owned registry and explicit new evidence, byte-exact full input and compatible convention/context checks, actual authenticated retrieval and unchanged atomic source/answer/admission/lifecycle validation.
-- [x] LRC-025: executable negative matrix for altered mathematical scope, unregistered text, context, conventions, provenance, replay and forged evidence; independent code/math review.
+- [x] LRC-038 scope: independently reviewed complete natural-power question forms bind the existing admitted Recipe, source, target, stored Japanese answer, compiler receipt and toolchain. This does not admit or publish a new Recipe/Draft.
+- [x] LRC-018/038: API-owned registry and explicit new evidence, byte-exact full input and compatible convention/context checks, actual authenticated retrieval and unchanged atomic source/answer/admission/lifecycle validation.
+- [x] LRC-038: executable negative matrix for altered mathematical scope, unregistered text, context, conventions, provenance, replay and forged evidence; independent code/math review.
 - [x] Real public performance witness: return the existing reviewed source and answer with `lean_catalog`, zero new model/generation/compile/Draft calls and a measured answer within ten seconds. Sequence 11 measured the registered plain-text input three times at 4.7752/4.6638/4.8301 seconds; separate production reads confirmed the sealed profile/source/answer and zero calls/jobs. [Evidence and scope](../../docs/aws-recipe-reuse-latency-2026-10-31.md#11月2日の実装と公開確認の状況).
 - [ ] Measure the other registered TeX-delimited form publicly. General wording and 30 concurrent users remain unmeasured.
 
 
 ## 2026-11-02 General semantic correspondence
 
-- [x] LRC-026: complete checked catalog batch and API-owned request/claim/ordered-entry receipt with explicit count/byte overflow handling; no new database grants.
-- [x] LRC-018/026: two independent concurrent source/request/stored-answer reviews, actual call/provider-ID/usage binding, normal token charging and exact immutable/lifecycle revalidation; historical guest/source compatibility. API `7cde967` and worker `7c000db` passed independent and cross-repository contract review.
+- [x] LRC-039: complete checked catalog batch and API-owned request/claim/ordered-entry receipt with explicit count/byte overflow handling; no new database grants.
+- [x] LRC-018/039: two independent concurrent source/request/stored-answer reviews, actual call/provider-ID/usage binding, normal token charging and exact immutable/lifecycle revalidation; historical guest/source compatibility. API `7cde967` and worker `7c000db` passed independent and cross-repository contract review.
 - [x] Independent review and adversarial scope/receipt/billing/retirement tests, including real PostgreSQL guest/paid settlement and read/source/Lean routes. Provider receipts in the PostgreSQL fixtures are explicitly synthetic; the separate real-provider 32-question experiment recorded 11/13 positive acceptance and 19/19 negative refusal across 64 actual calls.
 - [x] Sequence-12 signed software deployment and actual seven-container/private-TLS readiness, unchanged 35-step DB contract/catalogs, restored public routing/HTTP health and removal of temporary verification authority.
 - [ ] Publish and independently read back the two canonical-answer revision-2 entries after fresh compilation/admission reconciliation and actual independent reviews. Preserve the other 18 selectable entries and both old revisions' immutable historical sources/answers.
@@ -66,7 +66,8 @@ Evidence and limits: [mathematical paraphrase experiment and sequence-12 deploym
 - [x] LRC-T014 / LRC-020–LRC-022: API `recipe-window` route, ranking profiles, partial-read validation, window receipt and settlement branch; historical snapshot receipts unchanged. Unit and real PostgreSQL tests, including the selector role's vector scan, a catalog above 32, partial vector coverage and an entry outside the window.
 - [x] LRC-T015 / LRC-021–LRC-022: Worker query vector with metered usage, window contract, removal of agent ranking; prompt change limited to the input description. Unit tests for provider failure and tampered windows.
 - [x] LRC-T016 / LRC-023: Recall, false reuse and latency at about 32, 100 and 1,000 entries with real judges. Record results and residual risk in `docs/recipe-retrieval-scale-2026-11-02.md`.
-- [ ] LRC-T019 / LRC-023: The gate does not pass yet. Rewritten cards reproduced a false reuse: an ambiguous general Cauchy-Schwarz question reused the two-dimensional card, also on the earlier cards. Keep the published catalog at its current size until judges route such ambiguity to `needs_input` and a rerun shows no false reuse at about 1,000 entries.
+- [x] LRC-T019 / LRC-025–LRC-027: A scope gate, a Terra review and the union of applied readings pass the LRC-027 gate on `pals-agent#27` at `fbbc001`: no false reuse, the recorded ambiguous question reused 0 of 50 times through `attempt()`, near-variant single approvals 2/302 against 3/300, and reuse 71.3% against 65.4%. See `docs/recipe-retrieval-scale-2026-11-02.md`.
+- [ ] LRC-T020 / LRC-026–LRC-027: The owner adopted the Terra review on 2026-11-02. It raises a reuse review from about 3,150 to 15,700 utilization tokens, and BILL-017 raises the Free allowance to 30,000 so that two reuses fit in a day. Keep the published catalog at its current size until this ships; without the Terra review the gate does not pass.
 - [ ] LRC-T017 / LRC-022: After owner approval, install `pals_recipe_retrieval` and import vectors in production; verify the embedding profile on the public route.
 - [ ] LRC-T018 / LRC-024: Remove the snapshot route and `MAX_RECIPES` once no older worker can run.
 
