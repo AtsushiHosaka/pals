@@ -1,0 +1,173 @@
+[
+ {
+  "id": "midsegment_converse",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "convex_polygon_interior_angle_sum",
+  "verdict": "flaw",
+  "flaws": [
+   "核心の「凸多角形のどの対角線も多角形の内部にある」「対角線$p_0p_i$は$p_i$の内角の内部を通る」「$p_0$の内角は$n+1$個の角の和」は、カードが定義する凸性（$i<j<k$なら$p_i,p_j,p_k$が正の向き）から導かず、一般の凸多角形の性質として断言しているだけである。光線$p_0p_2,\\dots,p_0p_{n+1}$が$p_0p_1$と$p_0p_{n+2}$の間にこの順で並ぶこと（角の加法が成り立つ根拠）は書かれていない。",
+   "題意はπ表記だが、答案は段階S2の題意でありながら角を弧度で扱う。ただし題意自体がπ表記なので答案側の問題ではなく、軽微である。"
+  ],
+  "severity": "minor",
+  "suggested_fix": "$(p_0,p_1,p_i)$、$(p_0,p_i,p_{n+2})$、$(p_0,p_1,p_{n+2})$がすべて正の向きであることから、光線$p_0p_i$は$\\angle p_1p_0p_{n+2}$（$<\\pi$）の内部にあり、$i$の順に並ぶと述べて角の加法を正当化する。$p_i$での加法も$(p_{i-1},p_i,p_{i+1})$と$p_0$の位置の向きから同様に示す。"
+ },
+ {
+  "id": "power_value_outside_secant",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "area_ratio_shared_angle",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "centroid_leibniz_sum_of_squares",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "tangent_secant_converse",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "chord_midpoint_perpendicular_to_center_line",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "perpendicular_from_center_bisects_chord",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "area_similar_triangles_ratio_square",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "square_diagonal_length_and_angle",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "heron_formula_area",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "area_equal_same_base_parallel",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "chord_le_diameter_eq_iff",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "rhombus_diagonals_perpendicular",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "rectangle_of_equal_diagonals",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "centroid_eq_circumcenter_iff_equilateral",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "internally_tangent_unique_common_point",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "tangent_secant_power",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "rhombus_diagonal_bisects_angle",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "angle_on_diameter_inside_outside",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "rectangle_diagonals_equal",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "law_of_sines_ratio",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "three_perpendiculars_converse_plane",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ },
+ {
+  "id": "common_chord_perpendicular_bisected_by_center_line",
+  "verdict": "pass",
+  "flaws": [],
+  "severity": "none",
+  "suggested_fix": ""
+ }
+]

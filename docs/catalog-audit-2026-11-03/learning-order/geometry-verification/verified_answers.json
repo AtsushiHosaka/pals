@@ -1,0 +1,740 @@
+[
+ {
+  "id": "parallel_of_common_perpendicular",
+  "batch": "L13",
+  "home": "S2",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$A,B,C,D,E,F$を平面上の点とし、$A\\neq B$、$C\\neq D$、$E\\neq F$で、直線$AB$と直線$CD$はともに直線$EF$に垂直とする。垂直な2直線は交わるので、直線$AB$と直線$EF$の交点を$P$、直線$CD$と直線$EF$の交点を$Q$とする。\n\n$P=Q$のとき、点$P$を通り直線$EF$に垂直な直線はただ1本なので、直線$AB$と直線$CD$は一致する。\n\n$P\\neq Q$のとき、直線$EF$が2直線$AB$、$CD$を横切るとき、同位角はどちらも$90^\\circ$で等しい。同位角が等しいから、直線$AB$と直線$CD$は平行である（平行線になるための条件）。\n\nどちらの場合も、直線$AB$と直線$CD$は平行（一致を含む）である。\n"
+ },
+ {
+  "id": "rectangle_diagonals_equal",
+  "batch": "L13",
+  "home": "S2",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C,D$を点とし、$A\\neq B$、$A\\neq D$、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$\\angle DAB=\\pi/2$とする。$\\angle DAB=\\pi/2$より$A,B,D$は同一直線上にない。$\\overrightarrow{AB}=\\overrightarrow{DC}$より四角形$ABCD$は平行四辺形で、$AB=DC$、$AD=BC$、$AD\\parallel BC$である。\n\n$AD\\parallel BC$より同側内角の和は$\\pi$なので、$\\angle ABC=\\pi-\\angle DAB=\\pi/2$である。平行四辺形の対角は等しいから、$\\angle BCD=\\angle DAB=\\pi/2$、$\\angle CDA=\\angle ABC=\\pi/2$である。\n\n三角形$ABC$と三角形$BAD$で、$AB=BA$（共通）、$BC=AD$、$\\angle ABC=\\angle BAD=\\pi/2$なので、2辺とその間の角が等しく合同である。よって$AC=BD$である。\n"
+ },
+ {
+  "id": "rectangle_of_equal_diagonals",
+  "batch": "L13",
+  "home": "S2",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C,D$を点とし、$A\\neq B$、$A\\neq D$、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$AC=BD$とする。\n\nまず$A,B,D$が同一直線上にないことを示す。同一直線上にあるとして、$A$を原点とする数直線で$B$の座標を$b$、$D$の座標を$d$（$b,d\\neq0$）とおくと、$C$の座標は$b+d$で、$AC=|b+d|$、$BD=|d-b|$である。これらが等しいと$bd=0$となり、$b,d\\neq0$に反する。\n\nよって四角形$ABCD$は平行四辺形で、$AD=BC$、$AD\\parallel BC$である。三角形$ABD$と三角形$BAC$で、$AB=BA$（共通）、$AD=BC$、$BD=AC$なので、3組の辺が等しく合同であり、$\\angle DAB=\\angle CBA$である。$AD\\parallel BC$より同側内角の和は$\\pi$なので$\\angle DAB+\\angle CBA=\\pi$である。したがって$\\angle DAB=\\pi/2$である。\n"
+ },
+ {
+  "id": "rhombus_diagonals_perpendicular",
+  "batch": "L13",
+  "home": "S2",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified",
+  "answer": "$A,B,C,D$を点とし、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$AB=AD$とする。\n\n$B=D$のときは$\\overrightarrow{BD}=\\vec{0}$、$A=C$のときは$\\overrightarrow{AC}=\\vec{0}$なので、内積は$0$である。以下$B\\neq D$かつ$A\\neq C$とする。$A,B,D$が同一直線上にあるとすると、$AB=AD$かつ$B\\neq D$より$A$は$BD$の中点となり、$C$は$A$と一致して$A\\neq C$に反する。したがって$A,B,D$は同一直線上にない。\n\nこのとき$\\overrightarrow{AB}=\\overrightarrow{DC}$より四角形$ABCD$は平行四辺形で、対角線$AC$と$BD$は互いの中点$M$で交わる。三角形$ABD$は$AB=AD$の二等辺三角形で、$M$は底辺$BD$の中点だから、$AM\\perp BD$である。直線$AM$は直線$AC$なので、$AC\\perp BD$、すなわち$\\overrightarrow{AC}\\cdot\\overrightarrow{BD}=0$である。\n"
+ },
+ {
+  "id": "rhombus_of_perpendicular_diagonals",
+  "batch": "L13",
+  "home": "S2",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C,D$を点とし、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$\\overrightarrow{AC}\\cdot\\overrightarrow{BD}=0$とする。\n\n$B=D$のときは$AB=AD$が明らかである。$A=C$のときは$\\overrightarrow{AB}=\\overrightarrow{DC}=\\overrightarrow{DA}$より$A$が$BD$の中点となり、$AB=AD$である。以下$B\\neq D$かつ$A\\neq C$とする。$A,B,D$が同一直線上にあるとすると、$\\overrightarrow{AC}$と$\\overrightarrow{BD}$はこの直線に平行な零でないベクトルとなり、内積は$0$にならない。したがって$A,B,D$は同一直線上にない。\n\nこのとき四角形$ABCD$は平行四辺形で、対角線$AC$と$BD$は互いの中点$M$で交わる。$AC\\perp BD$より$AM\\perp BD$である。三角形$AMB$と三角形$AMD$で、$AM$は共通、$BM=DM$、$\\angle AMB=\\angle AMD=\\pi/2$なので合同であり、$AB=AD$である。\n"
+ },
+ {
+  "id": "rhombus_diagonal_bisects_angle",
+  "batch": "L13",
+  "home": "S2",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified",
+  "answer": "$A,B,C,D$を点とし、$A,B,D$は同一直線上になく、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$AB=AD$とする。四角形$ABCD$は平行四辺形なので、$BC=AD$、$DC=AB$である。$AB=AD$とあわせて、$AB=BC=CD=DA$となる。\n\n三角形$ABC$と三角形$ADC$で、$AB=AD$、$BC=DC$、$AC$は共通なので、3組の辺が等しく合同である。よって$\\angle BAC=\\angle DAC=\\angle CAD$である。\n"
+ },
+ {
+  "id": "square_diagonal_length_and_angle",
+  "batch": "L13",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C,D$を点とし、$A\\neq B$、$\\overrightarrow{AB}=\\overrightarrow{DC}$、$AB=AD$、$\\angle DAB=\\pi/2$とする。$\\angle DAB=\\pi/2$より$A,B,D$は同一直線上になく、四角形$ABCD$は平行四辺形で、$BC=AD=AB$、$BC\\parallel AD$である。\n\n同側内角の和は$\\pi$だから、$\\angle ABC=\\pi-\\angle DAB=\\pi/2$である。三角形$ABC$は$\\angle ABC=\\pi/2$、$AB=BC$の直角二等辺三角形である。三平方の定理より$AC^2=AB^2+BC^2=2AB^2$なので、$AC=\\sqrt{2}\\,AB$である。\n\n二等辺三角形の底角は等しく、三角形の内角の和は$\\pi$だから、$\\angle BAC=\\angle BCA=(\\pi-\\pi/2)/2=\\pi/4$である。\n"
+ },
+ {
+  "id": "convex_polygon_interior_angle_sum",
+  "batch": "L13",
+  "home": "S2",
+  "review": "fix",
+  "adversarial": "flaw",
+  "status": "hold",
+  "answer": "$p_0,\\dots,p_{n+2}$が凸$(n+3)$角形の頂点をなすとする。凸多角形のどの対角線も多角形の内部にあるので、頂点$p_0$から他の頂点へ対角線を引くと、多角形は$n+1$個の三角形$p_0p_ip_{i+1}$（$i=1,\\dots,n+1$）に分かれる。\n\n対角線$p_0p_i$（$2\\leq i\\leq n+1$）は頂点$p_i$の内角の内部を通るので、$p_i$の内角は、隣り合う2つの三角形の$p_i$での角の和に等しい（角の加法）。同様に$p_0$の内角は$n+1$個の三角形の$p_0$での角の和に等しい。$p_1$と$p_{n+2}$の内角は、それぞれ三角形$p_0p_1p_2$、$p_0p_{n+1}p_{n+2}$の角そのものである。したがって多角形の内角の和は、$n+1$個の三角形の内角の和の合計に等しい。\n\n三角形の内角の和は$\\pi$なので、多角形の内角の和は$(n+1)\\pi$である。\n"
+ },
+ {
+  "id": "convex_polygon_exterior_angle_sum",
+  "batch": "L13",
+  "home": "S2",
+  "review": "fix",
+  "adversarial": null,
+  "status": "hold",
+  "answer": "$p_0,\\dots,p_{n+2}$が凸$(n+3)$角形の頂点をなすとする。\n\nまず内角の和が$(n+1)\\pi$であることを示す。凸多角形のどの対角線も多角形の内部にあるので、頂点$p_0$から他の頂点へ対角線を引くと、多角形は$n+1$個の三角形$p_0p_ip_{i+1}$（$i=1,\\dots,n+1$）に分かれる。対角線$p_0p_i$（$2\\leq i\\leq n+1$）は頂点$p_i$の内角の内部を通るので、$p_i$の内角は隣り合う2つの三角形の$p_i$での角の和に等しい（角の加法）。同様に$p_0$の内角は$n+1$個の三角形の$p_0$での角の和に等しく、$p_1$と$p_{n+2}$の内角はそれぞれ1つの三角形の角に等しい。よって内角の和は$n+1$個の三角形の内角の和の合計であり、三角形の内角の和は$\\pi$なので$(n+1)\\pi$である。\n\n頂点は$n+3$個あり、各頂点の外角は$\\pi$から内角を引いたものなので、外角の和は$(n+3)\\pi-(n+1)\\pi=2\\pi$である。\n"
+ },
+ {
+  "id": "triangle_area_sine",
+  "batch": "L13",
+  "home": "S4",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C$を平面上の点とし、三角形$ABC$の面積を$S$、$\\theta=\\angle BAC$とする。三角形の面積は、既知の公式『底辺と高さの積の半分』で与えられるものとする。\n\n$A=B$または$A=C$のときは、凸包が線分または1点で$S=0$であり、$AB\\cdot AC=0$なので右辺も$0$である。3点が同一直線上にあるときは$S=0$で、$\\theta=0$または$\\pi$より$\\sin\\theta=0$なので右辺も$0$である。\n\n以下、3点は同一直線上にないとする。$C$から直線$AB$に下ろした垂線の足を$H$とする。$\\theta<\\pi/2$のとき、$H$は半直線$AB$上にあり、直角三角形$ACH$で三角比の定義から$CH=AC\\sin\\theta$である。$\\theta=\\pi/2$のとき、$H=A$で$CH=AC=AC\\sin\\theta$である。$\\theta>\\pi/2$のとき、$H$は$A$について$B$と反対側にあり、直角三角形$ACH$で$\\angle CAH=\\pi-\\theta$だから、$CH=AC\\sin(\\pi-\\theta)=AC\\sin\\theta$である。\n\nよって底辺を$AB$、高さを$CH$として、$S=\\frac{1}{2}AB\\cdot CH=\\frac{1}{2}AB\\cdot AC\\sin\\angle BAC$である。\n"
+ },
+ {
+  "id": "heron_formula_area",
+  "batch": "L13",
+  "home": "S4",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C$を平面上の点とし、$a=BC$、$b=CA$、$c=AB$、$s=(a+b+c)/2$、$\\theta=\\angle BAC$とする。三角形の面積$S$は、既知の公式『底辺と高さの積の半分』で与えられるものとする。\n\nまず$S=\\frac{1}{2}bc\\sin\\theta$を示す。$A=B$、$A=C$、または3点が同一直線上のときは、両辺とも$0$である。それ以外のとき、$C$から直線$AB$に下ろした垂線の足を$H$とすると、$\\theta$が鋭角・直角・鈍角のいずれでも$CH=b\\sin\\theta$である（鈍角のときは$\\angle CAH=\\pi-\\theta$と$\\sin(\\pi-\\theta)=\\sin\\theta$を使う）。よって$S=\\frac{1}{2}c\\cdot CH=\\frac{1}{2}bc\\sin\\theta$である。\n\n次に、余弦定理より$2bc\\cos\\theta=b^2+c^2-a^2$である（$bc=0$のときは$a=b$または$a=c$なので両辺とも$0$である）。また$\\sin\\theta\\geq0$である。$\\sin^2\\theta=1-\\cos^2\\theta$より、$\\left(\\frac{1}{2}bc\\sin\\theta\\right)^2=\\frac{1}{4}b^2c^2-\\frac{1}{16}(b^2+c^2-a^2)^2=\\frac{1}{16}(a+b+c)(-a+b+c)(a-b+c)(a+b-c)=s(s-a)(s-b)(s-c)$である。\n\n面積は$0$以上なので、平方根をとって結論を得る。\n"
+ },
+ {
+  "id": "triangle_area_base_height",
+  "batch": "L13",
+  "home": "S1",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$A,B,C,H$を平面上の点とし、$B\\neq C$、$H$は直線$BC$上にあり$HA\\perp BC$（$A$が直線$BC$上なら$H=A$）とする。面積の基本性質（長方形の面積は縦と横の積、合同な図形の面積は等しい、面積は加法的）を用いる。$h=AH$とおく。\n\n$H\\neq A$のとき、直線$BC$上の点$X$($X\\neq H$)に対して直角三角形$AHX$は、$AH$と$HX$を隣り合う2辺とする長方形を対角線で切った2つの合同な三角形の1つなので、面積は$\\frac{1}{2}h\\cdot HX$である。$X=H$のときは面積$0$で同じ式が成り立つ。\n\n$H$が線分$BC$上にあるとき、三角形$ABC$は直角三角形$AHB$と$AHC$に分かれるので、面積は$\\frac{1}{2}h(HB+HC)=\\frac{1}{2}h\\cdot BC$である。$H$が線分$BC$の外にあるとき、$H$に近い方の端点を$B$とすると、三角形$ABC$は直角三角形$AHC$から$AHB$を除いたものなので、面積は$\\frac{1}{2}h(HC-HB)=\\frac{1}{2}h\\cdot BC$である。$C$の方が近いときも同様である。\n\n$H=A$のときは$A$が直線$BC$上にあり、三角形は線分になって面積は$0$、$AH=0$なので成り立つ。したがって面積は$\\frac{1}{2}BC\\cdot AH$である。\n"
+ },
+ {
+  "id": "area_ratio_common_vertex_base_line",
+  "batch": "L13",
+  "home": "S2",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$A,B,C,D$を平面上の点とし、$B\\neq C$、$D$は直線$BC$上にあるとする。三角形の面積は『底辺と高さの積の半分』で与えられるものとし、$S$と書く。$A$から直線$BC$に下ろした垂線の長さを$h$とする（$A$が直線$BC$上なら$h=0$）。\n\n$B,D,C$は同じ直線$BC$上にあるので、三角形$ABD$は底辺$BD$、高さ$h$で$S(ABD)=\\frac{1}{2}BD\\cdot h$である（$B=D$のときは両辺とも$0$）。同様に三角形$ADC$は底辺$DC$、高さ$h$で$S(ADC)=\\frac{1}{2}DC\\cdot h$である。\n\nしたがって$S(ABD)\\cdot DC=\\frac{1}{2}BD\\cdot DC\\cdot h=S(ADC)\\cdot BD$である。\n"
+ },
+ {
+  "id": "area_equal_same_base_parallel",
+  "batch": "L13",
+  "home": "S2",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified",
+  "answer": "$A,A',B,C$を平面上の点とし、$A\\neq A'$、$B\\neq C$、直線$AA'$と直線$BC$は平行とする。三角形の面積は『底辺と高さの積の半分』で与えられるものとする。\n\n平行な2直線の間隔は一定なので、$A$と$A'$から直線$BC$までの距離は等しい（直線$AA'$が直線$BC$と一致する場合は、どちらも$0$である）。この距離を$h$とすると、三角形$ABC$と三角形$A'BC$はどちらも底辺$BC$、高さ$h$なので、面積はともに$\\frac{1}{2}BC\\cdot h$である。よって2つの面積は等しい。\n"
+ },
+ {
+  "id": "area_ratio_shared_angle",
+  "batch": "L13",
+  "home": "S4",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C,B',C'$を平面上の点とし、$A\\neq B$、$A\\neq C$、$B'$は直線$AB$上、$C'$は直線$AC$上にあるとする。三角形の面積$S$は、公式$S(XYZ)=\\frac{1}{2}XY\\cdot XZ\\sin\\angle YXZ$（3点が同一直線上でも、両辺は$0$）を用いる。\n\n$B'=A$または$C'=A$のときは、$AB'\\cdot AC'=0$で、三角形$AB'C'$は線分または点なので$S(AB'C')=0$であり、両辺とも$0$である。以下$B'\\neq A$、$C'\\neq A$とする。$B'$は直線$AB$上、$C'$は直線$AC$上の$A$と異なる点だから、半直線$AB'$は半直線$AB$かその反対向きであり、$AC'$も同様である。したがって$\\angle B'AC'$は$\\angle BAC$または$\\pi-\\angle BAC$に等しく、どちらの場合も$\\sin\\angle B'AC'=\\sin\\angle BAC$である。\n\nよって$S(AB'C')=\\frac{1}{2}AB'\\cdot AC'\\sin\\angle BAC$、$S(ABC)=\\frac{1}{2}AB\\cdot AC\\sin\\angle BAC$である。したがって$S(AB'C')\\cdot AB\\cdot AC=\\frac{1}{2}AB'\\cdot AC'\\cdot AB\\cdot AC\\sin\\angle BAC=S(ABC)\\cdot AB'\\cdot AC'$である。\n"
+ },
+ {
+  "id": "area_similar_triangles_ratio_square",
+  "batch": "L13",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C,D,E,F$を平面上の点、$k>0$とし、$DE=k\\,AB$、$DF=k\\,AC$、$EF=k\\,BC$とする。三角形の面積は『底辺と高さの積の半分』で与えられるものとする。\n\n$A,B,C$が同一直線上にあるとき、3辺のうち1つは他の2つの和に等しい。三角形$DEF$の各辺は$k$倍なので同じ関係が成り立ち、$D,E,F$も同一直線上にある。面積はどちらも$0$で、$0=k^2\\cdot0$である。以下、$A,B,C$は三角形をなすとする。このとき$D,E,F$も三角形をなし、3組の辺の比が等しいから、$\\triangle ABC\\sim\\triangle DEF$（相似比$1:k$）である。\n\n$A$から直線$BC$に下ろした垂線の足を$H$、$D$から直線$EF$に下ろした垂線の足を$H'$とする。相似より$\\angle B=\\angle E$である。$\\angle B$が鋭角のとき直角三角形$ABH$と$DEH'$は$\\angle B=\\angle E$で2角が等しく相似、鈍角のときは$\\angle ABH=\\angle DEH'=\\pi-\\angle B$で相似、直角のときは$H=B$、$H'=E$で$AH=AB$、$DH'=DE$である。いずれも$DH':AH=DE:AB=k:1$である。\n\nしたがって$S(DEF)=\\frac{1}{2}EF\\cdot DH'=\\frac{1}{2}(k\\,BC)(k\\,AH)=k^2\\cdot\\frac{1}{2}BC\\cdot AH=k^2S(ABC)$である。\n"
+ },
+ {
+  "id": "parallelogram_area",
+  "batch": "L13",
+  "home": "S4",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$A,B,C,D$を平面上の点とし、$\\overrightarrow{AB}=\\overrightarrow{DC}$とする。三角形の面積$S$は、公式$S(XYZ)=\\frac{1}{2}XY\\cdot XZ\\sin\\angle YXZ$を用いる。\n\n$A=B$、$A=D$、または$A,B,D$が同一直線上にあるときは、4点の凸包は線分または1点で面積は$0$であり、$AB\\cdot AD=0$または$\\sin\\angle BAD=0$なので右辺も$0$である。\n\n以下、$A,B,D$は同一直線上にないとする。四角形$ABCD$は平行四辺形で、対角線$BD$により2つの三角形$ABD$、$CDB$に分かれる。この2つは3辺が等しく合同である。よって面積は$2S(ABD)=2\\cdot\\frac{1}{2}AB\\cdot AD\\sin\\angle BAD=AB\\cdot AD\\sin\\angle BAD$である。\n"
+ },
+ {
+  "id": "three_perpendiculars",
+  "batch": "L13",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "平面$\\alpha$と点$A,H,B,C$をとり、$H,B,C$は$\\alpha$上にあり、$B\\neq C$で、$HA$は$\\alpha$に垂直、$HB\\perp BC$とする。\n\n$A=H$のときは$AB=HB\\perp BC$で成り立つ。$H=B$のときは$AB=AH$が$\\alpha$に垂直で、$\\alpha$上の$BC$に垂直なので成り立つ。以下$A\\neq H$、$H\\neq B$とする。このとき$A,H,B$は同一直線上にない（同一直線上なら$HA\\parallel HB$となるが、$HA$は$\\alpha$上の$HB$に垂直なので矛盾）。\n\n$HA$は$\\alpha$に垂直で、$BC$は$\\alpha$上の直線だから$BC\\perp HA$である。また仮定より$BC\\perp HB$である。$BC$は平面$AHB$上の交わる2直線$HA$、$HB$に垂直なので、平面$AHB$に垂直である。直線$AB$は平面$AHB$上にあるから、$BC\\perp AB$である。\n"
+ },
+ {
+  "id": "three_perpendiculars_converse_foot",
+  "batch": "L13",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "平面$\\alpha$と点$A,H,B,C$をとり、$H,B,C$は$\\alpha$上にあり、$B\\neq C$で、$HA$は$\\alpha$に垂直、$AB\\perp BC$とする。\n\n$A=H$のときは$HB=AB\\perp BC$で成り立つ。$H=B$のときは$\\overrightarrow{BH}=\\vec{0}$で成り立つ。以下$A\\neq H$、$H\\neq B$とする。このとき$A,H,B$は同一直線上にない（同一直線上なら$HA\\parallel HB$となるが、$HA$は$\\alpha$上の$HB$に垂直なので矛盾）。\n\n$HA$は$\\alpha$に垂直で、$BC$は$\\alpha$上の直線だから$BC\\perp HA$である。また仮定より$BC\\perp AB$である。$BC$は平面$AHB$上の交わる2直線$AH$、$AB$に垂直なので、平面$AHB$に垂直である。直線$HB$は平面$AHB$上にあるから、$BC\\perp HB$である。\n"
+ },
+ {
+  "id": "three_perpendiculars_converse_plane",
+  "batch": "L13",
+  "home": "S5",
+  "review": "fix",
+  "adversarial": "pass",
+  "status": "verified",
+  "answer": "$A,H,B,C$を点とし、$H,B,C$は同一直線上になく、$AB\\perp BC$、$HB\\perp BC$、$AH\\perp HB$とする。$H\\neq B$である。\n\n$A=H$のときは$\\overrightarrow{HA}=\\vec{0}$で成り立つ。以下$A\\neq H$とする。$A,B,H$が同一直線上にあるとすると直線$HA$と直線$HB$は一致するが、$AH\\perp HB$に反する。したがって$A,B,H$は同一直線上にない。\n\n$BC$は平面$ABH$上の交わる2直線$BA$、$BH$に垂直なので、平面$ABH$に垂直である。よって$BC\\perp AH$である。直線$AH$は、平面$HBC$上の交わる2直線$HB$、$BC$に垂直（$HB$は仮定、$BC$は今示した）なので、平面$HBC$に垂直である。\n"
+ },
+ {
+  "id": "foot_of_perpendicular_shortest",
+  "batch": "L13",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "平面$\\alpha$と点$A,H,X$をとり、$H,X$は$\\alpha$上にあり、$HA$は$\\alpha$に垂直とする。\n\n$H=X$のときは$AX=AH$、$HX=0$で成り立つ。$A=H$のときは$AX=HX$、$AH=0$で成り立つ。以下$A\\neq H$、$X\\neq H$とする。$HA$は$\\alpha$に垂直で、直線$HX$は$\\alpha$上にあるから、$\\angle AHX=\\pi/2$である。直角三角形$AHX$に三平方の定理を使うと、$AX^2=AH^2+HX^2$である。$HX^2\\geq0$より$AH^2\\leq AX^2$であり、長さは$0$以上なので$AH\\leq AX$である。\n"
+ },
+ {
+  "id": "slant_equal_iff_foot_equal",
+  "batch": "L13",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "平面$\\alpha$と点$A,H,B,C,D$をとり、$H,B,C,D$は$\\alpha$上にあり、$HA$は$\\alpha$に垂直とする。\n\n$\\alpha$上の任意の点$X$について、$AX^2=AH^2+HX^2$が成り立つ。実際、$H=X$または$A=H$のときは明らかで、そうでないときは$\\angle AHX=\\pi/2$の直角三角形$AHX$に三平方の定理を使う。\n\nしたがって$\\alpha$上の2点$X,Y$について、$AX^2=AY^2$と$HX^2=HY^2$は同値である。長さは$0$以上なので、$AX=AY$と$HX=HY$は同値である。これを$(X,Y)=(B,C)$と$(C,D)$に使えば、$AB=AC=AD$と$HB=HC=HD$が同値であることを得る。\n"
+ },
+ {
+  "id": "triangle_congruent_aas",
+  "batch": "L14",
+  "home": "S2",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C,A',B',C'$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$A',B',C'$も同一直線上になく、$\\angle ABC=\\angle A'B'C'$、$\\angle BCA=\\angle B'C'A'$、$CA=C'A'$とする。\n内角の和より$\\angle CAB=\\pi-\\angle ABC-\\angle BCA=\\angle C'A'B'$である。したがって辺$CA$とその両端の角$\\angle BCA,\\angle CAB$が、$C'A'$と$\\angle B'C'A',\\angle C'A'B'$にそれぞれ等しい。合同条件（1辺とその両端の角、頂点を$C,A,B$の順に読み替える）より、$A,B,C$と$A',B',C'$はこの対応で合同である。\n"
+ },
+ {
+  "id": "triangles_common_angle_product_similar",
+  "batch": "L14",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$A,B,C,D,E$を実内積空間上のアフィン空間の点とする。$D$は$A$と$B$の間にあって$A,B$と異なり、$E$は$A$と$C$の間にあって$A,C$と異なり、$AD\\cdot AB=AE\\cdot AC$とする。$AB,AC>0$である。\n$r=AD/AC>0$とおくと$AD=r\\,AC$であり、等式を$AC$で割ると$AE=r\\,AB$である。$D$は半直線$AB$上、$E$は半直線$AC$上にあるので$\\angle DAE=\\angle CAB$である。\n$A,B,C$が同一直線上にないとき、$D,A,E$も同一直線上になく、$AD:AC=AE:AB=r$でその間の角が等しい。相似条件（2組の辺の比とその間の角）より、$A,D,E$と$A,C,B$はこの対応で相似である。\n$A,B,C$が同一直線上にあるとき、この直線を数直線とみて$A$を原点とし、$B,C$の座標を$b,c$とする。$B,C$が$A$に対して同じ側にあれば$D,E$の座標は$rc,rb$、反対側にあれば$-rc,-rb$である。いずれも$DE=r|c-b|=r\\,CB$である。$AD=r\\,AC$、$AE=r\\,AB$と合わせて、対応する2頂点間の距離の比がすべて$r$なので、相似である。\n"
+ },
+ {
+  "id": "isosceles_iff_equal_base_angles",
+  "batch": "L14",
+  "home": "S2",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$A,B,C$を実内積空間上のアフィン空間の、同一直線上にない点とする。\n$AB=AC$とする。$M$を$BC$の中点とすると、$AB=AC$、$BM=CM$、$AM$は共通なので、3辺が等しく$\\triangle ABM\\equiv\\triangle ACM$である。対応する角は等しいので$\\angle ABM=\\angle ACM$である。$M$は線分$BC$上にあるので$\\angle ABM=\\angle ABC$、$\\angle ACM=\\angle ACB$であり、$\\angle ABC=\\angle ACB$である。\n逆に$\\angle ABC=\\angle ACB$とする。$\\angle BAC$の二等分線と線分$BC$の交点を$D$とする。$\\triangle ABD$と$\\triangle ACD$で、$\\angle ABD=\\angle ACD$、$\\angle BAD=\\angle CAD$、$AD$は共通なので、合同条件（2つの角とその間にない1辺）より合同であり、$AB=AC$である。\n"
+ },
+ {
+  "id": "median_bisects_apex_implies_isosceles",
+  "batch": "L14",
+  "home": "S2",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$A,B,C$を実内積空間上のアフィン空間の、同一直線上にない点とし、$M$を$B$と$C$の中点として$\\angle BAM=\\angle MAC$とする。$\\theta=\\angle BAM$とおく。\n直線$AM$上に、$M$が$A$と$D$の間にあり$MD=AM$となる点$D$をとる。$\\triangle AMC$と$\\triangle DMB$で、$CM=BM$、$AM=DM$、$\\angle AMC=\\angle DMB$（対頂角）なので2辺とその間の角が等しく合同である。よって$AC=DB$、$\\angle CAM=\\angle BDM$である。\n$A$は直線$BC$上にないので、$M$は直線$AB$上になく、$A,B,D$は同一直線上にない。$D$は半直線$AM$上、$A$は半直線$DM$上にあるので$\\angle BAD=\\angle BAM=\\theta$、$\\angle BDA=\\angle BDM=\\angle CAM=\\theta$である。$\\triangle ABD$の底角が等しいので、$BA=BD$である。したがって$AB=BD=AC$である。\n"
+ },
+ {
+  "id": "isosceles_apex_bisector_foot_is_midpoint",
+  "batch": "L14",
+  "home": "S2",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$A,B,C,D$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$AB=AC$で、$D$は$B$と$C$の間にあって$B,C$と異なり、$\\angle BAD=\\angle DAC$とする。\n$\\triangle ABD$と$\\triangle ACD$で、$AB=AC$、$\\angle BAD=\\angle CAD$、$AD$は共通なので、2辺とその間の角が等しく合同である。よって$BD=DC$である。$D$は線分$BC$上にあるので$BD+DC=BC$であり、$BD=DC=BC/2$である。線分$BC$上で$B$からの距離が$BC/2$の点は中点だけなので、$D$は$BC$の中点である。\n"
+ },
+ {
+  "id": "isosceles_altitude_foot_is_midpoint",
+  "batch": "L14",
+  "home": "S2",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C,H$を実内積空間上のアフィン空間の点とする。$B\\neq C$、$AB=AC$で、$H$は直線$BC$上にあり、$\\langle A-H,C-B\\rangle=0$とする。\n$A$が直線$BC$上にあるとき、$A-H$は$C-B\\neq0$に平行で内積が$0$なので$A=H$である。直線上で$B,C$から等距離にある点は中点だけなので、$A=H$は$BC$の中点である。\n$A$が直線$BC$上にないとき、$H\\neq A$で$AH$は直線$BC$に垂直である。$H=B$とすると$\\angle ABC=\\pi/2$であり、$AB=AC$による底角$\\angle ACB=\\angle ABC=\\pi/2$と合わせて内角の和が$\\pi$を超えるので矛盾する。$H=C$も同様なので、$H$は$B,C$と異なり、$\\angle AHB=\\angle AHC=\\pi/2$である。直角三角形$AHB,AHC$は斜辺$AB=AC$と他の1辺$AH$が等しいので、合同条件（直角三角形の斜辺と他の1辺）より$HB=HC$である。$H$は直線$BC$上で$B,C$から等距離にあるので、$BC$の中点である。\n"
+ },
+ {
+  "id": "isosceles_apex_pi_div_three_is_equilateral",
+  "batch": "L14",
+  "home": "S2",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$AB=AC$、$\\angle BAC=\\pi/3$とする。\n$\\angle BAC$は$0$でも$\\pi$でもないので、$A,B,C$は同一直線上にない。$AB=AC$より底角は等しく$\\angle ABC=\\angle ACB$である。内角の和より$\\angle ABC+\\angle ACB=\\pi-\\pi/3$なので、$\\angle ABC=\\angle ACB=\\pi/3$である。3つの角が等しい三角形は正三角形なので、$AB=BC=CA$である。\n"
+ },
+ {
+  "id": "triangle_side_lt_iff_opposite_angle_lt",
+  "batch": "L14",
+  "home": "S2",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$A,B,C$を実内積空間上のアフィン空間の、同一直線上にない点とする。\n$AB<AC$とする。線分$AC$上に$AD=AB$となる点$D$をとる。$AD<AC$なので、$D$は$A$と$C$の間にあって$C$と異なる。$\\triangle ABD$は二等辺三角形なので$\\angle ABD=\\angle ADB$である。$D$は線分$AC$の内部にあるので$\\angle ABC=\\angle ABD+\\angle DBC>\\angle ABD$である。また$\\triangle BDC$で外角の定理より$\\angle ADB=\\angle DBC+\\angle DCB>\\angle DCB=\\angle ACB$である。以上から$\\angle ACB<\\angle ADB=\\angle ABD<\\angle ABC$である。\n逆に$\\angle ACB<\\angle ABC$とする。$AB=AC$なら底角が等しく矛盾する。$AB>AC$なら、上の議論で$B$と$C$の役割を入れ替えて$\\angle ABC<\\angle ACB$となり矛盾する。よって$AB<AC$である。\n"
+ },
+ {
+  "id": "side_opposite_nonacute_angle_is_longest",
+  "batch": "L14",
+  "home": "S2",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$A\\neq B$、$C\\neq B$、$\\angle ABC\\geq\\pi/2$とする。\n$\\angle ABC=\\pi$のとき、$B$は$A$と$C$の間にあり、$AC=AB+CB$である。$AB>0$、$CB>0$なので$AC>AB$、$AC>CB$である。\n$\\angle ABC<\\pi$のとき、$\\angle ABC$は$0$でも$\\pi$でもないので、$A,B,C$は同一直線上にない。三角形の内角の和より、残りの角$\\angle BCA,\\angle CAB$は$\\pi/2$より小さく、$\\angle ABC\\geq\\pi/2$より小さい。大角に大辺が対応するので、$\\angle ACB<\\angle ABC$から$AB<AC$、$\\angle CAB<\\angle CBA$から$CB<CA$である。\n"
+ },
+ {
+  "id": "perpendicular_is_shortest_to_line",
+  "batch": "L14",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C,H,X$を実内積空間上のアフィン空間の点とする。$H,X$は直線$BC$上にあり、$\\langle A-H,C-B\\rangle=0$とする。\n$X=H$なら$AH=AX$である。$X\\neq H$のとき、$A=H$なら$AH=0\\leq AX$である。$A\\neq H$のとき、$H,X$は直線$BC$上にあり$AH$は直線$BC$に垂直なので、$\\angle AHX=\\pi/2$であり、$\\triangle AHX$は$H$を直角とする直角三角形である。三平方の定理より$AX^2=AH^2+HX^2>AH^2$である。長さは$0$以上なので$AH<AX$である。\n"
+ },
+ {
+  "id": "right_triangle_thirty_sixty_ratio",
+  "batch": "L14",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C$を実内積空間上のアフィン空間の、同一直線上にない点とし、$\\angle BCA=\\pi/2$、$\\angle CAB=\\pi/6$とする。\n直線$BC$上に、$C$が$B$と$D$の間にあり$CD=BC$となる点$D$をとる。$\\triangle ACB$と$\\triangle ACD$で、$AC$は共通、$BC=DC$、$\\angle ACB=\\angle ACD=\\pi/2$なので合同であり、$AD=AB$、$\\angle CAD=\\angle CAB=\\pi/6$である。$C$は線分$BD$の内部にあるので$\\angle BAD=\\angle BAC+\\angle CAD=\\pi/3$である。$AB=AD$で頂角が$\\pi/3$なので$\\triangle ABD$は正三角形であり、$BD=AB$である。$BD=2BC$なので$AB=2BC$である。三平方の定理より$AC^2=AB^2-BC^2=3BC^2$であり、$AC=\\sqrt3\\,BC$である。\n"
+ },
+ {
+  "id": "right_triangle_hypotenuse_twice_leg_angles",
+  "batch": "L14",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$B\\neq C$、$\\angle BCA=\\pi/2$、$AB=2BC$とする。$BC>0$である。$A=C$なら$AB=BC$となり$AB=2BC$に反するので$A\\neq C$である。$A=B$なら$AB=0$となり同じく反するので$A\\neq B$である。\n直線$BC$上に、$C$が$B$と$D$の間にあり$CD=BC$となる点$D$をとる。$\\triangle ACB$と$\\triangle ACD$で、$AC$は共通、$BC=DC$、$\\angle ACB=\\angle ACD=\\pi/2$なので合同であり、$AD=AB$である。$BD=2BC=AB$なので$AB=AD=BD$で、$\\triangle ABD$は正三角形、$\\angle ABD=\\pi/3$である。$C$は半直線$BD$上にあるので$\\angle ABC=\\pi/3$である。内角の和より$\\angle CAB=\\pi-\\pi/2-\\pi/3=\\pi/6$である。\n"
+ },
+ {
+  "id": "law_of_sines_ratio",
+  "batch": "L14",
+  "home": "S4",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C$を実内積空間上のアフィン空間の、同一直線上にない点とする。3つの角は$0$より大きく$\\pi$より小さいので、正弦はすべて正である。\n$A$から直線$BC$におろした垂線の足を$H$とし、$h=AH$とおく。$A$は直線$BC$上にないので$h>0$である。$\\angle ABC=\\pi/2$なら$H=B$で$h=AB=AB\\sin\\angle ABC$である。$\\angle ABC$が鋭角なら$H$は半直線$BC$上にあり、鈍角なら反対側にあるので、直角三角形$AHB$の鋭角は$\\angle ABC$または$\\pi-\\angle ABC$であり、$\\sin(\\pi-\\theta)=\\sin\\theta$より、いずれも$h=AB\\sin\\angle ABC$である。同様に$h=AC\\sin\\angle ACB$である。よって$AB\\sin\\angle ABC=AC\\sin\\angle ACB$、すなわち$\\dfrac{AB}{\\sin\\angle BCA}=\\dfrac{CA}{\\sin\\angle ABC}$である。\n頂点$B$から垂線をおろして同じ議論をすると$BA\\sin\\angle BAC=BC\\sin\\angle BCA$、すなわち$\\dfrac{BC}{\\sin\\angle BAC}=\\dfrac{AB}{\\sin\\angle BCA}$である。よって3つの比は等しい。\n"
+ },
+ {
+  "id": "median_theorem_apollonius",
+  "batch": "L14",
+  "home": "S4",
+  "review": "fix",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$M$を$B$と$C$の中点とする。\n$B=C$のときは$M=B=C$で$AB=AC=AM$となり、両辺は$2AM^2$なので等式は成り立つ。以下$B\\neq C$とする。\n$A$が直線$BC$上にあるとき（$A=M$を含む）は、この直線を数直線とみて$M$を原点、$B,C,A$の座標を$-m,m,a$とする。$AB^2+AC^2=(a+m)^2+(a-m)^2=2a^2+2m^2=2(AM^2+BM^2)$である。\n$A$が直線$BC$上にないとき、$\\theta=\\angle AMB$とおく。$B,M,C$はこの順に一直線上にあるので$\\angle AMC=\\pi-\\theta$であり、$\\cos\\angle AMC=-\\cos\\theta$である。\n$\\triangle ABM$と$\\triangle ACM$に余弦定理を用いると、$AB^2=AM^2+BM^2-2\\,AM\\cdot BM\\cos\\theta$、$AC^2=AM^2+CM^2+2\\,AM\\cdot CM\\cos\\theta$である。$BM=CM$なので足すと$AB^2+AC^2=2(AM^2+BM^2)$である。"
+ },
+ {
+  "id": "angle_bisector_theorem_converse",
+  "batch": "L14",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$A,B,C,D$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$D$は$B$と$C$の間にあって$B,C$と異なり、$AB/AC=BD/DC$とする。\n$\\angle BAC$の二等分線は線分$BC$の内部の点$D'$で交わる。角の二等分線の定理より$AB/AC=BD'/D'C$である。$k=AB/AC$とおくと、$BD=k\\,DC$かつ$BD+DC=BC$より$BD=\\dfrac{k}{1+k}BC$であり、同様に$BD'=\\dfrac{k}{1+k}BC$である。$D,D'$はともに線分$BC$上で$B$からの距離が等しいので$D=D'$であり、$\\angle BAD=\\angle DAC$である。\n"
+ },
+ {
+  "id": "midsegment_converse",
+  "batch": "L14",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified",
+  "answer": "$A,B,C,E$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$E$は直線$AC$上にあり、$A,B$の中点$M$と$E$を結ぶ直線は直線$BC$に平行であるとする。\n$E'$を$A,C$の中点とする。中点連結定理より、直線$ME'$は直線$BC$に平行である。直線$ME$も直線$BC$に平行で、$M$を通って直線$BC$に平行な直線は1本だけなので、直線$ME$と直線$ME'$は一致する。$M$は直線$AC$上にないので、直線$ME'$と直線$AC$は$E'$だけで交わる。$E$は直線$AC$上かつこの直線上の点なので、$E=E'$であり、$E$は$A,C$の中点である。\n"
+ },
+ {
+  "id": "medial_triangle_similar",
+  "batch": "L14",
+  "home": "S3",
+  "review": "fix",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$D,E,F$をそれぞれ$BC,CA,AB$の中点とする。\n$A,B,C$が同一直線上にないとき、$\\triangle ABC$に中点連結定理を用いる。$D,E$は$BC,CA$の中点なので$DE=\\frac12AB$であり、同様に$EF=\\frac12BC$、$FD=\\frac12CA$である。\n$A,B,C$が同一直線上にあるとき（点が重なる場合を含む）は、この直線を数直線とみて$A,B,C$の座標を$a,b,c$とする。$D,E,F$の座標は$\\frac{b+c}2,\\frac{c+a}2,\\frac{a+b}2$なので、$DE=\\frac{|b-a|}2=\\frac12AB$、$EF=\\frac12BC$、$FD=\\frac12CA$である。\nいずれの場合も、対応する2頂点間の距離の比はすべて$\\frac12$なので、相似である。"
+ },
+ {
+  "id": "proportional_segments_imply_parallel",
+  "batch": "L14",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$A,B,C,D,E$を実内積空間上のアフィン空間の点とする。$D$は$A$と$B$の間にあって$A,B$と異なり、$E$は$A$と$C$の間にあって$A,C$と異なり、$AD/AB=AE/AC$とする。平行は方向が等しいことを指し、直線の一致も含む。\n$A,B,C$が同一直線上にあるときは、$D,E,B,C$がすべてその直線上にあるので、直線$DE$と直線$BC$は一致し、平行である。\n$A,B,C$が同一直線上にないとき、$D,E$は半直線$AB,AC$上にあるので$\\angle DAE=\\angle BAC$であり、$AB:AD=AC:AE$である。2組の辺の比とその間の角が等しいので、相似条件より$\\triangle ADE\\sim\\triangle ABC$である。よって$\\angle ADE=\\angle ABC$であり、同位角が等しいので、直線$DE$は直線$BC$に平行である。\n"
+ },
+ {
+  "id": "parallel_iff_internal_division_ratio",
+  "batch": "L14",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$A,B,C,D,E$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$D$は$A$と$B$の間にあって$A,B$と異なり、$E$は$A$と$C$の間にあって$A,C$と異なるとする。\n直線$DE$が直線$BC$に平行であるとする。平行線と線分の比より$AD/AB=AE/AC=s$とおくと、$0<s<1$で$DB=AB-AD=(1-s)AB$、$EC=(1-s)AC$なので、$AD/DB=s/(1-s)=AE/EC$である。\n逆に$AD/DB=AE/EC$とする。$AB=AD+DB$、$AC=AE+EC$である。$AD\\cdot EC=AE\\cdot DB$の両辺に$AD\\cdot AE$を加えると$AD(AE+EC)=AE(AD+DB)$、すなわち$AD\\cdot AC=AE\\cdot AB$なので$AD/AB=AE/AC$である。よって平行線と線分の比の逆（$AD/AB=AE/AC$ならば平行）より、直線$DE$は直線$BC$に平行である。\n"
+ },
+ {
+  "id": "right_triangle_altitude_foot_between",
+  "batch": "L14",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C,H$を実内積空間上のアフィン空間の点とする。$A,B,C$は同一直線上になく、$\\angle BAC=\\pi/2$で、$H$は直線$BC$上にあり、$\\langle A-H,C-B\\rangle=0$とする。\n内角の和より$\\angle ABC+\\angle ACB=\\pi/2$で、どちらも正なので$\\angle ABC,\\angle ACB<\\pi/2$である。$A$は直線$BC$上にないので$H\\neq A$であり、$H\\neq B$なら$\\triangle AHB$は$H$を直角とする直角三角形で、$\\angle ABH<\\pi/2$である。$H$が線分$BC$の内部にないとすると、$H=B$、$H=C$、$B$が$H$と$C$の間にある、$C$が$H$と$B$の間にある、のいずれかである。$H=B$なら$\\langle A-B,C-B\\rangle=0$より$\\angle ABC=\\pi/2$となり矛盾する。$B$が$H$と$C$の間にあるときは、$\\angle ABC=\\pi-\\angle ABH>\\pi/2$となり矛盾する。$C$についても同様である。よって$H$は$B$と$C$の間にあって$B,C$と異なる。\n"
+ },
+ {
+  "id": "thales_right_angle_iff_on_diameter_circle",
+  "batch": "L15",
+  "home": "S3",
+  "review": "fix",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "$M$を$A,B$の中点、$r=AB/2$とする。$AB$を直径とする球面$s$は中心$M$、半径$r$の球面である。\n$A=B$のとき、$M=A$、$r=0$で$s$は点$A$だけからなる。$X\\neq A$より$X\\notin s$であり、$\\angle AXB=0\\neq\\pi/2$なので、両辺とも成り立たず同値である。以下$A\\neq B$とする。\n$X$が直線$AB$上にあるとき、$X\\neq A,B$なので$\\angle AXB$は$0$または$\\pi$であり、$\\pi/2$ではない。また直線$AB$上で$MX=r$となる点は$A,B$だけなので、$X\\in s$でもない。両辺とも成り立たないので同値は成り立つ。\n$X$が直線$AB$上にないとする。$A,B,X$を含む平面で考える。$M$もこの平面にある。\n$X\\in s$とする。$MX=MA=MB$なので、三角形$MAX$と$MBX$は二等辺三角形であり、$\\angle MXA=\\angle MAX$、$\\angle MXB=\\angle MBX$である。$M$は線分$AB$の内点なので$\\angle AXB=\\angle AXM+\\angle MXB=\\angle XAB+\\angle XBA$である。三角形$ABX$の内角の和より$2\\angle AXB=\\pi$であり、$\\angle AXB=\\pi/2$である。\n逆に$\\angle AXB=\\pi/2$とする。$X$について$M$と点対称な点を$X'$とすると、四角形$AXBX'$は対角線が互いに他を二等分するので平行四辺形であり、$\\angle AXB=\\pi/2$なので長方形である。長方形の対角線は等しいので$XX'=AB$であり、$MX=XX'/2=r$である。よって$X\\in s$である。\n"
+ },
+ {
+  "id": "right_angle_on_circle_chord_is_diameter",
+  "batch": "L15",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "平面上の中心$O$の円の上に点$A,B,X$をとり、$X\\neq A,B$、$\\angle AXB=\\pi/2$とする。$A=B$なら$\\angle AXB=0$となるので$A\\neq B$であり、$\\angle AXB=\\pi/2$より$A,B,X$は一直線上にない。\n$M$を$A,B$の中点とし、$X$について$M$と点対称な点を$X'$とする。四角形$AXBX'$は対角線$AB,XX'$が互いに他を二等分するので平行四辺形であり、$\\angle AXB=\\pi/2$なので長方形である。長方形の対角線は等しいので$AB=XX'$であり、$MX=XX'/2=AB/2=MA=MB$である。\n$O$は$A,X$から等距離なので線分$AX$の垂直二等分線上にあり、$B,X$から等距離なので線分$BX$の垂直二等分線上にある。$M$も$MA=MX$、$MB=MX$なのでこの2直線上にある。$A,B,X$は一直線上にないので2直線は平行でなく、交点はただ1つである。よって$O=M$であり、$O$は線分$AB$の中点である。すなわち$AB$は直径である。\n"
+ },
+ {
+  "id": "angle_on_diameter_inside_outside",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified_with_radian_caveat",
+  "answer": "$AB$は直径なので、$O$は$A,B$の中点であり$OA=OB=r$である。$A=B$のときは$r=0$、$O=A$で、$X\\neq A$より$\\angle AXB=0<\\pi/2$かつ$XO>0=r$なので、2つの同値はどちらも成り立つ。\n以下$A\\neq B$とする。$X$が直線$AB$上にあるとき、$X$が線分$AB$の内点なら$\\angle AXB=\\pi$かつ$XO<r$、外にあれば$\\angle AXB=0$かつ$XO>r$である。いずれの場合も2つの同値は成り立つ。\n$X$が直線$AB$上にないとき、$A,B,X$を含む平面で考える。三角形$XAB$に余弦定理を用いると$AB^2=XA^2+XB^2-2XA\\cdot XB\\cos\\angle AXB$である。$O$は$AB$の中点なので中線定理より$XA^2+XB^2=2XO^2+2r^2$であり、$AB^2=4r^2$である。よって$2XA\\cdot XB\\cos\\angle AXB=2XO^2+2r^2-4r^2=2(XO^2-r^2)$である。$XA\\cdot XB>0$なので、$\\cos\\angle AXB$の符号は$XO^2-r^2$の符号に等しい。\n$0<\\angle AXB<\\pi$なので、$\\cos\\angle AXB<0$は$\\angle AXB>\\pi/2$と同値で、$\\cos\\angle AXB>0$は$\\angle AXB<\\pi/2$と同値である。$XO,r\\geq0$なので$XO^2-r^2$の符号は$XO-r$の符号に等しい。以上で2つの同値が得られる。\n"
+ },
+ {
+  "id": "two_right_angles_on_segment_concyclic",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "$M$を$A,B$の中点、$r=AB/2$とする。$U$を$X$または$Y$とする。$\\angle AUB=\\pi/2$なので$A\\neq B$であり、$A,B,U$は一直線上にない。\n$U$について$M$と点対称な点を$U'$とすると、四角形$AUBU'$は対角線が互いに他を二等分するので平行四辺形であり、$\\angle AUB=\\pi/2$なので長方形である。長方形の対角線は等しいので$UU'=AB$であり、$MU=UU'/2=r$である。よって$X,Y$は中心$M$、半径$r$の球面の上にある。$A,B$もこの球面の上にあるので、4点は同一球面上にある。\n"
+ },
+ {
+  "id": "altitude_to_diameter_geometric_mean",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "中心$O$、半径$r$の球面で$AB$は直径なので、$O$は$A,B$の中点であり$OA=OB=r$である。$H$は直線$AB$上の点で$XH\\perp AB$（$X=H$のときは$XH=0$）である。$O$も直線$AB$上にあるので、三平方の定理より$XO^2=XH^2+HO^2$である（$X=H$や$H=O$の場合も成り立つ）。$XO=r$なので$XH^2=r^2-HO^2$である。\n特に$HO\\leq r$なので、$H$は線分$AB$上にあり、$HA,HB$は$r-HO$と$r+HO$（順不同）である。したがって$HA\\cdot HB=r^2-HO^2=XH^2$である。\n"
+ },
+ {
+  "id": "parallel_chords_equal_cross_chords",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "直線$AB$と$CD$は平行なので、4点$A,B,C,D$は1つの平面にある。この平面と球面の共通部分は円であり、$A,B,C,D$はこの円の上にある。この円の中心を$P$とする。\n$\\ell$を線分$AB$の垂直二等分線とする。円の弦の垂直二等分線は中心を通るので$P$は$\\ell$上にある。$\\ell\\perp AB$で$CD\\parallel AB$なので$\\ell\\perp CD$である。中心$P$を通り弦$CD$に垂直な直線は弦$CD$を二等分するので、$\\ell$は線分$CD$の垂直二等分線でもある。\nしたがって$\\ell$に関する線対称で$A\\leftrightarrow B$、$C\\leftrightarrow D$となる。この対称で線分$AC$は線分$BD$に移るので、$AC=BD$である。\n"
+ },
+ {
+  "id": "chord_midpoint_perpendicular_to_center_line",
+  "batch": "L15",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified_with_radian_caveat",
+  "answer": "実内積空間上のアフィン空間で、中心$O$の球面の上に点$A,B$をとり、$M$を$A,B$の中点とする。$\\langle O-M,B-A\\rangle=0$は、$A=B$または$O=M$であるか、直線$OM$と直線$AB$が垂直であることを意味する。\n$A=B$のとき$B-A=0$、$O=M$のとき$O-M=0$なので成り立つ。$A\\neq B$かつ$O\\neq M$とする。$O$が直線$AB$上にあるなら、$OA=OB$と$A\\neq B$より$O$は$A,B$の中点$M$になり、$O\\neq M$に反する。よって$O$は直線$AB$上にない。三角形$OAB$は$OA=OB$の二等辺三角形で、$M$は底辺$AB$の中点である。三角形$OAM$と$OBM$は3辺が等しいので合同で、$\\angle OMA=\\angle OMB$である。この2角の和は$\\pi$なので、どちらも$\\pi/2$であり、$OM\\perp AB$である。\n"
+ },
+ {
+  "id": "perpendicular_from_center_bisects_chord",
+  "batch": "L15",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified",
+  "answer": "実内積空間上のアフィン空間で、中心$O$の球面の上に相異なる点$A,B$をとり、直線$AB$上の点$H$は$O=H$であるか$OH\\perp AB$であるとする（これが$\\langle O-H,B-A\\rangle=0$の意味である）。\n$A,B$は直線$AB$上にあるので、三平方の定理より$OA^2=OH^2+HA^2$、$OB^2=OH^2+HB^2$である（$H=A$、$H=B$、$O=H$の退化した場合も成り立つ）。$OA=OB$なので$HA=HB$である。$H$は直線$AB$上の点で、$A\\neq B$なので、$A,B$から等距離にある直線上の点は中点だけである。よって$H$は$A,B$の中点である。\n"
+ },
+ {
+  "id": "half_chord_center_distance_pythagoras",
+  "batch": "L15",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B$をとり、$M$を$A,B$の中点とする。\n$A=B$のとき$M=A$で$OM=r$、$AB=0$なので成り立つ。$A\\neq B$とする。$O$が直線$AB$上にあるなら、$OA=OB$より$O=M$で、$OM=0$、$AB/2=MA=OA=r$なので成り立つ。$O$が直線$AB$上にないなら、三角形$OAB$は二等辺三角形で$M$は底辺の中点なので$OM\\perp AB$である（3辺が等しい三角形$OAM,OBM$は合同で$\\angle OMA=\\angle OMB=\\pi/2$）。直角三角形$OMA$に三平方の定理を用いて$OM^2+MA^2=OA^2=r^2$であり、$MA=AB/2$なので$OM^2+(AB/2)^2=r^2$である。\n"
+ },
+ {
+  "id": "equal_chords_iff_equal_center_distance",
+  "batch": "L15",
+  "home": "S4",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B,C,D$をとり、$M,N$を$AB,CD$の中点とする。\nまず$OM^2+(AB/2)^2=r^2$を示す。$A=B$のとき$M=A$で$OM=r$、$AB=0$なので成り立つ。$A\\neq B$のとき、$O$が直線$AB$上にあれば$OA=OB$より$O=M$で、$AB/2=r$なので成り立つ。$O$が直線$AB$上になければ、二等辺三角形$OAB$で$OM\\perp AB$なので、直角三角形$OMA$に三平方の定理を用いて$OM^2+MA^2=OA^2=r^2$であり、$MA=AB/2$なので成り立つ。同様に$ON^2+(CD/2)^2=r^2$である。\nよって$AB=CD$なら$OM^2=ON^2$であり、距離は非負なので$OM=ON$である。逆に$OM=ON$なら$(AB/2)^2=(CD/2)^2$であり、$AB=CD$である。\n"
+ },
+ {
+  "id": "equal_chords_iff_equal_central_angles",
+  "batch": "L15",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r>0$の球面の上に点$A,B,C,D$をとる。球面上の2点$X,Y$を次の3つの場合に分ける。場合1 $X=Y$のとき、$\\angle XOY=0$、$XY=0$である。場合2 $O$が$X,Y$の中点のとき、$\\angle XOY=\\pi$、$XY=2r$である。場合3 それ以外のとき、$O,X,Y$は一直線上にない（一直線上にあると、$OX=OY=r>0$より$X=Y$か場合2になる）。このとき$0<\\angle XOY<\\pi$であり、$0<XY<2r$である（$XY=2r$は$O$が中点であることと同値で、$XY\\leq2r$は三角不等式による）。\n$\\angle XOY$の値（$0$、$\\pi$、その間）からも、$XY$の値（$0$、$2r$、その間）からも、$(X,Y)$がどの場合に属するかが決まる。したがって$AB=CD$と$\\angle AOB=\\angle COD$のどちらを仮定しても、$(A,B)$と$(C,D)$は同じ場合に属する。場合1なら両辺とも$0$、場合2なら$AB=CD=2r$かつ$\\angle AOB=\\angle COD=\\pi$なので、結論は成り立つ。場合3のとき、三角形$OAB$と$OCD$は$OA=OC$、$OB=OD$を満たす。$AB=CD$なら3辺が等しいので合同で、$\\angle AOB=\\angle COD$である。$\\angle AOB=\\angle COD$なら2辺とその間の角が等しいので合同で、$AB=CD$である。\n"
+ },
+ {
+  "id": "chord_le_diameter_eq_iff",
+  "batch": "L15",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified",
+  "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B$をとる。三角不等式より$AB\\leq AO+OB=2r$である。\n$AB$が直径、すなわち$O$が$A,B$の中点なら$AB=AO+OB=2r$である。逆に$AB=2r$とする。$A,O,B$が一直線上にないなら、三角形$AOB$で2辺の和は残りの辺より大きいので$AB<AO+OB=2r$となり矛盾する。よって一直線上にある。直線上で$AB=AO+OB$なら$O$は線分$AB$上にあり、$AO=OB=r$なので$O$は$A,B$の中点である。すなわち$AB$は直径である。\n"
+ },
+ {
+  "id": "point_on_chord_strictly_between_iff_inside",
+  "batch": "L15",
+  "home": "S4",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に相異なる点$A,B$をとり、$H$を直線$AB$上の点とする。$M$を$A,B$の中点とする。\n$O$が直線$AB$上にあれば、$OA=OB$と$A\\neq B$より$O=M$である。そうでなければ二等辺三角形$OAB$で$OM\\perp AB$である。どちらの場合も、直線$AB$上の任意の点$P$について、三平方の定理から$OP^2=OM^2+MP^2$である（$P=M$のときも成り立つ）。$P=A$として$r^2=OM^2+MA^2$、$P=H$として$HO^2=OM^2+MH^2$を得る。\n$HO,r\\geq0$なので、$HO<r$は$MH<MA$と同値である。直線$AB$上で、$M$は$A,B$の中点なので、$MH<MA$は$H$が$A$と$B$の間に真にあることと同値である。\n"
+ },
+ {
+  "id": "tangent_iff_unique_common_point",
+  "batch": "L15",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$T=O$のとき、球面は点$T$だけなので共有点は$T$だけであり、接する条件も常に成り立つので同値は成り立つ。以下$T\\neq O$とする。直線$TX$と$O$を含む平面で考える。接するとは、直線が半径$OT$に垂直であることである。\n直線$TX$が$T$で接するとする。直線上の点$U\\neq T$について、三平方の定理から$OU^2=OT^2+TU^2>OT^2$なので、$U$は球面上にない。よって共有点は$T$だけである。\n逆に直線$TX$が$OT$に垂直でないとする。$O$から直線に下ろした垂線の足を$H$とすると$H\\neq T$である。直線上で$H$について$T$と対称な点$T'$をとると、$T'\\neq T$であり、$OH$が線分$TT'$の垂直二等分線になる（$H=O$のときは$O$が中点）ので$OT'=OT$である。よって$T'$も共有点であり、共有点は$T$だけではない。\n"
+ },
+ {
+  "id": "tangent_iff_length_sq_eq_power",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "$r=0$なら$T=O$で、直線$QT$は常に$T$で接し、$QT^2=QO^2-r^2$も成り立つので同値である。以下$r>0$とする。\n$O,T,Q$が一直線上にないとき、三角形$OTQ$について、三平方の定理とその逆により$QO^2=QT^2+TO^2$は$\\angle OTQ=\\pi/2$と同値である。$TO=r$なので、$QT^2=QO^2-r^2$は$\\angle OTQ=\\pi/2$、すなわち直線$QT$が半径$OT$に垂直であること（$T$で接すること）と同値である。\n$O,T,Q$が一直線上にあるとき、直線$QT$は直線$OT$に等しいので半径に垂直でなく、接しない。このとき$QO$は$QT+r$、$r-QT$、$QT-r$のいずれかに等しく、$QO^2-QT^2-r^2$は$2r\\,QT$または$-2r\\,QT$になる。$r>0$、$QT>0$なのでこれは$0$にならず、$QT^2=QO^2-r^2$も成り立たない。両辺とも成り立たないので同値は成り立つ。\n"
+ },
+ {
+  "id": "contact_chord_perpendicular_bisected_by_center_line",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "平面上の中心$O$、半径$r>0$の円をとる。$A\\neq B$、$Q\\neq A,B$で、直線$QA$が$A$で、直線$QB$が$B$で接するとする。\n接線は半径に垂直なので、三平方の定理より$QA^2=QO^2-r^2=QB^2$であり、$QA=QB$である。また$OA=OB=r$である。線分$AB$の両端から等距離にある点は線分$AB$の垂直二等分線$\\ell$上にあるので、$Q,O$はともに$\\ell$上にある。$QO^2=QA^2+r^2>r^2$より$Q\\neq O$なので、直線$QO$は$\\ell$に一致する。よって直線$QO$は弦$AB$に垂直で、$AB$の中点を通る。すなわち$\\langle Q-O,B-A\\rangle=0$であり、$A,B$の中点は直線$QO$上にある。\n"
+ },
+ {
+  "id": "tangent_chord_angle_converse",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "平面上の中心$O$の円の上に点$A,B,C$をとり、$A\\neq B$とする。$T,C$は直線$AB$の反対側にあり直線上になく、$\\angle TAB=\\angle ACB$とする。ここで直線が円に$A$で接するとは、半径$OA$に垂直な直線であることとする。\n$A\\neq B$より半径は正である。$A$を通り$OA$に垂直な直線を$\\ell$とする。$\\ell$は$A$で円に接する。$\\ell$上の$A$と異なる点$U$については、三平方の定理より$OU^2=OA^2+AU^2>OA^2$なので$U$は円上にない。よって$B\\neq A$は$\\ell$上にない。したがって$\\ell$は直線$AB$と$A$だけで交わり、$\\ell$上には$T$と同じ側の点$T'$がある。\n$T',C$は直線$AB$の反対側にあるので、接弦定理（$A$での接線上の点$T'$と円の上の点$C$が直線$AB$の反対側にあるとき$\\angle T'AB=\\angle ACB$）より、$\\angle T'AB=\\angle ACB=\\angle TAB$である。$T,T'$は直線$AB$の同じ側にあり、半直線$AB$となす角が等しいので、半直線$AT$と半直線$AT'$は一致する。したがって$T$は$\\ell$上にあり、直線$AT$は$\\ell$に等しい。よって直線$AT$は$A$で円に接する。\n"
+ },
+ {
+  "id": "power_value_inside_chord",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B$をとり、$H$は$A$と$B$の間に真にあるとする。$A\\neq B$であり、$M$を$A,B$の中点とする。\n$O$が直線$AB$上にあれば$OA=OB$より$O=M$であり、そうでなければ二等辺三角形$OAB$で$OM\\perp AB$である。どちらの場合も、直線$AB$上の点$P$について三平方の定理から$OP^2=OM^2+MP^2$である（$P=M$でも成り立つ）。$P=A$、$P=H$として$r^2=OM^2+MA^2$、$HO^2=OM^2+MH^2$を得る。\n$H$は$A,B$の間に真にあるので$x=MH$とおくと$0\\leq x<MA$であり、$HA,HB$は$MA-x$と$MA+x$（順不同）である。よって$HA\\cdot HB=MA^2-x^2=r^2-HO^2$である。\n"
+ },
+ {
+  "id": "power_value_outside_secant",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified",
+  "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B$をとり、$H$は$A,B$のアフィン包に属し$HO\\geq r$とする。\n$A=B$のとき$H=A$で、$HA\\cdot HB=0$、$HO=r$なので$HA\\cdot HB=HO^2-r^2$が成り立つ。$A\\neq B$とし、$M$を$A,B$の中点とする。$O$が直線$AB$上にあれば$O=M$であり、そうでなければ二等辺三角形$OAB$で$OM\\perp AB$である。どちらの場合も、直線$AB$上の点$P$について三平方の定理から$OP^2=OM^2+MP^2$である。$P=A$、$P=H$として$r^2=OM^2+MA^2$、$HO^2=OM^2+MH^2$を得る。$HO\\geq r$より$MH\\geq MA$である。したがって$H$は線分$AB$の外または端点にあり、$HA,HB$は$MH-MA$と$MH+MA$（順不同）である。$HA\\cdot HB=MH^2-MA^2=HO^2-r^2$である。\n"
+ },
+ {
+  "id": "tangent_secant_power",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified",
+  "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B$をとり、$Q$は$A,B$のアフィン包に属し、$Q\\neq T$で直線$QT$は$T$で接するとする。直線$QT$は半径$OT$に垂直なので、三平方の定理より$QO^2=QT^2+r^2$である。特に$QO\\geq r$である。\n$A=B$のとき$Q=A$は球面上にあり$QO=r$だが、$QT^2=QO^2-r^2=0$は$Q\\neq T$に反する。よってこの場合は起こらない。$A\\neq B$とし、$M$を$A,B$の中点とする。$O$が直線$AB$上にあれば$O=M$であり、そうでなければ二等辺三角形$OAB$で$OM\\perp AB$である。どちらの場合も、直線$AB$上の点$P$について三平方の定理から$OP^2=OM^2+MP^2$である。$P=A$、$P=Q$として$r^2=OM^2+MA^2$、$QO^2=OM^2+MQ^2$を得る。$QO\\geq r$より$MQ\\geq MA$なので、$QA,QB$は$MQ-MA$と$MQ+MA$（順不同）である。したがって$QA\\cdot QB=MQ^2-MA^2=QO^2-r^2=QT^2$である。\n"
+ },
+ {
+  "id": "tangent_secant_converse",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified_with_radian_caveat",
+  "answer": "実内積空間上のアフィン空間で、中心$O$、半径$r$の球面の上に点$A,B,T$をとり、$A$は$Q$と$B$の間に真にあり、$QT^2=QA\\cdot QB$とする。$A\\neq B$なので$r>0$である。\n$A$が$Q$と$B$の間に真にあるので、$Q$は線分$AB$の外にあり、$QA>0$、$QB>0$である。円の内部にある直線$AB$上の点は線分$AB$の内点だけなので、$QO\\geq r$である。方べきの定理（割線の形。$Q$が球面の外部または球面上にあるとき$QA\\cdot QB=QO^2-r^2$）より$QO^2-r^2=QA\\cdot QB$である。仮定と合わせて$QT^2=QO^2-r^2>0$、すなわち$Q\\neq T$で$QO^2=QT^2+TO^2$である。\n$O,T,Q$が一直線上にないなら、三平方の定理の逆より$\\angle OTQ=\\pi/2$なので、直線$QT$は$T$で接する。一直線上にあるとすると、$QO$は$QT+r$、$r-QT$、$QT-r$のいずれかに等しく、$QO^2-QT^2-r^2$は$2r\\,QT$または$-2r\\,QT$になる。$r>0$、$QT>0$なのでこれは$0$にならず、$QO^2=QT^2+TO^2$に反する。よって一直線上にはなく、直線$QT$は$T$で接する。\n"
+ },
+ {
+  "id": "intersecting_chords_converse",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "実内積空間上のアフィン空間で、点$H$は$A,B$の間と$C,D$の間に真にあり、$A,H,C$は一直線上になく、$AH\\cdot BH=CH\\cdot DH$とする。\n$A,B,C$は一直線上にない。一直線上なら$H,C$がともに直線$AB$上にあり、$A,H,C$が一直線上になるからである。$A,B,C$を含む平面を$P$とし、$P$上で$A,B,C$を通る円を$\\Gamma$とする。$H$は弦$AB$の内点なので$\\Gamma$の内部にある。$D$は直線$CH$上にあるので$P$上にある。\n直線$CH$は$\\Gamma$と$C$以外にもう1点$D'$で交わり、$H$は$C$と$D'$の間にある。交わる弦の定理（方べきの定理）より$CH\\cdot D'H=AH\\cdot BH=CH\\cdot DH$である。$CH>0$なので$D'H=DH$である。$D,D'$はどちらも$H$から見て$C$と反対側にあるので$D=D'$である。よって$D$は$\\Gamma$の上にあり、$A,B,C,D$は同一円周上にある。この円を大円とする球面を考えれば、4点は同一球面上にある。\n"
+ },
+ {
+  "id": "secants_converse",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "実内積空間上のアフィン空間で、$A$は$Q$と$B$の間に、$C$は$Q$と$D$の間に真にあり、$Q,A,C$は一直線上になく、$QA\\cdot QB=QC\\cdot QD$とする。\n$A,B,C$は一直線上にない。一直線上なら$Q,C$がともに直線$AB$上にあり、$Q,A,C$が一直線上になるからである。$A,B,C$を含む平面を$P$とし、$P$上で$A,B,C$を通る円を$\\Gamma$とする。$Q$は直線$AB$上にあるので$P$上にある。$Q$は線分$AB$の外にあり、$\\Gamma$上にもない（$\\Gamma$上なら$Q=A$または$B$となるため）ので、$\\Gamma$の外部にある。$D$は直線$QC$上にあるので$P$上にある。\n直線$QC$と$\\Gamma$の共有点は$C$と、もう1点$D'$である（接するときは$D'=C$とする）。$Q$は外部の点なので、$C,D'$は$Q$から見て同じ側にある。方べきの定理より$QC\\cdot QD'=QA\\cdot QB=QC\\cdot QD$であり、$QC>0$なので$QD'=QD$である。$D,D'$はどちらも$Q$から出る同じ半直線上にあるので$D=D'$である。よって$D$は$\\Gamma$の上にあり、$A,B,C,D$は同一円周上にある。この円を大円とする球面を考えれば、4点は同一球面上にある。\n"
+ },
+ {
+  "id": "common_chord_perpendicular_bisected_by_center_line",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": "pass",
+  "status": "verified",
+  "answer": "平面上に中心$O_1\\neq O_2$の2円をとり、相異なる点$A,B$を共有するとする。$M$を$A,B$の中点とし、$\\ell$を線分$AB$の垂直二等分線とする。$O_1A=O_1B$、$O_2A=O_2B$なので、$O_1,O_2$はどちらも$\\ell$上にある。$O_1\\neq O_2$なので、直線$O_1O_2$は$\\ell$に一致する。よって直線$O_1O_2$は$AB$に垂直で、$AB$の中点$M$を通る。すなわち$\\langle O_2-O_1,B-A\\rangle=0$であり、$A,B$の中点は直線$O_1O_2$上にある。\n"
+ },
+ {
+  "id": "two_circles_at_most_two_common_points",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "平面上の相異なる2円が、相異なる点$A,B$と点$Q$をすべて共有するとし、$Q\\neq A$かつ$Q\\neq B$と仮定する。\n円と直線の共有点は高々2個なので、$A,B,Q$は一直線上にない。一直線上にない3点を通る円はただ1つである（中心は$AB$と$AQ$の垂直二等分線の交点で、この2直線は平行でないので1点に定まり、半径は中心から$A$までの距離に等しい）。2円はどちらも$A,B,Q$を通るので一致し、「2円は異なる」に反する。よって$Q=A$または$Q=B$である。\n"
+ },
+ {
+  "id": "externally_tangent_iff_center_distance",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2$の2つの球面をとる。外接するとは、共有点$T$で線分$O_1O_2$上にあるものが存在することである。\n外接するとき、$r_1=O_1T\\geq0$、$r_2=O_2T\\geq0$であり、$T$が線分上にあるので$O_1O_2=O_1T+TO_2=r_1+r_2$である。\n逆に$O_1O_2=r_1+r_2$、$r_1,r_2\\geq0$とする。$r_1+r_2=0$なら$r_1=r_2=0$、$O_1=O_2$であり、$T=O_1$が条件を満たす。$r_1+r_2>0$なら、線分$O_1O_2$を$r_1:r_2$に内分する点を$T$とする。$T$は線分上にあり、$O_1T=r_1$、$O_2T=r_2$である。\n"
+ },
+ {
+  "id": "internally_tangent_iff_center_distance",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$0$でない実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2$の2つの球面をとる。第1が第2に内接するとは、共有点$T$で$O_1$が線分$O_2T$上にあるものが存在することである。\n内接するとき、$r_1,r_2\\geq0$であり、$O_2T=O_2O_1+O_1T$より$O_1O_2=r_2-r_1$である。\n逆に$O_1O_2=r_2-r_1$、$r_1,r_2\\geq0$とする。$O_1=O_2$なら$r_1=r_2$で2つの球面は一致する。空間が$0$でないので、$O_1$から距離$r_1$にある点$T$が存在し、$T$は共有点で、$O_1=O_2$は線分$O_2T$の端点にある。$O_1\\neq O_2$なら$d=O_1O_2>0$とし、半直線$O_2O_1$上に$O_2T=r_2$となる点$T$をとる。$r_2=r_1+d\\geq d$なので$O_1$は線分$O_2T$上にあり、$O_1T=r_2-d=r_1$である。\n"
+ },
+ {
+  "id": "externally_tangent_unique_common_point",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2>0$の2つの球面をとり、$d=O_1O_2=r_1+r_2$とする。$d>r_1$なので、線分$O_1O_2$上に$O_1T=r_1$となる点$T$がある。$TO_2=d-r_1=r_2$なので、$T$は共有点である。\n$Q$を共有点とする。$O_1Q=r_1$、$QO_2=r_2$より$O_1Q+QO_2=d=O_1O_2$である。$O_1,Q,O_2$が一直線上にないなら、三角形の2辺の和は残りの辺より大きいので$O_1Q+QO_2>O_1O_2$となり矛盾する。よって一直線上にある。直線上で$O_1Q+QO_2=O_1O_2$なら$Q$は線分$O_1O_2$上にあり、$O_1Q=r_1$なので$Q=T$である。\n"
+ },
+ {
+  "id": "internally_tangent_unique_common_point",
+  "batch": "L15",
+  "home": "S5",
+  "review": "fix",
+  "adversarial": "pass",
+  "status": "verified",
+  "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$0<r_1<r_2$の2つの球面をとり、$d=O_1O_2=r_2-r_1>0$とする。半直線$O_2O_1$上に$O_2T=r_2$となる点$T$をとる。$d<r_2$なので$O_1$は線分$O_2T$上にあり、$O_1T=r_2-d=r_1$である。よって$T$は共有点である。\n$Q$を共有点とする。$O_1Q=r_1$、$O_2Q=r_2=d+r_1$より$O_2Q=O_2O_1+O_1Q$である。$O_2,O_1,Q$が一直線上にないなら、三角形の2辺の和は残りの辺より大きいので$O_2Q<O_2O_1+O_1Q$となり矛盾する。よって一直線上にあり、$O_1$は線分$O_2Q$上にある。したがって$Q$は半直線$O_2O_1$上にあり、$O_2Q=r_2$なので$Q=T$である。"
+ },
+ {
+  "id": "common_tangent_at_contact_on_center_line",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1>0,r_2$の2つの球面をとる。$T$は直線$O_1O_2$上で第2の球面の上にあり、$X\\neq T$、直線$TX$は第1の球面に$T$で接するとする。\n$r_1>0$より$T\\neq O_1$であり、$T$は直線$O_1O_2$上にある。直線$TX$は第1の球面に$T$で接するので、半径$O_1T$、すなわち直線$O_1O_2$に垂直である。$O_2$は直線$O_1O_2$上にあるので、$O_2=T$であるか、半径$O_2T$が直線$O_1O_2$に重なる。$O_2\\neq T$のとき、直線$TX$は半径$O_2T$に垂直である。$O_2=T$のとき$r_2=0$で、接する条件は常に成り立つ。どちらの場合も、直線$TX$は第2の球面に$T$で接する。\n"
+ },
+ {
+  "id": "two_circles_common_point_exists_in_plane",
+  "batch": "L15",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "平面上で、中心$O_1\\neq O_2$、半径$r_1,r_2>0$の2円をとり、$d=O_1O_2>0$は$|r_1-r_2|\\leq d\\leq r_1+r_2$を満たすとする。\n$|r_1-r_2|<d<r_1+r_2$のとき、3辺の長さが$d,r_1,r_2$の三角形が作図できる（三角形の成立条件）。その頂点を、長さ$d$の辺の両端が$O_1,O_2$になるようにとり、残りの頂点を$T$とすると、$TO_1=r_1$、$TO_2=r_2$である。\n$d=r_1+r_2$のとき、線分$O_1O_2$を$r_1:r_2$に内分する点を$T$とする。$d=r_2-r_1$のとき、半直線$O_2O_1$上に$O_2T=r_2$となる点$T$をとると、$O_1T=r_2-d=r_1$である。$d=r_1-r_2$のとき、半直線$O_1O_2$上に$O_1T=r_1$となる点$T$をとると、$O_2T=r_1-d=r_2$である。\nどの場合も$T$は2円の共有点である。\n"
+ },
+ {
+  "id": "common_tangent_bisected_by_common_chord",
+  "batch": "L15",
+  "home": "S5",
+  "review": "fix",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "実内積空間上のアフィン空間で、2つの球面が点$A,B$を共有し、$T_1\\neq T_2$で直線$T_1T_2$は第1の球面に$T_1$で、第2の球面に$T_2$で接するとする。$H$は$A,B$のアフィン包と直線$T_1T_2$の両方に属するとする。接線は接点以外で球面と交わらない。\n$A=B$のとき$H=A$で、$H$は直線$T_1T_2$と第1の球面の共有点なので$H=T_1$である。同様に$H=T_2$となり、$T_1\\neq T_2$に反する。よってこの場合は起こらず、$A\\neq B$とする。このとき直線$AB$は直線$T_1T_2$と異なる（同じなら、$A,B$は接線上の球面の点なので$A=B=T_1$となるため）。\n第1の球面について$HT_1^2=HA\\cdot HB$を示す。$H=T_1$のとき、$H$は第1の球面と直線$AB$の共有点なので$H=A$または$H=B$であり、両辺は$0$である。$H\\neq T_1$のとき、直線$HT_1$（直線$T_1T_2$）と直線$AB$は$H$で交わるので、両方を含む平面$\\Pi$がある。$\\Pi$と第1の球面の共通部分は、異なる2点$A,B$を含むので円であり、$T_1$も通る。直線$T_1T_2$はこの円と$T_1$以外で交わらないので、円に$T_1$で接する。よって方べきの定理（接線と割線）より$HT_1^2=HA\\cdot HB$である。\n第2の球面についても同様に$HT_2^2=HA\\cdot HB$である。よって$HT_1=HT_2$である。$H$は直線$T_1T_2$上にあり$T_1\\neq T_2$なので、$T_1,T_2$から等距離にある点は中点だけである。すなわち$H$は$T_1,T_2$の中点である。"
+ },
+ {
+  "id": "external_common_tangent_length",
+  "batch": "L15",
+  "home": "S5",
+  "review": "fix",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2$の2つの球面をとり、$T_1\\neq T_2$の直線$T_1T_2$が第1に$T_1$で、第2に$T_2$で接し、$O_1,O_2$は直線の同じ側にあって直線上にないとする。\n$O_1,O_2$が直線の同じ側にあるので、4点$T_1,T_2,O_1,O_2$は1つの平面上にある。接線は半径に垂直なので$T_1O_1\\perp T_1T_2$、$T_2O_2\\perp T_1T_2$であり、$O_1,O_2$が同じ側にあるので、半径$T_1O_1$と$T_2O_2$は平行で同じ向きである。\n命題は添字の入れ替えで不変なので、$r_1\\geq r_2$としてよい。線分$T_1O_1$上に$T_1K=r_2$となる点$K$をとる。$T_1K$と$T_2O_2$は平行で長さが等しく同じ向きなので、四角形$KT_1T_2O_2$は平行四辺形であり、$\\angle KT_1T_2=90^\\circ$なので長方形である。\nよって$KO_2=T_1T_2$、$KO_2\\perp T_1O_1$であり、$KO_1=r_1-r_2$である。直角三角形$KO_2O_1$に三平方の定理を用いて（$K=O_1$のときは$r_1=r_2$で$O_1O_2=KO_2$）、$O_1O_2^2=T_1T_2^2+(r_1-r_2)^2$である。すなわち$T_1T_2^2=O_1O_2^2-(r_1-r_2)^2$である。"
+ },
+ {
+  "id": "internal_common_tangent_length",
+  "batch": "L15",
+  "home": "S5",
+  "review": "fix",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2$の2つの球面をとり、$T_1\\neq T_2$の直線$T_1T_2$が第1に$T_1$で、第2に$T_2$で接し、$O_1,O_2$は直線を含む平面で直線の両側にあって直線上にないとする。\n接線は半径に垂直なので$T_1O_1\\perp T_1T_2$、$T_2O_2\\perp T_1T_2$であり、$O_1,O_2$が反対側にあるので、半径$T_1O_1$と$T_2O_2$は平行で反対向きである。\n半直線$O_1T_1$を$T_1$の先へ延ばし、$T_1K=r_2$となる点$K$をとる。$K$は$O_2$と直線$T_1T_2$の同じ側にある。$T_1K$と$T_2O_2$は平行で長さが等しく同じ向きなので、四角形$KT_1T_2O_2$は平行四辺形であり、$\\angle KT_1T_2=90^\\circ$なので長方形である。\nよって$KO_2=T_1T_2$、$KO_2\\perp KO_1$であり、$T_1$は線分$KO_1$上にあるので$KO_1=r_2+r_1$である。直角三角形$KO_2O_1$に三平方の定理を用いて、$O_1O_2^2=T_1T_2^2+(r_1+r_2)^2$である。すなわち$T_1T_2^2=O_1O_2^2-(r_1+r_2)^2$である。"
+ },
+ {
+  "id": "centroid_leibniz_sum_of_squares",
+  "batch": "L16",
+  "home": "S5",
+  "review": "fix",
+  "adversarial": "pass",
+  "status": "verified",
+  "answer": "$A,B,C$を同一直線上にない3点、$G$を重心、$P$を任意の点とし、$M$を辺$BC$の中点とする。重心の性質から$G$は線分$AM$上にあり$AG=2GM$である。$GM=m$とおくと$AG=2m$、$AM=3m$である。\nまず$P\\neq G$とする。$\\theta=\\angle PGA$とおくと$\\angle PGM=180^\\circ-\\theta$である（$P$が直線$AM$上にあるときは$\\theta=0^\\circ$または$180^\\circ$とみなす。このとき下の2式は直接の計算で確かめられる）。\n三角形$PGA$、$PGM$に余弦定理を使うと、$PA^2=PG^2+4m^2-4m\\cdot PG\\cos\\theta$、$PM^2=PG^2+m^2+2m\\cdot PG\\cos\\theta$である。第1式に第2式の2倍を加えると$PA^2+2PM^2=3PG^2+6m^2$を得る。\nまた三角形$PBC$の中線定理（$P$が直線$BC$上にあっても成り立つ）より$PB^2+PC^2=2PM^2+\\frac{BC^2}{2}$である。辺々加えると$PA^2+PB^2+PC^2=3PG^2+6m^2+\\frac{BC^2}{2}$ …(＊)となる。\n$P=G$のときも、$GA^2=4m^2$と三角形$GBC$の中線定理$GB^2+GC^2=2m^2+\\frac{BC^2}{2}$から$GA^2+GB^2+GC^2=6m^2+\\frac{BC^2}{2}$となり、(＊)は$PG=0$で成り立つ。したがって(＊)の定数部分は$GA^2+GB^2+GC^2$に等しく、すべての$P$について$PA^2+PB^2+PC^2=GA^2+GB^2+GC^2+3PG^2$が成り立つ。"
+ },
+ {
+  "id": "circumcenter_right_triangle_hypotenuse_midpoint",
+  "batch": "L16",
+  "home": "S3",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified_with_radian_caveat",
+  "answer": "$A,B,C$を同一直線上にない3点で$\\angle BAC=\\frac{\\pi}{2}$とし、$M$を$BC$の中点とする。直線$MA$上に、$A$と反対側に$MD=MA$となる点$D$をとる。対角線$AD$と$BC$が互いの中点$M$で交わるので、四角形$ABDC$は平行四辺形である。$\\angle BAC$が直角なので、これは長方形である。長方形の対角線は長さが等しく互いの中点で交わるので、$MA=MB=MC=\\frac{BC}{2}$である。$M$は平面$ABC$上にあり、同じ平面上で3頂点から等距離にある点は外心だけなので、$M$は外心で、半径は$\\frac{BC}{2}$である。\n"
+ },
+ {
+  "id": "centroid_eq_circumcenter_iff_equilateral",
+  "batch": "L16",
+  "home": "S5",
+  "review": "fix",
+  "adversarial": "pass",
+  "status": "verified",
+  "answer": "$A,B,C$を同一直線上にない3点、$G$を重心、$O$を外心とし、$L,M$を辺$BC,CA$の中点とする。重心の性質から$G$は中線$AL,BM$の上にあり、$AG=2GL$なので$G\\neq L$、同様に$G\\neq M$である。\n（$\\Rightarrow$）$G=O$とする。$O$は$B,C$から等距離なので線分$BC$の垂直二等分線$\\ell$の上にあり、$L$も$\\ell$の上にある。$O=G\\neq L$なので直線$OL$は$\\ell$であり、$A$は直線$GL$の上にあるから$A$は$\\ell$の上にある。よって$AB=AC$である。\n同様に$G$が$CA$の垂直二等分線の上にあり、$M$もその上にあることから、$B$がその上にあって$BC=BA$を得る。したがって$AB=BC=CA$で正三角形である。\n（$\\Leftarrow$）$ABC$を正三角形とする。三角形$ABL$と$ACL$は3辺が等しいので合同であり、$\\angle ALB=\\angle ALC$である。この2つの角の和は$180^\\circ$なので$AL\\perp BC$となり、$AL$は$BC$の垂直二等分線である。その上にある$G$について$GB=GC$である。\n同様に$BM$は$CA$の垂直二等分線なので$GC=GA$である。よって$GA=GB=GC$であり、同じ平面上で3頂点から等距離にある点は外心だけなので、$G$は外心である。"
+ },
+ {
+  "id": "altitude_feet_concyclic",
+  "batch": "L16",
+  "home": "S5",
+  "review": "fix",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$A,B,C$を同一直線上にない3点、$H$を垂心、$E,F$を上のとおりとする。\n$BC$を直径とする円を$\\Gamma$とする。$E=C$なら$E$は$\\Gamma$の上にある。$E\\neq C$なら$E$は$B$から直線$CA$に下ろした垂線の足なので$\\angle BEC=90^\\circ$であり、円周角の定理の逆により$E$は$\\Gamma$の上にある。\n$F$についても、$F=B$なら$\\Gamma$の上にあり、$F\\neq B$なら$\\angle BFC=90^\\circ$から$\\Gamma$の上にある。よって$B,C,E,F$は同一円周上にある。\n次に$A=H$のとき、$AB\\perp AC$なので$E=F=A$であり、4点は一致する。$A\\neq H$のとき、$AH$を直径とする円を$\\Gamma'$とする。$E$と$H$はともに$B$を通り$CA$に垂直な直線上にある。\n$E=A$または$E=H$なら$E$は$\\Gamma'$の上にある。そうでなければ直線$EH$は$CA$に垂直で、直線$EA$は$CA$なので$\\angle AEH=90^\\circ$であり、$E$は$\\Gamma'$の上にある。\n$F$も$C$を通り$AB$に垂直な直線上にあるので同様に$\\Gamma'$の上にある。よって$A,H,E,F$は同一円周上にある。"
+ },
+ {
+  "id": "menelaus_unsigned_ratio_form",
+  "batch": "L16",
+  "home": "S5",
+  "review": "fix",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$A,B,C$を同一直線上にない3点、$D,E,F$を直線$BC,CA,AB$上にあって同一直線$\\ell$上にある点とし、$D\\neq C$、$E\\neq A$、$F\\neq B$とする。\nまず$\\ell$が頂点を通らないことを示す。$A$を通るとすると、$A,E$はどちらも$\\ell$と直線$CA$の上にあり$E\\neq A$なので$\\ell$は直線$CA$であり、$D$は$\\ell$と直線$BC$の共有点$C$になって$D\\neq C$に反する。\n$B$を通るとすると、$F\\neq B$より$\\ell$は直線$AB$であり、$E$は直線$AB$と直線$CA$の共有点$A$になって$E\\neq A$に反する。$C$を通るとすると、$D\\neq C$より$\\ell$は直線$BC$であり、$F$は$B$になって$F\\neq B$に反する。\nしたがって$A,B,C$から$\\ell$までの距離$a,b,c$はどれも正である。直線$BC$と$\\ell$は$D$で交わるので、そのなす角を$\\theta$（$0^\\circ<\\theta\\le90^\\circ$）とすると$b=BD\\sin\\theta$、$c=CD\\sin\\theta$であり、$\\frac{BD}{DC}=\\frac{b}{c}$である。\n同様に$\\frac{CE}{EA}=\\frac{c}{a}$、$\\frac{AF}{FB}=\\frac{a}{b}$である。3式を掛けると$\\frac{BD}{DC}\\cdot\\frac{CE}{EA}\\cdot\\frac{AF}{FB}=1$を得る。"
+ },
+ {
+  "id": "ceva_unsigned_ratio_form",
+  "batch": "L16",
+  "home": "S5",
+  "review": "pass",
+  "adversarial": null,
+  "status": "verified",
+  "answer": "$A,B,C$を同一直線上にない3点、$D,E,F$を直線$BC,CA,AB$上の頂点と異なる点、$p$を直線$AD,BE,CF$の共有点とする。直線$AD$と直線$BC$の共有点は$D$だけで$D$は頂点でないから、$B,C$は直線$AD$上にない。同様に$C,A$は直線$BE$上に、$A,B$は直線$CF$上にない。したがって$p$は$A,B,C$のどれとも異なり、直線$Ap$は直線$AD$、直線$Bp$は直線$BE$、直線$Cp$は直線$CF$である。直線$AD$と直線$BC$のなす角を$\\theta$とすると、$B,C$から直線$AD$までの距離はそれぞれ$BD\\sin\\theta$、$CD\\sin\\theta$で、$\\sin\\theta\\neq 0$なので$\\frac{BD}{DC}$は$B,C$から直線$Ap$までの距離の比に等しい。三角形$ABp$と$ACp$は底辺$Ap$を共有するので、この比は面積比に等しく$\\frac{BD}{DC}=\\frac{[ABp]}{[ACp]}$である（$[\\ ]$は面積。$C$が直線$Ap$上にないので分母は正）。同様に$\\frac{CE}{EA}=\\frac{[BCp]}{[BAp]}$、$\\frac{AF}{FB}=\\frac{[CAp]}{[CBp]}$である。$[ABp]=[BAp]$、$[BCp]=[CBp]$、$[CAp]=[ACp]$なので、3式を掛けると$\\frac{BD}{DC}\\cdot\\frac{CE}{EA}\\cdot\\frac{AF}{FB}=1$を得る。\n"
+ }
+]

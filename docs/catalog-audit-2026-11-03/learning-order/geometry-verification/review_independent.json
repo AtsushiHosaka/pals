@@ -1,0 +1,921 @@
+[
+ {
+  "id": "parallel_of_common_perpendicular",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "P=Qで垂線の一意性、P≠Qで同位角が等しい、の2場合で漏れなし。"
+ },
+ {
+  "id": "rectangle_diagonals_equal",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "A,B,Dが一直線上にないこと、平行四辺形の性質、同側内角、SASの流れに誤りなし。"
+ },
+ {
+  "id": "rectangle_of_equal_diagonals",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "一直線上の場合を数直線上の座標（S1）で排除している。三角形ABDとBACの対応（A-B,B-A,D-C）も正しい。"
+ },
+ {
+  "id": "rhombus_diagonals_perpendicular",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "B=D、A=C、一直線上の退化を漏れなく処理。一直線上ならC=Aとなる論証も正しい。"
+ },
+ {
+  "id": "rhombus_of_perpendicular_diagonals",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "A=C、B=D、一直線上の退化を処理。一直線上のときCも同じ直線上にあるので、ACとBDが零でない平行ベクトルになる点も正しい。"
+ },
+ {
+  "id": "rhombus_diagonal_bisects_angle",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "SSS合同で足りる。非退化はカードの仮定にある。"
+ },
+ {
+  "id": "square_diagonal_length_and_angle",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "同側内角、三平方（S3）、二等辺三角形の底角（S2）。誤りなし。"
+ },
+ {
+  "id": "convex_polygon_interior_angle_sum",
+  "verdict": "fix",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [
+   "対角線が内部にあるため、p_0からの対角線が各頂点の内角を分けて角の加法が使える、という凸性の使用が書かれていない。この分解が証明の核心で、『角の加法』の一語に任されている",
+   "カードの凸性は向き付きの符号条件で与えられ、教科書の凸（対角線が内部）との同値は暗黙に仮定している"
+  ],
+  "fixed_answer": "$p_0,\\dots,p_{n+2}$が凸$(n+3)$角形の頂点をなすとする。凸多角形のどの対角線も多角形の内部にあるので、頂点$p_0$から他の頂点へ対角線を引くと、多角形は$n+1$個の三角形$p_0p_ip_{i+1}$（$i=1,\\dots,n+1$）に分かれる。\n\n対角線$p_0p_i$（$2\\leq i\\leq n+1$）は頂点$p_i$の内角の内部を通るので、$p_i$の内角は、隣り合う2つの三角形の$p_i$での角の和に等しい（角の加法）。同様に$p_0$の内角は$n+1$個の三角形の$p_0$での角の和に等しい。$p_1$と$p_{n+2}$の内角は、それぞれ三角形$p_0p_1p_2$、$p_0p_{n+1}p_{n+2}$の角そのものである。したがって多角形の内角の和は、$n+1$個の三角形の内角の和の合計に等しい。\n\n三角形の内角の和は$\\pi$なので、多角形の内角の和は$(n+1)\\pi$である。\n",
+  "note": "三角形に分ける方針と数え方（p_1,p_{n+2}は1つ、p_2..p_{n+1}は2つ、p_0はn+1個）は正しい。修正は凸性の使用を明記するだけ。符号条件と教科書の凸の同値の証明は不明（学年内では扱わない）。"
+ },
+ {
+  "id": "convex_polygon_exterior_angle_sum",
+  "verdict": "fix",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [
+   "内角の和の証明で、凸性（対角線が内部にある）を使って角の加法が成り立つ根拠が書かれていない",
+   "カードの凸性（符号条件）と教科書の凸の同値を暗黙に仮定している"
+  ],
+  "fixed_answer": "$p_0,\\dots,p_{n+2}$が凸$(n+3)$角形の頂点をなすとする。\n\nまず内角の和が$(n+1)\\pi$であることを示す。凸多角形のどの対角線も多角形の内部にあるので、頂点$p_0$から他の頂点へ対角線を引くと、多角形は$n+1$個の三角形$p_0p_ip_{i+1}$（$i=1,\\dots,n+1$）に分かれる。対角線$p_0p_i$（$2\\leq i\\leq n+1$）は頂点$p_i$の内角の内部を通るので、$p_i$の内角は隣り合う2つの三角形の$p_i$での角の和に等しい（角の加法）。同様に$p_0$の内角は$n+1$個の三角形の$p_0$での角の和に等しく、$p_1$と$p_{n+2}$の内角はそれぞれ1つの三角形の角に等しい。よって内角の和は$n+1$個の三角形の内角の和の合計であり、三角形の内角の和は$\\pi$なので$(n+1)\\pi$である。\n\n頂点は$n+3$個あり、各頂点の外角は$\\pi$から内角を引いたものなので、外角の和は$(n+3)\\pi-(n+1)\\pi=2\\pi$である。\n",
+  "note": "外角の和の計算 (n+3)π-(n+1)π=2π は正しい。修正は凸性の使用を明記するだけ。"
+ },
+ {
+  "id": "triangle_area_sine",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "面積を『底辺×高さ÷2』で与えるのは教科書流の読み替えで、カードの『凸包のルベーグ測度』とは定義が異なる。同値な既知事実として許容できるが、別カードの形式化と厳密に揃えるなら注記が要る。 鈍角でsin(π-θ)=sinθを使うのはS4の範囲。垂線の足が辺の外に出る場合も場合分けされている。",
+  "home_comment": "題意（面積公式）はS4の三角比の応用として自然。"
+ },
+ {
+  "id": "heron_formula_area",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "面積を『底辺×高さ÷2』で与えるのは教科書流の読み替えで、カードの『凸包のルベーグ測度』とは定義が異なる。同値な既知事実として許容できるが、別カードの形式化と厳密に揃えるなら注記が要る。 余弦定理(S4)の後に面積公式、その後にヘロンの順で、数Iの流れに合う。bc=0の退化も処理されている。"
+ },
+ {
+  "id": "triangle_area_base_height",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "長方形の面積・合同の面積保存・加法性だけから導いており、H が線分BC上と外にある両方、H=A の退化も処理されて正しい。底辺×高さ÷2そのものの導出なので循環もない。",
+  "home_comment": "題意は小学校算数の面積公式で、S1でも高めの扱い。levelは問題ない。"
+ },
+ {
+  "id": "area_ratio_common_vertex_base_line",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "面積を『底辺×高さ÷2』で与えるのは教科書流の読み替えで、カードの『凸包のルベーグ測度』とは定義が異なる。同値な既知事実として許容できるが、別カードの形式化と厳密に揃えるなら注記が要る。 B=D、D=C、A が直線BC上の退化も処理されている。"
+ },
+ {
+  "id": "area_equal_same_base_parallel",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "面積を『底辺×高さ÷2』で与えるのは教科書流の読み替えで、カードの『凸包のルベーグ測度』とは定義が異なる。同値な既知事実として許容できるが、別カードの形式化と厳密に揃えるなら注記が要る。 直線AA'とBCが一致する場合も扱っている。"
+ },
+ {
+  "id": "area_ratio_shared_angle",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "面積を『底辺×高さ÷2』で与えるのは教科書流の読み替えで、カードの『凸包のルベーグ測度』とは定義が異なる。同値な既知事実として許容できるが、別カードの形式化と厳密に揃えるなら注記が要る。 半直線の向きが反対でもsinが等しい点、A,B,Cが一直線上の場合も正しい。公式S=1/2 XY·XZ sinは同じS4の既習事項。"
+ },
+ {
+  "id": "area_similar_triangles_ratio_square",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "面積を『底辺×高さ÷2』で与えるのは教科書流の読み替えで、カードの『凸包のルベーグ測度』とは定義が異なる。同値な既知事実として許容できるが、別カードの形式化と厳密に揃えるなら注記が要る。 退化の場合に『一辺が他の2辺の和なら一直線上』（三角不等式の等号条件）を暗黙に使うが、教科書の範囲で許容できる。鋭角・直角・鈍角の場合分けは正しい。"
+ },
+ {
+  "id": "parallelogram_area",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "面積を『底辺×高さ÷2』で与えるのは教科書流の読み替えで、カードの『凸包のルベーグ測度』とは定義が異なる。同値な既知事実として許容できるが、別カードの形式化と厳密に揃えるなら注記が要る。 退化（A=B、A=D、一直線上）を処理。対角線BDで2つの合同な三角形に分ける流れも正しい。"
+ },
+ {
+  "id": "three_perpendiculars",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "A=H、H=B の退化は、ベクトル記法では BA=BH となり仮定から直接出るので漏れない。線と平面の垂直条件（S5）で、教科書の三垂線の標準証明に一致。"
+ },
+ {
+  "id": "three_perpendiculars_converse_foot",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "A=H、H=B の退化は処理済み。A,H,Bが一直線上でないことの論証、平面AHBへの垂直も正しい。"
+ },
+ {
+  "id": "three_perpendiculars_converse_plane",
+  "verdict": "fix",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [
+   "最後の文が『平面HBC上の交わる2直線HB、HCのうちHBに垂直で、またBCに垂直』となり、HCは使われておらず、交わる2直線の指定（HBとBC）が不正確で読み手を混乱させる"
+  ],
+  "fixed_answer": "$A,H,B,C$を点とし、$H,B,C$は同一直線上になく、$AB\\perp BC$、$HB\\perp BC$、$AH\\perp HB$とする。$H\\neq B$である。\n\n$A=H$のときは$\\overrightarrow{HA}=\\vec{0}$で成り立つ。以下$A\\neq H$とする。$A,B,H$が同一直線上にあるとすると直線$HA$と直線$HB$は一致するが、$AH\\perp HB$に反する。したがって$A,B,H$は同一直線上にない。\n\n$BC$は平面$ABH$上の交わる2直線$BA$、$BH$に垂直なので、平面$ABH$に垂直である。よって$BC\\perp AH$である。直線$AH$は、平面$HBC$上の交わる2直線$HB$、$BC$に垂直（$HB$は仮定、$BC$は今示した）なので、平面$HBC$に垂直である。\n",
+  "note": "方針と退化の処理（A=H、A,B,Hが一直線上になる場合の排除でA=Bも含む）は正しい。修正は最終文を交わる2直線HB、BCに直しただけ。"
+ },
+ {
+  "id": "foot_of_perpendicular_shortest",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "H=X、A=H、一般の場合の3分岐で漏れなし。三平方（S3）は直角三角形AHXが平面上にあるので適用できる。"
+ },
+ {
+  "id": "slant_equal_iff_foot_equal",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "home_comment": "題意は空間の垂線と三平方だけで足りるので、S3でも成り立つ。S5は妥当だが高めかもしれない。"
+ },
+ {
+  "id": "triangle_congruent_aas",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "triangles_common_angle_product_similar",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "共線の場合は数直線の座標を使うが、数直線上の1次元の計算なので S1 の範囲として許容。"
+ },
+ {
+  "id": "isosceles_iff_equal_base_angles",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "逆の向きで、角の二等分線が線分BCの内部で交わること、D が内部にあるので angle ABD=angle ABC となることは暗黙に使う。教科書の水準なので許容。"
+ },
+ {
+  "id": "median_bisects_apex_implies_isosceles",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "isosceles_apex_bisector_foot_is_midpoint",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "isosceles_altitude_foot_is_midpoint",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "isosceles_apex_pi_div_three_is_equilateral",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "triangle_side_lt_iff_opposite_angle_lt",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "side_opposite_nonacute_angle_is_longest",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "perpendicular_is_shortest_to_line",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "right_triangle_thirty_sixty_ratio",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "right_triangle_hypotenuse_twice_leg_angles",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "law_of_sines_ratio",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "鈍角の正弦 sin(pi - theta)=sin theta は S4 の三角比の定義の範囲。"
+ },
+ {
+  "id": "median_theorem_apollonius",
+  "verdict": "fix",
+  "math_valid": false,
+  "same_claim": false,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [
+   "Aが直線BC上にある場合（A=Mを除く）が扱われていない。このとき三角形ABM,ACMは三角形にならず、余弦定理（三角形に対する定理）をそのまま使えない。題意の仮定にはAが直線BC上にないという条件がない。"
+  ],
+  "fixed_answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$M$を$B$と$C$の中点とする。\n$B=C$のときは$M=B=C$で$AB=AC=AM$となり、両辺は$2AM^2$なので等式は成り立つ。以下$B\\neq C$とする。\n$A$が直線$BC$上にあるとき（$A=M$を含む）は、この直線を数直線とみて$M$を原点、$B,C,A$の座標を$-m,m,a$とする。$AB^2+AC^2=(a+m)^2+(a-m)^2=2a^2+2m^2=2(AM^2+BM^2)$である。\n$A$が直線$BC$上にないとき、$\\theta=\\angle AMB$とおく。$B,M,C$はこの順に一直線上にあるので$\\angle AMC=\\pi-\\theta$であり、$\\cos\\angle AMC=-\\cos\\theta$である。\n$\\triangle ABM$と$\\triangle ACM$に余弦定理を用いると、$AB^2=AM^2+BM^2-2\\,AM\\cdot BM\\cos\\theta$、$AC^2=AM^2+CM^2+2\\,AM\\cdot CM\\cos\\theta$である。$BM=CM$なので足すと$AB^2+AC^2=2(AM^2+BM^2)$である。",
+  "note": "home S4（余弦定理）は妥当。三平方の定理だけでも A から BC への垂線の足を使って示せるので、S3 まで下げられる可能性がある（未検証）。"
+ },
+ {
+  "id": "angle_bisector_theorem_converse",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "midsegment_converse",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "medial_triangle_similar",
+  "verdict": "fix",
+  "math_valid": false,
+  "same_claim": false,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [
+   "中点連結定理を「任意の3点X,Y,Z」について使っているが、教科書の定理は三角形に対するもの。題意には非退化の仮定がなく、A,B,Cが同一直線上にある場合（点が重なる場合を含む）が暗黙に処理されている。"
+  ],
+  "fixed_answer": "$A,B,C$を実内積空間上のアフィン空間の点とし、$D,E,F$をそれぞれ$BC,CA,AB$の中点とする。\n$A,B,C$が同一直線上にないとき、$\\triangle ABC$に中点連結定理を用いる。$D,E$は$BC,CA$の中点なので$DE=\\frac12AB$であり、同様に$EF=\\frac12BC$、$FD=\\frac12CA$である。\n$A,B,C$が同一直線上にあるとき（点が重なる場合を含む）は、この直線を数直線とみて$A,B,C$の座標を$a,b,c$とする。$D,E,F$の座標は$\\frac{b+c}2,\\frac{c+a}2,\\frac{a+b}2$なので、$DE=\\frac{|b-a|}2=\\frac12AB$、$EF=\\frac12BC$、$FD=\\frac12CA$である。\nいずれの場合も、対応する2頂点間の距離の比はすべて$\\frac12$なので、相似である。",
+  "note": "カタログに、任意の3点で成り立つ形の中点連結定理のカードが既にあり、それを引用してよいなら元の patch で pass。"
+ },
+ {
+  "id": "proportional_segments_imply_parallel",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "parallel_iff_internal_division_ratio",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "right_triangle_altitude_foot_between",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "thales_right_angle_iff_on_diameter_circle",
+  "verdict": "fix",
+  "math_valid": false,
+  "same_claim": false,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [
+   "直径$AB$で$A=B$（$r=0$）の退化を扱っていない。この場合「直線$AB$」も三角形$ABX$も定まらず、2段落目以降の論法が使えない"
+  ],
+  "fixed_answer": "$M$を$A,B$の中点、$r=AB/2$とする。$AB$を直径とする球面$s$は中心$M$、半径$r$の球面である。\n$A=B$のとき、$M=A$、$r=0$で$s$は点$A$だけからなる。$X\\neq A$より$X\\notin s$であり、$\\angle AXB=0\\neq\\pi/2$なので、両辺とも成り立たず同値である。以下$A\\neq B$とする。\n$X$が直線$AB$上にあるとき、$X\\neq A,B$なので$\\angle AXB$は$0$または$\\pi$であり、$\\pi/2$ではない。また直線$AB$上で$MX=r$となる点は$A,B$だけなので、$X\\in s$でもない。両辺とも成り立たないので同値は成り立つ。\n$X$が直線$AB$上にないとする。$A,B,X$を含む平面で考える。$M$もこの平面にある。\n$X\\in s$とする。$MX=MA=MB$なので、三角形$MAX$と$MBX$は二等辺三角形であり、$\\angle MXA=\\angle MAX$、$\\angle MXB=\\angle MBX$である。$M$は線分$AB$の内点なので$\\angle AXB=\\angle AXM+\\angle MXB=\\angle XAB+\\angle XBA$である。三角形$ABX$の内角の和より$2\\angle AXB=\\pi$であり、$\\angle AXB=\\pi/2$である。\n逆に$\\angle AXB=\\pi/2$とする。$X$について$M$と点対称な点を$X'$とすると、四角形$AXBX'$は対角線が互いに他を二等分するので平行四辺形であり、$\\angle AXB=\\pi/2$なので長方形である。長方形の対角線は等しいので$XX'=AB$であり、$MX=XX'/2=r$である。よって$X\\in s$である。\n"
+ },
+ {
+  "id": "right_angle_on_circle_chord_is_diameter",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "angle_on_diameter_inside_outside",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "two_right_angles_on_segment_concyclic",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "altitude_to_diameter_geometric_mean",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "parallel_chords_equal_cross_chords",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "軽微: 「平面と球面の共通部分は円」は既知として使っている。空間図形の標準事実として許容。直線$AB$と$CD$が一致する場合も、どの平面でもよく、論法はそのまま通る。"
+ },
+ {
+  "id": "chord_midpoint_perpendicular_to_center_line",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "perpendicular_from_center_bisects_chord",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "half_chord_center_distance_pythagoras",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "軽微: 合同から$\\angle OMA=\\angle OMB$を得たあと、2角の和が平角であることを一言添えるとよい（不備とはしない）。"
+ },
+ {
+  "id": "equal_chords_iff_equal_center_distance",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "home_comment": "題意は中3の円の弦の性質で、patchの道具は三平方の定理と二等辺三角形だけ。home S4は高すぎ、S3相当と思われる。"
+ },
+ {
+  "id": "equal_chords_iff_equal_central_angles",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "chord_le_diameter_eq_iff",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "point_on_chord_strictly_between_iff_inside",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "home_comment": "使う道具は三平方の定理だけで、題意も中学で述べられる。S3相当とも考えられる。"
+ },
+ {
+  "id": "tangent_iff_unique_common_point",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "tangent_iff_length_sq_eq_power",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "contact_chord_perpendicular_bisected_by_center_line",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "tangent_chord_angle_converse",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "接弦定理（順の向き）を引用して逆を示す標準的な形。接線は「半径に垂直な直線」と定義しており、この定義は教科書と一致。"
+ },
+ {
+  "id": "power_value_inside_chord",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "power_value_outside_secant",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "tangent_secant_power",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "軽微: 仮定一覧に$T\\in s$がないが、「$T$で接する」から$OT=r$を読んでおり、題意に沿う。"
+ },
+ {
+  "id": "tangent_secant_converse",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "軽微: 「円の内部の直線$AB$上の点は線分$AB$の内点だけ」は別カード（弦と内部の点）の結果の引用。同じ段階で既習なので許容。"
+ },
+ {
+  "id": "intersecting_chords_converse",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "Aが直線CH上にないこと、円の内部、D'との一致まで確認した。"
+ },
+ {
+  "id": "secants_converse",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "接する場合は仮定と矛盾して空になるが、証明は論理的に有効。"
+ },
+ {
+  "id": "common_chord_perpendicular_bisected_by_center_line",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "home_comment": "題意は中2〜中3の内容（垂直二等分線の性質）。homeのS5は高すぎる可能性がある。"
+ },
+ {
+  "id": "two_circles_at_most_two_common_points",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "円と直線の共有点が高々2個という補題を前提にする。教科書の既知事項なので許容。",
+  "home_comment": "題意は中3程度。"
+ },
+ {
+  "id": "externally_tangent_iff_center_distance",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "internally_tangent_iff_center_distance",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "externally_tangent_unique_common_point",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": []
+ },
+ {
+  "id": "internally_tangent_unique_common_point",
+  "verdict": "fix",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [
+   "「半径$O_2O_1$の延長」は誤り。$O_2O_1$の長さは$r_2-r_1$で、どちらの球面の半径でもない"
+  ],
+  "fixed_answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$0<r_1<r_2$の2つの球面をとり、$d=O_1O_2=r_2-r_1>0$とする。半直線$O_2O_1$上に$O_2T=r_2$となる点$T$をとる。$d<r_2$なので$O_1$は線分$O_2T$上にあり、$O_1T=r_2-d=r_1$である。よって$T$は共有点である。\n$Q$を共有点とする。$O_1Q=r_1$、$O_2Q=r_2=d+r_1$より$O_2Q=O_2O_1+O_1Q$である。$O_2,O_1,Q$が一直線上にないなら、三角形の2辺の和は残りの辺より大きいので$O_2Q<O_2O_1+O_1Q$となり矛盾する。よって一直線上にあり、$O_1$は線分$O_2Q$上にある。したがって$Q$は半直線$O_2O_1$上にあり、$O_2Q=r_2$なので$Q=T$である。"
+ },
+ {
+  "id": "common_tangent_at_contact_on_center_line",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "接するの定義が内積の直交条件なら、第2の球面への接も定義から従う。$r_2=0$の場合も定義上成り立つ。定義が一点のみ共有でも成り立つ。"
+ },
+ {
+  "id": "two_circles_common_point_exists_in_plane",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "home_comment": "題意は中3〜S5。三角形の成立条件の利用は適切。"
+ },
+ {
+  "id": "common_tangent_bisected_by_common_chord",
+  "verdict": "fix",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [
+   "球面の場合に平面の方べきの定理（接線と割線）を直接使っている。直線$HT_1$と直線$AB$を含む平面$\\Pi$で球面を切った円に帰着する説明が必要（次元は2に限らない）",
+   "直線$AB$が接線と異なること（$H$が1点に定まること）の確認がない"
+  ],
+  "fixed_answer": "実内積空間上のアフィン空間で、2つの球面が点$A,B$を共有し、$T_1\\neq T_2$で直線$T_1T_2$は第1の球面に$T_1$で、第2の球面に$T_2$で接するとする。$H$は$A,B$のアフィン包と直線$T_1T_2$の両方に属するとする。接線は接点以外で球面と交わらない。\n$A=B$のとき$H=A$で、$H$は直線$T_1T_2$と第1の球面の共有点なので$H=T_1$である。同様に$H=T_2$となり、$T_1\\neq T_2$に反する。よってこの場合は起こらず、$A\\neq B$とする。このとき直線$AB$は直線$T_1T_2$と異なる（同じなら、$A,B$は接線上の球面の点なので$A=B=T_1$となるため）。\n第1の球面について$HT_1^2=HA\\cdot HB$を示す。$H=T_1$のとき、$H$は第1の球面と直線$AB$の共有点なので$H=A$または$H=B$であり、両辺は$0$である。$H\\neq T_1$のとき、直線$HT_1$（直線$T_1T_2$）と直線$AB$は$H$で交わるので、両方を含む平面$\\Pi$がある。$\\Pi$と第1の球面の共通部分は、異なる2点$A,B$を含むので円であり、$T_1$も通る。直線$T_1T_2$はこの円と$T_1$以外で交わらないので、円に$T_1$で接する。よって方べきの定理（接線と割線）より$HT_1^2=HA\\cdot HB$である。\n第2の球面についても同様に$HT_2^2=HA\\cdot HB$である。よって$HT_1=HT_2$である。$H$は直線$T_1T_2$上にあり$T_1\\neq T_2$なので、$T_1,T_2$から等距離にある点は中点だけである。すなわち$H$は$T_1,T_2$の中点である。"
+ },
+ {
+  "id": "external_common_tangent_length",
+  "verdict": "fix",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": false,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [
+   "角を弧度法（$\\pi/2$）で書いている。弧度法は数II（S6）で、homeのS5より後。度数法（$90^\\circ$）にする"
+  ],
+  "fixed_answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2$の2つの球面をとり、$T_1\\neq T_2$の直線$T_1T_2$が第1に$T_1$で、第2に$T_2$で接し、$O_1,O_2$は直線の同じ側にあって直線上にないとする。\n$O_1,O_2$が直線の同じ側にあるので、4点$T_1,T_2,O_1,O_2$は1つの平面上にある。接線は半径に垂直なので$T_1O_1\\perp T_1T_2$、$T_2O_2\\perp T_1T_2$であり、$O_1,O_2$が同じ側にあるので、半径$T_1O_1$と$T_2O_2$は平行で同じ向きである。\n命題は添字の入れ替えで不変なので、$r_1\\geq r_2$としてよい。線分$T_1O_1$上に$T_1K=r_2$となる点$K$をとる。$T_1K$と$T_2O_2$は平行で長さが等しく同じ向きなので、四角形$KT_1T_2O_2$は平行四辺形であり、$\\angle KT_1T_2=90^\\circ$なので長方形である。\nよって$KO_2=T_1T_2$、$KO_2\\perp T_1O_1$であり、$KO_1=r_1-r_2$である。直角三角形$KO_2O_1$に三平方の定理を用いて（$K=O_1$のときは$r_1=r_2$で$O_1O_2=KO_2$）、$O_1O_2^2=T_1T_2^2+(r_1-r_2)^2$である。すなわち$T_1T_2^2=O_1O_2^2-(r_1-r_2)^2$である。",
+  "note": "数学的内容は正しい。記法のみの修正。"
+ },
+ {
+  "id": "internal_common_tangent_length",
+  "verdict": "fix",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": false,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [
+   "角を弧度法（$\\pi/2$）で書いている。弧度法は数II（S6）で、homeのS5より後。度数法（$90^\\circ$）にする"
+  ],
+  "fixed_answer": "実内積空間上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2$の2つの球面をとり、$T_1\\neq T_2$の直線$T_1T_2$が第1に$T_1$で、第2に$T_2$で接し、$O_1,O_2$は直線を含む平面で直線の両側にあって直線上にないとする。\n接線は半径に垂直なので$T_1O_1\\perp T_1T_2$、$T_2O_2\\perp T_1T_2$であり、$O_1,O_2$が反対側にあるので、半径$T_1O_1$と$T_2O_2$は平行で反対向きである。\n半直線$O_1T_1$を$T_1$の先へ延ばし、$T_1K=r_2$となる点$K$をとる。$K$は$O_2$と直線$T_1T_2$の同じ側にある。$T_1K$と$T_2O_2$は平行で長さが等しく同じ向きなので、四角形$KT_1T_2O_2$は平行四辺形であり、$\\angle KT_1T_2=90^\\circ$なので長方形である。\nよって$KO_2=T_1T_2$、$KO_2\\perp KO_1$であり、$T_1$は線分$KO_1$上にあるので$KO_1=r_2+r_1$である。直角三角形$KO_2O_1$に三平方の定理を用いて、$O_1O_2^2=T_1T_2^2+(r_1+r_2)^2$である。すなわち$T_1T_2^2=O_1O_2^2-(r_1+r_2)^2$である。",
+  "note": "数学的内容は正しい。記法のみの修正。"
+ },
+ {
+  "id": "centroid_leibniz_sum_of_squares",
+  "verdict": "fix",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": false,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [
+   "角を弧度法（$\\pi-\\theta$、$\\pi$）で書いている。弧度法は数II（S6）で、homeのS5より後。度数法にする",
+   "$P$が直線$AM$上のときの余弦定理の使用が「みなす」だけで根拠がない。成り立つ旨を一言添える"
+  ],
+  "fixed_answer": "$A,B,C$を同一直線上にない3点、$G$を重心、$P$を任意の点とし、$M$を辺$BC$の中点とする。重心の性質から$G$は線分$AM$上にあり$AG=2GM$である。$GM=m$とおくと$AG=2m$、$AM=3m$である。\nまず$P\\neq G$とする。$\\theta=\\angle PGA$とおくと$\\angle PGM=180^\\circ-\\theta$である（$P$が直線$AM$上にあるときは$\\theta=0^\\circ$または$180^\\circ$とみなす。このとき下の2式は直接の計算で確かめられる）。\n三角形$PGA$、$PGM$に余弦定理を使うと、$PA^2=PG^2+4m^2-4m\\cdot PG\\cos\\theta$、$PM^2=PG^2+m^2+2m\\cdot PG\\cos\\theta$である。第1式に第2式の2倍を加えると$PA^2+2PM^2=3PG^2+6m^2$を得る。\nまた三角形$PBC$の中線定理（$P$が直線$BC$上にあっても成り立つ）より$PB^2+PC^2=2PM^2+\\frac{BC^2}{2}$である。辺々加えると$PA^2+PB^2+PC^2=3PG^2+6m^2+\\frac{BC^2}{2}$ …(＊)となる。\n$P=G$のときも、$GA^2=4m^2$と三角形$GBC$の中線定理$GB^2+GC^2=2m^2+\\frac{BC^2}{2}$から$GA^2+GB^2+GC^2=6m^2+\\frac{BC^2}{2}$となり、(＊)は$PG=0$で成り立つ。したがって(＊)の定数部分は$GA^2+GB^2+GC^2$に等しく、すべての$P$について$PA^2+PB^2+PC^2=GA^2+GB^2+GC^2+3PG^2$が成り立つ。",
+  "note": "数学的内容は正しい（数値例でも確認）。余弦定理（S4）、中線定理は許容範囲。",
+  "home_comment": "直線上の点に関する中線定理を含め、実質は中3の三平方の定理で書ける。S5のままで問題ない。"
+ },
+ {
+  "id": "circumcenter_right_triangle_hypotenuse_midpoint",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "題意の$\\angle BAC=\\pi/2$自体が弧度法表記。答案はこれに合わせている。",
+  "home_comment": "homeがS3なら、題意の表記を$90^\\circ$にするのが望ましい（弧度法はS6）。"
+ },
+ {
+  "id": "centroid_eq_circumcenter_iff_equilateral",
+  "verdict": "fix",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": false,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [
+   "角の和を弧度法（$\\pi$）で書いている。弧度法は数II（S6）で、homeのS5より後。$180^\\circ$にする"
+  ],
+  "fixed_answer": "$A,B,C$を同一直線上にない3点、$G$を重心、$O$を外心とし、$L,M$を辺$BC,CA$の中点とする。重心の性質から$G$は中線$AL,BM$の上にあり、$AG=2GL$なので$G\\neq L$、同様に$G\\neq M$である。\n（$\\Rightarrow$）$G=O$とする。$O$は$B,C$から等距離なので線分$BC$の垂直二等分線$\\ell$の上にあり、$L$も$\\ell$の上にある。$O=G\\neq L$なので直線$OL$は$\\ell$であり、$A$は直線$GL$の上にあるから$A$は$\\ell$の上にある。よって$AB=AC$である。\n同様に$G$が$CA$の垂直二等分線の上にあり、$M$もその上にあることから、$B$がその上にあって$BC=BA$を得る。したがって$AB=BC=CA$で正三角形である。\n（$\\Leftarrow$）$ABC$を正三角形とする。三角形$ABL$と$ACL$は3辺が等しいので合同であり、$\\angle ALB=\\angle ALC$である。この2つの角の和は$180^\\circ$なので$AL\\perp BC$となり、$AL$は$BC$の垂直二等分線である。その上にある$G$について$GB=GC$である。\n同様に$BM$は$CA$の垂直二等分線なので$GC=GA$である。よって$GA=GB=GC$であり、同じ平面上で3頂点から等距離にある点は外心だけなので、$G$は外心である。",
+  "note": "数学的内容は正しい。記法のみの修正。"
+ },
+ {
+  "id": "altitude_feet_concyclic",
+  "verdict": "fix",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": false,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [
+   "直角を弧度法（$\\pi/2$）で3か所書いている。弧度法は数II（S6）で、homeのS5より後。$90^\\circ$にする"
+  ],
+  "fixed_answer": "$A,B,C$を同一直線上にない3点、$H$を垂心、$E,F$を上のとおりとする。\n$BC$を直径とする円を$\\Gamma$とする。$E=C$なら$E$は$\\Gamma$の上にある。$E\\neq C$なら$E$は$B$から直線$CA$に下ろした垂線の足なので$\\angle BEC=90^\\circ$であり、円周角の定理の逆により$E$は$\\Gamma$の上にある。\n$F$についても、$F=B$なら$\\Gamma$の上にあり、$F\\neq B$なら$\\angle BFC=90^\\circ$から$\\Gamma$の上にある。よって$B,C,E,F$は同一円周上にある。\n次に$A=H$のとき、$AB\\perp AC$なので$E=F=A$であり、4点は一致する。$A\\neq H$のとき、$AH$を直径とする円を$\\Gamma'$とする。$E$と$H$はともに$B$を通り$CA$に垂直な直線上にある。\n$E=A$または$E=H$なら$E$は$\\Gamma'$の上にある。そうでなければ直線$EH$は$CA$に垂直で、直線$EA$は$CA$なので$\\angle AEH=90^\\circ$であり、$E$は$\\Gamma'$の上にある。\n$F$も$C$を通り$AB$に垂直な直線上にあるので同様に$\\Gamma'$の上にある。よって$A,H,E,F$は同一円周上にある。",
+  "note": "数学的内容は正しい。$A=H$の退化、$E=H$などの場合分けも漏れなし。記法のみの修正。"
+ },
+ {
+  "id": "menelaus_unsigned_ratio_form",
+  "verdict": "fix",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": false,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [
+   "角の範囲を弧度法（$\\pi/2$）で書いている。弧度法は数II（S6）で、homeのS5より後。$90^\\circ$にする"
+  ],
+  "fixed_answer": "$A,B,C$を同一直線上にない3点、$D,E,F$を直線$BC,CA,AB$上にあって同一直線$\\ell$上にある点とし、$D\\neq C$、$E\\neq A$、$F\\neq B$とする。\nまず$\\ell$が頂点を通らないことを示す。$A$を通るとすると、$A,E$はどちらも$\\ell$と直線$CA$の上にあり$E\\neq A$なので$\\ell$は直線$CA$であり、$D$は$\\ell$と直線$BC$の共有点$C$になって$D\\neq C$に反する。\n$B$を通るとすると、$F\\neq B$より$\\ell$は直線$AB$であり、$E$は直線$AB$と直線$CA$の共有点$A$になって$E\\neq A$に反する。$C$を通るとすると、$D\\neq C$より$\\ell$は直線$BC$であり、$F$は$B$になって$F\\neq B$に反する。\nしたがって$A,B,C$から$\\ell$までの距離$a,b,c$はどれも正である。直線$BC$と$\\ell$は$D$で交わるので、そのなす角を$\\theta$（$0^\\circ<\\theta\\le90^\\circ$）とすると$b=BD\\sin\\theta$、$c=CD\\sin\\theta$であり、$\\frac{BD}{DC}=\\frac{b}{c}$である。\n同様に$\\frac{CE}{EA}=\\frac{c}{a}$、$\\frac{AF}{FB}=\\frac{a}{b}$である。3式を掛けると$\\frac{BD}{DC}\\cdot\\frac{CE}{EA}\\cdot\\frac{AF}{FB}=1$を得る。",
+  "note": "数学的内容は正しい。頂点が$\\ell$上にないことの確認も妥当。三角比（S4）の利用は許容。記法のみの修正。"
+ },
+ {
+  "id": "ceva_unsigned_ratio_form",
+  "verdict": "pass",
+  "math_valid": true,
+  "same_claim": true,
+  "order_ok": true,
+  "circular": false,
+  "lint_ok": true,
+  "problems": [],
+  "note": "頂点が各直線上にないこと、$p$が頂点と異なること、面積比への移行を確認した。三角比（S4）の利用は許容。やや長い（約680字）が10行以内。"
+ }
+]
