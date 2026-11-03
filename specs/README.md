@@ -7,6 +7,7 @@
 ## Learner-facing behavior
 
 - [mathematical-reasoning-and-diagrams](mathematical-reasoning-and-diagrams/requirements.md) — Checked elementary geometry, inline TikZ and commutative diagrams, trustworthy theorem retrieval, and mathematical coverage.
+- [geometry-figures](geometry-figures/requirements.md) — 初等幾何とグラフのテンプレート呼び出し、回答への直接埋め込み。
 
 - [pals-product-core](pals-product-core/requirements.md) — 証明要求、回答、検証状態、出力言語、チャット。
 - [proof-request-reuse](proof-request-reuse/requirements.md) — 通常送信、前提確認、カタログ再利用と Lean 検証の流れ。
