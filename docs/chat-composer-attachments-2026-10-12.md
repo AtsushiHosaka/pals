@@ -45,7 +45,7 @@ The next visual follow-up moves the attachment button down by 4px and removes th
 
 ## Remaining release checks
 
-Implementation is pushed and reviewable; it is not deployed. `MACMINI_AUTO_DEPLOY` was false at the live audit. Before production acceptance:
+Implementation is pushed and reviewable; it is not deployed. Before production acceptance:
 
 1. Complete the exact signed 32-to-33 registry replay against the required PostgreSQL dependencies. A single cached-pgvector attempt failed at the historical 25-step predecessor bootstrap before the candidate DDL; it did not prove the signed transition.
 2. Review/install the protected host source-hash policy and explicit v7 capability, then validate/install the attachment edge snippet inside the existing Host-restricted API handle.

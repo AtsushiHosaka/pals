@@ -29,21 +29,6 @@ bound signed sequence 27 and manifest
 Its only blocker was `assessment_queue_not_ready`; Docker reported
 11,545,612,288 bytes available against 9,261,023,232 required.
 
-On the current Mac mini, `/opt/homebrew/bin/aws` does not exist. The installed CLI
-is `/usr/local/bin/aws`. The protected `pals-prod-member` configuration exists, but
-STS initially failed with an expired SSO token and failed refresh. Login was
-started with the available CLI and `--no-browser`, and the official authorization
-URL was opened in Chrome. The user completed the existing password/MFA flow.
-The CLI then reported successful login, and STS matched the pinned account and
-existing operator identity. No password, token or credential was copied into Git.
-
-Use the CLI resolved from PATH rather than assuming a Homebrew prefix:
-
-```sh
-AWS_CONFIG_FILE=/Users/hosakaatsushi/Documents/Codex/2026-10-02/task-2/mini-build-20261002/secure-handoff/aws-public-config \
-  aws sso login --profile pals-prod-member
-```
-
 Fresh queue
 [inspection 38488351470](https://github.com/AtsushiHosaka/pals/actions/runs/38488351470)
 returned `ready`, `queues_present=true` and `permissions_present=true` with plan

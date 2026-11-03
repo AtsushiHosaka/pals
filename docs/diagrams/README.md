@@ -10,7 +10,7 @@
 - Lean verifierは、compute EC2上の別コンテナです（pals-infraの`host/private-runtime/compute_runtime.py`）。別インスタンスではありません。
 - 本番の再利用は、Recipe全件（32件以内）をAPIから取得し、workerが2〜4文字n-gramのTF-IDFで上位5件にして、Luna（low）2つが独立に審査する経路です。「20件」は、検索公開済みRecipeの現在の件数と合います。コード上の上限は32件です。
 - 埋め込み検索（`text-embedding-3-small`、384次元）は、Draft catalogとTyped catalogにあります。READMEの「v12」は、このコードに痕跡がなく、未採用の記録と一致します。
-- assessmentキューはTerraformの外にあります（`scripts/provision-macmini-assessment-queue.py`が作成し、名前で参照）。
+- assessmentキューはTerraformの外にあります（名前で参照）。
 
 ```sh
 python3 docs/diagrams/generate_agent_architecture.py

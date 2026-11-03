@@ -2,7 +2,7 @@
 
 The user explicitly requested deployment after approving the KaTeX palette in the shared regular-chat composer. Frontend #19 and parent #51 are merged. The parent at this checkpoint is `7e7a3bc5da1929bb09d57ab12fa1c7e0bfef1a10`, with frontend `7aabcd48e23aec7eb124912ab23d1603b66073e6`.
 
-The live automatic-deploy preference remains false. Standard deployment releases the exact current parent main through the signed Mac mini controller; it has no frontend-only bypass.
+Standard deployment releases the exact current parent main; it has no frontend-only bypass.
 
 Read-only [host inspection](https://github.com/AtsushiHosaka/pals/actions/runs/38211886916) and [preflight](https://github.com/AtsushiHosaka/pals/actions/runs/38211924325) passed. Inspection proves the installed signed registry has 32 steps, release sequence20, the serving production runtime/token accounting is ready, and both approved interpreters start. The installed controller/authority are the reviewed older v6 tuple; the v7 capability and attachment schema are absent. This is prerequisite evidence, not deployment completion.
 

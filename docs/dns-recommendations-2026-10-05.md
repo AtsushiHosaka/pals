@@ -8,7 +8,6 @@
 
 画像と既存ブラウザータブには公開前の情報が残っていた。
 再読み込み後は、`palschat.site`と`api.palschat.site`のプロキシ済みTunnelレコードを確認できた。
-この2件は[10月4日の公開記録](pals-publication-cutover-2026-10-04.md)と一致する。
 既存のTunnel経路、ACM検証CNAME、SSL/TLS設定は変更していない。
 
 ## wwwはCloudflareで正式URLへ転送する

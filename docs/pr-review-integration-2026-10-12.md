@@ -1,6 +1,6 @@
 # PALS PR review and integration — 2026-10-12
 
-The user requested review, repair, and merge of all open PALS pull requests. The initial inventory contained 24 PRs across the parent and its implementation repositories. Three additional focused repair PRs address defects found during review. The final inventory then found frontend #19 and parent #51 for a collapsible math keyboard; they are included in the same review and merge scope, bringing the total to 29 PRs. Deployment is outside this request; the live `MACMINI_AUTO_DEPLOY` variable was verified as `false` and left unchanged.
+The user requested review, repair, and merge of all open PALS pull requests. The initial inventory contained 24 PRs across the parent and its implementation repositories. Three additional focused repair PRs address defects found during review. The final inventory then found frontend #19 and parent #51 for a collapsible math keyboard; they are included in the same review and merge scope, bringing the total to 29 PRs. Deployment is outside this request.
 
 | Repository | Initial PRs | Review repairs |
 |---|---|---|

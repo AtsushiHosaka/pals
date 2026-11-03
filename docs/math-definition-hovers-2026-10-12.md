@@ -50,7 +50,7 @@ prove authentication, backend/provider execution, or formal proof generation.
 ## Production deployment evidence
 
 The user's explicit deployment request authorized the coordinated signed release.
-The Mac mini deployment owner restored the failed candidate before the final
+The deployment owner restored the failed candidate before the final
 release. The signing and original-row preservation gates were retained; the
 independently reviewed recovery patch narrowly accounts for the existing startup
 retention of two expired guest records.

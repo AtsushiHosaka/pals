@@ -1,6 +1,6 @@
 # 質問評価をLean処理から分離し、実行数を個別に増やす
 
-質問評価には専用のSQSキューとworkerを設ける。これで、Leanを含む証明処理の完了を待たずに、新しい質問の評価を開始できる。今回はAPIの振り分け、workerの処理種別、LocalStack、ローカルComposeを実装した。Mac miniの署名付き本番配備とAWS構成変更は未実施である。実機はユーザー確認済みのM1 Mac mini・16GB RAMである。初期構成は質問評価1件、証明生成1件、Lean検証1件とし、負荷測定後に実行数を見直す。
+質問評価には専用のSQSキューとworkerを設ける。これで、Leanを含む証明処理の完了を待たずに、新しい質問の評価を開始できる。今回はAPIの振り分け、workerの処理種別、LocalStack、ローカルComposeを実装した。署名付き本番配備とAWS構成変更は未実施である。初期構成は質問評価1件、証明生成1件、Lean検証1件とし、負荷測定後に実行数を見直す。
 
 ## 待ちの原因はキュー共有と同期処理にある
 
@@ -18,9 +18,9 @@ flowchart LR
   F --> G[隔離したLean環境]
 ```
 
-## M1・16GBでは各処理を1件ずつに抑える
+## 各処理を1件ずつに抑える
 
-Mac miniはM1・16GB RAMで、ユーザーは過度な並列化を避けたいと述べている。まず評価workerだけを独立させ、Lean環境は1つに据え置く。この構成なら、新しい質問は別の評価キューに入り、Lean処理の完了を待たずに評価を開始できる。ただし、評価worker自体が処理中なら、次の質問は評価キューで待つ。
+ユーザーは過度な並列化を避けたいと述べている。まず評価workerだけを独立させ、Lean環境は1つに据え置く。この構成なら、新しい質問は別の評価キューに入り、Lean処理の完了を待たずに評価を開始できる。ただし、評価worker自体が処理中なら、次の質問は評価キューで待つ。
 
 | 処理 | 初期同時実行数 | ローカルComposeの設定上限 |
 | --- | --- | --- |
@@ -55,13 +55,11 @@ docker compose --project-name pals-local \
   up -d --no-build --no-deps --scale assessment-worker=2 assessment-worker
 ```
 
-これは開発用Composeの操作であり、Miniの署名付き本番controllerに代用しない。Miniの現行配備契約はAPI・Web・workerの3サービスを管理する。評価workerの追加に備え、親リポジトリの配備設定・結果にv2を追加した。v2は4サービスを要求し、両workerの起動確認を必須にする。署名対象のimageは従来の3種類で、評価workerは同じworker imageを使う。旧v1の契約は維持する。
+これは開発用Composeの操作であり、署名付き本番controllerに代用しない。
 
-APIの停止確認にも `pals.macmini-update-observation.v2` を追加した。初回追加時は評価workerの名前を `null` とし、追加後はその名前を指定する。DB更新前に、評価workerを含む書き込みプロセスの停止、余分なworkerの不在、署名済みimageとの一致を照合する。
+本番SQSの準備用のスクリプトをpals-infraに追加した。既存の `pals-mini-prod-proof-jobs` は変更せず、評価キューとDLQを作成する。API roleには新キューの送信権限、worker roleには受信・削除・visibility変更・属性取得の権限だけを追加する。適用前にアカウント、既存role、trust、権限、既存キューを照合し、計画のSHAを指定して実行する。既存の機械認証更新とIAMを同時に変更しない。
 
-本番SQSの準備用に `pals-infra/scripts/provision-macmini-assessment-queue.py` を追加した。既存の `pals-mini-prod-proof-jobs` は変更せず、評価キューとDLQを作成する。API roleには新キューの送信権限、worker roleには受信・削除・visibility変更・属性取得の権限だけを追加する。適用前にアカウント、既存role、trust、権限、既存キューを照合し、計画のSHAを指定して実行する。既存の機械認証更新とIAMを同時に変更しない。
-
-実機のhost controller、監視、drain、資格情報の共有設定は未更新である。現在の本番launcherは `natural-only` を要求する。実機でLeanがどの経路から動くかを確認し、隔離環境を確かめてから本番のLean構成を判断する。評価worker追加だけを理由にこの制約を解除しない。
+現在の本番launcherは `natural-only` を要求する。実機でLeanがどの経路から動くかを確認し、隔離環境を確かめてから本番のLean構成を判断する。評価worker追加だけを理由にこの制約を解除しない。
 
 ## Lean環境を増やすときはreconcilerも並列化する
 

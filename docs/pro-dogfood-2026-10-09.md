@@ -5,7 +5,7 @@ The approved account is active on permanent complimentary Pro. Project creation,
 ## Run
 
 - ID: `20261008-pro-resume-2353`; mode: authenticated exploratory runtime QA.
-- Target: `https://palschat.site`, the public PALS deployment hosted on Mac mini. Browser client: existing local Chrome tab controlled through `cua_repl`; no remote Mini desktop session was used.
+- Target: `https://palschat.site`, the public PALS deployment. Browser client: existing local Chrome tab controlled through `cua_repl`.
 - Live revision: unknown; no implementation-source inspection, repair or deployment performed.
 - Actor: approved permanent complimentary Pro test account. Credentials and account identifiers omitted from this note.
 - Time: 2026-10-08 23:54–2026-10-09 00:18 JST (UTC journal timestamps).
