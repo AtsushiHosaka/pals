@@ -7,6 +7,20 @@ workflow, documentation, and Codex helper scripts. Implementation repositories
 are managed separately and will be linked from this repository after their
 GitHub remotes are created.
 
+## アーキテクチャ
+
+### 全体構成
+
+[![PALS 全体構成](docs/diagrams/pals-architecture-system.png)](docs/diagrams/pals-architecture-system.png)
+
+EC2はcontrol（Caddy・Web・API・Reconciler）とcompute（評価worker・証明worker・Lean verifier）に分かれます。Lean verifierはcomputeの中の隔離コンテナで、別インスタンスではありません。外向き通信と認証情報を持たず、Reconcilerからのmutual TLSだけを受け付けます。Aurora内のカタログは、検索方式が異なります。pgvectorを使うのはDraft catalogだけで、Lean Recipe catalogは厳密一致と全文検索です。
+
+### エージェントの動き
+
+[![PALS エージェントの動き](docs/diagrams/pals-architecture-agent.png)](docs/diagrams/pals-architecture-agent.png)
+
+[全体構成のPNG](docs/diagrams/pals-architecture-system.png) · [エージェントの動きのPNG](docs/diagrams/pals-architecture-agent.png) · [draw.ioで編集（2ページ）](docs/diagrams/pals-architecture.drawio) · [図の根拠と再生成](docs/diagrams/README.md#アーキテクチャ図の根拠と再生成)
+
 ## AWS構成図・配備状況
 
 [![PALS AWS architecture and deployment status](docs/diagrams/pals-aws-private-target.png)](docs/diagrams/pals-aws-private-target.png)
