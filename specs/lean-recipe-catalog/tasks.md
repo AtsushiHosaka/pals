@@ -48,3 +48,19 @@ Executed evidence and remaining gates: `docs/recipe-first-implementation-2026-10
 - [ ] LRC-T019 / LRC-023: The gate does not pass yet. Rewritten cards reproduced a false reuse: an ambiguous general Cauchy-Schwarz question reused the two-dimensional card, also on the earlier cards. Keep the published catalog at its current size until judges route such ambiguity to `needs_input` and a rerun shows no false reuse at about 1,000 entries.
 - [ ] LRC-T017 / LRC-022: After owner approval, install `pals_recipe_retrieval` and import vectors in production; verify the embedding profile on the public route.
 - [ ] LRC-T018 / LRC-024: Remove the snapshot route and `MAX_RECIPES` once no older worker can run.
+
+## Proof-relevant fingerprint and materializer v2
+
+Depends on the search window in `pals#150` only through the catalog being published afterward; neither blocks the other's implementation.
+
+- [ ] LRC-T030 / LRC-030: Parse, store and select `pals.lean-toolchain-fingerprint.v2` in `pals-api` and `pals-agent`, keeping v1 readable for history.
+- [ ] LRC-T031 / LRC-031: Add `audit_version` with pinned policy and audit digests and a failing-guard test in `pals-agent`, and a drift test for the `pals-api` copy.
+- [ ] LRC-T032 / LRC-032: Report `audit_version` in authenticated verifier readiness, keep verifier digests in receipts, and return `audit_version_mismatch` on a real selection path.
+- [ ] LRC-T033 / LRC-033: Add `RecipeAuthoringManifestV2` and `RecipeMaterializerV2`, with byte vectors shared by both repositories.
+- [ ] LRC-T034 / LRC-034: Add the release resolver and trusted kernel type comparison, with real-Lean tests for accept, type mismatch and compile failure, including the 6 known type-mismatch cards.
+- [ ] LRC-T035 / LRC-035: Admit published Recipes and catalog cards as v2 with real compile evidence and repeated reviews. Record adoption rate, time and memory from the verifier image.
+- [ ] LRC-T036 / LRC-036: Rehearse the cutover and its revert on real PostgreSQL, with reuse answered throughout.
+- [ ] LRC-T037 / LRC-037: Remove the `TOOLCHAIN_SHA` constant and reseal exact-input profiles.
+
+Completion needs real PostgreSQL, the pinned Lean workspace and the verifier image. Unit doubles, printed-type comparison and macOS timings do not satisfy this gate. Production admission and the switch need the user's approval.
+
