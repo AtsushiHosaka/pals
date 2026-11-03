@@ -2,7 +2,7 @@
 
 ## Scope and traceability
 
-This design implements `LRC-001`–`LRC-019` and `LRC-030`–`LRC-037`. LRC-001–LRC-013 preserve the existing formal proof-job selector; LRC-014–LRC-018 add Recipe-first natural-request reuse. It adds a `pals-api` internal-only catalog service
+This design implements `LRC-001`–`LRC-024` and `LRC-030`–`LRC-037`. LRC-001–LRC-013 preserve the existing formal proof-job selector; LRC-014–LRC-018 add Recipe-first natural-request reuse. It adds a `pals-api` internal-only catalog service
 backed by isolated local PostgreSQL schemas. `pals-agent` calls that service through a private
 RecipeSelection port; it does not connect to the database. The generic Draft tables, PFI and typed-Draft catalog are unchanged. Proof-request answer evidence uses the separate PFR contract.
 
