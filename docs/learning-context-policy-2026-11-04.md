@@ -4,7 +4,8 @@ Working implementation record, 2026-11-04. Tracks [#183](https://github.com/Atsu
 and the owner's [angle/context decision #224](https://github.com/AtsushiHosaka/pals/issues/224).
 Session: `codex://threads/01a1a258-3e8e-7aa0-b2f0-6a2c91477ba8`.
 Implementation: draft [pals-agent#45](https://github.com/AtsushiHosaka/pals-agent/pull/45),
-commit `80c61b5b21b26b28e75b332efbcdc2a292c8de5a`. No deployment or committed parent
+initial commit `80c61b5b21b26b28e75b332efbcdc2a292c8de5a`, updated by prerequisite correction
+`272dd3a355702430dd238a651bc433dc0d792f53`. No deployment or committed parent
 submodule-pin update is included in this documentation change.
 
 ## Implemented contract
@@ -82,11 +83,35 @@ was withdrawn after tracing the immutable linked-chat source through public runt
 Japanese lower-secondary geometry, explicit degrees, explicit school-level radians, general
 radian default, England GCSE degrees, pi in sector area, university prerequisites, and no
 language-to-curriculum inference. It has no mock client, compiler bypass, automatic retry or
-credential-file loader. The first paid two-call probe was not executed: automatic approval
-review rejected reading a local credential and sending repository-derived prompts to OpenAI
-without explicit authorization for that destination/payload. User approval is pending.
-Model compliance, full production E2E, latency, deployment and actual educational outcomes
-remain **not verified**.
+credential-file loader. Automatic approval review initially rejected the credential-backed paid
+probe. The owner subsequently authorized API evaluations expected to cost less than $1 in total;
+an evaluation expected to reach $1 requires advance confirmation. This is not deployment or
+publication authorization.
+
+The first real two-call v1 probe was rejected by the independent judge: it used induction for a
+Japanese junior-high polygon problem and asserted an invalid arbitrary-diagonal decomposition.
+The source-backed registry was revised to v2: mathematical induction belongs to upper-secondary
+Math B, not an assumed junior-high prerequisite. A general-n claim need not use induction when
+direct decomposition suffices. The official upper-secondary source above supports that placement.
+
+| Run | Cases approved | Calls | Input / output tokens | Pinned-rate upper-bound estimate |
+| --- | ---: | ---: | ---: | ---: |
+| v1 junior-high probe | 0 / 1 | 2 | 3,715 / 1,398 | $0.001163375 |
+| v2 full probe set | 6 / 8 | 16 | 29,358 / 7,281 | $0.007310250 |
+
+The total estimate is $0.008473625, using the repository's conservative Luna snapshot of
+$0.125/million input tokens and $0.50/million output tokens, with no cache discount. This is not
+an invoice. Usage is recorded for every call; no model, compiler or transport was replaced.
+The two runs are different populations and must not be treated as an accuracy improvement.
+
+The v2 passes cover explicit degrees, explicit school-level radians, the unspecified radian
+default, England GCSE degrees, preserving pi in a sector area, and a university kernel proof
+without rank-nullity. Two Drafts remain rejected: the junior-high polygon answer misdescribes
+the angle partition at non-fan vertices; the sine-derivative answer uses an undeclared auxiliary
+inequality instead of deriving it from the requested starting facts. These are actual rejected
+raw Drafts, not successfully verified/released answers. No criterion was relaxed to pass them.
+The final v2 unit check is 346 passed in 2.60s. Full production E2E, stored-answer orchestration,
+latency impact, deployment and educational outcomes remain **not verified**. Agent#45 stays draft.
 
 ## Catalog audit: quantity is not availability
 
