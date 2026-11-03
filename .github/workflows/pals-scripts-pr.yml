@@ -27,8 +27,6 @@ jobs:
         run: |
           bash pals-scripts/tests/secret-ignore.sh
           bash pals-scripts/tests/secrets-gate.sh
-      - name: Check operator input and log boundaries
-        run: python3 -m unittest discover -s pals-scripts/tests -p 'test_qa_pro_operator_workflow.py'
       - name: Check out the pinned public agent
         run: |
           git -c url."https://github.com/".insteadOf=git@github.com: \

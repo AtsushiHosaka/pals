@@ -8,7 +8,7 @@
 
 ## 1. P2: 回答の種類によってLeanソース表示の公開ルートが欠ける
 
-- ゲストの `llm_assessed` / `reviewed_explanation` は `GuestLeanSourcePanel.tsx:38` から `getGuestRequestSources` を呼ぶ。`lib/api/guestChat.ts` は `GET /v1/guest/proof-requests/{id}/sources` を要求するが、infra `host/macmini-edge/guest-chat.caddy:35` 以下には `/lean` と `/answers` しかなく、`/sources` がない。
+- ゲストの `llm_assessed` / `reviewed_explanation` は `GuestLeanSourcePanel.tsx:38` から `getGuestRequestSources` を呼ぶ。`lib/api/guestChat.ts` は `GET /v1/guest/proof-requests/{id}/sources` を要求するが、本番では下記のとおり入口で404になる。
 - 本番で今回のQA要求IDへの匿名GETを比較すると `/sources` は入口の `404 text/plain: Not found`、`/lean` はAPIの `401 application/json: guest_session_required`。後者の401は認証情報を送らない確認として正常。前者はAPIの認証境界に到達していない。
 - ログイン後にも、カタログ証明を使う `lib/api/proofRequests.ts:83` の `/v1/proof-requests/{id}/lean-source` に対する許可OriginのOPTIONSが404。他方 `/sources`、`/retry`、proof-job `/recovery`、数学設定、検索は同じOPTIONS条件で200。
 - 影響: 新たにコンパイルした証明は表示できても、参照・カタログから返した回答のコード表示は失敗する。今回カタログ回答そのものは新規生成していないため、回答生成の可否とは区別する。
@@ -37,7 +37,6 @@
 
 ## 5. P2: 常時監視は機能障害をhealthyと判定し得る
 
-- `pals-infra/host/macmini-recovery/auto_recovery.py:131` の継続監視は `/health`、`/signin`、コンテナ状態とreadyファイルを確認する。`:157` はそれらが成功するとhealthyにする。
 - `pals-api/app/api/routes/health.py:10` は候補検証ランタイムの終了を検知するが、DBの業務処理・ゲストIP整合・ログイン成功・プロジェクト作成・外部モデルの応答は確認しない。
 - 今回追加したゲストセッション検査は通常デプロイ完了時に実行される。常時監視や `pals_normal_update_authority.py` の既存復旧後ヘルス確認まで自動で拡張されたわけではない。
 - 影響: 稼働後に特定APIや外部依存だけが壊れても、監視上は正常のままになり得る。今回の障害も通常ヘルスでは検知できなかった。

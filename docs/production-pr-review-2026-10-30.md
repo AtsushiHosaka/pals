@@ -81,9 +81,7 @@ pins. These repairs preserve existing user-facing entry points.
 
 ## Release limits and pending operations
 
-- **Production deployment: HEALTHY.** The exact clean Mini checkout passed
-  preflight, and the existing signed deployment wrapper completed through approved
-  Parsec input. Its `pals.macmini-deploy-result.v3` result reported `healthy` for
+- **Production deployment: HEALTHY.** The signed deployment result reported `healthy` for
   parent `d0ef6efd33e90c7aa0d899763d1c8e9e2df58702` and the six source commits
   above. The safe manifest fingerprint is
   `e2c1ecedccd2d6577956f5023b9fa3628a4b58e91fc98632dc08d8c5ad59f69d`.
