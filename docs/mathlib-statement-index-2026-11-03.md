@@ -205,7 +205,7 @@ Leanで解釈した命題を使う記号検索が最も高く、統合しても�
 
 `calculus_supp_v5_ftc_point_spike_counterexample`、`mv_line_supp_v5_orientation_counterexample`、`mv_foundation_lagrange_multiplier_from_direction`、`calculus_v3_limit_order`、`calculus_supp_v3_geometric_boundary_counterexample`、`la_reuse_kernel_detects_zero`、`commalg_modules_exact_id_zero`、`la_v6_nonzero_maps_zero_composite`、`la_reuse_right_inverse_surjective`、`la_v6_basis_recognition`、`calculus_v4_gradient_direction_bound`、`calculus_v5_two_sided_limit_characterization`
 
-成功はLean検証と公理検査を通った`verified`だけとします。費用の上限で止まった問題は、両群がそろわないので判定から外し、件数を報告します。判定に使う問題が12問未満になった場合も、条件の数値は変えません。条件は問題の差し替えや再実行で満たしません。
+成功は`ProofPipeline`のLean検証を通った`verified`だけとします。費用の上限で止まった問題は、両群がそろわないので判定から外し、件数を報告します。判定に使う問題が12問未満になった場合も、条件の数値は変えません。条件は問題の差し替えや再実行で満たしません。
 
 **`exact?`の事前確認は別の検討項目です。** カードの命題の52%がモデルなしで閉じました。Sketchで命題が固まった後に`exact?`を試せば、Proveと修復を省ける問題があるかもしれません。ただし、生成の流れの中での効果と遅延はまだ測っていません。
 
