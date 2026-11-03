@@ -1,0 +1,212 @@
+[
+ {
+  "domain": "school_calculus",
+  "id": "linear_recurrence_limit",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "complex_analysis",
+  "id": "riemann_removable_singularity",
+  "verdict": "correct",
+  "reason": "Local boundedness on a punctured open disc is equivalent to eventually bounded along nhdsWithin c {c}^c; hypotheses and conclusion match.",
+  "suggested": null
+ },
+ {
+  "domain": "complex_analysis",
+  "id": "cauchy_integral_formula_disc",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_homotopy",
+  "id": "ptolemy_cyclic_quadrilateral",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_plane",
+  "id": "three_perpendiculars",
+  "verdict": "correct",
+  "reason": "Inner-product form is correct and covers degenerate cases. perpendicular_to_subspace a h s is still degenerate for a=h (meaning presupposes a line), which only weakens the OM in that trivial case; accepted as noted by the first auditor.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_homotopy",
+  "id": "smooth_partition_of_unity_exists",
+  "verdict": "correct",
+  "reason": "Finite-dimensionality of the model space is now present and the rest matches. Caveat: smooth_manifold_modeled_on's meaning does not say real field or allow boundary/corners (Lean allows any ModelWithCorners), so tighten the meaning text; the S-expression itself is acceptable.",
+  "suggested": null
+ },
+ {
+  "domain": "real_analysis",
+  "id": "heine_cantor",
+  "verdict": "correct",
+  "reason": "Metric carriers restored; continuity and uniform continuity are both stated on the subspace, matching ContinuousOn/UniformContinuousOn, following the existing continuous_between (subspace_topology_on X K) convention.",
+  "suggested": null
+ },
+ {
+  "domain": "modules_categories",
+  "id": "short_five_lemma_modules",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "group_theory",
+  "id": "finite_abelian_group_structure",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_plane",
+  "id": "lines_perpendicular_to_plane_parallel",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "probability_statistics",
+  "id": "gaussian_indep_add",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "group_theory",
+  "id": "sign_of_transposition_and_cycle",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "school_vectors_complex",
+  "id": "perpendicular_iff_ratio_re_zero",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "school_data_logic",
+  "id": "data_mean_of_two_groups",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_homotopy",
+  "id": "covering_lift_uniqueness",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "measure_integration",
+  "id": "continuity_from_above_counterexample",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "calculus_single",
+  "id": "second_derivative_test_maximum",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "school_sequences",
+  "id": "sum_consecutive_product",
+  "verdict": "correct",
+  "reason": "natural_range m = {0..m-1} and natural_range (m+1) = {0..m} match Finset.range; the outer oriented_interval 1 n is unchanged and was accepted.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_circle",
+  "id": "chord_eq_two_radius_sin_inscribed_angle",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_plane",
+  "id": "tetrahedron_opposite_edges_perpendicular_iff",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "modules_categories",
+  "id": "snake_lemma_modules",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "school_algebra_basics",
+  "id": "nested_square_root_minus_form_ordered",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "fourier_convex_numeric",
+  "id": "banach_fixed_point_real_constant",
+  "verdict": "wrong",
+  "reason": "Still missing that f maps X into X (Lean f : X -> X). Without it the OM is false, e.g. X={0}, f(0)=5 satisfies the contraction hypothesis vacuously yet has no fixed point in X. Add the self-map conjunct.",
+  "suggested": "(forall (X f K) (-> (and (metric_space X) (complete_space X) (exists (z) (in z X)) (forall (x) (-> (in x X) (in (fn_value f x) X))) (>= K 0) (< K 1) (forall (x y) (-> (and (in x X) (in y X)) (<= (dist_of (fn_value f x) (fn_value f y)) (* K (dist_of x y)))))) (exists (x) (and (in x X) (= (fn_value f x) x) (forall (y) (-> (and (in y X) (= (fn_value f y) y)) (= y x)))))))"
+ },
+ {
+  "domain": "geometry_plane",
+  "id": "parallel_of_common_perpendicular",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "complex_analysis",
+  "id": "fundamental_theorem_of_algebra",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "school_vectors_complex",
+  "id": "external_division_formula",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_triangle",
+  "id": "perpendicular_is_shortest_to_line",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "ring_theory",
+  "id": "noetherian_iff_ideals_fg",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "logic_sets",
+  "id": "ordinal_add_not_commutative",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ },
+ {
+  "domain": "school_data_logic",
+  "id": "data_variance_of_sum",
+  "verdict": "correct",
+  "reason": "Hypotheses, quantifier scope and conclusion match the Lean target and the earlier defect is fixed; argument orders agree with symbol meanings.",
+  "suggested": null
+ }
+]

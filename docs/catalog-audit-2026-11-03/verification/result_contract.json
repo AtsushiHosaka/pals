@@ -1,0 +1,1707 @@
+{
+ "manual_items": [
+  [
+   "commutative_algebra",
+   "associated_primes_finite",
+   "answer_note",
+   "Add one sentence to the answer: for Noetherian R, a prime P is associated iff P=Ann(x) for some x (if P=rad Ann(x) then Ann(x) is primary, so Ass(Rx)={P})."
+  ]
+ ],
+ "vocab_added": [
+  "ae_measurable_fn",
+  "aut_group_over",
+  "binomial_measure",
+  "canonical_ring_hom",
+  "cardinal_add",
+  "cardinal_mul",
+  "cardinal_pow",
+  "euclidean_ambient_dimension",
+  "formal_power_series_over",
+  "has_homology",
+  "hom_post_compose",
+  "ideal_mul",
+  "logb",
+  "module_smul",
+  "module_zero",
+  "monoid",
+  "ordinal_add",
+  "post_compose",
+  "power_series_var",
+  "prime_power_cyclic_sum_family",
+  "proposition_holds",
+  "real_tends_to",
+  "ring_product",
+  "smooth_manifold_modeled_on",
+  "transvection_product"
+ ],
+ "cards": {
+  "textbook.school_vectors_complex.triangle_area_inner_formula": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.probability_statistics.sample_variance_unbiased": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.measure_integration.product_measure_of_rectangle": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_mean_affine_transform": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_plane.lines_perpendicular_to_plane_parallel": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_analytic_geometry.triangle_area_cross_product_formula": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.modules_categories.snake_lemma_modules": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ring_theory.ring_quotient_lift_unique": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.field_galois.normal_extension_conjugates_transitive": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.triangle_similar_sas_ratio": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_counting_probability.bayes_uniform_simple": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_covariance_affine_transform": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.entrance_exam.log_ten_two_between_bounds": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_exp_log.logb_rpow_power_positive": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_integers.coprime_mul_eq_square": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.group_theory.order_of_power_formula": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.linear_advanced.orthonormal_set_extends_to_basis": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.fourier_convex_numeric.fourier_coefficient_l1_bound": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ode.matrix_exponential_derivative": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_variance_of_two_groups": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.finset_card_union_three": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_polynomials.remainder_by_two_distinct_linear_factors": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.complex_analysis.roots_of_unity_explicit": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_calculus.integral_sixth_formula": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.logic_sets.reals_uncountable": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.functional_analysis.hilbert_basis_fourier_expansion": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_calculus.geometric_series_convergence_criterion": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_polynomials.common_root_of_two_monic_quadratics": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.linear_basic.gauss_diagonalization": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.commutative_algebra.associated_primes_finite": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_counting_probability.falling_factorial_eq_factorial_mul_choose": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_polynomials.remainder_by_linear_ax_plus_b": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.advanced_undergrad.homology_map_functorial": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.modules_categories.limit_cone_unique_up_to_iso": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_homotopy.smooth_partition_of_unity_exists": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.real_analysis.heine_cantor": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_correlation_abs_le_one": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.proof_by_contradiction_template": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.commutative_algebra.zero_divisors_union_associated_primes": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_counting_probability.expectation_uniform_total": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_homotopy.mfderiv_eq_fderiv_normed": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_quadratic.common_root_resultant_condition": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.isosceles_iff_median_perpendicular": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_centers.orthocenter_on_altitudes": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.logic_sets.ordinal_zero_succ_or_limit": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ode.matrix_exponential_neg_inverse": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ring_theory.polynomial_monic_division": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.advanced_undergrad.lie_ideal_bracket_le_inf": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.triangle_exists_iff_three_inequalities": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.central_angle_twice_inscribed_same_side": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.probability_statistics.poisson_limit_binomial": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.inscribed_angle_same_side": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.advanced_undergrad.schur_endomorphism_is_scalar": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_stddev_affine_transform": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_exp_log.first_nonzero_decimal_iff_common_log_bounds": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.implication_cycle_iff": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_counting_probability.total_prob_uniform_partition": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.complex_analysis.circle_integral_ml_bound": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.probability_statistics.prob_union_bound_finite": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.multivariable.euler_homogeneous_function": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.entrance_exam.prime_square_add_two_prime": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.measure_integration.simple_function_approximation": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_polynomials.componendo_dividendo": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_covariance_shortcut": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.finset_card_union_two": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_vectors_complex.plane_equation_normal_form": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.modules_categories.abelian_mono_iff_kernel_zero": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.multivariable.gaussian_integral_plane": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.logic_sets.infinite_cardinal_add_mul": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_vectors_complex.perpendicular_iff_ratio_re_zero": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.entrance_exam.pi_between_three_point_one_and_three_point_two": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_counting_probability.trials_maximum_value": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.multivariable.divergence_theorem_box": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_algebra_basics.proportion_iff_cross_product": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ring_theory.noetherian_iff_ideals_fg": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_exp_log.logb_mul_positive": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_counting_probability.indep_uniform_iff_cond": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_correlation_abs_one_iff_linear": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_centers.circumcenter_equidistant_on_perp_bisectors": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.modules_categories.hom_covariant_left_exact": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.measure_integration.lebesgue_decomposition_theorem": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.entrance_exam.sqrt_two_add_sqrt_three_irrational": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.functional_analysis.pointwise_limit_of_operators_bounded": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.tangent_chord_angle": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.commutative_algebra.dedekind_contains_iff_divides": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.right_triangle_leg_square_projection": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.topology_general.urysohn_lemma": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_vectors_complex.external_division_formula": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.logic_sets.prop_de_morgan": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.measure_integration.measurable_sequence_supremum": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.entrance_exam.sum_of_factorials_perfect_square": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.calculus_single.riemann_sum_convergence": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.logic_sets.not_exists_iff_forall_not": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.group_theory.sylow_first_theorem": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.group_theory.sign_of_transposition_and_cycle": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.probability_statistics.variance_indep_sum": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_homotopy.triangle_angle_sum": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.logic_sets.countable_union_of_countable": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.pred_not_forall_imp_counterexample": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.complex_analysis.holomorphic_mean_value_property": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_sequences.telescoping_sqrt_rationalize": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.field_galois.irreducible_separable_iff_derivative_ne_zero": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_centers.ceva_converse": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ring_theory.noetherian_ascending_chain_stabilizes": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_analytic_geometry.homothety_image_of_circle_locus": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ring_theory.primitive_irreducible_over_int_iff_rat": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_counting_probability.positive_solutions_count": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.two_circles_at_most_two_common_points": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_variance_of_sum": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.probability_statistics.indep_event_compl": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_integers.three_dvd_sum_of_squares": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.entrance_exam.exp_one_gt_two_point_seven": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_mean_of_two_groups": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.topology_general.metric_continuous_iff_seq": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.right_triangles_common_hypotenuse_equal_angle_iff_equal_leg": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.probability_statistics.cond_mul_rule": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_centers.menelaus_theorem": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.implication_by_contradiction_template": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_counting_probability.bayes_uniform_partition": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_plane.varignon_rectangle_rhombus_criteria": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_vectors_complex.internal_division_formula": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_calculus.integral_twelfth_formula": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.probability_statistics.sample_mean_unbiased": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.commutative_algebra.integral_over_integral_closure_is_integral": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.cyclic_quadrilateral_opposite_angles_converse": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_exp_log.logb_power_base_power_argument": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.group_theory.pow_eq_one_iff_order_dvd": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.probability_statistics.central_limit_theorem": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.functional_analysis.adjoint_norm_eq": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.measure_integration.pointwise_limit_integral_counterexample": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.right_triangle_altitude_hypotenuse_product": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.calculus_single.monotone_right_limit_exists": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.logic_sets.not_forall_iff_exists_not": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_centers.ceva_theorem": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.logic_sets.shifted_base_induction": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_integers.congruence_iff_same_remainder": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_trigonometry.tan_pi_div_two_sub": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.modules_categories.pullback_of_mono_is_mono": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.medial_triangle_similar": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_counting_probability.falling_factorial_mul_factorial": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_calculus.linear_recurrence_limit": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.probability_statistics.gaussian_mean_variance": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.logic_sets.ordinal_add_not_commutative": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.modules_categories.short_five_lemma_modules": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.entrance_exam.cube_root_two_irrational": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.entrance_exam.three_unit_fractions_sum_one": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.real_analysis.lipschitz_uniform_continuous": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.cyclic_quadrilateral_exterior_angle": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_plane.tetrahedron_opposite_edges_perpendicular_iff": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.probability_statistics.gaussian_indep_add": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.calculus_single.log_composite_derivative": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.fourier_convex_numeric.riemann_lebesgue_real_line": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.group_theory.finite_abelian_group_structure": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.modules_categories.structure_theorem_pid_modules": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_sequences.sum_consecutive_product": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_integers.pow_dvd_pow_iff": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.logic_sets.exists_forall_implies_forall_exists": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.functional_analysis.compact_operators_closed_under_norm_limit": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.real_analysis.radius_of_convergence": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ring_theory.chinese_remainder_two_ideals": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.group_theory.alternating_group_simple": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_plane.parallel_of_common_perpendicular": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_polynomials.reciprocal_quartic_substitution": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_homotopy.ptolemy_cyclic_quadrilateral": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.entrance_exam.log_ten_two_irrational": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.measure_integration.integrable_of_dominated": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.combinatorics_graphs.power_series_negative_binomial": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.combinatorics_graphs.weighted_sum_binomials": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.linear_basic.vandermonde_det": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.pred_forall_contrapositive": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.fourier_convex_numeric.krein_milman_theorem": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_mean_between_bounds": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_integers.gcd_lcm_cofactor_iff": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.group_theory.abelianization_universal_property": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.chord_eq_two_radius_sin_inscribed_angle": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_homotopy.law_of_cosines_angle": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_vectors_complex.inner_eq_norm_norm_cos": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.combinatorics_graphs.turan_edge_bound": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.isosceles_altitude_foot_is_midpoint": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_counting_probability.expectation_uniform_count_events": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.advanced_undergrad.cyclotomic_norm_zeta_sub_one": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_centers.menelaus_converse": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_variance_zero_iff_constant": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_centers.nine_point_center_and_radius": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.inscribed_angle_same_side_converse": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.entrance_exam.harmonic_sum_not_integer": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_exp_log.digit_count_iff_common_log_bounds": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_plane.rhombus_of_perpendicular_diagonals": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_trigonometry.tan_double_angle": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.group_theory.alternating_group_index_and_order": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.finset_card_neither_of_two": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.advanced_undergrad.cyclotomic_integers_are_z_zeta": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.complex_analysis.cauchy_integral_formula_disc": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.measure_integration.ae_convergence_implies_in_measure": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.triangles_common_angle_product_similar": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_counting_probability.strictly_increasing_sequences_count": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.group_theory.left_coset_eq_iff_inv_mul_mem": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.linear_basic.left_inverse_is_right_inverse": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.advanced_undergrad.homotopic_chain_maps_same_homology": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.topology_general.compact_finite_intersection_property": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_integers.difference_of_two_squares_iff": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_correlation_affine_transform": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ring_theory.quotient_ideal_correspondence": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_variance_affine_transform": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.logic_sets.left_right_inverse_eq": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.complex_analysis.exp_eq_one_iff": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.measure_integration.continuity_from_above_counterexample": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.entrance_exam.no_rational_point_on_circle_radius_sqrt_three": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.group_theory.symmetric_group_not_solvable": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.measure_integration.dominated_convergence_theorem": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.entrance_exam.exp_pi_gt_pi_exp": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ring_theory.matrix_ring_nonzero_square_zero": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.fourier_convex_numeric.banach_fixed_point_real_constant": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_algebra_basics.fundamental_theorem_symmetric_polynomials": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_exp_log.logb_even_power_abs": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_polynomials.polynomial_division_uniqueness": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.entrance_exam.pythagorean_product_divisible_by_sixty": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.fourier_convex_numeric.newton_step_convex_bracket": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.right_triangle_altitude_geometric_mean": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.complex_analysis.fundamental_theorem_of_algebra": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_exists_on_both_sides_of_mean": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.fourier_convex_numeric.cauchy_schwarz_two_dimensional": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_algebra_basics.real_pair_with_given_sum_and_product_iff": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_homotopy.arc_length_additive_chord_bound": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.complex_analysis.circle_integral_simple_pole": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_polynomials.remainder_by_square_of_linear": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_trigonometry.tan_add_formula": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.group_theory.commuting_coprime_order_product": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_sequences.group_sum_natural_numbers": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.fourier_convex_numeric.amgm_two_variables": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.right_triangle_altitude_similar_triangles": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.common_chord_perpendicular_bisected_by_center_line": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.complex_analysis.euler_formula": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.fourier_convex_numeric.fourier_coefficient_explicit_formula": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ring_theory.polynomial_root_count_le_degree": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.right_triangle_congruent_hypotenuse_leg": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.multivariable.partials_exist_not_continuous": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ring_theory.matrix_unit_iff_det_unit": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_centers.medians_concurrent_at_centroid": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_plane.three_perpendiculars_converse_plane": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.advanced_undergrad.schur_intertwiner_bijective_or_zero": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_inequalities.min_x_plus_inv_on_ray": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.right_angle_on_circle_chord_is_diameter": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_homotopy.convex_set_contractible": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.equal_inscribed_angles_equal_chords": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.triangle_congruent_sas": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ring_theory.eisenstein_criterion_prime_ideal": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_homotopy.power_of_a_point_lines": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_plane.three_perpendiculars": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_sum_deviation_zero": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.perpendicular_iff_square_difference": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.or_iff_not_left_imp_right": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.perpendicular_is_shortest_to_line": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.linear_advanced.distinct_eigenvalues_give_eigenbasis": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.functional_analysis.parseval_identity_hilbert_basis": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_exp_log.logb_change_of_base": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_homotopy.inner_zero_iff_right_angle": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.modules_categories.abelian_mono_epi_is_iso": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.complex_analysis.cauchy_derivative_formula": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_counting_probability.cond_prob_uniform_chain": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.cyclic_quadrilateral_opposite_angles_sum_pi": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ode.picard_lindelof_existence": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.calculus_single.second_derivative_test_maximum": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.measure_integration.minkowski_inequality": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_variance_shortcut": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.group_theory.first_isomorphism_theorem": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_quadratic.quadratic_coefficients_unique": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.real_analysis.eventually_lt_of_limsup_lt": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.fourier_convex_numeric.composite_trapezoid_error_bound": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.modules_categories.quotient_by_torsion_is_torsion_free": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.entrance_exam.cos_twenty_degrees_irrational": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_plane.triangle_area_base_height": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_algebra_basics.nested_square_root_minus_form_ordered": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.contact_chord_perpendicular_bisected_by_center_line": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_homotopy.fundamental_group_map_functorial": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.field_galois.algebraic_elements_closed_under_field_operations": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_quadratic.product_with_fixed_sum_maximum": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_analytic_geometry.linear_form_max_on_disc": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ring_theory.fraction_field_universal_property": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.internally_tangent_iff_center_distance": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.tangent_iff_perpendicular_radius": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": [
+    "statement: math-like text outside $: _acefgimnopqtu"
+   ]
+  },
+  "textbook.school_sequences.arith_common_terms_lcm": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.complex_analysis.cauchy_riemann_sufficient": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.real_analysis.lub_add": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.advanced_undergrad.lowenheim_skolem_up_and_down": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_plane.parallel_of_alternate_angles": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_vectors_complex.line_plane_intersection_parameter": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.fourier_convex_numeric.poisson_summation_power_decay": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_analytic_geometry.quadratic_graph_vertex_form_focus_directrix": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.calculus_single.integral_logarithmic_derivative": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_quadratic.root_count_by_discriminant": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_exp_log.leading_digit_iff_common_log_bounds": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_data_logic.data_standardized_mean_variance": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_homotopy.covering_path_lifting": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ring_theory.euclidean_domain_is_pid": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.complex_analysis.principal_log_exp": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_calculus.contraction_recurrence_limit": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_trigonometry.sinusoid_period": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.topology_general.hausdorff_sequence_limit_unique": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_plane.three_perpendiculars_converse_foot": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.linear_advanced.gram_schmidt_orthonormalization": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ring_theory.eisenstein_integer_monic_over_rat": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.similar_triangles_side_ratio_cross": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.logic_sets.cardinal_power_laws": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_polynomials.real_cubic_factorization_from_nonreal_root": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.complex_analysis.riemann_removable_singularity": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.group_theory.second_isomorphism_theorem": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_plane.parallel_of_corresponding_angles": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.ring_theory.ring_hom_injective_iff_ker_bot": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_homotopy.covering_lift_uniqueness": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_homotopy.pythagoras_angle_iff": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.real_analysis.cauchy_product": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.probability_statistics.strong_law_large_numbers": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_homotopy.parallelogram_law_norm": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.central_angle_plus_twice_inscribed_opposite_side": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.modules_categories.five_lemma_modules": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_integers.consecutive_product_even": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.calculus_single.fixed_point_unit_interval": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.functional_analysis.compact_unit_ball_implies_finite_dimensional": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.calculus_single.limit_unique": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_counting_probability.total_prob_uniform_two": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.number_theory.gcd_mul_lcm": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_plane.line_perpendicular_plane_criterion": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.tangent_chord_angle_converse": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.entrance_exam.power_swap_equation_integer_solution": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_triangle.similar_triangles_area_ratio_sine_form": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.school_exp_log.digit_count_of_power_floor_formula": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_plane.rhombus_diagonals_perpendicular": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.modules_categories.adjunction_hom_bijection": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.field_galois.abel_ruffini_solvable_by_radicals_implies_solvable_group": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.geometry_circle.two_circles_common_point_exists_in_plane": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.advanced_undergrad.lie_jacobi_cyclic_sum": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  },
+  "textbook.logic_sets.contrapositive_iff": {
+   "stage": "contract",
+   "error": null,
+   "text_lint": []
+  }
+ },
+ "xml_collisions": []
+}

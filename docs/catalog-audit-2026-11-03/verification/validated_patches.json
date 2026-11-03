@@ -1,0 +1,1601 @@
+{
+ "advanced_undergrad.schur_intertwiner_bijective_or_zero": {
+  "openmath": "(forall (k G V W r s f) (-> (and (field k) (monoid G) (linear_representation r k G V) (linear_representation s k G W) (irreducible_representation r) (irreducible_representation s) (intertwining_map f r s)) (or (bijective f) (= f 0))))"
+ },
+ "advanced_undergrad.schur_endomorphism_is_scalar": {
+  "openmath": "(forall (k G V r f) (-> (and (field k) (algebraically_closed k) (monoid G) (finite_dim_space V) (linear_representation r k G V) (irreducible_representation r) (intertwining_map f r r)) (exists (c) (and (in c k) (forall (v) (-> (in v V) (= (fn_value f v) (scalar_action c v))))))))"
+ },
+ "advanced_undergrad.lie_jacobi_cyclic_sum": {
+  "statement_en": "In a Lie ring L, [x,[y,z]] + [y,[z,x]] + [z,[x,y]] = 0 for all x, y, z (the Jacobi identity).",
+  "assumptions": [
+   "$L$はリー環"
+  ]
+ },
+ "advanced_undergrad.lie_ideal_bracket_le_inf": {
+  "answer": "$L$を可換環$R$上のリー代数、$I,J$を$L$のイデアルとする。$[I,J]$は$[x,y]$($x\\in I$, $y\\in J$)をすべて含む最小のイデアルである。$x\\in I$, $y\\in J$とする。$J$はイデアルなので$[x,y]\\in J$である。反可換性より$[x,y]=-[y,x]$であり、$I$はイデアルなので$[y,x]\\in I$である。よって$[x,y]\\in I\\cap J$である。$I$と$J$がともにイデアルなので$I\\cap J$もイデアルである。したがって$[x,y]$をすべて含む最小のイデアル$[I,J]$は$I\\cap J$に含まれる。"
+ },
+ "advanced_undergrad.cyclotomic_norm_zeta_sub_one": {
+  "statement": "$p$を奇素数、$K$を$\\mathbb{Q}$に$1$の原始$p$乗根を添加した円分体(第$p$円分体)、$\\zeta$を$K$の原始$p$乗根とする。整数環における$\\zeta-1$の$\\mathbb{Z}$へのノルムは$p$である。",
+  "assumptions": [
+   "$p$は奇素数",
+   "$K$は$\\mathbb{Q}$の第$p$円分体",
+   "$\\zeta$は$K$の原始$p$乗根"
+  ]
+ },
+ "advanced_undergrad.cyclotomic_integers_are_z_zeta": {
+  "statement": "$n$を正の整数、$K$を$\\mathbb{Q}$に$1$の原始$n$乗根を添加した円分体(第$n$円分体)、$\\zeta$を$K$の原始$n$乗根とする。$K$の元が代数的整数であることは、$\\mathbb{Z}[\\zeta]$に属することと同値である。",
+  "assumptions": [
+   "$n$は正の整数",
+   "$K$は$\\mathbb{Q}$の第$n$円分体",
+   "$\\zeta$は$K$の原始$n$乗根"
+  ]
+ },
+ "advanced_undergrad.lowenheim_skolem_up_and_down": {
+  "hard_negative": {
+   "statement": "無限構造Mと任意の無限基数κに対し、Mと初等同値で濃度κの構造がある。言語の濃度は問わない。",
+   "reason": "言語が非可算個の定数記号$c_i$をもち、$M$で$c_i\\neq c_j$($i\\neq j$)がすべて成り立つとする。各$c_i\\neq c_j$は$M$で成り立つ文なので、$M$と初等同値な構造はこれらをすべて満たし、非可算でなければならない。よって$\\kappa=\\aleph_0$では成り立たない。"
+  }
+ },
+ "advanced_undergrad.homology_map_functorial": {
+  "openmath": "(forall (C K L M f g i) (-> (and (homological_complex K C) (homological_complex L C) (homological_complex M C) (has_homology K i) (has_homology L i) (has_homology M i) (chain_map f K L) (chain_map g L M)) (and (= (homology_map (morphism_comp f g) i) (morphism_comp (homology_map f i) (homology_map g i))) (= (homology_map (identity_morphism K) i) (identity_morphism (homology_object K i))))))"
+ },
+ "advanced_undergrad.homotopic_chain_maps_same_homology": {
+  "openmath": "(forall (C K L f g i) (-> (and (preadditive_category C) (homological_complex K C) (homological_complex L C) (has_homology K i) (has_homology L i) (chain_map f K L) (chain_map g K L) (chain_homotopic f g)) (= (homology_map f i) (homology_map g i))))"
+ },
+ "calculus_single.limit_unique": {
+  "hard_negative": {
+   "statement": "$x\\to a$（$x\\neq a$）で$f(x)\\to L$ならば、$L=f(a)$である。",
+   "reason": "$x\\neq0$で$f(x)=0$、$f(0)=1$とすると、$x\\to0$（$x\\neq0$）の極限は$0$だが$f(0)=1$である。この極限は$a$での値と無関係である。"
+  }
+ },
+ "calculus_single.monotone_right_limit_exists": {
+  "openmath": "(forall (f a) (-> (fn_monotone (lambda (x) (fn_value f x))) (exists (m S) (and (forall (y) (<-> (in y S) (exists (x) (and (> x a) (= y (fn_value f x)))))) (is_glb S m) (fn_right_limit_at (lambda (x) (fn_value f x)) a m)))))"
+ },
+ "calculus_single.fixed_point_unit_interval": {
+  "statement": "$a\\leq b$とし、$f:\\mathbb{R}\\to\\mathbb{R}$が$[a,b]$で連続で$f([a,b])\\subset[a,b]$ならば、$f(c)=c$となる$c\\in[a,b]$が存在する。",
+  "statement_en": "If a ≤ b, f is continuous on [a,b] and maps [a,b] into itself, then f has a fixed point c in [a,b].",
+  "assumptions": [
+   "$a\\leq b$",
+   "$f$は$[a,b]$で連続",
+   "$x\\in[a,b]$ならば$f(x)\\in[a,b]$"
+  ],
+  "quantifiers": [
+   "任意の$f:\\mathbb{R}\\to\\mathbb{R}$と$a,b\\in\\mathbb{R}$",
+   "ある$c\\in[a,b]$"
+  ],
+  "conclusion": "$f(c)=c$となる$c\\in[a,b]$が存在する。",
+  "answer": "$a\\leq b$とし、$f:\\mathbb{R}\\to\\mathbb{R}$は$[a,b]$で連続で、$x\\in[a,b]$ならば$f(x)\\in[a,b]$を満たすとする。$g(x)=f(x)-x$とおくと、$g$は$[a,b]$で連続である。$f(a)\\geq a$より$g(a)\\geq0$であり、$f(b)\\leq b$より$g(b)\\leq0$である。中間値の定理（$[a,b]$で連続な関数は$g(a)$と$g(b)$の間の値を$[a,b]$上でとる）より、$g(c)=0$となる$c\\in[a,b]$が存在する。この$c$が$f(c)=c$を満たす。\n",
+  "openmath": "(forall (f a b) (-> (and (<= a b) (fn_continuous_on (lambda (x) (fn_value f x)) (closed_interval a b)) (forall (x) (-> (in x (closed_interval a b)) (in (fn_value f x) (closed_interval a b))))) (exists (c) (and (in c (closed_interval a b)) (= (fn_value f c) c)))))",
+  "hard_negative": {
+   "statement": "$f$が開区間$(a,b)$で連続で$(a,b)$を$(a,b)$の中へ写すならば不動点をもつ。",
+   "reason": "$a<b$のとき$f(x)=(x+a)/2$は$(a,b)$を$(a,b)$の中へ写す連続関数だが、不動点は$a$だけで$(a,b)$に属さない。閉区間であることが必要である。"
+  },
+  "target": "∀ (f : ℝ → ℝ) (a b : ℝ), a ≤ b → ContinuousOn f (Set.Icc a b) → (∀ x ∈ Set.Icc a b, f x ∈ Set.Icc a b) → ∃ c ∈ Set.Icc a b, f c = c",
+  "proof": "by\n  intro f a b hab hf hm\n  have hg : ContinuousOn (fun x => f x - x) (Set.Icc a b) := hf.sub continuousOn_id\n  have h0 := (hm a (Set.left_mem_Icc.mpr hab)).1\n  have h1 := (hm b (Set.right_mem_Icc.mpr hab)).2\n  obtain ⟨c, hc, e⟩ := intermediate_value_Icc' hab hg (show (0 : ℝ) ∈ Set.Icc (f b - b) (f a - a) from ⟨by linarith, by linarith⟩)\n  exact ⟨c, hc, by simpa [sub_eq_zero] using e⟩\n"
+ },
+ "calculus_single.log_composite_derivative": {
+  "hard_negative": {
+   "statement": "$f$が$a$で微分可能で$f(a)\\geq0$ならば、$x\\mapsto\\log f(x)$は$a$で微分可能である。",
+   "reason": "$f(x)=x$、$a=0$では$f(a)=0$で、$\\log x$は$0$の近くで$-\\infty$へ発散するので$0$で微分可能でない。$f(a)>0$という仮定が必要である。"
+  }
+ },
+ "calculus_single.second_derivative_test_maximum": {
+  "statement": "$\\delta>0$とし、$f,g:\\mathbb{R}\\to\\mathbb{R}$について、$|x-a|<\\delta$の各点$x$で$f$の微分係数が$g(x)$であり、$g(a)=0$で、$g$の$a$での微分係数$u$が負ならば、$f$は$a$で極大をとる。",
+  "statement_en": "If δ > 0, f has derivative g(x) at every x with |x-a| < δ, g(a) = 0, and g has derivative u < 0 at a, then f has a local maximum at a.",
+  "assumptions": [
+   "$\\delta>0$",
+   "$|x-a|<\\delta$の各点$x$で$f$の微分係数は$g(x)$",
+   "$g(a)=0$",
+   "$g$の$a$での微分係数は$u$",
+   "$u<0$"
+  ],
+  "quantifiers": [
+   "任意の$f,g:\\mathbb{R}\\to\\mathbb{R}$と$a,u,\\delta\\in\\mathbb{R}$"
+  ],
+  "answer": "$\\delta>0$とし、$f,g:\\mathbb{R}\\to\\mathbb{R}$、$a,u\\in\\mathbb{R}$とする。$|x-a|<\\delta$の各点$x$で$f$の微分係数は$g(x)$であり、$g(a)=0$、$g$の$a$での微分係数は$u<0$であるとする。\n$g(a)=0$より、$x\\to a$で$g(x)/(x-a)=(g(x)-g(a))/(x-a)\\to u<0$である。よってある$\\delta'\\in(0,\\delta]$があって、$0<|x-a|<\\delta'$で$g(x)/(x-a)<0$となる。すなわち$(a-\\delta',a)$で$g>0$、$(a,a+\\delta')$で$g<0$である。\n$x\\in(a-\\delta',a)$なら、$f$は$[x,a]$で微分可能なので連続であり、平均値の定理より$f(a)-f(x)=g(c)(a-x)$となる$c\\in(x,a)$がある。$g(c)>0$より$f(x)<f(a)$である。$x\\in(a,a+\\delta')$なら、同様に$f(x)-f(a)=g(c)(x-a)$となる$c\\in(a,x)$があり、$g(c)<0$より$f(x)<f(a)$である。よって$f$は$a$で極大をとる。\n",
+  "openmath": "(forall (f g a u d) (-> (and (> d 0) (forall (x) (-> (< (abs (- x a)) d) (has_deriv_at (lambda (t) (fn_value f t)) (fn_value g x) x))) (= (fn_value g a) 0) (has_deriv_at (lambda (x) (fn_value g x)) u a) (< u 0)) (local_max_at (lambda (x) (fn_value f x)) a)))",
+  "target": "∀ (f g : ℝ → ℝ) (a u δ : ℝ), 0 < δ → (∀ x : ℝ, |x - a| < δ → HasDerivAt f (g x) x) → g a = 0 → HasDerivAt g u a → u < 0 → IsLocalMax f a",
+  "proof": "by\n  intro f g a u δ hδ hf hg0 hg hu\n  have hnear : ∀ x : ℝ, |x - a| < δ → deriv f x = g x := fun x hx => (hf x hx).deriv\n  have hev : deriv f =ᶠ[nhds a] g := by\n    have : ∀ᶠ x in nhds a, |x - a| < δ := by\n      have : Metric.ball a δ ∈ nhds a := Metric.ball_mem_nhds a hδ\n      filter_upwards [this] with x hx\n      simpa [Real.dist_eq] using hx\n    filter_upwards [this] with x hx using hnear x hx\n  have h2 : HasDerivAt (deriv f) u a := hg.congr_of_eventuallyEq hev\n  have h0 : deriv f a = 0 := by rw [hnear a (by simpa using hδ), hg0]\n  have hca : ContinuousAt f a := (hf a (by simpa using hδ)).continuousAt\n  exact isLocalMax_of_deriv_deriv_neg (by rw [h2.deriv]; exact hu) h0 hca\n"
+ },
+ "calculus_single.integral_logarithmic_derivative": {
+  "hard_negative": {
+   "statement": "$f$が閉区間内で$0$になっても同じ公式が成り立つ。",
+   "reason": "$f(x)=x$、$g(x)=1$、区間$[0,2]$では、$1/x$は$0$の近くで積分可能でなく、$\\log f(0)$も定義されない。分母が$0$になる点では公式は意味をもたない。"
+  }
+ },
+ "calculus_single.riemann_sum_convergence": {
+  "hard_negative": {
+   "statement": "$f$が$[a,b]$で有界であれば、等分の左端点リーマン和は常に積分に収束する。",
+   "reason": "$[0,1]$上のディリクレ関数（有理数で$1$、無理数で$0$）は有界である。分点$k/(n+1)$は全て有理数なので左端点リーマン和は常に$1$だが、積分は$0$である。連続性（または積分可能性）が必要である。"
+  }
+ },
+ "combinatorics_graphs.weighted_sum_binomials": {
+  "statement": "自然数$n$について$2\\sum_{k=0}^{n}k\\binom{n}{k}=n\\,2^n$である。",
+  "statement_en": "For a natural number n, 2·Σ_{k=0}^{n} k·C(n, k) = n·2^n.",
+  "conclusion": "$2\\sum_{k=0}^{n}k\\binom{n}{k}=n\\,2^n$が成り立つ。",
+  "answer": "$n$を自然数とし、$\\binom{n}{k}$を$n$元集合の$k$元部分集合の個数とする。$n$元集合$X$の部分集合$S$と$S$の元$x$の組$(S,x)$の個数を二通りに数える。$S$を先に選ぶと、$|S|=k$のとき$x$は$k$通りなので、総数は$\\sum_{k=0}^{n}k\\binom{n}{k}$である。$x$を先に選ぶと$n$通りで、$S\\setminus\\{x\\}$は$X\\setminus\\{x\\}$の任意の部分集合なので$2^{n-1}$通りである（$n\\geq1$）。よって$n\\geq1$のとき総数は$n2^{n-1}$であり、両辺を$2$倍して$2\\sum_{k=0}^{n}k\\binom{n}{k}=n2^n$を得る。$n=0$では両辺とも$0$である。",
+  "openmath": "(forall (n) (-> (in n N) (= (* 2 (sum (integer_range 0 n) (lambda (k) (* k (binom n k))))) (* n (^ 2 n)))))",
+  "hard_negative": {
+   "statement": "$\\sum_{k=0}^{n}k\\binom{n}{k}=n\\,2^n$である。",
+   "reason": "$n=1$では左辺が$1$、右辺が$2$である。$2$倍した左辺が$n2^n$に等しく、$2$倍を落とすと$n2^{n-1}$になる。"
+  },
+  "target": "∀ n : ℕ, 2 * ∑ k ∈ Finset.range (n + 1), k * n.choose k = n * 2 ^ n",
+  "proof": "by\n  intro n\n  cases n with\n  | zero => simp\n  | succ n =>\n    rw [Nat.sum_range_mul_choose]\n    simp only [Nat.add_sub_cancel, pow_succ]\n    ring"
+ },
+ "combinatorics_graphs.power_series_negative_binomial": {
+  "openmath": "(forall (S d) (-> (and (comm_ring S) (in d N)) (= (* (formal_power_series_over S (lambda (n) (binom (+ d n) d))) (^ (- 1 (power_series_var S)) (+ d 1))) 1)))"
+ },
+ "combinatorics_graphs.turan_edge_bound": {
+  "target": "∀ (V : Type*) [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj] (r : ℕ), 0 < r → G.CliqueFree (r + 1) → (G.edgeFinset.card : ℚ) ≤ (((Fintype.card V ^ 2 - (Fintype.card V % r) ^ 2) * (r - 1) : ℕ) : ℚ) / ((2 * r : ℕ) : ℚ) + (((Fintype.card V % r).choose 2 : ℕ) : ℚ)",
+  "proof": "by\n  intro V _ G _ r hr h\n  have h1 : G.edgeFinset.card ≤ ((Fintype.card V ^ 2 - (Fintype.card V % r) ^ 2) * (r - 1)) / (2 * r) + (Fintype.card V % r).choose 2 := h.card_edgeFinset_le\n  have h2 : ((((Fintype.card V ^ 2 - (Fintype.card V % r) ^ 2) * (r - 1)) / (2 * r) : ℕ) : ℚ) ≤ (((Fintype.card V ^ 2 - (Fintype.card V % r) ^ 2) * (r - 1) : ℕ) : ℚ) / ((2 * r : ℕ) : ℚ) := Nat.cast_div_le\n  have h3 : (G.edgeFinset.card : ℚ) ≤ ((((Fintype.card V ^ 2 - (Fintype.card V % r) ^ 2) * (r - 1)) / (2 * r) : ℕ) : ℚ) + (((Fintype.card V % r).choose 2 : ℕ) : ℚ) := by exact_mod_cast h1\n  linarith"
+ },
+ "commutative_algebra.zero_divisors_union_associated_primes": {
+  "openmath": "(forall (R M r) (-> (and (comm_ring R) (noetherian_ring R) (module_over M R) (in r R)) (<-> (exists (x) (and (in x M) (!= x (module_zero M)) (= (module_smul r x) (module_zero M)))) (exists (P) (and (in P (associated_primes R M)) (in r P))))))",
+  "hard_negative": {
+   "statement": "ネーターでない可換環上でも、零因子全体は(Ann(x)=Pの形で定まる)随伴素イデアルの和集合に等しい。",
+   "reason": "R=k[x_1,x_2,…]/(x_1^2,x_2^2,…)の唯一の素イデアル$(x_1,x_2,\\dots)$はどの元$a$の零化イデアル$\\operatorname{Ann}(a)$にもならない(0でない$a$に現れない変数$x_j$を掛けると0にならない)。よってAnn(x)の形の随伴素イデアルは存在しないが、x_1は零因子である。"
+  }
+ },
+ "commutative_algebra.integral_over_integral_closure_is_integral": {
+  "answer": "$R,A$を可換環、$A$を$R$代数、$C$を$R$上整な$A$の元全体とし、$x\\in A$は$C$上整とする。\n$x$は$C$係数のモニック多項式の根であり、その係数を$c_0,\\dots,c_{n-1}$とする。各$c_i$は$R$上整である。$R_0=R$, $R_{k+1}=R_k[c_k]$($k=0,\\dots,n-1$)とおく。$c_k$は$R$上整なので$R_k$上整であり、その整方程式の次数を$d_k$とすると、$R_{k+1}$は$1,c_k,\\dots,c_k^{d_k-1}$で生成される$R_k$加群である。有限生成加群上の有限生成加群は、生成元どうしの積を生成元に取れば有限生成なので、$R'=R_n=R[c_0,\\dots,c_{n-1}]$は有限生成$R$加群である。$x$は$R'$上整なので、$R'[x]$は$1,x,\\dots,x^{n-1}$で生成される$R'$加群であり、したがって有限生成$R$加群である。\n$R'[x]$は$1$を含む部分$R$代数なので、行列式の議論を使う。生成元$b_1,\\dots,b_k$について$xb_i=\\sum_ja_{ij}b_j$($a_{ij}\\in R$の像)と書くと、$\\det(xE-(a_{ij}))$がすべての$b_i$を消すので$0$である($1$は$b_i$の線形結合だから)。これは$x$についてのモニックな方程式なので、$x$は$R$上整である。",
+  "hard_negative": {
+   "statement": "$x$が$R$の$A$における整閉包$C$上で代数的(非モニックな多項式の根)であれば、$x$は$R$上整である。",
+   "reason": "モニックの仮定が必要である。$R=\\mathbb{Z}$, $A=\\mathbb{Q}$では$C=\\mathbb{Z}$で、$x=1/2$は$2x-1=0$を満たす($\\mathbb{Z}$係数の非モニック式の根)が、$\\mathbb{Z}$上整でない。"
+  }
+ },
+ "commutative_algebra.dedekind_contains_iff_divides": {
+  "openmath": "(forall (A I J) (-> (and (dedekind_domain A) (ideal_of I A) (ideal_of J A)) (<-> (exists (L) (and (ideal_of L A) (= J (ideal_mul I L)))) (subset J I))))"
+ },
+ "complex_analysis.exp_eq_one_iff": {
+  "openmath": "(forall (z) (-> (in z C) (<-> (= (exp z) 1) (exists (n) (and (in n Z) (= z (* n (* 2 (* pi complex_imaginary_unit)))))))))"
+ },
+ "complex_analysis.euler_formula": {
+  "statement": "複素数$z$について、$e^{iz}=\\cos z+i\\sin z$が成り立つ。",
+  "statement_en": "For every complex number z, exp(iz) = cos z + i sin z.",
+  "assumptions": [
+   "$z\\in\\mathbb{C}$"
+  ],
+  "quantifiers": [
+   "任意の$z\\in\\mathbb{C}$"
+  ],
+  "conclusion": "$e^{iz}=\\cos z+i\\sin z$が成り立つ。",
+  "answer": "$z\\in\\mathbb{C}$とする。絶対収束するべき級数$e^w=\\sum_{n\\geq 0}w^n/n!$に$w=iz$を代入する。$i^{2m}=(-1)^m$、$i^{2m+1}=(-1)^m i$であり、絶対収束するので偶数次と奇数次の項に分けてよい。すると$e^{iz}=\\sum_{m\\geq 0}(-1)^m z^{2m}/(2m)!+i\\sum_{m\\geq 0}(-1)^m z^{2m+1}/(2m+1)!$となる。右辺の二つの和は、複素数の余弦と正弦をべき級数$\\cos z=\\sum_{m\\geq 0}(-1)^m z^{2m}/(2m)!$、$\\sin z=\\sum_{m\\geq 0}(-1)^m z^{2m+1}/(2m+1)!$で定めたものに等しいので、等式が成り立つ。",
+  "openmath": "(forall (z) (-> (in z C) (= (exp (* z complex_imaginary_unit)) (+ (cos z) (* complex_imaginary_unit (sin z))))))",
+  "target": "∀ (z : ℂ), Complex.exp (z * Complex.I) = Complex.cos z + Complex.sin z * Complex.I",
+  "proof": "by\n  intro z\n  exact Complex.exp_mul_I z"
+ },
+ "complex_analysis.roots_of_unity_explicit": {
+  "openmath": "(forall (n z) (-> (and (in n N) (> n 0) (in z C)) (<-> (= (^ z n) 1) (exists (k) (and (in k N) (< k n) (= z (exp (/ (* 2 (* pi (* complex_imaginary_unit k))) n))))))))"
+ },
+ "complex_analysis.principal_log_exp": {
+  "openmath": "(forall (z) (-> (and (in z C) (< (neg pi) (imag_part z)) (<= (imag_part z) pi)) (= (principal_log (exp z)) z)))"
+ },
+ "complex_analysis.cauchy_riemann_sufficient": {
+  "topic": "複素微分・実微分可能性と複素線形性(コーシー・リーマン条件の作用素形)"
+ },
+ "complex_analysis.circle_integral_simple_pole": {
+  "openmath": "(forall (c w R) (-> (in w (open_disc c R)) (= (circle_integral (lambda (z) (/ 1 (- z w))) c R) (* 2 (* pi complex_imaginary_unit)))))"
+ },
+ "complex_analysis.circle_integral_ml_bound": {
+  "openmath": "(forall (f c R B) (-> (and (>= R 0) (continuous_on_set f (circle_set c R)) (forall (z) (-> (in z (circle_set c R)) (<= (abs (fn_value f z)) B)))) (<= (abs (circle_integral (lambda (z) (fn_value f z)) c R)) (* 2 (* pi (* R B))))))"
+ },
+ "complex_analysis.cauchy_integral_formula_disc": {
+  "openmath": "(forall (f c w R) (-> (and (> R 0) (holomorphic_on f (open_disc c R)) (continuous_on_set f (closed_disc c R)) (in w (open_disc c R))) (= (circle_integral (lambda (z) (/ (fn_value f z) (- z w))) c R) (* 2 (* pi (* complex_imaginary_unit (fn_value f w)))))))"
+ },
+ "complex_analysis.cauchy_derivative_formula": {
+  "openmath": "(forall (f U c w R) (-> (and (open_set U) (subset (closed_disc c R) U) (holomorphic_on f U) (in w (open_disc c R))) (= (complex_deriv f w) (/ (circle_integral (lambda (z) (/ (fn_value f z) (^ (- z w) 2))) c R) (* 2 (* pi complex_imaginary_unit))))))"
+ },
+ "complex_analysis.holomorphic_mean_value_property": {
+  "openmath": "(forall (f c R) (-> (and (> R 0) (holomorphic_on f (open_disc c R)) (continuous_on_set f (closed_disc c R))) (= (fn_value f c) (* (/ 1 (* 2 pi)) (interval_integral 0 (* 2 pi) (lambda (t) (fn_value f (+ c (* R (exp (* complex_imaginary_unit t)))))))))))"
+ },
+ "complex_analysis.fundamental_theorem_of_algebra": {
+  "openmath": "(forall (f) (-> (and (polynomial_over f C) (> (poly_degree f) 0)) (exists (z) (and (in z C) (= (poly_eval f z) 0)))))"
+ },
+ "complex_analysis.riemann_removable_singularity": {
+  "statement": "開集合$s\\subset\\mathbb{C}$の点$c$について、$f$が$s\\setminus\\{c\\}$で正則であり、$c$の近くで($c$自身を除いて)有界ならば、$s$全体で正則で$s\\setminus\\{c\\}$で$f$に一致する関数$g$が存在する(リーマンの除去可能特異点定理)。",
+  "statement_en": "If s is an open set containing c, f is holomorphic on s minus {c}, and f is bounded on some punctured neighbourhood of c, then there is a function g holomorphic on s that agrees with f on s minus {c}.",
+  "assumptions": [
+   "$s\\subset\\mathbb{C}$は開集合",
+   "$c\\in s$",
+   "$f$は$s\\setminus\\{c\\}$で正則",
+   "ある$M\\in\\mathbb{R}$と$\\rho>0$があり、$0<|z-c|<\\rho$を満たす全ての$z$で$|f(z)|\\leq M$"
+  ],
+  "quantifiers": [
+   "任意の関数$f:\\mathbb{C}\\to\\mathbb{C}$",
+   "任意の集合$s\\subset\\mathbb{C}$",
+   "任意の$c\\in\\mathbb{C}$",
+   "ある関数$g:\\mathbb{C}\\to\\mathbb{C}$"
+  ],
+  "answer": "$s\\subset\\mathbb{C}$を開集合、$c\\in s$とし、$f$は$s\\setminus\\{c\\}$で正則で、ある$M\\in\\mathbb{R}$と$\\rho_0>0$について$0<|z-c|<\\rho_0$なら$|f(z)|\\leq M$であるとする。$s$は開集合なので、開円板$D=\\{z\\mid|z-c|<\\rho\\}$が$s$に含まれ$0<\\rho\\leq\\rho_0$となる$\\rho$がとれる。このとき$D\\setminus\\{c\\}$上で$|f|\\leq M$である。\n$z\\neq c$で$h(z)=(z-c)^2 f(z)$、$h(c)=0$と定める。$h$は$s\\setminus\\{c\\}$で正則である。また$z\\in D\\setminus\\{c\\}$で$\\left|\\frac{h(z)-h(c)}{z-c}\\right|=|z-c||f(z)|\\leq M|z-c|$なので、$h$は$c$でも複素微分可能で$h'(c)=0$である。よって$h$は$s$全体で正則である。\n$D$上でテイラー展開により$h(z)=\\sum_{n\\geq 0}a_n(z-c)^n$と書ける。$a_0=h(c)=0$、$a_1=h'(c)=0$である。$k(z)=\\sum_{n\\geq 2}a_n(z-c)^{n-2}$は$D$で収束するべき級数なので正則であり、$h(z)=(z-c)^2 k(z)$である。$z\\in D\\setminus\\{c\\}$では$k(z)=f(z)$である。\n$z\\in s\\setminus\\{c\\}$で$g(z)=f(z)$、$g(c)=k(c)$と定める。$s\\setminus\\{c\\}$は開集合なので$g$はそこで正則であり、$D$上で$g=k$なので$c$でも正則である。よって$g$が求める関数である。",
+  "openmath": "(forall (f s c) (-> (and (open_set s) (in c s) (holomorphic_on f (setdiff s (set c))) (exists (M r) (and (> r 0) (forall (z) (-> (and (in z (open_disc c r)) (!= z c)) (<= (abs (fn_value f z)) M)))))) (exists (g) (and (holomorphic_on g s) (forall (z) (-> (in z (setdiff s (set c))) (= (fn_value g z) (fn_value f z))))))))",
+  "target": "∀ (f : ℂ → ℂ) (s : Set ℂ) (c : ℂ), IsOpen s → c ∈ s → DifferentiableOn ℂ f (s \\ {c}) → (∃ M : ℝ, ∀ᶠ z in nhdsWithin c {c}ᶜ, ‖f z‖ ≤ M) → ∃ g : ℂ → ℂ, DifferentiableOn ℂ g s ∧ ∀ z ∈ s \\ {c}, g z = f z",
+  "proof": "by\n  intro f s c hs hc hd hb\n  obtain ⟨M, hM⟩ := hb\n  refine ⟨Function.update f c (Filter.limUnder (nhdsWithin c {c}ᶜ) f), ?_, ?_⟩\n  · apply Complex.differentiableOn_update_limUnder_of_isLittleO (hs.mem_nhds hc) hd\n    apply Filter.IsBoundedUnder.isLittleO_sub_self_inv\n    refine ⟨M + ‖f c‖, Filter.eventually_map.2 (hM.mono fun z hz => ?_)⟩\n    exact norm_sub_le_of_le hz le_rfl\n  · intro z hz\n    exact Function.update_of_ne (fun h => hz.2 (by simp [h])) _ _"
+ },
+ "entrance_exam.sqrt_two_add_sqrt_three_irrational": {
+  "statement": "$\\sqrt{2}+\\sqrt{3}$は無理数である。"
+ },
+ "entrance_exam.log_ten_two_irrational": {
+  "statement": "$\\log_{10}2=\\dfrac{\\log 2}{\\log 10}$（$\\log$は自然対数）は無理数である。"
+ },
+ "entrance_exam.cos_twenty_degrees_irrational": {
+  "statement": "$\\cos 20^\\circ$は無理数である。"
+ },
+ "entrance_exam.cube_root_two_irrational": {
+  "statement": "$2$の$3$乗根は無理数である。"
+ },
+ "entrance_exam.exp_one_gt_two_point_seven": {
+  "statement": "自然対数の底$e$は$e>2.7$をみたす。"
+ },
+ "entrance_exam.pi_between_three_point_one_and_three_point_two": {
+  "statement": "円周率$\\pi$は$3.1<\\pi<3.2$をみたす。"
+ },
+ "entrance_exam.log_ten_two_between_bounds": {
+  "statement": "$\\dfrac{3}{10}<\\log_{10}2<\\dfrac{1}{3}$である。"
+ },
+ "entrance_exam.exp_pi_gt_pi_exp": {
+  "statement": "$\\pi^e<e^\\pi$である。",
+  "answer": "$e$を自然対数の底、$\\pi$を円周率とする。$x>0$、$x\\neq 1$では$\\log x<x-1$である。実際、$f(x)=x-1-\\log x$は$f^{\\prime}(x)=1-\\dfrac{1}{x}$より$x=1$でのみ最小値$0$をとる。\n$e=\\sum_{k\\geq 0}\\dfrac{1}{k!}$で、$k\\geq 2$では$k!\\geq 2^{k-1}$（$k\\geq 3$では真に大きい）なので$e<1+1+\\dfrac{1}{2}+\\dfrac{1}{4}+\\cdots=3$である。また円に内接する正六角形の周の長さ$6$は円周$2\\pi$より短いので$\\pi>3$である。よって$e<3<\\pi$であり、$\\dfrac{\\pi}{e}\\neq 1$なので、$x=\\dfrac{\\pi}{e}$を代入すると$\\log\\pi-1<\\dfrac{\\pi}{e}-1$、すなわち$e\\log\\pi<\\pi$を得る。指数関数は増加関数なので、$\\pi^e=\\exp(e\\log\\pi)<\\exp(\\pi)=e^\\pi$である。\n"
+ },
+ "entrance_exam.prime_square_add_two_prime": {
+  "statement": "素数$p$について、$p^2+2$が素数であることと$p=3$であることは同値である。"
+ },
+ "entrance_exam.three_unit_fractions_sum_one": {
+  "statement": "$a\\leq b\\leq c$をみたす正の整数について、$\\dfrac{1}{a}+\\dfrac{1}{b}+\\dfrac{1}{c}=1$となるのは$(a,b,c)=(2,3,6),(2,4,4),(3,3,3)$のときに限る。"
+ },
+ "entrance_exam.pythagorean_product_divisible_by_sixty": {
+  "answer": "$a,b,c$を$a^2+b^2=c^2$をみたす整数とする。$3,4,5$が$abc$を割り切ることを順に示す。\n$3$で割り切れない整数の平方は$3$を法として$1$である。$a,b,c$がどれも$3$で割り切れないと左辺は$1+1\\equiv 2\\pmod 3$、右辺は$c^2\\equiv 1\\pmod 3$となって合わないので、$3$は$abc$を割り切る。\n$5$で割り切れない整数の平方は$5$を法として$\\pm 1$である。$a,b,c$がどれも$5$で割り切れないと、左辺は$5$を法として$0$か$\\pm 2$であり、$c^2\\equiv\\pm 1$に合わない。よって$5$は$abc$を割り切る。\n$a,b$がともに奇数なら$c^2\\equiv 2\\pmod 4$となり不合理である。$a,b$がともに偶数なら$4$は$ab$を割り切る。一方だけが偶数の場合、対称性より$a$を偶数として$b,c$は奇数である。奇数の平方は$8$を法として$1$なので$a^2=c^2-b^2\\equiv 0\\pmod 8$であり、$4$は$a$を割り切る。いずれの場合も$4$は$abc$を割り切る。\n$3,4,5$は互いに素なので、$60$は$abc$を割り切る。\n"
+ },
+ "entrance_exam.no_rational_point_on_circle_radius_sqrt_three": {
+  "statement": "$x^2+y^2=3$をみたす有理数$x,y$は存在しない。"
+ },
+ "entrance_exam.sum_of_factorials_perfect_square": {
+  "statement": "正の整数$n$について、$1!+2!+\\dots+n!$が平方数となるのは$n=1$または$n=3$のときに限る。"
+ },
+ "entrance_exam.power_swap_equation_integer_solution": {
+  "statement": "$a<b$をみたす正の整数$a,b$について、$a^b=b^a$となるのは$(a,b)=(2,4)$のときに限る。"
+ },
+ "entrance_exam.harmonic_sum_not_integer": {
+  "statement": "$n\\geq 2$のとき、$1+\\dfrac{1}{2}+\\dots+\\dfrac{1}{n}$は整数でない。"
+ },
+ "field_galois.algebraic_elements_closed_under_field_operations": {
+  "statement": "$x,y$が体$F$上代数的ならば、$x+y$、$xy$、$-x$も$F$上代数的である。また$x\\neq 0$ならば$x^{-1}$も$F$上代数的である。",
+  "statement_en": "If x and y are algebraic over a field F, then x+y, xy and -x are algebraic over F, and x⁻¹ is algebraic over F whenever x ≠ 0.",
+  "assumptions": [
+   "$E$は体$F$の拡大体",
+   "$x,y\\in E$は$F$上代数的"
+  ],
+  "conclusion": "$x+y$、$xy$、$-x$は$F$上代数的であり、$x\\neq 0$ならば$x^{-1}$も$F$上代数的である。",
+  "answer": "$E$を体$F$の拡大体、$x,y\\in E$を$F$上代数的な元とする。\n\n$x$は$F$上代数的なので$[F(x):F]$は有限である。$y$は$F$上代数的なので$F(x)$上でも代数的であり、$[F(x,y):F(x)]$も有限である。次数公式より$[F(x,y):F]$は有限である。\n\n$F(x,y)$は体なので、$x+y$、$xy$、$-x$はすべて$F(x,y)$の元であり、$x\\neq 0$なら$x^{-1}$も$F(x,y)$の元である。有限次拡大の元は代数的なので、これらは$F$上代数的である。\n",
+  "openmath": "(forall (F E x y) (-> (and (field_extension E F) (in x E) (in y E) (algebraic_over x F) (algebraic_over y F)) (and (algebraic_over (+ x y) F) (algebraic_over (* x y) F) (algebraic_over (neg x) F) (-> (!= x 0) (algebraic_over (/ 1 x) F)))))",
+  "target": "∀ (F E : Type*) [Field F] [Field E] [Algebra F E] (x y : E), IsAlgebraic F x → IsAlgebraic F y → IsAlgebraic F (x + y) ∧ IsAlgebraic F (x * y) ∧ IsAlgebraic F (-x) ∧ (x ≠ 0 → IsAlgebraic F x⁻¹)",
+  "proof": "by\n  intro F E _ _ _ x y hx hy\n  exact ⟨hx.add hy, hx.mul hy, hx.neg, fun _ => hx.inv⟩"
+ },
+ "field_galois.irreducible_separable_iff_derivative_ne_zero": {
+  "hard_negative": {
+   "statement": "$\\mathbb{Q}$上の任意の多項式$f$について、$f'\\neq 0$ならば$f$は分離的である。",
+   "reason": "既約性が必要である。$f=(X-1)^2\\in\\mathbb{Q}[X]$は$f'=2(X-1)\\neq 0$だが、$\\gcd(f,f')=X-1$が定数でないので分離的でない。"
+  }
+ },
+ "field_galois.normal_extension_conjugates_transitive": {
+  "openmath": "(forall (F E x y) (-> (and (normal_extension E F) (in x E) (in y E) (= (minimal_polynomial x F) (minimal_polynomial y F))) (exists (s) (and (in s (aut_group_over E F)) (= (automorphism_apply s x) y)))))"
+ },
+ "field_galois.abel_ruffini_solvable_by_radicals_implies_solvable_group": {
+  "kind": "textbook",
+  "hard_negative": {
+   "statement": "$q\\in F[X]$が既約でなくても、$q(x)=0$を満たす$x\\in E$がべき根で解けるならば$q$のガロア群は可解である。",
+   "reason": "既約性が必要である。$F=\\mathbb{Q}$、$x=0$、$q=X(X^5-4X+2)$とすると、$x\\in F$は自明にべき根で解け$q(0)=0$だが、$q$の分解体は$X^5-4X+2$の分解体であり、そのガロア群$S_5$は可解でない。"
+  }
+ },
+ "fourier_convex_numeric.amgm_two_variables": {
+  "statement": "（2変数の場合）非負実数$a,b$について$\\sqrt{ab}\\leq\\frac{a+b}{2}$が成り立つ。$n$個の場合は別のカード（相加相乗平均の有限族）で扱う。",
+  "statement_en": "(Two-variable form; the n-variable form is a separate card.) For nonnegative reals a and b, sqrt(ab) ≤ (a+b)/2.",
+  "hard_negative": {
+   "statement": "3つの非負実数$a,b,c$についても$\\sqrt{abc}\\leq\\frac{a+b+c}{3}$が成り立つ。",
+   "reason": "指数は項数$n$に応じて$1/n$でなければならず、2変数版の形をそのまま3変数に流用できない。$a=b=c=4$では左辺$\\sqrt{64}=8$、右辺$4$で偽である。3個以上の場合は有限族版を使う。"
+  }
+ },
+ "fourier_convex_numeric.cauchy_schwarz_two_dimensional": {
+  "statement": "（2成分の場合）実数$a,b,c,d$について$(ac+bd)^2\\leq(a^2+b^2)(c^2+d^2)$が成り立つ。成分数が一般の有限和は別のカード（コーシー＝シュワルツの有限和版）で扱う。",
+  "statement_en": "(Two-component form; the general finite-sum form is a separate card.) For real numbers a,b,c,d, (ac+bd)^2 ≤ (a^2+b^2)(c^2+d^2).",
+  "hard_negative": {
+   "statement": "3成分の積和$ac+bd+ef$についても$(ac+bd+ef)^2\\leq(a^2+b^2)(c^2+d^2)$が成り立つ。",
+   "reason": "右辺の和の項数は成分数に合わせる必要がある。$a=b=c=d=0$、$e=f=1$では左辺$1$、右辺$0$で偽である。成分数が一般の場合は有限和版を使う。"
+  }
+ },
+ "fourier_convex_numeric.newton_step_convex_bracket": {
+  "openmath": "(forall (f x r d) (-> (and (convex_function_on f R) (= (fn_value f r) 0) (has_deriv_at (lambda (s) (fn_value f s)) d x) (> d 0) (>= (fn_value f x) 0)) (and (<= r (- x (/ (fn_value f x) d))) (<= (- x (/ (fn_value f x) d)) x))))"
+ },
+ "fourier_convex_numeric.krein_milman_theorem": {
+  "hard_negative": {
+   "statement": "コンパクト凸集合はその端点全体の凸包に等しい（閉包は不要である）。",
+   "reason": "閉包は外せない。$\\ell^2$で$s=\\overline{\\mathrm{conv}}(\\{0\\}\\cup\\{e_n/n\\mid n\\geq1\\})$はコンパクト凸で、端点は$\\{0\\}\\cup\\{e_n/n\\}$に含まれる。$x=\\sum_{n\\geq1}2^{-n}(e_n/n)$は$s$の点だが非零成分が無限個あり、端点の有限凸結合では書けないので$\\operatorname{conv}(\\operatorname{ext}s)$に属さない。"
+  }
+ },
+ "fourier_convex_numeric.banach_fixed_point_real_constant": {
+  "openmath": "(forall (X f K) (-> (and (metric_space X) (complete_space X) (exists (z) (in z X)) (forall (x) (-> (in x X) (in (fn_value f x) X))) (>= K 0) (< K 1) (forall (x y) (-> (and (in x X) (in y X)) (<= (dist_of (fn_value f x) (fn_value f y)) (* K (dist_of x y)))))) (exists (x) (and (in x X) (= (fn_value f x) x) (forall (y) (-> (and (in y X) (= (fn_value f y) y)) (= y x)))))))"
+ },
+ "fourier_convex_numeric.composite_trapezoid_error_bound": {
+  "openmath": "(forall (f a b z m lo hi) (-> (and (<= lo hi) (or (and (= lo a) (= hi b)) (and (= lo b) (= hi a))) (twice_continuously_differentiable_on f (closed_interval lo hi)) (forall (x) (-> (in x (closed_interval lo hi)) (<= (abs (second_derivative_within f (closed_interval lo hi) x)) z))) (in m N) (> m 0)) (<= (abs (- (trapezoid_sum f m a b) (interval_integral a b (lambda (x) (fn_value f x))))) (/ (* (^ (abs (- b a)) 3) z) (* 12 (^ m 2))))))"
+ },
+ "fourier_convex_numeric.fourier_coefficient_explicit_formula": {
+  "openmath": "(forall (a b f n) (-> (and (< a b) (in n Z) (interval_integrable_fn f a b)) (= (fourier_coeff_on f a b n) (* (/ 1 (- b a)) (interval_integral a b (lambda (x) (* (exp (/ (* 2 pi complex_i (neg n) x) (- b a))) (fn_value f x))))))))",
+  "target": "∀ (a b : ℝ) (hab : a < b) (f : ℝ → ℂ) (n : ℤ), MeasureTheory.IntegrableOn f (Set.Ioc a b) → fourierCoeffOn hab f n = ((1 / (b - a) : ℝ) : ℂ) * ∫ x in a..b, Complex.exp (2 * Real.pi * Complex.I * ((-n : ℤ) : ℂ) * x / ((b - a : ℝ) : ℂ)) * f x",
+  "proof": "by\n  intro a b hab f n _\n  rw [fourierCoeffOn_eq_integral f n hab, Complex.real_smul]\n  congr 1\n  refine intervalIntegral.integral_congr (fun x _ => ?_)\n  simp only [smul_eq_mul, fourier_coe_apply]\n"
+ },
+ "fourier_convex_numeric.fourier_coefficient_l1_bound": {
+  "hard_negative": {
+   "statement": "測度を長さ$T$のルベーグ測度（総質量$T$）にしても$|c_n(f)|\\leq\\int_0^T|f(x)|\\,dx$が成り立つ。",
+   "reason": "$c_n$は正規化された測度で定義されるので、非正規化の積分は$T$倍される。$T<1$、$f\\equiv1$、$n=0$では$c_0(f)=1$だが$\\int_0^T1\\,dx=T<1$で偽である。"
+  }
+ },
+ "fourier_convex_numeric.riemann_lebesgue_real_line": {
+  "hard_negative": {
+   "statement": "$f$が可積分ならばそのフーリエ変換$\\widehat{f}$も$\\mathbb{R}$上で可積分である。",
+   "reason": "リーマン＝ルベーグの補題は$0$への収束だけを保証する。$f=1_{[0,1]}$では$|\\widehat{f}(w)|=|\\sin(\\pi w)|/(\\pi|w|)$であり、これは$\\mathbb{R}$上で可積分でない。"
+  }
+ },
+ "fourier_convex_numeric.poisson_summation_power_decay": {
+  "hard_negative": {
+   "statement": "$f$が連続で可積分でさえあれば、減衰条件なしにポアソン和公式が成り立つ。",
+   "reason": "周期化$\\sum_nf(x+n)$が発散しうる。$\\varphi$を台が$[-1,1]$の連続な山型関数で$\\varphi(0)=1$とし、$f(x)=\\sum_{k\\geq1}k\\,\\varphi(k^3(x-k))$とおくと、$f$は連続で$\\int f=O(\\sum k^{-2})<\\infty$だが、$\\sum_nf(n)=\\sum_kk$は発散する。"
+  }
+ },
+ "functional_analysis.compact_unit_ball_implies_finite_dimensional": {
+  "hard_negative": {
+   "statement": "閉単位球が有界閉集合であるノルム空間は有限次元である。",
+   "reason": "閉単位球は任意のノルム空間で有界閉集合なので、この仮定は常に成り立つ。ℓ²は無限次元であり、正規直交系$(e_n)$は$\\|e_n-e_m\\|=\\sqrt2$を満たして収束部分列をもたないので、閉単位球はコンパクトでない。"
+  }
+ },
+ "functional_analysis.pointwise_limit_of_operators_bounded": {
+  "openmath": "(forall (E F g f) (-> (and (banach_space E) (normed_space F) (forall (n) (bounded_operator (seq_value g n) E F)) (pointwise_tends_to g f)) (bounded_operator f E F)))"
+ },
+ "functional_analysis.parseval_identity_hilbert_basis": {
+  "target": "∀ (𝕜 : Type*) [RCLike 𝕜] (E ι : Type*) [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [CompleteSpace E] (b : ι → E), Orthonormal 𝕜 b → (Submodule.span 𝕜 (Set.range b)).topologicalClosure = ⊤ → ∀ x : E, HasSum (fun i => ‖inner 𝕜 (b i) x‖ ^ 2) (‖x‖ ^ 2)\n",
+  "proof": "by\n  intro 𝕜 _ E ι _ _ _ b hb hd x\n  have hs : ⊤ ≤ (Submodule.span 𝕜 (Set.range b)).topologicalClosure := le_of_eq hd.symm\n  have hB : ⇑(HilbertBasis.mk hb hs) = b := HilbertBasis.coe_mk hb hs\n  have h := RCLike.hasSum_re 𝕜 ((HilbertBasis.mk hb hs).hasSum_inner_mul_inner x x)\n  rw [hB] at h\n  have h1 : (fun i => RCLike.re (inner 𝕜 x (b i) * inner 𝕜 (b i) x)) =\n      fun i => ‖inner 𝕜 (b i) x‖ ^ 2 := by\n    funext i\n    rw [← inner_conj_symm x (b i), RCLike.conj_mul, ← RCLike.ofReal_pow, RCLike.ofReal_re]\n  rw [h1, inner_self_eq_norm_sq] at h\n  exact h\n"
+ },
+ "functional_analysis.hilbert_basis_fourier_expansion": {
+  "target": "∀ (𝕜 : Type*) [RCLike 𝕜] (E ι : Type*) [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [CompleteSpace E] (b : ι → E), Orthonormal 𝕜 b → (Submodule.span 𝕜 (Set.range b)).topologicalClosure = ⊤ → ∀ x : E, HasSum (fun i => (inner 𝕜 (b i) x) • b i) x\n",
+  "proof": "by\n  intro 𝕜 _ E ι _ _ _ b hb hd x\n  have hs : ⊤ ≤ (Submodule.span 𝕜 (Set.range b)).topologicalClosure := le_of_eq hd.symm\n  have hB : ⇑(HilbertBasis.mk hb hs) = b := HilbertBasis.coe_mk hb hs\n  have h := (HilbertBasis.mk hb hs).hasSum_repr x\n  simp only [HilbertBasis.repr_apply_apply, hB] at h\n  exact h\n"
+ },
+ "functional_analysis.adjoint_norm_eq": {
+  "hard_negative": {
+   "statement": "$\\|T^*\\|=\\|T\\|$が成り立つのは$T^*=T$のときに限る。",
+   "reason": "$\\mathbb{C}$上の$T(z)=iz$では$T^*(z)=-iz$で$T^*\\neq T$だが、$\\|T^*\\|=\\|T\\|=1$である。"
+  }
+ },
+ "functional_analysis.compact_operators_closed_under_norm_limit": {
+  "openmath": "(forall (E F S T) (-> (and (normed_space E) (banach_space F) (forall (n) (compact_operator (seq_value S n))) (operator_tends_to S T)) (compact_operator T)))"
+ },
+ "geometry_centers.medians_concurrent_at_centroid": {
+  "hard_negative": {
+   "statement": "三角形の各頂点と対辺上の任意の点を結ぶ3本の直線は、いつでも1点で交わる。",
+   "reason": "$A=(0,0)$、$B=(1,0)$、$C=(0,1)$、$D=BC$の中点、$E=CA$の中点、$F=(3/4,0)$とする。直線$AD$と$BE$は$(1/3,1/3)$で交わるが、直線$CF$は$x=1/3$で$y=5/9\\neq 1/3$なので、この点を通らない。共点になるには中点（一般にはチェバの条件）が要る。"
+  }
+ },
+ "geometry_centers.circumcenter_equidistant_on_perp_bisectors": {
+  "statement": "三角形$ABC$の外心を$O$、外接円の半径を$R$とすると、$OA=OB=OC=R$であり、$O$は各2頂点を結ぶ線分の垂直二等分線（空間では垂直二等分面）の上にある。",
+  "conclusion": "$OA=OB=OC=R$であり、$O$は3組の2頂点の垂直二等分線（面）上にある。"
+ },
+ "geometry_centers.orthocenter_on_altitudes": {
+  "openmath": "(forall (a b c) (-> (not (collinear_points a b c)) (and (on_line (orthocenter_of a b c) a (altitude_foot a b c)) (= (inner_product (- (orthocenter_of a b c) a) (- b c)) 0))))"
+ },
+ "geometry_centers.nine_point_center_and_radius": {
+  "statement": "三角形$ABC$の平面上に中心をもち、3辺の中点を通る円は、中心が外心$O$と垂心$H$を結ぶ線分の中点で、半径が外接円の半径$R$の$\\frac{1}{2}$である（九点円の中心と半径）。",
+  "statement_en": "Let S be a sphere (circle in the plane) whose centre lies in the plane of triangle ABC and which passes through the midpoints of the three sides. Then its centre is the midpoint of the circumcenter O and the orthocenter H, and its radius is R/2 where R is the circumradius.",
+  "assumptions": [
+   "$A,B,C$は同一直線上にない3点",
+   "円（球面）$S$の中心は平面$ABC$上にある",
+   "$S$は3辺$BC,CA,AB$の中点を通る",
+   "$O,H,R$は外心、垂心、外接円の半径"
+  ],
+  "quantifiers": [
+   "任意の三角形$ABC$と、3辺の中点を通り中心が平面$ABC$上にある円$S$"
+  ],
+  "conclusion": "$S$の中心は$OH$の中点で、半径は$\\frac{R}{2}$である。",
+  "openmath": "(forall (a b c o r) (-> (and (not (collinear_points a b c)) (on_plane o a b c) (on_circle (midpoint_of b c) o r) (on_circle (midpoint_of c a) o r) (on_circle (midpoint_of a b) o r)) (and (= o (midpoint_of (circumcenter_of a b c) (orthocenter_of a b c))) (= r (/ (circumradius_of a b c) 2)))))",
+  "target": "∀ (V P : Type*) [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricSpace P] [NormedAddTorsor V P] (t : Affine.Triangle ℝ P) (S : EuclideanGeometry.Sphere P), S.center ∈ affineSpan ℝ (Set.range t.points) → (∀ j k : Fin 3, j ≠ k → midpoint ℝ (t.points j) (t.points k) ∈ S) → S.center = midpoint ℝ t.circumcenter t.orthocenter ∧ S.radius = t.circumradius / 2\n",
+  "proof": "by\n  intro V P _ _ _ _ t S hc hm\n  have hmid : ∀ i j k : Fin 3, i ≠ j → i ≠ k → j ≠ k → t.faceOppositeCentroid i = midpoint ℝ (t.points j) (t.points k) := by\n    intro i j k hij hik hjk\n    rw [Affine.Simplex.faceOppositeCentroid_eq_affineCombination]\n    have hs : ({i}ᶜ : Finset (Fin 3)) = {j, k} := by\n      fin_cases i <;> fin_cases j <;> fin_cases k <;> simp_all <;> decide\n    rw [hs, Finset.affineCombination_eq_weightedVSubOfPoint_vadd_of_sum_eq_one _ _ _ (by rw [Finset.sum_pair hjk]; norm_num) (t.points j), Finset.weightedVSubOfPoint_apply, Finset.sum_pair hjk]\n    simp [midpoint, AffineMap.lineMap_apply]\n  have hS : S = t.medial.circumsphere := by\n    apply (t.medial.circumsphere_unique_dist_eq).2 S\n    constructor\n    · rw [Affine.Simplex.affineSpan_range_medial]; exact hc\n    · rw [Set.range_subset_iff]\n      intro i\n      rw [Affine.Simplex.medial_points]\n      have hi : i = 0 ∨ i = 1 ∨ i = 2 := by fin_cases i <;> simp\n      rcases hi with rfl | rfl | rfl\n      · rw [hmid 0 1 2 (by decide) (by decide) (by decide)]; exact hm 1 2 (by decide)\n      · rw [hmid 1 0 2 (by decide) (by decide) (by decide)]; exact hm 0 2 (by decide)\n      · rw [hmid 2 0 1 (by decide) (by decide) (by decide)]; exact hm 0 1 (by decide)\n  have hN : S = t.ninePointCircle := by\n    rw [hS, ← Affine.Simplex.ninePointCircle_eq_circumsphere_medial]\n  rw [hN]\n  constructor\n  · rw [Affine.Simplex.ninePointCircle_center, Affine.Triangle.orthocenter_eq_smul_vsub_vadd_circumcenter]\n    rw [midpoint, AffineMap.lineMap_apply]\n    simp [Affine.Simplex.centroid]\n    rw [smul_smul]\n    congr 1\n    norm_num\n  · rw [Affine.Simplex.ninePointCircle_radius]; norm_num\n"
+ },
+ "geometry_centers.menelaus_theorem": {
+  "openmath": "(forall (a b c r s t) (-> (and (not (collinear_points a b c)) (collinear_points (division_point b c r) (division_point c a s) (division_point a b t))) (= (* (* r s) t) (neg (* (* (- 1 r) (- 1 s)) (- 1 t))))))"
+ },
+ "geometry_centers.menelaus_converse": {
+  "openmath": "(forall (a b c r s t) (-> (= (* (* r s) t) (neg (* (* (- 1 r) (- 1 s)) (- 1 t)))) (collinear_points (division_point b c r) (division_point c a s) (division_point a b t))))"
+ },
+ "geometry_centers.ceva_theorem": {
+  "openmath": "(forall (a b c p r s t) (-> (and (not (collinear_points a b c)) (!= r 0) (!= s 0) (!= t 0) (on_line p a (division_point b c r)) (on_line p b (division_point c a s)) (on_line p c (division_point a b t))) (= (* (* (/ r (- 1 r)) (/ s (- 1 s))) (/ t (- 1 t))) 1)))",
+  "hard_negative": {
+   "statement": "チェバの定理の積は$\\frac{r}{1-r}\\cdot\\frac{s}{1-s}\\cdot\\frac{t}{1-t}=-1$である（メネラウスの定理の符号）。",
+   "reason": "$r=s=t=\\frac{1}{2}$（$D,E,F$が各辺の中点）では3直線$AD,BE,CF$は重心で交わり、各因子は$1$なので積は$1$であって$-1$ではない。$-1$になるのは$D,E,F$が同一直線上にあるときである。"
+  }
+ },
+ "geometry_centers.ceva_converse": {
+  "openmath": "(forall (a b c p r s t) (-> (and (not (collinear_points a b c)) (= (* (* (/ r (- 1 r)) (/ s (- 1 s))) (/ t (- 1 t))) 1) (on_line p a (division_point b c r)) (on_line p b (division_point c a s))) (on_line p c (division_point a b t))))"
+ },
+ "geometry_circle.inscribed_angle_same_side": {
+  "openmath": "(forall (o r a b x y) (-> (and euclidean_plane_ambient (on_circle a o r) (on_circle b o r) (on_circle x o r) (on_circle y o r) (!= a b) (same_side_of_line x y a b)) (= (euclid_angle a x b) (euclid_angle a y b))))"
+ },
+ "geometry_circle.inscribed_angle_same_side_converse": {
+  "openmath": "(forall (a b x y) (-> (and euclidean_plane_ambient (!= a b) (same_side_of_line x y a b) (= (euclid_angle a x b) (euclid_angle a y b))) (cospherical_points (set a b x y))))"
+ },
+ "geometry_circle.central_angle_twice_inscribed_same_side": {
+  "openmath": "(forall (o r a b x) (-> (and euclidean_plane_ambient (on_circle a o r) (on_circle b o r) (on_circle x o r) (!= a b) (same_side_of_line o x a b)) (= (euclid_angle a o b) (* 2 (euclid_angle a x b)))))"
+ },
+ "geometry_circle.central_angle_plus_twice_inscribed_opposite_side": {
+  "openmath": "(forall (o r a b x) (-> (and euclidean_plane_ambient (on_circle a o r) (on_circle b o r) (on_circle x o r) (!= a b) (opposite_side_of_line o x a b)) (= (+ (euclid_angle a o b) (* 2 (euclid_angle a x b))) (* 2 pi))))"
+ },
+ "geometry_circle.right_angle_on_circle_chord_is_diameter": {
+  "openmath": "(forall (o r a b x) (-> (and euclidean_plane_ambient (on_circle a o r) (on_circle b o r) (on_circle x o r) (!= x a) (!= x b) (= (euclid_angle a x b) (/ pi 2))) (is_diameter a b o r)))"
+ },
+ "geometry_circle.cyclic_quadrilateral_opposite_angles_sum_pi": {
+  "openmath": "(forall (o r a b c d) (-> (and euclidean_plane_ambient (on_circle a o r) (on_circle b o r) (on_circle c o r) (on_circle d o r) (!= a c) (opposite_side_of_line b d a c)) (= (+ (euclid_angle a b c) (euclid_angle c d a)) pi)))"
+ },
+ "geometry_circle.cyclic_quadrilateral_opposite_angles_converse": {
+  "openmath": "(forall (a b c d) (-> (and euclidean_plane_ambient (!= a c) (opposite_side_of_line b d a c) (= (+ (euclid_angle a b c) (euclid_angle c d a)) pi)) (cospherical_points (set a b c d))))"
+ },
+ "geometry_circle.cyclic_quadrilateral_exterior_angle": {
+  "openmath": "(forall (o r a b c d e) (-> (and euclidean_plane_ambient (on_circle a o r) (on_circle b o r) (on_circle c o r) (on_circle d o r) (!= b d) (opposite_side_of_line a c b d) (strictly_between b c e)) (= (euclid_angle d c e) (euclid_angle b a d))))"
+ },
+ "geometry_circle.chord_eq_two_radius_sin_inscribed_angle": {
+  "openmath": "(forall (o r a b x) (-> (and euclidean_plane_ambient (on_circle a o r) (on_circle b o r) (on_circle x o r) (!= a b) (!= x a) (!= x b)) (= (dist_of a b) (* (* 2 r) (sin (euclid_angle a x b))))))"
+ },
+ "geometry_circle.equal_inscribed_angles_equal_chords": {
+  "openmath": "(forall (o r a b c d x y) (-> (and euclidean_plane_ambient (on_circle a o r) (on_circle b o r) (on_circle c o r) (on_circle d o r) (on_circle x o r) (on_circle y o r) (!= a b) (!= c d) (!= x a) (!= x b) (!= y c) (!= y d) (= (euclid_angle a x b) (euclid_angle c y d))) (= (dist_of a b) (dist_of c d))))"
+ },
+ "geometry_circle.tangent_iff_perpendicular_radius": {
+  "statement": "実内積空間上のアフィン空間で、中心$O$、半径$r>0$の球面（平面なら円）の上の点$T$と点$X\\neq T$について、直線$TX$が$T$で接することと$\\angle XTO=\\pi/2$は同値である。ここで接するとは、直線上の点$U$がすべて$\\langle U-T,T-O\\rangle=0$を満たすことである。ここでの「接する」は半径に直交する直線という定義であり、共有点が1点という定義との同値は tangent_iff_unique_common_point が与える。"
+ },
+ "geometry_circle.contact_chord_perpendicular_bisected_by_center_line": {
+  "openmath": "(forall (o r q a b) (-> (and euclidean_plane_ambient (> r 0) (!= a b) (!= q a) (!= q b) (tangent_to_circle_at a q o r) (tangent_to_circle_at b q o r)) (and (perpendicular_lines q o a b) (on_line (midpoint_of a b) q o))))"
+ },
+ "geometry_circle.tangent_chord_angle": {
+  "openmath": "(forall (o r a b c t) (-> (and euclidean_plane_ambient (tangent_to_circle_at a t o r) (on_circle b o r) (on_circle c o r) (!= a b) (opposite_side_of_line t c a b)) (= (euclid_angle t a b) (euclid_angle a c b))))"
+ },
+ "geometry_circle.tangent_chord_angle_converse": {
+  "openmath": "(forall (o r a b c t) (-> (and euclidean_plane_ambient (on_circle a o r) (on_circle b o r) (on_circle c o r) (!= a b) (opposite_side_of_line t c a b) (= (euclid_angle t a b) (euclid_angle a c b))) (tangent_to_circle_at a t o r)))"
+ },
+ "geometry_circle.common_chord_perpendicular_bisected_by_center_line": {
+  "openmath": "(forall (o1 r1 o2 r2 a b) (-> (and euclidean_plane_ambient (!= o1 o2) (!= a b) (on_circle a o1 r1) (on_circle b o1 r1) (on_circle a o2 r2) (on_circle b o2 r2)) (and (perpendicular_lines o2 o1 a b) (on_line (midpoint_of a b) o1 o2))))"
+ },
+ "geometry_circle.two_circles_at_most_two_common_points": {
+  "openmath": "(forall (o1 r1 o2 r2 a b q) (-> (and euclidean_plane_ambient (or (!= o1 o2) (!= r1 r2)) (!= a b) (on_circle a o1 r1) (on_circle b o1 r1) (on_circle q o1 r1) (on_circle a o2 r2) (on_circle b o2 r2) (on_circle q o2 r2)) (or (= q a) (= q b))))"
+ },
+ "geometry_circle.internally_tangent_iff_center_distance": {
+  "statement": "実内積空間（$0$でない）上のアフィン空間で、中心$O_1,O_2$、半径$r_1,r_2$の2つの球面（平面なら2円）について、第1の球面が第2の球面に内接する（共有点$T$があり、$O_1$が線分$O_2T$上にある）ことと、$O_1O_2=r_2-r_1$かつ$r_1,r_2\\geq0$は同値である。なお同一の球面（$O_1=O_2$かつ$r_1=r_2$）や半径$0$の球面も、この定義では内接に含める。",
+  "statement_en": "In a nonzero real inner product affine space, the sphere with center O1 and radius r1 is internally tangent to the sphere with center O2 and radius r2, meaning that some common point T has O1 on segment O2T, if and only if |O1O2| = r2 - r1 and r1, r2 ≥ 0. Coincident spheres and spheres of radius 0 count as internally tangent under this definition."
+ },
+ "geometry_circle.two_circles_common_point_exists_in_plane": {
+  "openmath": "(forall (o1 r1 o2 r2) (-> (and euclidean_plane_ambient (!= o1 o2) (> r1 0) (> r2 0) (<= (abs (- r1 r2)) (dist_of o1 o2)) (<= (dist_of o1 o2) (+ r1 r2))) (exists (t) (and (on_circle t o1 r1) (on_circle t o2 r2)))))"
+ },
+ "geometry_homotopy.convex_set_contractible": {
+  "openmath": "(forall (E S) (-> (and (topological_vector_space E) (subset S E) (convex_set S) (!= S emptyset)) (contractible_space (subspace_topology_on E S))))"
+ },
+ "geometry_homotopy.fundamental_group_map_functorial": {
+  "openmath": "(forall (X Y Z f g x p) (-> (and (in f (continuous_maps X Y)) (in g (continuous_maps Y Z)) (in x X) (in p (fundamental_group X x))) (and (= (fn_value (induced_hom (map_compose g f) x) p) (fn_value (induced_hom g (fn_value f x)) (fn_value (induced_hom f x) p))) (= (fn_value (induced_hom (identity_map X) x) p) p))))"
+ },
+ "geometry_homotopy.covering_path_lifting": {
+  "openmath": "(forall (E X p c e) (-> (and (in p (continuous_maps E X)) (covering_map p) (in c (continuous_maps unit_interval X)) (in e E) (= (fn_value c 0) (fn_value p e))) (exists (h) (and (in h (continuous_maps unit_interval E)) (= (map_compose p h) c) (= (fn_value h 0) e) (forall (k) (-> (and (in k (continuous_maps unit_interval E)) (= (map_compose p k) c) (= (fn_value k 0) e)) (= k h)))))))"
+ },
+ "geometry_homotopy.covering_lift_uniqueness": {
+  "openmath": "(forall (A E p g h a) (-> (and (covering_map p) (preconnected_space A) (in g (continuous_maps A E)) (in h (continuous_maps A E)) (= (map_compose p g) (map_compose p h)) (in a A) (= (fn_value g a) (fn_value h a))) (= g h)))"
+ },
+ "geometry_homotopy.mfderiv_eq_fderiv_normed": {
+  "statement": "ノルム空間を自分自身をモデルとする多様体と見ると、多様体としての微分可能性はフレシェ微分可能性と同値であり、$x$でフレシェ微分可能なとき、接写像はフレシェ微分に一致する。",
+  "statement_en": "For a map f between real normed spaces viewed as manifolds over themselves, manifold differentiability at x is equivalent to Fréchet differentiability at x, and when f is Fréchet differentiable at x the tangent map equals the Fréchet derivative.",
+  "conclusion": "$f$の$x$での多様体としての微分可能性はフレシェ微分可能性と同値であり、$f$が$x$でフレシェ微分可能なら$x$での接写像はフレシェ微分に等しい。",
+  "answer": "$E,F$を実ノルム空間、$f:E\\to F$を写像、$x\\in E$とする。$E,F$を自分自身をモデルとする多様体と見るとき、モデルとチャートはともに恒等写像であり、$\\operatorname{range}I=E$である。したがって$f$の座標表示は$f$自身である。\n多様体としての微分可能性の定義は、$f$が$x$で連続で、座標表示が$\\operatorname{range}I$内で微分可能であることである。ここでは「$f$が$x$で連続で、かつ$f$が$x$でフレシェ微分可能」となる。フレシェ微分可能なら連続なので、これはフレシェ微分可能性と同値である。\n$f$が$x$でフレシェ微分可能なとき、接写像は座標表示の$\\operatorname{range}I=E$内での微分なので、$f$の$x$でのフレシェ微分に等しい。\n",
+  "openmath": "(forall (E F f x) (-> (and (normed_space E) (normed_space F)) (and (<-> (mdifferentiable_at f x) (frechet_differentiable_at f x)) (-> (frechet_differentiable_at f x) (= (mfderiv f x) (frechet_derivative f x))))))",
+  "target": "∀ (E E' : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] [NormedAddCommGroup E'] [NormedSpace ℝ E'] (f : E → E') (x : E), (MDifferentiableAt (modelWithCornersSelf ℝ E) (modelWithCornersSelf ℝ E') f x ↔ DifferentiableAt ℝ f x) ∧ (DifferentiableAt ℝ f x → mfderiv (modelWithCornersSelf ℝ E) (modelWithCornersSelf ℝ E') f x = fderiv ℝ f x)",
+  "proof": "by\n  intro E E' _ _ _ _ f x\n  exact ⟨mdifferentiableAt_iff_differentiableAt, fun _ => mfderiv_eq_fderiv⟩"
+ },
+ "geometry_homotopy.smooth_partition_of_unity_exists": {
+  "openmath": "(forall (E M S U) (-> (and (finite_dim_space E) (smooth_manifold_modeled_on M E) (hausdorff_space M) (sigma_compact_space M) (closed_set S) (open_cover_of U S)) (exists (f) (and (smooth_partition_of_unity f S) (subordinate_to f U)))))"
+ },
+ "geometry_homotopy.law_of_cosines_angle": {
+  "level": "high",
+  "hard_negative": {
+   "statement": "余弦定理の符号を取り違えた等式$|ac|^2=|ab|^2+|cb|^2+2|ab||cb|\\cos\\angle abc$が常に成り立つ。",
+   "reason": "正三角形で$|ab|=|cb|=|ac|=1$、$\\angle abc=\\pi/3$とすると、左辺は$1$、右辺は$1+1+2\\cdot\\frac12=3$であり一致しない。"
+  }
+ },
+ "geometry_homotopy.parallelogram_law_norm": {
+  "openmath": "(forall (V x y) (-> (and (inner_product_space V) (in x V) (in y V)) (= (+ (^ (norm (+ x y)) 2) (^ (norm (- x y)) 2)) (* 2 (+ (^ (norm x) 2) (^ (norm y) 2))))))"
+ },
+ "geometry_homotopy.pythagoras_angle_iff": {
+  "level": "high",
+  "openmath": "(forall (a b c) (-> (and (!= a b) (!= c b)) (<-> (= (^ (dist_of a c) 2) (+ (^ (dist_of a b) 2) (^ (dist_of c b) 2))) (= (euclid_angle a b c) (/ pi 2)))))"
+ },
+ "geometry_homotopy.triangle_angle_sum": {
+  "level": "middle",
+  "openmath": "(forall (a b c) (-> (and (!= a b) (!= b c) (!= c a)) (= (+ (euclid_angle a b c) (euclid_angle b c a) (euclid_angle c a b)) pi)))"
+ },
+ "geometry_homotopy.ptolemy_cyclic_quadrilateral": {
+  "level": "high",
+  "openmath": "(forall (a b c d p) (-> (and (cospherical_points (set a b c d)) (= (euclid_angle a p c) pi) (= (euclid_angle b p d) pi)) (= (+ (* (dist_of a b) (dist_of c d)) (* (dist_of b c) (dist_of d a))) (* (dist_of a c) (dist_of b d)))))"
+ },
+ "geometry_homotopy.power_of_a_point_lines": {
+  "level": "high",
+  "statement_en": "If points a, b, c, d lie on a common sphere and p lies in the affine span of {a,b} and in the affine span of {c,d} (a line when the two points differ, a single point otherwise), then |ap||bp| = |cp||dp|."
+ },
+ "geometry_homotopy.inner_zero_iff_right_angle": {
+  "level": "high",
+  "openmath": "(forall (x y) (-> (and (!= x 0) (!= y 0)) (<-> (= (inner_product x y) 0) (= (vector_angle x y) (/ pi 2)))))"
+ },
+ "geometry_homotopy.arc_length_additive_chord_bound": {
+  "statement_en": "For a map f from ℝ to a pseudo-extended-metric space (distances may be ∞ or 0 between distinct points; ordinary metric spaces included) and a ≤ b ≤ c, the total variation (arc length) satisfies L(a,b) + L(b,c) = L(a,c) in [0,∞], and d(f(a), f(c)) ≤ L(a,c)."
+ },
+ "geometry_plane.parallel_of_alternate_angles": {
+  "openmath": "(forall (a b c d) (-> (and euclidean_plane_ambient (!= a c) (opposite_side_of_line b d a c) (= (euclid_angle b a c) (euclid_angle d c a))) (parallel_lines a b d c)))"
+ },
+ "geometry_plane.parallel_of_corresponding_angles": {
+  "openmath": "(forall (a b c d e) (-> (and euclidean_plane_ambient (strictly_between e a c) (same_side_of_line b d a c) (= (euclid_angle e a b) (euclid_angle a c d))) (parallel_lines a b c d)))"
+ },
+ "geometry_plane.parallel_of_common_perpendicular": {
+  "openmath": "(forall (a b c d e f) (-> (and euclidean_plane_ambient (!= a b) (!= c d) (!= e f) (perpendicular_lines a b e f) (perpendicular_lines c d e f)) (parallel_lines a b c d)))"
+ },
+ "geometry_plane.rhombus_diagonals_perpendicular": {
+  "openmath": "(forall (a b c d) (-> (and (parallelogram a b c d) (= (dist_of a b) (dist_of a d))) (= (inner_product (- c a) (- d b)) 0)))"
+ },
+ "geometry_plane.rhombus_of_perpendicular_diagonals": {
+  "openmath": "(forall (a b c d) (-> (and (parallelogram a b c d) (= (inner_product (- c a) (- d b)) 0)) (= (dist_of a b) (dist_of a d))))"
+ },
+ "geometry_plane.varignon_rectangle_rhombus_criteria": {
+  "openmath": "(forall (a b c d) (and (<-> (= (inner_product (- (midpoint_of b c) (midpoint_of a b)) (- (midpoint_of c d) (midpoint_of b c))) 0) (= (inner_product (- c a) (- d b)) 0)) (<-> (= (dist_of (midpoint_of a b) (midpoint_of b c)) (dist_of (midpoint_of b c) (midpoint_of c d))) (= (dist_of a c) (dist_of b d)))))"
+ },
+ "geometry_plane.triangle_area_base_height": {
+  "openmath": "(forall (a b c h) (-> (and (!= b c) (on_line h b c) (= (inner_product (- a h) (- c b)) 0)) (= (triangle_area a b c) (* (/ 1 2) (dist_of b c) (dist_of a h)))))"
+ },
+ "geometry_plane.three_perpendiculars": {
+  "openmath": "(forall (s a h b c) (-> (and (in_affine_subspace h s) (in_affine_subspace b s) (in_affine_subspace c s) (!= b c) (perpendicular_to_subspace a h s) (= (inner_product (- h b) (- c b)) 0)) (= (inner_product (- a b) (- c b)) 0)))"
+ },
+ "geometry_plane.three_perpendiculars_converse_foot": {
+  "openmath": "(forall (s a h b c) (-> (and (in_affine_subspace h s) (in_affine_subspace b s) (in_affine_subspace c s) (!= b c) (perpendicular_to_subspace a h s) (= (inner_product (- a b) (- c b)) 0)) (= (inner_product (- h b) (- c b)) 0)))"
+ },
+ "geometry_plane.three_perpendiculars_converse_plane": {
+  "openmath": "(forall (a h b c) (-> (and (not (collinear_points h b c)) (= (inner_product (- a b) (- c b)) 0) (= (inner_product (- h b) (- c b)) 0) (= (inner_product (- a h) (- h b)) 0)) (perpendicular_to_plane a h h b c)))"
+ },
+ "geometry_plane.line_perpendicular_plane_criterion": {
+  "openmath": "(forall (a o b c x y) (-> (and (not (collinear_points o b c)) (= (inner_product (- a o) (- b o)) 0) (= (inner_product (- a o) (- c o)) 0) (on_plane x o b c) (on_plane y o b c)) (= (inner_product (- a o) (- y x)) 0)))"
+ },
+ "geometry_plane.lines_perpendicular_to_plane_parallel": {
+  "openmath": "(forall (a b c d x y z) (-> (and (euclidean_ambient_dimension 3) (!= a b) (!= c d) (not (collinear_points x y z)) (perpendicular_lines a b x y) (perpendicular_lines a b x z) (perpendicular_lines c d x y) (perpendicular_lines c d x z)) (parallel_lines a b c d)))"
+ },
+ "geometry_plane.tetrahedron_opposite_edges_perpendicular_iff": {
+  "openmath": "(forall (a b c d) (<-> (= (inner_product (- b a) (- d c)) 0) (= (+ (^ (dist_of a c) 2) (^ (dist_of b d) 2)) (+ (^ (dist_of a d) 2) (^ (dist_of b c) 2)))))"
+ },
+ "geometry_triangle.triangle_congruent_sas": {
+  "hard_negative": {
+   "statement": "$\\angle ACB=\\angle A'C'B'$、$AB=A'B'$、$BC=B'C'$ならば、$A,B,C$と$A',B',C'$は合同である。",
+   "reason": "$\\angle C=\\pi/6$、$BC=4$、$AB=3$とすると、余弦定理から$AC^2-4\\sqrt3\\,AC+7=0$で、$AC=2\\sqrt3\\pm\\sqrt5$はどちらも正である。角$C$と2辺$AB,BC$が等しく$CA$が異なる2つの三角形があるので合同でない。"
+  }
+ },
+ "geometry_triangle.right_triangle_congruent_hypotenuse_leg": {
+  "hard_negative": {
+   "statement": "$\\angle ABC=\\angle A'B'C'$が直角でなく等しい鋭角のときも、$CA=C'A'$、$AB=A'B'$なら合同である。",
+   "reason": "$\\angle B=\\pi/6$、$AB=4$、$CA=3$とすると、余弦定理から$BC^2-4\\sqrt3\\,BC+7=0$で、$BC=2\\sqrt3\\pm\\sqrt5$はどちらも正である。角が鋭角で$AB,CA$が等しくても第3辺が異なる2つの三角形がある。"
+  }
+ },
+ "geometry_triangle.triangle_similar_sas_ratio": {
+  "hard_negative": {
+   "statement": "$AB=r\\,A'B'$、$CB=r\\,C'B'$、$\\angle BCA=\\angle B'C'A'$ならば相似である。",
+   "reason": "$r=1$とし、$\\angle C=\\pi/6$、$CB=4$、$AB=3$の三角形を考えると$CA=2\\sqrt3\\pm\\sqrt5$の2通りがある。$AB=A'B'$、$CB=C'B'$、$\\angle C=\\angle C'$だが$CA\\neq C'A'$で、相似比は$1$しかありえないので相似でない。"
+  }
+ },
+ "geometry_triangle.similar_triangles_side_ratio_cross": {
+  "statement": "$A,B,C$と$A',B',C'$がこの対応で相似ならば、対応する辺の比を積の形で書いた等式$AB\\cdot B'C'=A'B'\\cdot BC$、$BC\\cdot C'A'=B'C'\\cdot CA$、$CA\\cdot A'B'=C'A'\\cdot AB$が成り立つ。 ここで相似とは、対応する2頂点間の距離の比がすべて同じ正の数であることをいう。",
+  "statement_en": "If A, B, C and A', B', C' are similar in this order, then AB·B'C' = A'B'·BC, BC·C'A' = B'C'·CA and CA·A'B' = C'A'·AB. Here similar means that all pairwise distances of corresponding vertices have the same positive ratio."
+ },
+ "geometry_triangle.similar_triangles_area_ratio_sine_form": {
+  "statement": "三角形$ABC$と三角形$A'B'C'$（それぞれ3点は同一直線上にない）と正の数$r$について、$AB=r\\,A'B'$、$BC=r\\,B'C'$、$CA=r\\,C'A'$ならば、2辺とその間の角の正弦で表した面積の式について$\\frac12AB\\cdot BC\\sin\\angle ABC=r^2\\cdot\\frac12A'B'\\cdot B'C'\\sin\\angle A'B'C'$が成り立つ。"
+ },
+ "geometry_triangle.triangles_common_angle_product_similar": {
+  "statement": "点$D$が線分$AB$の内部、点$E$が線分$AC$の内部にあり$AD\\cdot AB=AE\\cdot AC$ならば、$A,D,E$と$A,C,B$はこの対応で相似である。$D$は$C$に、$E$は$B$に対応する。 ここで相似とは、対応する2頂点間の距離の比がすべて同じ正の数であることをいう。",
+  "statement_en": "If D lies strictly between A and B, E lies strictly between A and C, and AD·AB = AE·AC, then A, D, E and A, C, B are similar in this order. Here similar means that all pairwise distances of corresponding vertices have the same positive ratio."
+ },
+ "geometry_triangle.isosceles_iff_median_perpendicular": {
+  "openmath": "(forall (a b c) (<-> (= (dist_of a b) (dist_of a c)) (= (inner_product (- a (midpoint_of b c)) (- c b)) 0)))"
+ },
+ "geometry_triangle.isosceles_altitude_foot_is_midpoint": {
+  "openmath": "(forall (a b c h) (-> (and (!= b c) (= (dist_of a b) (dist_of a c)) (on_line h b c) (= (inner_product (- a h) (- c b)) 0)) (= h (midpoint_of b c))))"
+ },
+ "geometry_triangle.perpendicular_is_shortest_to_line": {
+  "openmath": "(forall (a b c h x) (-> (and (on_line h b c) (= (inner_product (- a h) (- c b)) 0) (on_line x b c)) (<= (dist_of a h) (dist_of a x))))"
+ },
+ "geometry_triangle.triangle_exists_iff_three_inequalities": {
+  "openmath": "(forall (a b c) (-> euclidean_plane_ambient (<-> (exists (x y z) (and (not (collinear_points x y z)) (= (dist_of y z) a) (= (dist_of z x) b) (= (dist_of x y) c))) (and (< a (+ b c)) (< b (+ c a)) (< c (+ a b))))))"
+ },
+ "geometry_triangle.perpendicular_iff_square_difference": {
+  "openmath": "(forall (a b c h) (<-> (= (inner_product (- a h) (- c b)) 0) (= (- (^ (dist_of a b) 2) (^ (dist_of a c) 2)) (- (^ (dist_of h b) 2) (^ (dist_of h c) 2)))))"
+ },
+ "geometry_triangle.right_triangles_common_hypotenuse_equal_angle_iff_equal_leg": {
+  "hard_negative": {
+   "statement": "$\\angle XHA,\\angle XKA$が直角でなくても、$\\angle HAX=\\angle KAX$ならば$XH=XK$である。",
+   "reason": "$A=(0,0)$、$X=(1,0)$、$H=(1/2,\\sqrt3/2)$、$K=(1,-\\sqrt3)$とすると$\\angle HAX=\\angle KAX=\\pi/3$だが$XH=1$、$XK=\\sqrt3$である。このとき$\\angle XHA,\\angle XKA$は直角でない。"
+  }
+ },
+ "geometry_triangle.medial_triangle_similar": {
+  "statement": "点$A,B,C$について、$BC,CA,AB$の中点をそれぞれ$D,E,F$とすると、$D,E,F$と$A,B,C$はこの対応で相似比$\\frac12$の相似である。 ここで相似とは、対応する2頂点間の距離の比がすべて同じ正の数であることをいう。",
+  "statement_en": "For points A, B, C with D, E, F the midpoints of BC, CA, AB, the triples D, E, F and A, B, C are similar in this order, with DE = AB/2, EF = BC/2 and FD = CA/2. Here similar means that all pairwise distances of corresponding vertices have the same positive ratio."
+ },
+ "geometry_triangle.right_triangle_altitude_geometric_mean": {
+  "openmath": "(forall (a b c h) (-> (and (= (euclid_angle b a c) (/ pi 2)) (on_line h b c) (= (inner_product (- a h) (- c b)) 0)) (= (^ (dist_of a h) 2) (* (dist_of b h) (dist_of h c)))))"
+ },
+ "geometry_triangle.right_triangle_leg_square_projection": {
+  "openmath": "(forall (a b c h) (-> (and (= (euclid_angle b a c) (/ pi 2)) (on_line h b c) (= (inner_product (- a h) (- c b)) 0)) (= (^ (dist_of a b) 2) (* (dist_of b h) (dist_of b c)))))"
+ },
+ "geometry_triangle.right_triangle_altitude_hypotenuse_product": {
+  "openmath": "(forall (a b c h) (-> (and (= (euclid_angle b a c) (/ pi 2)) (on_line h b c) (= (inner_product (- a h) (- c b)) 0)) (= (* (dist_of a h) (dist_of b c)) (* (dist_of a b) (dist_of a c)))))"
+ },
+ "geometry_triangle.right_triangle_altitude_similar_triangles": {
+  "statement": "直角三角形$ABC$（$A,B,C$は同一直線上になく$\\angle BAC=\\pi/2$）で、$H$が$A$から直線$BC$への垂線の足（$H$は直線$BC$上、$\\langle A-H,C-B\\rangle=0$）ならば、$H,B,A$と$A,B,C$、$H,A,C$と$A,B,C$はそれぞれこの対応で相似である。 ここで相似とは、対応する2頂点間の距離の比がすべて同じ正の数であることをいう。",
+  "statement_en": "If A, B, C are not collinear, ∠BAC = π/2, H lies on line BC and ⟨A-H,C-B⟩ = 0, then H, B, A is similar to A, B, C and H, A, C is similar to A, B, C, in these orders. Here similar means that all pairwise distances of corresponding vertices have the same positive ratio."
+ },
+ "group_theory.left_coset_eq_iff_inv_mul_mem": {
+  "hard_negative": {
+   "statement": "群$G$の部分群$H$と$a,b\\in G$について、$aH=bH$であることと$ab^{-1}\\in H$であることは同値である。",
+   "reason": "$ab^{-1}\\in H$は右剰余類の等式$Ha=Hb$に対応する条件である。$G=S_3$、$H=\\{e,(1\\ 2)\\}$、$a=(1\\ 3)$、$b=(1\\ 3)(1\\ 2)$とすると、$b=a(1\\ 2)$より$aH=bH$であるが、$ab^{-1}=(1\\ 3)(1\\ 2)(1\\ 3)=(2\\ 3)\\notin H$である。"
+  }
+ },
+ "group_theory.order_of_power_formula": {
+  "openmath": "(forall (G g n) (-> (and (group G) (in g G) (in n N) (exists (m) (and (in m N) (> m 0) (= (group_pow g m) (group_identity G))))) (= (element_order (group_pow g n)) (/ (element_order g) (gcd (element_order g) n)))))"
+ },
+ "group_theory.pow_eq_one_iff_order_dvd": {
+  "openmath": "(forall (G g n) (-> (and (group G) (in g G) (in n N)) (and (-> (exists (m) (and (in m N) (> m 0) (= (group_pow g m) (group_identity G)))) (<-> (= (group_pow g n) (group_identity G)) (dvd (element_order g) n))) (-> (not (exists (m) (and (in m N) (> m 0) (= (group_pow g m) (group_identity G))))) (<-> (= (group_pow g n) (group_identity G)) (= n 0))))))"
+ },
+ "group_theory.commuting_coprime_order_product": {
+  "openmath": "(forall (G a b) (-> (and (group G) (in a G) (in b G) (= (group_mul a b) (group_mul b a)) (exists (m) (and (in m N) (> m 0) (= (group_pow a m) (group_identity G)))) (exists (m) (and (in m N) (> m 0) (= (group_pow b m) (group_identity G)))) (= (gcd (element_order a) (element_order b)) 1)) (= (element_order (group_mul a b)) (* (element_order a) (element_order b)))))"
+ },
+ "group_theory.abelianization_universal_property": {
+  "openmath": "(forall (G A f) (-> (and (group G) (abelian_group A) (group_hom f G A)) (exists (g) (and (group_hom g (abelianization G) A) (forall (x) (-> (in x G) (= (fn_value g (fn_value (quotient_map G (commutator_subgroup G)) x)) (fn_value f x)))) (forall (h) (-> (and (group_hom h (abelianization G) A) (forall (x) (-> (in x G) (= (fn_value h (fn_value (quotient_map G (commutator_subgroup G)) x)) (fn_value f x))))) (= h g)))))))"
+ },
+ "group_theory.first_isomorphism_theorem": {
+  "openmath": "(forall (f G H) (-> (group_hom f G H) (exists (e) (and (group_iso e (quotient_group G (group_kernel f)) (group_image f)) (forall (x) (-> (in x G) (= (fn_value e (fn_value (quotient_map G (group_kernel f)) x)) (fn_value f x))))))))"
+ },
+ "group_theory.second_isomorphism_theorem": {
+  "hard_negative": {
+   "statement": "群$G$の部分群$H$と正規部分群$N$について、$H/(H\\cap N)\\cong G/N$である。",
+   "reason": "右辺は$HN/N$でなければならない。$G=S_3$、$H=\\{e\\}$、$N=A_3$とすると、$H/(H\\cap N)$は自明群であるが、$G/N$は位数$2$の群なので同型でない。"
+  }
+ },
+ "group_theory.sylow_first_theorem": {
+  "statement": "シローの第一定理。$p$を素数とする。有限群$G$の位数を$p^n$が割り切るなら、位数$p^n$の部分群が存在する。"
+ },
+ "group_theory.alternating_group_simple": {
+  "answer": "$X$を$|X|\\geq5$の有限集合、$A=A(X)$を交代群とする。$A$は3サイクルを含むので自明でない。$N\\neq\\{1\\}$を$A$の正規部分群として、$N=A$を示す。3サイクルとは長さ$3$の巡回置換のことである。\n\n$N$が3サイクルを1つ含めば$N=A$であることを示す。$A$は3サイクル全体で生成される。実際、偶置換は偶数個の互換の積であり、置換を右から合成すると、共通の点を持つ2つの互換は$(a\\ b)(a\\ c)=(a\\ c\\ b)$、互いに素な2つの互換は$(a\\ b)(c\\ d)=(a\\ c\\ b)(a\\ c\\ d)$と3サイクルの積に書ける。また3サイクル$(a\\ b\\ c)$と$(a'\\ b'\\ c')$について、$a,b,c$をそれぞれ$a',b',c'$に移す置換$\\sigma$をとると、$\\sigma(a\\ b\\ c)\\sigma^{-1}=(a'\\ b'\\ c')$である。$\\sigma$が奇置換なら、$a,b,c$以外の2点$d,e$をとって$\\sigma(d\\ e)$に取り替える。$(d\\ e)$は$(a\\ b\\ c)$と可換なので同じ等式が成り立ち、$\\sigma(d\\ e)$は偶置換である。よって3サイクルはすべて$A$の中で共役であり、$N$はそのすべてを含む。\n\n$N$が3サイクルを含むことを示す。$\\sigma\\in N\\setminus\\{1\\}$を固定点の個数が最大の元とし、$\\sigma$が3サイクルでないと仮定して矛盾を導く。$\\sigma$を互いに素な巡回置換の積に分解すると、次のどちらかである。\n\n場合1：$\\sigma$は長さ$3$以上の巡回置換を含む。$\\sigma$が動かす点が$3$個なら$\\sigma$は3サイクルであり、$4$個なら長さ$4$の巡回置換で奇置換であるから、どちらも起こらない。よって$\\sigma$は$5$個以上の点を動かす。動かす相異なる点$a,b,c,d,e$を$\\sigma(a)=b$、$\\sigma(b)=c$となるようにとる。\n\n場合2：$\\sigma$は互いに素な互換の積である。$\\sigma$は偶置換なので、互換は$2$個以上ある。$\\sigma(a)=b$、$\\sigma(b)=a$、$\\sigma(c)=d$、$\\sigma(d)=c$となる相異なる$a,b,c,d$をとり、$|X|\\geq5$なので他の点$e$をとる。\n\nどちらの場合も$\\tau=(c\\ d\\ e)\\in A$とおき、$\\sigma'=\\tau\\sigma\\tau^{-1}\\in N$、$\\rho=\\sigma^{-1}\\sigma'\\in N$とする。場合1では$\\sigma'(b)=\\tau(\\sigma(b))=\\tau(c)=d\\neq c=\\sigma(b)$である。場合2では$\\sigma'(d)=\\tau(\\sigma(c))=\\tau(d)=e\\neq c=\\sigma(d)$である。よって$\\rho\\neq1$である。\n\n$\\rho$の固定点を数える。$\\sigma$の固定点$x$が$c,d,e$のいずれでもなければ、$\\tau$も$\\sigma$も$x$を固定するので$\\rho(x)=x$である。場合1では$c,d,e$は$\\sigma$に動かされるので、$\\sigma$の固定点はすべて$\\rho$の固定点である。さらに$\\sigma'(a)=\\tau(\\sigma(a))=\\tau(b)=b$より$\\rho(a)=a$であり、$a$は$\\sigma$に動かされる点である。よって$\\rho$の固定点は$\\sigma$より多い。場合2では$\\sigma$の固定点のうち失う可能性があるのは$e$だけである。一方$\\sigma'(a)=b$、$\\sigma'(b)=a$より$\\rho(a)=a$、$\\rho(b)=b$であり、$a,b$は$\\sigma$に動かされる点である。よって$\\rho$の固定点は$\\sigma$より多い。どちらも$\\sigma$の選び方に矛盾する。\n\nしたがって$\\sigma$は3サイクルであり、$N=A$である。\n",
+  "openmath": "(forall (X) (-> (and (finite_set X) (>= (size X) 5)) (simple_group (alternating_group X))))"
+ },
+ "group_theory.sign_of_transposition_and_cycle": {
+  "openmath": "(forall (X t c) (-> (and (finite_set X) (in t (symmetric_group X)) (in c (symmetric_group X))) (and (-> (transposition t) (= (permutation_sign t) -1)) (-> (cycle_permutation c) (= (permutation_sign c) (^ -1 (- (cycle_length c) 1)))))))"
+ },
+ "group_theory.alternating_group_index_and_order": {
+  "openmath": "(forall (X) (-> (and (finite_set X) (>= (size X) 2)) (and (normal_subgroup (alternating_group X) (symmetric_group X)) (= (subgroup_index (alternating_group X) (symmetric_group X)) 2) (= (* 2 (size (alternating_group X))) (size (symmetric_group X))))))"
+ },
+ "group_theory.finite_abelian_group_structure": {
+  "openmath": "(forall (G) (-> (and (finite_group G) (abelian_group G)) (exists (k p e) (and (in k N) (forall (i) (-> (and (in i N) (< i k)) (and (in (seq_value p i) P) (in (seq_value e i) N)))) (isomorphic_groups G (prime_power_cyclic_sum_family k p e))))))"
+ },
+ "group_theory.symmetric_group_not_solvable": {
+  "openmath": "(forall (X) (-> (and (finite_set X) (>= (size X) 5)) (not (solvable_group (symmetric_group X)))))"
+ },
+ "linear_advanced.distinct_eigenvalues_give_eigenbasis": {
+  "openmath": "(forall (K V f n mu v) (-> (and (fd_vector_space K V) (endomorphism K V f) (= (dim_of K V) n) (= (size mu) n) (family_injective mu) (forall (i) (eigenvector_of f (fn_value mu i) (fn_value v i)))) (exists (b) (and (is_basis_family K V b) (forall (i) (= (fn_value f (fn_value b i)) (smul (fn_value mu i) (fn_value b i))))))))"
+ },
+ "linear_advanced.gram_schmidt_orthonormalization": {
+  "openmath": "(forall (K E n v) (-> (and (inner_product_space_over K E) (= (size v) n) (linearly_independent_family v)) (exists (u) (and (orthonormal_family u E) (forall (k) (= (family_span_upto u k) (family_span_upto v k)))))))"
+ },
+ "linear_advanced.orthonormal_set_extends_to_basis": {
+  "openmath": "(forall (K E v) (-> (and (fd_inner_product_space K E) (orthonormal_set v E)) (exists (u) (and (subset v u) (orthonormal_set u E) (= (linear_span u) (whole_space E))))))"
+ },
+ "linear_basic.left_inverse_is_right_inverse": {
+  "openmath": "(forall (K A B) (-> (and (matrix_over_field A K) (matrix_over_field B K) (= (matrix_row_count A) (matrix_column_count A)) (= (matrix_row_count B) (matrix_row_count A)) (= (matrix_column_count B) (matrix_row_count A)) (= (matrix_mul A B) identity_matrix)) (= (matrix_mul B A) identity_matrix)))"
+ },
+ "linear_basic.gauss_diagonalization": {
+  "openmath": "(forall (K A) (-> (matrix_over_field A K) (exists (L M D) (and (transvection_product L) (transvection_product M) (diagonal_matrix D) (= (matrix_mul (matrix_mul L A) M) D)))))"
+ },
+ "linear_basic.vandermonde_det": {
+  "hard_negative": {
+   "statement": "ファンデルモンドの行列式はΠ_{i<j}(v_i+v_j)である。",
+   "reason": "有理数体では成り立たない。n=2, v=(1,2)とすると行列式は2-1=1だが、積は1+2=3である。標数2では$v_j-v_i=v_j+v_i$となり両者は一致するので、反例には体を指定する必要がある。"
+  }
+ },
+ "logic_sets.contrapositive_iff": {
+  "openmath": "(forall (P Q) (<-> (-> (proposition_holds P) (proposition_holds Q)) (-> (not (proposition_holds Q)) (not (proposition_holds P)))))"
+ },
+ "logic_sets.prop_de_morgan": {
+  "openmath": "(forall (P Q) (and (<-> (not (and (proposition_holds P) (proposition_holds Q))) (or (not (proposition_holds P)) (not (proposition_holds Q)))) (<-> (not (or (proposition_holds P) (proposition_holds Q))) (and (not (proposition_holds P)) (not (proposition_holds Q))))))"
+ },
+ "logic_sets.not_forall_iff_exists_not": {
+  "openmath": "(forall (A P) (<-> (not (forall (x) (-> (in x A) (holds_at P x)))) (exists (x) (and (in x A) (not (holds_at P x))))))"
+ },
+ "logic_sets.not_exists_iff_forall_not": {
+  "openmath": "(forall (A P) (<-> (not (exists (x) (and (in x A) (holds_at P x)))) (forall (x) (-> (in x A) (not (holds_at P x))))))"
+ },
+ "logic_sets.exists_forall_implies_forall_exists": {
+  "openmath": "(forall (A B R) (-> (exists (y) (and (in y B) (forall (x) (-> (in x A) (relates R x y))))) (forall (x) (-> (in x A) (exists (y) (and (in y B) (relates R x y)))))))"
+ },
+ "logic_sets.left_right_inverse_eq": {
+  "openmath": "(forall (A B f g h) (-> (and (map_between f A B) (map_between g B A) (map_between h B A) (forall (x) (-> (in x A) (= (fn_value g (fn_value f x)) x))) (forall (y) (-> (in y B) (= (fn_value f (fn_value h y)) y)))) (= g h)))"
+ },
+ "logic_sets.countable_union_of_countable": {
+  "openmath": "(forall (I A) (-> (and (countable I) (forall (i) (-> (in i I) (countable (fn_value A i))))) (countable (indexed_union_over I A))))"
+ },
+ "logic_sets.reals_uncountable": {
+  "answer": "自然数全体$\\mathbb{N}$と実数全体$\\mathbb{R}$の濃度を比べる。\n$\\mathbb{N}\\subseteq\\mathbb{R}$より$|\\mathbb{N}|\\leq|\\mathbb{R}|$なので、全射$\\mathbb{N}\\to\\mathbb{R}$がないことを示せばよい（$|\\mathbb{R}|\\leq|\\mathbb{N}|$なら単射$\\mathbb{R}\\to\\mathbb{N}$があり、$\\mathbb{R}$は空でないのでその左逆写像から全射$\\mathbb{N}\\to\\mathbb{R}$が得られるため）。実数列$(x_n)_{n\\in\\mathbb{N}}$を任意にとる。\n閉区間の列$I_0\\supseteq I_1\\supseteq\\cdots$を、長さが正で$x_n\\notin I_n$となるように順に選ぶ。$I_{-1}=[0,1]$とする。$I_{n-1}=[a,b]$（$a<b$）まで定まったとき、$[a,a+(b-a)/3]$と$[b-(b-a)/3,b]$は交わらないので、少なくとも一方は$x_n$を含まない。その一方を$I_n$とする。\n実数の完備性（区間縮小法）により、$\\bigcap_n I_n$は空でない。その元は$x_n\\notin I_n$よりどの$x_n$とも異なる。よって$n\\mapsto x_n$は全射でなく、$|\\mathbb{N}|<|\\mathbb{R}|$である。\n"
+ },
+ "logic_sets.infinite_cardinal_add_mul": {
+  "openmath": "(forall (a b) (-> (and (is_cardinal a) (is_cardinal b) (<= aleph_zero a) (<= aleph_zero b)) (and (-> (<= a b) (and (= (cardinal_add a b) b) (= (cardinal_mul a b) b))) (-> (<= b a) (and (= (cardinal_add a b) a) (= (cardinal_mul a b) a))))))"
+ },
+ "logic_sets.cardinal_power_laws": {
+  "openmath": "(forall (a b c) (-> (and (is_cardinal a) (is_cardinal b) (is_cardinal c)) (and (= (cardinal_pow a (cardinal_add b c)) (cardinal_mul (cardinal_pow a b) (cardinal_pow a c))) (= (cardinal_pow a (cardinal_mul b c)) (cardinal_pow (cardinal_pow a b) c)) (= (cardinal_pow (cardinal_mul a b) c) (cardinal_mul (cardinal_pow a c) (cardinal_pow b c))))))"
+ },
+ "logic_sets.shifted_base_induction": {
+  "statement": "自然数$k$と自然数上の述語$P$について、$P(k)$が成り立ち、かつ$k\\leq n$を満たす全ての$n$について「$P(n)$ならば$P(n+1)$」が成り立つならば、$k\\leq n$を満たす全ての$n$で$P(n)$が成り立つ。",
+  "hard_negative": {
+   "statement": "同じ仮定のもとで、全ての自然数$n$（$k$未満も含む）で$P(n)$が成り立つ。",
+   "reason": "$k$未満の$n$については何も言えない。$k\\geq1$のとき、$P(n)$を「$n\\geq k$」とすると仮定は成り立つが、$P(0)$は偽である。"
+  }
+ },
+ "logic_sets.ordinal_zero_succ_or_limit": {
+  "openmath": "(forall (a) (-> (is_ordinal a) (or (= a 0) (exists (b) (and (is_ordinal b) (= a (ordinal_add b 1)))) (limit_ordinal a))))"
+ },
+ "logic_sets.ordinal_add_not_commutative": {
+  "openmath": "(and (= (ordinal_add 1 omega_ordinal) omega_ordinal) (!= (ordinal_add omega_ordinal 1) omega_ordinal))"
+ },
+ "measure_integration.measurable_sequence_supremum": {
+  "openmath": "(forall (f) (-> (forall (n) (and (measurable_fn (seq_value f n)) (forall (x) (<= 0 (fn_value (seq_value f n) x))))) (measurable_fn (fn_seq_sup f))))"
+ },
+ "measure_integration.continuity_from_above_counterexample": {
+  "openmath": "(and (forall (n) (-> (in n N) (= (measure_of lebesgue_measure (half_line_right n)) extended_infinity))) (forall (n m) (-> (and (in n N) (in m N) (<= n m)) (subset (half_line_right m) (half_line_right n)))) (forall (x) (-> (in x R) (exists (n) (and (in n N) (notin x (half_line_right n)))))))"
+ },
+ "measure_integration.simple_function_approximation": {
+  "openmath": "(forall (f) (-> (and (measurable_fn f) (forall (x) (<= 0 (fn_value f x)))) (exists (p) (and (forall (n) (and (simple_fn (seq_value p n)) (forall (x) (and (<= 0 (fn_value (seq_value p n) x)) (< (fn_value (seq_value p n) x) extended_infinity))))) (fn_seq_increasing p) (pointwise_tends_to p f)))))"
+ },
+ "measure_integration.dominated_convergence_theorem": {
+  "openmath": "(forall (mu F f g) (-> (and (is_measure mu) (forall (n) (ae_measurable_fn (seq_value F n) mu)) (integrable_fn g mu) (forall (n) (ae_le mu (fn_abs (seq_value F n)) g)) (ae_fn_seq_tends_to mu F f)) (seq_tends_to (integral_seq F mu) (integral_wrt (lambda (x) (fn_value f x)) mu))))"
+ },
+ "measure_integration.pointwise_limit_integral_counterexample": {
+  "hard_negative": {
+   "statement": "各点で$f$に収束する非負可測関数列$f_n$について、積分も$\\int f\\,d\\mu$に収束する。",
+   "reason": "$f_n=1_{(n,n+1]}$は各点で$0$に収束するが、$\\int f_n\\,d\\mu=1$は$\\int 0\\,d\\mu=0$に収束しない。優関数または単調性が必要である。"
+  }
+ },
+ "measure_integration.integrable_of_dominated": {
+  "openmath": "(forall (mu f g) (-> (and (ae_measurable_fn f mu) (integrable_fn g mu) (ae_le mu (fn_abs f) g)) (integrable_fn f mu)))"
+ },
+ "measure_integration.product_measure_of_rectangle": {
+  "statement_en": "Let μ be a measure on α and ν a σ-finite measure on β. For arbitrary subsets A ⊂ α and B ⊂ β (the measure of an arbitrary set is the infimum over measurable supersets, and 0·∞ = 0), (μ×ν)(A×B) = μ(A)·ν(B)."
+ },
+ "measure_integration.minkowski_inequality": {
+  "openmath": "(forall (mu p f g) (-> (and (is_measure mu) (<= 1 p) (ae_measurable_fn f mu) (ae_measurable_fn g mu)) (<= (lp_norm (pointwise_sum f g) p mu) (+ (lp_norm f p mu) (lp_norm g p mu)))))"
+ },
+ "measure_integration.ae_convergence_implies_in_measure": {
+  "openmath": "(forall (mu f g) (-> (and (finite_measure mu) (forall (n) (ae_measurable_fn (seq_value f n) mu)) (ae_fn_seq_tends_to mu f g)) (tends_in_measure f g mu)))"
+ },
+ "measure_integration.lebesgue_decomposition_theorem": {
+  "openmath": "(forall (mu nu) (-> (and (sigma_finite_measure mu) (sigma_finite_measure nu)) (exists (s f) (and (is_measure s) (mutually_singular s nu) (measurable_fn f) (= mu (+ s (with_density nu f)))))))"
+ },
+ "modules_categories.five_lemma_modules": {
+  "openmath": "(forall (R M1 M2 M3 M4 M5 N1 N2 N3 N4 N5 f1 f2 f3 f4 g1 g2 g3 g4 i1 i2 i3 i4 i5) (-> (and (is_ring R) (is_module R M1) (is_module R M2) (is_module R M3) (is_module R M4) (is_module R M5) (is_module R N1) (is_module R N2) (is_module R N3) (is_module R N4) (is_module R N5) (module_hom f1 R M1 M2) (module_hom f2 R M2 M3) (module_hom f3 R M3 M4) (module_hom f4 R M4 M5) (module_hom g1 R N1 N2) (module_hom g2 R N2 N3) (module_hom g3 R N3 N4) (module_hom g4 R N4 N5) (module_hom i1 R M1 N1) (module_hom i2 R M2 N2) (module_hom i3 R M3 N3) (module_hom i4 R M4 N4) (module_hom i5 R M5 N5) (exact_pair f1 f2) (exact_pair f2 f3) (exact_pair f3 f4) (exact_pair g1 g2) (exact_pair g2 g3) (exact_pair g3 g4) (= (map_compose g1 i1) (map_compose i2 f1)) (= (map_compose g2 i2) (map_compose i3 f2)) (= (map_compose g3 i3) (map_compose i4 f3)) (= (map_compose g4 i4) (map_compose i5 f4)) (surjective_map i1) (bijective_map i2) (bijective_map i4) (injective_map i5)) (bijective_map i3)))"
+ },
+ "modules_categories.short_five_lemma_modules": {
+  "openmath": "(forall (R A B C Ap Bp Cp f g fp gp a b c) (-> (and (is_ring R) (is_module R A) (is_module R B) (is_module R C) (is_module R Ap) (is_module R Bp) (is_module R Cp) (module_hom f R A B) (module_hom g R B C) (module_hom fp R Ap Bp) (module_hom gp R Bp Cp) (module_hom a R A Ap) (module_hom b R B Bp) (module_hom c R C Cp) (injective_map f) (exact_pair f g) (surjective_map g) (injective_map fp) (exact_pair fp gp) (surjective_map gp) (= (map_compose fp a) (map_compose b f)) (= (map_compose gp b) (map_compose c g)) (bijective_map a) (bijective_map c)) (bijective_map b)))"
+ },
+ "modules_categories.snake_lemma_modules": {
+  "openmath": "(forall (R M1 M2 M3 N1 N2 N3 K2 K3 C1 C2 f1 f2 g1 g2 i1 i2 i3 u2 u3 p1 p2 F G) (-> (and (is_comm_ring R) (is_module R M1) (is_module R M2) (is_module R M3) (is_module R N1) (is_module R N2) (is_module R N3) (is_module R K2) (is_module R K3) (is_module R C1) (is_module R C2) (module_hom f1 R M1 M2) (module_hom f2 R M2 M3) (module_hom g1 R N1 N2) (module_hom g2 R N2 N3) (module_hom i1 R M1 N1) (module_hom i2 R M2 N2) (module_hom i3 R M3 N3) (module_hom u2 R K2 M2) (module_hom u3 R K3 M3) (module_hom p1 R N1 C1) (module_hom p2 R N2 C2) (module_hom F R K2 K3) (module_hom G R C1 C2) (exact_pair f1 f2) (surjective_map f2) (injective_map g1) (exact_pair g1 g2) (= (map_compose g1 i1) (map_compose i2 f1)) (= (map_compose g2 i2) (map_compose i3 f2)) (exact_pair u2 i2) (exact_pair u3 i3) (injective_map u3) (exact_pair i1 p1) (exact_pair i2 p2) (surjective_map p1) (= (map_compose f2 u2) (map_compose u3 F)) (= (map_compose G p1) (map_compose p2 g1))) (exists (d) (and (module_hom d R K3 C1) (exact_pair F d) (exact_pair d G)))))",
+  "hard_negative": {
+   "statement": "$f_2$が全射でなくても、同じ結論($\\ker\\delta=\\operatorname{im}F$かつ$\\ker G=\\operatorname{im}\\delta$を満たす$\\delta:K_3\\to C_1$の存在)が成り立つ。",
+   "reason": "$f_2$の全射性が必要である。$M_1=M_2=0$, $M_3=\\mathbb{Z}$, $N_1=N_2=N_3=0$、縦の写像はすべて零とすると、行は$M_2,N_2$で完全で$g_1$は単射である。$K_3=\\mathbb{Z}$, $K_2=C_1=C_2=0$, $F=0$なので$\\ker\\delta=\\operatorname{im}F=0$が必要だが、$\\delta:\\mathbb{Z}\\to0$の核は$\\mathbb{Z}$である。"
+  }
+ },
+ "modules_categories.hom_covariant_left_exact": {
+  "openmath": "(forall (R A B C X f g) (-> (and (is_ring R) (is_module R A) (is_module R B) (is_module R C) (is_module R X) (module_hom f R A B) (module_hom g R B C) (injective_map f) (exact_pair f g)) (and (injective_map (hom_post_compose X f)) (exact_pair (hom_post_compose X f) (hom_post_compose X g)))))"
+ },
+ "modules_categories.structure_theorem_pid_modules": {
+  "statement": "$R$を単項イデアル整域、$M$を有限生成$R$加群とする。ある自然数$n,m$と既約元$p_1,\\dots,p_m$、自然数$e_1,\\dots,e_m$により$M\\cong R^n\\oplus\\bigoplus_{j=1}^mR/(p_j^{e_j})$となる(構造定理の存在部分。一意性は主張しない)。",
+  "openmath": "(forall (R M) (-> (and (is_pid R) (is_module R M) (finitely_generated_module R M)) (exists (n m p e) (and (in n N) (in m N) (forall (i) (-> (and (in i N) (< i m)) (irreducible_element (seq_value p i) R))) (module_iso R M (direct_sum_modules (free_rank_module R n) (prime_power_quotient_sum R p e m)))))))"
+ },
+ "modules_categories.quotient_by_torsion_is_torsion_free": {
+  "statement": "$R$を可換環、$M$を$R$加群とし、$T(M)$を、ある非零因子$a\\in R$で$ax=0$となる$x\\in M$全体のなす部分加群とする。$M/T(M)$に対する同じ意味のねじれ部分加群$T(M/T(M))$は$0$である。",
+  "statement_en": "For a module M over a commutative ring, let T(N) denote the submodule of elements killed by some non-zero-divisor of R. Then T(M/T(M)) = 0."
+ },
+ "modules_categories.adjunction_hom_bijection": {
+  "openmath": "(forall (C D F G X Y) (-> (and (is_category C) (is_category D) (functor_between F C D) (functor_between G D C) (adjoint_pair F G) (object_of X C) (object_of Y D)) (exists (e) (and (bijection_between e (hom_set (functor_on_object F X) Y) (hom_set X (functor_on_object G Y))) (forall (f) (-> (in f (hom_set (functor_on_object F X) Y)) (= (fn_value e f) (cat_compose (functor_on_morphism G f) (adjunction_unit F G X)))))))))",
+  "hard_negative": {
+   "statement": "随伴$F\\dashv G$があれば、$G(X)$から$Y$への射と$X$から$F(Y)$への射の間にも自然な全単射がある。",
+   "reason": "これは$G\\dashv F$を述べており$F\\dashv G$からは従わない。忘却関手$U:\\mathbf{Top}\\to\\mathbf{Set}$は離散位相を与える$D$の右随伴だが、$X=\\mathbb{R}$, $Y=\\{0,1\\}$では$\\mathrm{Hom}_{\\mathbf{Set}}(U(X),Y)$は$2^{|\\mathbb{R}|}$個、$\\mathrm{Hom}_{\\mathbf{Top}}(X,D(Y))$は定数写像の$2$個で、全単射がない。"
+  }
+ },
+ "modules_categories.limit_cone_unique_up_to_iso": {
+  "hard_negative": {
+   "statement": "同じ図式の極限錐の頂点は(同型でなく)等しい。",
+   "reason": "一意なのは同型を除いてである。$A=\\{0\\}$, $B=\\{1\\}$の積の頂点として$\\{(0,1)\\}$も$\\{(1,0)\\}$(射影を入れ替えたもの)も取れるが、集合として異なる。"
+  }
+ },
+ "modules_categories.pullback_of_mono_is_mono": {
+  "openmath": "(forall (C X Y Z f g) (-> (and (is_category C) (object_of X C) (object_of Y C) (object_of Z C) (morphism_between f X Z) (morphism_between g Y Z) (mono_morphism f)) (mono_morphism (pullback_projection_right f g))))"
+ },
+ "modules_categories.abelian_mono_epi_is_iso": {
+  "openmath": "(forall (C X Y f) (-> (and (abelian_category C) (object_of X C) (object_of Y C) (morphism_between f X Y) (mono_morphism f) (epi_morphism f)) (iso_morphism f)))"
+ },
+ "modules_categories.abelian_mono_iff_kernel_zero": {
+  "openmath": "(forall (C X Y f) (-> (and (abelian_category C) (object_of X C) (object_of Y C) (morphism_between f X Y)) (<-> (mono_morphism f) (= (kernel_inclusion f) zero_morphism_cat))))"
+ },
+ "multivariable.partials_exist_not_continuous": {
+  "statement": "$f:\\mathbb{R}^2\\to\\mathbb{R}$が$f(0,0)=0$かつ$(x,y)\\neq(0,0)$で$f(x,y)=xy/(x^2+y^2)$を満たすとき、$f$は原点で両方の偏微分係数が$0$であるが、原点で連続でない。",
+  "statement_en": "If f : R^2 -> R satisfies f(0,0) = 0 and f(x,y) = xy/(x^2+y^2) for (x,y) ≠ (0,0), then both partial derivatives of f at the origin equal 0, but f is not continuous at the origin.",
+  "assumptions": [
+   "$f(0,0)=0$",
+   "$(x,y)\\neq(0,0)$で$f(x,y)=xy/(x^2+y^2)$"
+  ],
+  "quantifiers": [
+   "任意の$f:\\mathbb{R}^2\\to\\mathbb{R}$"
+  ],
+  "answer": "$f:\\mathbb{R}^2\\to\\mathbb{R}$が$f(0,0)=0$を満たし、$(x,y)\\neq(0,0)$では$f(x,y)=xy/(x^2+y^2)$を満たすとする。\n\n全ての$x$で$f(x,0)=0$、全ての$y$で$f(0,y)=0$である。これらの$1$変数関数は定数なので、原点での偏微分係数はどちらも$0$である。\n\n一方、$t\\neq0$では$f(t,t)=t^2/(2t^2)=1/2$である。$t\\to0$で$(t,t)$は原点に近づくが、$f(t,t)$は$1/2$のままであり、$f(0,0)=0$に収束しない。したがって$f$は原点で連続でない。\n",
+  "target": "∀ (f : ℝ × ℝ → ℝ), f (0, 0) = 0 → (∀ x y : ℝ, (x ≠ 0 ∨ y ≠ 0) → f (x, y) = x * y / (x ^ 2 + y ^ 2)) → HasDerivAt (fun x : ℝ => f (x, 0)) 0 0 ∧ HasDerivAt (fun y : ℝ => f (0, y)) 0 0 ∧ ¬ ContinuousAt f (0, 0)",
+  "proof": "by\n  intro f h0 h\n  have hx : ∀ x : ℝ, f (x, 0) = 0 := by\n    intro x\n    by_cases hx : x = 0\n    · subst hx; exact h0\n    · rw [h x 0 (Or.inl hx)]; simp\n  have hy : ∀ y : ℝ, f (0, y) = 0 := by\n    intro y\n    by_cases hy : y = 0\n    · subst hy; exact h0\n    · rw [h 0 y (Or.inr hy)]; simp\n  refine ⟨?_, ?_, ?_⟩\n  · have : (fun x : ℝ => f (x, 0)) = fun _ => (0 : ℝ) := funext hx\n    rw [this]; exact hasDerivAt_const _ _\n  · have : (fun y : ℝ => f (0, y)) = fun _ => (0 : ℝ) := funext hy\n    rw [this]; exact hasDerivAt_const _ _\n  · intro hc\n    have hc' : Filter.Tendsto (fun t : ℝ => (t, t)) (nhdsWithin 0 {0}ᶜ) (nhds ((0 : ℝ), (0 : ℝ))) := by\n      have : ContinuousAt (fun t : ℝ => (t, t)) 0 := by fun_prop\n      exact this.tendsto.mono_left nhdsWithin_le_nhds\n    have h3 := hc.tendsto.comp hc'\n    have hev : (fun t : ℝ => (1 / 2 : ℝ)) =ᶠ[nhdsWithin 0 {0}ᶜ] (f ∘ fun t : ℝ => (t, t)) := by\n      filter_upwards [self_mem_nhdsWithin] with t ht\n      have ht' : t ≠ 0 := ht\n      simp only [Function.comp]\n      rw [h t t (Or.inl ht')]\n      field_simp\n      ring\n    have h4 := tendsto_nhds_unique (h3.congr' hev.symm) tendsto_const_nhds\n    rw [h0] at h4\n    norm_num at h4\n"
+ },
+ "multivariable.euler_homogeneous_function": {
+  "statement": "実ノルム空間$E$上の実数値関数$f$と実数$k$について、全ての$t>0$と$y\\in E$で$f(ty)=t^kf(y)$が成り立ち、$f$の点$x$での微分が$L$ならば、$L(x)=kf(x)$である（オイラーの同次関数定理）。",
+  "statement_en": "If f : E -> R on a real normed space satisfies f(ty) = t^k f(y) for all t > 0 and y in E, with real k, and f has derivative L at x, then L(x) = k f(x) (Euler's homogeneous function theorem).",
+  "assumptions": [
+   "$E$は実ノルム空間",
+   "$k\\in\\mathbb{R}$",
+   "全ての$t>0$と$y\\in E$で$f(ty)=t^kf(y)$",
+   "$f$の$x$での微分は$L$"
+  ],
+  "quantifiers": [
+   "任意の$f:E\\to\\mathbb{R}$、$k\\in\\mathbb{R}$、$x\\in E$、有界線形写像$L$"
+  ],
+  "answer": "$E$を実ノルム空間、$k\\in\\mathbb{R}$とし、$f:E\\to\\mathbb{R}$は全ての$t>0$と$y\\in E$で$f(ty)=t^kf(y)$を満たすとする（$t>0$に対し$t^k=e^{k\\ln t}$）。$x\\in E$での$f$の微分を$L$とする。\n\n$h(t)=f(tx)$とおく。$t\\mapsto tx$の$t=1$での微分係数は$x$であり、$t=1$で点$x$を通る。連鎖律より$h'(1)=L(x)$である。一方、$t>0$では$h(t)=t^kf(x)$であり、$t\\mapsto t^k$の$t=1$での微分係数は$k$なので、$h'(1)=kf(x)$である。したがって$L(x)=kf(x)$である。\n",
+  "openmath": "(forall (E f k x L) (-> (and (normed_space E) (in k R) (homogeneous_of_degree f k) (has_fderiv_at f L x)) (= (fn_value L x) (* k (fn_value f x)))))",
+  "target": "∀ (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] (f : E → ℝ) (k : ℝ) (x : E) (L : E →L[ℝ] ℝ), (∀ t : ℝ, 0 < t → ∀ y : E, f (t • y) = t ^ k * f y) → HasFDerivAt f L x → L x = k * f x",
+  "proof": "by\n  intro E _ _ f k x L hom hL\n  have h1 : HasDerivAt (fun t : ℝ => t • x) x 1 := by\n    simpa using (hasDerivAt_id (1 : ℝ)).smul_const x\n  have hL' : HasFDerivAt f L ((1 : ℝ) • x) := by simpa using hL\n  have h2 : HasDerivAt (fun t : ℝ => f (t • x)) (L x) 1 := hL'.comp_hasDerivAt 1 h1\n  have h3 := (Real.hasDerivAt_rpow_const (x := (1 : ℝ)) (p := k) (Or.inl one_ne_zero)).mul_const (f x)\n  have h4 : (fun t : ℝ => f (t • x)) =ᶠ[nhds 1] fun t : ℝ => t ^ k * f x := by\n    filter_upwards [lt_mem_nhds (one_pos : (0 : ℝ) < 1)] with t ht\n    exact hom t ht x\n  have h5 := h2.unique (h3.congr_of_eventuallyEq h4)\n  simpa using h5\n"
+ },
+ "multivariable.gaussian_integral_plane": {
+  "statement": "$b>0$のとき、$\\int_{\\mathbb{R}^2}\\exp(-b(x^2+y^2))\\,dx\\,dy=\\pi/b$である。",
+  "statement_en": "For b > 0, the integral of exp(-b(x^2+y^2)) over the plane equals π/b.",
+  "assumptions": [
+   "$b>0$"
+  ],
+  "quantifiers": [
+   "任意の$b\\in\\mathbb{R}$"
+  ],
+  "conclusion": "$\\int_{\\mathbb{R}^2}\\exp(-b(x^2+y^2))\\,dx\\,dy=\\pi/b$である。",
+  "answer": "$b>0$とする。$\\exp(-b(x^2+y^2))=\\exp(-bx^2)\\exp(-by^2)$である。$\\exp(-bx^2)$は$\\mathbb{R}$上で可積分なので、トネリの定理よりこの関数は$\\mathbb{R}^2$上で可積分である。\n\nフビニの定理より、重積分は$(\\int_{\\mathbb{R}}\\exp(-bx^2)\\,dx)(\\int_{\\mathbb{R}}\\exp(-by^2)\\,dy)$に等しい。ガウス積分の公式（$b>0$なら$\\int_{\\mathbb{R}}\\exp(-bx^2)\\,dx=\\sqrt{\\pi/b}$）より、各因子は$\\sqrt{\\pi/b}$である。したがって重積分は$\\sqrt{\\pi/b}\\cdot\\sqrt{\\pi/b}=\\pi/b$である。\n",
+  "openmath": "(forall (b) (-> (> b 0) (= (integral_whole_space (lambda (z) (exp (neg (* b (+ (^ (first_coord z) 2) (^ (second_coord z) 2))))))) (/ pi b))))",
+  "hard_negative": {
+   "statement": "$b>0$のとき$\\int_{\\mathbb{R}^2}\\exp(-b(x^2+y^2))\\,dx\\,dy=\\sqrt{\\pi/b}$である。",
+   "reason": "$\\sqrt{\\pi/b}$は1次元の積分の値である。2次元では2つの1次元積分の積になるので$\\pi/b$である。$b=1$では$\\pi\\neq\\sqrt{\\pi}$である。"
+  },
+  "target": "∀ b : ℝ, 0 < b → (∫ z : ℝ × ℝ, Real.exp (-(b * (z.1 ^ 2 + z.2 ^ 2)))) = Real.pi / b",
+  "proof": "by\n  intro b hb\n  have h : (fun z : ℝ × ℝ => Real.exp (-(b * (z.1 ^ 2 + z.2 ^ 2)))) =\n      fun z : ℝ × ℝ => Real.exp (-b * z.1 ^ 2) * Real.exp (-b * z.2 ^ 2) := by\n    funext z\n    rw [← Real.exp_add]\n    congr 1\n    ring\n  rw [h, MeasureTheory.Measure.volume_eq_prod]\n  rw [MeasureTheory.integral_prod_mul (fun x : ℝ => Real.exp (-b * x ^ 2)) (fun y : ℝ => Real.exp (-b * y ^ 2))]\n  rw [integral_gaussian b]\n  exact Real.mul_self_sqrt (div_nonneg Real.pi_pos.le hb.le)\n"
+ },
+ "multivariable.divergence_theorem_box": {
+  "hard_negative": {
+   "statement": "面$x_i=a_i$上の積分を引かずに足しても成り立つ。すなわち$\\int_{[a,b]}\\operatorname{div}F=\\sum_i\\bigl(\\int_{x_i=b_i}F_i+\\int_{x_i=a_i}F_i\\bigr)$である。",
+   "reason": "向かい合う面の寄与は引き算でなければならない。$n=0$、$[0,1]$上で$F\\equiv1$（$\\operatorname{div}F=0$）では左辺$0$、右辺$F(1)+F(0)=2$で偽である。"
+  }
+ },
+ "number_theory.gcd_mul_lcm": {
+  "statement_en": "For natural numbers a and b, gcd(a, b) · lcm(a, b) = ab, where lcm(a, b) = 0 by convention if a = 0 or b = 0."
+ },
+ "ode.picard_lindelof_existence": {
+  "hard_negative": {
+   "statement": "閉球上のリプシッツ性・連続性・有界性があれば、時間幅の条件$L\\max(t_{\\max}-t_0,t_0-t_{\\min})\\leq a$がなくても、全区間$I$上の解が存在する。",
+   "reason": "時間幅の条件は外せない。$E=\\mathbb{R}$、$x_0=0$、$a=1$、$L=1$、$K=0$、$I=[0,2]$、$t_0=0$、$f(t,x)=1$（$x\\leq1$）、$f(t,x)=0$（$x>1$）とする。閉球$[-1,1]$上では$f\\equiv1$で全ての仮定が成り立つが、$[0,2]$上の解はない。解は$t\\leq1$で$x=t$であり、$t=1$での微分係数は$f(1,1)=1$なので$t>1$で$x>1$となり、そこでは$x'=0$となって矛盾する。"
+  }
+ },
+ "ode.matrix_exponential_derivative": {
+  "hard_negative": {
+   "statement": "行列値関数$A(t)$が微分可能なら、$\\exp(A(t))$の微分係数は常に$A'(t)\\exp(A(t))$である。",
+   "reason": "$A(t)$と$A'(t)$が可換でなければ一般に成り立たない。$A(t)=N+tM$、$N=\\begin{pmatrix}0&1\\\\0&0\\end{pmatrix}$、$M=\\begin{pmatrix}0&0\\\\1&0\\end{pmatrix}$の$t=0$では微分係数は$\\int_0^1e^{sN}Me^{(1-s)N}ds=M+\\frac{NM+MN}{2}+\\frac{NMN}{6}$だが、$A'(0)\\exp(A(0))=M(I+N)=M+MN$で、差は$\\frac{NM-MN}{2}+\\frac{N}{6}\\neq0$である。"
+  }
+ },
+ "ode.matrix_exponential_neg_inverse": {
+  "target": "∀ (m : Type*) [Fintype m] [DecidableEq m] (A : Matrix m m ℝ), NormedSpace.exp A * NormedSpace.exp (-A) = 1 ∧ NormedSpace.exp (-A) * NormedSpace.exp A = 1",
+  "proof": "by\n  intro m _ _ A\n  have h1 : Commute A (-A) := (Commute.refl A).neg_right\n  have h2 := Matrix.exp_add_of_commute A (-A) h1\n  have h3 := Matrix.exp_add_of_commute (-A) A h1.symm\n  rw [add_neg_cancel, NormedSpace.exp_zero] at h2\n  rw [neg_add_cancel, NormedSpace.exp_zero] at h3\n  exact ⟨h2.symm, h3.symm⟩\n"
+ },
+ "probability_statistics.prob_union_bound_finite": {
+  "statement_en": "For a probability measure P and a finite family of arbitrary (not necessarily measurable) subsets A_i of the sample space, P(⋃_{i∈s} A_i) ≤ Σ_{i∈s} P(A_i), where P of a non-measurable set means its outer measure."
+ },
+ "probability_statistics.cond_mul_rule": {
+  "statement_en": "For a probability measure P, a measurable event A with P(A) > 0 and an arbitrary set B, the conditional probability P(B|A) := P(A∩B)/P(A) satisfies P(B|A)·P(A) = P(A∩B) (P of a non-measurable set is its outer measure)."
+ },
+ "probability_statistics.indep_event_compl": {
+  "hard_negative": {
+   "statement": "互いに素な事象$A,B$（$P(A)>0$、$P(B)>0$）について、$A$と$B^c$は独立である。",
+   "reason": "$P(A\\cap B^c)=P(A)$だが$P(A)P(B^c)=P(A)(1-P(B))<P(A)$なので独立でない。補集合に移せるのは、$A$と$B$がもともと独立な場合である。"
+  }
+ },
+ "probability_statistics.variance_indep_sum": {
+  "openmath": "(forall (P s X) (-> (and (probability_measure P) (finite_set s) (forall (i) (-> (in i s) (square_integrable_rv (seq_value X i) P))) (forall (i j) (-> (and (in i s) (in j s) (!= i j)) (indep_rv P (seq_value X i) (seq_value X j))))) (= (variance P (sum s (lambda (i) (seq_value X i)))) (sum s (lambda (i) (variance P (seq_value X i)))))))"
+ },
+ "probability_statistics.strong_law_large_numbers": {
+  "hard_negative": {
+   "statement": "可積分性を仮定しなくても、独立同分布な実確率変数列の標本平均はほとんど確実に収束する。",
+   "reason": "標準コーシー分布の独立同分布列では標本平均$\\frac1n\\sum_{i<n}X_i$の分布が再び標準コーシー分布で、$n$によらない。ほとんど確実に収束するなら極限は末尾事象に可測でコルモゴロフの0-1法則により定数だが、コーシー分布は定数でない。よって収束しない。"
+  }
+ },
+ "probability_statistics.central_limit_theorem": {
+  "hard_negative": {
+   "statement": "独立同分布列$(X_i)$が可積分で分散が無限でも、同じ正規化$\\frac{1}{\\sqrt{n}}\\left(\\sum_{i<n}X_i-nE[X_0]\\right)$は正規分布に法則収束する。",
+   "reason": "$P(X_0>x)=x^{-3/2}$ ($x\\geq1$)は平均$3$をもつが分散は無限である。この場合$(\\sum_{i<n}X_i-nE[X_0])$は$n^{2/3}$のオーダーで揺れるので、$\\sqrt{n}$で割った列は緊密でなく、どんな正規分布にも法則収束しない。"
+  }
+ },
+ "probability_statistics.gaussian_mean_variance": {
+  "statement_en": "The normal distribution with parameters m and v ≥ 0 is square-integrable, has mean m and variance v.",
+  "conclusion": "$N(m,v)$は2乗可積分で、期待値は$m$、分散は$v$である。",
+  "openmath": "(forall (m v) (-> (>= v 0) (and (square_integrable_rv identity_rv (gaussian_measure m v)) (= (expectation (gaussian_measure m v) identity_rv) m) (= (variance (gaussian_measure m v) identity_rv) v))))",
+  "target": "∀ (m : ℝ) (v : NNReal), MeasureTheory.MemLp id 2 (ProbabilityTheory.gaussianReal m v) ∧ ∫ x, x ∂(ProbabilityTheory.gaussianReal m v) = m ∧ ProbabilityTheory.variance (fun x => x) (ProbabilityTheory.gaussianReal m v) = v",
+  "proof": "by\n  intro m v\n  exact ⟨ProbabilityTheory.memLp_id_gaussianReal 2, ProbabilityTheory.integral_id_gaussianReal, ProbabilityTheory.variance_fun_id_gaussianReal⟩"
+ },
+ "probability_statistics.gaussian_indep_add": {
+  "openmath": "(forall (P X Y m1 m2 v1 v2) (-> (and (probability_measure P) (>= v1 0) (>= v2 0) (indep_rv P X Y) (has_law P X (gaussian_measure m1 v1)) (has_law P Y (gaussian_measure m2 v2))) (has_law P (+ X Y) (gaussian_measure (+ m1 m2) (+ v1 v2)))))"
+ },
+ "probability_statistics.poisson_limit_binomial": {
+  "openmath": "(forall (p r k) (-> (and (forall (n) (-> (in n N) (and (<= 0 (seq_value p n)) (<= (seq_value p n) 1)))) (>= r 0) (in k N) (real_tends_to (lambda (n) (* n (seq_value p n))) r)) (real_tends_to (lambda (n) (prob (binomial_measure n (seq_value p n)) (set k))) (prob (poisson_measure r) (set k)))))"
+ },
+ "probability_statistics.sample_mean_unbiased": {
+  "hard_negative": {
+   "statement": "各$X_i$が可積分であれば、期待値が共通でなくても標本平均の期待値は$E[X_0]$である。",
+   "reason": "$n=2$、$E[X_0]=0$、$E[X_1]=2$なら標本平均の期待値は$1\\neq E[X_0]$である。共通の期待値$m$の仮定が必要である。"
+  }
+ },
+ "probability_statistics.sample_variance_unbiased": {
+  "openmath": "(forall (P X n m v) (-> (and (probability_measure P) (>= n 2) (forall (i j) (-> (and (in i (finset_range n)) (in j (finset_range n)) (!= i j)) (indep_rv P (seq_value X i) (seq_value X j)))) (forall (i) (-> (in i (finset_range n)) (and (square_integrable_rv (seq_value X i) P) (= (expectation P (seq_value X i)) m) (= (variance P (seq_value X i)) v))))) (= (expectation P (/ (sum (finset_range n) (lambda (i) (^ (- (seq_value X i) (/ (partial_sum_rv X n) n)) 2))) (- n 1))) v)))"
+ },
+ "real_analysis.lub_add": {
+  "topic": "上限・集合の和（和集合ではない）の上限"
+ },
+ "real_analysis.eventually_lt_of_limsup_lt": {
+  "statement": "有界な実数列の上極限が$c$より小さいなら、十分先の全ての項は$c$より小さい。",
+  "statement_en": "If the limit superior of a bounded real sequence is less than c, then all sufficiently late terms are less than c.",
+  "assumptions": [
+   "全ての$n$で$|a_n|\\leq M$",
+   "$\\limsup_n a_n<c$"
+  ],
+  "answer": "$(a_n)$を実数列、$M,c\\in\\mathbb{R}$とし、全ての$n$で$|a_n|\\leq M$とする。$B$を、ある$N$について「$n\\geq N$なら$a_n\\leq b$」が成り立つ実数$b$全体の集合とする。上極限は$B$の下限である。$M\\in B$なので$B$は空でない。また$b\\in B$なら十分大きい$n$で$-M\\leq a_n\\leq b$なので$-M\\leq b$であり、$B$は下に有界である。\n$\\limsup_n a_n<c$とすると、$c$は$B$の下界ではない。したがって$b<c$となる$b\\in B$がある。$b\\in B$より、ある$N$があり、$n\\geq N$なら$a_n\\leq b<c$である。\n",
+  "openmath": "(forall (a M c) (-> (and (forall (n) (<= (abs (seq_value a n)) M)) (< (seq_limsup a) c)) (exists (K) (forall (n) (-> (>= n K) (< (seq_value a n) c))))))",
+  "target": "∀ (a : ℕ → ℝ) (M c : ℝ), (∀ n, |a n| ≤ M) → Filter.limsup a Filter.atTop < c → ∃ N : ℕ, ∀ n : ℕ, N ≤ n → a n < c",
+  "proof": "by\n  intro a M c h h₁\n  have hu : Filter.IsBoundedUnder (· ≤ ·) Filter.atTop a :=\n    Filter.isBoundedUnder_of ⟨M, fun n => (abs_le.mp (h n)).2⟩\n  have h₂ := Filter.eventually_lt_of_limsup_lt h₁ hu\n  obtain ⟨N, hN⟩ := Filter.eventually_atTop.1 h₂\n  exact ⟨N, fun n hn => hN n hn⟩\n"
+ },
+ "real_analysis.cauchy_product": {
+  "answer": "$(a_n),(b_n)$を実数列とし、$\\sum_n|a_n|$と$\\sum_n|b_n|$が収束するとする。$A'=\\sum_n|a_n|$、$B'=\\sum_n|b_n|$、$A=\\sum_n a_n$、$B=\\sum_n b_n$とおき、$c_n=\\sum_{k\\leq n}a_kb_{n-k}$とする。\nまず$\\sum_n c_n$の絶対収束を示す。$\\sum_{n\\leq N}|c_n|\\leq\\sum_{n\\leq N}\\sum_{k+l=n}|a_k||b_l|\\leq(\\sum_{k\\leq N}|a_k|)(\\sum_{l\\leq N}|b_l|)\\leq A'B'$である。部分和は上に有界な単調増加列なので、$\\sum_n|c_n|$は収束する。絶対収束する級数は収束するので、$\\sum_n c_n$は収束する。\n次に和を求める。$A_N=\\sum_{k\\leq N}a_k$、$B_N=\\sum_{l\\leq N}b_l$、$C_N=\\sum_{n\\leq N}c_n$とおくと、$A_NB_N-C_N$は$k,l\\leq N$かつ$k+l>N$を満たす組$(k,l)$についての$a_kb_l$の和である。$m=\\lfloor N/2\\rfloor$とする。そのような組では$k>m$または$l>m$なので、$|A_NB_N-C_N|\\leq(\\sum_{k>m}|a_k|)B'+A'(\\sum_{l>m}|b_l|)$である。右辺は$N\\to\\infty$で$0$に収束する。$A_NB_N\\to AB$なので、$C_N$も$AB$に収束する。すなわち$\\sum_n c_n=AB$である。\n"
+ },
+ "real_analysis.radius_of_convergence": {
+  "openmath": "(forall (a) (or (exists (r) (and (>= r 0) (forall (x) (-> (< (abs x) r) (real_series_summable (lambda (n) (abs (* (seq_value a n) (^ x n))))))) (forall (x) (-> (< r (abs x)) (not (exists (S) (seq_fn_tends_to (lambda (K) (real_partial_sum (lambda (n) (* (seq_value a n) (^ x n))) K)) S))))))) (forall (x) (real_series_summable (lambda (n) (abs (* (seq_value a n) (^ x n))))))))"
+ },
+ "real_analysis.heine_cantor": {
+  "openmath": "(forall (X Y f S) (-> (and (metric_space X) (metric_space Y) (compact_in X S) (continuous_between (subspace_topology_on X S) Y f)) (uniformly_continuous_map (subspace_topology_on X S) Y f)))"
+ },
+ "real_analysis.lipschitz_uniform_continuous": {
+  "hard_negative": {
+   "statement": "一様連続な関数$f:\\mathbb{R}\\to\\mathbb{R}$はリプシッツ連続である。",
+   "reason": "$f(x)=\\sqrt{|x|}$は一様連続（$|\\sqrt{|x|}-\\sqrt{|y|}|\\leq\\sqrt{|x-y|}$）だが、$0$の近くで$f(h)/h=1/\\sqrt{h}$が非有界なので、どの$K$でも$|f(x)-f(y)|\\leq K|x-y|$を満たさない。"
+  }
+ },
+ "ring_theory.ring_hom_injective_iff_ker_bot": {
+  "openmath": "(forall (R S f) (-> (and (comm_ring R) (comm_ring S) (ring_hom f R S)) (<-> (injective_function f) (= (ring_kernel f) (zero_ideal R)))))"
+ },
+ "ring_theory.quotient_lift_unique": {
+  "id": "ring_quotient_lift_unique"
+ },
+ "ring_theory.quotient_ideal_correspondence": {
+  "statement": "可換環$R$のイデアル$I$と自然な射影$\\pi:R\\to R/I$について、$I\\subseteq J$を満たす$R$の任意のイデアル$J$で$\\pi^{-1}(\\pi(J))=J$であり、$R/I$の任意のイデアル$K$で$\\pi(\\pi^{-1}(K))=K$である。",
+  "statement_en": "Let I be an ideal of a commutative ring R with projection π: R → R/I. For every ideal J ⊇ I of R, π⁻¹(π(J)) = J, and for every ideal K of R/I, π(π⁻¹(K)) = K.",
+  "assumptions": [
+   "$R$は可換環",
+   "$I$は$R$のイデアル",
+   "$\\pi:R\\to R/I$は自然な射影"
+  ],
+  "quantifiers": [
+   "任意の可換環$R$とそのイデアル$I$",
+   "$I\\subseteq J$を満たす任意のイデアル$J\\subseteq R$",
+   "$R/I$の任意のイデアル$K$"
+  ],
+  "conclusion": "$I\\subseteq J$なら$\\pi^{-1}(\\pi(J))=J$であり、$R/I$の任意のイデアル$K$で$\\pi(\\pi^{-1}(K))=K$である。",
+  "answer": "$R$を可換環、$I\\subseteq J$を$R$のイデアル、$\\pi:R\\to R/I$を自然な射影とする。$\\pi$は全射なので、$\\pi(J)$は$R/I$のイデアルであり、$J$の元の剰余類の全体である。\n\n$j\\in J$なら$\\pi(j)\\in\\pi(J)$なので、$J\\subseteq\\pi^{-1}(\\pi(J))$である。\n\n逆に$x\\in\\pi^{-1}(\\pi(J))$とする。$\\pi(x)=\\pi(j)$となる$j\\in J$があるので、$x-j\\in I\\subseteq J$である。したがって$x=(x-j)+j\\in J$である。\n\n次に$K$を$R/I$のイデアルとする。$y\\in K$なら、$\\pi$は全射なので$y=\\pi(x)$となる$x\\in R$がある。$\\pi(x)=y\\in K$より$x\\in\\pi^{-1}(K)$なので$y\\in\\pi(\\pi^{-1}(K))$である。逆に$\\pi(\\pi^{-1}(K))$の元は$\\pi(x)$（$\\pi(x)\\in K$）の形なので$K$に属する。よって$\\pi(\\pi^{-1}(K))=K$である。\n",
+  "openmath": "(forall (R I) (-> (and (comm_ring R) (ideal_of I R)) (and (forall (J) (-> (and (ideal_of J R) (subset I J)) (= (ideal_comap (ring_quotient_map I) (ideal_map (ring_quotient_map I) J)) J))) (forall (K) (-> (ideal_of K (quotient_ring R I)) (= (ideal_map (ring_quotient_map I) (ideal_comap (ring_quotient_map I) K)) K))))))",
+  "target": "∀ (R : Type*) [CommRing R] (I : Ideal R), (∀ J : Ideal R, I ≤ J → (J.map (Ideal.Quotient.mk I)).comap (Ideal.Quotient.mk I) = J) ∧ (∀ K : Ideal (R ⧸ I), (K.comap (Ideal.Quotient.mk I)).map (Ideal.Quotient.mk I) = K)\n",
+  "proof": "by\n  intro R _ I\n  refine ⟨fun J h => ?_, fun K => ?_⟩\n  · rw [Ideal.comap_map_of_surjective _ Ideal.Quotient.mk_surjective, ← RingHom.ker_eq_comap_bot, Ideal.mk_ker]\n    exact sup_eq_left.mpr h\n  · exact Ideal.map_comap_of_surjective _ Ideal.Quotient.mk_surjective K\n"
+ },
+ "ring_theory.chinese_remainder_two_ideals": {
+  "openmath": "(forall (R I J) (-> (and (comm_ring R) (ideal_of I R) (ideal_of J R) (= (ideal_sum I J) (unit_ideal R))) (exists (e) (and (ring_iso e (quotient_ring R (inter I J)) (ring_product (quotient_ring R I) (quotient_ring R J))) (forall (x) (= (fn_value e (residue_class (inter I J) x)) (ordered_pair (residue_class I x) (residue_class J x))))))))"
+ },
+ "ring_theory.euclidean_domain_is_pid": {
+  "answer": "$R$をユークリッド整域とする。すなわち$R$は整域で、$R$上に整礎な関係$\\prec$（無限に下る列を持たない関係）があり、任意の$x\\in R$と$d\\neq 0$について、$x=dq+r$かつ「$r=0$または$r\\prec d$」を満たす$q,r\\in R$が存在する。ふつうは自然数値の関数$\\delta$を使い、$r\\prec d$を$\\delta(r)<\\delta(d)$とする。\n\n$I$を$R$のイデアルとする。$I=\\{0\\}$なら$I=(0)$である。$I\\neq\\{0\\}$なら、$I$の$0$でない元の集合は空でなく$\\prec$が整礎なので、$\\prec$について極小な元$d$がある。$(d)\\subseteq I$は明らかである。\n\n$x\\in I$をとり、$x=dq+r$と割る。$r=x-dq\\in I$である。$r\\neq 0$なら$r\\prec d$となり、$d$の極小性に反する。よって$r=0$であり、$x\\in(d)$である。したがって$I=(d)$である。\n"
+ },
+ "ring_theory.polynomial_monic_division": {
+  "openmath": "(forall (R f g) (-> (and (comm_ring R) (nontrivial_ring R) (in f (polynomial_ring R)) (in g (polynomial_ring R)) (monic_polynomial g)) (exists (q r) (and (= f (+ (* g q) r)) (or (= r 0) (< (poly_degree r) (poly_degree g)))))))"
+ },
+ "ring_theory.polynomial_root_count_le_degree": {
+  "openmath": "(forall (R f S) (-> (and (integral_domain R) (in f (polynomial_ring R)) (!= f 0) (subset S R) (finite_set S) (forall (a) (-> (in a S) (= (poly_eval f a) 0)))) (<= (size S) (poly_degree f))))"
+ },
+ "ring_theory.primitive_irreducible_over_int_iff_rat": {
+  "openmath": "(forall (f) (-> (and (in f (polynomial_ring Z)) (primitive_polynomial f)) (<-> (irreducible_element f (polynomial_ring Z)) (irreducible_element (poly_map (canonical_ring_hom Z Q) f) (polynomial_ring Q)))))"
+ },
+ "ring_theory.eisenstein_criterion_prime_ideal": {
+  "openmath": "(forall (R P f) (-> (and (integral_domain R) (prime_ideal P R) (in f (polynomial_ring R)) (primitive_polynomial f) (> (poly_degree f) 0) (notin (poly_leading_coeff f) P) (forall (n) (-> (and (in n N) (< n (poly_degree f))) (in (poly_coeff f n) P))) (notin (poly_coeff f 0) (ideal_product P P))) (irreducible_element f (polynomial_ring R))))"
+ },
+ "ring_theory.eisenstein_integer_monic_over_rat": {
+  "openmath": "(forall (f p) (-> (and (in f (polynomial_ring Z)) (monic_polynomial f) (> (poly_degree f) 0) (prime_element p Z) (forall (n) (-> (and (in n N) (< n (poly_degree f))) (dvd p (poly_coeff f n)))) (not (dvd (^ p 2) (poly_coeff f 0)))) (irreducible_element (poly_map (canonical_ring_hom Z Q) f) (polynomial_ring Q))))"
+ },
+ "ring_theory.fraction_field_universal_property": {
+  "openmath": "(forall (A K L g) (-> (and (integral_domain A) (fraction_field_of K A) (is_field L) (ring_hom g A L) (injective_function g)) (exists (h) (and (ring_hom h K L) (forall (a) (-> (in a A) (= (fn_value h (fn_value (fraction_embedding A K) a)) (fn_value g a)))) (forall (k) (-> (and (ring_hom k K L) (forall (a) (-> (in a A) (= (fn_value k (fn_value (fraction_embedding A K) a)) (fn_value g a))))) (= k h)))))))"
+ },
+ "ring_theory.matrix_unit_iff_det_unit": {
+  "openmath": "(forall (n R A) (-> (and (comm_ring R) (finite_set n) (in A (matrix_ring n R))) (<-> (unit_element A (matrix_ring n R)) (unit_element (matrix_det A) R))))"
+ },
+ "ring_theory.matrix_ring_nonzero_square_zero": {
+  "openmath": "(forall (n R i j) (-> (and (comm_ring R) (nontrivial_ring R) (finite_set n) (in i n) (in j n) (!= i j)) (exists (A) (and (in A (matrix_ring n R)) (!= A 0) (= (* A A) 0)))))"
+ },
+ "ring_theory.noetherian_iff_ideals_fg": {
+  "statement": "可換環$R$について、イデアルの任意の昇鎖$I_0\\subseteq I_1\\subseteq\\cdots$がある番号から先で一定になること（昇鎖条件）と、$R$のすべてのイデアルが有限生成であることは同値である。",
+  "statement_en": "For a commutative ring R, every ascending chain of ideals I_0 ⊆ I_1 ⊆ ... is eventually constant if and only if every ideal of R is finitely generated.",
+  "conclusion": "イデアルの昇鎖条件が成り立つことと、$R$のすべてのイデアルが有限生成であることは同値である。",
+  "openmath": "(forall (R) (-> (comm_ring R) (<-> (forall (I) (-> (and (forall (n) (-> (in n N) (ideal_of (seq_value I n) R))) (forall (n) (-> (in n N) (subset (seq_value I n) (seq_value I (+ n 1)))))) (exists (k) (and (in k N) (forall (m) (-> (and (in m N) (<= k m)) (= (seq_value I k) (seq_value I m)))))))) (forall (J) (-> (ideal_of J R) (finitely_generated_ideal J))))))",
+  "target": "∀ (R : Type*) [CommRing R], (∀ I : ℕ → Ideal R, Monotone I → ∃ N, ∀ m, N ≤ m → I N = I m) ↔ ∀ I : Ideal R, I.FG\n",
+  "proof": "by\n  intro R _\n  rw [← isNoetherianRing_iff_ideal_fg, isNoetherianRing_iff, ← monotone_stabilizes_iff_noetherian]\n  constructor\n  · intro h f\n    exact h f f.monotone\n  · intro h I hI\n    exact h ⟨I, hI⟩\n"
+ },
+ "ring_theory.noetherian_ascending_chain_stabilizes": {
+  "openmath": "(forall (R I) (-> (and (comm_ring R) (noetherian_ring R) (forall (n) (-> (in n N) (and (ideal_of (seq_value I n) R) (subset (seq_value I n) (seq_value I (+ n 1))))))) (exists (k) (and (in k N) (forall (m) (-> (and (in m N) (<= k m)) (= (seq_value I k) (seq_value I m))))))))"
+ },
+ "school_algebra_basics.proportion_iff_cross_product": {
+  "hard_negative": {
+   "statement": "$\\dfrac{a}{b}=\\dfrac{c}{d}$であることと$ab=cd$であることは同値である。",
+   "reason": "$a=1,b=2,c=2,d=1$のとき$ab=cd=2$だが、$\\dfrac{a}{b}=\\dfrac{1}{2}$、$\\dfrac{c}{d}=2$で等しくない。外項の積と内項の積は$ad=bc$である。"
+  }
+ },
+ "school_algebra_basics.nested_square_root_minus_form_ordered": {
+  "statement": "実数$a,b\\geq 0$について$\\sqrt{a+b-2\\sqrt{ab}}=|\\sqrt{a}-\\sqrt{b}|$である。大小が分かっていれば絶対値は外れ、$a\\geq b$なら$\\sqrt{a}-\\sqrt{b}$、$a\\leq b$なら$\\sqrt{b}-\\sqrt{a}$に等しい。",
+  "statement_en": "For real a, b ≥ 0, √(a + b - 2√(ab)) = |√a - √b|. If a ≥ b this is √a - √b, and if a ≤ b it is √b - √a.",
+  "assumptions": [
+   "$a,b$は実数",
+   "$a\\geq 0$かつ$b\\geq 0$"
+  ],
+  "conclusion": "$\\sqrt{a+b-2\\sqrt{ab}}=|\\sqrt{a}-\\sqrt{b}|$が成り立つ。",
+  "answer": "$a,b$を$0$以上の実数とする。$\\sqrt{ab}=\\sqrt{a}\\sqrt{b}$なので、$a+b-2\\sqrt{ab}=(\\sqrt{a})^2+(\\sqrt{b})^2-2\\sqrt{a}\\sqrt{b}=(\\sqrt{a}-\\sqrt{b})^2$である。任意の実数$u$について$\\sqrt{u^2}=|u|$なので、$\\sqrt{a+b-2\\sqrt{ab}}=|\\sqrt{a}-\\sqrt{b}|$を得る。",
+  "openmath": "(forall (a b) (-> (and (>= a 0) (>= b 0)) (= (root (- (+ a b) (* 2 (root (* a b) 2))) 2) (abs (- (root a 2) (root b 2))))))",
+  "hard_negative": {
+   "statement": "$a,b\\geq 0$の大小によらず$\\sqrt{a+b-2\\sqrt{ab}}=\\sqrt{a}-\\sqrt{b}$である。",
+   "reason": "$a=1$、$b=4$なら左辺は$\\sqrt{5-4}=1$、右辺は$-1$である。絶対値を付けなければ$a\\geq b$が必要である。"
+  },
+  "target": "∀ a b : ℝ, 0 ≤ a → 0 ≤ b → Real.sqrt (a + b - 2 * Real.sqrt (a * b)) = |Real.sqrt a - Real.sqrt b|",
+  "proof": "by\n  intro a b ha hb\n  have hs := Real.sq_sqrt ha\n  have ht := Real.sq_sqrt hb\n  rw [Real.sqrt_mul ha]\n  have h : a + b - 2 * (Real.sqrt a * Real.sqrt b) = (Real.sqrt a - Real.sqrt b) ^ 2 := by\n    linear_combination -hs - ht\n  rw [h, Real.sqrt_sq_eq_abs]"
+ },
+ "school_algebra_basics.real_pair_with_given_sum_and_product_iff": {
+  "openmath": "(forall (s p) (-> (and (in s R) (in p R)) (<-> (exists (x y) (and (in x R) (in y R) (= (+ x y) s) (= (* x y) p))) (<= (* 4 p) (^ s 2)))))"
+ },
+ "school_algebra_basics.fundamental_theorem_symmetric_polynomials": {
+  "level": 2
+ },
+ "school_analytic_geometry.triangle_area_cross_product_formula": {
+  "statement": "実数$a_1,a_2,b_1,b_2$について、ベクトル$(a_1,a_2)$、$(b_1,b_2)$の作る三角形の面積の2つの公式の値は一致する。すなわち（面積そのものは扱わず、2式の等式として）$\\frac12\\sqrt{(a_1^2+a_2^2)(b_1^2+b_2^2)-(a_1b_1+a_2b_2)^2}=\\frac12|a_1b_2-a_2b_1|$である。",
+  "statement_en": "For real a1,a2,b1,b2, the two triangle-area expressions agree: (1/2)√((a1²+a2²)(b1²+b2²)-(a1b1+a2b2)²) = (1/2)|a1b2-a2b1| (identity only; no area is defined)."
+ },
+ "school_analytic_geometry.homothety_image_of_circle_locus": {
+  "statement": "$k\\ne0$とする。点$(x_0,y_0)$が円$(x-a)^2+(y-b)^2=r^2$の上を動くとき、定点$(p,q)$を中心に$k$倍した点$(x,y)=(p+k(x_0-p),q+k(y_0-q))$の全体は、方程式$(x-(p+k(a-p)))^2+(y-(q+k(b-q)))^2=(kr)^2$で表される。"
+ },
+ "school_analytic_geometry.linear_form_max_on_disc": {
+  "statement": "$r\\ge0$、$a,b,p,q$を実数とする。円板$(x-p)^2+(y-q)^2\\le r^2$における$ax+by$の最大値は$ap+bq+r\\sqrt{a^2+b^2}$である（$p=q=0$なら$r\\sqrt{a^2+b^2}$）。",
+  "statement_en": "For r≥0 and real a,b,p,q, the maximum of ax+by over the disc (x-p)^2+(y-q)^2≤r^2 equals ap+bq+r√(a^2+b^2).",
+  "assumptions": [
+   "$r\\ge0$",
+   "$a,b,p,q$は実数"
+  ],
+  "quantifiers": [
+   "任意の実数$a,b,p,q,r$"
+  ],
+  "conclusion": "最大値は$ap+bq+r\\sqrt{a^2+b^2}$である。",
+  "answer": "$a,b,p,q,r$を実数とし、$r\\ge0$とする。$S=\\sqrt{a^2+b^2}$とおく。\n\n上からの評価。円板内の点$(x,y)$について$u=x-p$、$v=y-q$とおくと$u^2+v^2\\le r^2$である。$(a^2+b^2)(u^2+v^2)-(au+bv)^2=(av-bu)^2\\ge0$より$(au+bv)^2\\le S^2r^2$であり、$rS\\ge0$なので$au+bv\\le rS$である。よって$ax+by=ap+bq+(au+bv)\\le ap+bq+rS$である。\n\n等号をとる点。$S=0$なら$a=b=0$であり、中心$(p,q)$で$ax+by=0=ap+bq+rS$である。$S>0$なら点$\\left(p+\\frac{ra}{S},q+\\frac{rb}{S}\\right)$は$u^2+v^2=r^2$を満たし、そこでの値は$ap+bq+\\frac{r(a^2+b^2)}{S}=ap+bq+rS$である。",
+  "openmath": "(forall (a b p q r) (-> (>= r 0) (and (exists (x y) (and (<= (+ (^ (- x p) 2) (^ (- y q) 2)) (^ r 2)) (= (+ (+ (* a p) (* b q)) (* r (root (+ (^ a 2) (^ b 2)) 2))) (+ (* a x) (* b y))))) (forall (x y) (-> (<= (+ (^ (- x p) 2) (^ (- y q) 2)) (^ r 2)) (<= (+ (* a x) (* b y)) (+ (+ (* a p) (* b q)) (* r (root (+ (^ a 2) (^ b 2)) 2)))))))))",
+  "hard_negative": {
+   "statement": "中心が$(p,q)$の円板でも最大値は$r\\sqrt{a^2+b^2}$である。",
+   "reason": "中心での値$ap+bq$が加わる。$(x-1)^2+y^2\\le1$での$x$の最大値は$2$であるが、この式は$1$を与える。"
+  },
+  "target": "∀ (a b p q r : ℝ), 0 ≤ r → IsGreatest {s : ℝ | ∃ x y : ℝ, (x - p) ^ 2 + (y - q) ^ 2 ≤ r ^ 2 ∧ s = a * x + b * y} (a * p + b * q + r * Real.sqrt (a ^ 2 + b ^ 2))",
+  "proof": "by\n  intro a b p q r hr\n  have hS : 0 ≤ Real.sqrt (a ^ 2 + b ^ 2) := Real.sqrt_nonneg _\n  have hSS : Real.sqrt (a ^ 2 + b ^ 2) ^ 2 = a ^ 2 + b ^ 2 := Real.sq_sqrt (by positivity)\n  constructor\n  · by_cases h0 : Real.sqrt (a ^ 2 + b ^ 2) = 0\n    · have ha : a = 0 := by nlinarith [sq_nonneg a, sq_nonneg b]\n      have hb : b = 0 := by nlinarith [sq_nonneg a, sq_nonneg b]\n      refine ⟨p, q, by simp; positivity, ?_⟩\n      rw [h0, ha, hb]; ring\n    · have hpos : 0 < Real.sqrt (a ^ 2 + b ^ 2) := lt_of_le_of_ne hS (Ne.symm h0)\n      refine ⟨p + r * a / Real.sqrt (a ^ 2 + b ^ 2), q + r * b / Real.sqrt (a ^ 2 + b ^ 2), ?_, ?_⟩\n      · have : (r * a / Real.sqrt (a ^ 2 + b ^ 2)) ^ 2 + (r * b / Real.sqrt (a ^ 2 + b ^ 2)) ^ 2 = r ^ 2 := by\n          field_simp\n          rw [hSS]\n        nlinarith [this]\n      · field_simp\n        nlinarith [hSS]\n  · rintro s ⟨x, y, hxy, rfl⟩\n    have h1 : (a * (x - p) + b * (y - q)) ^ 2 ≤ (a ^ 2 + b ^ 2) * r ^ 2 := by\n      nlinarith [sq_nonneg (a * (y - q) - b * (x - p)), mul_le_mul_of_nonneg_left hxy (by positivity : (0:ℝ) ≤ a ^ 2 + b ^ 2)]\n    have h2 : a * (x - p) + b * (y - q) ≤ Real.sqrt (a ^ 2 + b ^ 2) * r := by\n      apply abs_le_of_sq_le_sq' _ (by positivity) |>.2\n      nlinarith [hSS]\n    nlinarith [h2]\n"
+ },
+ "school_analytic_geometry.quadratic_graph_vertex_form_focus_directrix": {
+  "hard_negative": {
+   "statement": "焦点は$\\left(h,k+\\frac{1}{a}\\right)$である。",
+   "reason": "焦点と頂点の距離は$\\frac{1}{4|a|}$である。$y=x^2$の頂点$(0,0)$はグラフ上にあり、点$\\left(0,\\frac14\\right)$と直線$y=-\\frac14$からの距離はともに$\\frac14$である。一方、$(0,1)$までの距離は$1$であり、直線$y=-\\frac14$までの距離$\\frac14$と異なる。"
+  }
+ },
+ "school_calculus.integral_sixth_formula": {
+  "statement": "実数$\\alpha,\\beta$について、$\\int_\\alpha^\\beta(x-\\alpha)(x-\\beta)\\,dx=-\\dfrac{(\\beta-\\alpha)^3}{6}$である。これは$\\int_\\alpha^\\beta(x-\\alpha)^m(x-\\beta)^n\\,dx$の$m=n=1$の特殊形（6分の1公式）である。",
+  "statement_en": "For real α and β, ∫_α^β (x-α)(x-β) dx = -(β-α)^3/6. This is the special case m = n = 1 of ∫_α^β (x-α)^m (x-β)^n dx (the 1/6 formula)."
+ },
+ "school_calculus.integral_twelfth_formula": {
+  "statement": "実数$\\alpha,\\beta$について、$\\int_\\alpha^\\beta(x-\\alpha)^2(x-\\beta)\\,dx=-\\dfrac{(\\beta-\\alpha)^4}{12}$である。これは$\\int_\\alpha^\\beta(x-\\alpha)^m(x-\\beta)^n\\,dx$の$m=2,\\ n=1$の特殊形（12分の1公式）である。",
+  "statement_en": "For real α and β, ∫_α^β (x-α)^2 (x-β) dx = -(β-α)^4/12. This is the special case m = 2, n = 1 of ∫_α^β (x-α)^m (x-β)^n dx (the 1/12 formula)."
+ },
+ "school_calculus.linear_recurrence_limit": {
+  "openmath": "(forall (a r s) (-> (and (< (abs r) 1) (forall (n) (-> (in n N) (= (seq_value a (+ n 1)) (+ (* r (seq_value a n)) s))))) (seq_tends_to a (/ s (- 1 r)))))"
+ },
+ "school_calculus.contraction_recurrence_limit": {
+  "openmath": "(forall (a L r) (-> (and (<= 0 r) (< r 1) (forall (n) (-> (in n N) (<= (abs (- (seq_value a (+ n 1)) L)) (* r (abs (- (seq_value a n) L))))))) (seq_tends_to a L)))"
+ },
+ "school_calculus.geometric_series_convergence_criterion": {
+  "statement": "$a\\neq 0$のとき、無限等比級数$\\sum_{n=0}^{\\infty}ar^n$が絶対収束する（実数項の級数として無条件に和をもつ）ことと$|r|<1$であることは同値である。",
+  "statement_en": "For a ≠ 0, the series ∑ a r^n is summable (absolutely convergent) if and only if |r| < 1.",
+  "conclusion": "$\\sum_{n=0}^{\\infty}ar^n$が絶対収束することと$|r|<1$は同値である。"
+ },
+ "school_counting_probability.cond_prob_uniform_chain": {
+  "assumptions": [
+   "$\\Omega$は有限で空でない標本空間",
+   "$A,B,C\\subseteq\\Omega$",
+   "$A\\cap B\\neq\\emptyset$",
+   "事象$E$の確率は$P(E)=|E|/|\\Omega|$、空でない事象$X$について$P_X(Y)=|X\\cap Y|/|X|$と定める"
+  ]
+ },
+ "school_counting_probability.total_prob_uniform_two": {
+  "assumptions": [
+   "$\\Omega$は有限で空でない標本空間",
+   "$A,B\\subseteq\\Omega$",
+   "$A\\neq\\emptyset$",
+   "$\\overline{A}\\neq\\emptyset$",
+   "事象$E$の確率は$P(E)=|E|/|\\Omega|$、空でない事象$X$について$P_X(Y)=|X\\cap Y|/|X|$と定める"
+  ]
+ },
+ "school_counting_probability.total_prob_uniform_partition": {
+  "assumptions": [
+   "$\\Omega$は有限で空でない標本空間",
+   "$I$は有限集合",
+   "各$A_i$は空でない",
+   "$i\\neq j$なら$A_i\\cap A_j=\\emptyset$",
+   "$\\bigcup_{i\\in I}A_i=\\Omega$",
+   "事象$E$の確率は$P(E)=|E|/|\\Omega|$、空でない事象$X$について$P_X(Y)=|X\\cap Y|/|X|$と定める"
+  ],
+  "hard_negative": {
+   "statement": "事象$A_i$が$\\Omega$を覆うだけで排反でなくても、$P(B)=\\sum_{i\\in I}P(A_i)P_{A_i}(B)$である。",
+   "reason": "重なりがあると$B$の要素が重複して数えられる。$A_1=A_2=\\Omega$で$B\\neq\\emptyset$なら右辺は$2P(B)\\neq P(B)$になる。"
+  }
+ },
+ "school_counting_probability.bayes_uniform_partition": {
+  "assumptions": [
+   "$\\Omega$は有限で空でない標本空間",
+   "$I$は有限集合で$k\\in I$",
+   "各$A_i$は空でない",
+   "$i\\neq j$なら$A_i\\cap A_j=\\emptyset$",
+   "$\\bigcup_{i\\in I}A_i=\\Omega$",
+   "$B\\neq\\emptyset$",
+   "事象$E$の確率は$P(E)=|E|/|\\Omega|$、空でない事象$X$について$P_X(Y)=|X\\cap Y|/|X|$と定める"
+  ]
+ },
+ "school_counting_probability.bayes_uniform_simple": {
+  "assumptions": [
+   "$\\Omega$は有限で空でない標本空間",
+   "$A,B\\subseteq\\Omega$",
+   "$A,B$は空でない",
+   "事象$E$の確率は$P(E)=|E|/|\\Omega|$、空でない事象$X$について$P_X(Y)=|X\\cap Y|/|X|$と定める"
+  ]
+ },
+ "school_counting_probability.indep_uniform_iff_cond": {
+  "assumptions": [
+   "$\\Omega$は有限で空でない標本空間",
+   "$A,B\\subseteq\\Omega$",
+   "$A\\neq\\emptyset$",
+   "事象$E$の確率は$P(E)=|E|/|\\Omega|$、$P_A(B)=|A\\cap B|/|A|$と定める"
+  ]
+ },
+ "school_counting_probability.trials_maximum_value": {
+  "statement_en": "In n >= 1 independent trials, each uniform on {0, 1, ..., m-1}, for k < m the probability that the maximum of the outcomes equals k is ((k+1)^n - k^n)/m^n.",
+  "assumptions": [
+   "$m,n,k$は自然数で$n\\geq1$",
+   "$k<m$",
+   "$\\omega\\in\\{0,\\dots,m-1\\}^n$の各要素は同様に確からしい"
+  ],
+  "quantifiers": [
+   "$n\\geq1$、$k<m$を満たす任意の自然数$m,n,k$"
+  ],
+  "openmath": "(forall (m n k) (-> (and (in m N) (in n N) (> n 0) (in k N) (< k m)) (= (/ (size (suchthat (function_set (integer_range 1 n) (integer_range 0 (- m 1))) (lambda (w) (and (forall (i) (-> (in i (integer_range 1 n)) (<= (fn_value w i) k))) (exists (i) (and (in i (integer_range 1 n)) (= (fn_value w i) k))))))) (size (function_set (integer_range 1 n) (integer_range 0 (- m 1))))) (/ (- (^ (+ k 1) n) (^ k n)) (^ m n)))))",
+  "target": "∀ (m n k : ℕ), 0 < n → k < m → ((Finset.univ.filter (fun ω : Fin n → Fin m => (∀ i, (ω i : ℕ) ≤ k) ∧ ∃ i, (ω i : ℕ) = k)).card : ℝ) / Fintype.card (Fin n → Fin m) = (((k : ℝ) + 1) ^ n - (k : ℝ) ^ n) / (m : ℝ) ^ n",
+  "proof": "by\n  intro m n k _ hk\n  have cnt : ∀ c : ℕ, c ≤ m → (Finset.univ.filter (fun ω : Fin n → Fin m => ∀ i, (ω i : ℕ) < c)).card = c ^ n := by\n    intro c hc\n    have e : Finset.univ.filter (fun ω : Fin n → Fin m => ∀ i, (ω i : ℕ) < c) = Fintype.piFinset (fun _ => Finset.univ.filter (fun x : Fin m => (x : ℕ) < c)) := by\n      ext ω; simp\n    have ec : (Finset.univ.filter (fun x : Fin m => (x : ℕ) < c)).card = c := by\n      rw [Fin.card_filter_val_lt]\n      exact min_eq_right hc\n    rw [e, Fintype.card_piFinset, Finset.prod_const, ec, Finset.card_univ, Fintype.card_fin]\n  have h1 := cnt (k + 1) hk\n  have h2 := cnt k hk.le\n  have hs : Finset.univ.filter (fun ω : Fin n → Fin m => ∀ i, (ω i : ℕ) < k + 1) = Finset.univ.filter (fun ω : Fin n → Fin m => (∀ i, (ω i : ℕ) ≤ k) ∧ ∃ i, (ω i : ℕ) = k) ∪ Finset.univ.filter (fun ω : Fin n → Fin m => ∀ i, (ω i : ℕ) < k) := by\n    ext ω\n    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union]\n    constructor\n    · intro hω\n      by_cases he : ∃ i, (ω i : ℕ) = k\n      · exact Or.inl ⟨fun i => Nat.le_of_lt_succ (hω i), he⟩\n      · refine Or.inr fun i => ?_\n        have := hω i\n        have hne : (ω i : ℕ) ≠ k := fun h => he ⟨i, h⟩\n        omega\n    · rintro (⟨h, _⟩ | h) i\n      · exact Nat.lt_succ_of_le (h i)\n      · exact Nat.lt_succ_of_lt (h i)\n  have hd : Disjoint (Finset.univ.filter (fun ω : Fin n → Fin m => (∀ i, (ω i : ℕ) ≤ k) ∧ ∃ i, (ω i : ℕ) = k)) (Finset.univ.filter (fun ω : Fin n → Fin m => ∀ i, (ω i : ℕ) < k)) := by\n    rw [Finset.disjoint_left]\n    intro ω hω hω'\n    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hω hω'\n    obtain ⟨_, i, hi⟩ := hω\n    have := hω' i\n    omega\n  have hc := Finset.card_union_of_disjoint hd\n  rw [← hs, h1, h2] at hc\n  have hc' : ((k : ℝ) + 1) ^ n = ((Finset.univ.filter (fun ω : Fin n → Fin m => (∀ i, (ω i : ℕ) ≤ k) ∧ ∃ i, (ω i : ℕ) = k)).card : ℝ) + (k : ℝ) ^ n := by\n    exact_mod_cast hc\n  rw [Fintype.card_fun, Fintype.card_fin, Fintype.card_fin]\n  push_cast\n  congr 1\n  linarith\n"
+ },
+ "school_counting_probability.expectation_uniform_count_events": {
+  "hard_negative": {
+   "statement": "この公式は事象$A_i$が独立なときに限って成り立つ。",
+   "reason": "独立性は不要である。$0<P(A)<1$の事象$A$について$A_1=A_2=A$とすると、$P(A\\cap A)=P(A)\\neq P(A)^2$なので独立ではないが、起こる個数は$\\omega\\in A$で$2$、それ以外で$0$であり、期待値は$2P(A)=P(A_1)+P(A_2)$である。"
+  }
+ },
+ "school_counting_probability.expectation_uniform_total": {
+  "assumptions": [
+   "$\\Omega$は有限で空でない標本空間",
+   "$X:\\Omega\\to\\mathbb{R}$",
+   "$A\\neq\\emptyset$",
+   "$\\overline{A}\\neq\\emptyset$",
+   "事象$E$の確率は$P(E)=|E|/|\\Omega|$、期待値は$E[X]=\\frac{1}{|\\Omega|}\\sum_{\\omega\\in\\Omega}X(\\omega)$、空でない$B$について$E[X\\mid B]=\\frac{1}{|B|}\\sum_{\\omega\\in B}X(\\omega)$と定める"
+  ]
+ },
+ "school_counting_probability.falling_factorial_mul_factorial": {
+  "assumptions": [
+   "$n,k$は自然数",
+   "$k\\leq n$",
+   "${}_{n}\\mathrm{P}_{k}=n(n-1)\\cdots(n-k+1)$（$k$個の積。$k=0$なら$1$、$k>n$なら積に$0$が現れて$0$）と定める"
+  ]
+ },
+ "school_counting_probability.falling_factorial_eq_factorial_mul_choose": {
+  "assumptions": [
+   "$n,k$は自然数",
+   "${}_{n}\\mathrm{P}_{k}=n(n-1)\\cdots(n-k+1)$（$k$個の積。$k=0$なら$1$、$k>n$なら積に$0$が現れて$0$）と定める"
+  ],
+  "answer": "$n,k$を自然数とする。${}_{n}\\mathrm{P}_{k}=n(n-1)\\cdots(n-k+1)$とおく。これは$n$個から$k$個を選んで並べる順列の数に等しい（$1$番目から$k$番目までの選び方が$n,n-1,\\dots,n-k+1$通りで、積の法則による）。$k>n$なら${}_{n}\\mathrm{P}_{k}=0$、$\\binom{n}{k}=0$で両辺は$0$である。$k\\leq n$のとき、$n$個の異なるものから$k$個を選んで並べる順列を、並べるものの集合で分類する。$k$個の集合の選び方は$\\binom{n}{k}$通りであり、選んだ$k$個の並べ方はそれぞれ$k!$通りである。積の法則より${}_{n}\\mathrm{P}_{k}=\\binom{n}{k}k!$である。"
+ },
+ "school_counting_probability.positive_solutions_count": {
+  "statement_en": "For natural numbers n and r, the set of tuples of positive integers (x_0,...,x_n) with x_0+...+x_n=r+1 is finite and has C(r,n) elements (in particular it is empty when r<n).",
+  "conclusion": "解の集合は有限で、その個数は$\\binom{r}{n}$である（$r<n$のときは解が存在しない）。",
+  "target": "∀ n r : ℕ, {x : Fin (n + 1) → ℕ | (∀ i, 1 ≤ x i) ∧ ∑ i, x i = r + 1}.Finite ∧ {x : Fin (n + 1) → ℕ | (∀ i, 1 ≤ x i) ∧ ∑ i, x i = r + 1}.ncard = r.choose n",
+  "proof": "by\n  intro n r\n  refine ⟨?_, ?_⟩\n  · refine (Set.finite_Iic (fun _ : Fin (n + 1) => r + 1)).subset ?_\n    intro x hx i\n    have h1 : x i ≤ ∑ j, x j := Finset.single_le_sum (f := x) (fun j _ => Nat.zero_le _) (Finset.mem_univ i)\n    have h2 : ∑ j, x j = r + 1 := hx.2\n    show x i ≤ r + 1\n    omega\n  · show Set.ncard {x : Fin (n + 1) → ℕ | (∀ i, 1 ≤ x i) ∧ ∑ i, x i = r + 1} = r.choose n\n    by_cases hr : r < n\n    · rw [Nat.choose_eq_zero_of_lt hr]\n      have : {x : Fin (n + 1) → ℕ | (∀ i, 1 ≤ x i) ∧ ∑ i, x i = r + 1} = ∅ := by\n        ext x\n        simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and]\n        intro hx hs\n        have : ∑ i : Fin (n + 1), 1 ≤ ∑ i, x i := Finset.sum_le_sum fun i _ => hx i\n        simp at this\n        omega\n      rw [this, Set.ncard_empty]\n    · obtain ⟨d, rfl⟩ : ∃ d, r = n + d := ⟨r - n, by omega⟩\n      have hcount : Set.ncard {y : Fin (n + 1) → ℕ | ∑ i, y i = d} = (n + d).choose n := by\n        have h1 : Nat.card {P : Fin (n + 1) → ℕ // ∑ i, P i = d} = Nat.card (Sym (Fin (n + 1)) d) := Nat.card_congr (Sym.equivNatSumOfFintype (Fin (n + 1)) d).symm\n        have h2 : Nat.card (Sym (Fin (n + 1)) d) = (n + d).choose d := by\n          rw [Nat.card_eq_fintype_card, Sym.card_sym_eq_choose, Fintype.card_fin]\n          congr 1\n          omega\n        rw [← Nat.card_coe_set_eq]\n        change Nat.card {P : Fin (n + 1) → ℕ // ∑ i, P i = d} = _\n        rw [h1, h2]\n        exact (Nat.choose_symm_add).symm\n      rw [← hcount]\n      have hsum : ∀ y : Fin (n + 1) → ℕ, ∑ i, (y i + 1) = ∑ i, y i + (n + 1) := by\n        intro y\n        rw [Finset.sum_add_distrib]\n        simp\n      have himg : {x : Fin (n + 1) → ℕ | (∀ i, 1 ≤ x i) ∧ ∑ i, x i = n + d + 1} = (fun y i => y i + 1) '' {y : Fin (n + 1) → ℕ | ∑ i, y i = d} := by\n        ext x\n        simp only [Set.mem_setOf_eq, Set.mem_image]\n        constructor\n        · rintro ⟨hx, hs⟩\n          refine ⟨fun i => x i - 1, ?_, ?_⟩\n          · have e : ∑ i, ((x i - 1) + 1) = n + d + 1 := by\n              rw [← hs]\n              exact Finset.sum_congr rfl fun i _ => Nat.sub_add_cancel (hx i)\n            rw [hsum] at e\n            show ∑ i, (x i - 1) = d\n            omega\n          · funext i\n            exact Nat.sub_add_cancel (hx i)\n        · rintro ⟨y, hy, rfl⟩\n          refine ⟨fun i => Nat.le_add_left 1 (y i), ?_⟩\n          rw [hsum, hy]\n          omega\n      rw [himg]\n      refine Set.ncard_image_of_injective _ ?_\n      intro y y' h\n      funext i\n      have := congrFun h i\n      simpa using this\n  \n"
+ },
+ "school_counting_probability.strictly_increasing_sequences_count": {
+  "openmath": "(forall (n k) (-> (and (in n N) (in k N)) (= (size (suchthat (function_set (integer_range 1 k) (integer_range 0 (- n 1))) (lambda (a) (forall (i j) (-> (and (in i (integer_range 1 k)) (in j (integer_range 1 k)) (< i j)) (< (fn_value a i) (fn_value a j))))))) (binom n k))))"
+ },
+ "school_data_logic.data_sum_deviation_zero": {
+  "openmath": "(forall (s x m) (-> (and (finite_set s) (!= s emptyset) (= m (/ (sum s (lambda (i) (fn_value x i))) (size s)))) (= (sum s (lambda (i) (- (fn_value x i) m))) 0)))"
+ },
+ "school_data_logic.data_mean_between_bounds": {
+  "openmath": "(forall (s x a b m) (-> (and (finite_set s) (!= s emptyset) (forall (i) (-> (in i s) (and (<= a (fn_value x i)) (<= (fn_value x i) b)))) (= m (/ (sum s (lambda (i) (fn_value x i))) (size s)))) (and (<= a m) (<= m b))))"
+ },
+ "school_data_logic.data_exists_on_both_sides_of_mean": {
+  "openmath": "(forall (s x m) (-> (and (finite_set s) (!= s emptyset) (= m (/ (sum s (lambda (i) (fn_value x i))) (size s)))) (and (exists (i) (and (in i s) (<= m (fn_value x i)))) (exists (j) (and (in j s) (<= (fn_value x j) m))))))"
+ },
+ "school_data_logic.data_mean_affine_transform": {
+  "openmath": "(forall (s x y a b mx my) (-> (and (finite_set s) (!= s emptyset) (forall (i) (-> (in i s) (= (fn_value y i) (+ (* a (fn_value x i)) b)))) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s)))) (= my (+ (* a mx) b))))"
+ },
+ "school_data_logic.data_mean_of_two_groups": {
+  "openmath": "(forall (s t x m1 m2) (-> (and (finite_set s) (!= s emptyset) (finite_set t) (!= t emptyset) (= (inter s t) emptyset) (= m1 (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= m2 (/ (sum t (lambda (i) (fn_value x i))) (size t)))) (= (/ (sum (union s t) (lambda (i) (fn_value x i))) (size (union s t))) (/ (+ (* (size s) m1) (* (size t) m2)) (+ (size s) (size t))))))"
+ },
+ "school_data_logic.data_variance_shortcut": {
+  "openmath": "(forall (s x m V) (-> (and (finite_set s) (!= s emptyset) (= m (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= V (/ (sum s (lambda (i) (^ (- (fn_value x i) m) 2))) (size s)))) (= V (- (/ (sum s (lambda (i) (^ (fn_value x i) 2))) (size s)) (^ m 2)))))"
+ },
+ "school_data_logic.data_variance_zero_iff_constant": {
+  "openmath": "(forall (s x m V) (-> (and (finite_set s) (!= s emptyset) (= m (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= V (/ (sum s (lambda (i) (^ (- (fn_value x i) m) 2))) (size s)))) (and (>= V 0) (<-> (= V 0) (forall (i) (-> (in i s) (= (fn_value x i) m)))))))"
+ },
+ "school_data_logic.data_variance_affine_transform": {
+  "openmath": "(forall (s x y a b mx my Vx Vy) (-> (and (finite_set s) (!= s emptyset) (forall (i) (-> (in i s) (= (fn_value y i) (+ (* a (fn_value x i)) b)))) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s))) (= Vx (/ (sum s (lambda (i) (^ (- (fn_value x i) mx) 2))) (size s))) (= Vy (/ (sum s (lambda (i) (^ (- (fn_value y i) my) 2))) (size s)))) (= Vy (* (^ a 2) Vx))))"
+ },
+ "school_data_logic.data_stddev_affine_transform": {
+  "openmath": "(forall (s x y a b mx my Vx Vy) (-> (and (finite_set s) (!= s emptyset) (forall (i) (-> (in i s) (= (fn_value y i) (+ (* a (fn_value x i)) b)))) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s))) (= Vx (/ (sum s (lambda (i) (^ (- (fn_value x i) mx) 2))) (size s))) (= Vy (/ (sum s (lambda (i) (^ (- (fn_value y i) my) 2))) (size s)))) (= (root Vy 2) (* (abs a) (root Vx 2)))))"
+ },
+ "school_data_logic.data_standardized_mean_variance": {
+  "openmath": "(forall (s x z m V mz Vz) (-> (and (finite_set s) (!= s emptyset) (> V 0) (= m (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= V (/ (sum s (lambda (i) (^ (- (fn_value x i) m) 2))) (size s))) (forall (i) (-> (in i s) (= (fn_value z i) (/ (- (fn_value x i) m) (root V 2))))) (= mz (/ (sum s (lambda (i) (fn_value z i))) (size s))) (= Vz (/ (sum s (lambda (i) (^ (- (fn_value z i) mz) 2))) (size s)))) (and (= mz 0) (= Vz 1))))"
+ },
+ "school_data_logic.data_variance_of_two_groups": {
+  "openmath": "(forall (s t x m1 m2 V1 V2 M W) (-> (and (finite_set s) (!= s emptyset) (finite_set t) (!= t emptyset) (= (inter s t) emptyset) (= m1 (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= m2 (/ (sum t (lambda (i) (fn_value x i))) (size t))) (= V1 (/ (sum s (lambda (i) (^ (- (fn_value x i) m1) 2))) (size s))) (= V2 (/ (sum t (lambda (i) (^ (- (fn_value x i) m2) 2))) (size t))) (= M (/ (sum (union s t) (lambda (i) (fn_value x i))) (size (union s t)))) (= W (/ (sum (union s t) (lambda (i) (^ (- (fn_value x i) M) 2))) (size (union s t))))) (= W (+ (/ (+ (* (size s) V1) (* (size t) V2)) (+ (size s) (size t))) (/ (* (* (size s) (size t)) (^ (- m1 m2) 2)) (^ (+ (size s) (size t)) 2))))))"
+ },
+ "school_data_logic.data_covariance_shortcut": {
+  "openmath": "(forall (s x y mx my c) (-> (and (finite_set s) (!= s emptyset) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s))) (= c (/ (sum s (lambda (i) (* (- (fn_value x i) mx) (- (fn_value y i) my)))) (size s)))) (= c (- (/ (sum s (lambda (i) (* (fn_value x i) (fn_value y i)))) (size s)) (* mx my)))))"
+ },
+ "school_data_logic.data_covariance_affine_transform": {
+  "openmath": "(forall (s x y u v a b c d mx my mu mv Cxy Cuv) (-> (and (finite_set s) (!= s emptyset) (forall (i) (-> (in i s) (and (= (fn_value u i) (+ (* a (fn_value x i)) b)) (= (fn_value v i) (+ (* c (fn_value y i)) d))))) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s))) (= mu (/ (sum s (lambda (i) (fn_value u i))) (size s))) (= mv (/ (sum s (lambda (i) (fn_value v i))) (size s))) (= Cxy (/ (sum s (lambda (i) (* (- (fn_value x i) mx) (- (fn_value y i) my)))) (size s))) (= Cuv (/ (sum s (lambda (i) (* (- (fn_value u i) mu) (- (fn_value v i) mv)))) (size s)))) (= Cuv (* (* a c) Cxy))))"
+ },
+ "school_data_logic.data_variance_of_sum": {
+  "openmath": "(forall (s x y z mx my mz Vx Vy Vz c) (-> (and (finite_set s) (!= s emptyset) (forall (i) (-> (in i s) (= (fn_value z i) (+ (fn_value x i) (fn_value y i))))) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s))) (= mz (/ (sum s (lambda (i) (fn_value z i))) (size s))) (= Vx (/ (sum s (lambda (i) (^ (- (fn_value x i) mx) 2))) (size s))) (= Vy (/ (sum s (lambda (i) (^ (- (fn_value y i) my) 2))) (size s))) (= Vz (/ (sum s (lambda (i) (^ (- (fn_value z i) mz) 2))) (size s))) (= c (/ (sum s (lambda (i) (* (- (fn_value x i) mx) (- (fn_value y i) my)))) (size s)))) (= Vz (+ (+ Vx (* 2 c)) Vy))))"
+ },
+ "school_data_logic.data_correlation_abs_le_one": {
+  "openmath": "(forall (s x y mx my Vx Vy c r) (-> (and (finite_set s) (!= s emptyset) (> Vx 0) (> Vy 0) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s))) (= Vx (/ (sum s (lambda (i) (^ (- (fn_value x i) mx) 2))) (size s))) (= Vy (/ (sum s (lambda (i) (^ (- (fn_value y i) my) 2))) (size s))) (= c (/ (sum s (lambda (i) (* (- (fn_value x i) mx) (- (fn_value y i) my)))) (size s))) (= r (/ c (* (root Vx 2) (root Vy 2))))) (<= (abs r) 1)))"
+ },
+ "school_data_logic.data_correlation_affine_transform": {
+  "openmath": "(forall (s x y u v a b c d mx my mu mv Vx Vy Vu Vv Cxy Cuv r t) (-> (and (finite_set s) (!= s emptyset) (> Vx 0) (> Vy 0) (forall (i) (-> (in i s) (and (= (fn_value u i) (+ (* a (fn_value x i)) b)) (= (fn_value v i) (+ (* c (fn_value y i)) d))))) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s))) (= mu (/ (sum s (lambda (i) (fn_value u i))) (size s))) (= mv (/ (sum s (lambda (i) (fn_value v i))) (size s))) (= Vx (/ (sum s (lambda (i) (^ (- (fn_value x i) mx) 2))) (size s))) (= Vy (/ (sum s (lambda (i) (^ (- (fn_value y i) my) 2))) (size s))) (= Vu (/ (sum s (lambda (i) (^ (- (fn_value u i) mu) 2))) (size s))) (= Vv (/ (sum s (lambda (i) (^ (- (fn_value v i) mv) 2))) (size s))) (= Cxy (/ (sum s (lambda (i) (* (- (fn_value x i) mx) (- (fn_value y i) my)))) (size s))) (= Cuv (/ (sum s (lambda (i) (* (- (fn_value u i) mu) (- (fn_value v i) mv)))) (size s))) (= r (/ Cxy (* (root Vx 2) (root Vy 2)))) (= t (/ Cuv (* (root Vu 2) (root Vv 2))))) (and (-> (> (* a c) 0) (= t r)) (-> (< (* a c) 0) (= t (neg r))))))"
+ },
+ "school_data_logic.data_correlation_abs_one_iff_linear": {
+  "openmath": "(forall (s x y mx my Vx Vy c r) (-> (and (finite_set s) (!= s emptyset) (> Vx 0) (> Vy 0) (= mx (/ (sum s (lambda (i) (fn_value x i))) (size s))) (= my (/ (sum s (lambda (i) (fn_value y i))) (size s))) (= Vx (/ (sum s (lambda (i) (^ (- (fn_value x i) mx) 2))) (size s))) (= Vy (/ (sum s (lambda (i) (^ (- (fn_value y i) my) 2))) (size s))) (= c (/ (sum s (lambda (i) (* (- (fn_value x i) mx) (- (fn_value y i) my)))) (size s))) (= r (/ c (* (root Vx 2) (root Vy 2))))) (<-> (= (abs r) 1) (exists (k) (forall (i) (-> (in i s) (= (- (fn_value y i) my) (* k (- (fn_value x i) mx)))))))))"
+ },
+ "school_data_logic.finset_card_union_two": {
+  "openmath": "(forall (A B) (-> (and (finite_set A) (finite_set B)) (= (size (union A B)) (- (+ (size A) (size B)) (size (inter A B))))))"
+ },
+ "school_data_logic.finset_card_union_three": {
+  "openmath": "(forall (A B D) (-> (and (finite_set A) (finite_set B) (finite_set D)) (= (size (union (union A B) D)) (+ (- (- (- (+ (+ (size A) (size B)) (size D)) (size (inter A B))) (size (inter B D))) (size (inter D A))) (size (inter (inter A B) D))))))"
+ },
+ "school_data_logic.finset_card_neither_of_two": {
+  "openmath": "(forall (U A B) (-> (and (finite_set U) (subset A U) (subset B U)) (= (size (setdiff U (union A B))) (+ (- (- (size U) (size A)) (size B)) (size (inter A B))))))"
+ },
+ "school_data_logic.pred_forall_contrapositive": {
+  "openmath": "(forall (A P Q) (<-> (forall (x) (-> (in x A) (-> (holds_at P x) (holds_at Q x)))) (forall (x) (-> (in x A) (-> (not (holds_at Q x)) (not (holds_at P x)))))))"
+ },
+ "school_data_logic.pred_not_forall_imp_counterexample": {
+  "openmath": "(forall (A P Q) (<-> (not (forall (x) (-> (in x A) (-> (holds_at P x) (holds_at Q x))))) (exists (x) (and (in x A) (and (holds_at P x) (not (holds_at Q x)))))))"
+ },
+ "school_data_logic.implication_cycle_iff": {
+  "openmath": "(forall (P Q R) (-> (and (-> (proposition_holds P) (proposition_holds Q)) (-> (proposition_holds Q) (proposition_holds R)) (-> (proposition_holds R) (proposition_holds P))) (and (<-> (proposition_holds P) (proposition_holds Q)) (<-> (proposition_holds Q) (proposition_holds R)))))"
+ },
+ "school_data_logic.proof_by_contradiction_template": {
+  "openmath": "(forall (P Q) (-> (and (-> (not (proposition_holds P)) (proposition_holds Q)) (-> (not (proposition_holds P)) (not (proposition_holds Q)))) (proposition_holds P)))"
+ },
+ "school_data_logic.implication_by_contradiction_template": {
+  "openmath": "(forall (P Q R) (-> (and (-> (and (proposition_holds P) (not (proposition_holds Q))) (proposition_holds R)) (-> (and (proposition_holds P) (not (proposition_holds Q))) (not (proposition_holds R)))) (-> (proposition_holds P) (proposition_holds Q))))"
+ },
+ "school_data_logic.or_iff_not_left_imp_right": {
+  "openmath": "(forall (P Q) (<-> (or (proposition_holds P) (proposition_holds Q)) (-> (not (proposition_holds P)) (proposition_holds Q))))"
+ },
+ "school_exp_log.logb_mul_positive": {
+  "hard_negative": {
+   "statement": "$a>0$、$a\\neq 1$、$M,N>0$のとき、$\\log_a(M+N)=\\log_aM+\\log_aN$である。",
+   "reason": "和の対数と積の対数を取り違えている。$a=2,\\ M=N=1$では左辺は$\\log_22=1$、右辺は$0+0=0$である。"
+  }
+ },
+ "school_exp_log.logb_rpow_power_positive": {
+  "hard_negative": {
+   "statement": "$a>0$、$a\\neq 1$、$M>0$のとき、任意の実数$p$について$\\log_a(M^p)=(\\log_aM)^p$である。",
+   "reason": "指数$p$は対数の前に係数として出るのであり、対数の冪にはならない。$a=2,\\ M=2,\\ p=3$では左辺は$\\log_28=3$、右辺は$1^3=1$である。"
+  }
+ },
+ "school_exp_log.logb_even_power_abs": {
+  "hard_negative": {
+   "statement": "$a>0$、$a\\neq 1$、$x\\neq 0$、$n$を正の整数とするとき、$\\log_a(x^{2n})=n\\log_a|x|$である。",
+   "reason": "指数の$2$を落としている。$a=2,\\ x=2,\\ n=1$では左辺は$\\log_24=2$、右辺は$\\log_22=1$である。"
+  }
+ },
+ "school_exp_log.logb_change_of_base": {
+  "openmath": "(forall (a b c) (-> (and (in a R) (in b R) (in c R) (> a 0) (!= a 1) (> b 0) (> c 0) (!= c 1)) (= (logb a b) (/ (logb c b) (logb c a)))))",
+  "hard_negative": {
+   "statement": "$a,c>0$、$a\\neq 1$、$c\\neq 1$、$b>0$のとき、$\\log_ab=\\dfrac{\\log_cb}{\\log_ac}$である。",
+   "reason": "分母が逆である。$a=2,\\ b=4,\\ c=8$では左辺は$2$、右辺は$\\dfrac{\\log_84}{\\log_28}=\\dfrac{2/3}{3}=\\dfrac29$である。"
+  }
+ },
+ "school_exp_log.logb_power_base_power_argument": {
+  "hard_negative": {
+   "statement": "$a>0$、$a\\neq 1$、$b>0$、$m\\neq 0$のとき、$0$でない任意の実数$n$について$\\log_{a^m}(b^n)=\\dfrac{m}{n}\\log_ab$である。",
+   "reason": "$m$と$n$が逆である。$a=b=2,\\ m=1,\\ n=2$では左辺は$\\log_24=2$、右辺は$\\dfrac12$である。"
+  }
+ },
+ "school_exp_log.digit_count_iff_common_log_bounds": {
+  "statement": "底が$10$の場合に限った形（一般の底は別カード）として、正の整数$N$と$0$以上の整数$d$について、$N$の十進表記が$d+1$桁であることと$d\\leq\\log_{10}N<d+1$であることは同値である。",
+  "statement_en": "Base-ten special form (general base is a separate card). For a positive integer N and a nonnegative integer d, the decimal expansion of N has d + 1 digits if and only if d ≤ log_10 N < d + 1.",
+  "openmath": "(forall (K d) (-> (and (in K N) (in d N) (>= K 1)) (<-> (= (digit_length 10 K) (+ d 1)) (and (<= d (/ (ln K) (ln 10))) (< (/ (ln K) (ln 10)) (+ d 1))))))"
+ },
+ "school_exp_log.digit_count_of_power_floor_formula": {
+  "statement": "底が$10$の場合に限った形（一般の底は別カード）として、正の整数$a$と$0$以上の整数$n$について、$a^n$の十進表記の桁数は$\\lfloor n\\log_{10}a\\rfloor+1$である。",
+  "statement_en": "Base-ten special form (general base is a separate card). For a positive integer a and a nonnegative integer n, the decimal expansion of a^n has ⌊n log_10 a⌋ + 1 digits.",
+  "openmath": "(forall (a n) (-> (and (in a N) (in n N) (>= a 1)) (= (digit_length 10 (^ a n)) (+ (floor (* n (/ (ln a) (ln 10)))) 1))))"
+ },
+ "school_exp_log.leading_digit_iff_common_log_bounds": {
+  "statement": "正の整数$N,m$と$0$以上の整数$k$について、$m\\cdot 10^k\\leq N<(m+1)\\cdot 10^k$であることと、$\\log_{10}m\\leq\\log_{10}N-k<\\log_{10}(m+1)$であることは同値である。",
+  "statement_en": "For positive integers N, m and a nonnegative integer k, m·10^k ≤ N < (m+1)·10^k if and only if log_10 m ≤ log_10 N - k < log_10(m+1).",
+  "answer": "$N,m$を正の整数、$k$を$0$以上の整数とする。関数$u\\mapsto\\log_{10}u$は$u>0$で狭義増加なので、$m\\cdot 10^k\\leq N<(m+1)\\cdot 10^k$は$\\log_{10}(m\\cdot 10^k)\\leq\\log_{10}N<\\log_{10}((m+1)\\cdot 10^k)$と同値である。積の対数の公式と$\\log_{10}10^k=k$より、これは$\\log_{10}m+k\\leq\\log_{10}N<\\log_{10}(m+1)+k$と同じである。各辺から$k$を引くと示すべき不等式を得る。"
+ },
+ "school_exp_log.first_nonzero_decimal_iff_common_log_bounds": {
+  "statement": "実数$x>0$と正の整数$k$について、$10^{-k}\\leq x<10^{1-k}$であることと$-k\\leq\\log_{10}x<1-k$であることは同値である。",
+  "statement_en": "For a real x > 0 and a positive integer k, 10^(-k) ≤ x < 10^(1-k) if and only if -k ≤ log_10 x < 1 - k.",
+  "answer": "$x>0$とし、$k$を正の整数とする。関数$u\\mapsto\\log_{10}u$は$u>0$で狭義増加であり、実数$t$について$\\log_{10}10^t=t$である。不等式$10^{-k}\\leq x<10^{1-k}$の各辺に$\\log_{10}$を適用すると、これは$-k\\leq\\log_{10}x<1-k$と同値である。"
+ },
+ "school_inequalities.min_x_plus_inv_on_ray": {
+  "statement": "正の実数$k$と$c\\geq\\sqrt{k}$を満たす実数$c$について、$x\\geq c$の範囲で$x+\\dfrac{k}{x}$の最小値は$c+\\dfrac{k}{c}$である。$k=1$のとき$c\\geq 1$の場合に当たる。",
+  "statement_en": "For positive real k and real c ≥ √k, the minimum of x + k/x over x ≥ c is c + k/c. The case k = 1 is c ≥ 1.",
+  "assumptions": [
+   "$k$は正の実数",
+   "$c$は実数で$c\\geq\\sqrt{k}$",
+   "$x\\geq c$"
+  ],
+  "quantifiers": [
+   "任意の正の実数$k$と$c\\geq\\sqrt{k}$"
+  ],
+  "conclusion": "$x\\geq c$の範囲で$x+\\dfrac{k}{x}$の最小値は$c+\\dfrac{k}{c}$である。",
+  "answer": "$k$を正の実数、$c$を$c\\geq\\sqrt{k}$を満たす実数とし、$x\\geq c$とする。$c\\geq\\sqrt{k}>0$なので$c>0$、$x>0$であり、$c^2\\geq k$である。$x+\\dfrac{k}{x}-\\left(c+\\dfrac{k}{c}\\right)=\\dfrac{(x-c)(xc-k)}{xc}$が成り立つ。$x-c\\geq 0$であり、$xc\\geq c^2\\geq k$より$xc-k\\geq 0$なので、右辺は$0$以上である。また$x=c$のとき値は$c+\\dfrac{k}{c}$に等しい。よって最小値は$c+\\dfrac{k}{c}$である。",
+  "openmath": "(forall (k c) (-> (and (> k 0) (>= c (root k 2))) (and (forall (x) (-> (>= x c) (<= (+ c (/ k c)) (+ x (/ k x))))) (exists (x) (and (>= x c) (= (+ x (/ k x)) (+ c (/ k c))))))))",
+  "hard_negative": {
+   "statement": "$k>0$、$c\\geq\\sqrt{k}$のとき、$x\\geq c$の範囲で$x+\\dfrac{k}{x}$の最小値は$2\\sqrt{k}$である。",
+   "reason": "$2\\sqrt{k}$を与える$x=\\sqrt{k}$は$c>\\sqrt{k}$なら範囲の外にある。$k=1$、$c=2$では$x\\geq 2$で$x+\\frac{1}{x}\\geq\\frac{5}{2}>2$である。"
+  },
+  "target": "∀ k c : ℝ, 0 < k → Real.sqrt k ≤ c → IsLeast {y : ℝ | ∃ x : ℝ, c ≤ x ∧ y = x + k / x} (c + k / c)",
+  "proof": "by\n  intro k c hk hc\n  have hs : 0 < Real.sqrt k := Real.sqrt_pos.mpr hk\n  have hc0 : 0 < c := lt_of_lt_of_le hs hc\n  have hkc : k ≤ c * c := by\n    have := Real.sq_sqrt hk.le\n    nlinarith\n  constructor\n  · exact ⟨c, le_rfl, rfl⟩\n  · rintro y ⟨x, hx, rfl⟩\n    have hx0 : 0 < x := by linarith\n    have key : x + k / x - (c + k / c) = (x - c) * (x * c - k) / (x * c) := by\n      field_simp\n      ring\n    have h1 : 0 ≤ x * c - k := by nlinarith\n    have h2 : 0 ≤ (x - c) * (x * c - k) / (x * c) :=\n      div_nonneg (mul_nonneg (sub_nonneg.2 hx) h1) (mul_pos hx0 hc0).le\n    linarith"
+ },
+ "school_integers.pow_dvd_pow_iff": {
+  "answer": "$a,b$を整数、$n$を正の整数とする。$b=ac$（$c$は整数）ならば$b^n=a^nc^n$なので、$a^n$は$b^n$を割り切る。\n逆に$a^n$が$b^n$を割り切るとする。$a=0$ならば$b^n=0$なので$b=0$であり、$a$は$b$を割り切る。$b=0$ならば$a$は$0$を割り切る。\n$a,b$がともに$0$でないとき、整除は符号によらないので$|a|,|b|$で考える（$|a|^n=|a^n|$、$|b|^n=|b^n|$であり、$|a|\\mid|b|$と$a\\mid b$は同値である）。素数$p$について$|a|,|b|$の素因数分解における$p$の指数を$e,f$とする。$|a|^n,|b|^n$における$p$の指数は$ne,nf$であり、仮定から$ne\\leq nf$、すなわち$e\\leq f$である。これがすべての素数$p$で成り立つので、$|a|$は$|b|$を割り切り、したがって$a$は$b$を割り切る。"
+ },
+ "school_integers.difference_of_two_squares_iff": {
+  "statement": "整数$n$（負でもよい）が$x^2-y^2$（$x,y$は整数）の形に表せることは、$n$を$4$で割った余り（$0$以上$4$未満の値）が$2$でないことと同値である。"
+ },
+ "school_integers.gcd_lcm_cofactor_iff": {
+  "assumptions": [
+   "$a,b,l$は$0$以上の整数",
+   "$g$は正の整数",
+   "$a=0$または$b=0$のとき$\\mathrm{lcm}(a,b)=0$とする"
+  ]
+ },
+ "school_integers.congruence_iff_same_remainder": {
+  "statement": "整数$a,b$と正の整数$n$について、$a,b$を$n$で割った余り（$0$以上$n$未満の値。$a,b$が負でもよい）が等しいことは、$n$が$a-b$を割り切ることと同値である。"
+ },
+ "school_integers.consecutive_product_even": {
+  "statement": "連続する個数を$2$個に限った形として、整数$n$について、連続する二つの整数の積$n(n+1)$は偶数である。",
+  "statement_en": "Two-term special form. For every integer n, the product n(n + 1) of two consecutive integers is even."
+ },
+ "school_integers.three_dvd_sum_of_squares": {
+  "statement": "$3$に限った形（$4$で割って$3$余る素数$p$の一般形は別カード）として、整数$a,b$について、$a^2+b^2$が$3$の倍数ならば、$a,b$はともに$3$の倍数である。",
+  "statement_en": "Special case p = 3 of the p ≡ 3 (mod 4) statement. If integers a and b are such that a² + b² is divisible by 3, then both a and b are divisible by 3."
+ },
+ "school_integers.coprime_mul_eq_square": {
+  "statement": "互いに素な$0$以上の整数$a,b$の積が$c^n$（$c,n$は$0$以上の整数）の形ならば、$a,b$はともに$n$乗数である。$n=2$とすれば、互いに素な数の積が平方数のとき、両方とも平方数である。",
+  "statement_en": "If coprime natural numbers a and b satisfy ab = c^n for natural numbers c and n, then a and b are both perfect n-th powers; n = 2 gives the square case.",
+  "assumptions": [
+   "$a,b,c,n$は$0$以上の整数",
+   "$\\gcd(a,b)=1$",
+   "$ab=c^n$"
+  ],
+  "quantifiers": [
+   "任意の$0$以上の整数$a,b,c,n$"
+  ],
+  "conclusion": "$a=s^n,\\ b=t^n$となる$0$以上の整数$s,t$が存在する。",
+  "answer": "$a,b,c,n$を$0$以上の整数とし、$\\gcd(a,b)=1$、$ab=c^n$とする。$a$が$n$乗数であることを示す（$b$は$a,b$を入れ替えて同様に示せる）。\n$n=0$のとき$ab=1$なので$a=b=1=1^0$である。以下$n\\geq 1$とする。$a=0$ならば$\\gcd(0,b)=b=1$なので$a=0^n$、$b=1^n$である。$b=0$の場合も同様である。\n$a,b$がともに正のとき、素数$p$が$a$を割り切るとする。$\\gcd(a,b)=1$より$p$は$b$を割り切らないので、$a$における$p$の指数は$ab=c^n$における$p$の指数に等しく、これは$c$における$p$の指数の$n$倍である。よって$a$のすべての素因数の指数は$n$の倍数であり、$a$は$n$乗数である。",
+  "openmath": "(forall (a b c n) (-> (and (in a N) (in b N) (in c N) (in n N) (= (gcd a b) 1) (= (* a b) (^ c n))) (and (exists (s) (and (in s N) (= a (^ s n)))) (exists (t) (and (in t N) (= b (^ t n)))))))",
+  "hard_negative": {
+   "statement": "$0$以上の整数$a,b$の積が$c^n$の形ならば、$a,b$はともに$n$乗数である。",
+   "reason": "互いに素の仮定を外すと成り立たない。$n=2,\\ a=2,\\ b=8$では$ab=16=4^2$だが、$2$は平方数でない。"
+  },
+  "target": "∀ (a b c n : ℕ), Nat.Coprime a b → a * b = c ^ n → (∃ s : ℕ, a = s ^ n) ∧ (∃ t : ℕ, b = t ^ n)",
+  "proof": "by\n  intro a b c n hab h\n  refine ⟨exists_eq_pow_of_mul_eq_pow (isUnit_iff_eq_one.mpr hab) h, ?_⟩\n  exact exists_eq_pow_of_mul_eq_pow (isUnit_iff_eq_one.mpr (Nat.Coprime.symm hab)) (by rw [mul_comm]; exact h)"
+ },
+ "school_polynomials.remainder_by_linear_ax_plus_b": {
+  "statement": "$a\\neq 0$のとき、実数係数の整式$P(x)$は、ある整式$Q(x)$を用いて$P(x)=(ax+b)Q(x)+P\\left(-\\frac{b}{a}\\right)$と表せる。$P(-b/a)$は定数で次数が$ax+b$より低いので、これが$P(x)$を$ax+b$で割った余りに当たる（余りの一意性は整式の除法の一意性による）。"
+ },
+ "school_polynomials.remainder_by_two_distinct_linear_factors": {
+  "statement": "$a\\neq b$のとき、実数係数の整式$P(x)$は、ある整式$Q(x)$により$P(x)=(x-a)(x-b)Q(x)+\\frac{P(a)-P(b)}{a-b}(x-a)+P(a)$と表せる。$\\frac{P(a)-P(b)}{a-b}(x-a)+P(a)$は次数が$1$以下で$(x-a)(x-b)$より低いので、これが$(x-a)(x-b)$で割った余りに当たる（余りの一意性は整式の除法の一意性による）。"
+ },
+ "school_polynomials.remainder_by_square_of_linear": {
+  "statement": "実数係数の整式$P(x)$と実数$a$について、ある整式$Q(x)$により$P(x)=(x-a)^2Q(x)+P'(a)(x-a)+P(a)$と表せる。$P'(a)(x-a)+P(a)$は次数が$1$以下で$(x-a)^2$より低いので、これが$(x-a)^2$で割った余りに当たる（余りの一意性は整式の除法の一意性による）。"
+ },
+ "school_polynomials.polynomial_division_uniqueness": {
+  "openmath": "(forall (B Q1 Q2 R1 R2) (-> (and (polynomial_over B R) (polynomial_over Q1 R) (polynomial_over Q2 R) (polynomial_over R1 R) (polynomial_over R2 R) (!= B (poly_const 0)) (< (poly_degree R1) (poly_degree B)) (< (poly_degree R2) (poly_degree B)) (= (+ (* B Q1) R1) (+ (* B Q2) R2))) (and (= Q1 Q2) (= R1 R2))))"
+ },
+ "school_polynomials.common_root_of_two_monic_quadratics": {
+  "statement": "複素数$m,p,q,r,s$が$p\\neq r$を満たし、複素数$\\alpha$が$m\\alpha^2+p\\alpha+q=0$と$m\\alpha^2+r\\alpha+s=0$をともに満たすなら、$\\alpha=\\frac{s-q}{p-r}$である。2次の係数が共通の値$m$である形で、$m=1$が典型例である。",
+  "statement_en": "For complex m, p, q, r, s with p ≠ r, a common root α of m x^2 + p x + q = 0 and m x^2 + r x + s = 0 equals (s-q)/(p-r). The two quadratics share the x^2 coefficient m.",
+  "assumptions": [
+   "$m,p,q,r,s$は複素数で$p\\neq r$",
+   "$\\alpha$は$m\\alpha^2+p\\alpha+q=0$と$m\\alpha^2+r\\alpha+s=0$を満たす複素数"
+  ],
+  "quantifiers": [
+   "任意の複素数$m,p,q,r,s,\\alpha$"
+  ],
+  "answer": "$m,p,q,r,s$を$p\\neq r$を満たす複素数とし、$\\alpha$を$m\\alpha^2+p\\alpha+q=0$と$m\\alpha^2+r\\alpha+s=0$を満たす複素数とする。2式を引くと$m\\alpha^2$が消えて$(p-r)\\alpha+q-s=0$である。$p-r\\neq 0$なので$\\alpha=\\frac{s-q}{p-r}$を得る。",
+  "openmath": "(forall (m p q r s a) (-> (and (in m C) (in p C) (in q C) (in r C) (in s C) (in a C) (!= p r) (= (+ (+ (* m (^ a 2)) (* p a)) q) 0) (= (+ (+ (* m (^ a 2)) (* r a)) s) 0)) (= a (/ (- s q) (- p r)))))",
+  "target": "∀ (m p q r s α : ℂ), p ≠ r → m * α ^ 2 + p * α + q = 0 → m * α ^ 2 + r * α + s = 0 → α = (s - q) / (p - r)",
+  "proof": "by\n  intro m p q r s α hpr h₁ h₂\n  rw [eq_div_iff (sub_ne_zero.mpr hpr)]\n  linear_combination h₁ - h₂"
+ },
+ "school_polynomials.reciprocal_quartic_substitution": {
+  "statement": "実数$a,b,c$と$0$でない実数$x$について、$t=x+\\frac{1}{x}$とおくと、相反方程式$ax^4+bx^3+cx^2+bx+a=0$は$at^2+bt+c-2a=0$と同値である。",
+  "statement_en": "For real a, b, c and real x ≠ 0, with t = x + 1/x, a x^4 + b x^3 + c x^2 + b x + a = 0 if and only if a t^2 + b t + c - 2a = 0.",
+  "assumptions": [
+   "$a,b,c,x$は実数で$x\\neq 0$",
+   "$t=x+\\frac{1}{x}$"
+  ],
+  "quantifiers": [
+   "任意の実数$a,b,c$と$0$でない実数$x$"
+  ],
+  "conclusion": "$ax^4+bx^3+cx^2+bx+a=0$と$at^2+bt+c-2a=0$は同値である。",
+  "answer": "$a,b,c$を実数、$x$を$0$でない実数とし、$t=x+\\frac{1}{x}$とおく。$t^2=x^2+2+\\frac{1}{x^2}$なので、$x^2(at^2+bt+c-2a)=x^2\\left(ax^2+\\frac{a}{x^2}+bx+\\frac{b}{x}+c\\right)=ax^4+bx^3+cx^2+bx+a$である。$x^2\\neq 0$だから、左辺が$0$であることと$at^2+bt+c-2a=0$は同値である。",
+  "openmath": "(forall (a b c x) (-> (and (in a R) (in b R) (in c R) (in x R) (!= x 0)) (<-> (= (+ (+ (+ (+ (* a (^ x 4)) (* b (^ x 3))) (* c (^ x 2))) (* b x)) a) 0) (= (- (+ (+ (* a (^ (+ x (/ 1 x)) 2)) (* b (+ x (/ 1 x)))) c) (* 2 a)) 0))))",
+  "hard_negative": {
+   "statement": "$at^2+bt+c-2a=0$に実数解$t$があれば、もとの方程式にも実数解$x$がある。",
+   "reason": "$x+\\frac{1}{x}=t$が実数解をもつのは$|t|\\geq 2$のときだけである。$a=1,\\ b=0,\\ c=2$では$t^2=0$の実数解$t=0$があるが、もとの方程式$x^4+2x^2+1=0$は$(x^2+1)^2=0$となり実数解をもたない。"
+  },
+  "target": "∀ (a b c x : ℝ), x ≠ 0 → (a * x ^ 4 + b * x ^ 3 + c * x ^ 2 + b * x + a = 0 ↔ a * (x + 1 / x) ^ 2 + b * (x + 1 / x) + c - 2 * a = 0)",
+  "proof": "by\n  intro a b c x hx\n  have key : a * x ^ 4 + b * x ^ 3 + c * x ^ 2 + b * x + a = x ^ 2 * (a * (x + 1 / x) ^ 2 + b * (x + 1 / x) + c - 2 * a) := by\n    field_simp\n    ring\n  rw [key, mul_eq_zero]\n  constructor\n  · rintro (h | h)\n    · exact absurd h (pow_ne_zero 2 hx)\n    · exact h\n  · exact Or.inr"
+ },
+ "school_polynomials.real_cubic_factorization_from_nonreal_root": {
+  "statement": "実数$a,b,c,d,p,q$が$a\\neq 0$、$q\\neq 0$を満たし、虚数$p+qi$が$ax^3+bx^2+cx+d=0$の解なら、すべての実数$x$で$ax^3+bx^2+cx+d=a\\left\\{x-\\left(-\\frac{b}{a}-2p\\right)\\right\\}(x^2-2px+p^2+q^2)$である。",
+  "statement_en": "For real a, b, c, d, p, q with a ≠ 0 and q ≠ 0, if p + qi is a root of a x^3 + b x^2 + c x + d = 0 then a x^3 + b x^2 + c x + d = a (x - (-b/a - 2p))(x^2 - 2px + p^2 + q^2) for every real x.",
+  "assumptions": [
+   "$a,b,c,d,p,q$は実数で$a\\neq 0$、$q\\neq 0$",
+   "$p+qi$は$ax^3+bx^2+cx+d=0$の解"
+  ],
+  "quantifiers": [
+   "任意の実数$a,b,c,d,p,q,x$"
+  ],
+  "conclusion": "$ax^3+bx^2+cx+d=a\\left\\{x-\\left(-\\frac{b}{a}-2p\\right)\\right\\}(x^2-2px+p^2+q^2)$が成り立つ。",
+  "answer": "$a,b,c,d,p,q$を$a\\neq 0$、$q\\neq 0$を満たす実数とし、$p+qi$が$ax^3+bx^2+cx+d=0$の解であるとする。代入して実部と虚部を比べると、$a(p^3-3pq^2)+b(p^2-q^2)+cp+d=0$と$q\\{a(3p^2-q^2)+2bp+c\\}=0$を得る。$q\\neq 0$より$c=-a(3p^2-q^2)-2bp$であり、これを第1式に代入すると$d=(2ap+b)(p^2+q^2)$となる。\n一方、$a\\left\\{x+\\frac{b}{a}+2p\\right\\}(x^2-2px+p^2+q^2)=(ax+b+2ap)(x^2-2px+p^2+q^2)$を展開すると、$ax^3+bx^2+\\{a(p^2+q^2)-2p(b+2ap)\\}x+(b+2ap)(p^2+q^2)$となる。$x$の係数は$a(q^2-3p^2)-2bp=c$、定数項は$d$に等しいので、これは$ax^3+bx^2+cx+d$である。",
+  "openmath": "(forall (a b c d p q x) (-> (and (in a R) (in b R) (in c R) (in d R) (in p R) (in q R) (in x R) (!= a 0) (!= q 0) (= (+ (+ (+ (* a (^ (+ p (* q complex_imaginary_unit)) 3)) (* b (^ (+ p (* q complex_imaginary_unit)) 2))) (* c (+ p (* q complex_imaginary_unit)))) d) 0)) (= (+ (+ (+ (* a (^ x 3)) (* b (^ x 2))) (* c x)) d) (* (* a (- x (- (/ (neg b) a) (* 2 p)))) (+ (+ (- (^ x 2) (* (* 2 p) x)) (^ p 2)) (^ q 2))))))",
+  "target": "∀ (a b c d p q : ℝ), a ≠ 0 → q ≠ 0 → (a : ℂ) * ((p : ℂ) + q * Complex.I) ^ 3 + b * ((p : ℂ) + q * Complex.I) ^ 2 + c * ((p : ℂ) + q * Complex.I) + d = 0 → ∀ x : ℝ, a * x ^ 3 + b * x ^ 2 + c * x + d = a * (x - (-b / a - 2 * p)) * (x ^ 2 - 2 * p * x + p ^ 2 + q ^ 2)",
+  "proof": "by\n  intro a b c d p q ha hq h x\n  have e : (a : ℂ) * ((p : ℂ) + q * Complex.I) ^ 3 + b * ((p : ℂ) + q * Complex.I) ^ 2 + c * ((p : ℂ) + q * Complex.I) + d = ((a * (p ^ 3 - 3 * p * q ^ 2) + b * (p ^ 2 - q ^ 2) + c * p + d : ℝ) : ℂ) + ((q * (a * (3 * p ^ 2 - q ^ 2) + 2 * b * p + c) : ℝ) : ℂ) * Complex.I := by\n    push_cast\n    linear_combination ((a : ℂ) * (3 * (p : ℂ) * q ^ 2 + (q : ℂ) ^ 3 * Complex.I) + (b : ℂ) * q ^ 2) * Complex.I_sq\n  rw [e] at h\n  have hre := congrArg Complex.re h\n  have him := congrArg Complex.im h\n  simp only [Complex.add_re, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im, Complex.zero_re, Complex.add_im, Complex.mul_im, Complex.zero_im] at hre him\n  have hI : a * (3 * p ^ 2 - q ^ 2) + 2 * b * p + c = 0 := by\n    have h1 : q * (a * (3 * p ^ 2 - q ^ 2) + 2 * b * p + c) = 0 := by linarith\n    exact (mul_eq_zero.mp h1).resolve_left hq\n  have hR : a * (p ^ 3 - 3 * p * q ^ 2) + b * (p ^ 2 - q ^ 2) + c * p + d = 0 := by linarith\n  have h3 : a * (x - (-b / a - 2 * p)) = a * x + b + 2 * a * p := by\n    field_simp\n    ring\n  rw [h3]\n  linear_combination x * hI + hR - p * hI"
+ },
+ "school_polynomials.componendo_dividendo": {
+  "hard_negative": {
+   "statement": "$\\dfrac{a}{b}=\\dfrac{c}{d}$なら$\\dfrac{a+b}{a-b}=\\dfrac{c-d}{c+d}$である。",
+   "reason": "$a=2,b=1,c=4,d=2$のとき$\\dfrac{a}{b}=\\dfrac{c}{d}=2$だが、左辺は$\\dfrac{3}{1}=3$、右辺は$\\dfrac{2}{6}=\\dfrac{1}{3}$である。分子は$c+d$、分母は$c-d$でなければならない。"
+  }
+ },
+ "school_quadratic.quadratic_coefficients_unique": {
+  "statement": "2次式に限った形（一般の次数の係数比較は別カード）として、すべての実数$x$で$ax^2+bx+c=dx^2+ex+f$が成り立つならば、$a=d,\\ b=e,\\ c=f$である。",
+  "statement_en": "Degree-2 special form of coefficient comparison: if a x² + b x + c = d x² + e x + f for every real x, then a = d, b = e and c = f."
+ },
+ "school_quadratic.product_with_fixed_sum_maximum": {
+  "level": "high"
+ },
+ "school_quadratic.root_count_by_discriminant": {
+  "openmath": "(forall (a b c) (-> (!= a 0) (and (-> (> (- (^ b 2) (* 4 a c)) 0) (= (size (suchthat R (lambda (x) (= (+ (* a (^ x 2)) (* b x) c) 0)))) 2)) (-> (= (- (^ b 2) (* 4 a c)) 0) (= (size (suchthat R (lambda (x) (= (+ (* a (^ x 2)) (* b x) c) 0)))) 1)) (-> (< (- (^ b 2) (* 4 a c)) 0) (= (suchthat R (lambda (x) (= (+ (* a (^ x 2)) (* b x) c) 0))) emptyset)))))"
+ },
+ "school_quadratic.common_root_resultant_condition": {
+  "hard_negative": {
+   "statement": "$(af-dc)^2=(ae-db)(bf-ec)$ならば、2つの方程式は共通の解をもつ。",
+   "reason": "逆は成り立たない。$a=d=0,\\ b=1,\\ c=0,\\ e=1,\\ f=1$では$(af-dc)^2=0$、$(ae-db)(bf-ec)=0\\cdot 1=0$で等式が成り立つが、$x=0$と$x+1=0$に共通の解はない。実数か複素数かに関係なく成り立つ反例である。"
+  }
+ },
+ "school_sequences.arith_common_terms_lcm": {
+  "topic": "整数全体を添字とする等差数列・共通項",
+  "statement": "正の整数$d,e$と整数$p,q$について、$x$が$p+di$と$q+ej$（$i,j$は負も含む任意の整数）の両方の形に表されるとき、同じく両方の形に表される整数$y$は、$y-x$が$d,e$の最小公倍数で割り切れる整数全体である。添字を正に限った数列の共通項では、添字の下限の条件が別に必要である。"
+ },
+ "school_sequences.sum_consecutive_product": {
+  "openmath": "(forall (m n) (-> (and (in m N) (in n N)) (= (sum (oriented_interval 1 n) (lambda (k) (product (natural_range m) (lambda (i) (+ k i))))) (/ (product (natural_range (+ m 1)) (lambda (i) (+ n i))) (+ m 1)))))"
+ },
+ "school_sequences.telescoping_sqrt_rationalize": {
+  "statement": "自然数$n$について、$\\sum_{k=1}^{n}\\dfrac{1}{\\sqrt{k}+\\sqrt{k+1}}=\\sqrt{n+1}-1$が成り立つ。これは公差$1$の等差数列$c_k=k$についての特殊形である。"
+ },
+ "school_sequences.group_sum_natural_numbers": {
+  "statement": "自然数の列$1,2,3,\\dots$を第$m$群が$m$項となるように区切るという特殊な群数列では、第$m$群は$\\dfrac{m(m-1)}{2}+j$（$1\\leq j\\leq m$）からなり、その和は$\\dfrac{m(m^2+1)}{2}$である。"
+ },
+ "school_trigonometry.tan_pi_div_two_sub": {
+  "hard_negative": {
+   "statement": "$\\sin x\\neq0$かつ$\\cos x\\neq0$をみたす実数$x$について$\\tan\\left(\\dfrac{\\pi}{2}-x\\right)=\\tan x$である。",
+   "reason": "余角では正接は逆数になる。$x=\\pi/6$では$\\tan(\\pi/3)=\\sqrt{3}$だが$\\tan(\\pi/6)=1/\\sqrt{3}$であり一致しない。等しくなるのは$\\tan x=\\pm1$のときに限る。"
+  }
+ },
+ "school_trigonometry.sinusoid_period": {
+  "statement": "実数$a,\\omega,b,x$について$\\omega\\neq0$のとき、$a\\sin\\left(\\omega\\left(x+\\dfrac{2\\pi}{\\omega}\\right)+b\\right)=a\\sin(\\omega x+b)$である。すなわち$2\\pi/\\omega$は周期の一つであり、最小周期が$2\\pi/|\\omega|$であるという主張は含まない。",
+  "statement_en": "For real a, ω, b, x with ω ≠ 0, a sin(ω(x + 2π/ω) + b) = a sin(ωx + b). This says 2π/ω is a period; it does not claim minimality (least period 2π/|ω|)."
+ },
+ "school_trigonometry.tan_add_formula": {
+  "hard_negative": {
+   "statement": "$\\cos x\\neq0$、$\\cos y\\neq0$、$\\cos(x+y)\\neq0$のとき$\\tan(x+y)=\\dfrac{\\tan x+\\tan y}{1+\\tan x\\tan y}$である。",
+   "reason": "分母の符号が違う。$x=y=\\pi/6$では$\\tan(\\pi/3)=\\sqrt{3}$だが、右辺は$\\dfrac{2/\\sqrt3}{4/3}=\\dfrac{\\sqrt3}{2}$である。"
+  }
+ },
+ "school_trigonometry.tan_double_angle": {
+  "hard_negative": {
+   "statement": "$\\cos x\\neq0$、$\\cos2x\\neq0$のとき$\\tan2x=\\dfrac{2\\tan x}{1+\\tan^2x}$である。",
+   "reason": "分母の符号が違う。$x=\\pi/6$では$\\tan(\\pi/3)=\\sqrt{3}$だが、右辺は$\\dfrac{2/\\sqrt3}{4/3}=\\dfrac{\\sqrt3}{2}$である。$1+\\tan^2x=1/\\cos^2x$は正接の倍角の分母ではない。"
+  }
+ },
+ "school_vectors_complex.internal_division_formula": {
+  "statement": "実内積空間の点$\\mathrm{A},\\mathrm{B},\\mathrm{P}$の位置ベクトルを$\\vec a,\\vec b,\\vec p$とし、$m,n>0$とする。$\\mathrm{P}$が線分$\\mathrm{AB}$上にあり$n\\,\\mathrm{AP}=m\\,\\mathrm{PB}$を満たす（すなわち$\\mathrm{P}$が線分$\\mathrm{AB}$を$m:n$に内分する）ことと、$\\vec p=\\dfrac{n\\vec a+m\\vec b}{m+n}$であることは同値である。",
+  "statement_en": "Let a, b, p be vectors in a real inner product space and m, n > 0. Then p lies on the segment from a to b with n|p-a| = m|b-p| if and only if p = (na+mb)/(m+n).",
+  "conclusion": "$\\mathrm{P}$が線分$\\mathrm{AB}$上にあり$n|\\vec p-\\vec a|=m|\\vec b-\\vec p|$であることと、$\\vec p=\\dfrac{n\\vec a+m\\vec b}{m+n}$であることは同値である。",
+  "answer": "$\\vec a,\\vec b,\\vec p$を実内積空間のベクトル、$m,n>0$とする。\n\n（右から左）$\\vec p=\\dfrac{n\\vec a+m\\vec b}{m+n}$とする。係数$\\dfrac{n}{m+n},\\dfrac{m}{m+n}$は正で和が$1$なので、$\\vec p$は線分$\\mathrm{AB}$上にある。また$\\vec p-\\vec a=\\dfrac{m}{m+n}(\\vec b-\\vec a)$、$\\vec b-\\vec p=\\dfrac{n}{m+n}(\\vec b-\\vec a)$なので、$n|\\vec p-\\vec a|=\\dfrac{mn}{m+n}|\\vec b-\\vec a|=m|\\vec b-\\vec p|$である。\n\n（左から右）$\\vec p$が線分$\\mathrm{AB}$上にあるので、$0\\le\\lambda\\le1$の$\\lambda$で$\\vec p=\\vec a+\\lambda(\\vec b-\\vec a)$と書ける。このとき$|\\vec p-\\vec a|=\\lambda|\\vec b-\\vec a|$、$|\\vec b-\\vec p|=(1-\\lambda)|\\vec b-\\vec a|$なので、条件$n|\\vec p-\\vec a|=m|\\vec b-\\vec p|$は$\\{n\\lambda-m(1-\\lambda)\\}|\\vec b-\\vec a|=0$となる。$\\vec a=\\vec b$なら$\\vec p=\\vec a$であり、$\\dfrac{n\\vec a+m\\vec b}{m+n}=\\vec a$でもある。$\\vec a\\ne\\vec b$なら$n\\lambda=m(1-\\lambda)$より$\\lambda=\\dfrac{m}{m+n}$であり、$\\vec p=\\dfrac{n}{m+n}\\vec a+\\dfrac{m}{m+n}\\vec b$を得る。",
+  "openmath": "(forall (V a b p m n) (-> (and (inner_product_space_over R V) (in a V) (in b V) (in p V) (in m R) (in n R) (> m 0) (> n 0)) (<-> (and (in_segment p a b) (= (* n (norm (- p a))) (* m (norm (- b p))))) (= p (+ (smul (/ n (+ m n)) a) (smul (/ m (+ m n)) b))))))",
+  "target": "∀ (V : Type*) [NormedAddCommGroup V] [InnerProductSpace ℝ V] (a b P : V) (m n : ℝ), 0 < m → 0 < n → ((P ∈ segment ℝ a b ∧ n * ‖P - a‖ = m * ‖b - P‖) ↔ P = (n / (m + n)) • a + (m / (m + n)) • b)",
+  "proof": "by\n  intro V _ _ a b P m n hm hn\n  have hmn : m + n ≠ 0 := by positivity\n  constructor\n  · rintro ⟨⟨x, y, hx, hy, hxy, hP⟩, h⟩\n    have hy' : y = 1 - x := by linarith\n    subst hP\n    subst hy'\n    have h1 : x • a + (1 - x) • b - a = (1 - x) • (b - a) := by module\n    have h2 : b - (x • a + (1 - x) • b) = x • (b - a) := by module\n    rw [h1, h2, norm_smul, norm_smul, Real.norm_of_nonneg hx, Real.norm_of_nonneg hy] at h\n    by_cases hab : ‖b - a‖ = 0\n    · have hba : b = a := by\n        have := norm_eq_zero.mp hab\n        exact sub_eq_zero.mp this\n      subst hba\n      match_scalars <;> field_simp <;> ring\n    · have hxy : n * (1 - x) = m * x := by\n        have : n * (1 - x) * ‖b - a‖ = m * x * ‖b - a‖ := by linarith\n        exact mul_right_cancel₀ hab this\n      have hx' : x = n / (m + n) := by\n        field_simp\n        linarith\n      subst hx'\n      match_scalars <;> field_simp <;> ring\n  · intro h\n    subst h\n    have hn' : 0 ≤ n / (m + n) := by positivity\n    have hm' : 0 ≤ m / (m + n) := by positivity\n    have hsum : n / (m + n) + m / (m + n) = 1 := by field_simp; ring\n    refine ⟨⟨n / (m + n), m / (m + n), hn', hm', hsum, rfl⟩, ?_⟩\n    have h1 : (n / (m + n)) • a + (m / (m + n)) • b - a = (m / (m + n)) • (b - a) := by\n      match_scalars <;> field_simp <;> ring\n    have h2 : b - ((n / (m + n)) • a + (m / (m + n)) • b) = (n / (m + n)) • (b - a) := by\n      match_scalars <;> field_simp <;> ring\n    rw [h1, h2, norm_smul, norm_smul, Real.norm_of_nonneg hn', Real.norm_of_nonneg hm']\n    field_simp\n"
+ },
+ "school_vectors_complex.external_division_formula": {
+  "statement": "実内積空間の点$\\mathrm{A},\\mathrm{B},\\mathrm{P}$の位置ベクトルを$\\vec a,\\vec b,\\vec p$とし、$m,n>0$、$m\\neq n$とする。$n(\\vec p-\\vec a)=m(\\vec p-\\vec b)$（すなわち$\\mathrm{P}$が線分$\\mathrm{AB}$を$m:n$に外分する）ことと、$\\vec p=\\dfrac{-n\\vec a+m\\vec b}{m-n}$であることは同値である。",
+  "statement_en": "Let a, b, p be vectors in a real inner product space, m, n > 0, m ≠ n. Then n(p-a) = m(p-b) if and only if p = (-na+mb)/(m-n).",
+  "conclusion": "$n(\\vec p-\\vec a)=m(\\vec p-\\vec b)$と$\\vec p=\\dfrac{-n\\vec a+m\\vec b}{m-n}$は同値である。",
+  "answer": "$\\vec a,\\vec b,\\vec p$を実内積空間のベクトル、$m,n>0$、$m\\neq n$とする。$m-n\\ne0$である。$n(\\vec p-\\vec a)=m(\\vec p-\\vec b)$を整理すると$(m-n)\\vec p=m\\vec b-n\\vec a$となる。$m-n\\ne0$なので、これは$\\vec p=\\dfrac{-n\\vec a+m\\vec b}{m-n}$と同値である（各変形は逆にたどれる）。",
+  "openmath": "(forall (V a b p m n) (-> (and (inner_product_space_over R V) (in a V) (in b V) (in p V) (in m R) (in n R) (> m 0) (> n 0) (!= m n)) (<-> (= p (+ (smul (/ (neg n) (- m n)) a) (smul (/ m (- m n)) b))) (= (smul n (- p a)) (smul m (- p b))))))",
+  "target": "∀ (V : Type*) [NormedAddCommGroup V] [InnerProductSpace ℝ V] (a b P : V) (m n : ℝ), 0 < m → 0 < n → m ≠ n → (P = (-n / (m - n)) • a + (m / (m - n)) • b ↔ n • (P - a) = m • (P - b))",
+  "proof": "by\n  intro V _ _ a b P m n hm hn hne\n  have hd : m - n ≠ 0 := sub_ne_zero.mpr hne\n  constructor\n  · intro h\n    subst h\n    match_scalars <;> field_simp <;> ring\n  · intro h\n    have h3 : n • (P - a) - m • (P - b) = 0 := by rw [h]; simp\n    have h' : (m - n) • P = (-n) • a + m • b := by\n      calc (m - n) • P = (-n) • a + m • b - (n • (P - a) - m • (P - b)) := by module\n        _ = (-n) • a + m • b := by rw [h3, sub_zero]\n    have : P = (m - n)⁻¹ • ((m - n) • P) := by rw [smul_smul, inv_mul_cancel₀ hd, one_smul]\n    rw [this, h']\n    match_scalars <;> field_simp\n"
+ },
+ "school_vectors_complex.inner_eq_norm_norm_cos": {
+  "assumptions": [
+   "$\\vec a\\neq\\vec 0$、$\\vec b\\neq\\vec 0$",
+   "$\\theta=\\arccos\\dfrac{\\vec a\\cdot\\vec b}{|\\vec a||\\vec b|}$（なす角の定義）"
+  ]
+ },
+ "school_vectors_complex.triangle_area_inner_formula": {
+  "statement": "実内積空間の$\\vec 0$でないベクトル$\\vec a,\\vec b$のなす角を$\\theta$とすると、三角形の面積の2つの公式の値は一致する。すなわち（面積そのものは扱わず、2式の等式として）$\\dfrac12|\\vec a||\\vec b|\\sin\\theta=\\dfrac12\\sqrt{|\\vec a|^2|\\vec b|^2-(\\vec a\\cdot\\vec b)^2}$が成り立つ。",
+  "statement_en": "For nonzero vectors a, b in a real inner product space with angle θ, the two area expressions agree: (1/2)|a||b| sin θ = (1/2)√(|a|²|b|² - (a·b)²) (the card states this identity only, not that either expression is an area)."
+ },
+ "school_vectors_complex.plane_equation_normal_form": {
+  "statement": "点$(x_0,y_0,z_0)$が平面$ax+by+cz+d=0$上にあるとき、点$(x,y,z)$がこの平面上にあることと、$a(x-x_0)+b(y-y_0)+c(z-z_0)=0$であることは同値である。"
+ },
+ "school_vectors_complex.line_plane_intersection_parameter": {
+  "statement": "直線$(x_0+tl,\\,y_0+tm,\\,z_0+tn)$と平面$ax+by+cz+d=0$について$al+bm+cn\\neq 0$とする。このとき、$t$に対応する点が平面上にあることと、$t=-\\dfrac{ax_0+by_0+cz_0+d}{al+bm+cn}$であることは同値である。"
+ },
+ "school_vectors_complex.perpendicular_iff_ratio_re_zero": {
+  "statement_en": "For complex numbers a ≠ b and c, the real inner product Re(conj(b-a)(c-a)) of the plane vectors b-a and c-a vanishes if and only if Re((c-a)/(b-a)) = 0.",
+  "openmath": "(forall (a b c) (-> (and (in a C) (in b C) (in c C) (!= a b)) (<-> (= (real_part (* (complex_conj (- b a)) (- c a))) 0) (= (real_part (/ (- c a) (- b a))) 0))))"
+ },
+ "topology_general.metric_continuous_iff_seq": {
+  "openmath": "(forall (X Y f) (-> (and (metric_space X) (metric_space Y)) (<-> (continuous_between X Y f) (forall (a L) (-> (and (forall (n) (in (seq_value a n) X)) (in L X) (seq_tends_to a L)) (seq_tends_to (function_compose_map f a) (fn_value f L)))))))"
+ },
+ "topology_general.compact_finite_intersection_property": {
+  "openmath": "(forall (X K I C) (-> (and (compact_in X K) (!= K emptyset) (forall (i) (-> (in i I) (closed_in X (fn_value C i)))) (forall (u) (-> (and (subset u I) (finite_set u)) (!= (inter K (family_inter u C)) emptyset)))) (!= (inter K (family_inter I C)) emptyset)))"
+ },
+ "topology_general.hausdorff_sequence_limit_unique": {
+  "openmath": "(forall (X a L M) (-> (and (hausdorff_space X) (forall (n) (in (seq_value a n) X)) (in L X) (in M X) (seq_tends_to a L) (seq_tends_to a M)) (= L M)))"
+ },
+ "topology_general.urysohn_lemma": {
+  "hard_negative": {
+   "statement": "ハウスドルフ空間の交わらない閉集合は、常に連続関数で分離できる。",
+   "reason": "連続関数$f$で$A$上$0$、$B$上$1$なら、$f^{-1}([0,1/2))$と$f^{-1}((1/2,1])$は$A,B$を分離する交わらない開集合になる。したがって全ての交わらない閉集合の組が連続関数で分離できるなら空間は正規である。ゾルゲンフライ平面はハウスドルフだが正規でないので、分離できない閉集合の組が存在する。"
+  }
+ }
+}

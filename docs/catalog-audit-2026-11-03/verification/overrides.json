@@ -1,0 +1,60 @@
+{
+ "logic_sets.countable_union_of_countable": [
+  [
+   "(indexed_union I (lambda (i) (fn_value A i)))",
+   "(indexed_union_over I A)"
+  ]
+ ],
+ "combinatorics_graphs.power_series_negative_binomial": [
+  [
+   "(power_series_x S)",
+   "(power_series_var S)"
+  ],
+  [
+   "formal_power_series_mk S",
+   "formal_power_series_over S"
+  ]
+ ],
+ "modules_categories.hom_covariant_left_exact": [
+  [
+   "post_compose",
+   "hom_post_compose"
+  ]
+ ],
+ "geometry_homotopy.smooth_partition_of_unity_exists": [
+  [
+   "(smooth_manifold M E)",
+   "(smooth_manifold_modeled_on M E)"
+  ]
+ ],
+ "group_theory.finite_abelian_group_structure": [
+  [
+   "prime_power_cyclic_sum",
+   "prime_power_cyclic_sum_family"
+  ]
+ ],
+ "ring_theory.chinese_remainder_two_ideals": [
+  [
+   "(pair (residue_class I x)",
+   "(ordered_pair (residue_class I x)"
+  ]
+ ],
+ "geometry_homotopy.covering_path_lifting": [
+  [
+   "__replace__",
+   "(forall (E X p c e) (-> (and (in p (continuous_maps E X)) (covering_map p) (in c (continuous_maps unit_interval X)) (in e E) (= (fn_value c 0) (fn_value p e))) (exists (h) (and (in h (continuous_maps unit_interval E)) (= (map_compose p h) c) (= (fn_value h 0) e) (forall (k) (-> (and (in k (continuous_maps unit_interval E)) (= (map_compose p k) c) (= (fn_value k 0) e)) (= k h)))))))"
+  ]
+ ],
+ "measure_integration.simple_function_approximation": [
+  [
+   "__replace__",
+   "(forall (f) (-> (and (measurable_fn f) (forall (x) (<= 0 (fn_value f x)))) (exists (p) (and (forall (n) (and (simple_fn (seq_value p n)) (forall (x) (and (<= 0 (fn_value (seq_value p n) x)) (< (fn_value (seq_value p n) x) extended_infinity))))) (fn_seq_increasing p) (pointwise_tends_to p f)))))"
+  ]
+ ],
+ "fourier_convex_numeric.banach_fixed_point_real_constant": [
+  [
+   "__replace__",
+   "(forall (X f K) (-> (and (metric_space X) (complete_space X) (exists (z) (in z X)) (forall (x) (-> (in x X) (in (fn_value f x) X))) (>= K 0) (< K 1) (forall (x y) (-> (and (in x X) (in y X)) (<= (dist_of (fn_value f x) (fn_value f y)) (* K (dist_of x y)))))) (exists (x) (and (in x X) (= (fn_value f x) x) (forall (y) (-> (and (in y X) (= (fn_value f y) y)) (= y x)))))))"
+  ]
+ ]
+}

@@ -1,0 +1,19 @@
+{
+ "generic_now_to_needs_vocabulary": [
+  "textbook_logic_sets_contrapositive_iff",
+  "textbook_logic_sets_not_exists_iff_forall_not",
+  "textbook_logic_sets_not_forall_iff_exists_not",
+  "textbook_logic_sets_prop_de_morgan",
+  "textbook_school_data_logic_finset_card_neither_of_two",
+  "textbook_school_data_logic_finset_card_union_three",
+  "textbook_school_data_logic_finset_card_union_two",
+  "textbook_school_data_logic_implication_by_contradiction_template",
+  "textbook_school_data_logic_implication_cycle_iff",
+  "textbook_school_data_logic_or_iff_not_left_imp_right",
+  "textbook_school_data_logic_pred_forall_contrapositive",
+  "textbook_school_data_logic_pred_not_forall_imp_counterexample",
+  "textbook_school_data_logic_proof_by_contradiction_template",
+  "textbook_school_exp_log_logb_change_of_base",
+  "textbook_school_sequences_sum_consecutive_product"
+ ]
+}

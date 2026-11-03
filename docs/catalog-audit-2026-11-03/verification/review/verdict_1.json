@@ -1,0 +1,212 @@
+[
+ {
+  "domain": "geometry_plane",
+  "id": "parallel_of_corresponding_angles",
+  "verdict": "correct",
+  "reason": "euclidean_plane_ambient conjunct mirrors the Fact finrank=2; strictly_between (e a c), euclid_angle (e a b)/(a c d), same_side_of_line (b d a c), parallel_lines (a b c d) all match the Lean argument order.",
+  "suggested": null
+ },
+ {
+  "domain": "school_counting_probability",
+  "id": "trials_maximum_value",
+  "verdict": "correct",
+  "reason": "Adds the 0<n hypothesis as (> n 0); rest unchanged and matches the Lean target.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_homotopy",
+  "id": "pythagoras_angle_iff",
+  "verdict": "correct",
+  "reason": "Only change is pi_constant -> pi (core symbol, also used unlisted in other cards here); proposition unchanged and hypotheses a!=b, c!=b kept.",
+  "suggested": null
+ },
+ {
+  "domain": "real_analysis",
+  "id": "eventually_lt_of_limsup_lt",
+  "verdict": "correct",
+  "reason": "Hypothesis now |a n| <= M as in the Lean target; limsup/conclusion unchanged.",
+  "suggested": null
+ },
+ {
+  "domain": "logic_sets",
+  "id": "countable_union_of_countable",
+  "verdict": "unsure",
+  "reason": "indexed_union_over meaning ('union of the members S_i for i in I') does not state argument order; (I A) is correct only if the index set comes first, which the text does not confirm. Otherwise the encoding is faithful.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_circle",
+  "id": "two_circles_common_point_exists_in_plane",
+  "verdict": "correct",
+  "reason": "euclidean_plane_ambient added as hypothesis; remaining hypotheses and on_circle (p c r) order match the Lean target.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_circle",
+  "id": "two_circles_at_most_two_common_points",
+  "verdict": "correct",
+  "reason": "Planarity hypothesis added; sphere inequality encoded as (or (!= o1 o2) (!= r1 r2)) matches s1 != s2; on_circle order correct.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_circle",
+  "id": "common_chord_perpendicular_bisected_by_center_line",
+  "verdict": "correct",
+  "reason": "Planarity added; perpendicular_lines o2 o1 a b equals inner(O2-O1,B-A)=0 given o1!=o2, a!=b; on_line midpoint o1 o2 matches.",
+  "suggested": null
+ },
+ {
+  "domain": "fourier_convex_numeric",
+  "id": "composite_trapezoid_error_bound",
+  "verdict": "correct",
+  "reason": "lo<=hi with {lo,hi}={a,b} correctly encodes Set.uIcc a b; C2 and |f''|<=z hypotheses are on [lo,hi]; conclusion unchanged and uses a,b with oriented integral as in Lean.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_triangle",
+  "id": "right_triangle_leg_square_projection",
+  "verdict": "correct",
+  "reason": "inner_product (- a h) (- c b) = 0 matches inner (A -v H) (C -v B) (order correct); point difference via '-' is the only available vector-difference notation. Other hypotheses unchanged.",
+  "suggested": null
+ },
+ {
+  "domain": "school_data_logic",
+  "id": "or_iff_not_left_imp_right",
+  "verdict": "correct",
+  "reason": "Propositions encoded via proposition_holds with bound P,Q; or/not/-> structure matches P or Q <-> (not P -> Q).",
+  "suggested": null
+ },
+ {
+  "domain": "complex_analysis",
+  "id": "euler_formula",
+  "verdict": "correct",
+  "reason": "Now for all complex z: exp(z*i) = cos z + i sin z, matching Lean (sin z * I = I * sin z).",
+  "suggested": null
+ },
+ {
+  "domain": "school_data_logic",
+  "id": "pred_forall_contrapositive",
+  "verdict": "correct",
+  "reason": "Carrier A added with guards on both sides; holds_at (P x) order correct; contrapositive structure matches Lean.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_homotopy",
+  "id": "covering_path_lifting",
+  "verdict": "wrong",
+  "reason": "Continuity and [0,1] domain are now fixed, but E and X are tied to p nowhere (covering_map p takes only p), so e in E, c in C(I,X), h in C(I,E) are not known to be about p : E -> X. Add (in p (continuous_maps E X)).",
+  "suggested": "(forall (E X p c e) (-> (and (in p (continuous_maps E X)) (covering_map p) (in c (continuous_maps unit_interval X)) (in e E) (= (fn_value c 0) (fn_value p e))) (exists (h) (and (in h (continuous_maps unit_interval E)) (= (map_compose p h) c) (= (fn_value h 0) e) (forall (k) (-> (and (in k (continuous_maps unit_interval E)) (= (map_compose p k) c) (= (fn_value k 0) e)) (= k h)))))))"
+ },
+ {
+  "domain": "geometry_centers",
+  "id": "menelaus_converse",
+  "verdict": "correct",
+  "reason": "division_point b c r = (1-r)b+rc, division_point c a s = (1-s)c+sa, division_point a b t = (1-t)a+tb, matching D,E,F; hypothesis and collinearity conclusion unchanged.",
+  "suggested": null
+ },
+ {
+  "domain": "linear_basic",
+  "id": "left_inverse_is_right_inverse",
+  "verdict": "correct",
+  "reason": "Adds matrix_over_field (A,K order ok), A square, B of the same order; identity_matrix of context size is now consistent. Matches Lean.",
+  "suggested": null
+ },
+ {
+  "domain": "topology_general",
+  "id": "hausdorff_sequence_limit_unique",
+  "verdict": "correct",
+  "reason": "Adds a_n in X for all n, L,M in X; this ties the sequence and limits to X (seq_tends_to has no space argument). Faithful enough; n is not restricted to N but a is a sequence.",
+  "suggested": null
+ },
+ {
+  "domain": "measure_integration",
+  "id": "simple_function_approximation",
+  "verdict": "wrong",
+  "reason": "Nonnegativity of f and finiteness of phi_n are added, but phi_n >= 0 is not required: Lean's SimpleFunc into ENNReal forces phi_n x >= 0, whereas the OM allows signed simple approximants, so the conclusion is weaker than the target.",
+  "suggested": "(forall (f) (-> (and (measurable_fn f) (forall (x) (<= 0 (fn_value f x)))) (exists (p) (and (forall (n) (and (simple_fn (seq_value p n)) (forall (x) (and (<= 0 (fn_value (seq_value p n) x)) (< (fn_value (seq_value p n) x) extended_infinity))))) (fn_seq_increasing p) (pointwise_tends_to p f)))))"
+ },
+ {
+  "domain": "linear_advanced",
+  "id": "distinct_eigenvalues_give_eigenbasis",
+  "verdict": "correct",
+  "reason": "(= (size mu) n) ties the family mu to n members as in Fin n -> K; v's members beyond mu's index range are irrelevant. Relies on size of a family meaning its number of members, which is the natural reading.",
+  "suggested": null
+ },
+ {
+  "domain": "fourier_convex_numeric",
+  "id": "newton_step_convex_bracket",
+  "verdict": "correct",
+  "reason": "convex_function_on f R, has_deriv_at (lambda (s) (fn_value f s)) d x with args (f, u, a) = (f, d, x) in the right order; rest unchanged.",
+  "suggested": null
+ },
+ {
+  "domain": "modules_categories",
+  "id": "five_lemma_modules",
+  "verdict": "correct",
+  "reason": "All 15 maps typed with module_hom in order (f R M N): f_i: M_i->M_{i+1}, g_i: N_i->N_{i+1}, i_j: M_j->N_j correct; commutation squares, exactness pairs and surj/bij/inj hypotheses match the Lean target.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_centers",
+  "id": "ceva_theorem",
+  "verdict": "correct",
+  "reason": "division_point arguments reproduce D=(1-r)B+rC, E=(1-s)C+sA, F=(1-t)A+tB; on_line p a D etc. and conclusion identical to before and to Lean.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_circle",
+  "id": "contact_chord_perpendicular_bisected_by_center_line",
+  "verdict": "correct",
+  "reason": "Planarity added; tangent_to_circle_at (t p c r) = (a q o r) order correct; perpendicular_lines q o a b is equivalent to inner(Q-O,B-A)=0 (Q!=O since Q is outside the circle).",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_circle",
+  "id": "right_angle_on_circle_chord_is_diameter",
+  "verdict": "correct",
+  "reason": "Planarity added; on_circle, euclid_angle (a x b), is_diameter (a b o r) orders match the Lean target.",
+  "suggested": null
+ },
+ {
+  "domain": "real_analysis",
+  "id": "radius_of_convergence",
+  "verdict": "correct",
+  "reason": "Disjunction (finite r>=0 with both clauses) or summable everywhere correctly mirrors R : ENNReal, including the R=infinity case where the second clause is vacuous.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_circle",
+  "id": "inscribed_angle_same_side_converse",
+  "verdict": "correct",
+  "reason": "Planarity added; same_side_of_line (x y a b), euclid_angle (a x b)/(a y b) and cospherical_points on {a,b,x,y} match Lean.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_homotopy",
+  "id": "parallelogram_law_norm",
+  "verdict": "correct",
+  "reason": "inner_product_space V with x,y in V gives the inner-product hypothesis; the real/complex distinction is lost (inner_product_space_over is not available in this vocabulary) but the law is true in both, so no false theorem shares it.",
+  "suggested": null
+ },
+ {
+  "domain": "school_vectors_complex",
+  "id": "internal_division_formula",
+  "verdict": "correct",
+  "reason": "Now an iff with m,n>0 in R, a,b,p in V and in_segment p a b (order p a b); the formula p=(n/(m+n))a+(m/(m+n))b matches Lean.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_centers",
+  "id": "nine_point_center_and_radius",
+  "verdict": "correct",
+  "reason": "on_plane o a b c (order p a b c) for the centre, on_circle of the three side midpoints, conclusions o = midpoint(circumcenter, orthocenter) and r = R/2 match the Lean target; noncollinearity matches the triangle.",
+  "suggested": null
+ },
+ {
+  "domain": "geometry_circle",
+  "id": "equal_inscribed_angles_equal_chords",
+  "verdict": "correct",
+  "reason": "Planarity added; all six points on the common circle, distinctness conditions and angle/chord conclusion match Lean.",
+  "suggested": null
+ }
+]
