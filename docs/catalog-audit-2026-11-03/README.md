@@ -80,7 +80,7 @@ Lean のコンパイルは、カタログ作成側がすでに全件で通して
 - 新しい `pals2` 記号が24個要る（`verification/vocabulary_additions.yaml`）。
 - `ring_theory.quotient_lift_unique` は `ring_quotient_lift_unique` に改名される。
 - 適用は `verification/apply_validated_patches.py` で行う。差分（`validated_patches.json`、332カード）を、カタログの checkout の YAML に当てる。凍結時点から checkout が動いている場合は、カードが見つからないと報告して止まる。
-- 適用していない項目が1つある。`associated_primes_finite` の模範解答に、文を1つ加える提案（`answer_note`）である。
+- 適用していない項目が1つある。`associated_primes_finite` の模範解答に、文を1つ加える提案（`answer_note`）である。この提案は理由の部分が誤りだった。根基が素イデアルでも Ann(x) が primary とは限らない（k[x,y] の (x²,xy) が反例）。適用側が結論（ネーター環で2つの定義の集合が一致する）だけを残し、理由を使わない直接の証明に差し替えた（commit 75c7383、ブランチ `claude/textbook-catalog-v1`）。`ALL_FINDINGS.json` の `answer_note` は使わないこと。
 
 ## ファイル
 
