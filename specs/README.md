@@ -23,6 +23,7 @@
 
 - [lean-recipe-catalog](lean-recipe-catalog/requirements.md)、[recipe-curation-proposals](recipe-curation-proposals/requirements.md)、[draft-catalog-expansion](draft-catalog-expansion/requirements.md) — 証明カタログ。
 - [domainless-production-bootstrap](domainless-production-bootstrap/requirements.md) — 本番構成の安全境界。
+- [proof-quality-observability](proof-quality-observability/requirements.md) — Lean 証明の失敗の種類と精度を CloudWatch で監視する（WORKING。分類は #216 と調整）。
 
 ## Repository-owned specs
 
