@@ -6,7 +6,7 @@
 
 worker は依頼文を Luna で英語の命題文に直し、その embedding を API の `/v1/internal/proof-requests/statement-draft-candidates` へ送ります。API はファイル内の全行とコサイン距離で比べ、上位8件を返します。署名済みの `public.dsp_drafts`、従来の XML 検索、Draft の追加候補の表は変更しません。
 
-`PALS_NATURAL_DRAFT_STATEMENT_SEARCH_ENABLED=true` のときだけ、worker はこの経路を使います。未設定なら従来の XML 検索のままです。本番の worker がこの検索を呼ぶのは DSP の Draft 段階だけで、`NaturalDspDraftRetriever` が `generic-v1` を固定して呼びます。候補は助言として Draft の生成に渡り、判定は Lean と意味レビューが行います。検索に失敗すると、従来の XML 検索と同じく `retrieval_unavailable` になります。`profile_id` が null の依頼でも検索する分岐は `ProofReuseRuntime.answer` の判定器の経路にあり、worker はこの経路を通りません。
+`PALS_NATURAL_DRAFT_STATEMENT_SEARCH_ENABLED=true` のときだけ、worker はこの経路を使います。未設定なら従来の XML 検索のままです。本番の worker がこの検索を呼ぶのは DSP の Draft 段階だけで、`NaturalDspDraftRetriever` が `generic-v1` を固定して呼びます。候補は助言として Draft の生成に渡り、判定は Lean と意味レビューが行います。検索に失敗すると、従来の XML 検索と同じく `retrieval_unavailable` になります。`profile_id` が null の依頼は検索しません。
 
 ## 表ではなくファイルにした理由
 
