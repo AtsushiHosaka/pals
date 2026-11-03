@@ -73,8 +73,8 @@ services:
         soft: 1024
         hard: 1024
     cpus: 2.0
-    mem_limit: 4g
-    memswap_limit: 4g
+    mem_limit: 8g
+    memswap_limit: 8g
     tmpfs:
       - /run/pals-verifier-requests:rw,noexec,nosuid,size=64m,uid=65532,gid=65532,mode=700
     environment:
