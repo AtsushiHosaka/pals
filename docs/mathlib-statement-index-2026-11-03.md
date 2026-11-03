@@ -199,6 +199,14 @@ Leanで解釈した命題を使う記号検索が最も高く、統合しても�
 
 続行の条件は実行前に固定します。満たさない場合はヒントの組み込みを見送り、索引は調査用として残します。
 
+#### 実行前に固定した内容
+
+ユーザーの承認を受け、結果を見る前に次の内容を固定しました。標本は、機械的な選別で残った29問のハッシュ順で、13番目から24番目の12問です。
+
+`calculus_supp_v5_ftc_point_spike_counterexample`、`mv_line_supp_v5_orientation_counterexample`、`mv_foundation_lagrange_multiplier_from_direction`、`calculus_v3_limit_order`、`calculus_supp_v3_geometric_boundary_counterexample`、`la_reuse_kernel_detects_zero`、`commalg_modules_exact_id_zero`、`la_v6_nonzero_maps_zero_composite`、`la_reuse_right_inverse_surjective`、`la_v6_basis_recognition`、`calculus_v4_gradient_direction_bound`、`calculus_v5_two_sided_limit_characterization`
+
+成功はLean検証と公理検査を通った`verified`だけとします。費用の上限で止まった問題は、両群がそろわないので判定から外し、件数を報告します。判定に使う問題が12問未満になった場合も、条件の数値は変えません。条件は問題の差し替えや再実行で満たしません。
+
 **`exact?`の事前確認は別の検討項目です。** カードの命題の52%がモデルなしで閉じました。Sketchで命題が固まった後に`exact?`を試せば、Proveと修復を省ける問題があるかもしれません。ただし、生成の流れの中での効果と遅延はまだ測っていません。
 
 **組み込む場合の追加作業**として、SQLite索引の配布、記号検索の読み込み時間の短縮、Lean解釈の実行場所の決定が必要です。記号検索の前提であるLean解釈の負荷は、本番構成では測っていません。
