@@ -13,9 +13,9 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-2026-08-28から2026-11-04までの275行です。出典の内訳は、docsが195行、pals-agentのPRが49行、palsのIssueが21行、palsのPRが10行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
+2026-08-28から2026-11-04までの276行です。出典の内訳は、docsが196行、pals-agentのPRが49行、palsのIssueが21行、palsのPRが10行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
 
-系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 38、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 15、`availability` 10、`other` 3です。
+系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 38、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 15、`availability` 10、`other` 4です。
 
 2026-11-04の[引き継ぎ確認](../quality-observability-audit-2026-11-04.md)に、CloudWatchの実装と未検証の範囲、プロンプトの変更前後を比較するために今後記録する項目をまとめています。既存の散布図には、題材や成功の定義が違う点が含まれます。図全体からモデルの精度向上を判断しません。
 
@@ -77,7 +77,7 @@ python -m venv .venv && .venv/bin/pip install pandas matplotlib   # 初回のみ
 - **費用は推計です。** 多くは版付き単価に使用量を掛けた値で、請求額ではありません。メモリの記述にあった約27米ドルは、定価換算です。
 - **合計の行は足さないでください。** `overlap_with` が空でない行は、他の行の合計や一部を含みます。
 - **失敗の件数は繰り返しを含みます。** 同じ質問を50回繰り返した実行は、50件と数えます。失敗の内訳のグラフは、行数と件数の両方を示しています。
-- **実行環境は`local macOS`が多く、`AWS`で測った行は23行です。** 所要時間は環境で大きく変わるので、環境の違う行の所要時間を比べません。環境が書かれていない行は空です。該当するのは34行です。
+- **実行環境は`local macOS`が多く、`AWS`で測った行は24行です。** 所要時間は環境で大きく変わるので、環境の違う行の所要時間を比べません。環境が書かれていない行は空です。該当するのは34行です。
 - **出典の日付が実行日とは限りません。** 実行日が書かれていない行は PR のマージ日や docs の日付を使っています。`notes` に書いています。
 
 ## 台帳に入れなかったもの
