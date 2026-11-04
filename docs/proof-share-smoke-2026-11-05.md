@@ -100,3 +100,25 @@ label was confirmed through anonymous persistence readback. An independent Lean
 compiler rerun, verifier audit receipt, and production latency/cost receipts were
 not obtained. The deliverable share remains active; revocation was not tested on
 the owner's intended public result.
+
+## Footer alignment regression — 2026-11-05 JST
+
+[Web PR #39](https://github.com/AtsushiHosaka/pals-webfront/pull/39) corrects
+the shared-card footer's marker alignment and makes the verification text larger
+and the same orange. It was merged as
+`3bc3f708ef69a5c3e505e799576c1b82665db842`. Two 1200×630 renders were inspected locally on macOS. Pixel
+bounds use solid accent pixels, RGB `(201, 84, 69)`, with the origin at the top
+left. Success means the marker and text have matching lower pixel edges.
+
+| Render/source | Marker lower edge | Text lower edge | Difference | Outcome |
+|---|---:|---:|---:|---|
+| v2, `bcb0053cdb00460fc8b5275f3da47b5ac0223f04` | 542 px | 568 px | Marker 26 px high | Fail |
+| v4, `99955e16927cc5b778fc1b2aa82c8e873e258ebe` | 570 px | 570 px | 0 px | Pass |
+
+The final text is 40 px rather than 28 px. The final marker bounds are
+`x=72–111, y=565–570`; the text bounds are `x=131–481, y=539–570`. Independent
+visual review found no clipping or missing glyphs. The existing verified-only
+footer condition was unchanged. This is a local visual regression check, not a
+model-accuracy benchmark or evidence of production deployment. No new model
+request, cost measurement, or latency measurement was performed. Images and
+conversation content remain outside public Git.
