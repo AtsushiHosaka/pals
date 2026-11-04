@@ -74,6 +74,8 @@
 | `review.rejected` | 再利用の判定や回答QAが却下した | `対応確認で再利用拒否`、`The answer did not pass the required review` | 集計 | 8 / 13 |
 | `review.false_accept` | 審査が誤ったカードの再利用を承認した(誤再利用)。正しさの回帰を見る指標 | `false reuse of 2-D card`、`誤再利用` | 評価で1件でも出たら即時(回帰検知) | 9 / 192 |
 | `review.unavailable` | 独立した審査が完了しなかった | `review_unavailable` | 率 | 1 / 1 |
+| `review.explanation_false_accept` | 回答QAが、具体的結論の欠落など、採点基準で定めた欠陥のある説明を誤承認した。カード再利用の誤承認とは分ける | `approved_missing_conclusion` | 評価で1件でも出たら回帰として確認 | 1 / 4（2026-11-05追加） |
+| `review.unsupported_rationale` | 回答QAの拒否理由に、入力にない主張や数学的に誤った指摘を含む。拒否したことだけで成功と数えない | `rejected_with_unfounded_duplication_rationale` | 評価で集計し、理由を独立確認する | 1 / 2（2026-11-05追加） |
 
 ## 正規の拒否(policy-refusal)
 
@@ -96,3 +98,4 @@
 - **集計だけにする**: 数学的に証明が成立しなかった失敗(`model.could_not_prove`、`verifier.lean_compile_error` など)と審査の却下です。利用者の質問ごとに起きるため、1件ずつ通知すると洪水になります。
 - **通知しない**: `policy.*` の正規の拒否、`verifier.exact_not_closed`、`audit.coverage_gap`。
 - 「台帳での行数 / 件数」は、重複を除いた行のうち`overlap_with`が空のものを数えた、2026-11-04時点の値です。件数は同じ質問を繰り返した実行も数えるため、行数と一緒に読みます。
+- 2026-11-05に説明QA用の2コードを追加しました。これらはCloudWatchの送信Schemaや運用アラームへ自動追加するものではありません。過去の`unclassified`行は当時の採点記録として保持し、新しい反復評価から使います。
