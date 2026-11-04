@@ -10,10 +10,11 @@ docs/quality-ledger/charts/. No network access, no model calls.
 from __future__ import annotations
 
 import json
-import re
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
+
+from audit_ledger import audit
 
 import matplotlib
 
@@ -54,40 +55,6 @@ def load() -> pd.DataFrame:
     df["overlap_with"] = df["overlap_with"].fillna("")
     df["failures"] = df["failures_json"].apply(lambda s: json.loads(s) if isinstance(s, str) and s else {})
     return df
-
-
-FAMILIES = {"answer_latency", "recipe_retrieval", "exact_precheck", "statement_index", "lean_runtime",
-            "proof_generation", "guest_quality", "catalog_audit", "load_test", "feature_audit",
-            "availability", "other"}
-
-
-def validate(df: pd.DataFrame) -> list[str]:
-    """Return a list of problems found in ledger.csv (empty when the ledger is consistent)."""
-    taxonomy = (HERE / "taxonomy.md").read_text(encoding="utf-8")
-    codes = set(re.findall(r"^\| `([a-z]+\.[a-z_0-9]+|unclassified)`", taxonomy, flags=re.M))
-    codes.add("unclassified")
-    errors = []
-    for _, r in df.iterrows():
-        rid = r["id"]
-        if r["family"] not in FAMILIES:
-            errors.append(f"{rid}: unknown family {r['family']!r}")
-        if pd.isna(r["source"]) or not str(r["source"]).strip():
-            errors.append(f"{rid}: source is empty")
-        if pd.notna(r["success_rate"]) and not 0 <= r["success_rate"] <= 1:
-            errors.append(f"{rid}: success_rate outside 0..1")
-        if pd.notna(r["n"]) and pd.notna(r["successes"]) and r["successes"] > r["n"]:
-            errors.append(f"{rid}: successes > n")
-        for code in r["failures"]:
-            if code not in codes:
-                errors.append(f"{rid}: failure code {code!r} is not in taxonomy.md")
-    for rid in df.loc[df["id"].duplicated(), "id"]:
-        errors.append(f"{rid}: duplicate id")
-    known = set(df["id"])
-    for _, r in df.iterrows():
-        for other in filter(None, r["overlap_with"].split(";")):
-            if other not in known:
-                errors.append(f"{r['id']}: overlap_with refers to unknown id {other!r}")
-    return errors
 
 
 def style(theme: dict) -> None:
@@ -196,11 +163,11 @@ def chart_cost_latency(df: pd.DataFrame, theme: dict, path: Path) -> None:
 
 
 def main() -> None:
-    df = load()
-    problems = validate(df)
+    problems = audit(LEDGER)["errors"]
     if problems:
         print("ledger.csv has problems:", *problems, sep="\n  - ")
         sys.exit(1)
+    df = load()
     OUT.mkdir(exist_ok=True)
     for name, theme in THEMES.items():
         style(theme)

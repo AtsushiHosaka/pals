@@ -7,14 +7,28 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 | [ledger.csv](ledger.csv) | 台帳の本体。1行が1回の測定 |
 | [ledger.schema.md](ledger.schema.md) | 列の定義と記入の規則 |
 | [taxonomy.md](taxonomy.md) | 失敗分類(提案)。コード、定義、タグ、通知の方針 |
+| [audit_ledger.py](audit_ledger.py) | 標準ライブラリだけで台帳を検査し、記録項目の空欄数を集計する |
 | [make_charts.py](make_charts.py) | 台帳を検査してグラフを生成する |
 | [charts/](charts/) | 生成した PNG(ライト用とダーク用) |
 
 ## 現在の内容
 
-2026-08-28 から 2026-11-03 までの 270 行です。出典の内訳は、docs が 195 行、pals-agent の PR が 49 行、pals の Issue が 16 行、pals の PR が 10 行です。pals の PR と Issue の多くは docs と重複していたため、台帳では1行にまとめて `source` に両方を書きました。
+2026-08-28から2026-11-04までの275行です。出典の内訳は、docsが195行、pals-agentのPRが49行、palsのIssueが21行、palsのPRが10行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
 
-系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 33、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 15、`availability` 10、`other` 3 です。
+系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 38、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 15、`availability` 10、`other` 3です。
+
+2026-11-04の[引き継ぎ確認](../quality-observability-audit-2026-11-04.md)に、CloudWatchの実装と未検証の範囲、プロンプトの変更前後を比較するために今後記録する項目をまとめています。既存の散布図には、題材や成功の定義が違う点が含まれます。図全体からモデルの精度向上を判断しません。
+
+## 台帳だけを検査する
+
+次のコマンドは追加パッケージ、モデル呼び出し、AWS接続なしで実行できます。JSONには件数と整合性の検査結果を出し、台帳の本文は出しません。空欄は0で埋めません。モデルを使わない測定もあるため、空欄の多さだけで記録漏れとは判断しません。
+
+```bash
+python3 docs/quality-ledger/audit_ledger.py --json
+python3 -m unittest discover -s docs/quality-ledger -p 'test_*.py'
+```
+
+列、一意なID、日付、列挙値、有限かつ非負の数値、整数の件数、成功率と分母の対応、p50とp95の順序、失敗コードと件数、重複参照を検査します。出典の内容の正しさや、異なる測定を比較してよいかは自動判定しません。グラフを生成するときも同じ検査を先に実行します。
 
 ## グラフ
 
@@ -63,7 +77,7 @@ python -m venv .venv && .venv/bin/pip install pandas matplotlib   # 初回のみ
 - **費用は推計です。** 多くは版付き単価に使用量を掛けた値で、請求額ではありません。メモリの記述にあった約27米ドルは、定価換算です。
 - **合計の行は足さないでください。** `overlap_with` が空でない行は、他の行の合計や一部を含みます。
 - **失敗の件数は繰り返しを含みます。** 同じ質問を50回繰り返した実行は、50件と数えます。失敗の内訳のグラフは、行数と件数の両方を示しています。
-- **実行環境は `local macOS` が多く、`AWS` で測った行は 19 行です。** 所要時間は環境で大きく変わるので、環境の違う行の所要時間を比べません。環境が書かれていない行は空です(33 行)。
+- **実行環境は`local macOS`が多く、`AWS`で測った行は23行です。** 所要時間は環境で大きく変わるので、環境の違う行の所要時間を比べません。環境が書かれていない行は空です。該当するのは34行です。
 - **出典の日付が実行日とは限りません。** 実行日が書かれていない行は PR のマージ日や docs の日付を使っています。`notes` に書いています。
 
 ## 台帳に入れなかったもの
