@@ -13,13 +13,15 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-2026-08-28から2026-11-05までの278行です。出典の内訳は、docsが198行、pals-agentのPRが49行、palsのIssueが21行、palsのPRが10行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
+2026-08-28から2026-11-05までの279行です。出典の内訳は、docsが199行、pals-agentのPRが49行、palsのIssueが21行、palsのPRが10行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
 
-系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 40、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 15、`availability` 10、`other` 4です。
+系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 40、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 15、`availability` 11、`other` 4です。
 
 2026-11-04の[引き継ぎ確認](../quality-observability-audit-2026-11-04.md)に、CloudWatchの実装と未検証の範囲、プロンプトの変更前後を比較するために今後記録する項目をまとめています。既存の散布図には、題材や成功の定義が違う点が含まれます。図全体からモデルの精度向上を判断しません。
 
 2026-11-05の[説明プロンプトの小規模比較](../prompt-benchmark-2026-11-05.md)を2行追加しました。同じ2題で旧版・変更案とも2/2であり、改善は確認できていません。費用は使用量からの保守的な推計、時間は生成と後追いレビューのHTTP累計です。本番E2Eや数学全般の精度とは分けます。
+
+同日の[seq18署名更新](../seq18-renewal-result-2026-11-05.md)後の稼働確認も1行記録しました。7サービスのその時点のコンテナ状態であり、継続的な稼働率や回答成功率ではありません。
 
 ## 台帳だけを検査する
 
