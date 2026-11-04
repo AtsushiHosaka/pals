@@ -39,7 +39,9 @@ Webのplatform・revision label・非root user・起動commandと、公開前後
 
 予定していた発行時刻は`2026-11-04T16:46:43Z`、期限は翌日の同時刻である。ただし現時点で候補digestは存在せず、承認待ちが続いた場合も古い候補を有効だと扱わない。再開時に実時刻と24時間方針を検査し、必要なら新時刻で候補を作り直す。
 
-DB appendとadmissionのcommit前失敗では旧状態を保持する。commit後は36段階へ進むため、旧35imageへ戻すだけでは復旧できない。36互換imageと正規の後続software releaseで修復する。appendを再実行して署名期限だけを延ばさない。初回coupon→software36の候補準備、正規署名・適用・再起動確認も、配備前の運用条件として追跡する。
+DB appendとadmissionのcommit前失敗では旧状態を保持する。commit後は36段階へ進むため、旧35imageへ戻すだけでは復旧できない。36互換imageと正規の後続software releaseで修復する。appendを再実行して署名期限だけを延ばさない。
+
+初回coupon→software36の候補準備は[infra#95](https://github.com/AtsushiHosaka/pals-infra/pull/95)に専用offlineツールを実装した。headは`92a14a3d680391c1f9a5ec9f8dedf3582520523c`で、freshな署名済みcoupon36だけを受け入れ、schema・専用planの除去・5つのmetadata以外を不変にする。新規38件と既存44件の計82件が通過し、独立レビューでも新規38件が通過した。ローカル実ECDSAとAPI60f8cd2のvalidator互換までの確認であり、実際の本番更新ではない。初回の正規署名・適用・再起動、失効後OS復旧、自動更新は配備前の未了条件として残る。
 
 その後、具体的な署名・本番適用の承認、正規drain、DB・両側readiness・復旧、Cognito→引換→実Plus利用を確認する。発行数・コード形式・引換期限・配布方法は#240の別判断であり、コード発行は0件のままである。
 

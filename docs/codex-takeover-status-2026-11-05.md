@@ -8,6 +8,8 @@
 
 署名の自動更新、期限後の正規復旧、実際のOS再起動は未完了であり、[#142](https://github.com/AtsushiHosaka/pals/issues/142)を開いたままにする。復旧用unitの設定確認と、再起動後の復旧成功は区別する。
 
+クーポン追加後の初回更新用には、[infra#95](https://github.com/AtsushiHosaka/pals-infra/pull/95)で構成不変のcoupon36→software36候補を準備するofflineツールを追加した。82テストと独立レビューを通過したが、本番での署名・更新・再起動は未確認である。
+
 ## 依頼ごとの進捗
 
 | 依頼 | 確認・実装したこと | 本番での状態・残作業 |
