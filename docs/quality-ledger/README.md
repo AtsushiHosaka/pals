@@ -13,7 +13,9 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-2026-08-28から2026-11-05までの280行です。出典の内訳は、docsが200行、pals-agentのPRが49行、palsのIssueが21行、palsのPRが10行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
+2026-08-28から2026-11-05までの289行です。出典の内訳は、docsが200行、pals-agentのPRが58行、palsのIssueが21行、palsのPRが10行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
+
+11月5日の説明回帰は、[Agent #50の記録](https://github.com/AtsushiHosaka/pals-agent/blob/36ea6a2b106d5782ca2012b8a75ee4fbfa4c2b52/testdata/explanation-grounding-v1/README.md)に対応する9行を追加しました。初回の同条件比較、書式不備で採点を除外したQA、不備を直した負例、最終修正後の確認を分けています。実モデル24呼出しの推計費用0.02573375 USDを重複なく記録しました。初回比較は両版2/2で、精度向上は確認していません。後の別条件の結果を加えて改善率を作りません。
 
 系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 40、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 15、`availability` 11、`other` 5です。
 
