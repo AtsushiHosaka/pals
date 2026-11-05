@@ -347,6 +347,7 @@ def generate(
             and response["reasoning"]["effort"] == pre["reasoning_effort"]
             and response["max_output_tokens"] == pre["max_output_tokens"]
             and response["service_tier"] == "default"
+            and response.get("prompt_cache_retention") == "24h"
             and response["store"] is False,
             "response_settings_mismatch",
         )

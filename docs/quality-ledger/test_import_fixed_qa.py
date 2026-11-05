@@ -132,6 +132,7 @@ class FixedQaImportTest(unittest.TestCase):
                 "reasoning": {"effort": "low"},
                 "max_output_tokens": 6000,
                 "service_tier": "default",
+                "prompt_cache_retention": "24h",
                 "store": False,
                 "usage": {
                     "input_tokens": 100,
@@ -421,6 +422,22 @@ class FixedQaImportTest(unittest.TestCase):
         (self.evidence / "call-24-reserved.json").unlink()
         with self.assertRaisesRegex(qa.EvidenceError, "attempt_reservations"):
             self.rows()
+
+    def test_both_profiles_reject_missing_or_different_observed_cache_retention(self):
+        for modern in (False, True):
+            for retention in (None, "30m"):
+                with self.subTest(modern=modern, retention=retention):
+                    self.build(modern)
+                    response = self.read("provider-1.json")["response"]
+                    if retention is None:
+                        del response["prompt_cache_retention"]
+                    else:
+                        response["prompt_cache_retention"] = retention
+                    self.write_response(0, response)
+                    with self.assertRaisesRegex(
+                        qa.EvidenceError, "response_settings_mismatch"
+                    ):
+                        self.rows()
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@
 
 private directoryと各原本は実行者が所有し、directoryは0700、ファイルは0600相当以下、通常ファイルである必要があります。symlinkは拒否します。prereg/outcomes/adjudicationのSHA256と人手確定の明示確認が必須です。新adjudication内のprereg/outcomes hashも照合します。旧adjudicationにはその欄がないため、外部指定hashが対応を固定します。
 
-preregと保存済み入力・baseline/candidate source・harnessのbytes、24上限・順序・各cell3回・固有call/provider ID・raw envelopeと解析結果・providerのmodel/reasoning/output設定・usage・cost reserve・保存済みverdict/rationaleを検査します。usageはrawとの対応を確認し、cached/cache-write/reasoningも欠ければ拒否します。欠損を0へ埋めません。観測したreserveはpreregの全入力0.25・出力0.50 USD/百万tokenの予算用計算で、請求額やcache保持の料金対応とは区別します。
+preregと保存済み入力・baseline/candidate source・harnessのbytes、24上限・順序・各cell3回・固有call/provider ID・raw envelopeと解析結果・providerのmodel/reasoning/output設定・usage・cost reserve・保存済みverdict/rationaleを検査します。既存2群のraw responseは prompt_cache_retention=24h と service_tier=default に明示限定し、保持表記の欠損や別TTLを拒否します。usageはrawとの対応を確認し、cached/cache-write/reasoningも欠ければ拒否します。欠損を0へ埋めません。観測したreserveはpreregの全入力0.25・出力0.50 USD/百万tokenの予算用計算で、請求額やcache保持の料金対応とは区別します。
 
 question/Lean/prompt/corpusのhashは、hash固定したprereg内のpinとして検査します。private Pythonを実行せず、promptの再描画・Leanの再compileはしません。公開sourceはcommit固定GitHub reportとPRのURL形式を検査します。URL先の内容を通信で取りに行く検査や、人手採点の正しさの証明ではありません。
 
@@ -42,7 +42,7 @@ Git外の実原本2群を変更せずに読み、rootの既存16行snapshotに�
 
 専用testは明示的な合成原本で、実importerを通して両schema、改変、採点binding、usage欠損、重複、既存CSV全field比較、出力の排他と原文非流出を検証します。fixtureのprivate Pythonは実行したら例外になる内容で、読み取りだけで処理できることも確認します。これはモデルの評価ではないため、unit/CI件数を品質台帳へ足しません。
 
-2026-11-05の最終検証では、専用13件と既存audit8件の21件、変更2sourceのRuff、diff検査が通過しました。raw responseだけでなくattempt予約receiptも24件と照合し、未報告の25件目や欠損を拒否します。実2群はdry-runと明示した0600の新規CSV出力でも全field一致を確認しています。独立コードレビューはこの記録時点で未了です。
+2026-11-05の最終検証では、専用14件と既存audit8件の22件、変更2sourceのRuff、diff検査が通過しました。raw responseだけでなくattempt予約receiptも24件と照合し、未報告の25件目や欠損を拒否します。実2群はdry-runと明示した0600の新規CSV出力でも全field一致を確認しています。独立レビューで見つかった保持表記の検査不足を修正し、両schemaでmissing/別TTLの負例も確認しました。独立follow-upはこの記録時点で未了です。
 
 ```bash
 python3 -m unittest discover -s docs/quality-ledger -p 'test_*.py'
