@@ -42,7 +42,7 @@ Git外の実原本2群を変更せずに読み、rootの既存16行snapshotに�
 
 専用testは明示的な合成原本で、実importerを通して両schema、改変、採点binding、usage欠損、重複、既存CSV全field比較、出力の排他と原文非流出を検証します。fixtureのprivate Pythonは実行したら例外になる内容で、読み取りだけで処理できることも確認します。これはモデルの評価ではないため、unit/CI件数を品質台帳へ足しません。
 
-2026-11-05の最終検証では、専用12件と既存audit8件の20件、変更2sourceのRuff、diff検査が通過しました。実2群はdry-runと明示した0600の新規CSV出力でも全field一致を確認しています。独立コードレビューはこの記録時点で未了です。
+2026-11-05の最終検証では、専用13件と既存audit8件の21件、変更2sourceのRuff、diff検査が通過しました。raw responseだけでなくattempt予約receiptも24件と照合し、未報告の25件目や欠損を拒否します。実2群はdry-runと明示した0600の新規CSV出力でも全field一致を確認しています。独立コードレビューはこの記録時点で未了です。
 
 ```bash
 python3 -m unittest discover -s docs/quality-ledger -p 'test_*.py'

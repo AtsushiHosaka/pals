@@ -260,6 +260,12 @@ def generate(
             "adjudication_binding_mismatch",
         )
     expected_files = set(range(1, 25))
+    reserved = {
+        int(m[1])
+        for p in directory.iterdir()
+        if (m := re.fullmatch(r"call-([0-9]+)-reserved\.json", p.name))
+    }
+    require(reserved == expected_files, "unexpected_attempt_reservations")
     for suffix in ("-raw.json", ".json"):
         found = {
             int(m[1])
@@ -283,6 +289,14 @@ def generate(
         )
         start, finish = moment(row["started_at_utc"]), moment(row["finished_at_utc"])
         require(created <= start <= finish, "invalid_call_chronology")
+        reservation = decode(
+            private_bytes(directory, f"call-{index + 1}-reserved.json")
+        )
+        require(
+            sha(reservation["payload_sha256"])
+            and start <= moment(reservation["utc"]) <= finish,
+            "invalid_attempt_reservation",
+        )
         dates.add(start.date().isoformat())
         wall = number(row["elapsed_seconds"])
         require(

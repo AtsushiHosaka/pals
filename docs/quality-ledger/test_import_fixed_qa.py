@@ -105,6 +105,13 @@ class FixedQaImportTest(unittest.TestCase):
                 "provider_request_id": f"secret-resp-{index}",
             }
             started = dt.datetime(2026, 11, 5, 0, 1, index, tzinfo=dt.UTC)
+            self.write(
+                f"call-{index + 1}-reserved.json",
+                {
+                    "utc": (started + dt.timedelta(seconds=0.01)).isoformat(),
+                    "payload_sha256": "e" * 64,
+                },
+            )
             outcomes.append(
                 dict(
                     task,
@@ -402,6 +409,18 @@ class FixedQaImportTest(unittest.TestCase):
             self.rows()
         with self.assertRaisesRegex(qa.EvidenceError, "duplicate_json_key"):
             qa.decode(b'{"success":true,"success":false}')
+
+    def test_unreported_attempt_reservation_cannot_bypass_the_24_call_cap(self):
+        self.write(
+            "call-25-reserved.json",
+            {"utc": "2026-11-05T00:02:00+00:00", "payload_sha256": "e" * 64},
+        )
+        with self.assertRaisesRegex(qa.EvidenceError, "attempt_reservations"):
+            self.rows()
+        (self.evidence / "call-25-reserved.json").unlink()
+        (self.evidence / "call-24-reserved.json").unlink()
+        with self.assertRaisesRegex(qa.EvidenceError, "attempt_reservations"):
+            self.rows()
 
 
 if __name__ == "__main__":
