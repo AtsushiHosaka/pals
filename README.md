@@ -62,6 +62,72 @@ Web・APIはprivate controlのt4g.medium、Lean worker・verifierはprivate comp
 
 以前のseq11では、完全一致する自然数冪の日本語入力をモデル呼び出しなしで再利用し、通常ゲストの3チャットで4.775秒・4.664秒・4.830秒で回答とLeanソースを表示しました。これは今回の言い換え経路とは別の公開実測です。[対象の全文・測定方法・利用枠・記録](docs/aws-recipe-reuse-latency-2026-10-31.md)を参照してください。
 
+The earlier observations below retain their original release and timing context.
+
+At 2026-11-01 01:29 JST, the signed sequence-5 update was deployed to the
+private AWS runtime, and the Cloudflare/TLS ALB listener and rules were restored.
+A public Japanese tan-one-degree question reached `answered` with its proof and
+Lean source displayed. Its verified Recipe was reused in 47.153515 seconds of
+server time, with independent request/answer correspondence checks. Aurora holds
+433 seeded Drafts and 102 compiler-verified Recipes. Of those Recipes, 20 have
+independently approved searchable entries; the new 82 are not yet searchable.
+A set of 744 typed Draft candidates passed local Lean and axiom replay; the new
+82 Recipes come from that same set and are not additional unique propositions.
+There are 35 inactive typed Drafts across four generations and none active in
+production. Nine catalog counts and content/vector fingerprints were unchanged
+across this update. The 1,100 usable-item target is not yet achieved.
+Chat history was not imported, as requested.
+
+The sequence-5 manifest is
+`3c4f602e217e22685daa13eafca69fd4a6dc2cf48aa0c0bdae7f477e18442b18`.
+All 33 preflight checks, all seven containers, private TLS connections and recovery
+unit checks passed. The temporary KMS verification/RDS read policy was removed
+and its absence confirmed. Typed catalog publication remains disabled pending
+content review and real retrieval/proof evaluation.
+
+The Web update moves project navigation to the sidebar heading and creation to
+its + button, keeps plan/usage under Settings, and reuses an empty chat without
+losing its draft or attachments. Fractions and exponents can be edited inline in
+prose, with fonts served from PALS. Public checks passed project navigation and
+creation/cancel, Settings-to-usage access, empty-chat reuse, and ordinary keyboard
+fraction input with TeX copy. Sequence 5 had a reproducible double-paste defect.
+The corrected Web image, commit `79f2df0722d241663851bab9fa66cc5b99fb09df`,
+was deployed in sequence 6. Its signed manifest is
+`b17899ab82efad2dc27bae99985fc78593012bb43bb4aa30984c281375f527d4`.
+The owning Aurora update admitted it without changing the API, worker or
+verifier image/toolchain; the temporary KMS/RDS policy was removed and its
+absence verified. All seven containers, private TLS and recovery-unit checks
+passed, and all nine catalog fingerprints were preserved. Public access was
+restored around 2026-11-01 01:57:50 JST with the ALB target healthy. After a
+transient connection error cleared on reload, the authenticated browser showed
+history and the Japanese proof. Explicit paste followed by TeX copy returned
+`\frac{n}{n+1}` without duplicated characters in the public Web UI. In a new
+empty chat, pressing New Chat twice kept the same URL, one list item and the
+unsent Japanese draft, and returned focus to the composer.
+
+Aurora now rejects the tested non-TLS connection path and accepts TLS 1.3.
+The writer still reports `pending-reboot`; no reboot was performed. Private
+networking, encryption, access controls and budget notifications were inspected.
+The application source-security scan could not start, so this is not an
+application-wide security approval.
+
+The natural-power continuity question reused a verified Recipe and reached
+`answered` in 25.003 seconds of server time, versus 154.333 seconds in the earlier
+generation trial. These are two individual observations, not a controlled
+performance benchmark. One-second answers, the 30-person latency target, and
+automatic scaling remain unachieved or unverified. Recovery units are enabled,
+but an actual reboot test has not been performed. Controlled restart/rebuild
+permission for the current sequence-11 release expires on 2026-11-03
+at 00:08:30 JST; running services do not stop solely because that time passes. See the runbook for the
+release window and the shared-network guest quota.
+
+- [Migration runbook and execution status](docs/aws-migration-runbook-2026-10-30.md)
+- [AWS security checks and catalog expansion evidence](docs/aws-security-and-catalog-check-2026-10-31.md)
+- [Capacity and performance design](docs/aws-low-latency-architecture-2026-10-30.md)
+- [Native Lean measurements on the private large instance](docs/aws-native-lean-benchmark-2026-10-30.md)
+- [Verified Recipe reuse latency and the next optimization design](docs/aws-recipe-reuse-latency-2026-10-31.md)
+- [Restore, Aurora rehearsal, and image preparation evidence](docs/aws-migration-verification-2026-10-31.md)
+
 ## Repository Layout
 
 - `pals-api` - private FastAPI backend

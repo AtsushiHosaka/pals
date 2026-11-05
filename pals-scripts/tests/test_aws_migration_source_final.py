@@ -1,0 +1,852 @@
+"""Offline source-bridge boundaries; no Docker, AWS, production SQL or source stops."""
+import ast
+import base64
+import copy
+import fcntl
+import hashlib
+import importlib.util
+import io
+import json
+import os
+import subprocess
+import sys
+import tarfile
+import tempfile
+import threading
+import time
+import unittest
+from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
+
+FILE = Path(__file__).resolve().parents[1]/"aws-migration-source-final.py"
+SPEC = importlib.util.spec_from_file_location("source_final", FILE)
+m = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(m)
+CANARY = "synthetic-private-value-do-not-print"
+
+
+def envelope(raw):
+    return m.encoded({"schema_version": m.ENVELOPE, "payload_b64": base64.b64encode(raw).decode(),
+                      "signature_b64": base64.b64encode(b"synthetic-der").decode()})
+
+
+def source_items(edge="pals-edge"):
+    result = {}
+    for index, name in enumerate([*m.ACTORS.values(), edge, m.DATABASE]):
+        result[name] = {"Name": "/"+name, "Id": format(index+1, "064x"),
+                        "Image": "sha256:"+format(index+20, "064x"), "Mounts": [],
+                        "Config": {"Image": "pgvector/pgvector@sha256:"+"a"*64,
+                                   "Env": ["PALS_ENV=prod", "PATH=/usr/bin:/bin"]},
+                        "State": {"Running": True},
+                        "HostConfig": {"RestartPolicy": {"Name": "unless-stopped", "MaximumRetryCount": 0}}}
+    return result
+
+
+class PrivateIOTests(unittest.TestCase):
+    def test_complete_mount_record_permutation_passes_and_facts_are_identical(self):
+        before=source_items();after=copy.deepcopy(before)
+        mounts=[{'Type':'bind','Source':'/fixture/a','Destination':'/a','RW':False,
+                 'Propagation':'rprivate','Mode':'ro','Unknown':{'retained':['one','two']}},
+                {'Type':'volume','Source':'/fixture/b','Destination':'/b','RW':True,'Name':'fixture-volume'}]
+        before[m.DATABASE]['Mounts']=mounts;after[m.DATABASE]['Mounts']=list(reversed(copy.deepcopy(mounts)))
+        m.require_same(before,after)
+        self.assertEqual(m.facts(before),m.facts(after))
+        self.assertEqual(m.canonical_mounts(after[m.DATABASE]['Mounts']),mounts)
+
+    def test_mount_record_semantic_changes_and_duplicate_destinations_refuse(self):
+        before=source_items();before[m.DATABASE]['Mounts']=[{'Type':'bind','Source':'/fixture/a',
+            'Destination':'/a','RW':False,'Propagation':'rprivate','Mode':'ro','Unknown':'original'}]
+        for key,value in [('Source','/fixture/changed'),('RW',True),('Propagation','rshared'),
+                          ('Mode','rw'),('Unknown','changed'),('Type','volume')]:
+            after=copy.deepcopy(before);after[m.DATABASE]['Mounts'][0][key]=value
+            with self.subTest(key=key),self.assertRaisesRegex(m.Refusal,'source_container_changed'):
+                m.require_same(before,after)
+        after=copy.deepcopy(before);after[m.DATABASE]['Mounts']*=2
+        with self.assertRaisesRegex(m.Refusal,'source_mount_destination_duplicate'):
+            m.require_same(before,after)
+        with self.assertRaisesRegex(m.Refusal,'source_mount_destination_duplicate'):
+            m.facts(after)
+
+    def test_changed_container_diagnostic_has_only_field_names_and_exact_source_line(self):
+        before=source_items();after=copy.deepcopy(before)
+        after[m.DATABASE]['Config']['Env']=['PASSWORD='+CANARY]
+        try:
+            m.require_same(before,after)
+        except m.Refusal as error:
+            report=m.failure_summary(error)
+        self.assertEqual(report['reason'],'source_container_changed')
+        self.assertEqual(report['changed_fields'],[{'container':m.DATABASE,'fields':['Config']}])
+        self.assertIs(type(report['failed_check_line']),int)
+        self.assertEqual(FILE.read_text().splitlines()[report['failed_check_line']-1].strip(),'raise error')
+        self.assertNotIn(CANARY,json.dumps(report))
+
+    def test_diagnostic_rejects_untrusted_metadata_and_exception_text(self):
+        error=m.Refusal('source_container_changed')
+        error.changed_fields=[{'container':CANARY,'fields':['Env',CANARY]}]
+        report=m.failure_summary(error)
+        self.assertNotIn('changed_fields',report);self.assertNotIn(CANARY,json.dumps(report))
+
+    def test_public_inspector_holds_both_real_native_locks(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            policy = {"state_dir": str(root)}
+            for name in ("host-update.lock", "deploy.lock"):
+                m.write(root/name, b"")
+            def inspect(*unused):
+                for name in ("host-update.lock", "deploy.lock"):
+                    code = "import fcntl,sys; f=open(sys.argv[1]); fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB)"
+                    process = subprocess.run([sys.executable, "-c", code, str(root/name)], capture_output=True, check=False, timeout=5)
+                    self.assertNotEqual(process.returncode, 0)
+                return {"status": "source_final_state_observed"}
+            with patch.object(m, "DEADLINE", time.monotonic()+5), \
+                    patch.object(m, "controller", return_value=(policy, {}, ["docker"], ())), \
+                    patch.object(m, "_inspect_final_state", side_effect=inspect):
+                self.assertEqual(m.inspect_final_state(root, policy, ["docker"])["status"], "source_final_state_observed")
+
+    def test_inspect_cli_needs_no_tool_and_does_not_validate_tool(self):
+        policy = {"state_dir": "/unused"}
+        with patch.object(m, "controller", return_value=(policy, {}, ["docker"], ())), \
+                patch.object(m, "inspect_final_state", return_value={"status": "source_final_state_observed"}), \
+                patch.object(m, "tool_image", side_effect=AssertionError("tool forbidden")), \
+                patch("sys.stdout", new_callable=io.StringIO):
+            self.assertEqual(m.main(["--inspect-final-state"]), 0)
+
+    def test_final_state_without_journal_exposes_only_public_fields(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            items = source_items()
+            items[m.DATABASE]["Config"]["Image"] = "pgvector/pgvector:pg16"
+            items[m.DATABASE]["Config"]["Env"] = ["PASSWORD="+CANARY]
+            image = {"Id": items[m.DATABASE]["Image"], "RepoDigests": ["pgvector/pgvector@sha256:"+"a"*64]}
+            with patch.object(m, "result", side_effect=[list(items.values()), [image]]):
+                actual = m._inspect_final_state(root, {"edge_container": "pals-edge"}, ["docker"])
+            self.assertFalse(actual["journal"]["exists"])
+            self.assertEqual(actual["database"]["config_image"], "pgvector/pgvector:pg16")
+            self.assertNotIn(CANARY, json.dumps(actual))
+            self.assertEqual(set(actual["containers"][m.DATABASE]), {"id", "running", "restart_policy"})
+
+    def test_final_state_invalid_journal_is_unavailable_without_raw_content(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            m.journal_path(root).parent.mkdir(mode=0o700)
+            m.write(m.journal_path(root), m.encoded({"phase": CANARY, "capture_completed": True}))
+            items = source_items()
+            image = {"Id": items[m.DATABASE]["Image"], "RepoDigests": []}
+            with patch.object(m, "result", side_effect=[list(items.values()), [image]]):
+                actual = m._inspect_final_state(root, {"edge_container": "pals-edge"}, ["docker"])
+            self.assertEqual(actual["journal"]["read_status"], "unavailable")
+            self.assertNotIn(CANARY, json.dumps(actual))
+
+    def test_failure_diagnostic_is_closed_and_preserves_stage(self):
+        with patch.object(m, "PHASE", "source_image_identity"):
+            known = m.failure_summary(m.Refusal("command_failed"))
+            self.assertEqual(known["stage"], "source_image_identity")
+            self.assertEqual(known["reason"], "command_failed")
+            unknown = m.failure_summary(RuntimeError(CANARY))
+            self.assertEqual(unknown["reason"], "guard_rejected")
+            self.assertNotIn(CANARY, json.dumps(unknown))
+
+    def test_private_read_rejects_alias_and_permissions(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve(); file = root/"input"
+            m.write(file, CANARY.encode()); self.assertEqual(m.private(file), CANARY.encode())
+            alias = root/"alias"; alias.symlink_to(file)
+            with self.assertRaises(m.Refusal): m.private(alias)
+            file.chmod(0o644)
+            with self.assertRaises(m.Refusal): m.private(file)
+
+    def test_atomic_metadata_and_no_overwrite(self):
+        with tempfile.TemporaryDirectory() as directory:
+            file = Path(directory).resolve()/"receipt"
+            m.write(file, b"one")
+            with self.assertRaises(FileExistsError): m.write(file, b"two")
+            m.write(file, b"two", replace=True)
+            self.assertEqual(file.read_bytes(), b"two")
+            self.assertEqual(file.stat().st_mode & 0o777, 0o600)
+
+    def test_python39_syntax_and_no_sdk_imports(self):
+        source = FILE.read_text(); tree = ast.parse(source, feature_version=(3, 9))
+        imported = {a.name.split('.')[0] for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names}
+        self.assertFalse(imported & {"boto3", "botocore", "psycopg", "requests"})
+
+    def test_failure_console_does_not_echo_unknown_arguments(self):
+        child = subprocess.run([sys.executable, str(FILE), "--"+CANARY], capture_output=True,
+                               timeout=5, check=False)
+        self.assertEqual(child.returncode, 2)
+        self.assertNotIn(CANARY.encode(), child.stdout+child.stderr)
+
+    def test_real_pipe_output_limit_and_command_error_are_static(self):
+        m.DEADLINE = time.monotonic()+5
+        with patch.object(m, "MAX_METADATA", 1024), self.assertRaises(m.Refusal):
+            m.run([sys.executable, "-c", "import sys;sys.stdout.write('x'*65536)"])
+        with self.assertRaises(m.Refusal) as failure:
+            m.run([sys.executable, "-c", "import sys;sys.stderr.write('"+CANARY+"');sys.exit(1)"])
+        self.assertNotIn(CANARY, str(failure.exception))
+
+
+class LockAndBindingsTests(unittest.TestCase):
+    def setUp(self):
+        m.DEADLINE=time.monotonic()+5
+
+    def test_free_held_free_probe_exercises_real_native_child_exclusion(self):
+        with tempfile.TemporaryDirectory() as directory:
+            lock = Path(directory).resolve()/"deploy.lock"; m.write(lock, b"")
+            statuses = []
+            def native(_args, **_kwargs):
+                # Replace only the VM command boundary. The actual fcntl probe
+                # executes in a separate native Python process against the fixture.
+                code = _args[-1].replace("'/lock'", repr(str(lock)))
+                child = subprocess.run([sys.executable, "-I", "-c", code], capture_output=True,
+                                       timeout=5, check=False)
+                statuses.append(child.returncode)
+                return child.returncode, child.stdout, child.stderr
+            with patch.object(m, "run", side_effect=native):
+                m.probe_lock(["docker"], "sha256:"+"a"*64, lock)
+            self.assertEqual(statuses, [0, 75, 0])
+
+    def test_unrelated_existing_container_lock_cannot_fake_success(self):
+        with tempfile.TemporaryDirectory() as directory:
+            lock = Path(directory).resolve()/"deploy.lock"; m.write(lock, b"")
+            with patch.object(m, "run", return_value=(75, b"native_lock_refused\n", b"")), \
+                 self.assertRaises(m.Refusal):
+                m.probe_lock(["docker"], "sha256:"+"a"*64, lock)
+
+    def test_native_lock_metadata_and_competing_fd(self):
+        with tempfile.TemporaryDirectory() as directory:
+            lock = Path(directory).resolve()/"deploy.lock"; m.write(lock, b"")
+            with m.existing_lock(lock) as verify:
+                fd = os.open(lock, os.O_RDONLY)
+                try:
+                    with self.assertRaises(BlockingIOError): fcntl.flock(fd, fcntl.LOCK_EX|fcntl.LOCK_NB)
+                    verify()
+                finally: os.close(fd)
+
+    def test_guest_fingerprint_is_of_decoded_key_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            file = Path(directory).resolve()/"guest"; m.write(file, ("ab"*32+"\n").encode())
+            env = {"PALS_GUEST_HASH_KEY": "AB"*32, "PALS_COGNITO_USER_POOL_ID": "ap-northeast-1_Test",
+                   "PALS_COGNITO_APP_CLIENT_ID": "client123", "PALS_COGNITO_ISSUER": "https://cognito-idp.ap-northeast-1.amazonaws.com/ap-northeast-1_Test",
+                   "PALS_S3_ARTIFACT_BUCKET": "fixture-artifacts", "PALS_SQS_PROOF_JOBS_QUEUE_URL":
+                   "https://sqs.ap-northeast-1.amazonaws.com/828786775577/jobs",
+                   "PALS_PROOF_REQUESTS_QUEUE_URL": "https://sqs.ap-northeast-1.amazonaws.com/828786775577/requests"}
+            actor = {"Config": {"Env": [k+"="+v for k,v in env.items()]}}
+            bindings = m.external_bindings({"guest_hash_key_file": str(file)}, actor)
+            self.assertEqual(len(bindings), 7)
+            self.assertEqual(bindings["guest_key_sha256"], hashlib.sha256(bytes.fromhex("ab"*32)).hexdigest())
+            self.assertNotEqual(bindings["guest_key_sha256"], hashlib.sha256(("ab"*32).encode()).hexdigest())
+            env["PALS_PROOF_REQUESTS_QUEUE_URL"] = env["PALS_SQS_PROOF_JOBS_QUEUE_URL"]
+            with self.assertRaises(m.Refusal):
+                m.external_bindings({"guest_hash_key_file": str(file)}, {"Config": {"Env": [k+"="+v for k,v in env.items()]}})
+
+
+class ImageAndSignatureTests(unittest.TestCase):
+    def test_actual_saved_config_bytes_are_hashed_not_docker_image_id(self):
+        with tempfile.TemporaryDirectory() as directory:
+            out = Path(directory).resolve()
+            image = "sha256:"+"a"*64; layers = ["sha256:"+"b"*64]
+            raw = json.dumps({"architecture": "arm64", "os": "linux", "rootfs": {"type": "layers", "diff_ids": layers}}).encode()
+            item = {"Id": image, "Os": "linux", "Architecture": "arm64", "RootFS": {"Layers": layers}}
+            database = {"Image": image, "Config": {"Image": "pgvector/pgvector@"+image}}
+            def save(_args, **options):
+                with tarfile.open(fileobj=options["output"], mode="w|") as archive:
+                    for name, content in [("manifest.json", b'[{"Config":"config.json"}]'), ("config.json", raw)]:
+                        member = tarfile.TarInfo(name); member.size = len(content)
+                        archive.addfile(member, io.BytesIO(content))
+                return 0, b"", b""
+            with patch.object(m, "result", return_value=[item]), patch.object(m, "run", side_effect=save):
+                identity = m.image_identity(["docker"], database, out)
+            self.assertEqual(identity["source_docker_image_id"], image)
+            self.assertEqual(identity["source_image_config_sha256"], hashlib.sha256(raw).hexdigest())
+            self.assertNotEqual(identity["source_image_config_sha256"], image.split(':')[1])
+
+    def test_kms_uses_32_raw_digest_bytes_and_actual_verify_command(self):
+        signature = b"\x30"+b"x"*69
+        calls = []
+        temporary_files = []
+        def aws(args, data=None, **_options):
+            calls.append((args,data))
+            self.assertIsNone(data)
+            digest = Path(args[args.index('--message')+1].removeprefix('fileb://'))
+            temporary_files.append(digest)
+            self.assertEqual(digest.read_bytes(),hashlib.sha256(b'fixture-payload').digest())
+            self.assertEqual(digest.stat().st_size,32)
+            self.assertEqual(digest.stat().st_mode&0o777,0o600)
+            self.assertEqual(digest.parent.stat().st_mode&0o777,0o700)
+            self.assertEqual(args[args.index('--key-id')+1],m.KEY)
+            self.assertEqual(args[args.index('--message-type')+1],'DIGEST')
+            self.assertEqual(args[args.index('--signing-algorithm')+1],'ECDSA_SHA_256')
+            self.assertNotIn('fixture-payload',repr(args))
+            self.assertNotIn("--cli-input-json", args)
+            if "sign" in args:
+                response = {"KeyId": m.KEY, "SigningAlgorithm": "ECDSA_SHA_256",
+                            "Signature": base64.b64encode(signature).decode()}
+            else:
+                path = args[args.index("--signature")+1].removeprefix("fileb://")
+                self.assertEqual(Path(path).read_bytes(), signature)
+                self.assertEqual(Path(path).stat().st_mode & 0o777, 0o600)
+                response = {"KeyId": m.KEY, "SigningAlgorithm": "ECDSA_SHA_256", "SignatureValid": True}
+            return 0, json.dumps(response).encode(), b""
+        with patch.object(m, "run", side_effect=aws):
+            observed = json.loads(m.signed(b"fixture-payload"))
+        self.assertEqual([a[a.index("kms")+1] for a,_d in calls], ["sign", "verify"])
+        self.assertEqual(base64.b64decode(observed["payload_b64"]), b"fixture-payload")
+        self.assertTrue(all(not path.exists() and not path.parent.exists() for path in temporary_files))
+
+    def test_public_aws_calls_use_closed_exact_argv_without_stdin(self):
+        calls=[]
+        def execute(args,data=None,**_options):
+            self.assertIsNone(data);self.assertNotIn('--cli-input-json',args)
+            self.assertEqual(args[args.index('--profile')+1],m.PROFILE)
+            self.assertEqual(args[args.index('--region')+1],m.REGION)
+            calls.append(args);return 0,b'{}',b''
+        with tempfile.TemporaryDirectory() as temporary,patch.object(m,'run',side_effect=execute):
+            root=Path(temporary).resolve();target=root/'download';m.write(target,b'')
+            body=root/'body';m.write(body,CANARY.encode())
+            base={'Bucket':m.BUCKET,'ExpectedBucketOwner':m.ACCOUNT}
+            key='aws-migration-20261030/tools/api-7027478-arm64.tar.gz';version='1MfCzRK8zYelAFqgiGxO1fgChCMnHC8v'
+            m.cli('sts','get-caller-identity')
+            m.cli('kms','get-public-key',{'KeyId':m.KEY})
+            for operation in ('get-public-access-block','get-bucket-acl','get-bucket-versioning'):
+                m.cli('s3api',operation,base)
+            m.cli('s3api','get-object',{**base,'Key':key,'VersionId':version,'Range':'bytes=0-149928496'},[str(target)])
+            args=calls[-1]
+            for flag,value in [('--bucket',m.BUCKET),('--expected-bucket-owner',m.ACCOUNT),('--key',key),
+                               ('--version-id',version),('--range','bytes=0-149928496')]:
+                self.assertEqual(args[args.index(flag)+1],value)
+            self.assertEqual(args[-1],str(target))
+            digest=m.sha(CANARY.encode());checksum=base64.b64encode(bytes.fromhex(digest)).decode()
+            m.cli('s3api','put-object',{**base,'Key':key,'Metadata':{'sha256':digest},'ChecksumSHA256':checksum,
+                                      'ServerSideEncryption':'AES256'},['--body',str(body)])
+            self.assertNotIn(CANARY,repr(calls[-1]))
+            self.assertEqual(calls[-1][calls[-1].index('--checksum-sha256')+1],checksum)
+            m.cli('s3api','head-object',{**base,'Key':key,'VersionId':version,'ChecksumMode':'ENABLED'})
+            self.assertEqual(calls[-1][-2:],['--checksum-mode','ENABLED'])
+
+    def test_public_aws_unknown_calls_fields_and_foreign_pins_never_execute(self):
+        base={'Bucket':m.BUCKET,'ExpectedBucketOwner':m.ACCOUNT}
+        with patch.object(m,'run',side_effect=AssertionError('invalid request must not execute')):
+            cases=[('ssm','put-parameter',{'Value':CANARY},()),('kms','decrypt',{},()),
+                   ('kms','get-public-key',{'KeyId':'foreign'},()),
+                   ('s3api','get-bucket-acl',{**base,'Bucket':'foreign'},()),
+                   ('s3api','get-bucket-acl',{**base,'Value':CANARY},()),
+                   ('s3api','get-bucket-versioning',base,['--endpoint-url','https://foreign.invalid']),
+                   ('s3api','head-object',{**base,'Key':'aws-migration-20261030/../foreign','VersionId':'fixed','ChecksumMode':'ENABLED'},()),
+                   ('s3api','head-object',{**base,'Key':'aws-migration-20261030/key','VersionId':'null','ChecksumMode':'ENABLED'},()),
+                   ('s3api','get-object',{**base,'Key':'aws-migration-20261030/key','Range':'bytes=1-5'},()),
+                   ('s3api','get-object',{**base,'Key':'aws-migration-20261030/key','Range':'bytes=0-9999999999'},())]
+            for service,operation,payload,extra in cases:
+                with self.subTest(operation=operation,payload=payload),self.assertRaises(m.Refusal):
+                    m.cli(service,operation,payload,extra)
+
+    def test_false_kms_verify_never_produces_envelope(self):
+        with patch.object(m, "run", return_value=(0, json.dumps({"KeyId":m.KEY,
+             "SigningAlgorithm":"ECDSA_SHA_256","SignatureValid":False}).encode(), b"")), \
+             self.assertRaises(m.Refusal):
+            m.verify_signature(b"payload", b"signature")
+
+    def test_fence_requires_all_stopped_and_restart_no(self):
+        items = source_items(); policy = {"kms_public_key_sha256":"c"*64}
+        identity = {"image_uri":"pgvector/pgvector@sha256:"+"d"*64, "image_id":items[m.DATABASE]["Image"],
+                    "source_docker_image_id":items[m.DATABASE]["Image"], "source_image_config_sha256":"e"*64,
+                    "source_image_rootfs_diff_ids":["sha256:"+"f"*64]}
+        raw = envelope(m.encoded({"predecessor_manifest_sha256":"a"*64,
+              "source_identity":{"database_system_identifier":"123", "database_volume_id":"fixture-volume"}}))
+        with self.assertRaises(m.Refusal):m.fence(items,identity,raw,"b"*64,policy,"stopped-after-final-capture")
+        for item in items.values():item["State"]["Running"]=False;item["HostConfig"]["RestartPolicy"]["Name"]="no"
+        observed=m.fence(items,identity,raw,"b"*64,policy,"stopped-before-target-admission")
+        from datetime import datetime
+        self.assertEqual((datetime.fromisoformat(observed["expires_at"].replace('Z','+00:00'))-
+                          datetime.fromisoformat(observed["issued_at"].replace('Z','+00:00'))).total_seconds(),300)
+        self.assertEqual(len(observed["writer_containers"]),7)
+
+
+class NativeLockWaitTests(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        self.path=Path(self.temp.name).resolve()/'host-update.lock';m.write(self.path,b'')
+        m.DEADLINE=time.monotonic()+5
+
+    def holder(self,seconds):
+        code="import fcntl,sys,time; f=open(sys.argv[1],'rb');fcntl.flock(f,fcntl.LOCK_EX);print('held',flush=True);time.sleep(float(sys.argv[2]))"
+        process=subprocess.Popen([sys.executable,'-I','-c',code,str(self.path),str(seconds)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        self.addCleanup(process.stderr.close);self.addCleanup(process.stdout.close)
+        self.addCleanup(process.wait,timeout=2)
+        self.assertEqual(process.stdout.readline(),b'held\n')
+        return process
+
+    def test_real_competing_process_release_then_parent_acquires_same_inode(self):
+        inode=self.path.stat().st_ino;process=self.holder(0.25)
+        with m.existing_lock(self.path) as verify:
+            process.wait(timeout=2);verify()
+            fd=os.open(self.path,os.O_RDONLY)
+            try:
+                with self.assertRaises(BlockingIOError):fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
+            finally:os.close(fd)
+            self.assertIsNotNone(m.LOCK_FD)
+        self.assertEqual(self.path.stat().st_ino,inode);self.assertIsNone(m.LOCK_FD)
+
+    def test_real_persistent_contention_hits_wait_bound_without_mutating_lock(self):
+        self.holder(0.35);inode=self.path.stat().st_ino;began=time.monotonic()
+        with patch.object(m,'LOCK_WAIT_SECONDS',0.08),self.assertRaises(BlockingIOError),m.existing_lock(self.path):pass
+        self.assertLess(time.monotonic()-began,0.3)
+        self.assertEqual(self.path.stat().st_ino,inode);self.assertIsNone(m.LOCK_FD)
+
+    def test_total_deadline_caps_real_contention_wait(self):
+        self.holder(0.35);m.DEADLINE=time.monotonic()+0.08;began=time.monotonic()
+        with self.assertRaisesRegex(m.Refusal,'total_timeout'),m.existing_lock(self.path):pass
+        self.assertLess(time.monotonic()-began,0.3);self.assertIsNone(m.LOCK_FD)
+
+    def test_inode_replacement_during_real_contention_is_rejected(self):
+        self.holder(0.35)
+        def replace():
+            time.sleep(0.04);replacement=self.path.with_name('replacement');m.write(replacement,b'');os.replace(replacement,self.path)
+        changed=threading.Thread(target=replace);changed.start();self.addCleanup(changed.join,1)
+        with self.assertRaisesRegex(m.Refusal,'source_lock_changed'),m.existing_lock(self.path):pass
+        self.assertIsNone(m.LOCK_FD)
+
+
+class IndependentLockProfileTests(unittest.TestCase):
+    def test_real_distinct_inode_guest_probe_is_000_and_shared_profile_refuses_it(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary).resolve();native=root/'native.lock';guest=root/'guest.lock'
+            m.write(native,b'');m.write(guest,b'');m.DEADLINE=time.monotonic()+5;statuses=[]
+            def boundary(args,**_options):
+                code=args[-1].replace("'/lock'",repr(str(guest)))
+                result=subprocess.run([sys.executable,'-I','-c',code],capture_output=True,timeout=2,check=False)
+                statuses.append(result.returncode);return result.returncode,result.stdout,result.stderr
+            with patch.object(m,'run',side_effect=boundary):
+                m.probe_lock(['docker'],'sha256:'+'a'*64,native,host_native=True)
+                self.assertEqual(statuses,[0,0,0])
+                with self.assertRaisesRegex(m.Refusal,'native_container_lock_domain_not_proven'):
+                    m.probe_lock(['docker'],'sha256:'+'a'*64,native)
+
+    def test_independent_profile_refuses_actual_shared_native_inode(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            native=Path(temporary).resolve()/'native.lock';m.write(native,b'');m.DEADLINE=time.monotonic()+5
+            def boundary(args,**_options):
+                code=args[-1].replace("'/lock'",repr(str(native)))
+                result=subprocess.run([sys.executable,'-I','-c',code],capture_output=True,timeout=2,check=False)
+                return result.returncode,result.stdout,result.stderr
+            with patch.object(m,'run',side_effect=boundary),self.assertRaises(m.Refusal):
+                m.probe_lock(['docker'],'sha256:'+'a'*64,native,host_native=True)
+
+    def test_cli_holds_both_real_native_locks_across_complete_capture_call(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            home=Path(temporary).resolve();state=home/'state';state.mkdir(mode=0o700)
+            for name in ('host-update.lock','deploy.lock'):m.write(state/name,b'')
+            policy={'state_dir':str(state),'edge_container':'pals-edge'};binding=(b'p',b'c',b'd');events=[]
+            def capture(*arguments):
+                events.append('capture');arguments[-1]()
+                for name in ('host-update.lock','deploy.lock'):
+                    fd=os.open(state/name,os.O_RDONLY)
+                    try:
+                        with self.assertRaises(BlockingIOError):fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
+                    finally:os.close(fd)
+                return {'status':'fixture_completed'}
+            def probe(*_args,**kwargs):
+                self.assertIs(kwargs['host_native'],True);events.append('probe')
+                fd=os.open(state/'deploy.lock',os.O_RDONLY)
+                try:fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
+                finally:os.close(fd)
+            with patch.object(m.Path,'home',return_value=home),patch.object(m,'controller',return_value=(policy,{},['docker'],binding)), \
+                 patch.object(m,'tool_image'),patch.object(m,'inspect_all',return_value={}),patch.object(m,'probe_lock',side_effect=probe), \
+                 patch.object(m,'capture',side_effect=capture),patch('sys.stdout',new_callable=io.StringIO):
+                self.assertEqual(m.main(['--tool-image','sha256:'+'a'*64,'--tool-api-commit','b'*40,'--host-native-locks','--smoke']),0)
+            self.assertEqual(events,['probe','capture'])
+
+
+class CaptureOrderingTests(unittest.TestCase):
+    def setUp(self):
+        patcher=patch.object(m,"prepare_source_patch");patcher.start();self.addCleanup(patcher.stop)
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        self.root=Path(self.temp.name).resolve();(self.root/"aws-migration-20261030").mkdir(mode=0o700)
+        m.write(self.root/'deploy.lock',b'')
+        (self.root/'auto-recovery').mkdir(mode=0o700)
+        m.write(self.root/'auto-recovery/disabled.json',b'{"reason":"final-source-capture"}')
+        self.previous=m.encoded({"kms_key_arn":m.KEY});self.previous_path=self.root/"previous"
+        m.write(self.previous_path,self.previous);m.write(self.root/"signature",b"signature")
+        self.policy={"state_dir":str(self.root),"edge_container":"pals-edge","signed_predecessor_manifest":str(self.previous_path),
+                     "signed_predecessor_signature":str(self.root/"signature"),"kms_public_key_sha256":"e"*64}
+        self.items=source_items();self.actual=copy.deepcopy(self.items);self.events=[]
+        images={role:self.items[name]["Image"] for role,name in m.ACTORS.items() if role not in ['assessment-worker','reconciler']}
+        images['worker']=self.items[m.ACTORS['worker']]['Image']
+        for role,component in [('assessment-worker','worker'),('reconciler','api')]:
+            self.items[m.ACTORS[role]]['Image']=images[component];self.actual[m.ACTORS[role]]['Image']=images[component]
+        self.current={"manifest_sha256":m.sha(self.previous),"images":images}
+        self.binding=(b"policy",b"current",b"config")
+        self.identity={"image_uri":"pgvector/pgvector@sha256:"+"f"*64,"image_id":self.items[m.DATABASE]['Image'],
+                       "source_docker_image_id":self.items[m.DATABASE]['Image'],"source_image_config_sha256":"d"*64,
+                       "source_image_rootfs_diff_ids":["sha256:"+"c"*64]}
+        self.args=SimpleNamespace(final=True,tool_image="sha256:"+"a"*64,tool_api_commit=m.SOURCE_PATCH_BASE,
+                                  confirm_source_manifest=self.current['manifest_sha256'])
+        self.fail_capture=False;self.fail_db_stop=False;m.DEADLINE=time.monotonic()+30
+
+    def fake_run(self, args, **_kwargs):
+        operation=args[1];self.events.append((operation,args[2:]))
+        byid={v['Id']:v for v in self.actual.values()}
+        if operation=='stop':
+            if self.fail_db_stop and self.items[m.DATABASE]['Id'] in args:raise m.Refusal('command_failed')
+            for value in args[2:]:
+                if value in byid:byid[value]['State']['Running']=False
+        elif operation=='update':
+            for value in args[2:]:
+                if value in byid:byid[value]['HostConfig']['RestartPolicy']['Name']='no'
+        else:raise AssertionError(operation)
+        return 0,b'',b''
+
+    def prepare(self,_root,output,*_args):
+        m.write(output/'inputs/historical-registry.json',b'{}')
+        m.write(output/'inputs/master-url',CANARY.encode())
+
+    def tool(self,*args):
+        self.events.append(('capture',[]))
+        if self.fail_capture:raise m.Refusal('tool_stdio_timeout')
+        return m.encoded({'schema_version':'pals.cloud-restore.source-evidence.v1',
+                         'predecessor_manifest_sha256':self.current['manifest_sha256'],
+                         'source_identity':{'database_system_identifier':'123','database_volume_id':'fixture-volume'}})
+
+    def signing(self,raw):
+        self.assertTrue(m.stopped(self.actual))
+        # Actual native lock remains held throughout signing, beyond tool exit.
+        fd=os.open(self.root/'deploy.lock',os.O_RDONLY)
+        try:
+            with self.assertRaises(BlockingIOError):fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        finally:os.close(fd)
+        self.events.append(('sign',[]));return envelope(raw)
+
+    def execute(self):
+        with patch.object(m,'require_drain_definition'),patch.object(m,'source_tools',return_value=({},'a'*64)), \
+             patch.object(m,'probe_lock'),patch.object(m,'aws_preflight',return_value=b'public'), \
+             patch.object(m,'prepare_inputs',side_effect=self.prepare),patch.object(m,'image_identity',return_value=self.identity), \
+             patch.object(m,'controller',return_value=(None,None,None,self.binding)), \
+             patch.object(m,'inspect_all',side_effect=lambda *_args:copy.deepcopy(self.actual)), \
+             patch.object(m,'run',side_effect=self.fake_run),patch.object(m,'drained',return_value=True), \
+             patch.object(m,'capture_tool',side_effect=self.tool),patch.object(m,'signed',side_effect=self.signing), \
+             patch.object(m,'upload',side_effect=lambda *_a,**_k:self.assertTrue(m.stopped(self.actual))):
+            return m.capture(self.root,self.args,self.policy,self.current,['docker'],self.binding,self.items,lambda:None)
+
+    def test_final_capture_and_database_fence_precede_every_sign(self):
+        result=self.execute();self.assertEqual(result['status'],'final_uploaded_source_fenced')
+        labels=[x[0] for x in self.events];self.assertLess(labels.index('capture'),labels.index('sign'))
+        dbstop=next(i for i,(op,argv) in enumerate(self.events) if op=='stop' and self.items[m.DATABASE]['Id'] in argv)
+        self.assertLess(labels.index('capture'),dbstop);self.assertLess(dbstop,labels.index('sign'))
+        journal=json.loads(m.private(m.journal_path(self.root)));self.assertEqual(journal['phase'],'uploaded_source_fenced')
+        self.assertNotIn(CANARY,repr(journal));self.assertFalse((Path(journal['output_directory'])/'inputs/master-url').exists())
+
+    def test_reconcile_uses_same_complete_mount_canonical_form_as_capture(self):
+        name=m.ACTORS['api']
+        mounts=[{'Destination':'/b','Source':'/fixture/b','RW':False,'Type':'bind','Propagation':'rprivate'},
+                {'Destination':'/a','Source':'/fixture/a','RW':True,'Type':'volume','Name':'fixture'}]
+        self.items[name]['Mounts']=copy.deepcopy(mounts);self.actual[name]['Mounts']=copy.deepcopy(mounts)
+        self.execute();self.actual[name]['Mounts'].reverse()
+        result=m.reconcile(self.root,SimpleNamespace(refresh_fence=False),self.policy,['docker'],self.binding,self.actual)
+        self.assertEqual(result['status'],'source_fenced_stopped')
+        self.actual[name]['Mounts'][0]['Propagation']='rshared'
+        with self.assertRaisesRegex(m.Refusal,'reconcile_source_identity_changed'):
+            m.reconcile(self.root,SimpleNamespace(refresh_fence=False),self.policy,['docker'],self.binding,self.actual)
+
+    def test_prejournal_recheck_reports_exact_failed_boundary_without_stopping(self):
+        self.actual[m.DATABASE]['Mounts']=[{'Destination':'/fixture','private':CANARY}]
+        try:
+            self.execute()
+        except m.Refusal as error:
+            report=m.failure_summary(error)
+        self.assertEqual(report['stage'],'recheck_container_identity')
+        self.assertEqual(report['reason'],'source_container_changed')
+        self.assertEqual(report['changed_fields'],[{'container':m.DATABASE,'fields':['Mounts']}])
+        self.assertFalse(m.journal_path(self.root).exists());self.assertEqual(self.events,[])
+        self.assertNotIn(CANARY,json.dumps(report))
+
+    def test_independent_profile_keeps_native_deploy_lock_without_reacquiring_it(self):
+        self.args.host_native_locks=True;m.write(self.root/'host-update.lock',b'')
+        with m.existing_lock(self.root/'host-update.lock'),m.existing_lock(self.root/'deploy.lock'):
+            result=self.execute()
+        self.assertEqual(result['status'],'final_uploaded_source_fenced')
+
+    def test_default_plan_has_no_aws_or_mutation_boundary(self):
+        m.write(self.root/'host-update.lock',b'')
+        args=['--tool-image',self.args.tool_image,'--tool-api-commit',self.args.tool_api_commit]
+        with patch.object(m.Path,'home',return_value=self.root.parent), \
+             patch.object(m,'controller',return_value=(self.policy,self.current,['docker'],self.binding)), \
+             patch.object(m,'tool_image'),patch.object(m,'inspect_all',return_value=self.items), \
+             patch.object(m,'require_drain_definition'),patch.object(m,'source_tools'), \
+             patch.object(m,'cli',side_effect=AssertionError('AWS forbidden in default plan')), \
+             patch.object(m,'capture',side_effect=AssertionError('capture forbidden in default plan')), \
+             patch.object(m,'run',side_effect=AssertionError('unexpected subprocess')), \
+             patch('sys.stdout',new_callable=io.StringIO) as output:
+            self.assertEqual(m.main(args),0)
+        self.assertEqual(json.loads(output.getvalue())['status'],'source_final_read_only_plan')
+
+    def test_capture_failure_never_stops_database_or_signs_or_restarts_source(self):
+        self.fail_capture=True
+        with self.assertRaises(m.Refusal):self.execute()
+        self.assertTrue(self.actual[m.DATABASE]['State']['Running'])
+        self.assertNotIn('sign',[x[0] for x in self.events]);self.assertNotIn('start',[x[0] for x in self.events])
+        journal=json.loads(m.private(m.journal_path(self.root)))
+        self.assertEqual(journal['phase'],'failed_reconcile_required');self.assertIs(journal['capture_completed'],False)
+
+    def test_explicit_resume_preserves_failed_capture_and_never_restarts_writers(self):
+        self.fail_capture=True
+        with self.assertRaises(m.Refusal):self.execute()
+        old=m.private(m.journal_path(self.root));previous=json.loads(old)
+        self.items=copy.deepcopy(self.actual);self.events=[];self.fail_capture=False
+        self.args.resume_final=True;self.args.host_native_locks=True
+        m.write(self.root/'host-update.lock',b'')
+        with m.existing_lock(self.root/'host-update.lock'),m.existing_lock(self.root/'deploy.lock'):
+            result=self.execute()
+        self.assertEqual(result['status'],'final_uploaded_source_fenced')
+        state=json.loads(m.private(m.journal_path(self.root)))
+        self.assertEqual(state['previous_capture'],{'journal_sha256':m.sha(old),'output_directory':previous['output_directory']})
+        self.assertNotEqual(state['output_directory'],previous['output_directory'])
+        self.assertTrue(Path(previous['output_directory']).is_dir())
+        stops=[args for action,args in self.events if action=='stop']
+        self.assertEqual(len(stops),1);self.assertIn(self.items[m.DATABASE]['Id'],stops[0])
+        self.assertNotIn('start',[action for action,_args in self.events])
+
+    def test_resume_rejects_wrong_phase_changed_facts_or_running_writer_without_journal_replacement(self):
+        self.fail_capture=True
+        with self.assertRaises(m.Refusal):self.execute()
+        old=m.private(m.journal_path(self.root));valid=json.loads(old)
+        self.items=copy.deepcopy(self.actual);self.args.resume_final=True;self.args.host_native_locks=True
+        for key,value in [('failed_phase','database_stop_pending'),('capture_completed',True),('tool_api_commit','f'*40)]:
+            state=copy.deepcopy(valid);state[key]=value;m.write(m.journal_path(self.root),m.encoded(state),replace=True)
+            before=m.private(m.journal_path(self.root))
+            with self.subTest(key=key),self.assertRaises(m.Refusal):self.execute()
+            self.assertEqual(m.private(m.journal_path(self.root)),before)
+        m.write(m.journal_path(self.root),old,replace=True)
+        self.items[m.ACTORS['api']]['State']['Running']=True
+        with self.assertRaisesRegex(m.Refusal,'resume_final_state_invalid'):self.execute()
+        self.assertEqual(m.private(m.journal_path(self.root)),old)
+
+    def test_missing_or_unsafe_maintenance_prevents_first_source_mutation(self):
+        marker=self.root/'auto-recovery/disabled.json'
+        marker.unlink()
+        with self.assertRaisesRegex(m.Refusal,'source_recovery_maintenance_required'):self.execute()
+        self.assertEqual(self.events,[])
+        for raw,mode in [(b'[]',0o600),(b'{}',0o644),(b'not-json',0o600)]:
+            m.write(marker,raw);marker.chmod(mode)
+            with self.assertRaisesRegex(m.Refusal,'source_recovery_maintenance_required'):self.execute()
+            self.assertEqual(self.events,[]);marker.unlink()
+
+    def test_removed_maintenance_after_ingress_stop_blocks_further_mutation(self):
+        original=self.fake_run
+        def changed(args,**options):
+            result=original(args,**options)
+            (self.root/'auto-recovery/disabled.json').unlink()
+            return result
+        with patch.object(self,'fake_run',side_effect=changed),self.assertRaisesRegex(m.Refusal,'source_recovery_maintenance_required'):
+            self.execute()
+        self.assertEqual(len(self.events),1)
+        self.assertTrue(self.actual[m.DATABASE]['State']['Running'])
+        self.assertNotIn('sign',[x[0] for x in self.events])
+
+    def test_ambiguous_database_stop_never_signs_or_retries(self):
+        self.fail_db_stop=True
+        with self.assertRaises(m.Refusal):self.execute()
+        self.assertNotIn('sign',[x[0] for x in self.events])
+        dbstops=[x for x in self.events if x[0]=='stop' and self.items[m.DATABASE]['Id'] in x[1]]
+        self.assertEqual(len(dbstops),1)
+        self.assertEqual(self.actual[m.DATABASE]['HostConfig']['RestartPolicy']['Name'],'no')
+        self.assertEqual(json.loads(m.private(m.journal_path(self.root)))['phase'],'failed_reconcile_required')
+
+
+class WireAndUploadTests(unittest.TestCase):
+    def setUp(self):
+        patcher=patch.object(m,"source_patch_path",return_value=Path("/fixed-reviewed-module.py"));patcher.start();self.addCleanup(patcher.stop)
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        self.root=Path(self.temp.name).resolve();(self.root/'inputs').mkdir(mode=0o700)
+        (self.root/'artifacts').mkdir(mode=0o700);m.write(self.root/'deploy.lock',b'')
+        self.items=source_items();self.tools={'env':'/usr/bin/env','pg_dump':'/usr/bin/pg_dump'}
+        self.dump_calls=[];m.DEADLINE=time.monotonic()+10
+
+    def test_real_stdio_child_receives_handoff_only_after_both_snapshot_dumps(self):
+        raw=m.encoded({'schema_version':'pals.cloud-restore.ec2-rehearsal-unsigned.v1','fixture':True})
+        target=self.root/'artifacts/source-payload.jcs'
+        child_code=("import sys,json,hashlib,os;print(json.dumps({'event':'snapshot_ready','snapshot':'00000003-00000001-1','admission_eligible':False}),flush=True);"
+                    "assert sys.stdin.readline()=='{\"action\":\"dumps-complete\"}\\n';"
+                    "raw="+repr(raw)+";p="+repr(str(target))+";f=os.open(p,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600);os.write(f,raw);os.close(f);"
+                    "print(json.dumps({'status':'smoke_unsigned_not_admissible','payload_sha256':hashlib.sha256(raw).hexdigest(),'table_count':0,'admission_eligible':False}),flush=True)")
+        original=subprocess.Popen
+        def popen(_args,**options):
+            self.assertIn('type=bind,source=/fixed-reviewed-module.py,target=/workspace/pals-api/app/release/cloud_restore_ec2_source.py,readonly',_args)
+            return original([sys.executable,'-c',child_code],**options)
+        def dumps(args,**options):
+            if 'ps' in args:return 0,b'',b''
+            self.assertIn('--snapshot=00000003-00000001-1',args)
+            self.dump_calls.append(args)
+            options['output'].write(b'PGDMPfixture' if '--format=custom' in args else b'-- schema fixture')
+            return 0,b'',b''
+        with patch.object(m.subprocess,'Popen',side_effect=popen),patch.object(m,'run',side_effect=dumps):
+            observed=m.capture_tool(self.root,self.root,{'state_dir':str(self.root)},['docker'],
+                                    self.items,'sha256:'+'a'*64,self.tools,True)
+        self.assertEqual(observed,raw);self.assertEqual(len(self.dump_calls),2)
+
+    def test_expired_budget_still_invokes_owned_tool_cleanup(self):
+        original=subprocess.Popen
+        def popen(_args,**options):return original([sys.executable,'-c','import time;time.sleep(30)'],**options)
+        image='sha256:'+'a'*64
+        info=[{'Image':image,'Id':'a'*64,'Config':{'Labels':{'pals.migration.purpose':'ec2-source-capture'}}}]
+        observed=[]
+        def cleanup(args,**_options):
+            observed.append(args)
+            return SimpleNamespace(returncode=0,stdout=json.dumps(info).encode(),stderr=b'')
+        m.DEADLINE=time.monotonic()-1
+        with patch.object(m,'run',return_value=(0,b'',b'')),patch.object(m.subprocess,'Popen',side_effect=popen), \
+             patch.object(m.subprocess,'run',side_effect=cleanup),self.assertRaises(m.Refusal):
+            m.capture_tool(self.root,self.root,{'state_dir':str(self.root)},['docker'],self.items,image,self.tools,True)
+        self.assertEqual(len(observed),2)
+        self.assertIn('inspect',observed[0]);self.assertIn('stop',observed[1]);self.assertIn('a'*64,observed[1])
+
+    def test_tool_eof_preserves_only_closed_exception_diagnostic(self):
+        diagnostic={'tool_module':'cloud_restore_ec2_source','tool_line':261,'tool_error':'ValueError','tool_failed_step':'pjr-foundation'}
+        code='import sys;sys.stderr.write('+repr(json.dumps(diagnostic))+');sys.stderr.flush();sys.exit(2)'
+        original=subprocess.Popen
+        def popen(_args,**options):return original([sys.executable,'-c',code],**options)
+        with patch.object(m,'run',return_value=(0,b'',b'')),patch.object(m.subprocess,'Popen',side_effect=popen):
+            try:m.capture_tool(self.root,self.root,{'state_dir':str(self.root)},['docker'],self.items,'sha256:'+'a'*64,self.tools,False)
+            except m.Refusal as error:report=m.failure_summary(error)
+        self.assertEqual(report['reason'],'tool_capture_failed')
+        self.assertEqual({key:report[key] for key in diagnostic},diagnostic)
+        with patch.object(m,'run',return_value=(0,b'',b'')), \
+                patch.object(m.subprocess,'Popen',side_effect=lambda _args,**options:original([sys.executable,'-c','import sys;sys.stderr.write('+repr(CANARY)+');sys.exit(2)'],**options)):
+            try:m.capture_tool(self.root,self.root,{'state_dir':str(self.root)},['docker'],self.items,'sha256:'+'a'*64,self.tools,False)
+            except m.Refusal as error:report=m.failure_summary(error)
+        self.assertNotIn(CANARY,json.dumps(report));self.assertNotIn('tool_module',report)
+
+    def test_wrapper_observes_real_short_circuit_without_repeating_predicates(self):
+        package=self.root/'app/release';package.mkdir(parents=True)
+        (package.parent/'__init__.py').touch();(package/'__init__.py').touch()
+        module=package/'cloud_restore_ec2_source.py'
+        for identifier in ('pjr-foundation', CANARY):
+            module.write_text("from types import SimpleNamespace\n"
+                "def load_config(path): return {}\n"
+                "calls=[]\n"
+                "def status(cursor):\n"
+                " calls.append(1)\n"
+                " if len(calls)>1: raise RuntimeError('predicate repeated')\n"
+                " return False\n"
+                "def capture_unsigned(config,smoke=False):\n"
+                " steps=[SimpleNamespace(identifier="+repr(identifier)+",status=status)]\n"
+                " if not all(step.status(None) for step in steps): raise ValueError('"+CANARY+"')\n")
+            wrapper=m.TOOL_CAPTURE_WRAPPER.replace("sys.path.insert(0,'/workspace/pals-api')",
+                                                    'sys.path.insert(0,'+repr(str(self.root))+')')
+            result=subprocess.run([sys.executable,'-I','-c',wrapper,'capture-unsigned','unused'],capture_output=True)
+            self.assertEqual(result.returncode,2)
+            report=json.loads(result.stderr)
+            self.assertEqual(report['tool_module'],'cloud_restore_ec2_source')
+            self.assertEqual(report['tool_error'],'ValueError')
+            self.assertNotIn(CANARY,result.stderr.decode())
+            if identifier=='pjr-foundation':self.assertEqual(report['tool_failed_step'],identifier)
+            else:self.assertNotIn('tool_failed_step',report)
+
+    def test_manifest_is_last_after_every_artifact_readback(self):
+        output=self.root/'artifacts';m.write(output/'one',CANARY.encode());m.write(output/'two',b'fixture')
+        calls=[];stored={}
+        def aws(service,operation,payload=None,extra=()):
+            self.assertEqual(service,'s3api');calls.append((operation,payload['Key']))
+            self.assertEqual(payload['ExpectedBucketOwner'],m.ACCOUNT)
+            if operation=='put-object':
+                body=Path(extra[1]).read_bytes()
+                stored[payload['Key']]={'ContentLength':len(body),'Metadata':payload['Metadata'],
+                                        'ServerSideEncryption':payload['ServerSideEncryption'],
+                                        'ChecksumSHA256':payload['ChecksumSHA256']}
+                return {'VersionId':'version1'}
+            return stored[payload['Key']]
+        with patch.object(m,'cli',side_effect=aws):m.upload(output,['one','two'],'fixture/',smoke=True)
+        self.assertEqual(calls, [('put-object','fixture/one'),('head-object','fixture/one'),
+                                 ('put-object','fixture/two'),('head-object','fixture/two'),
+                                 ('put-object','fixture/manifest.json'),('head-object','fixture/manifest.json')])
+        receipt=json.loads((output/'upload-receipt.json').read_bytes());self.assertNotIn(CANARY,repr(receipt))
+
+    def test_failed_artifact_readback_never_publishes_manifest(self):
+        output=self.root/'artifacts';m.write(output/'one',b'fixture');calls=[]
+        def aws(_service,operation,payload=None,extra=()):
+            calls.append((operation,payload['Key']))
+            if operation=='put-object':return {'VersionId':'version1'}
+            return {'ContentLength':7,'Metadata':{'sha256':'0'*64},'ServerSideEncryption':'AES256','ChecksumSHA256':'wrong'}
+        with patch.object(m,'cli',side_effect=aws),self.assertRaises(m.Refusal):m.upload(output,['one'],'fixture/')
+        self.assertEqual(len(calls),2);self.assertFalse((output/'upload-manifest.json').exists())
+
+    def test_prepared_config_matches_exact_api_keys_and_url_never_enters_argv(self):
+        policy={'state_dir':str(self.root),'database_identity':{'database_volume_id':'fixture-volume'},
+                'identity_volume':'fixture-volume-name','kms_public_key_sha256':'a'*64,
+                'database_urls':{'master_database_url':str(self.root/'original-url')}}
+        for name,filename,content in [('signed_predecessor_manifest','previous',b'{}'),
+                ('signed_predecessor_signature','previous-signature',b'signature'),
+                ('previous_production_registry','registry',b'{}'),('host_marker','host',b'host')]:
+            policy[name]=str(self.root/filename);m.write(self.root/filename,content)
+        m.write(self.root/'original-url',('postgresql+psycopg://postgres:'+CANARY+'@original-host:35432/pals').encode())
+        self.items[m.DATABASE]['Mounts']=[{'Type':'volume','Name':'source-pgdata','Destination':'/var/lib/postgresql/data'}]
+        calls=[]
+        def cat(args,**_options):calls.append(args);return 0,b'fixture-volume\n',b''
+        bindings={'cognito_user_pool_id':'fixture','cognito_app_client_id':'fixture','cognito_issuer':'fixture',
+                  'artifact_bucket':'fixture','proof_jobs_queue_arn':'fixture1','proof_requests_queue_arn':'fixture2','guest_key_sha256':'a'*64}
+        observations=[[{'Name':'fixture-volume-name','Driver':'local'}],
+                      [{'Id':self.items[m.DATABASE]['Image'],'Os':'linux','Architecture':'arm64'}]]
+        with patch.object(m,'external_bindings',return_value=bindings),patch.object(m,'run',side_effect=cat), \
+                patch.object(m,'result',side_effect=observations):
+            m.prepare_inputs(self.root,self.root,policy,{'manifest_sha256':m.sha(b'{}')},['docker'],self.items,b'public','b'*64)
+        config=json.loads((self.root/'inputs/capture-config.json').read_bytes())
+        owning=FILE.parents[1]/'pals-api/app/release/cloud_restore_ec2_source.py'
+        tree=ast.parse(owning.read_text())
+        assignment=next(n for n in tree.body if isinstance(n,ast.Assign) and any(
+                        isinstance(t,ast.Name) and t.id=='KEYS' for t in n.targets))
+        self.assertEqual(set(config),ast.literal_eval(assignment.value.args[0]))
+        self.assertEqual(config['deployment_lock_file'],'/deployment-lock')
+        self.assertEqual((self.root/'inputs/master-url').read_text(),
+                         'postgresql://postgres:'+CANARY+'@127.0.0.1:5432/pals')
+        self.assertNotIn(CANARY,repr(calls))
+        observer=calls[0]
+        self.assertIn('--network=none',observer);self.assertIn('--pull=never',observer)
+        self.assertIn('type=volume,source=fixture-volume-name,target=/identity,readonly,volume-nocopy',observer)
+        self.assertEqual(observer[-2:],[self.items[m.DATABASE]['Image'],'/identity/volume.identity'])
+
+    def test_volume_marker_rejects_wrong_actual_marker_or_missing_volume(self):
+        policy={'identity_volume':'fixture-volume-name','database_identity':{'database_volume_id':'expected'}}
+        image={'Id':self.items[m.DATABASE]['Image'],'Os':'linux','Architecture':'arm64'}
+        with patch.object(m,'result',side_effect=[[{'Name':'fixture-volume-name','Driver':'local'}],[image]]), \
+                patch.object(m,'run',return_value=(0,b'wrong\n',b'')),self.assertRaises(m.Refusal):
+            m.read_volume_marker(['docker'],policy,self.items[m.DATABASE])
+        with patch.object(m,'result',return_value=[]),patch.object(m,'run') as command,self.assertRaises(m.Refusal):
+            m.read_volume_marker(['docker'],policy,self.items[m.DATABASE])
+        command.assert_not_called()
+
+
+
+
+class SourcePatchTests(unittest.TestCase):
+    def test_fixed_version_download_and_digest_are_both_required(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output=Path(directory).resolve();(output/'inputs').mkdir(mode=0o700)
+            raw=b'reviewed operator source module'
+            digest=m.sha(raw);calls=[]
+            def cli(service,operation,payload,extra=()):
+                calls.append((service,operation,payload))
+                self.assertEqual(payload['Key'],m.SOURCE_PATCH_KEY)
+                self.assertEqual(payload['VersionId'],'fixed-version')
+                response={'VersionId':'fixed-version','ContentLength':len(raw),'ServerSideEncryption':'AES256',
+                          'Metadata':{'sha256':digest},'ChecksumSHA256':base64.b64encode(bytes.fromhex(digest)).decode()}
+                if operation=='get-object':Path(extra[0]).write_bytes(raw)
+                return response
+            with patch.object(m,'SOURCE_PATCH_VERSION','fixed-version'),patch.object(m,'SOURCE_PATCH_SHA',digest), \
+                 patch.object(m,'SOURCE_PATCH_SIZE',len(raw)),patch.object(m,'cli',side_effect=cli):
+                path=m.prepare_source_patch(output)
+                self.assertEqual(path.read_bytes(),raw)
+                self.assertEqual(len(calls),2)
+                path.write_bytes(b'x'*len(raw))
+                with self.assertRaises(m.Refusal):m.source_patch_path(output)
+                path.write_bytes(raw);path.chmod(0o644)
+                with self.assertRaises(m.Refusal):m.source_patch_path(output)
+
+    def test_wrong_s3_version_is_rejected_before_download(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output=Path(directory).resolve();(output/'inputs').mkdir(mode=0o700)
+            with patch.object(m,'SOURCE_PATCH_VERSION','fixed-version'),patch.object(m,'SOURCE_PATCH_SIZE',1), \
+                 patch.object(m,'cli',return_value={'VersionId':'wrong-version'}) as cli:
+                with self.assertRaises(m.Refusal):m.prepare_source_patch(output)
+                self.assertEqual(cli.call_count,1)
+                self.assertEqual(list((output/'inputs').iterdir()),[])
+
+
+if __name__=='__main__':unittest.main()

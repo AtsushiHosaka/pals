@@ -9,3 +9,15 @@ Before removal, describe the exact feature, affected screens, and user impact, t
 For example, simplifying Project home must preserve file upload, file listing, and access to existing materials. Removing an upload panel without providing another usable entry point removes the feature even if its backend API still exists.
 
 This rule was requested on October 12, 2026, after Project materials upload was found missing from the deployed interface.
+
+## Selected-answer follow-up questions
+
+Selecting answer text or mathematical notation by dragging and releasing must retain
+an accessible follow-up question form in guest and authenticated chats, including
+catalog-backed answers and reviewed explanations. Keep the exact original TeX in
+the quote, preserve the question after failed submission, and keep quota and
+idempotency checks. Restyling, definition popovers, and new answer renderers must
+not bypass this entry point. Do not remove it without explicit user approval.
+
+Release checks must include the webfront guest-answer-selection,
+proof-request-selection, proof-selection, and guest-chat regression suites.

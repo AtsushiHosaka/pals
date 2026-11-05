@@ -115,6 +115,13 @@ primary mode cells. The commutative-algebra advanced scope retains its separate 
 chapter target and must later refine every chapter target into the same mode/difficulty
 axes before it can report comprehensive.
 
+The 2026-10-31 revision adds `univ.algebra.integral-extension` for integral elements
+of commutative ring algebras, with rings/ideals and polynomial prerequisites. The
+undergraduate matrix now has 101 families and 505 required primary mode patterns.
+Its eight existing authoring records remain unadmitted. Five existing smooth-map
+records reuse `univ.multivar.total-jacobian`; no second Jacobian family or additional
+mathematical records are created by these assignments.
+
 ### Distinctness
 
 A binding can satisfy a separate structural pattern only when its canonical OpenMath

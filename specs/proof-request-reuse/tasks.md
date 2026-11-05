@@ -84,3 +84,44 @@ Executed evidence and remaining gates: `docs/recipe-first-implementation-2026-10
 - [x] PFR-015 agent: refute plan after a clarification when a counterexample is still reported; localized negation statement; unit tests (agent `e8d3467`).
 - [x] PFR-015 webfront: "Lean-refuted" label for project, projectless and guest answers in four languages (webfront `e19606c`).
 - [x] PFR-015 real local journey: "n² + n is odd" kept as written was refuted by Lean (`¬ ∀ n, 0 < n → Odd (n² + n)`) and shown as "Leanで反証済み：この主張は偽です" with the counterexample n = 1. Evidence: `docs/math-conventions-evidence-2026-10-05.md`.
+
+## 2026-11-01 Recipe latency and exact-input profiles
+
+Authority: the user explicitly requested reuse of the existing natural-power
+continuity Recipe, a public answer within ten seconds and independent work in
+parallel. Baseline is the actual sequence-9 release, API `adda209` and worker
+`d58b60d`. This additive change affects PFR-010/016–018 and LRC-018/038; it does
+not authorize weaker proof evidence or an unverified fixed answer.
+
+- [x] Diagnose the actual slow request: the power Recipe was retrieved and passed all scope checks; independent answer correspondence rejected it before new DSP generation. Record the missing rejection-rationale evidence as a diagnostic gap.
+- [x] Define the separate exact-input contract and independently review the two complete Japanese question forms against the admitted universal natural-power theorem, including zero and the recorded power convention.
+- [x] PFR-018 API: authoritative finite registry, distinct closed evidence kind, exact current request/claim/context/convention validation and unchanged locked catalog/answer/lifecycle revalidation. No schema migration or worker-created provider approval.
+- [x] PFR-006/018 API: permit zero-provider token settlement only from server-established exact-profile validation and absence of provider call records; retain normal holds, guest limits, replay fences and non-profile settlement behavior. Real PostgreSQL positive/negative/replay tests.
+- [x] PFR-018 agent: real authenticated catalog retrieval and exact immutable entry validation before zero-call reuse; unknown input or context retains the ordinary route. Prove generator, compiler, Draft, explanation and model call counts remain zero for eligible inputs.
+- [x] PFR-010/017 general path: independently assess and review the same bounded candidates concurrently, require exact agreement, preserve separate request context and token-call attribution, and retain bounded private rejection reasons.
+- [x] Hard negatives: changed exponent type, conclusion, quantifiers, method, output language, conventions, added text, history/material/image context, source/answer/toolchain tampering, retired entry, stale claim and forged profile must not be accepted as matching reuse.
+- [x] Signed software-only deployment followed by real public guest submissions: exact stored answer/Lean hashes, `lean_catalog`, no linked proof job, zero model/generator/verifier/Draft calls and each measured end-to-end time at most ten seconds. Report actual measurements and any remaining limits. Sequence 11 measured the registered plain-text form in three fresh guest chats: 4.7752/4.6638/4.8301 seconds, with a separate read-only zero-call/source/profile check.
+- [ ] Measure the other registered form containing TeX delimiters through the public UI. Do not infer its public timing from the plain-text result.
+
+Evidence: [production measurements and limits](../../docs/aws-recipe-reuse-latency-2026-10-31.md#11月2日の実装と公開確認の状況). API `9b8b004`, worker `122f2f9`: independent review, focused negative/concurrency tests and real PostgreSQL settlement plus guest GET/source/Lean tests. These tests do not establish general-input or concurrent-user latency.
+
+
+## 2026-11-02 Mathematical paraphrases within ten seconds
+
+Authority: the user rejected literal-only matching and explicitly requested
+mathematically equivalent changed questions for natural powers, tan 1 degree and
+other Recipes, with real public measurements under ten seconds. Baseline is
+sequence 11, API `9b8b004`, worker `122f2f9`, parent `5e88f2e`.
+
+- [x] PFR-019 API: complete authenticated bounded catalog snapshot, server-owned claim/input/batch receipt, explicit empty overflow result, unchanged source/compiler/lifecycle authority and no new DB grants.
+- [x] PFR-014/017/019 worker: two genuine independent concurrent original-request/source/answer reviews, full scope/polarity/premise checks, exact same-entry agreement and ordinary-route compatibility; no question-string allowlist for this semantic path.
+- [x] Actual-provider experiment: measure all 20 current candidates against 32 fixed questions and select static GPT-6 Luna / low with a 1,536-token output cap per call. Retain all 64 calls and actual usage; no automatic model cascade. Result: 11/13 equivalent inputs accepted, 19/19 negative inputs refused, no parser/provider failures. Classification time excludes the public request lifecycle.
+- [x] PFR-006/016/019 API: actual reviewer identity/usage admission, normal charging of all recorded provider usage, replay/stale/forged receipt rejection, and real PostgreSQL guest/token-policy settlement, read/source/Lean and retirement tests. PostgreSQL accounting tests use explicitly synthetic provider receipts; the separate real-provider experiment does not establish live paid settlement.
+- [x] Adversarial scope tests: changed exponent domain, degree/radian, dependent quantifiers, missing premises, different limit sidedness, method restrictions, false-proof versus truth-question polarity, answer/source mutation, incomplete catalog and incompatible conventions. Unit/contract, real PostgreSQL and actual-provider evidence retain their separate scopes.
+- [x] Signed software deployment: sequence 12, API `7cde967` and worker `7c000db`; actual seven-container/private-TLS readiness, unchanged 35-step DB contract/catalogs, public routing restoration and HTTP health, with temporary verification authority absent.
+- [ ] Semantic-path concurrent-request and retirement-during-settlement runtime witness beyond the existing lock/revalidation tests; do not infer 30-user behavior from single-request tests.
+- [ ] Canonical-answer revision 2 for right-limit/discontinuity and the pi bound: complete fresh compilation/admission reconciliation, independent review, signature, atomic publication and read-only historical/source validation. Candidate preparation and attempted compilation are not publication evidence.
+- [ ] Re-evaluate the unchanged 32-question corpus after any published answer revisions; equivalent-input acceptance of 13/13 has not been achieved by the recorded 11/13 run.
+- [ ] Signed deployment and changed-question public witnesses across at least three substantive Recipes: multiple new paraphrases, exact stored source/answer, both real reviewer calls, zero new Lean jobs and each accepted measured answer within ten seconds. Record failures and remaining limits without extrapolating general completeness or 30-user latency.
+
+Evidence: [actual-provider results, sequence-12 deployment and remaining gates](../../docs/aws-recipe-semantic-benchmark-2026-11-02.md). Independent API/worker review, cross-repository producer/consumer validation and real PostgreSQL tests establish the implementation boundaries above; they do not establish public changed-question latency, complete mathematical coverage or successful revision-2 publication.

@@ -36,12 +36,12 @@ class DraftCatalogCoverageAuditTests(unittest.TestCase):
         self.assertEqual(
             scopes["school-japan-current"]["admitted_distinct_patterns"], 0
         )
-        self.assertEqual(scopes["undergraduate-core-v1"]["family_count"], 100)
+        self.assertEqual(scopes["undergraduate-core-v1"]["family_count"], 101)
         self.assertEqual(
-            scopes["undergraduate-core-v1"]["required_distinct_patterns"], 500
+            scopes["undergraduate-core-v1"]["required_distinct_patterns"], 505
         )
         self.assertEqual(
-            scopes["undergraduate-core-v1"]["filled_distinct_patterns"], 175
+            scopes["undergraduate-core-v1"]["filled_distinct_patterns"], 180
         )
         self.assertEqual(
             scopes["undergraduate-core-v1"]["admitted_distinct_patterns"], 0
@@ -75,6 +75,66 @@ class DraftCatalogCoverageAuditTests(unittest.TestCase):
         self.assertEqual(
             len(report["findings"]["profiles_without_configured_limits"]), 38
         )
+
+    def test_integral_extension_and_smooth_map_bindings_remain_authoring_only(self) -> None:
+        families = {
+            family["id"]: family
+            for scope in self.matrix["scopes"]
+            for family in scope.get("families", [])
+        }
+        integral = families["univ.algebra.integral-extension"]
+        self.assertEqual(
+            integral["prerequisites"],
+            ["univ.algebra.rings-ideals", "univ.algebra.polynomials"],
+        )
+        self.assertEqual(integral["profile_requirement"], "typed_commalg_sealed")
+        self.assertEqual(
+            {binding["draft_id"] for binding in integral["draft_bindings"]},
+            {
+                "commalg_integral_add",
+                "commalg_integral_base_map",
+                "commalg_integral_extension_member",
+                "commalg_integral_mul",
+                "commalg_integral_neg",
+                "commalg_integral_one",
+                "commalg_integral_square",
+                "commalg_integral_sub",
+            },
+        )
+        smooth_ids = {
+            "calculus_v4_norm_away_zero",
+            "calculus_v4_norm_square_chain",
+            "calculus_v4_smooth_composition",
+            "calculus_v4_smooth_inner_product",
+            "calculus_v4_smooth_squared_norm",
+        }
+        jacobian = families["univ.multivar.total-jacobian"]
+        smooth = [
+            binding
+            for binding in jacobian["draft_bindings"]
+            if binding["draft_id"] in smooth_ids
+        ]
+        self.assertEqual({binding["draft_id"] for binding in smooth}, smooth_ids)
+        self.assertNotIn("univ.calculus.multivariable-jacobian", families)
+        for binding in [*integral["draft_bindings"], *smooth]:
+            self.assertEqual(binding["primary_mode"], "justify_prove")
+            self.assertIsNone(binding["admission_manifest"])
+
+        report = AUDIT.build_report(self.matrix, ROOT, self.sources)
+        scope = next(
+            scope
+            for scope in report["coverage"]["scopes"]
+            if scope["id"] == "undergraduate-core-v1"
+        )
+        family = next(
+            family
+            for family in scope["families"]
+            if family["id"] == integral["id"]
+        )
+        self.assertEqual(family["mode_cells"], {"required": 5, "filled": 1})
+        self.assertEqual(family["admitted_distinct_patterns"], 0)
+        self.assertFalse(family["comprehensive"])
+        self.assertEqual(report["findings"]["binding_source_mismatches"], [])
 
     def test_output_is_deterministic(self) -> None:
         first = AUDIT.build_report(self.matrix, ROOT)
