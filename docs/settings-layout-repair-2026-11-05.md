@@ -77,8 +77,18 @@ Node 24.15.0; locked frontend dependencies; Next.js 16.4.3.
 
 - Six targeted Vitest files pass, 69 tests: account-output-language-settings,
   modal-accessibility, math-conventions, billing-settings, notation-preferences,
-  and use-account-notation-preferences. Command: `node node_modules/vitest/vitest.mjs
-  run --configLoader native` followed by those `tests/unit/` paths.
+  and use-account-notation-preferences. From the frontend repository:
+
+  ```sh
+  node node_modules/vitest/vitest.mjs run --configLoader native \
+    tests/unit/account-output-language-settings.test.tsx \
+    tests/unit/modal-accessibility.test.tsx \
+    tests/unit/math-conventions.test.tsx \
+    tests/unit/billing-settings.test.tsx \
+    tests/unit/notation-preferences.test.ts \
+    tests/unit/use-account-notation-preferences.test.tsx
+  ```
+
 - `npm run typecheck`, ESLint on the changed TSX, and `git diff --check` pass.
 - The normal Turbopack `npm run build` passes TypeScript and generates 15 static
   pages after the temporary preview is removed. The first build found stale

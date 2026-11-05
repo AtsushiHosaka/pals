@@ -13,7 +13,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-2026-08-28から2026-11-05までの382行です。出典の内訳は、docsが204行、pals-agentのPRが80行、palsのIssueが70行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
+2026-08-28から2026-11-05までの394行です。出典の内訳は、docsが204行、pals-agentのPRが80行、palsのIssueが82行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
 
 11月5日の説明回帰は、[Agent #50の記録](https://github.com/AtsushiHosaka/pals-agent/blob/36ea6a2b106d5782ca2012b8a75ee4fbfa4c2b52/testdata/explanation-grounding-v1/README.md)に対応する9行を追加しました。初回の同条件比較、書式不備で採点を除外したQA、不備を直した負例、最終修正後の確認を分けています。実モデル24呼出しの推計費用0.02573375 USDを重複なく記録しました。初回比較は両版2/2で、精度向上は確認していません。後の別条件の結果を加えて改善率を作りません。
 
@@ -21,7 +21,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 これらの外部ベンチマークの費用は、使用量に事前登録した全入力0.25・出力0.50 USD/百万tokenを掛けた保守値です。通常入力の標準単価、アプリの版付き原価推計、請求額とは分けます。過去289行を変更せず、今回の6行だけを追記しました。
 
-系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 47、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 79、`availability` 11、`other` 36です。
+系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 47、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 91、`availability` 11、`other` 36です。
 
 2026-11-04の[引き継ぎ確認](../quality-observability-audit-2026-11-04.md)に、CloudWatchの実装と未検証の範囲、プロンプトの変更前後を比較するために今後記録する項目をまとめています。既存の散布図には、題材や成功の定義が違う点が含まれます。図全体からモデルの精度向上を判断しません。
 
@@ -57,6 +57,8 @@ The [settings layout repair](../settings-layout-repair-2026-11-05.md) adds four 
 [日本語の証明共有](../japanese-proof-share-2026-11-05.md)では、既存360行を保持して6行追加しました。Highの初回と同じ依頼の再試行の失敗、2ホストの読み取り診断、Mediumの完成、日本語共有・公開カード、実際のX下書き表示を分けています。初回の内部HTTP 500が2件でもユーザー試行は1回です。Mediumの705.721秒は完成を画面で観測するまでの上限で、実行時間の中央値ではありません。PALSの検証済み表示と69行のコードを確認し、独立したLean再実行はしていません。単発の運用・表示確認として記録し、モデル比較や数学全般の精度向上とは扱いません。
 
 [多言語の診断契約](../localized-diagnostic-fix-2026-11-05.md)を3行、[共有ロゴの実ブラウザー操作](../shared-logo-try-link-2026-11-05.md)を1行追加し、既存366行をbyte単位で保持しました。診断は同じ固定96件のbase20/96・修正後96/96と、未知追記の拒否384/384を分けています。baseも同じ384件を拒否しますが、分母に加算しません。ロゴは実ChromeのクリックとEnterの2/2で、APIやguest生成の完了、本番配備は未確認です。すべて同じホストのlocal macOSで測った範囲に限り、単体検査件数、費用、性能は加算していません。
+
+The [settings production-release record](../settings-production-release-2026-11-05.md) adds twelve disjoint operational and browser records while preserving the prior 382 rows byte-for-byte. It keeps the real production layout failure, preflight and serialization failures, guarded drain refusals, successful preparation/staging/prewarm, and exact previous-runtime restoration and cleanup separate. The drain guard worked and no candidate admission is claimed. These records do not establish deployment of the repaired UI, model quality, mathematical accuracy, or a general service success rate.
 
 ## グラフ
 
