@@ -6,7 +6,7 @@
 
 オーナーの明示承認とSSO認証後、11:13:35 JSTに正規SSM経路から指定した1項目だけを読んだ。直前に現行manifest・署名・公開鍵pin、設定と環境参照のhash・所有者・modeを検査した。SSM実行1回、IAM追加・KMS署名・DB更新・サービス変更は0回だった。値は公開せず、Git外の保護領域へhash一覧とともに保存した。
 
-旧API60f8cd2・Webe63bc50の正式image receiptは生成したが、追加修正を含まない履歴snapshotである。最終sourceとimageを固定し直すまで、新しい配備候補として採用しない。新schemaへの署名・適用は承認していない。本番seq18の期限は11月5日23:53:01 JSTのままである。進行は[#234](https://github.com/AtsushiHosaka/pals/issues/234)と[#244](https://github.com/AtsushiHosaka/pals/issues/244)を参照する。
+API5c1a2fd7・Web11b62967の正式image receiptと未署名seq19候補を固定した。receipt SHA-256はa372af8d76076a7d307f0742e7e512184466ea1489aae7e221447f10a4a04bda、候補はfa94cf782cbb20c2ffcac4134b725ff34ee813389d0a3746cd6cc526f2f9eb51。旧sourceのimage・receiptは履歴として保持する。親担当が前署名・全4imageの対応・保持する資源とSQL/registryを独立照合し、local-only checkも成功した。[#255](https://github.com/AtsushiHosaka/pals/issues/255)で署名・全読取検証の承認を受領したが、直前に別チャットがshared-card seq19を本番適用済みと確認した。旧seq18を前提とする候補は使用停止し、署名/IAM/追加SSM/native/DB/サービス操作は0回のまま保全する。承認を新digestへ流用しない。現行seq19の原本と進行中#248を確認し、新候補を具体化する。進行は[#234](https://github.com/AtsushiHosaka/pals/issues/234)と[#244](https://github.com/AtsushiHosaka/pals/issues/244)を参照する。
 
 ## 再現した問題と修正先
 
@@ -22,7 +22,7 @@
 | 保存済み親説明 | 引用の改行を復元すると不変な親ハッシュと一致しなかった | Agent#55/API#60でモデル用引用と保存済み親のidentityを分けた。新規引用・親差替えの拒否は維持した |
 | 追加質問のclaim | 現APIのnullableなoutput_languageを旧workerの閉じたDTO検査が拒否した | Agent#55で実際に対応する4言語・null・省略だけを許可。未知の値や項目は拒否する |
 | 回答QA | 実在しない欠陥を正しい段階へ追加した | 最初の改善案は失敗。唯一の追加修正を別の固定群で評価し、結果を下記へ分けた |
-| runtime診断のHTTP経路 | 元のruntime診断をcompileへ集約していた | #217へ残差を記録。個別の分類表の修正だけで経路全体が直ったとは扱わない |
+| runtime診断のHTTP経路 | 元のruntime診断をcompileへ集約していた | API#64/Agent#56で閉じた2コードを保持し、API/DBで修復不能として終端。独立実PG/mTLS16件も通過し、後続統合branchへmergeした |
 | TLSのquery user | authorityのactorよりqueryのuserが優先された | API#61を#47へ統合。実libpq・実接続で指定actorとTLS1.3を確認した |
 | 長いタイトル | regexの後方走査が入力増加に対して急増した | 線形stackへ変更。下記の同一入力による局所測定を残した |
 | タイトルの入れ子 | 外側のitalicと内側のboldを併用すると末尾starが残った | 同じstackで修正し、API/Web/OGの回帰を追加した |
@@ -90,4 +90,16 @@ TLSの追加修正e920777dは、局所29件と実PG接続3件、計32件を親�
 
 新sourceの実image・receipt・未署名候補、schemaの正規適用、公開画面・Cognito引換・実Plus機能、CloudWatchの収集・抽出・アラーム遷移を確認する。クーポンは未発行、価格は未変更、AWSの縮小も未実施である。局所検証やmergeだけで、対応する本番受入Issueを閉じない。
 
-タイトル修正の最終統合はAPI#48の224694daa3ae2dfb87de48dfe8615950e45fe3ed、Web#40のd2558575b535024a838644c0bfb981b050f6769f。APIの対象104件、Webの全145ファイル・1,855件が通過した。Web全体の初回と1回の再試行は110秒でtimeoutした。単独検査の通過と残存processの不存在を確認後、最後の再試行は並列数4・240秒上限で32.315秒で終了した。source・設定・期待値は変えず、前のtimeoutも保持した。原因は断定していない。
+タイトル修正では追加レビューのたびに、括弧付き積、既存italicの閉じ側、italic内の単語間の積を確認した。F15の修正がF16の回帰を残したため、API#65/Web#46で積の保護とitalicの条件を分けた。最終統合はAPI#48の5c1a2fd791b63228c60376527cbf9f5c18014939、Web#40の11b629673a70b39bfdbf2faf315f6cc9ea696aef。API対象66件、Web対象91件を親担当・別担当が確認し、API統合122件、Web全145ファイル1,891件、型・lintも通過した。既存の線形性・script・Unicodeの期待値は弱めていない。
+
+Web全体の過去2回は110秒でtimeoutした。単独検査と残存processの不存在を確認後、並列数4で全件を完了した。timeoutの原因は断定しない。前述の局所速度測定は3ab871f5のsnapshotであり、最新F16や本番の速度として読み替えない。
+
+## 後続のruntime・試験分離・取り込み
+
+API#64とAgent#56は実mTLSのverifier HTTPからAPI・PGへ、lean.not_found/lake.not_foundの閉じた診断を保持する。元のpath/message/symbolを公開eventへ出さず、修復不能の終端とhold解放を確認した。model/recipe/refutation経路、telemetry無効、既存usage、再配信、通常のcompile修復と否定fallback、同時reconcileとCOMMIT応答損失を検査した。親担当は製品差分を読み、独立担当の実PG16件・Agent HTTP38件・API単体112件を確認した。受理済みrequest・catalog・生成・正常compileの一部は明示fixtureで、実モデルや生成全体の試験ではない。
+
+API#66では試験用DSNのquery dbnameがURL pathより優先する問題を修正した。queryのencoded/repeated keyを実libpqで解釈し、接続前とSELECT current_database()で自分のUUID DBへの接続を検査する。既存の他の接続設定は保持し、失敗したCREATEの後にはDROPせず、正常に作ったDBだけをplain DROPする。親担当の14単体・11実PGも通過し、前後の全DB名とrole flagsが一致した。実際の試験DSNにquery dbnameはなく、既存DBを破壊した事実は確認していない。API#52は6985402、Agent#51は74a6d5eとなった。coupon36のsourceは変更していない。
+
+親PR#254の取り込みCLIは、既存2群のraw・人手採点・usageから候補CSVを作る。独立レビューで、保持表記24hを未照合で固定する不足を修正し、両schemaで原本との一致を必須にした。22件と、既存2群8行ずつの全20field照合が通過し、親#243へ統合した。自動採点・台帳append・将来の全schema対応は含まない。
+
+新Agentのproject metadataに対応するinfra#98は、明示profileだけでdev依存のjsonschemaと共有schemaのwheel同梱を許可する。旧default・runtime依存・canonical source tarは維持する。独立レビューで、docker create直後のtimeout時の所有物回収と、publish直前のcanonical archive再照合に不足2件を再現した。修正・再レビューが終わるまで採用しない。ここまでのDocker/ECRは境界fixtureであり、このprofileでの実image build・publicationは0回である。

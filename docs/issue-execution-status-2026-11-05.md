@@ -1,44 +1,53 @@
 # 未解決Issueの実行状況
 
-2026-11-05 04:28 JSTにGitHubから取得した63件の一覧。priority:highは23件である。判断記録、総合管理、別チャットの進行、配備待ちも含む。件数を未修正バグ数やコードレビュー完了数とは扱わない。
+2026年11月5日15:18 JSTにGitHubから取得した64件の一覧。priority:highは23件である。#255は取得時点ではクーポン候補の署名・読取検証の判断待ちだった。15時台に承認を受領したが、別チャットの本番seq19更新で旧predecessorが無効になったため未実行で判断記録として閉じた。共有カードの#253はこの取得時点では閉じられている。件数には判断記録、総合管理、配備待ちが含まれ、未修正バグ数とは一致しない。
 
-今回の担当は[Codex](codex://threads/01a1a6ef-927b-7d72-b689-5c442ada7af7)。進行の正本は各IssueとProjectであり、この文書は時点記録である。実装、局所検証、独立レビュー、本番の確認を分けて更新する。
+担当は[このCodexチャット](codex://threads/01a1a6ef-927b-7d72-b689-5c442ada7af7)。3つのサブエージェントと実装・独立レビュー・統合を分担する。進行は各IssueとProjectに残し、本書は取得時点の一覧と、その後15時台までの作業記録を分ける。
 
-## 今回実装・レビューした範囲
+## 実装・レビューと残る受入
 
-| 対象 | 実装と独立レビュー | 次の受入 |
+| 対象 | 今回の実装・確認 | 残る受入 |
 |---|---|---|
-| #217 品質計測 | [API #49](https://github.com/AtsushiHosaka/pals-api/pull/49)はDB commit後の終端、[Agent #49](https://github.com/AtsushiHosaka/pals-agent/pull/49)はLean試行・heartbeat・説明最終失敗・版付きSchemaを実装。[infra #96](https://github.com/AtsushiHosaka/pals-infra/pull/96)は保護fileとcollector設定をoffline準備 | 隔離verifierの制限を保つ出力先・署名付き設定・rotation、CloudWatch実抽出・通知。監視は未稼働 |
-| #232/#233 説明の根拠・結論 | [Agent #50](https://github.com/AtsushiHosaka/pals-agent/pull/50)で未証明の同一視を促す指示、複数行haveの引用、具体的結論を修正。新2題のLean監査と実モデル24呼出し、別の固定QA24反復を記録。[統合Agent #51](https://github.com/AtsushiHosaka/pals-agent/pull/51)は657件通過 | 本番と元の症状の確認。一般の精度向上とはしない。新しいQA根拠誤判定は#252 |
-| #250 Plus有料転換 | [API #50](https://github.com/AtsushiHosaka/pals-api/pull/50)で支払receipt、13か月保持、未回収を示すreportを実装。実PGで独立再現したUTC窓・snapshot不一致を修正 | 実Stripe、定期回収・削除、操作eventの新データ契約・trackerと集計。本番未収集 |
-| #250 後続schema37 | 専用署名契約[API #51](https://github.com/AtsushiHosaka/pals-api/pull/51)、候補と初回software更新[infra #97](https://github.com/AtsushiHosaka/pals-infra/pull/97)をoffline実装。[統合API #52](https://github.com/AtsushiHosaka/pals-api/pull/52)は実PG3群を含む724件通過 | 新image、全36形状/TLS/Aurora/native controller、署名候補と本番受入。旧36候補のimageだけを置換しない |
-| #11 質問の数式表示 | 本番sourceに既存Web #9の修正があることを確認。[Web #41](https://github.com/AtsushiHosaka/pals-webfront/pull/41)は実routeから履歴復元までの回帰・記録だけを追加し候補branchへmerge | 本番ブラウザ受入。別session使用中の既存タブは操作していない |
-| #251 新たに見つかったCI課題 | coupon状態の試験fixtureとRetry時のfocus検査を[Web #42](https://github.com/AtsushiHosaka/pals-webfront/pull/42)で修正・独立レビュー・merge。全1,721件、型・lint通過。Issue/ProjectはDone | 完了済みなので下の未解決一覧には含めない。製品のa11y変更ではない |
-| #252 新たに見つかったQA課題 | 最終版の拒否理由2件に、正しい下界→等号条件の導出を重複とする誤指摘を独立確認。根拠と別の受入条件をIssueへ記録 | 未修正。元の採点を保持し、正例・負例と理由を検証する別の実装へ着手できる状態 |
+| #231 タイトル | API#65/Web#46まででitalic内の積とMarkdownの境界を修正。API対象66件・Web対象91件、API統合122件・Web全145ファイル1,891件。元のAPI#44/Web#40とAPI#48へ統合 | 新image・本番と共有画面での確認 |
+| #252 QAの誤指摘 | 最初の候補は結論欠落を3/3誤承認し不採用。唯一の追加修正は同じ4入力で各3/3の厳格成功。全24理由を独立照合、Agent#53を#51へ統合し関連590件通過 | 固定群に限る受入。一般精度・生成全体・追加質問の実モデル精度・本番の改善は未確認 |
+| #232/#233 説明・結論 | Agent#50の引用と具体的結論の修正を保持。保存済み親の改行と不変hashの不整合をAgent#55/API#60で修正し、実worker→API→PGで独立10件確認 | 新worker・本番の元の症状、Lean行表示 |
+| #236 出力言語 | API#46を保持。Agent#55で現APIのnullableな言語項目を厳格に受ける互換性を追加 | 個別の日本語→en事例、言語優先順位#229/#230の判断、本番受入 |
+| #250 支払・転換 | API#53/#57/#59で失敗receipt後の公平回収・排他を実装し、親担当も実PG5件を確認。元#50/#51へ反映 | 実Stripe・定期runner/削除・操作event契約とtracker。本番未収集 |
+| #250 後続37 | API#52へ品質・支払・37契約・親参照を通常merge。536単体、差分71、PG119件通過。広めのPG群39件は失敗し、代表3件は旧32ceでも同じfixture不備を再現 | 39件全部の旧版同一性は未確認。新image・完全schema・Aurora/PKI/native controllerと本番受入 |
+| #217 CloudWatch | API#64/Agent#56でruntime診断のHTTP→API→DB終端を修正。独立実PG/mTLS16件も通過し、API#52/Agent#51へ統合 | 実モデル・生成全体・本番の受入とcollectorの収集/抽出/通知は未完了 |
+| #216 評価記録 | 既存295行を保持し314行へ追記。失敗案8、追加修正8、タイトル測定3。6グラフ再生成・監査エラー0 | PR#254を独立レビュー後に親#243へ統合。既存2群の人手採点と原本から8行ずつ再生成して台帳と一致。汎用の自動収集・採点・appendは未実装 |
+| #234/#244 配備 | 単一項目の承認済み読取は11:13完了。13:51のfresh metadata照合も一致。API5c1a2fd7/Web11b62967の実imageと正式receiptを固定。未署名候補fa94cf78を親担当も照合 | 旧fa94への承認を受領したが、別チャットの本番seq19で前提変更となり未実行。新候補の具体化と本番受入。37用imageを36へ混ぜない |
+| #240 初期Plus | 実Plus1か月の資格・期限・取消・引換を実装済み。最大100人程度という意向を記録 | 発行数・引換期限の具体条件、実Cognito→引換→利用。本番発行0件 |
+| #239/#242 費用・料金 | Gmail/Cost Explorerの費用、72時間の容量、保存原価523呼出しを調査済み | AWS縮小・料金変更は未実施。欠損/失敗原価・利用分布を含む採算と実負荷検証が必要 |
+| #228/#11 共有カード・質問数式 | #228は別チャットが本番・実X下書きを確認して完了。質問数式は既存sourceとWeb#41の回帰を保持 | #248の追加カード修正、#11の本番ブラウザ受入は継続。別セッションのタブを重複操作しない |
+| #251 進捗スクリプト | 前回の監査・修正・独立検証でdone/closed | 製品のa11y修正とは区別し、下の未解決一覧へは含めない |
 
-説明生成の初回比較は旧版・中間版とも2/2で、精度向上は確認していない。固定QAの別測定では、結論欠落は旧4回誤承認・最終4回正しく拒否、正例は両版4回承認だった。一方、未証明の同一視への拒否自体は両4/4でも、正しい理由まで要求すると旧4/4・最終2/4だった。別群を足して改善率を作らない。
+15時台には#255を新設した。API#66の試験DB分離は独立25件を通過してAPI#52の6985402へ統合した。新Agent向けimage補助infra#98は、中断時回収とcanonical archive再照合のP2指摘2件を修正中。一覧のラベルは取得時点の値として保持し、後から完了扱いへ読み替えない。
 
-## 一覧の読み方
+追加レビューのsource・測定・限界は[記録](review-followups-2026-11-05.md)、費用は[AWS調査](aws-cost-review-2026-11-04.md)と[容量調査](aws-cost-capacity-2026-11-05.md)、料金は[再確認](pricing-review-2026-11-04.md)を参照する。別群を合算して改善率を作らない。
 
-以下は取得時のラベルをそのまま分類した。readyは受入済みや自動マージ可能という意味ではない。他チャットがin-progressの領域は重複編集しない。#138にはreadyとblockedが共存しており、待ち先を確認してから整理する。
+## 取得時点の未解決一覧
+
+以下のラベルは15:18 JSTの取得値。readyは受入済みや自動merge可という意味ではない。他チャットがin-progressの領域は重複編集しない。#138のready/blocked共存も取得値のまま残す。
 
 | Issue | 優先度 | 担当ラベル | 状態ラベル |
 |---|---|---|---|
-| [#252 回答QAが正しい証明段階に根拠のない欠陥を付け加える](https://github.com/AtsushiHosaka/pals/issues/252) | high | codex | ready |
+| [#255 判断: クーポン36候補の署名と期限付き読み取り検証](https://github.com/AtsushiHosaka/pals/issues/255) | high | user | needs-decision |
+| [#252 回答QAが正しい証明段階に根拠のない欠陥を付け加える](https://github.com/AtsushiHosaka/pals/issues/252) | high | codex | in-progress |
 | [#250 操作後の離脱とPlus有料転換を、CloudWatchと確定課金記録で計測する](https://github.com/AtsushiHosaka/pals/issues/250) | high | codex | in-progress |
-| [#244 Plusクーポンを本番へ出す専用署名appendプロファイルと引換経路を実装する](https://github.com/AtsushiHosaka/pals/issues/244) | high | codex | needs-decision |
+| [#248 Lighten shared-card Lean backdrop and add truthful English verification footer](https://github.com/AtsushiHosaka/pals/issues/248) | 通常 | codex | in-progress |
+| [#244 Plusクーポンを本番へ出す専用署名appendプロファイルと引換経路を実装する](https://github.com/AtsushiHosaka/pals/issues/244) | high | codex | in-progress |
 | [#242 Plus・Pro・Researchの料金と利用枠を、実測原価と利用分布で再検討する](https://github.com/AtsushiHosaka/pals/issues/242) | high | codex | in-progress |
 | [#240 初期ユーザー向けにPlusを1か月使えるクーポンを準備する](https://github.com/AtsushiHosaka/pals/issues/240) | high | codex | needs-decision |
 | [#239 AWS費用の増加理由を確認し、機能を保って削減する](https://github.com/AtsushiHosaka/pals/issues/239) | high | codex | in-progress |
 | [#237 【引き継ぎ】Claude から Codex へ: 現状と、着手する順序(2026-11-04)](https://github.com/AtsushiHosaka/pals/issues/237) | high | codex | in-progress |
 | [#236 日本語の依頼で出力言語が en になった経路を特定する](https://github.com/AtsushiHosaka/pals/issues/236) | high | codex | in-progress |
 | [#235 イプシロン問題のベンチマーク結果を X に載せる(共有リンク・下書き・確認)](https://github.com/AtsushiHosaka/pals/issues/235) | high | user | needs-decision |
-| [#234 機能修正を次の署名リリースへ配備する（seq18は同一構成更新済み）](https://github.com/AtsushiHosaka/pals/issues/234) | high | codex | blocked |
+| [#234 機能修正を次の署名リリースへ配備する（seq18は同一構成更新済み）](https://github.com/AtsushiHosaka/pals/issues/234) | high | codex | in-progress |
 | [#233 計算問題で説明に最終的な答えが明記されない(双対数 ε²=0 の総和)](https://github.com/AtsushiHosaka/pals/issues/233) | high | codex | in-progress |
 | [#232 Lean コードのパネル: 行ごとの説明が出ない、説明欄が上部を占める](https://github.com/AtsushiHosaka/pals/issues/232) | high | codex | in-progress |
-| [#231 チャットのタイトルが LaTeX のソースのまま表示される](https://github.com/AtsushiHosaka/pals/issues/231) | high | codex | ready |
+| [#231 チャットのタイトルが LaTeX のソースのまま表示される](https://github.com/AtsushiHosaka/pals/issues/231) | high | codex | in-progress |
 | [#229 UI の言語と回答の言語を統一し、初期の言語をブラウザの言語から決める](https://github.com/AtsushiHosaka/pals/issues/229) | high | codex | ready |
-| [#228 共有チャットのURLを X に貼ったとき、カード画像(Open Graph)が出るようにする](https://github.com/AtsushiHosaka/pals/issues/228) | high | codex | blocked |
 | [#226 Verify learning-context constraints through full proof and stored-answer paths](https://github.com/AtsushiHosaka/pals/issues/226) | 通常 | codex | ready |
 | [#224 Decision: context-aware angle units and curriculum-aware explanations (#183)](https://github.com/AtsushiHosaka/pals/issues/224) | 通常 | user | 未設定 |
 | [#223 本番で lean_explanation_failed が簡単な質問でも出続けている](https://github.com/AtsushiHosaka/pals/issues/223) | high | codex | ready |
@@ -88,8 +97,8 @@
 | [#12 Mathematics設定が読み込みエラーになり、Retryでも回復しない](https://github.com/AtsushiHosaka/pals/issues/12) | 通常 | user | needs-decision |
 | [#11 認証済みチャットの質問本文でLaTeXが数式として表示されない](https://github.com/AtsushiHosaka/pals/issues/11) | 通常 | codex | blocked |
 
-## 配備と判断待ち
+## 配備と判断の扱い
 
-同一構成のseq18更新だけが本番で完了している。新機能は未配備で、次の署名候補に必要なembedding版の限定読取は承認待ちである。自動承認レビューが旧承認の範囲・期限外として操作を拒否したため、別経路で読み取らない。
+#228/#253の最新記録で、14時台にshared-cardのseq19が本番適用済みと確認した。Web3bc3f708、manifest1630bc12、schema35を維持した更新であり、保存原本のECDSA署名を親担当も独立検証し、期限11月6日11:10:57 JSTを確認した。新しいlive検査は行っていない。旧seq18の期限を現行期限として使わない。#248は別チャットが追加修正を進めている。同じ本番へ別候補を同時適用しない。
 
-Plus1か月と、おおむね最大100人という意向は記録済み。実際の発行数・引換期限は未確定である。料金変更、AWS縮小、全操作の収集開始も実施していない。個別の進捗と質問・回答は[総合Issue #237](https://github.com/AtsushiHosaka/pals/issues/237)と関連Issueからたどる。
+オーナーは#255のfa94候補への署名・全読取検証を承認したが、候補のpredecessorが旧seq18のため実行を停止した。署名/IAM/追加SSM/native/DB/サービス操作は0回。異なるdigestへの承認流用はせず、新しい候補を#234/#244で具体化する。質問・回答・理由と影響は#241/#255へ記録した。

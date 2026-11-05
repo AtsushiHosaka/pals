@@ -1,8 +1,29 @@
-# 次期クーポン配備の準備と承認待ち
+# 次期クーポン配備の準備と検証
 
-現在の本番は同一構成へ更新したseq18である。以下は次の機能・schema候補を具体化するための準備で、本番の署名・DB適用・サービス切替は実施していない。進行は[#244](https://github.com/AtsushiHosaka/pals/issues/244)、機能配備は[#234](https://github.com/AtsushiHosaka/pals/issues/234)、ソースの固定は[親PR#249](https://github.com/AtsushiHosaka/pals/pull/249)を参照する。
+別チャットの#228/#253の記録では、14時台にshared-cardのseq19が本番適用済みである。以下は本チャットの旧seq18を前提としたクーポン候補の準備記録で、使用を停止した。本チャットから新schemaの署名・DB適用・サービス切替は実施していない。進行は[#244](https://github.com/AtsushiHosaka/pals/issues/244)、機能配備は[#234](https://github.com/AtsushiHosaka/pals/issues/234)、ソースの固定は[親PR#249](https://github.com/AtsushiHosaka/pals/pull/249)を参照する。
 
-## 実際に固定したsourceとimage
+## 前提変更による停止
+
+オーナーは#255で候補fa94への「署名と全読み取り検証を承認」と回答した。しかし回答直前に、本番がmanifest1630bc127e6281b6a7a5bd75d51bee80df7f1445b7710686c1439ef86055caa7のseq19へ進んだことを確認した。旧candidateはseq18をpredecessorとするため署名せず保全する。policy付与・追加SSM/native・DB/サービス操作も0回。#255は判断記録として閉じ、異なるdigestへ承認を流用しない。新predecessorの保存原本を既知の独立SPKIでECDSA検証し、manifest1630bc12・署名349dc425と期限11月6日11:10:57 JSTを照合した。新たなlive SSM確認はしていない。次候補は少なくともseq20以降とし、進行中の#248と調整する。
+
+## F16反映時点の履歴
+
+14:27 JSTに、タイトルのF16を反映したsourceから正式receiptと未署名seq19候補を再生成した。API#48は5c1a2fd791b63228c60376527cbf9f5c18014939、Web#40は11b629673a70b39bfdbf2faf315f6cc9ea696aef、親#249のsource snapshotはf514ffed0fa8cf03053ece37e8e36d374de5bb5dである。infra fb9d224・worker6e5c58d・verifier189b443を保持し、後続37やruntime診断修正は含めない。
+
+| 成果 | SHA-256 |
+|---|---|
+| 未署名候補 | fa94cf782cbb20c2ffcac4134b725ff34ee813389d0a3746cd6cc526f2f9eb51 |
+| 正式v2 receipt | a372af8d76076a7d307f0742e7e512184466ea1489aae7e221447f10a4a04bda |
+| API image | 0b7a06b3c1e6a47c21d050d17d87d055d2f2ee5292a78ac8f10214c0fde3edc8 |
+| Web image | 25e493e49c82d44a922709b64041c1bccc76660bd2b993fefa9473573ac2c753 |
+
+候補の発行時刻は2026-11-05T05:27:36Z、期限は翌日の同時刻、JSTでは11月6日14:27:36で24時間。まだ署名していないため、稼働中のseq18の期限11月5日23:53:01 JSTを更新したものではない。
+
+新API/Webは既存の非公開registryへ保存し、再pull後のRepoDigest・platform・source labelを確認した。APIはapp/docs/scripts/pyprojectの全ファイルと実imageのcopy・実行bitが一致した。コピー確認用の未起動containerと認証cacheは削除済み。全4役割のOCI実体を確認したが、これはoffline builder自身の外部検証ではなく、別のpublication証拠である。
+
+旧60f8cd2/e63bc50とF15時点の42680595/6c7abd98、候補54105f7aは履歴snapshotとして保持し、署名・本番適用の対象へ流用しない。以下の初回構築記録もその時点の履歴である。
+
+## 初回sourceとimageの履歴
 
 独立したrelease作業ツリーを既存Git object storeから作成し、親と4つの子をcleanな状態にした。追加のアプリ・PGは起動していない。親のrelease commitは`bb33688da12b369d29109da86fa2b9941dc2a9fd`で、調査文書のPR#243のbranchとは分けた。
 
@@ -25,19 +46,19 @@ Webのplatform・revision label・非root user・起動commandと、公開前後
 
 正規のsource capture CLIは5つのcleanなrepositoryから成功し、source-commits JSONのSHA-256は`69bed65ca94b509af95909c16eb0dc282e25b4f796bc93de3ec4c7bedacd6469`だった。現行seq18の実署名をローカルECDSAで検証し、鍵pinも現行manifestが指すKMS公開鍵への認証済みGetPublicKeyで独立確認した。KMS署名や権限追加は行っていない。
 
-## 未生成のものと、承認が必要な読み取り
+## 限定読取の完了と次の承認範囲
 
-正式な`pals.production-images.v2` receiptと、新しいunsigned manifestはまだ生成していない。receiptに必須の`draft_embedding_revision`が保存済みのpublication receiptやworker imageのENV・labelでは確認できなかったためである。ローカルimage receiptや推測した版を代用しない。
+オーナーの明示承認とSSO認証後、11:13:35 JSTに指定1項目を正規経路で読んだ。manifest・署名・SPKI、設定と環境参照のhash/所有/modeを再検査し、値は非公開で保管した。以前の読取承認待ちは解消済みである。13:51 JSTのfresh metadataでも参照先は一致し、追加の値の抽出は0件だった。
 
-現行seq18の保護されたcompute設定と2つの環境ファイル参照のSHA・所有者・modeを照合し、`PALS_DRAFT_EMBEDDING_REVISION`という1項目だけを読むSSM操作を準備した。自動承認レビューは、本番の保護設定を読む操作が、01:30 JSTまでの同一構成更新に限った先の承認を超えるとして拒否した。操作は未実行であり、別経路で回避していない。
+以下は承認を受領したが未実行となった、候補fa94cf78のKMS署名と読取検証の案である。未適用の一時policyはSHA-256 d5bda1541297ad3fd23cd58f2e6cbc9864f248858011cc61bb0a61854d8883b4。Tokyoの既存release keyへGetPublicKey/Verify、既存Aurora clusterと1 memberへDescribeを許可し、11月5日16:10 JSTに失効させる。KMS Sign・DB書込・wildcardをpolicyへ追加せず、同名があれば上書きを拒否し、最後に自分の文書だけを削除して不在を確認する。同じroleの全sessionに作用し、特定processへ隔離するpolicyではない。
 
-オーナーへ、この単一項目の読み取りを承認してよいか質問した。環境全体や認証情報の表示、書換、サービス操作、権限追加を含めない。回答待ちの内容と理由は#241/#244に記録した。読み取りが承認されても、それ自体は新schemaの署名・適用を承認したことにはならない。
+完全な現行native検査には、正規の検証処理内で環境設定、TLS鍵、既存AWS資格情報を内部照合する範囲も必要になる。現35段DBの読取は既存の制限runtime principal・CAを内部利用し、READ ONLYと10秒のstatement timeoutを使う。master/release資格は使わない。これらはembedding1項目の承認から広げず、明示範囲として確認する。値を画面・Issue・ログへ出さない。
+
+この段階に本番切替・DDL・DB admission・drain/停止/再起動は含めない。未配備36のadmission receiptは作らず、現35の検査を新36のnative起動成功とは扱わない。既存の追加質問のclaim不一致も候補に残り、初期クーポン発行前に実Plus機能の受入を行う。
 
 ## 続きの手順と復旧の条件
 
-欠けた1項目を正規の根拠で確定した後、sourceを再確認し、正規CLIで4imageのv2 receiptを生成する。専用offline builderは、署名済みseq18・独立hash/key pin・exact35 registry・新API sourceを使い、36への1段階だけのappend候補を作る。44件の独立検証は、API・infraのpure validatorとの互換までで、実Aurora・PKI・OCI内容や本番更新をこのツールだけでは証明しない。
-
-予定していた発行時刻は`2026-11-04T16:46:43Z`、期限は翌日の同時刻である。ただし現時点で候補digestは存在せず、承認待ちが続いた場合も古い候補を有効だと扱わない。再開時に実時刻と24時間方針を検査し、必要なら新時刻で候補を作り直す。
+旧候補のsource・実image・正式receiptは保全済み。次は現行seq19の原本と進行中のWeb修正を確認して、新しいpredecessorに対する候補を具体化する。旧fa94候補への署名・検証は実行しない。完全な新36schema・Aurora・PKI・native controllerを通す正の起動と、実Cognito→引換→Plus機能はまだ確認していない。候補の署名だけで配備済みとはしない。
 
 DB appendとadmissionのcommit前失敗では旧状態を保持する。commit後は36段階へ進むため、旧35imageへ戻すだけでは復旧できない。36互換imageと正規の後続software releaseで修復する。appendを再実行して署名期限だけを延ばさない。
 

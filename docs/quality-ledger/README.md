@@ -114,4 +114,4 @@ python -m venv .venv && .venv/bin/pip install pandas matplotlib   # 初回のみ
 - 回答経路の所要時間の計測は、Langfuse を使っていません。[answer-path-latency-tracing-2026-11-02.md](../answer-path-latency-tracing-2026-11-02.md) は、固定のラベルと数値だけを記録する別の仕組みだと書いています。
 - 本番の LLM 呼び出しが Langfuse に常時送られているかどうかは、リポジトリの docs と PR では確認できませんでした。AWS の事業計画の表に「CloudWatch + Langfuse-compatible tracing」とある([pals-startup-aws-activate-business-plan.md](../pals-startup-aws-activate-business-plan.md))のは計画の記述です。
 - 台帳と Langfuse の関係(提案)。台帳は、評価のまとまりごとの**長く残す要約**です(成功率、失敗コード別の件数、費用、所要時間、出典)。Langfuse は**リクエスト単位のトレース**で、1回ごとの経路を調べる用途です。台帳の行から、必要なら同じ評価の Langfuse のトレースへたどれます。ただし台帳にトレースの ID は入れません(質問本文や利用者情報につながる値を残さないため)。
-- 失敗コードは [taxonomy.md](taxonomy.md) と同じ語彙で、評価の書き出しと運用の監視([#217](https://github.com/AtsushiHosaka/pals/issues/217) の CloudWatch)に使えます。評価の実行時に自動で台帳へ追記する仕組みは、まだありません。既存の仕組み(JSONL の履歴から台帳の行を作る)に乗せるか、CloudWatch のメトリクスに出すかは、#216 と #217 で決めます。
+- 失敗コードは [taxonomy.md](taxonomy.md) と同じ語彙で、評価の書き出しと運用の監視([#217](https://github.com/AtsushiHosaka/pals/issues/217) の CloudWatch)に使えます。[固定QA取り込みCLI](import-fixed-qa.md)は、既存2群の原本と人手採点から候補CSVを生成できます。意味の自動採点と台帳への自動追記、将来の評価の汎用収集は未実装です。CloudWatchの実収集は#217で追跡します。
