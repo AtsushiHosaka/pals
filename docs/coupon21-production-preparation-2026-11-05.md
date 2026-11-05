@@ -44,3 +44,7 @@ cache回収の追加レビューでもF20を検出した。未知の隣接ファ
 SSMへ送る入力は、sourceを分割して各段階でhashを検査し、host内で元の署名済みpacketへ復元する。独立decodeで両hostの元packetと同じ内容に復元でき、最大commandは53,694byteで63,000byte未満だった。後続operatorの入力は実際のnative準備成功receiptからだけ作り、仮のreceiptやadmissionを使わない。実行wrapperには本番適用のactionを設けず、読取検査を固定した。
 
 ここまでのnative・cache・wrapperの検証はofflineである。承認待ちの段階で、権限付与、保護された本番資格の読取、DB接続、native準備は実行していない。次の作業は、#271への回答を受けてから再開する。
+
+## 他チャットの記録との統合
+
+記録PR#269の統合前に、mainへ設定画面の検証4行が追加された。mainの356行をrawのprefixとして保持し、今回の4行も全20fieldを保って足した360行へ統合した。設定画面の文書とsubmodule参照も保持する。6グラフを同じ台帳から再生成し、監査エラー0を確認した。これは記録の統合であり、署名済み候補のsourceやimageを変更していない。
