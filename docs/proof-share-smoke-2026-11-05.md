@@ -122,3 +122,39 @@ footer condition was unchanged. This is a local visual regression check, not a
 model-accuracy benchmark or evidence of production deployment. No new model
 request, cost measurement, or latency measurement was performed. Images and
 conversation content remain outside public Git.
+
+## Deployment preparation and authentication blocker — 2026-11-05 JST
+
+The owner explicitly requested production activation and an X draft preview.
+The prior operator chat was inactive. Preparation preserves the current API,
+worker, verifier, infrastructure and 35-step database registry; it advances only
+the Web source to the merged PR #39 revision above and its parent gitlink.
+The clean five-repository capture is on pushed parent branch
+`codex/card-only-release-20261105`, commit
+`b7160a3c0b9eec78a6567b3341f4922b900b4a65`. It does not include coupon changes.
+
+A local `linux/arm64` deployment image was built from a Git archive of the exact
+merged Web source, with the existing verified public build arguments. Archive
+SHA-256: `d3f8d75bcf3d0bc503de0a81148b3397b5ca031150bebad239d22619a5da1a3d`.
+Local image ID: `sha256:9809b33faffe1611cfba955219b73f8b782fb9d57fcb0af24e12cb01c17c5f83`.
+This is a local identity, not a published immutable image or release receipt.
+
+One run of that actual image fetched the existing anonymous snapshot and rendered
+a 1200×630 PNG. The marker and text both ended at y=570, with the existing accent
+RGB `(201, 84, 69)`; response header checks passed. The runner exited nonzero at
+its immediate cleanup assertion because Docker's automatic removal was still
+asynchronous. A subsequent check confirmed the task container absent and its
+loopback port released. Rendering passed; the original runner did not exit zero.
+
+Eleven offline preparation checks passed against the real predecessor signature
+and pinned API transition validators. They cover retained source/schema fields,
+sequence rules, receipt rejection and unchanged native helper functions. These
+checks do not establish new image publication, a signed candidate, database
+admission, host activation, recovery readiness, or public X rendering.
+
+The existing AWS SSO token had expired. The narrow protected environment-field
+read failed at authentication before any remote command was submitted. A normal
+SSO sign-in was opened for the owner; its first pending login expired and was
+reopened. No image was pushed, no IAM permission was changed and no production
+cutover was attempted. Deployment and the actual X card check remain pending
+AWS sign-in and the owning signed release process. No X post was sent.
