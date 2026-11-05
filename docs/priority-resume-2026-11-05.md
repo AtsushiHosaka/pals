@@ -27,8 +27,27 @@
 
 各担当は別の作業領域を使い、既存の依存環境・停止済み試験DBを再利用する。単体試験の件数を数学の精度へ加算しない。実装後は別担当が差分と根拠を確認し、親担当が結果・未検証範囲を照合する。
 
-## クーポン準備で判明した制約
+## クーポン候補の準備結果
 
-自動承認レビューが、新Web imageを既存の非公開ECRへ保存する操作を拒否した。この保存先への非公開source由来成果物の送信について、今回の明示承認がないことが理由だった。同じ送信を別経路で再試行せず、ローカルbuildと検査を継続する。未送信のimageに本番のpublication証拠があるとは記録しない。送信するimageと保存先を特定し、必要な承認を求める。
+自動承認レビューは、新Web imageを既存の非公開レジストリへ保存する操作を、明示承認の不足により拒否した。ローカルbuildと独立照合を完了して対象を示した後、オーナーは「このimageのECR保存を承認する」と回答した。[判断#261](https://github.com/AtsushiHosaka/pals/issues/261)に承認範囲を残した。具体的な保存先・非公開artifact識別子の公開記録も拒否されたため、本書には含めない。
+
+承認後、照合済みimageを再buildせず新規タグで保存し、実digestと再取得後の実体を確認した。一時認証cacheは削除済み。cleanな5リポジトリのsource capture、4役割のOCI実体、正式receipt、seq20保存署名、APIの正規validatorと35→36の1段階append・専用planを照合し、**未署名のseq21候補**を作成した。親担当もcanonical bytes、正確な変更field、不変のworker/verifier・runtime binding・platform、4役割のID・構成・layerを独立照合した。
+
+[source固定PR#263](https://github.com/AtsushiHosaka/pals/pull/263)は、前候補のsource branchに対するWeb gitlinkだけの差分で、mainへ統合していない。候補の期限は**2026年11月6日16:40:50 JST**。これは未署名候補の期限であり、稼働中seq20の期限を延長したものではない。正確な候補・receipt・image識別子と原本は、Git外の0700/0600領域で保持する。最初のsource captureは担当生成のbytecodeを検出して拒否し、その生成物だけを除いた再実行が成功した。不完全な初回出力は採用していない。
+
+freshな本番predecessor・排他とnative readinessは未確認。KMS署名、IAM変更、追加SSM読取、DB受理・本番切替・コード発行は0回。旧#255への承認を新候補へ流用しない。ECR保存の承認を、これらの操作へ広げない。
 
 クーポン条件は[#240](https://github.com/AtsushiHosaka/pals/issues/240)・[#241](https://github.com/AtsushiHosaka/pals/issues/241)で回答済みの、上限100人・1人1回・引換後Plus1か月・発行から30日以内の引換を維持する。発行は0件のままである。
+
+## 並列実装と独立レビュー
+
+| 範囲 | 実装・検証・統合 | 未検証 |
+|---|---|---|
+| 品質ファイル出力 #217 | [Agent#57](https://github.com/AtsushiHosaka/pals-agent/pull/57)。非blocking排他・部分appendの回収・inode/権限の再検査。担当199件と別のworker等94件、親の独立112件が通過。品質統合PR#51へ`aedef030`で通常merge | 永続outbox、OS停止後配送、本番collector・CloudWatch抽出・通知。coupon36の固定workerには追加しない |
+| 支払周期処理 #250 | [API#67](https://github.com/AtsushiHosaka/pals-api/pull/67)。既存の回収・13か月削除を有限周期で実行し、資格情報を分離。同じDBを要求し、deadline/停止時に子processとDB sessionを解放。担当33単体・契約と47実PG、独立26単体と5実PG、親33単体・契約が通過。統合PR#52へ`5daf8ec`で通常merge | 実Stripe、production37受入、配備された定期実行、操作tracker・CloudWatch。本番captureの拒否を保持 |
+
+両差分の独立レビューにP0–P2の指摘はなかった。APIの最初の実PG/CLI5ケースは4/5で、interval待機中のSIGTERM後に次周期の停止結果を余分に出した。次の子processは起動していない。周期開始前の停止検査を加え、同じ5ケースが5/5になった。別担当も5/5を確認した。この局所的な運用試験を、支払全体・本番稼働・モデル精度の成功率へ読み替えない。
+
+初回JUnitのSHA-256は`754e771e35a3be7028d2d847920ea9b69da43b4f92dba1ea833742a1c8384722`、修正後の47件JUnitは`73cc6114a63a2fee88d3a651a56f58f311a91c40c53696930cf7e37e01678fe6`。台帳には同じ5つの運用ケースの初回・修正後を別行で残し、単体・既存回帰の通過件数を加算しない。
+
+既存の試験PostgreSQLを再利用し、元の3DBと38roleのflag行が前後で一致、他client0を確認して正常停止した。データとログは保持する。Agentの実ファイル・実socket試験のprocessも終了した。既存mypyの無関係なunused-ignoreとStarlette/httpxの警告は残り、限定mypy・Ruff・diff検査は通過した。
