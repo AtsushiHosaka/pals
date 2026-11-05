@@ -1,6 +1,6 @@
-# ロゴ・共有タイトル修正版v2の本番準備
+# ロゴ・共有タイトル修正版v2の本番反映と公開画面検証
 
-最終Webソースの実ARM64ビルドと公開に続き、新候補の生成・署名、Webのprewarm、両ホストのnative準備と実metadata取得まで完了しました。最新の取得完了は2026-11-05 15:15 UTC、JSTでは11月6日00:15です。operatorのREAD ONLY preflightより前の準備段階で、DB受理とactivationはいずれも0回です。本番はseq20のままで、公開ページのロゴ操作は未確認です。進行は親Issue #273、4操作の一時権限の判断はIssue #279に記録しています。
+ロゴ導線と共有タイトル修正版を含むWebソース`120cb477911b89ad2b8487f968fc0187f7d85496`の本番反映を完了しました。両ホストはseq21・7サービスのreadinessを通過し、一時権限の削除、公開入口の復元、配備所有権の解放も完了しています。2026-11-05 16:17 UTC、JSTでは11月6日01:17に、既存の日本語共有ページでPALSロゴを押し、`https://palschat.site/try`へ進めることを実ブラウザーで確認しました。進行は親Issue #273、権限判断はIssue #279、記録は[親PR #283](https://github.com/AtsushiHosaka/pals/pull/283)にまとめています。
 
 ## 入れ子の強調内にある積の修正
 
@@ -50,7 +50,7 @@ prewarm前に、実OCIのindex、ARM64 manifest、config、9層のrootfsとソ�
 
 controlのnative準備は15:11:11 UTC、computeは15:13:58 UTCに成功し、両方とも`prepared_not_admitted_not_activated`を返しました。serving applicationとDBの変更はありません。実prepared metadataの読み取り取得も、controlが15:14:02 UTC、computeが15:15:31 UTCに成功しています。これらはJSTでは11月6日の00時台です。取得したbytesを復号して原本のhashと厳密に照合し、controlのSHA-256は`f564df6b7e3d74b338571d78ce7390f8b506f54c1d6cac9f47342fbe2d716584`、computeは`c278708398e2ae51f0641fef0d5e1ccb4d4bd8a90312ccb2500350d5027d661a`でした。native準備2/2とmetadata取得2/2は、それぞれ異なる段階の記録です。
 
-実prepared参照から、38個のhelper関連成果物をofflineで生成しました。このうちPythonは17ファイルです。派生coreは不変で、rootによる完了版のレビューと配置・実行は別に扱います。ファイル数やAST検査を台帳の独立した本番試行へ加算していません。ここまでの結果はソフトウェア全体の最終合格や本番反映を示すものではありません。
+実prepared参照から、38個のhelper関連成果物をofflineで生成しました。このうちPythonは17ファイルです。派生coreを保持し、完了版のレビュー後に両ホストへ配置しました。配置と各helperの実行は別に扱います。ファイル数やAST検査を台帳の独立した本番試行へ加算していません。ここまでの結果はソフトウェア全体の最終合格や本番反映を示すものではありません。
 
 ## 準備前に再取得した現状
 
@@ -58,10 +58,46 @@ controlのnative準備は15:11:11 UTC、computeは15:13:58 UTCに成功し、両
 
 これらは準備に使う現状の補足として時刻を分けて記録し、先の2ホスト観測と合算したconfidenceや、継続的な稼働率は作っていません。新候補に対するpreflight・DB受理・activationの成功とも扱いません。
 
-## 承認と残作業
+## 材料配置と切り替え前の確認
 
-ユーザーは同じ既存対象に対する4つの読み取り操作を、付与要求から最大45分だけ許可することと、settings担当への調整メッセージ送信を明示的に承認しました。メッセージは送信済みで、IAMの付与はまだ0回です。settings担当とは単独配備をHOLDし、次に統合リリースを行う順序で合意しています。担当側が別途観測したfresh readのclaim 0件は、本作業の独立した排他確認と混同しません。
+完了版helperはcontrolが15:26:32 UTC、computeが15:28:38 UTCに配置を完了しました。公開operatorの材料配置も15:28:54 UTCに成功しています。配置時点のアプリケーションとDBは変更していません。15:39:20・15:39:52 UTCの実observerは、両ホストの旧seq20 runtimeが実際の参照と一致することを確認しました。
 
-旧署名候補`2e3fbc08f2920d836d2a217a16aace4457aacf89586a2e9a7b4c9f835b7dc443`のHOLDは継続し、署名原本を保持しています。v2では完了版helperのレビューと配置、必要な一時権限の付与、READ ONLY preflight、未失効leaseの再確認、正規のDB受理と切り替え、後始末と権限削除、公開ページの実クリック確認が残ります。本番反映やクリック成功はまだ主張しません。
+生成claimの読み取り診断は15:40:40・15:49:36 UTCの2回とも成功し、未失効のgeneration claimは0件でした。durable claimは変更していません。分母は2回の観測で、0件というcountを成功数にせず、後続の4項目drainが完了した証拠とも扱いません。
+
+## 45分の一時権限と正規preflight
+
+承認済みの同じ4操作について、15:47:40 UTCの要求から最大45分、16:32:40 UTCを上限とする一時権限を付与し、正確なpolicyのreadbackに成功しました。JSTでは11月6日00:47:40から01:32:40までです。期限は自動更新しません。付与記録のSHA-256は`54aafd09394fb10f54d28a3a3f5359d74e9b461772205fc4aca59f5934a609e7`です。この中間記録時点では削除前でした。実削除と不存在確認は後述の16:11:32 UTCに完了しています。
+
+15:48:06 UTCの正規READ ONLY preflightはSuccess・exit 0で完了しました。releaseとruntimeの35段階は一致し、DB mutationは0、serving actorも不変です。検査用container 2個と一時RAM領域の後始末もすべて成功しました。35段階ずつを70回の独立試行には換算せず、preflight全体を1回として記録しています。実原本のSHA-256は`045b046145cb5ce7e702a4320cedccc7b33445f7cbdbe22f0b7b20ffa10e0969`です。
+
+## 所有権取得と入口drainの中間状態
+
+15:50:00 UTCに正規の全体所有権を取得し、15:50:50・15:51:03 UTCにcontrolとcomputeのlifecycle planが通過しました。両planは旧runtimeと実prepared参照を照合する読み取り処理で、mutationは0です。所有権取得とplanの成功は、DB受理や新アプリの起動ではありません。
+
+公開入口の登録解除は1回だけ要求しました。AWS CLIはexit 0・空応答を返しましたが、root wrapperがJSONとして解析して`JSONDecodeError`で停止しました。要求は再送せず、実readbackで`draining`を確認しています。これはAWS側の登録解除失敗と断定できる結果ではなく、CLI応答の解析不足です。台帳では`infra.result_parse_failure`を1件記録しました。原本のSHA-256は`5eecb49d8dcbd53bf41e9bccbdaa6be3059704e17b09c67f0468abdd6cf7c6e3`です。
+
+この中間記録時点ではwrapper修正版の独立レビューと後続処理が未完了でした。その後、登録解除を再送せず実状態から正規手順を再開しています。解析失敗の原本と台帳行は、後続の成功で置き換えず保持します。
+
+## 本番反映と後始末の完了
+
+両ホストのdrainは全項目0を確認し、旧writerの停止も両方で強制停止なしに完了しました。15:57:45 UTCに正規operatorが順序付き5段階を完了して`released`を返し、実native受領記録のbytesも取得・照合しました。SHA-256は`9a6a88eab22b4a91dac448e4e120cf95407bf765484971e0ac99adf7bba88c72`です。両ホストのfinalize、旧資源のcleanup、新coreの起動とreconcilerの引き継ぎを終え、recovery jobの生成・assembly・installも完了しています。16:10:43・16:10:49 UTCの最終healthはseq21、Webソース120cb、compute 3・control 4サービスの稼働とreadinessを確認しました。
+
+一時権限は16:11:32 UTCに削除し、`NoSuchEntity`で不存在を確認しました。上限16:32:40 UTCより前で、原本のSHA-256は`83167a0e9c396046aaa66fb2d0ac0cfdf055c5b62743a85273b8548fed19069d`です。入口の再登録はCLI exit 0・空応答を正常に扱い、同じ単一targetのhealthyと14属性の不変をreadbackで確認しました。16:15:07 UTCに所有権の正規解放もSuccess・exit 0で完了し、`canonical_card_release_completed_and_released`を返しています。
+
+## 公開ページの実ブラウザー受入
+
+16:17:13 UTCに既存の日本語共有ページを開き、日本語の証明とLean検証済みの表示を確認しました。ロゴ全体のリンクを実際に押すと`https://palschat.site/try`へ進み、見出しが表示され、質問欄が入力可能でした。通常状態のロゴは4辺ともborderが0px、box-shadowはnone、focus-visibleはfalseです。outline-widthの計算値は3pxですがoutline-styleがnoneなので、この状態でoutlineは描画されていません。幅0pxとは記録しません。rootは共有ページと遷移後の実スクリーンショットも確認しています。受入原本のSHA-256は`e59357a0fda38eb2ea13030177ebe92d9c067f9001f557e6ab0a749c115fbd82`です。
+
+依頼された本番反映とロゴからの遷移確認は完了です。これは単発の本番受入で、全機能・全ブラウザーの回帰試験ではありません。再起動試験、新規の質問送信、独立したLean再実行、Xへの投稿は行っていません。関連ソースは[ロゴ導線のWeb PR #52](https://github.com/AtsushiHosaka/pals-webfront/pull/52)と[共有タイトル修正のWeb PR #57](https://github.com/AtsushiHosaka/pals-webfront/pull/57)です。
+
+## 承認と完了範囲
+
+ユーザーは同じ既存対象に対する4つの読み取り操作を、付与要求から最大45分だけ許可することと、settings担当への調整メッセージ送信を明示的に承認しました。メッセージは送信済みで、一時権限の付与は上記の1回です。settings担当とは単独配備をHOLDし、次に統合リリースを行う順序で合意しています。担当側が別途観測したfresh readのclaim 0件は、本作業の独立した排他確認と混同しません。
+
+旧署名候補`2e3fbc08f2920d836d2a217a16aace4457aacf89586a2e9a7b4c9f835b7dc443`のHOLDは継続し、署名原本を保持しています。この旧候補を適用せず、新しい02ca候補で本番反映・後始末・公開ページの実クリック確認を完了しました。今回の依頼範囲で残る必須検証はありません。
 
 初回の台帳追記は、既存401行をbyte単位で保持した7行です。今回はその408行を保持し、新候補1束、署名1束、OCI照合1束、prewarm 1回、native準備2ホスト、metadata取得2ホストの6行を追加しました。新しい6行の日付は原本のUTC実行日11月5日で統一し、JSTでは翌日となる処理は上記に併記しています。初回タイトル失敗2件は`infra.app_defect`です。モデル費用とAWS費用は測っておらず空欄です。
+
+今回の中間記録では、既存414行をbyte単位で保持し、helper配置、公開operator配置、実旧runtime観測、claim観測、一時権限付与、READ ONLY preflight、所有権取得、両ホストplan、入口応答の解析失敗を9行追加しました。各行はその段階の1操作または2ホスト・2観測であり、内部assertやcount項目を独立試行へ加算していません。
+
+最終追記では既存423行をbyte単位で保持し、DB受理までの排他・停止束、両ホスト切り替え束、recovery・最終health束、権限削除、入口復元・所有解放束、公開ブラウザー受入の6行を追加しました。関連phaseは束ね、5段階・7サービス・CSSの各assertを独立試行には換算していません。
