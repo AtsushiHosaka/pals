@@ -1,6 +1,8 @@
 # seq21の本番配備準備
 
-担当はCodex。[担当チャット](codex://threads/01a1aa9a-9621-7a10-a10b-5a2c46083d1a)、進行は[#234](https://github.com/AtsushiHosaka/pals/issues/234)・[#244](https://github.com/AtsushiHosaka/pals/issues/244)。前段の[候補準備記録](priority-resume-2026-11-05.md)とsource固定PR#263を引き継ぐ。本番はseq20、候補は署名済みseq21で、DB受理・本番切替・クーポン発行は未実施である。
+担当はCodex。[担当チャット](codex://threads/01a1aa9a-9621-7a10-a10b-5a2c46083d1a)、進行は[#234](https://github.com/AtsushiHosaka/pals/issues/234)・[#244](https://github.com/AtsushiHosaka/pals/issues/244)。前段の[候補準備記録](priority-resume-2026-11-05.md)とsource固定PR#263を引き継ぐ。17時台のcheckpointでは本番seq20と署名済み候補seq21を確認し、本チャットでのDB受理・本番切替・クーポン発行は未実施である。
+
+19時台に#271の承認を受領し、両ホストのnative準備と読取preflightが成功した。一時権限は削除し、不存在まで確認済みである。その後、別チャットの#265が本番更新の所有権を取得し、#273の配備も予定されていると確認した。現在は最新predecessorの確定待ちである。失敗した2回の経路と後始末を含む最新の結果は[実行記録](seq21-native-verification-2026-11-05.md)を参照する。以下の「承認待ち」「未実行」は実行前のcheckpointを保持した記述である。
 
 ## 実行した確認と署名
 
