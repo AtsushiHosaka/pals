@@ -12,9 +12,9 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-2026-08-28 から 2026-11-03 までの 270 行です。出典の内訳は、docs が 195 行、pals-agent の PR が 49 行、pals の Issue が 16 行、pals の PR が 10 行です。pals の PR と Issue の多くは docs と重複していたため、台帳では1行にまとめて `source` に両方を書きました。
+2026-08-28 から 2026-11-05 までの 289 行です。出典の内訳は、docs が 195 行、pals-agent の PR が 49 行、pals の Issue が 17 行、pals の PR が 28 行です。pals の PR と Issue の多くは docs と重複していたため、台帳では1行にまとめて `source` に両方を書きました。
 
-系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 33、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 15、`availability` 10、`other` 3 です。
+系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 34、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 33、`availability` 10、`other` 3 です。
 
 ## グラフ
 
@@ -63,7 +63,7 @@ python -m venv .venv && .venv/bin/pip install pandas matplotlib   # 初回のみ
 - **費用は推計です。** 多くは版付き単価に使用量を掛けた値で、請求額ではありません。メモリの記述にあった約27米ドルは、定価換算です。
 - **合計の行は足さないでください。** `overlap_with` が空でない行は、他の行の合計や一部を含みます。
 - **失敗の件数は繰り返しを含みます。** 同じ質問を50回繰り返した実行は、50件と数えます。失敗の内訳のグラフは、行数と件数の両方を示しています。
-- **実行環境は `local macOS` が多く、`AWS` で測った行は 19 行です。** 所要時間は環境で大きく変わるので、環境の違う行の所要時間を比べません。環境が書かれていない行は空です(33 行)。
+- **実行環境は `local macOS` が多く、`AWS` で測った行は 32 行です。** 所要時間は環境で大きく変わるので、環境の違う行の所要時間を比べません。環境が書かれていない行は空です(33 行)。
 - **出典の日付が実行日とは限りません。** 実行日が書かれていない行は PR のマージ日や docs の日付を使っています。`notes` に書いています。
 
 ## 台帳に入れなかったもの
