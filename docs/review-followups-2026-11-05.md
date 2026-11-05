@@ -103,3 +103,7 @@ API#66では試験用DSNのquery dbnameがURL pathより優先する問題を修
 親PR#254の取り込みCLIは、既存2群のraw・人手採点・usageから候補CSVを作る。独立レビューで、保持表記24hを未照合で固定する不足を修正し、両schemaで原本との一致を必須にした。22件と、既存2群8行ずつの全20field照合が通過し、親#243へ統合した。自動採点・台帳append・将来の全schema対応は含まない。
 
 新Agentのproject metadataに対応するinfra#98は、明示profileだけでdev依存のjsonschemaと共有schemaのwheel同梱を許可する。旧default・runtime依存・canonical source tarは維持する。独立レビューで、docker create直後のtimeout時の所有物回収と、publish直前のcanonical archive再照合に不足2件を再現した。修正・再レビューが終わるまで採用しない。ここまでのDocker/ECRは境界fixtureであり、このprofileでの実image build・publicationは0回である。
+
+## mainの本番検証台帳との統合
+
+別チャットがmainへ公開した共有カード本番検証19行を、こちらの314行へ追加して333行とした。双方に同じidで値の違う行はなく、こちらの314行はbyte単位で保持し、両側の全20fieldとidを照合した。出典内訳はdocs203・Agent PR80・Issue22・親PR28、AWS39・local macOS220・不明34・その他40である。台帳監査エラー0、6グラフを再生成して目視確認した。別の測定群の率を合算して精度改善としない。

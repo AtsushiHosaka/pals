@@ -1,0 +1,283 @@
+# Production proof and share smoke — 2026-11-05 JST
+
+Tracking: [proof trial #245](https://github.com/AtsushiHosaka/pals/issues/245),
+[Open Graph #228](https://github.com/AtsushiHosaka/pals/issues/228),
+[release #234](https://github.com/AtsushiHosaka/pals/issues/234).
+
+## Scope and authority
+
+The owner requested one production trial of a repeating-decimal equality, a
+review of the generated proof, and share-card deployment if absent. The trial
+uses the existing signed-in Chrome session and the normal PALS UI. No account,
+duplicate application stack, database fixture, or replacement answer was created.
+The selected UI model was **GPT-6.1 Terra High**. Only one question was submitted.
+
+This is a single smoke trial, not an accuracy benchmark. The public report omits
+account identifiers, private chat URLs, share tokens, and request/answer/Lean bodies.
+Private screenshots remain outside Git. It does not publish an X post.
+
+## Live card observation
+
+On 2026-11-05 JST, an HTTPS GET to `https://palschat.site/` with
+`User-Agent: Twitterbot/1.0` returned HTTP 200 and **zero** `og:*` or `twitter:*`
+meta tags. The request used Python's standard-library HTTPS client and an HTML
+parser. This establishes the homepage's missing metadata; shared-page metadata
+and the actual X preview require separate checks.
+
+[Web PR #31](https://github.com/AtsushiHosaka/pals-webfront/pull/31) implements
+cards on the divergent `main` branch. The production-line source tip inspected
+was `1706a53007e5e2c601937fb342e391771d6ff37d`; it does not include the two card
+commits `73bd6e253cf79eefd78d00da3b6176fc8d971ff0` and
+`600a6de0b364644133b29218f0d86786834b4427`. Integration must retain the newer
+production-line changes rather than deploy all of `main`.
+
+The separate release chat is preparing a renewal of the existing software
+configuration. That candidate retains the old Web revision, so signing it does
+not deploy the cards. This chat owns card integration and proof evidence, and
+does not modify the other chat's release artifacts or run a concurrent cutover.
+
+## Trial observations
+
+- Submitted at **2026-11-04 15:14:52.979 UTC** (2026-11-05 00:14:52.979 JST).
+- The UI created a new conversation and displayed the submitted question.
+- Observed states include `Drafting`, `Proving`, `Compiling`, and then `Proving`
+  again. These labels alone do not establish proof success or a failure cause.
+- A completed answer was observed by **15:22:14.805 UTC**, an upper bound of
+  441.826 seconds from submission. This is an observation bound, not server-side
+  execution timing or a latency percentile.
+- The returned explanation is English. It derives a finite partial-sum formula,
+  proves convergence, establishes summability, and identifies the infinite sum
+  by uniqueness of limits. It does not rely only on finite decimal arithmetic.
+- Manual inspection of the 98-line Lean source confirmed that its target is the
+  corresponding infinite sum over the real numbers. It has no added hypotheses,
+  `sorry` token, or new axiom declaration. This inspection is not a Lean rerun.
+- The normal sharing preview showed two messages and `Lean検証済み`. After
+  review, the owner-requested immutable public snapshot was created.
+- An independent HTTPS request without cookies or authorization retrieved the
+  public snapshot with HTTP 200: two messages, `output_language=en`, assistant
+  `status=verified`, and nonempty Lean source. Its response retained
+  `Cache-Control: no-store, private, max-age=0` and no-index headers.
+- The actual shared-page HTML also returned HTTP 200 with no-store/no-index
+  headers and **zero card metadata tags**. Browser navigation to the anonymous
+  page stalled in the existing Chrome session; the share dialog and anonymous
+  HTTP retrieval were verified independently. Do not count the stalled browser
+  navigation as a successful anonymous UI journey.
+  A separate in-app anonymous browser was unavailable in this environment.
+
+## Card candidate and review
+
+[Web PR #37](https://github.com/AtsushiHosaka/pals-webfront/pull/37) integrates the
+two card commits onto `1706a53`, preserving the existing title and Lean-panel
+changes. Independent review identified a sizing-command regex that corrupted
+arrows and large set operators. The correction and regression cases were
+included in final candidate `073cedbf9d3b2eb357ef72469d5f81d54116a3c5`; a second
+independent review reported no remaining P0–P2 findings.
+
+Validation: TypeScript, changed-file ESLint, whitespace checks, 1,687 unit tests
+before the operator correction, 47 focused tests and a production rebuild after
+it. The final standalone production build fetched this actual anonymous snapshot
+from the live API: Twitterbot HTML contained problem-specific title/description,
+`summary_large_image` and an absolute image URL. Its PNG was 1200×630, visually
+checked with readable Japanese text. The page/image retained private no-store,
+no-index and no-referrer headers. An invalid token rendered a brand-only image.
+Temporary local servers were stopped and port 3187 was confirmed released.
+
+PR #37 was merged into the production source branch as
+`4dbc451818e8d3312f3d72064be5b41eb302b6d8`. The only remote status check was
+CodeRabbit, which was skipped; no GitHub Actions run existed for this head.
+Local verification and independent review above supply the executed checks.
+This merge is **not a deployment**. Host/container API and font connectivity,
+the signed software update, activation, and actual X rendering remain pending
+the separately owned release flow in #234.
+
+## Verification limits
+
+The source branch and issue history do not prove which image currently serves a
+particular request. The model selection above is the observed UI selection;
+provider usage receipts and cost were not retrieved. No latency distribution or
+general success rate can be inferred from this one trial. A PALS verification
+label was confirmed through anonymous persistence readback. An independent Lean
+compiler rerun, verifier audit receipt, and production latency/cost receipts were
+not obtained. The deliverable share remains active; revocation was not tested on
+the owner's intended public result.
+
+## Footer alignment regression — 2026-11-05 JST
+
+[Web PR #39](https://github.com/AtsushiHosaka/pals-webfront/pull/39) corrects
+the shared-card footer's marker alignment and makes the verification text larger
+and the same orange. It was merged as
+`3bc3f708ef69a5c3e505e799576c1b82665db842`. Two 1200×630 renders were inspected locally on macOS. Pixel
+bounds use solid accent pixels, RGB `(201, 84, 69)`, with the origin at the top
+left. Success means the marker and text have matching lower pixel edges.
+
+| Render/source | Marker lower edge | Text lower edge | Difference | Outcome |
+|---|---:|---:|---:|---|
+| v2, `bcb0053cdb00460fc8b5275f3da47b5ac0223f04` | 542 px | 568 px | Marker 26 px high | Fail |
+| v4, `99955e16927cc5b778fc1b2aa82c8e873e258ebe` | 570 px | 570 px | 0 px | Pass |
+
+The final text is 40 px rather than 28 px. The final marker bounds are
+`x=72–111, y=565–570`; the text bounds are `x=131–481, y=539–570`. Independent
+visual review found no clipping or missing glyphs. The existing verified-only
+footer condition was unchanged. This is a local visual regression check, not a
+model-accuracy benchmark or evidence of production deployment. No new model
+request, cost measurement, or latency measurement was performed. Images and
+conversation content remain outside public Git.
+
+## Deployment preparation and authentication blocker — 2026-11-05 JST
+
+The owner explicitly requested production activation and an X draft preview.
+The prior operator chat was inactive. Preparation preserves the current API,
+worker, verifier, infrastructure and 35-step database registry; it advances only
+the Web source to the merged PR #39 revision above and its parent gitlink.
+The clean five-repository capture is on pushed parent branch
+`codex/card-only-release-20261105`, commit
+`b7160a3c0b9eec78a6567b3341f4922b900b4a65`. It does not include coupon changes.
+
+A local `linux/arm64` deployment image was built from a Git archive of the exact
+merged Web source, with the existing verified public build arguments. Archive
+SHA-256: `d3f8d75bcf3d0bc503de0a81148b3397b5ca031150bebad239d22619a5da1a3d`.
+Local image ID: `sha256:9809b33faffe1611cfba955219b73f8b782fb9d57fcb0af24e12cb01c17c5f83`.
+This is a local identity, not a published immutable image or release receipt.
+
+One run of that actual image fetched the existing anonymous snapshot and rendered
+a 1200×630 PNG. The marker and text both ended at y=570, with the existing accent
+RGB `(201, 84, 69)`; response header checks passed. The runner exited nonzero at
+its immediate cleanup assertion because Docker's automatic removal was still
+asynchronous. A subsequent check confirmed the task container absent and its
+loopback port released. Rendering passed; the original runner did not exit zero.
+
+Eleven offline preparation checks passed against the real predecessor signature
+and pinned API transition validators. They cover retained source/schema fields,
+sequence rules, receipt rejection and unchanged native helper functions. These
+checks do not establish new image publication, a signed candidate, database
+admission, host activation, recovery readiness, or public X rendering.
+
+The existing AWS SSO token had expired. The narrow protected environment-field
+read failed at authentication before any remote command was submitted. A normal
+SSO sign-in was opened for the owner; its first pending login expired and was
+reopened. No image was pushed, no IAM permission was changed and no production
+cutover was attempted. Deployment and the actual X card check remain pending
+AWS sign-in and the owning signed release process. No X post was sent.
+
+## Signed card-only candidate and native checks — 2026-11-05 JST
+
+AWS SSO was refreshed through the normal device flow. The exact protected-field
+read then succeeded. The actual publication receipt binds the clean five-source
+capture and four pulled immutable role images; only the Web image changes.
+Receipt SHA-256: `b085559ac2acd4ddd65ff8cbf50d6881e6efed3b1f6834c06e1ac1fdd293448b`.
+The real signed seq19 candidate is
+`1630bc127e6281b6a7a5bd75d51bee80df7f1445b7710686c1439ef86055caa7`.
+It preserves the current 35-step registry, external bindings, API, worker,
+verifier, infrastructure and Lean/Lake pins. The new signature passed independent
+verification against the previously pinned signing public key.
+
+| Actual gate | Evidence and result |
+|---|---|
+| Immutable publication | Four role-image identities checked; formal v2 receipt produced. Pass. |
+| Native versioned preparation | Both hosts returned `prepared_not_admitted_not_activated`. Pass. |
+| Native lifecycle plan | Both hosts rechecked the current seq18 tuple, readiness and prepared files; all seven services remained running. Pass. |
+| Initial native Web image comparison | Pull completed; full Docker Config JSON projection differed. The command refused. Fail retained. |
+| Independent OCI/cache comparison | Raw registry config digest, all original configuration fields, nine filesystem layers, source, platform and actual runtime-owner image guard matched. Pass. |
+| Owning read-only admission preflight | Refused at predecessor-signature validation with `ClientError`; task containers/RAM were removed and serving actors were unchanged. Fail retained. |
+
+The image discrepancy was in Docker's inspection representation: production
+adds eleven legacy fields with false, empty-string or null defaults. Every
+original field matches the actual raw OCI config. The follow-up verifier accepts
+only those explicitly named, exactly typed defaults, still requires the original
+configuration digest and filesystem hashes, and rejects missing/unknown fields
+or changed values. It did not replace an expected digest with an observed ID,
+repull an image, or alter the original failed evidence. Fifteen pure checks cover
+that verifier's metadata and refusal behavior; all passed. This is operational
+validation, not model accuracy.
+
+### Earlier permission-blocked checkpoint (historical)
+
+Separate native read-only probes confirmed `AccessDeniedException` for KMS
+GetPublicKey/Verify and `AccessDenied` for RDS DescribeDBClusters/DescribeDBInstances.
+The proposed temporary policy was recorded in [decision #253](https://github.com/AtsushiHosaka/pals/issues/253).
+The key and cluster matched the signed target; a separate current membership read
+confirmed the one instance included in the proposed scope. At that checkpoint,
+no new IAM grant was active and owner approval was pending. The proposal affected
+sessions of the existing control role during its window, rather than one process.
+Production still served seq18; no drain, owning DB admission, finalized runtime,
+activation or new installed recovery pair had been performed. The initial
+permission refusal and image-inspection refusal above remain failed observations.
+
+## Approved seq19 rollout and current status — 2026-11-05 JST
+
+Before cutover, the exact new Web image rendered the existing owner-requested
+snapshot through a temporary loopback listener in the current Web network
+namespace. Its HTML and PNG fetched the live API and existing font dependencies,
+retaining no-store, no-index and no-referrer headers. The retrieved 1200×630 PNG
+was byte-identical to the approved card, SHA-256
+`33f6f1f573f13e7e88526bf147066854184c1ba69aa9d08279f80f9eab7e1f16`.
+This confirms the checked font/footer pixels for this one snapshot. The test
+container was removed and the original serving actor tuple remained unchanged.
+That preview did not exercise public ingress or X.
+
+The first fixed permission window expired without an IAM change. The owner then
+approved the same narrow scope for 45 minutes after attachment. The actual
+recorded window began at **05:04:38 UTC (14:04:38 JST)** and was capped at
+05:49:38 UTC. Only KMS GetPublicKey/Verify and exact-target RDS metadata reads in
+Tokyo were added to the existing control role. There was no Sign, schema, coupon
+or other write grant. The policy was deleted and actual `NoSuchEntity` absence
+readback completed at **05:21:15 UTC (14:21:15 JST)**, before its expiry.
+
+| Actual completed gate | Evidence and result |
+|---|---|
+| Native preview | One existing snapshot; 1200×630 PNG exactly matched the approved bytes. Test removed; serving actors unchanged. Pass. |
+| Owning read-only preflight | One complete native preflight passed at 05:05:18 UTC, with 35 release-schema and 35 runtime checks, zero DB mutations, and task container/RAM cleanup. Pass. |
+| Owning software admission | One actual transaction returned the five-step `released` receipt at 05:11:40 UTC, including exclusive quiescence and preservation of the existing DB. Pass. |
+| Final host health and recovery | Both hosts passed seq19 readiness and exact firewall checks by 05:20:47 UTC. All seven actors were running, with two new recovery configurations and three loaded/enabled recovery units. Pass. |
+| Temporary permission cleanup | One exact policy was removed and its absence independently read back as `NoSuchEntity`. Pass. |
+| Public shared-card HTTP | The actual production share returned Twitterbot metadata and a 1200×630 PNG matching the approved RGBA pixels and bytes; both footer lower edges were y=570. Pass. |
+| Actual X draft preview | The signed-in X composer displayed the actual PALS card after saving and reopening the draft and blurring the link field. Pass; no post published. |
+
+The control health check also read back seq19 as the latest DB admission.
+Read-only drain observations found zero outstanding claims or Lean/Lake child
+processes; durable claims were not modified or forced through. No new model
+request was made for these rollout checks. The actual reboot path was not tested.
+
+Signed seq19 is active on both hosts, retaining the existing API, worker,
+verifier, infrastructure, 35-step schema and Lean/Lake identities. Its signed
+window expires at **2026-11-06 02:10:57 UTC (11:10:57 JST)**. Only the Web source
+and parent gitlink advanced as described above.
+
+## Public HTTP and actual X preview — completed
+
+The independent production HTTPS check passed for the actual existing share.
+Twitterbot HTML exposed problem-specific Open Graph metadata and
+`summary_large_image`; the image was 1200×630, byte-identical to the approved PNG
+above, with matching RGBA pixels. The orange marker and verification text both
+ended at y=570. The page and image retained private no-store, no-index and
+no-referrer headers. This HTTP result remains separate from the X browser check.
+
+X's card validator fetched the page, detected 25 metadata tags, identified the
+large-image card type and reported successful card loading. Separately, the
+actual signed-in X draft was saved and reopened. After the link field lost
+focus, the composer displayed the actual PALS card image. The browser evidence
+was recorded at **05:28:48 UTC (14:28:48 JST)**. This establishes the requested
+draft preview, rather than only a crawler-like HTTP response.
+X's own black title overlay partially overlaps the orange verification footer
+in the draft preview. The underlying approved PNG is unchanged; this release
+made no further layout change for X's overlay.
+
+The canonical release record also completed and released operator ownership.
+The public ingress target was healthy, the existing target and load-balancer
+attributes were unchanged, and temporary IAM removal had been read back.
+
+Private evidence hashes retained outside Git provide traceability:
+
+| Artifact | SHA-256 |
+|---|---|
+| Production HTTP result | `80fe82a3800e36e5c12241d255975ca3f9d0fcab73193e78e95a7d071217049f` |
+| Actual X browser verification record | `0f57e589fcc8d868c2668f6a1241d74392523bcb3041d477a8e884cb2d30a302` |
+| X draft screenshot | `009f3daf56da865da6a96309823cf593722c2e9de0ef143d05958abaf8aece70` |
+| Restored ingress readback | `651ecb0e88c52def8a5217ad9206b26908b232e9cdcf8b2244ba676bf2fd8de5` |
+| Canonical ownership-release result | `0636de9acbe5625579e13790ff4f2913d61222251a3d2df8a18e0093406bd5b8` |
+
+The requested production deployment and actual X draft preview are verified.
+No X post was published. These final checks did not rerun model generation, the
+Lean compiler or an actual host reboot. Private tokens, screenshots, browser
+accessibility text, runtime identifiers and raw conversation content remain
+outside Git.
