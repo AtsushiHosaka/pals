@@ -3,13 +3,15 @@
 Tracking: [#265](https://github.com/AtsushiHosaka/pals/issues/265).
 [Session](codex://threads/01a1aac0-d36c-7331-9a73-a79dc78d1a0a).
 
-Status: **guarded cutover paused before admission; previous runtime restored and
-healthy**. Seq21 has not been admitted or activated. The real production
-settings checks after deployment remain pending.
+Status: **integrated seq21 deployed; requested production layout matrix passes**.
+On November 6 JST, the actual signed-in settings screen passed desktop,
+phone-width and native 200% Chrome layout checks. The integrated Web source is
+`120cb477911b89ad2b8487f968fc0187f7d85496`, retaining settings repair `9332a04`.
+One separate P3 mobile focus-return issue is tracked in [#285](https://github.com/AtsushiHosaka/pals/issues/285).
 
-Deployment ownership is now handed to the integrated Web release for #273.
-The standalone settings candidate remains on hold; actual settings acceptance
-will follow that release.
+The historical standalone settings candidate below remains on hold and was
+never admitted. Deployment was completed by the integrated release for #273;
+its release record is [here](logo-production-v2-2026-11-05.md).
 
 ## Authorization and review
 
@@ -31,7 +33,7 @@ A minor automated review comment about the abbreviated test command was
 verified and addressed in the follow-up documentation; it does not affect the
 frontend repair or release image.
 
-## Exact Web-only candidate
+## Historical standalone Web-only candidate — held
 
 Fresh native checks confirmed the actual seq20 predecessor, seven running
 services, exact firewall/readiness/recovery state, and no canonical release
@@ -133,7 +135,7 @@ absent before and after the check, with the healthy previous seq20 still serving
 ## Integrated-release handoff
 
 The owner authorized coordination with the [integrated-release chat](codex://threads/01a1a71b-fbdb-7ce3-93fe-43a7c7bae0d7).
-That chat will prepare and deploy the next integrated source for #273. The
+That chat was assigned to prepare and deploy the next integrated source for #273. The
 standalone settings candidate is held rather than applied after that source.
 Each release retains its own approval, artifacts and fresh canonical ownership.
 
@@ -154,7 +156,7 @@ counts were zero. No grant, token, lock, admission, activation, or runtime chang
 was made during these checks. These are observations, so the integrated release
 must still claim ownership and repeat its own fresh checks before cutover.
 
-## Actual browser baseline and remaining acceptance
+## Actual browser baseline
 
 The owner signed into the existing production app through its normal UI. The
 actual account settings loaded from the real backend. Before deployment,
@@ -168,14 +170,80 @@ This establishes the test method on the old release, not acceptance of the new
 release. Screenshots are restricted to the settings dialog; account and chat
 details are not published.
 
-Remaining gates for the integrated release: actual claim clearance, fresh approved verification access and
-positive pre-cutover checks;
-exclusive ownership and guarded cutover/admission; final recovery, health,
-ingress and permission-cleanup evidence; and post-reload production
-desktop/phone-width/200% settings checks. Partial or unknown phases require
-reconciliation rather than automatic retry or rollback.
+## Integrated deployment and production acceptance — November 6 JST
+
+Independent readback of actual integrated-release artifacts confirms:
+
+- Seq21 manifest `02ca35de2e2d128b83ffa52996f357189cc13343f9fd5b2d4e3651b82a2bb945`
+  binds Web source `120cb477911b89ad2b8487f968fc0187f7d85496`.
+- Actual admission returned Success/0 and all five ordered steps. The exact
+  exported receipt SHA-256 is `9a6a88eab22b4a91dac448e4e120cf95407bf765484971e0ac99adf7bba88c72`.
+- Both final-health invocations passed: all seven actors running, readiness,
+  exact firewall, enabled recovery units, and control's latest DB admission21.
+- The same public target is healthy with all 14 attributes unchanged. Temporary
+  verification access was removed and actual `NoSuchEntity` absence verified.
+- Actual owner release returned Success/0 and
+  `canonical_card_release_completed_and_released`.
+
+The production QA tab was reloaded after deployment and Settings opened through
+the normal signed-in account menu. Phone navigation used the workspace drawer.
+The real backend supplied all 36 notation rows; no sample fixture or mock was
+used. Screenshots contain only the settings dialog.
+
+| Actual Chrome case | CSS viewport | Result |
+|---|---|---|
+| Desktop | 1280×900 | PASS: both forms have 20px control-to-button separation; no horizontal overflow; footer reachable |
+| Phone width | 375×812 | PASS: same separation; identifier Add moves to a separate row; footer buttons fit |
+| Native 200% zoom | 636×406 effective viewport | PASS: same separation; controls reflow and footer buttons remain reachable |
+
+Action containers have 16px grid separation plus 4px top inset, producing 20px
+to the first button in both forms. All measured controls remain inside the
+dialog horizontally; action buttons are 40px high. Long content is reached by
+normal modal scrolling and keyboard focus rather than squeezing all 36 rows
+into one screen.
+
+Native Chrome View → Zoom In established actual 200% zoom: Chrome's own zoom
+indicator reached 200%, device-pixel ratio changed from 2 to 4, and the viewport
+changed from 1272×812 to 636×406. Initial shortcut attempts did not change zoom
+and are excluded from the enlarged-display check. Zoom and viewport overrides
+were restored afterward. Screenshot clipping at zoom used the actual 2×
+coordinate conversion; accepted screenshots are the final clean captures.
+
+At phone width, Add with an empty identifier produced the real local validation
+notice. Its text wrapped without overflow; ordinary keyboard scrolling kept
+the footer accessible with 20px separation. The notice was cleared by reloading
+before the clean zoom case. No settings Save action or persistent account write
+was performed. Captured console warnings/errors since the QA reload total zero.
+
+Accepted private evidence uses `desktop-metrics-v2.json`, `phone-metrics.json`,
+`zoom200-clean-metrics.json`, `native-zoom-200-pass.json` and corresponding final
+dialog screenshots. Initial observer/capture attempts are retained but excluded
+from the three accepted layout cases. The first desktop catalog-count selector
+was corrected to `.notation-rule-row`; the actual count is 36. Raw artifacts
+stay outside Git. Independent visual and metric review passed these cases.
+
+## Separate accessibility follow-up
+
+Desktop Escape closes Settings and restores focus to the account-menu button.
+Clean 375px phone Escape closes it but leaves `document.activeElement` on BODY;
+the same responsive path at 200% does so on Close. This is P3
+[#285](https://github.com/AtsushiHosaka/pals/issues/285), distinct from the passing
+layout matrix. Subsequent Tab recovery was not reliably verified, so no
+keyboard-trap claim is made.
+
+Source inspection ties the behavior to the mobile drawer removing the captured
+opener before Settings opens and the modal restoring focus only if that opener
+remains connected. Those files are byte-identical before the layout repair and
+in the deployed source; the old-production symptom was not separately reproduced.
+A stable return-focus target can address the follow-up while preserving
+settings controls, saves and desktop focus restoration.
+
+These checks establish the requested signed-in layout behavior in Chrome,
+including phone-width emulation. Physical-phone/Safari rendering, account-save
+persistence, generated answers and reboot recovery were not tested by this QA.
 
 Private artifacts and exact operation responses remain outside Git under the
 task-owned release directory. No credentials, role/host identifiers, internal
 addresses, raw account/chat content, authentication codes or tokens are included
-in this record. This record will be updated from actual remaining results.
+in this record. The requested layout acceptance is complete; #285 remains a
+separate accessibility follow-up.

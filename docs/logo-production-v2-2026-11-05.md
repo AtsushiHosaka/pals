@@ -1,0 +1,103 @@
+# ロゴ・共有タイトル修正版v2の本番反映と公開画面検証
+
+ロゴ導線と共有タイトル修正版を含むWebソース`120cb477911b89ad2b8487f968fc0187f7d85496`の本番反映を完了しました。両ホストはseq21・7サービスのreadinessを通過し、一時権限の削除、公開入口の復元、配備所有権の解放も完了しています。2026-11-05 16:17 UTC、JSTでは11月6日01:17に、既存の日本語共有ページでPALSロゴを押し、`https://palschat.site/try`へ進めることを実ブラウザーで確認しました。進行は親Issue #273、権限判断はIssue #279、記録は[親PR #283](https://github.com/AtsushiHosaka/pals/pull/283)にまとめています。
+
+## 入れ子の強調内にある積の修正
+
+[前回の共有タイトル修正](shared-title-star-propagation-2026-11-05.md)を通過したソースにも、内側の三重の強調記号に囲まれた積で、数学上の`*`が欠落する2条件が残っていました。Web PR #57のレビュー済みhead `b8c52be032e02f021d169bdcdbddb1e80c3eea0f`を通常mergeし、最終ソースを`120cb477911b89ad2b8487f968fc0187f7d85496`へ固定しました。rootは実headとmerge後treeの一致、settings・ロゴ導線・レビュー済みheadが祖先であること、対象3ファイルのbyte一致を確認しています。
+
+同じ固定8入力をローカルNodeの実タイトル関数へ渡し、期待する文字列との完全一致で判定しました。結果は修正前6/8、修正後8/8です。内訳は次のとおりです。
+
+| 条件 | 修正前 | 修正後 |
+|---|---|---|
+| `*A ***Prove f*(g+h)*k is continuous*** B*` | 失敗 | 成功 |
+| `*A ***Prove (f+g)*(h+k) is continuous*** B*` | 失敗 | 成功 |
+| 前回の固定6条件 | 6/6 | 6/6 |
+
+新しい2条件では外側と内側の強調記号だけを除き、`f*(g+h)*k`や`(f+g)*(h+k)`を保持したタイトルを期待しています。fixtureのSHA-256は`3139eb6f8f192e09a7777af2526936d943efc7efc1c60f655d61ace7354755dc`です。修正前の関数ファイルは`e330ac9ca0d4974bb3d699886ddbc82fd9fd982fa36df26e2342dc30c082f77a`、修正後は`3228275bf7dc5b9dbe9b73c21a013fdd5189042090983981c65c766a898015ba`です。実測原本のSHA-256は修正前`9262e375e447eaf4904682ab6301b28d30ad0f0c6e33df09f575c323c1a19f17`、修正後`ebf9597f2b450caa9df78d59768944e78cfc9050e5fe58250e56c9b116f602fc`です。
+
+関連する単体検査156件、型検査、lintは通過し、独立した16条件と同じ16条件の冪等性、内側の積を含む2,000回の反復検査も通過しました。前回の6条件は今回の8入力と重複します。過去の条件や単体検査を新しい分母へ足さず、数学の証明、実API、E2E、本番表示の成功としても扱いません。
+
+## ローカルCPU観測の限界
+
+追加ループは文字位置を進める構造としてレビューしましたが、formatter全体の計算量を保証する記録ではありません。同じローカルNodeプロセスで、合成文字列内の積を1,000回と4,000回繰り返し、各サイズでwarmupを3回行ってからCPU時間を3回測りました。中央値は入力10,031文字で2.770 ms、40,031文字で1.909 msでした。
+
+小さい入力を先に測る順序と、同一プロセスのJIT・warmupの影響を分離していません。この逆転を性能改善、本番速度、formatter全体のO(n)の証拠には使いません。台帳には6標本の観測を1行として残し、成功率やp50・p95は定義していません。原本のSHA-256は`35972d628a9119baf191e520bc50d3f20e48218c8e256d172b9d567f9ee3d442`です。
+
+## 実ソース取得とARM64ビルド
+
+旧専用親コミット`e751018b4f26a701243df5ac6d6ebb66d5517197`から、Web gitlinkだけを変更した新親`da43a53229876c1ae9bb7645374cf26a2eb789ae`を作成しました。API、Agent、Infraの参照はseq20の値を保持し、5リポジトリのHEADとcleanな状態を取得前後に照合しています。正規のsource capture原本は変更せず、新BASEへbyte単位で複写しました。captureのSHA-256は`26c9e90860e5264c36c4354e2afa19c60c1a2cbfa0eff3aba786a1548568380b`です。
+
+rootの最終ソース承認記録は、正確な5項目、Web commit、実treeを結び付けています。SHA-256は`73e0c2188335cfc1d4df356b475a4d4ff5434f00ee61cb5e6d195378c96f8547`です。ビルドwrapperは既存coreを保ち、5つの参照の変更と実承認guardの追加を独立レビューしました。
+
+実Docker buildはLinux ARM64で成功し、ローカル処理1回の経過時間は36.296秒でした。イメージのソースラベルと、アーカイブ・build引数のSHAを照合しています。アーカイブのSHA-256は`7b7d269233e8a4fd1406bac4917a30637778b1890e771e82b30591eea80dd087`、build記録は`aaf8c116c4386651602658fd534d05cb49f9899bf87806f83dc0ff3e34875aac`です。公開用の8項目は実buildとcaptureから別ファイルへ写し、元のbuild記録を変更していません。単発の経過時間を性能評価には使いません。
+
+## 本番の読み取り確認と実公開
+
+14:33:56・14:34:07 UTCにcomputeとcontrolを独立して読み取り、両ホストがseq20の実healthを通過しました。controlの4サービスとcomputeの3サービスが稼働し、firewall・readinessも確認しています。controlのcanonical ownerは確認前後とも不在でした。computeのowner欄は対象外であり、両ホストの所有権を同じ方法で確認したとは書きません。分母は2ホストで、7サービスを7試行には換算していません。再起動試験とモデル呼出しは行っていません。
+
+レビュー済みpublisherで実Webイメージを公開し、4役割の実pullとidentity照合から正式v2受領記録を作成しました。処理1回の経過時間は27.982秒で、4役割とsource tupleが一致しています。一時Docker認証ディレクトリの残存は0件です。受領記録のSHA-256は`299c1aa5dd8b03b65280e921744cfd23e4e5d3ab35f8ec9ef97d312d91382df1`です。分母は1公開束で、4役割を4回の独立した公開試行にはしません。
+
+準備中の失敗も保持しています。派生utilityは元の版を保存し、実source pathのリテラル1箇所だけを直したv2で進めました。最初の独立検査ではsystem Pythonにcryptographyがなく停止しましたが、AWS呼出しはありません。実公開は既存API用仮想環境で成功しました。また、candidate helperの初回導出は、rootがconfig SHAを誤入力したためprivate hash guardが出力ディレクトリ作成前に拒否しました。実原本からSHAを計算し直した後の導出は成功しており、候補や本番runtimeを変更した失敗ではありません。これらの準備検査を追加の本番試行として数えません。
+
+## 新候補の生成・署名と未起動材料の準備
+
+実公開の受領記録に結び付けた新候補は`02ca35de2e2d128b83ffa52996f357189cc13343f9fd5b2d4e3651b82a2bb945`です。正規APIのvalidatorでseq20からseq21、schema35維持、Web imageのみの変更、非Web参照の不変を確認しました。発行窓は2026-11-05 14:44:56 UTCから翌日同時刻までです。これは候補の有効窓で、本番期限を更新した記録ではありません。署名前の照合原本のSHA-256は`4abf6ece7eda420bc81afb3b93527a4ed99604145cd5b38f0435508dfe269828`です。
+
+この候補へ実Signを1回要求し、既知の公開鍵によるローカルECDSA検証と実Verifyに通過しました。自動再試行は0回です。署名のSHA-256は`f452f3de9e09575aea0d5737a28d97af86537eb23c8875f60b02b7e3593ab72a`、署名照合原本は`d538300a592253d79e31972d436d0fb0ca629c92ad609c485659d9a7ce40b349`です。実署名の成功は本番受理や切り替えの成功ではありません。
+
+prewarm前に、実OCIのindex、ARM64 manifest、config、9層のrootfsとソースの対応を照合しました。ECRの読み取り3回とconfig取得1回を合わせた1束の検査で、4回の独立した配備試行には換算していません。続く実prewarmは15:09:13 UTCに成功し、正確なWeb imageのidentityと一時ECR認証情報の回収を確認しました。アプリケーション、DB、IAMは変更せず、Webも起動していません。prewarm応答原本のSHA-256は`51e2b6d7cd7da7428ea52b06f9f9a22b213dfd431fb8900de8f8f949fc5e0944`です。
+
+controlのnative準備は15:11:11 UTC、computeは15:13:58 UTCに成功し、両方とも`prepared_not_admitted_not_activated`を返しました。serving applicationとDBの変更はありません。実prepared metadataの読み取り取得も、controlが15:14:02 UTC、computeが15:15:31 UTCに成功しています。これらはJSTでは11月6日の00時台です。取得したbytesを復号して原本のhashと厳密に照合し、controlのSHA-256は`f564df6b7e3d74b338571d78ce7390f8b506f54c1d6cac9f47342fbe2d716584`、computeは`c278708398e2ae51f0641fef0d5e1ccb4d4bd8a90312ccb2500350d5027d661a`でした。native準備2/2とmetadata取得2/2は、それぞれ異なる段階の記録です。
+
+実prepared参照から、38個のhelper関連成果物をofflineで生成しました。このうちPythonは17ファイルです。派生coreを保持し、完了版のレビュー後に両ホストへ配置しました。配置と各helperの実行は別に扱います。ファイル数やAST検査を台帳の独立した本番試行へ加算していません。ここまでの結果はソフトウェア全体の最終合格や本番反映を示すものではありません。
+
+## 準備前に再取得した現状
+
+先の14:33・14:34 UTCの観測とは別に、14:55:14・14:55:26 UTCにcomputeとcontrolのseq20 healthを再取得しました。controlのcanonical ownerは再び確認前後とも不在です。この時点の公開入口も、単一targetがhealthyで、14属性が以前と一致していました。既存の一時policyは実readbackで`NoSuchEntity`を確認し、IAM変更は0回です。この再確認で、派生処理が参照する既存cleanup原本を差し替えていません。
+
+これらは準備に使う現状の補足として時刻を分けて記録し、先の2ホスト観測と合算したconfidenceや、継続的な稼働率は作っていません。新候補に対するpreflight・DB受理・activationの成功とも扱いません。
+
+## 材料配置と切り替え前の確認
+
+完了版helperはcontrolが15:26:32 UTC、computeが15:28:38 UTCに配置を完了しました。公開operatorの材料配置も15:28:54 UTCに成功しています。配置時点のアプリケーションとDBは変更していません。15:39:20・15:39:52 UTCの実observerは、両ホストの旧seq20 runtimeが実際の参照と一致することを確認しました。
+
+生成claimの読み取り診断は15:40:40・15:49:36 UTCの2回とも成功し、未失効のgeneration claimは0件でした。durable claimは変更していません。分母は2回の観測で、0件というcountを成功数にせず、後続の4項目drainが完了した証拠とも扱いません。
+
+## 45分の一時権限と正規preflight
+
+承認済みの同じ4操作について、15:47:40 UTCの要求から最大45分、16:32:40 UTCを上限とする一時権限を付与し、正確なpolicyのreadbackに成功しました。JSTでは11月6日00:47:40から01:32:40までです。期限は自動更新しません。付与記録のSHA-256は`54aafd09394fb10f54d28a3a3f5359d74e9b461772205fc4aca59f5934a609e7`です。この中間記録時点では削除前でした。実削除と不存在確認は後述の16:11:32 UTCに完了しています。
+
+15:48:06 UTCの正規READ ONLY preflightはSuccess・exit 0で完了しました。releaseとruntimeの35段階は一致し、DB mutationは0、serving actorも不変です。検査用container 2個と一時RAM領域の後始末もすべて成功しました。35段階ずつを70回の独立試行には換算せず、preflight全体を1回として記録しています。実原本のSHA-256は`045b046145cb5ce7e702a4320cedccc7b33445f7cbdbe22f0b7b20ffa10e0969`です。
+
+## 所有権取得と入口drainの中間状態
+
+15:50:00 UTCに正規の全体所有権を取得し、15:50:50・15:51:03 UTCにcontrolとcomputeのlifecycle planが通過しました。両planは旧runtimeと実prepared参照を照合する読み取り処理で、mutationは0です。所有権取得とplanの成功は、DB受理や新アプリの起動ではありません。
+
+公開入口の登録解除は1回だけ要求しました。AWS CLIはexit 0・空応答を返しましたが、root wrapperがJSONとして解析して`JSONDecodeError`で停止しました。要求は再送せず、実readbackで`draining`を確認しています。これはAWS側の登録解除失敗と断定できる結果ではなく、CLI応答の解析不足です。台帳では`infra.result_parse_failure`を1件記録しました。原本のSHA-256は`5eecb49d8dcbd53bf41e9bccbdaa6be3059704e17b09c67f0468abdd6cf7c6e3`です。
+
+この中間記録時点ではwrapper修正版の独立レビューと後続処理が未完了でした。その後、登録解除を再送せず実状態から正規手順を再開しています。解析失敗の原本と台帳行は、後続の成功で置き換えず保持します。
+
+## 本番反映と後始末の完了
+
+両ホストのdrainは全項目0を確認し、旧writerの停止も両方で強制停止なしに完了しました。15:57:45 UTCに正規operatorが順序付き5段階を完了して`released`を返し、実native受領記録のbytesも取得・照合しました。SHA-256は`9a6a88eab22b4a91dac448e4e120cf95407bf765484971e0ac99adf7bba88c72`です。両ホストのfinalize、旧資源のcleanup、新coreの起動とreconcilerの引き継ぎを終え、recovery jobの生成・assembly・installも完了しています。16:10:43・16:10:49 UTCの最終healthはseq21、Webソース120cb、compute 3・control 4サービスの稼働とreadinessを確認しました。
+
+一時権限は16:11:32 UTCに削除し、`NoSuchEntity`で不存在を確認しました。上限16:32:40 UTCより前で、原本のSHA-256は`83167a0e9c396046aaa66fb2d0ac0cfdf055c5b62743a85273b8548fed19069d`です。入口の再登録はCLI exit 0・空応答を正常に扱い、同じ単一targetのhealthyと14属性の不変をreadbackで確認しました。16:15:07 UTCに所有権の正規解放もSuccess・exit 0で完了し、`canonical_card_release_completed_and_released`を返しています。
+
+## 公開ページの実ブラウザー受入
+
+16:17:13 UTCに既存の日本語共有ページを開き、日本語の証明とLean検証済みの表示を確認しました。ロゴ全体のリンクを実際に押すと`https://palschat.site/try`へ進み、見出しが表示され、質問欄が入力可能でした。通常状態のロゴは4辺ともborderが0px、box-shadowはnone、focus-visibleはfalseです。outline-widthの計算値は3pxですがoutline-styleがnoneなので、この状態でoutlineは描画されていません。幅0pxとは記録しません。rootは共有ページと遷移後の実スクリーンショットも確認しています。受入原本のSHA-256は`e59357a0fda38eb2ea13030177ebe92d9c067f9001f557e6ab0a749c115fbd82`です。
+
+依頼された本番反映とロゴからの遷移確認は完了です。これは単発の本番受入で、全機能・全ブラウザーの回帰試験ではありません。再起動試験、新規の質問送信、独立したLean再実行、Xへの投稿は行っていません。関連ソースは[ロゴ導線のWeb PR #52](https://github.com/AtsushiHosaka/pals-webfront/pull/52)と[共有タイトル修正のWeb PR #57](https://github.com/AtsushiHosaka/pals-webfront/pull/57)です。
+
+## 承認と完了範囲
+
+ユーザーは同じ既存対象に対する4つの読み取り操作を、付与要求から最大45分だけ許可することと、settings担当への調整メッセージ送信を明示的に承認しました。メッセージは送信済みで、一時権限の付与は上記の1回です。settings担当とは単独配備をHOLDし、次に統合リリースを行う順序で合意しています。担当側が別途観測したfresh readのclaim 0件は、本作業の独立した排他確認と混同しません。
+
+旧署名候補`2e3fbc08f2920d836d2a217a16aace4457aacf89586a2e9a7b4c9f835b7dc443`のHOLDは継続し、署名原本を保持しています。この旧候補を適用せず、新しい02ca候補で本番反映・後始末・公開ページの実クリック確認を完了しました。今回の依頼範囲で残る必須検証はありません。
+
+初回の台帳追記は、既存401行をbyte単位で保持した7行です。今回はその408行を保持し、新候補1束、署名1束、OCI照合1束、prewarm 1回、native準備2ホスト、metadata取得2ホストの6行を追加しました。新しい6行の日付は原本のUTC実行日11月5日で統一し、JSTでは翌日となる処理は上記に併記しています。初回タイトル失敗2件は`infra.app_defect`です。モデル費用とAWS費用は測っておらず空欄です。
+
+今回の中間記録では、既存414行をbyte単位で保持し、helper配置、公開operator配置、実旧runtime観測、claim観測、一時権限付与、READ ONLY preflight、所有権取得、両ホストplan、入口応答の解析失敗を9行追加しました。各行はその段階の1操作または2ホスト・2観測であり、内部assertやcount項目を独立試行へ加算していません。
+
+最終追記では既存423行をbyte単位で保持し、DB受理までの排他・停止束、両ホスト切り替え束、recovery・最終health束、権限削除、入口復元・所有解放束、公開ブラウザー受入の6行を追加しました。関連phaseは束ね、5段階・7サービス・CSSの各assertを独立試行には換算していません。
