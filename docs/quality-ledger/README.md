@@ -13,7 +13,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-2026-08-28から2026-11-05までの399行です。出典の内訳は、docsが204行、pals-agentのPRが80行、palsのIssueが87行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
+2026-08-28から2026-11-05までの401行です。出典の内訳は、docsが204行、pals-agentのPRが80行、palsのIssueが89行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
 
 11月5日の説明回帰は、[Agent #50の記録](https://github.com/AtsushiHosaka/pals-agent/blob/36ea6a2b106d5782ca2012b8a75ee4fbfa4c2b52/testdata/explanation-grounding-v1/README.md)に対応する9行を追加しました。初回の同条件比較、書式不備で採点を除外したQA、不備を直した負例、最終修正後の確認を分けています。実モデル24呼出しの推計費用0.02573375 USDを重複なく記録しました。初回比較は両版2/2で、精度向上は確認していません。後の別条件の結果を加えて改善率を作りません。
 
@@ -21,7 +21,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 これらの外部ベンチマークの費用は、使用量に事前登録した全入力0.25・出力0.50 USD/百万tokenを掛けた保守値です。通常入力の標準単価、アプリの版付き原価推計、請求額とは分けます。過去289行を変更せず、今回の6行だけを追記しました。
 
-系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 47、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 96、`availability` 11、`other` 36です。
+系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 47、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 98、`availability` 11、`other` 36です。
 
 2026-11-04の[引き継ぎ確認](../quality-observability-audit-2026-11-04.md)に、CloudWatchの実装と未検証の範囲、プロンプトの変更前後を比較するために今後記録する項目をまとめています。既存の散布図には、題材や成功の定義が違う点が含まれます。図全体からモデルの精度向上を判断しません。
 
@@ -63,6 +63,8 @@ The [settings layout repair](../settings-layout-repair-2026-11-05.md) adds four 
 [同じロゴ配備準備記録](../shared-logo-production-preparation-2026-11-05.md)に、実署名、prewarm、両ホストのnative準備とmetadata取得、helper・公開operator配置、READ ONLY preflightの停止、4操作の権限評価を7行追加しました。既存389行は保持しています。preflightは前提署名の段階でClientErrorを返し、検査containerとRAMを回収しました。権限評価の4件はすべてimplicitDenyでしたが、実API呼出しの失敗や配備成功率には換算していません。新しい45分権限の承認待ちで、本番seq20とロゴ未反映の状態は変わっていません。
 
 [共有タイトルのF02伝播](../shared-title-star-propagation-2026-11-05.md)を3行追加し、既存396行をbyte単位で保持しました。同じ固定5入力をローカルNodeの実タイトル関数で比較し、伝播前0/5、既存修正の移植だけ3/5、限定修正後5/5でした。以前の3題subsetや81件の単体検査は分母へ加算しません。数学証明、実API、E2E、本番表示は未検証で、旧署名候補の配備は保留しています。
+
+[同じタイトル修正の追記](../shared-title-star-propagation-2026-11-05.md#入れ子の強調に関する追加修正)では、入れ子の強調を含む固定6入力の修正前2/6・修正後6/6を2行追加し、既存399行をbyte単位で保持しました。新規4条件は0/4から4/4、以前の積の対照2条件は両版2/2です。前回の5入力、対照2件の重複、148件の単体検査は新しい分母へ足していません。タイトル関数のローカル評価に限り、追加の本番操作は行っていません。
 
 ## グラフ
 
