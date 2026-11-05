@@ -13,7 +13,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-2026-08-28から2026-11-05までの358行です。出典の内訳は、docsが204行、pals-agentのPRが80行、palsのIssueが46行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
+2026-08-28から2026-11-05までの362行です。出典の内訳は、docsが204行、pals-agentのPRが80行、palsのIssueが50行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
 
 11月5日の説明回帰は、[Agent #50の記録](https://github.com/AtsushiHosaka/pals-agent/blob/36ea6a2b106d5782ca2012b8a75ee4fbfa4c2b52/testdata/explanation-grounding-v1/README.md)に対応する9行を追加しました。初回の同条件比較、書式不備で採点を除外したQA、不備を直した負例、最終修正後の確認を分けています。実モデル24呼出しの推計費用0.02573375 USDを重複なく記録しました。初回比較は両版2/2で、精度向上は確認していません。後の別条件の結果を加えて改善率を作りません。
 
@@ -21,7 +21,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 これらの外部ベンチマークの費用は、使用量に事前登録した全入力0.25・出力0.50 USD/百万tokenを掛けた保守値です。通常入力の標準単価、アプリの版付き原価推計、請求額とは分けます。過去289行を変更せず、今回の6行だけを追記しました。
 
-系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 47、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 55、`availability` 11、`other` 36です。
+系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 47、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 59、`availability` 11、`other` 36です。
 
 2026-11-04の[引き継ぎ確認](../quality-observability-audit-2026-11-04.md)に、CloudWatchの実装と未検証の範囲、プロンプトの変更前後を比較するために今後記録する項目をまとめています。既存の散布図には、題材や成功の定義が違う点が含まれます。図全体からモデルの精度向上を判断しません。
 
@@ -52,7 +52,9 @@ python3 -m unittest discover -s docs/quality-ledger -p 'test_*.py'
 
 同日の[seq20共有カード配備](../og-footer-x-clearance-2026-11-05.md)では、レイアウト・配備・権限削除・公開画像・X表示の検証を14行追加しました。既存334行を保持し、初回の失敗と修正後の成功を分けました。Xでは版付きリンクの下書きで検証文の全文を確認しました。元のリンクのキャッシュ更新は未確認です。
 
-[日本語の証明共有](../japanese-proof-share-2026-11-05.md)では、既存352行をbyte単位で保持して6行追加しました。Highの初回と同じ依頼の再試行の失敗、2ホストの読み取り診断、Mediumの完成、日本語共有・公開カード、実際のX下書き表示を分けています。初回の内部HTTP 500が2件でもユーザー試行は1回です。Mediumの705.721秒は完成を画面で観測するまでの上限で、実行時間の中央値ではありません。PALSの検証済み表示と69行のコードを確認し、独立したLean再実行はしていません。単発の運用・表示確認として記録し、モデル比較や数学全般の精度向上とは扱いません。
+The [settings layout repair](../settings-layout-repair-2026-11-05.md) adds four disjoint local preview records: two original failing viewports, the same two repaired viewports, eight additional locale/viewport cases, and four narrow state cases. The owner approved sample settings for layout verification. These rows do not measure real account persistence, production rendering, browser zoom, or mathematical quality.
+
+[日本語の証明共有](../japanese-proof-share-2026-11-05.md)では、既存356行を保持して6行追加しました。Highの初回と同じ依頼の再試行の失敗、2ホストの読み取り診断、Mediumの完成、日本語共有・公開カード、実際のX下書き表示を分けています。初回の内部HTTP 500が2件でもユーザー試行は1回です。Mediumの705.721秒は完成を画面で観測するまでの上限で、実行時間の中央値ではありません。PALSの検証済み表示と69行のコードを確認し、独立したLean再実行はしていません。単発の運用・表示確認として記録し、モデル比較や数学全般の精度向上とは扱いません。
 
 ## グラフ
 
