@@ -190,16 +190,94 @@ repull an image, or alter the original failed evidence. Fifteen pure checks cove
 that verifier's metadata and refusal behavior; all passed. This is operational
 validation, not model accuracy.
 
+### Earlier permission-blocked checkpoint (historical)
+
 Separate native read-only probes confirmed `AccessDeniedException` for KMS
 GetPublicKey/Verify and `AccessDenied` for RDS DescribeDBClusters/DescribeDBInstances.
-The proposed temporary policy is recorded in [decision #253](https://github.com/AtsushiHosaka/pals/issues/253).
-The key and cluster match the signed target; a separate current membership read
-confirmed the one instance included in the proposed scope. No new IAM grant is
-active. The proposal affects sessions of the existing control role during its
-window; it is not limited to one process. Owner approval is pending.
+The proposed temporary policy was recorded in [decision #253](https://github.com/AtsushiHosaka/pals/issues/253).
+The key and cluster matched the signed target; a separate current membership read
+confirmed the one instance included in the proposed scope. At that checkpoint,
+no new IAM grant was active and owner approval was pending. The proposal affected
+sessions of the existing control role during its window, rather than one process.
+Production still served seq18; no drain, owning DB admission, finalized runtime,
+activation or new installed recovery pair had been performed. The initial
+permission refusal and image-inspection refusal above remain failed observations.
 
-No lifecycle apply, service drain, owning DB admission, finalized new runtime,
-activation, new installed recovery pair, production card metadata or actual X
-draft preview is claimed. Existing production remains on seq18. The previously
-prepared public HTTP card checker is read-only and explicitly distinguishes
-Twitterbot-like HTTP evidence from an actual X preview. No X post was sent.
+## Approved seq19 rollout and current status — 2026-11-05 JST
+
+Before cutover, the exact new Web image rendered the existing owner-requested
+snapshot through a temporary loopback listener in the current Web network
+namespace. Its HTML and PNG fetched the live API and existing font dependencies,
+retaining no-store, no-index and no-referrer headers. The retrieved 1200×630 PNG
+was byte-identical to the approved card, SHA-256
+`33f6f1f573f13e7e88526bf147066854184c1ba69aa9d08279f80f9eab7e1f16`.
+This confirms the checked font/footer pixels for this one snapshot. The test
+container was removed and the original serving actor tuple remained unchanged.
+That preview did not exercise public ingress or X.
+
+The first fixed permission window expired without an IAM change. The owner then
+approved the same narrow scope for 45 minutes after attachment. The actual
+recorded window began at **05:04:38 UTC (14:04:38 JST)** and was capped at
+05:49:38 UTC. Only KMS GetPublicKey/Verify and exact-target RDS metadata reads in
+Tokyo were added to the existing control role. There was no Sign, schema, coupon
+or other write grant. The policy was deleted and actual `NoSuchEntity` absence
+readback completed at **05:21:15 UTC (14:21:15 JST)**, before its expiry.
+
+| Actual completed gate | Evidence and result |
+|---|---|
+| Native preview | One existing snapshot; 1200×630 PNG exactly matched the approved bytes. Test removed; serving actors unchanged. Pass. |
+| Owning read-only preflight | One complete native preflight passed at 05:05:18 UTC, with 35 release-schema and 35 runtime checks, zero DB mutations, and task container/RAM cleanup. Pass. |
+| Owning software admission | One actual transaction returned the five-step `released` receipt at 05:11:40 UTC, including exclusive quiescence and preservation of the existing DB. Pass. |
+| Final host health and recovery | Both hosts passed seq19 readiness and exact firewall checks by 05:20:47 UTC. All seven actors were running, with two new recovery configurations and three loaded/enabled recovery units. Pass. |
+| Temporary permission cleanup | One exact policy was removed and its absence independently read back as `NoSuchEntity`. Pass. |
+| Public shared-card HTTP | The actual production share returned Twitterbot metadata and a 1200×630 PNG matching the approved RGBA pixels and bytes; both footer lower edges were y=570. Pass. |
+| Actual X draft preview | The signed-in X composer displayed the actual PALS card after saving and reopening the draft and blurring the link field. Pass; no post published. |
+
+The control health check also read back seq19 as the latest DB admission.
+Read-only drain observations found zero outstanding claims or Lean/Lake child
+processes; durable claims were not modified or forced through. No new model
+request was made for these rollout checks. The actual reboot path was not tested.
+
+Signed seq19 is active on both hosts, retaining the existing API, worker,
+verifier, infrastructure, 35-step schema and Lean/Lake identities. Its signed
+window expires at **2026-11-06 02:10:57 UTC (11:10:57 JST)**. Only the Web source
+and parent gitlink advanced as described above.
+
+## Public HTTP and actual X preview — completed
+
+The independent production HTTPS check passed for the actual existing share.
+Twitterbot HTML exposed problem-specific Open Graph metadata and
+`summary_large_image`; the image was 1200×630, byte-identical to the approved PNG
+above, with matching RGBA pixels. The orange marker and verification text both
+ended at y=570. The page and image retained private no-store, no-index and
+no-referrer headers. This HTTP result remains separate from the X browser check.
+
+X's card validator fetched the page, detected 25 metadata tags, identified the
+large-image card type and reported successful card loading. Separately, the
+actual signed-in X draft was saved and reopened. After the link field lost
+focus, the composer displayed the actual PALS card image. The browser evidence
+was recorded at **05:28:48 UTC (14:28:48 JST)**. This establishes the requested
+draft preview, rather than only a crawler-like HTTP response.
+X's own black title overlay partially overlaps the orange verification footer
+in the draft preview. The underlying approved PNG is unchanged; this release
+made no further layout change for X's overlay.
+
+The canonical release record also completed and released operator ownership.
+The public ingress target was healthy, the existing target and load-balancer
+attributes were unchanged, and temporary IAM removal had been read back.
+
+Private evidence hashes retained outside Git provide traceability:
+
+| Artifact | SHA-256 |
+|---|---|
+| Production HTTP result | `80fe82a3800e36e5c12241d255975ca3f9d0fcab73193e78e95a7d071217049f` |
+| Actual X browser verification record | `0f57e589fcc8d868c2668f6a1241d74392523bcb3041d477a8e884cb2d30a302` |
+| X draft screenshot | `009f3daf56da865da6a96309823cf593722c2e9de0ef143d05958abaf8aece70` |
+| Restored ingress readback | `651ecb0e88c52def8a5217ad9206b26908b232e9cdcf8b2244ba676bf2fd8de5` |
+| Canonical ownership-release result | `0636de9acbe5625579e13790ff4f2913d61222251a3d2df8a18e0093406bd5b8` |
+
+The requested production deployment and actual X draft preview are verified.
+No X post was published. These final checks did not rerun model generation, the
+Lean compiler or an actual host reboot. Private tokens, screenshots, browser
+accessibility text, runtime identifiers and raw conversation content remain
+outside Git.

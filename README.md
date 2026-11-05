@@ -47,16 +47,18 @@ seq15配備後の実機読取では、自然文Draftは433行、現在admitted�
 
 Web・APIはprivate controlのt4g.medium、Lean worker・verifierはprivate computeのr8a.large、DBはAuroraです。大会時のxlarge切り替え、ASG・自動スケールは未配備です。1秒回答と30人同時利用も未達成または未検証です。Lean生成の既定はTerra・mediumで、モデルの自動切り替えはありません。
 
-配備中のseq15 manifestは`913327b2c280bcfb000aac7c0992ddefeb1d4eb1bc2bd62e1fbc6ff49c028fe3`です。署名の有効期限は2026年11月3日14:33:33 JSTで、起動時に検査します。期限切れだけでは稼働中サービスは停止しませんが、無人での署名更新は未実装です。
+2026年11月5日の実機確認では、配備中のseq19 manifestは`1630bc127e6281b6a7a5bd75d51bee80df7f1445b7710686c1439ef86055caa7`です。署名の有効期限は2026年11月6日11:10:57 JSTで、起動時に検査します。期限切れだけでは稼働中サービスは停止しませんが、無人での署名更新は未実装です。
+
+今回の配備ではWebの共有カードを更新し、API・worker・verifier・infraと35段階のDBスキーマを維持しました。両ホストの稼働と復旧設定、公開共有ページの画像、Xの下書きでのカード表示を確認しました。[配備と検証の記録](docs/proof-share-smoke-2026-11-05.md)を参照してください。
 
 | 配備中のソフトウェア | commit |
 | --- | --- |
-| 親リポジトリ | `264b693cf59a555fc5b718f5d3057b8d946571b9` |
-| API | `5ef6ebabaf8aa133ec067f8e8881153a0fb49880` |
-| worker | `01aca0a942cc88e81b9526232acb3a52cc4f08a9` |
-| infra | `4d9478a1601642a72ad15dc5ba82f8285b473e6e` |
-| Web | `c0978aabf81b046f34ec22818ed407d1292be928` |
-| verifier | `f851917c390fe7cf49d453a5ff3ec70deaf92b67` |
+| 親リポジトリ | `b7160a3c0b9eec78a6567b3341f4922b900b4a65` |
+| API | `9f45a39ea023ac9f7f28f9efdb816b90c18cffff` |
+| worker | `6e5c58dec2459962b2df498385d47cd8d6abe3a2` |
+| infra | `6ddafd53259d3385af0243521d729e11a93106f1` |
+| Web | `3bc3f708ef69a5c3e505e799576c1b82665db842` |
+| verifier | `189b44378e6e63e5ab7c92d9c5b7d6507acd80f0` |
 
 以前のseq11では、完全一致する自然数冪の日本語入力をモデル呼び出しなしで再利用し、通常ゲストの3チャットで4.775秒・4.664秒・4.830秒で回答とLeanソースを表示しました。これは今回の言い換え経路とは別の公開実測です。[対象の全文・測定方法・利用枠・記録](docs/aws-recipe-reuse-latency-2026-10-31.md)を参照してください。
 
