@@ -7,6 +7,10 @@ Status: **guarded cutover paused before admission; previous runtime restored and
 healthy**. Seq21 has not been admitted or activated. The real production
 settings checks after deployment remain pending.
 
+Deployment ownership is now handed to the integrated Web release for #273.
+The standalone settings candidate remains on hold; actual settings acceptance
+will follow that release.
+
 ## Authorization and review
 
 The owner requested review of Web #49 and parent #268, merge if sound, production
@@ -126,6 +130,30 @@ new explicit verification approval and a fresh positive preflight.
 An independent read-only control health check then confirmed canonical ownership
 absent before and after the check, with the healthy previous seq20 still serving.
 
+## Integrated-release handoff
+
+The owner authorized coordination with the [integrated-release chat](codex://threads/01a1a71b-fbdb-7ce3-93fe-43a7c7bae0d7).
+That chat will prepare and deploy the next integrated source for #273. The
+standalone settings candidate is held rather than applied after that source.
+Each release retains its own approval, artifacts and fresh canonical ownership.
+
+Independent source checks found Web #53, #54 and #56 merged, with ancestry
+`9332a04 → b86e2644 → a0659156 → 5930d6b9 → 82867a02`. The settings component at
+the final head is byte-identical to the reviewed repair; all earlier CSS lines
+are retained, with only two shared-logo rules added. The head and #56 merge
+have identical file contents. This proves source preservation, not the
+eventual image or non-Web release tuple. API #72 and coupon/schema updates are
+outside the requested handoff scope.
+
+Fresh read-only checks on November 5 at 23:07 JST confirmed the previous seq20
+on both hosts, all seven services running, exact firewall and passed readiness.
+Canonical ownership was absent before and after the control check. The original
+public target was healthy with all 14 attributes unchanged; this chat's original
+temporary policy was absent. At 23:10:42 JST, all four aggregate active-claim
+counts were zero. No grant, token, lock, admission, activation, or runtime change
+was made during these checks. These are observations, so the integrated release
+must still claim ownership and repeat its own fresh checks before cutover.
+
 ## Actual browser baseline and remaining acceptance
 
 The owner signed into the existing production app through its normal UI. The
@@ -140,7 +168,7 @@ This establishes the test method on the old release, not acceptance of the new
 release. Screenshots are restricted to the settings dialog; account and chat
 details are not published.
 
-Remaining gates: actual claim clearance, fresh approved verification access and
+Remaining gates for the integrated release: actual claim clearance, fresh approved verification access and
 positive pre-cutover checks;
 exclusive ownership and guarded cutover/admission; final recovery, health,
 ingress and permission-cleanup evidence; and post-reload production
