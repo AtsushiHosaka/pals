@@ -13,7 +13,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-2026-08-28から2026-11-05までの352行です。出典の内訳は、docsが204行、pals-agentのPRが80行、palsのIssueが40行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
+2026-08-28から2026-11-05までの356行です。出典の内訳は、docsが204行、pals-agentのPRが80行、palsのIssueが44行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
 
 11月5日の説明回帰は、[Agent #50の記録](https://github.com/AtsushiHosaka/pals-agent/blob/36ea6a2b106d5782ca2012b8a75ee4fbfa4c2b52/testdata/explanation-grounding-v1/README.md)に対応する9行を追加しました。初回の同条件比較、書式不備で採点を除外したQA、不備を直した負例、最終修正後の確認を分けています。実モデル24呼出しの推計費用0.02573375 USDを重複なく記録しました。初回比較は両版2/2で、精度向上は確認していません。後の別条件の結果を加えて改善率を作りません。
 
@@ -21,7 +21,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 これらの外部ベンチマークの費用は、使用量に事前登録した全入力0.25・出力0.50 USD/百万tokenを掛けた保守値です。通常入力の標準単価、アプリの版付き原価推計、請求額とは分けます。過去289行を変更せず、今回の6行だけを追記しました。
 
-系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 44、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 52、`availability` 11、`other` 36です。
+系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 44、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 56、`availability` 11、`other` 36です。
 
 2026-11-04の[引き継ぎ確認](../quality-observability-audit-2026-11-04.md)に、CloudWatchの実装と未検証の範囲、プロンプトの変更前後を比較するために今後記録する項目をまとめています。既存の散布図には、題材や成功の定義が違う点が含まれます。図全体からモデルの精度向上を判断しません。
 
@@ -51,6 +51,8 @@ python3 -m unittest discover -s docs/quality-ledger -p 'test_*.py'
 [検証用containerの回収](../overlay-probe-verification-2026-11-05.md)は、固定2profileの実Docker境界確認を1行として追加しました。既存333行を保持し、起動・build・公開を行わずcreate応答喪失からの回収だけを測っています。単体件数や数学的な精度とは区別します。
 
 同日の[seq20共有カード配備](../og-footer-x-clearance-2026-11-05.md)では、レイアウト・配備・権限削除・公開画像・X表示の検証を14行追加しました。既存334行を保持し、初回の失敗と修正後の成功を分けました。Xでは版付きリンクの下書きで検証文の全文を確認しました。元のリンクのキャッシュ更新は未確認です。
+
+The [settings layout repair](../settings-layout-repair-2026-11-05.md) adds four disjoint local preview records: two original failing viewports, the same two repaired viewports, eight additional locale/viewport cases, and four narrow state cases. The owner approved sample settings for layout verification. These rows do not measure real account persistence, production rendering, browser zoom, or mathematical quality.
 
 ## グラフ
 
