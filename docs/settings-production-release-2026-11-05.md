@@ -115,6 +115,17 @@ validity for the bounded attempt and cleanup. A lease estimate or elapsed wait
 does not prove that the claim has cleared. Continue only from reconciled actual
 state; do not automatically retry partial phases.
 
+A guarded postponement then archived only this operation's canonical ownership
+record. It required fresh actual previous-runtime health, identical healthy
+ingress, verified temporary-access absence and two native read-only checks that
+the latest admission was still seq20. The actual result confirms no candidate
+admission or activation and no runtime, ingress, IAM or database mutation by
+the postponement. This is a distinct postponed-without-admission record, not a
+successful seq21 completion. A later attempt requires a new ownership token,
+new explicit verification approval and a fresh positive preflight.
+An independent read-only control health check then confirmed canonical ownership
+absent before and after the check, with the healthy previous seq20 still serving.
+
 ## Actual browser baseline and remaining acceptance
 
 The owner signed into the existing production app through its normal UI. The
