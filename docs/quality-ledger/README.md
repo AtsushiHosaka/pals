@@ -12,7 +12,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-2026-08-28 から 2026-11-05 までの 275 行です。出典の内訳は、docs が 195 行、pals-agent の PR が 49 行、pals の Issue が 17 行、pals の PR が 14 行です。pals の PR と Issue の多くは docs と重複していたため、台帳では1行にまとめて `source` に両方を書きました。
+2026-08-28 から 2026-11-05 までの 282 行です。出典の内訳は、docs が 195 行、pals-agent の PR が 49 行、pals の Issue が 17 行、pals の PR が 21 行です。pals の PR と Issue の多くは docs と重複していたため、台帳では1行にまとめて `source` に両方を書きました。
 
 系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 34、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 17、`availability` 10、`other` 3 です。
 

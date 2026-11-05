@@ -158,3 +158,48 @@ SSO sign-in was opened for the owner; its first pending login expired and was
 reopened. No image was pushed, no IAM permission was changed and no production
 cutover was attempted. Deployment and the actual X card check remain pending
 AWS sign-in and the owning signed release process. No X post was sent.
+
+## Signed card-only candidate and native checks — 2026-11-05 JST
+
+AWS SSO was refreshed through the normal device flow. The exact protected-field
+read then succeeded. The actual publication receipt binds the clean five-source
+capture and four pulled immutable role images; only the Web image changes.
+Receipt SHA-256: `b085559ac2acd4ddd65ff8cbf50d6881e6efed3b1f6834c06e1ac1fdd293448b`.
+The real signed seq19 candidate is
+`1630bc127e6281b6a7a5bd75d51bee80df7f1445b7710686c1439ef86055caa7`.
+It preserves the current 35-step registry, external bindings, API, worker,
+verifier, infrastructure and Lean/Lake pins. The new signature passed independent
+verification against the previously pinned signing public key.
+
+| Actual gate | Evidence and result |
+|---|---|
+| Immutable publication | Four role-image identities checked; formal v2 receipt produced. Pass. |
+| Native versioned preparation | Both hosts returned `prepared_not_admitted_not_activated`. Pass. |
+| Native lifecycle plan | Both hosts rechecked the current seq18 tuple, readiness and prepared files; all seven services remained running. Pass. |
+| Initial native Web image comparison | Pull completed; full Docker Config JSON projection differed. The command refused. Fail retained. |
+| Independent OCI/cache comparison | Raw registry config digest, all original configuration fields, nine filesystem layers, source, platform and actual runtime-owner image guard matched. Pass. |
+| Owning read-only admission preflight | Refused at predecessor-signature validation with `ClientError`; task containers/RAM were removed and serving actors were unchanged. Fail retained. |
+
+The image discrepancy was in Docker's inspection representation: production
+adds eleven legacy fields with false, empty-string or null defaults. Every
+original field matches the actual raw OCI config. The follow-up verifier accepts
+only those explicitly named, exactly typed defaults, still requires the original
+configuration digest and filesystem hashes, and rejects missing/unknown fields
+or changed values. It did not replace an expected digest with an observed ID,
+repull an image, or alter the original failed evidence. Fifteen pure checks cover
+that verifier's metadata and refusal behavior; all passed. This is operational
+validation, not model accuracy.
+
+Separate native read-only probes confirmed `AccessDeniedException` for KMS
+GetPublicKey/Verify and `AccessDenied` for RDS DescribeDBClusters/DescribeDBInstances.
+The proposed temporary policy is recorded in [decision #253](https://github.com/AtsushiHosaka/pals/issues/253).
+The key and cluster match the signed target; a separate current membership read
+confirmed the one instance included in the proposed scope. No new IAM grant is
+active. The proposal affects sessions of the existing control role during its
+window; it is not limited to one process. Owner approval is pending.
+
+No lifecycle apply, service drain, owning DB admission, finalized new runtime,
+activation, new installed recovery pair, production card metadata or actual X
+draft preview is claimed. Existing production remains on seq18. The previously
+prepared public HTTP card checker is read-only and explicitly distinguishes
+Twitterbot-like HTTP evidence from an actual X preview. No X post was sent.
