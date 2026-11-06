@@ -365,15 +365,52 @@ class Tool:
                 (name, arguments)).fetchone()
             if found != (True,):
                 raise Refusal(f"pals_billing.{name} does not exist in this database; billing migration missing?")
-        admin = master.execute(
-            "SELECT EXISTS (SELECT 1 FROM pg_auth_members m JOIN pg_roles r ON r.oid=m.roleid JOIN pg_roles u "
-            "ON u.oid=m.member WHERE r.rolname=%s AND u.rolname=current_user AND m.admin_option)", (ROLE,)
-        ).fetchone()
-        if admin != (True,):
-            raise Refusal(f"the master user cannot grant {ROLE} (no ADMIN OPTION); an operator must fix this")
+        self.prove_grant_works(master)
         stale = master.execute("SELECT count(*) FROM pg_roles WHERE rolname LIKE 'pals\\_op\\_lt\\_%'").fetchone()
         if stale and stale[0]:
             raise Refusal("a previous temporary login still exists; drop it first")
+
+
+    def prove_grant_works(self, master: Any) -> None:
+        """Do the real create-and-grant inside a transaction, then roll it back.
+
+        Reading pg_auth_members would only guess whether the master may grant the role; this asks
+        the server itself and leaves nothing behind (role creation and GRANT are transactional).
+        """
+        probe = f"pals_op_lt_probe_{secrets.token_hex(4)}"
+        try:
+            with master.transaction():
+                master.execute(f"CREATE ROLE {ident(probe)} NOLOGIN")
+                master.execute(f"GRANT {ident(ROLE)} TO {ident(probe)} WITH INHERIT FALSE, SET TRUE")
+                raise _RollBack
+        except _RollBack:
+            return
+        except Exception as error:  # noqa: BLE001
+            first = (str(error).splitlines() or [""])[0][:160]
+            raise Refusal(f"the master user cannot create a login and grant {ROLE} ({first}). "
+                          f"{self.describe_membership(master)}") from None
+
+    def describe_membership(self, master: Any) -> str:
+        """Role names and flags only (no secrets): who can administer the operator role."""
+        try:
+            who = master.execute(
+                "SELECT current_user, rolcreaterole, rolsuper, EXISTS (SELECT 1 FROM pg_roles g WHERE "
+                "g.rolname='rds_superuser' AND pg_has_role(current_user, g.oid, 'MEMBER')) "
+                "FROM pg_roles WHERE rolname=current_user"
+            ).fetchone()
+            rows = master.execute(
+                "SELECT pg_get_userbyid(m.member), pg_get_userbyid(m.grantor), m.admin_option, "
+                "m.inherit_option, m.set_option FROM pg_auth_members m JOIN pg_roles r ON r.oid=m.roleid "
+                "WHERE r.rolname=%s ORDER BY 1", (ROLE,)).fetchall()
+        except Exception:  # noqa: BLE001
+            return "membership could not be read"
+        edges = "; ".join(f"{m}<-{g} admin={a} inherit={i} set={t}" for m, g, a, i, t in rows) or "none"
+        return (f"connected as {who[0]} (createrole={who[1]}, superuser={who[2]}, rds_superuser={who[3]}); "
+                f"edges on {ROLE}: {edges}")
+
+
+class _RollBack(Exception):
+    """Raised on purpose to roll the probe transaction back."""
 
 
 def parser() -> argparse.ArgumentParser:

@@ -76,12 +76,16 @@ class FakeConn:
         text = " ".join(str(query).split())
         self.log.append((self.user, text, params))
         low = text.lower()
-        if "from pg_roles where rolname=%s" in low and "rolcanlogin" in low:
+        if text.startswith("GRANT") and "pals_op_lt_probe_" in text and not self.admin:
+            raise RuntimeError("permission denied to grant role")
+        if "from pg_auth_members" in low:
+            self.last = [("palsadmin", "rdsadmin", False, False, False)]
+        elif "select current_user, rolcreaterole" in low:
+            self.last = ("palsadmin", True, False, True)
+        elif "from pg_roles where rolname=%s" in low and "rolcanlogin" in low:
             self.last = self.role_row
         elif "from pg_proc" in low:
             self.last = (self.procs,)
-        elif "admin_option" in low:
-            self.last = (self.admin,)
         elif "like 'pals" in low:
             self.last = (self.stale,)
         elif "select count(*)" in low:
@@ -93,10 +97,17 @@ class FakeConn:
     def fetchone(self):
         return self.last
 
+    def fetchall(self):
+        return self.last
+
     @contextlib.contextmanager
     def transaction(self):
         self.log.append((self.user, "BEGIN", None))
-        yield
+        try:
+            yield
+        except BaseException:
+            self.log.append((self.user, "ROLLBACK", None))
+            raise
         self.log.append((self.user, "COMMIT", None))
 
     def close(self):
@@ -141,8 +152,19 @@ class GrantTest(unittest.TestCase):
         self.assertEqual(code, 0, err)
         self.assertIn("connection check ok", out)
         self.assertTrue(log)
-        self.assertFalse(any(s.startswith(("CREATE", "GRANT", "DROP")) for _, s, _ in log))
+        real = [s for _, s, _ in log if s.startswith(("CREATE", "GRANT", "DROP")) and "_probe_" not in s]
+        self.assertEqual(real, [])  # only the rolled-back probe touches roles
         self.assertFalse((self.state / "grants.json").exists())
+
+    def test_the_grant_probe_is_rolled_back_not_committed(self):
+        log = []
+        self.run_main(["check", "--execute", "--confirm-pool", "pals-mini-prod"], runner=fake_aws(),
+                      connect=self.connect_factory(log), tunnel=no_tunnel)
+        steps = [s for _, s, _ in log]
+        probe = [i for i, s in enumerate(steps) if s.startswith("CREATE ROLE") and "_probe_" in s]
+        self.assertEqual(len(probe), 1)
+        self.assertEqual(steps[probe[0] - 1], "BEGIN")
+        self.assertEqual(steps[probe[0] + 2], "ROLLBACK")
 
     def test_check_without_execute_never_connects_or_reads_the_secret(self):
         runner, log = fake_aws(), []
@@ -155,7 +177,8 @@ class GrantTest(unittest.TestCase):
         code, _, err = self.run_main(["check", "--execute", "--confirm-pool", "pals-mini-prod"], runner=fake_aws(),
                                      connect=self.connect_factory([], admin=False), tunnel=no_tunnel)
         self.assertEqual(code, 2)
-        self.assertIn("ADMIN OPTION", err)
+        self.assertIn("cannot create a login and grant", err)
+        self.assertIn("edges on pals_billing_test_admin", err)
 
     def test_execute_requires_pool_confirmation(self):
         code, _, err = self.run_main(["grant", "--execute"], runner=fake_aws(), connect=self.connect_factory([]))
@@ -187,7 +210,7 @@ class GrantTest(unittest.TestCase):
                                        connect=self.connect_factory(log), tunnel=no_tunnel)
         self.assertEqual(code, 0, err)
         statements = [(u, s) for u, s, _ in log]
-        creates = [s for u, s in statements if s.startswith("CREATE ROLE")]
+        creates = [s for u, s in statements if s.startswith("CREATE ROLE") and "_probe_" not in s]
         self.assertEqual(len(creates), 1)
         self.assertIn("NOINHERIT", creates[0])
         self.assertIn("VALID UNTIL", creates[0])
@@ -196,7 +219,8 @@ class GrantTest(unittest.TestCase):
         grant_calls = [(u, s) for u, s in statements if "grant_complimentary_pro" in s]
         self.assertEqual(len(grant_calls), 3)
         self.assertTrue(all(u == login for u, _ in grant_calls))  # the audit identity is the temp login
-        order = [s.split()[0] + " " + s.split()[1] for _, s in statements if s.startswith(("CREATE ROLE", "DROP ROLE"))]
+        order = [s.split()[0] + " " + s.split()[1] for _, s in statements
+                 if s.startswith(("CREATE ROLE", "DROP ROLE")) and "_probe_" not in s]
         self.assertEqual(order, ["CREATE ROLE", "DROP ROLE"])
         self.assertIn("temporary operator login dropped", out)
         grants = json.loads((self.state / "grants.json").read_text())
@@ -209,7 +233,7 @@ class GrantTest(unittest.TestCase):
         log = []
         _, out, err = self.run_main(self.execute_args(), runner=fake_aws(), connect=self.connect_factory(log),
                                     tunnel=no_tunnel)
-        creates = [s for _, s, _ in log if s.startswith("CREATE ROLE")]
+        creates = [s for _, s, _ in log if s.startswith("CREATE ROLE") and "PASSWORD '" in s]
         password = creates[0].split("PASSWORD '")[1].split("'")[0]
         for secret in ("master-secret-value", password, "never-printed"):
             self.assertNotIn(secret, out + err)
@@ -217,14 +241,14 @@ class GrantTest(unittest.TestCase):
     def test_preflight_failures_stop_before_creating_any_login(self):
         for kwargs, expected in (({"role_row": (True, False, False)}, "NOLOGIN"),
                                  ({"procs": False}, "does not exist"),
-                                 ({"admin": False}, "ADMIN OPTION"),
+                                 ({"admin": False}, "cannot create a login and grant"),
                                  ({"stale": 1}, "previous temporary login")):
             log = []
             code, _, err = self.run_main(self.execute_args(), runner=fake_aws(),
                                          connect=self.connect_factory(log, **kwargs), tunnel=no_tunnel)
             self.assertEqual(code, 2, kwargs)
             self.assertIn(expected, err)
-            self.assertFalse(any(s.startswith("CREATE ROLE") for _, s, _ in log), kwargs)
+            self.assertFalse(any(s.startswith("CREATE ROLE") and "PASSWORD" in s for _, s, _ in log), kwargs)
             (self.state / "grants.json").unlink(missing_ok=True)
 
     def test_a_failure_while_granting_still_drops_the_login(self):
@@ -371,6 +395,20 @@ class RealPostgresTest(unittest.TestCase):
         revoked = self.admin.execute("SELECT count(*) FROM pals_billing.complimentary_pro_revocations").fetchone()
         self.assertEqual(revoked, (3,))
         self.assertEqual(self.logins(), [])
+
+    def test_master_without_admin_option_is_refused_with_diagnostics_then_passes_once_granted(self):
+        self.admin.execute("REVOKE pals_billing_test_admin FROM palsadmin")
+        code, _, err = self.run_main(["check", "--execute", "--confirm-pool", "pals-mini-prod"])
+        self.assertEqual(code, 2)
+        self.assertIn("cannot create a login and grant", err)
+        self.assertIn("edges on pals_billing_test_admin: none", err)
+        self.assertEqual(self.logins(), [])  # the probe left nothing behind
+        self.admin.execute("GRANT pals_billing_test_admin TO palsadmin WITH ADMIN OPTION")
+        code, out, err = self.run_main(["check", "--execute", "--confirm-pool", "pals-mini-prod"])
+        self.assertEqual(code, 0, err)
+        self.assertEqual(self.logins(), [])
+        left = self.admin.execute("SELECT count(*) FROM pg_roles WHERE rolname LIKE 'pals\\_op\\_lt\\_probe%'").fetchone()
+        self.assertEqual(left, (0,))
 
     def test_the_login_needs_set_role_and_cannot_call_the_function_directly(self):
         self.admin.execute("CREATE ROLE probe LOGIN NOINHERIT PASSWORD 'probepw'")
