@@ -2,7 +2,7 @@
 
 担当はCodex。[障害Issue #223](https://github.com/AtsushiHosaka/pals/issues/223)、[担当チャット](codex://threads/01a1ae34-04ec-7050-b060-e31d0be7ad3b)。関連は[#222](https://github.com/AtsushiHosaka/pals/issues/222)、品質監視の[#217](https://github.com/AtsushiHosaka/pals/issues/217)、署名更新の[#142](https://github.com/AtsushiHosaka/pals/issues/142)。
 
-本番ログと読み取り専用DB照会で、今回の失敗経路を特定した。平方専用Recipeは本番検索の公開一覧に存在せず、一般の自然数冪のRecipeは特殊化の再利用を認めない照合で却下された。新規証明はLean検証を通ったが、説明は`x_squared_epsilon_delta`検査で3回とも拒否された。旧修正候補は追加レビューの指摘により停止した。新たな承認後、R2を本番seq22へ反映し、全7サービスのreadiness、公開入口の復元、一時権限の削除、所有権の解放を確認した。後続の新しい数学依頼も説明生成で失敗し、公開UIの復旧受入は未達である。
+本番ログと読み取り専用DB照会で、今回の失敗経路を特定した。平方専用Recipeは本番検索の公開一覧に存在せず、一般の自然数冪のRecipeは特殊化の再利用を認めない照合で却下された。新規証明はLean検証を通ったが、説明は`x_squared_epsilon_delta`検査で3回とも拒否された。旧修正候補は追加レビューの指摘により停止した。新たな承認後、R2を本番seq22へ反映し、全7サービスのreadiness、公開入口の復元、一時権限の削除、所有権の解放を確認した。後続の新しい数学依頼も説明生成で失敗した。R3は新たな明示承認を得て切替進行中で、正規operatorのrelease結果まで確認した。新runtimeの最終health、入口の復元、公開UIの復旧受入は、この進捗記録では未確認である。
 
 AWS SSOは当初期限切れだったが、オーナーの再認証後に調査を再開した。以下では、実機確認、保存済み配備記録、オフライン再現を区別する。
 
@@ -129,7 +129,7 @@ R2候補のmanifest `0a7d1267d08665dec24e7e37afcec709bf1b3e2791e535fc8db7e08c5a5
 
 ALBは元と同じ単一targetをhealthyへ戻し、14項目の設定値を維持した。一時検証権限は11:55:50 JSTに削除し、`NoSuchEntity`で不存在を確認した。実存続窓は29分1秒で、モデルの処理時間へは算入しない。11:59:08 JSTの所有権解放は`canonical_card_release_completed_and_released`で成功した。
 
-現行seq22 manifestのSHA-256は`0a7d1267d08665dec24e7e37afcec709bf1b3e2791e535fc8db7e08c5a51b311`、signatureのSHA-256は`ece7dfcb7155cb7ae14444a3aa15b0726c5b89bd94f7aeddd3d05a1a7aea2ecf`である。有効期限は`2026-11-07T01:52:38Z`、日本時間では2026年11月7日10:52:38。旧seq21の期限や、停止した旧917候補の署名を現行の根拠に使わない。
+R2反映時に確認したseq22 manifestのSHA-256は`0a7d1267d08665dec24e7e37afcec709bf1b3e2791e535fc8db7e08c5a51b311`、signatureのSHA-256は`ece7dfcb7155cb7ae14444a3aa15b0726c5b89bd94f7aeddd3d05a1a7aea2ecf`である。有効期限は`2026-11-07T01:52:38Z`、日本時間では2026年11月7日10:52:38。旧seq21の期限や、停止した旧917候補の署名を現行の根拠に使わない。
 
 実応答原本はGit外に保持し、公開記録には質問本文・応答全文・秘密・内部host識別子を載せない。下表のSHA-256は原本ファイルを区別する先頭16桁であり、manifestの完全SHAとは別の値である。
 
@@ -180,18 +180,34 @@ seq23候補のmanifestは`3f8e3dd94323d13d41292cf4f7594c68363a31235e1e73cb7536f7
 
 13:39:48 JSTのIAMシミュレーションでは検証用4操作がすべて`implicitDeny`だった。regionと現在時刻を指定した読取評価で、実EC2のcontextや実preflightを再現したものではない。`MissingContextValues`は保存していないため、拒否原因をこの記録だけでは確定しない。権限変更は0回である。
 
-この時点ではR3の本番ホスト配置、一時IAM権限、DB admission、切替、公開画面の受入を行っていない。現在の本番は引き続きseq22で、期限も11月7日10:52:38 JSTのままである。前の承認は別候補を対象としていたため、新候補の配置・検証用一時権限・条件付き切替を改めて確認する。
+13:39:48 JSTの評価時点では、R3の本番ホスト配置、一時IAM権限、DB admission、切替、公開画面の受入は未実施だった。その時点の本番はseq22で、期限は11月7日10:52:38 JSTだった。前の承認は別候補を対象としていたため、R3について新たな承認を確認した。後述の進捗を、この承認待ちだった時点へ遡って適用しない。
 
 Recipeについて、現APIのモデル呼出し0回の対応は、固定した一般べき乗の日本語2文とEntry等の完全一致条件に限られる。平方専用Recipeを公開するだけで、今回の入力や言い換えを即時に返せるとは保証できない。専用Entryの公開と、対応する入力の安全な照合を分けて検証する。
 
+## R3の承認と切替進捗
+
+[オーナー判断 #294](https://github.com/AtsushiHosaka/pals/issues/294)に基づき、R3の配置、最大45分の検証用4読取権限、検証後の切替について新たな明示承認を得た。承認記録は14:26:21 JSTに保存し、SHA-256は`13d203770ce169fcb5af9de097ad97811f5c4b8a8fdc21d1b9d8ede2b4a0e86e`である。対象は前節のseq23 manifestで、旧候補の承認は流用していない。
+
+14:31 JSTの両ホストの実native準備は成功し、まだruntimeを起動していないことを確認した。native準備stateのSHA-256はcontrolが`d0b9a18bfbb32d6a96c16dbf6f4682fe4f913f37acc3b8dc34897d5849498f34`、computeが`636bb6573e0b90ed37ab87e6635580af67ed6c3fcabae5e272df6d276b9f139b`。実metadataと準備後のfresh観測からcomplete packetを生成し、38出力、7項目のmetadata契約、実job、9 helperのstage bytesをオフラインで照合した。completeの独立検査記録は`97e355276d73b7e6ab5b6305183cce6b780718ce7772450f32db7e693d39fdac`、freezeは`0b73a8c914f704d9111effb478697501384cc5aaeb6441a37a2c6901aee9ccb6`である。この生成処理自体によるAWS・DB・モデル呼出しは0回だった。
+
+一時検証権限は14:47:39 JSTに付与し、期限は15:32:39 JSTとした。内容は既存resourceに対する4読取操作だけで、許可範囲や期限を延長していない。以下の検査は、実runtime切替の前に行った。
+
+初回の14:48:59–14:49:03 JSTのpreflightは、`plan-actual-aurora`段階の`ValueError`で拒否された。DB applyとdrain・activationは行っていない。14:57:28 JSTに別の読取で、対象Auroraがavailableで、識別、接続先、engine、暗号化、削除保護、scalingとmember構成を含む12個の照合条件がすべてtrueだったことを確認した。これだけで初回の拒否原因を確定したとは扱わない。
+
+14:57:47–14:57:56 JSTの再preflightでは、wrapperが末尾の`FileExistsError`で失敗を返したため、成功として扱わず実receiptを読み戻した。14:59:38 JSTの読取結果で、初回拒否のreceiptと、別の一意な実行の`read_only_plan_passed`を区別した。後者ではrelease計画とruntimeの35段階が一致し、DB変更0、drain・activationなし、稼働actor不変、検査資源の不在を確認した。35は1回の複合検査の段階数であり、35回の配備成功ではない。
+
+15:00:19 JSTにcanonical所有権を取得し、ALBの登録解除と排出待ちを実施した。処理中件数を確認して、旧worker群とcontrolのAPIを正常停止した。15:06:49–15:07:01 JSTの正規operatorは`released`を返し、既存DBの同一性、既存schemaとrole、排他とquiescence、署名releaseのadmission、既存DBの保持の5段階を完了した。実operator応答のSHA-256は`246f9a1b82e5bac48a6a80295640f62ddd4faec57263a4d3cf85fa0b77a007e8`である。
+
+この進捗は正規admissionまでの確認で、R3の本番切替全体は進行中である。後続のfinalize・新runtime起動・recovery・最終health・ALB入口復元、一時権限削除、所有権解放は別に結果を確認する。公開UIの説明完走、Lean参照、保存と再読み込みの受入は未達のままで、数学的な復旧は判定していない。
+
 ## 本番反映の残作業
 
-残る作業は次のとおり。
+15:07 JSTまでの進捗に対する残作業は次のとおり。
 
-1. R2反映後の説明生成失敗を固定された段階・理由で調べ、必要な修正後に公開UIの説明完走・Lean参照・保存・再読み込みを受け入れる。今回のruntime切替とreadinessだけで、説明障害の復旧済みとはしない。
+1. R3の切替を完了し、全サービスの最終health、入口復元、一時権限削除、所有権解放を確認する。その後、公開UIの説明完走・Lean参照・保存・再読み込みを受け入れる。runtime切替とreadinessだけで、説明障害の復旧済みとはしない。
 2. 次の署名期限までに正規更新を行う。再起動を伴う復旧の実試験は未実施で、導入済み復旧設定の検証と区別する。
 3. [平方専用RecipeのIssue #287](https://github.com/AtsushiHosaka/pals/issues/287)で、現toolchainのcompiler証拠・独立審査・署名に結び付けて公開し、保存回答を返すことを確認する。現vector storageは未配置のため、既存の字句検索による公開と、将来のvector導入を分ける。日本語回答は著作草稿で、Recipeは未公開である。旧localのcompiler receiptは本番へ流用しない。公開後も意味対応の審査は残るため、モデルを呼ばず即時に返す経路は別途検証する。
-4. DLQの時刻・失敗種別と、品質監視の実収集・抽出・警報を確認する。再配信・削除は原因調査と分ける。
+4. DLQの時刻・失敗種別と、品質collector全体の実収集・抽出・警報を確認する。再配信・削除は原因調査と分ける。説明失敗の閉ログ観測と稼働・欠測・ALBの5アラームは、[別の通知記録](incident-notifications-2026-11-06.md)で本番反映とメール到達を確認済みである。
 
 ## 再発防止の実施計画
 
@@ -204,4 +220,4 @@ Recipeについて、現APIのモデル呼出し0回の対応は、固定した�
 | 配備後に利用者の操作を通した完走確認を行う | リリース運用 | ゲストと認証済み利用の説明・Lean参照・保存を確認し、失敗があればリリース完了としない |
 | 署名期限の監視と正規更新を継続する | Infra／#142 | 現行期限、更新責任、期限前更新、失効後の正規復旧を確認する |
 
-既存liveness監視の対象はコンテナのhealth、worker再起動、SQS接続不可で、説明失敗の監視とは異なる。#217の最新記録でも品質collectorは本番の受信・抽出・アラームが未確認だった。再発防止の完了は、実装やmergeと、本番での監視稼働を分けて報告する。
+既存liveness監視の対象はコンテナのhealth、worker再起動、SQS接続不可で、説明失敗の監視とは異なる。今回追加した通知sliceは、専用probeの実ALARMからSNS・Gmail受信箱への到達と回収を確認済みである。一方、品質collectorを含むPQO全体は未完で、一般のLean失敗や個別停滞の網羅、電話端末の音・バナーも未検証である。再発防止の完了は、実装やmerge、本番での通知稼働、数学的な回答成功を分けて報告する。
