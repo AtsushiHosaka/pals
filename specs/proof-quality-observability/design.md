@@ -118,11 +118,34 @@ AWS の認証情報がなかったため、AWS 上の実在は確認していな
 | `EvalSuccessRate` | Percent | `[Suite, ModelConfig]` | 8 / 12 |
 | `EvalCases` | Count | `[Suite, ModelConfig]` | 8 / 12 |
 | `EvalFailed` | Count | `[Suite, FailureClass]` | 8 / 24 |
-| 合計 | | | 約60 / 約127 |
+| `ProofRequestsAccepted` | Count | `[Environment]` のみ | 1 / 1 |
+| `ProofRequestsInFlight` | Count | `[Environment, State]` のみ | 5 / 5 |
+| `ProofRequestOldestAgeSeconds` | Seconds | `[Environment, State]` のみ | 5 / 5 |
+| `LeanJobsUnreconciled` | Count | `[Environment]` のみ | 1 / 1 |
+| `LeanJobsUnreconciledOldestAgeSeconds` | Seconds | `[Environment]` のみ | 1 / 1 |
+| 合計 | | | 74 / 140 |
+
+合計は1環境分の既存61 / 127系列に、完走性の13系列を加えた値である。複数環境、追加のディメンション集合、複数発行元を合算する場合は再計算し、PQO-005の150系列以下を守る。`State` と `Route`、要求ID、リビジョンとの直積は作らない。
+
+完走性5メトリクスの機械可読な契約は [completion-metrics.v1.json](completion-metrics.v1.json) である。APIとinfraは同じbytesを版付きで保持し、更新時に一致を検査する。既存の `quality-event-v1` は変更せず、完走性イベントを別の `pals.proof-quality-completion.v1` として追加する。旧イベントのvalidatorを緩めたり、旧readerが新イベントを受けると仮定したりしない。
+
+`State` は次の5値だけを許す。DBの状態列をそのままディメンションへ渡さない。
+
+| State | 監視する段階 |
+|---|---|
+| `accepted` | 受付は永続化済みで、キューへの引渡しが未完了 |
+| `queued` | キューへの引渡し後で、処理の開始待ち |
+| `verifying` | 事前評価・生成・Lean検証を含む処理中 |
+| `explaining` | Lean検証後、説明の作成・再試行待ち |
+| `awaiting_application` | 適用できる成功・失敗の結果があり、要求への反映待ち |
+
+`ProofRequestsAccepted` は受付commit後の1イベントで値1とする。在中件数と未適用件数は非負整数、経過秒数は非負の有限数とする。bool、NaN、Infinity、CloudWatchの数値範囲外を拒否する。正常な0件は対応する経過秒数も0とし、件数0で正の経過秒数は拒否する。snapshotは5状態を各1回と未適用ジョブの値を必須にし、未知・欠落・重複状態、不正値があれば一部だけを正常なsnapshotとして発行しない。集計失敗を0へ変換しない。
+
+完走性イベントは `contract_version`、`event`、`Environment`、在中イベントだけの `State`、対応するメトリクス値、EMFの `_aws` だけを持つ。イベント名はJSONの `events` に限る。ディメンション集合の追加、`unrecognized` への置換、本文や要求の相関項目の追加は許さない。EMFのTimestampは観測時刻のミリ秒で、旧経路と同じ過去14日・未来2時間の範囲を検査する。新契約も既存の無効・file・UDPのtransport境界を使い、新たなAWS権限や自動起動を加えない。
 
 `Route` の値（暫定）: `catalog_recipe`、`semantic_reuse`、`lean_generation`、`chat_answer`。`ModelConfig` は、モデル構成の登録名（モデル、推論量、Recipe 設定を表す非秘密の識別子）で、#216 の台帳の「構成」欄と同じ値にする。上限が150を超えそうなときの縮小順は、`FailureCode` の組、`Route` の組、評価の `EvalFailed`、の順とする（詳細はログに残るため、情報は失われない）。
 
-ログの項目（EMF の `_aws` 以外）: `event`（`proof_request_terminal`、`lean_attempt`、`worker_heartbeat`、`eval_run`）、`request_hash`、`revision`、`route`、`model_config`、`failure_class`、`failure_code`、`diagnostic_code`、`attempts`、`repairs_used`、`duration_ms`、`suite`、`ledger_id`、`cases`、`succeeded`、`cost_usd`。メッセージ本文、診断メッセージ、利用者に関わる項目は持たない。
+旧イベントのログ項目（EMF の `_aws` 以外）: `event`（`proof_request_terminal`、`lean_attempt`、`worker_heartbeat`、`eval_run`）、`request_hash`、`revision`、`route`、`model_config`、`failure_class`、`failure_code`、`diagnostic_code`、`attempts`、`repairs_used`、`duration_ms`、`suite`、`ledger_id`、`cases`、`succeeded`、`cost_usd`。メッセージ本文、診断メッセージ、利用者に関わる項目は持たない。
 
 ### D5 アラームの根拠
 
@@ -209,7 +232,7 @@ AWS の認証情報がなかったため、AWS 上の実在は確認していな
 
 ### D11 終端しない要求の検出
 
-終端イベントの方式（D3）は、終端した要求にしか出ない。次の3つの値を、イベントとは別に出す（PQO-026〜PQO-029）。
+終端イベントの方式（D3）は、終端した要求にしか出ない。D4の5メトリクスを次の3群として別に出す（PQO-026〜PQO-029）。
 
 | 値 | 出所 | 出し方 |
 |---|---|---|
@@ -217,11 +240,28 @@ AWS の認証情報がなかったため、AWS 上の実在は確認していな
 | 非終端の件数と最古の経過秒数（状態別） | 要求テーブルの状態列と時刻列 | 定期（5分）。読み取り専用の集計クエリ。本文の列は選ばない |
 | 未適用の Lean ジョブの件数と最古の経過秒数 | ジョブテーブルと要求テーブルの差 | 同上 |
 
-- 出す側は、既存のワーカーのハートビートと同じ経路（D2）を使う。出す側が止まれば、欠測が異常として検出される（PQO-014、PQO-029）。
-- 期限の初期値は暫定とする。観測された失敗は約1,522秒後で、`proof-jobs` の滞留アラーム（900秒）より長い。検証中の要求は900秒を初期値にし、14日の実測の p99 で置き換える。他の状態は、実測が出るまで同じ値を置く。
-- 状態名と時刻列は、実装時に pals-api のスキーマから確認する。この文書の名前は仮であり、確認前に確定した扱いにしない。
+- snapshotは5分ごとに全5状態と未適用ジョブを観測する。正常な空集合では全ての件数・経過秒数を0とする。集計元を読めない、時刻が不明、分類できない場合は成功した空集合にしない。transportの部分失敗でも、残りを0で補わない。
+- 監視状態の優先順位は、適用待ち、説明生成中、処理中、キュー待ち、受付済みの順とし、同一snapshot内の要求は1状態にだけ数える。入力待ちと終端済みを在中へ入れない。複数の過去jobや再配信で要求を重複計数しない。未適用ジョブは別のjob単位で、現在の要求に適用可能な未反映結果だけを数える。
+- 在中の経過秒数は受付の永続化時刻から観測時刻までとし、状態遷移のたびに0へ戻さない。未適用ジョブは、結果が適用可能になった時刻から測る。DBの `updated_at` を段階開始時刻とみなさない。具体的な列・排他的述語と複数jobの選択はT018で実DB検証する。
+- 出力の経路はD2を使う。アラームは各snapshot系列の欠測を検査し、ワーカーの `WorkerHeartbeat` をsnapshot収集の成功の代用にしない。
+- 初期期限900秒は全5状態と未適用ジョブに置く暫定設定であり、SLAや実測p99ではない。約1,522秒のUI観測をサーバー時間や期限の根拠にしない。14日分の同じ定義の実測を得てから、変更案と根拠を確認する。
 - キューの滞留アラーム（D5）は、キューに入った後の滞留しか見ない。受付済みでキューに入っていない要求と、ジョブ終了後に適用されない要求は、この D11 のゲージだけが見る。
 - 同じ値に対する独立した確認として、合成プローブがある。モデル費用が継続するため、この仕様では扱わない（PQO-031）。
+
+アラームの系列選択と評価は次で固定する。各行の名前空間は `PALS/ProofQuality`、単位は `Seconds`、統計値は `Maximum`、periodは300秒、evaluation_periodsとdatapoints_to_alarmは共に1、treat_missing_dataは `breaching` とする。閾値と等しい値は期限超過にせず、`GreaterThanThreshold` で超過を検査する。
+
+| 対象 | メトリクス | 正確なディメンション | 初期閾値 |
+|---|---|---|---|
+| 受付済み | `ProofRequestOldestAgeSeconds` | `Environment=<env>, State=accepted` | 900秒 |
+| キュー待ち | `ProofRequestOldestAgeSeconds` | `Environment=<env>, State=queued` | 900秒 |
+| 処理中 | `ProofRequestOldestAgeSeconds` | `Environment=<env>, State=verifying` | 900秒 |
+| 説明生成中 | `ProofRequestOldestAgeSeconds` | `Environment=<env>, State=explaining` | 900秒 |
+| 適用待ち | `ProofRequestOldestAgeSeconds` | `Environment=<env>, State=awaiting_application` | 900秒 |
+| 未適用ジョブ | `LeanJobsUnreconciledOldestAgeSeconds` | `Environment=<env>` | 900秒 |
+
+状態別閾値の設定は5値を過不足なく持ち、各値を正の有限秒数とする。未適用ジョブの閾値は別に設定する。追加6アラームは専用のopt-inを既定falseにし、既存9アラームのアドレス・設定を保持する。`alarm_actions` は既存変数を使い、空を既定とする。DB集計・定期実行と新費用見積もり、本番適用の確認が終わるまで有効にしない。欠測検知の設定検査を、CloudWatchの実ALARM遷移や収集稼働と取り違えない。
+
+契約の根拠は[AWS EMF仕様](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html)と[欠測時のアラーム処理](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/alarms-and-missing-data.html)。新しい契約の用意は、新しいメトリクスの発行・課金や権限の付与を意味しない。
 
 ## Test strategy
 
