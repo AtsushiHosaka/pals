@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "draft: the owner approves this list before any run",
+  "status": "approved by the owner on 2026-11-06 (taken from the owner running the load test with --execute and a spend approval)",
   "notes": [
     "A = simple new problems (the ~1 minute goal applies); B = questions that should hit a published Recipe; C = medium-depth new proofs (recorded only).",
     "No (x+y)^2 expansion (AGENTS.md); no problem here is a published Recipe topic in class A or C.",

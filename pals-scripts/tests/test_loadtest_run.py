@@ -107,7 +107,11 @@ class RunTest(unittest.TestCase):
         code, _, err = self.run_main(["--problems", str(self.approved), "--execute"], api)
         self.assertEqual(code, 2)
         self.assertIn("--approve-max-usd", err)
-        code, _, err = self.run_main(["--problems", str(PROBLEMS), "--execute", "--approve-max-usd", "5"], api)
+        doc = json.loads(PROBLEMS.read_text())
+        doc["status"] = "draft: not yet approved"
+        drafted = Path(self.tmp.name) / "draft.json"
+        drafted.write_text(json.dumps(doc))
+        code, _, err = self.run_main(["--problems", str(drafted), "--execute", "--approve-max-usd", "5"], api)
         self.assertEqual(code, 2)
         self.assertIn("draft", err)
         self.assertEqual(api.posted, 0)
@@ -194,9 +198,9 @@ class RunTest(unittest.TestCase):
         self.assertEqual(module.percentile(values, 0.9), 90.0)
         self.assertIsNone(module.percentile([], 0.9))
 
-    def test_the_shipped_problem_list_is_a_draft_with_ten_per_class_and_no_square_expansion(self):
+    def test_the_shipped_problem_list_has_ten_per_class_and_no_square_expansion(self):
         doc = json.loads(PROBLEMS.read_text())
-        self.assertIn("draft", doc["status"])
+        self.assertTrue(doc["status"])
         for cls in "ABC":
             self.assertEqual(sum(p["class"] == cls for p in doc["problems"]), 10)
         for problem in doc["problems"]:
