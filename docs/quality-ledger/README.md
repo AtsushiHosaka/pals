@@ -13,7 +13,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-2026-08-28から2026-11-06までの463行です。出典の内訳は、docsが220行、pals-agentのPRが80行、palsのIssueが135行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
+2026-08-28から2026-11-06までの470行です。出典の内訳は、docsが227行、pals-agentのPRが80行、palsのIssueが135行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
 
 11月5日の説明回帰は、[Agent #50の記録](https://github.com/AtsushiHosaka/pals-agent/blob/36ea6a2b106d5782ca2012b8a75ee4fbfa4c2b52/testdata/explanation-grounding-v1/README.md)に対応する9行を追加しました。初回の同条件比較、書式不備で採点を除外したQA、不備を直した負例、最終修正後の確認を分けています。実モデル24呼出しの推計費用0.02573375 USDを重複なく記録しました。初回比較は両版2/2で、精度向上は確認していません。後の別条件の結果を加えて改善率を作りません。
 
@@ -21,7 +21,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 これらの外部ベンチマークの費用は、使用量に事前登録した全入力0.25・出力0.50 USD/百万tokenを掛けた保守値です。通常入力の標準単価、アプリの版付き原価推計、請求額とは分けます。過去289行を変更せず、今回の6行だけを追記しました。
 
-系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 49、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 153、`availability` 14、`other` 38です。
+系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 49、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 160、`availability` 14、`other` 38です。
 
 2026-11-04の[引き継ぎ確認](../quality-observability-audit-2026-11-04.md)に、CloudWatchの実装と未検証の範囲、プロンプトの変更前後を比較するために今後記録する項目をまとめています。既存の散布図には、題材や成功の定義が違う点が含まれます。図全体からモデルの精度向上を判断しません。
 
@@ -167,3 +167,5 @@ python -m venv .venv && .venv/bin/pip install pandas matplotlib   # 初回のみ
 続いて、承認済みの隔離説明生成1回を別行に記録しました。同じ検証済みLeanと文脈から新たに生成した説明は数学的に妥当でしたが、補助定数Cと約分の等式連鎖を現検査が扱えず拒否しました。このsampleは製品側の過剰拒否として分類し、失われた元の出力の復元や公開受入とは分けています。生成14.400秒とtoken数は測定値で、費用欄は空欄です。単体テスト件数は試行数へ加えていません。
 
 [平方連続性のR3準備](../incident-square-validator-r3-preparation-2026-11-06.md)では、固定70件を正例14・数学的不正42・弱い終端のgate対照14に分け、baseとcandidateの6行を追加しました。成功は正例の受理、または各対照の拒否です。正例は5/14→14/14、不正の受理は両0/42、弱い終端対照の受理は1/14→0/14でした。弱い終端対照を数学的に偽だとは扱いません。既存456行のbytesを保持し、費用・latencyは空欄、追加modelは0です。単体526件は加算せず、新sampleと実66行のfull parser確認も別の局所証拠として扱います。旧3出力は未知で、R3の本番受入は未実施です。
+
+11月6日の[障害通知の本番検証](../incident-notifications-2026-11-06.md)を、独立した技術試行7行として追加しました。直接SNSとCloudWatch経由のGmail受信、監視の事前確認・配置・メトリクス受信・通知有効化、専用probeの回収を確認しています。各行のn=1は技術試行1回で、作成資源数やメトリクス点数を分母にしません。単体47件・Terraform mock-plan 5件は加算せず、費用とlatencyは空欄です。途中の補助readerと回収の修正も出典に残しました。数学的な復旧、一般のLean失敗や個別ジョブ停滞の網羅、電話端末の通知音・バナーは確認していません。既存463行のbytesは保持しています。
