@@ -66,3 +66,43 @@ The existing [ledger schema](quality-ledger/ledger.schema.md) and
 sanitized observation is the row's public source; the observer published and
 read it back at `2026-11-06T00:55:07Z`. Raw content, identifiers, private URLs,
 screenshots, and logs stay outside this report.
+
+## Terminal UI follow-up — 2026-11-06
+
+The earlier unfinished snapshot above is preserved verbatim. At
+`2026-11-06T01:02:45.950Z`, the observer first saw a terminal UI failure for the
+same submitted guest request. The Lean panel was removed and the UI stated,
+in English translation: “The answer will not be shown because Lean could not
+verify it. You can retry.” The composer became available again. The observer
+retained another private accessibility capture and screenshot at
+`2026-11-06T01:03:26.011Z`. No retry or new proof submission was made. The observer
+also confirmed the entry path as `/try`.
+
+The interval from the original click-start to the first observed terminal UI
+failure is **1522.140 seconds**. This is an observation upper bound for the UI
+failure becoming visible, not the exact backend execution duration. The
+previous 975.206-second unfinished snapshot remains valid for its earlier
+observation time; the 900-second UI budget did not cancel the pipeline.
+
+The user-facing proof attempt ended without a completed answer. There is no
+underlying diagnostic, log, or available formal artifact establishing the cause.
+In particular, this does not establish a compiler error, mathematical invalidity,
+missing Lean runtime, or the cause tracked in #270. Generation versus reuse,
+model usage and cost remain unknown, and no independent Lean rerun was made.
+No application implementation, deployment, or recurring-cost authorization was
+changed by this follow-up.
+
+Ledger row `2026-11-06-production-guest-proof-ui-terminal-followup` records the
+same one attempt with `n=1`, `successes=0`, `success_rate=0`, and one
+`unclassified` UI failure. Its `overlap_with` points to
+`2026-11-06-production-guest-proof-ui-unfinished`; it is not a second trial.
+All 448 previously committed rows remain byte-for-byte unchanged. Cost and
+latency percentiles remain blank; `latency_other` carries the observation upper
+bound. The public source remains the monitor's sanitized report in #246.
+
+Under the existing chart contract, overlapping rows are excluded from success
+and failure aggregates. The original snapshot has no numeric outcome and the
+terminal follow-up is overlapping, so neither contributes a success or failure
+point to those charts. They do not implement latest-outcome coalescing; the
+terminal result is explicit in this report and ledger, rather than inferred
+from an aggregate chart.
