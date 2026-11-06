@@ -30,6 +30,19 @@ git diff --check
 
 ## API・infraと残る受入
 
-APIは旧schemaを緩めず、別の版付き完走性契約とbuilder・送信入口を追加する。infraは同じ契約から、既定無効の6アラームを用意する。対応PRと固定head、独立レビュー・統合結果は確認後に追記する。
+APIは旧schemaを緩めず、別の版付き完走性契約とbuilder・送信入口を追加した。infraは同じ契約から、既定無効の6アラームを用意した。独立レビュー後、次の既知コピーへ限定反映した。
+
+| 対象 | 修正PRと固定source | 反映先とmerge |
+|---|---|---|
+| API完走性契約 | [API#81](https://github.com/AtsushiHosaka/pals-api/pull/81)、`fc9beaa158c2ba562bbe9dacf62dad817a65bc5d` | API#52へ `7273eaed2830f94b60c41bcd6334154c1c97a3d6`。後続タイトル修正後は `b5b0942085e185e92d7058c192b228a74ccbfa02` |
+| API品質branchへの限定移植 | [API#83](https://github.com/AtsushiHosaka/pals-api/pull/83)、`f0f146f05e9fde44e6168ec74c9bd49d66f5fcb6` | API#49へ `608f8d78b19b46b09761e8391e5f78206eb66029` |
+| infraアラーム準備 | [infra#104](https://github.com/AtsushiHosaka/pals-infra/pull/104)、`a0654d80332c97ad297a75dbd99091eaa7ec4372` | infra#96へ `246a3f3d54aa6b2ff1c19ebf32f18a9110f5e949` |
+| infra品質branchへの限定移植 | [infra#105](https://github.com/AtsushiHosaka/pals-infra/pull/105)、`881b61963b6e8568deb63bd60cc2530d97f6f89e` | infra#94へ `d907b3988ad995f89b37cdbab6ea88ddce7c7c97` |
+
+API初版の独立レビューでは、返却イベントのディメンション配列を編集すると内部契約まで変わるP2を再現した。返却配列を複製し、schema・イベントの編集後も後続出力が不変となる回帰を追加した。修正後の独立107件と、実private fileへの7行の送信、無効入力の書込0、送信途中の移動による部分2行・未送信4件を確認した。修正後の実wheelのSHA-256は `ecbf4c95a34697f53ef0bb29f2a7555ddf643aca2f9830de19200d00351b8076`。新module・2JSONのsource一致と、別展開先からの実importも独立確認した。
+
+infraの独立検証はPython13件とTerraform1.13.5のmock33件で成功した。これは構成展開と拒否条件の検査であり、AWSの実ALARM遷移ではない。#94への移植ではcollectorの試験が含まれないため、作者の結果は既存17件・新15件の32件であり、33件と合算しない。API移植先でも作者が107件を実行し、別担当は両移植の差分と固定blobを照合した。
+
+親CLIに `--copy` を付けた2子コピーの検査も、独立実行でエラー0・SHA-256一致を確認した。APIの6ファイルだけを#49へ、infraの6ファイルだけを#94へ移し、別の課金・collector実装全体は混ぜていない。新しい単体件数を精度台帳へ足していない。
 
 実DB集計、受付commit後の接続、5状態への排他的な割当、定期実行、collectorと新イベントの実収集、CloudWatchの実ALARM遷移は未検証である。T018全体と#217は完了扱いにしない。モデル呼出し、本番計測、DB操作、AWS/IAM変更、署名、image build・配備は今回行わない。
