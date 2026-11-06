@@ -13,7 +13,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-2026-08-28から2026-11-06までの454行です。出典の内訳は、docsが211行、pals-agentのPRが80行、palsのIssueが135行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
+2026-08-28から2026-11-06までの455行です。出典の内訳は、docsが212行、pals-agentのPRが80行、palsのIssueが135行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
 
 11月5日の説明回帰は、[Agent #50の記録](https://github.com/AtsushiHosaka/pals-agent/blob/36ea6a2b106d5782ca2012b8a75ee4fbfa4c2b52/testdata/explanation-grounding-v1/README.md)に対応する9行を追加しました。初回の同条件比較、書式不備で採点を除外したQA、不備を直した負例、最終修正後の確認を分けています。実モデル24呼出しの推計費用0.02573375 USDを重複なく記録しました。初回比較は両版2/2で、精度向上は確認していません。後の別条件の結果を加えて改善率を作りません。
 
@@ -21,7 +21,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 これらの外部ベンチマークの費用は、使用量に事前登録した全入力0.25・出力0.50 USD/百万tokenを掛けた保守値です。通常入力の標準単価、アプリの版付き原価推計、請求額とは分けます。過去289行を変更せず、今回の6行だけを追記しました。
 
-系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 48、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 145、`availability` 14、`other` 38です。
+系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 49、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 145、`availability` 14、`other` 38です。
 
 2026-11-04の[引き継ぎ確認](../quality-observability-audit-2026-11-04.md)に、CloudWatchの実装と未検証の範囲、プロンプトの変更前後を比較するために今後記録する項目をまとめています。既存の散布図には、題材や成功の定義が違う点が含まれます。図全体からモデルの精度向上を判断しません。
 
@@ -161,3 +161,5 @@ python -m venv .venv && .venv/bin/pip install pandas matplotlib   # 初回のみ
 2026年11月6日の[説明生成障害の調査](../incident-explanation-failure-2026-11-06.md)を4行追加しました。公開入口3点、署名と稼働stateの2ホスト、表記変更の過剰拒否2例、実依頼1件の終端失敗を分けています。HTTP応答やコンテナ稼働を説明の成功率には使いません。実依頼はLean検証後の専用説明検査で3回拒否されましたが、モデル出力が保存されていないため詳細分類は未確定です。修正の単体テスト件数は台帳へ加算していません。
 
 同じ[説明障害の調査](../incident-explanation-failure-2026-11-06.md#r2の本番反映と確認範囲)に、R2のseq22反映から終了証拠までを運用検証1組として追加しました。旧候補のpreflight・権限削除と重複せず、35段階・2ホスト・7サービスを別試行へ展開していません。最終readiness、ALBの復元、期限付き権限の削除、所有権解放を確認しました。数学説明の本番受入と実再起動は未確認で、単体テスト件数やモデル費用は加算していません。
+
+同じ障害記録に、R2反映後の公開UIからの新規1依頼が説明生成で失敗した1行を追加しました。linked jobはverifiedですが、説明はfailed、`output_review_approved=false`でした。集約コードだけでは詳細原因を特定できず、失敗分類はunclassifiedです。直前のruntime運用成功1組や元の障害1件と重複計数せず、公開数学回答の受入未達として記録しました。約380.88秒はDB作成から失敗確定までの単発値で、p95やクリック計時ではありません。
