@@ -13,7 +13,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-2026-08-28から2026-11-06までの449行です。出典の内訳は、docsが204行、pals-agentのPRが80行、palsのIssueが137行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
+2026-08-28から2026-11-06までの472行です。出典の内訳は、docsが227行、pals-agentのPRが80行、palsのIssueが137行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
 
 11月5日の説明回帰は、[Agent #50の記録](https://github.com/AtsushiHosaka/pals-agent/blob/36ea6a2b106d5782ca2012b8a75ee4fbfa4c2b52/testdata/explanation-grounding-v1/README.md)に対応する9行を追加しました。初回の同条件比較、書式不備で採点を除外したQA、不備を直した負例、最終修正後の確認を分けています。実モデル24呼出しの推計費用0.02573375 USDを重複なく記録しました。初回比較は両版2/2で、精度向上は確認していません。後の別条件の結果を加えて改善率を作りません。
 
@@ -21,9 +21,9 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 これらの外部ベンチマークの費用は、使用量に事前登録した全入力0.25・出力0.50 USD/百万tokenを掛けた保守値です。通常入力の標準単価、アプリの版付き原価推計、請求額とは分けます。過去289行を変更せず、今回の6行だけを追記しました。
 
-系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 49、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 143、`availability` 11、`other` 37です。
+系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 51、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 160、`availability` 14、`other` 38です。
 
-The [production guest-proof smoke](../production-guest-proof-smoke-2026-11-06.md) has two observations of one submission: an unfinished snapshot and a terminal UI failure follow-up. The latter links to the former through `overlap_with`; the prior 448 rows remain byte-for-byte unchanged. The first observed failure gives a 1522.140-second UI observation upper bound, not an exact backend execution time or a diagnosed mathematical failure. Existing chart rules exclude the overlapping follow-up from success and failure aggregates; they do not coalesce these observations into a latest-outcome point or count them as two independent trials.
+The [production guest-proof smoke](../production-guest-proof-smoke-2026-11-06.md) has two observations of one submission: an unfinished snapshot and a terminal UI failure follow-up. The latter links to the former through `overlap_with`; the prior 470 rows remain byte-for-byte unchanged. The first observed failure gives a 1522.140-second UI observation upper bound, not an exact backend execution time or a diagnosed mathematical failure. Existing chart rules exclude the overlapping follow-up from success and failure aggregates; they do not coalesce these observations into a latest-outcome point or count them as two independent trials.
 
 2026-11-04の[引き継ぎ確認](../quality-observability-audit-2026-11-04.md)に、CloudWatchの実装と未検証の範囲、プロンプトの変更前後を比較するために今後記録する項目をまとめています。既存の散布図には、題材や成功の定義が違う点が含まれます。図全体からモデルの精度向上を判断しません。
 
@@ -143,6 +143,8 @@ python -m venv .venv && .venv/bin/pip install pandas matplotlib   # 初回のみ
 - オーナーのメモリのファイルにある数値のうち、リポジトリの docs や PR から根拠をたどれないもの。27 米ドルの評価費用は、Issue の記録とあわせて1行にしました。ほかにメモリだけを根拠とする記述(seq16 のリリースメモ)は入れていません。
 - 出典に数値のない Issue と PR。
 
+PR #274で追加したセキュリティ回帰の集計11行も、この規約に合わせて[検証記録](../verification/security-review-followup-2026-11-05.md)へ移しました。実DBやLinuxを含む確認と純粋な単体スイートを区別し、元の成功・失敗の数値は保存しています。
+
 ## Langfuse
 
 リポジトリで確認できたことと、台帳との関係です。
@@ -159,3 +161,15 @@ python -m venv .venv && .venv/bin/pip install pandas matplotlib   # 初回のみ
 同じ再開記録に、未署名クーポン候補1組のoffline照合と、支払周期処理の固定5運用ケースの初回4/5・修正後5/5を3行追加しました。本番・実Stripe・モデル精度は未検証で、単体や既存回帰の件数は加算していません。
 
 [seq21本番配備準備](../coupon21-production-preparation-2026-11-05.md)で、署名前の4host metadata照合・承認済み1署名束・Aurora1対応束・OCI2役割の照合を4行追加しました。native準備・本番受理・数学やモデルの精度とは分けています。
+
+2026年11月6日の[説明生成障害の調査](../incident-explanation-failure-2026-11-06.md)を4行追加しました。公開入口3点、署名と稼働stateの2ホスト、表記変更の過剰拒否2例、実依頼1件の終端失敗を分けています。HTTP応答やコンテナ稼働を説明の成功率には使いません。実依頼はLean検証後の専用説明検査で3回拒否されましたが、モデル出力が保存されていないため詳細分類は未確定です。修正の単体テスト件数は台帳へ加算していません。
+
+同じ[説明障害の調査](../incident-explanation-failure-2026-11-06.md#r2の本番反映と確認範囲)に、R2のseq22反映から終了証拠までを運用検証1組として追加しました。旧候補のpreflight・権限削除と重複せず、35段階・2ホスト・7サービスを別試行へ展開していません。最終readiness、ALBの復元、期限付き権限の削除、所有権解放を確認しました。数学説明の本番受入と実再起動は未確認で、単体テスト件数やモデル費用は加算していません。
+
+同じ障害記録に、R2反映後の公開UIからの新規1依頼が説明生成で失敗した1行を追加しました。linked jobはverifiedですが、説明はfailed、`output_review_approved=false`でした。後続の固定log抽出で専用の固定ルールの専用検査が3回拒否したと特定しました。独立QAの却下とは扱いません。失敗出力は未保存で、生成文の欠陥か検査の誤拒否かは不明なため、失敗分類はunclassifiedを維持しています。直前のruntime運用成功1組や元の障害1件と重複計数せず、公開数学回答の受入未達として記録しました。約380.88秒はDB作成から失敗確定までの単発値で、p95やクリック計時ではありません。
+
+続いて、承認済みの隔離説明生成1回を別行に記録しました。同じ検証済みLeanと文脈から新たに生成した説明は数学的に妥当でしたが、補助定数Cと約分の等式連鎖を現検査が扱えず拒否しました。このsampleは製品側の過剰拒否として分類し、失われた元の出力の復元や公開受入とは分けています。生成14.400秒とtoken数は測定値で、費用欄は空欄です。単体テスト件数は試行数へ加えていません。
+
+[平方連続性のR3準備](../incident-square-validator-r3-preparation-2026-11-06.md)では、固定70件を正例14・数学的不正42・弱い終端のgate対照14に分け、baseとcandidateの6行を追加しました。成功は正例の受理、または各対照の拒否です。正例は5/14→14/14、不正の受理は両0/42、弱い終端対照の受理は1/14→0/14でした。弱い終端対照を数学的に偽だとは扱いません。既存456行のbytesを保持し、費用・latencyは空欄、追加modelは0です。単体526件は加算せず、新sampleと実66行のfull parser確認も別の局所証拠として扱います。旧3出力は未知で、R3の本番受入は未実施です。
+
+11月6日の[障害通知の本番検証](../incident-notifications-2026-11-06.md)を、独立した技術試行7行として追加しました。直接SNSとCloudWatch経由のGmail受信、監視の事前確認・配置・メトリクス受信・通知有効化、専用probeの回収を確認しています。各行のn=1は技術試行1回で、作成資源数やメトリクス点数を分母にしません。単体47件・Terraform mock-plan 5件は加算せず、費用とlatencyは空欄です。途中の補助readerと回収の修正も出典に残しました。数学的な復旧、一般のLean失敗や個別ジョブ停滞の網羅、電話端末の通知音・バナーは確認していません。既存463行のbytesは保持しています。
