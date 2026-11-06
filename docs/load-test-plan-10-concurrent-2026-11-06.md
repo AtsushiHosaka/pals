@@ -172,18 +172,46 @@ proof-jobsのDLQが、2026年10月31日から増え続けています（日ご�
 - パスワードと`sub`は、`~/.pals-loadtest/manifest.json`（0600）にだけ残ります。リポジトリの外で、画面には出ません。
 - 既存のアドレスと衝突したら、何も作らず止まります。プールの既存ユーザー（約10人）には触れません。
 - アドレスは、`--email name@gmail.com`のように、自分のアドレスを1つ渡します。`name+pals-lt01@gmail.com`から`name+pals-lt10@gmail.com`までが作られます。メールは送られませんが、実在のドメインなら形式の検査で弾かれにくく、アカウントも見分けやすくなります。
-- 作成後に`grant-commands.sh`が生成されます。**実行はされません。** 内容は、各アカウントへ72時間の無償Pro資格を付ける`billing_test_entitlement grant`のコマンドです。Freeは累計3回（2026年9月30日の記録）しか使えず、30件の依頼には足りません。このコマンドは`pals-api/`で、課金運用専用のDB接続（秘密管理）を設定して、オーナーが実行します。試験後は`revoke`で取り消します。
+- Freeでは足りません。2026年11月2日の仕様（BILL-017/019）では、Freeは1日30,000トークンで、新規のLean証明の生成は使えません。デプロイ済みのAPIは旧仕様（累計3回）のままですが、どちらでも30件の依頼には足りません。無償Proの付与は、次の「無償Proの付与」の補助スクリプトで行います（`create`が生成する`grant-commands.sh`は使いません）。
 - 試験後に`delete`でアカウントを消します。
 
 ### 状況（2026年11月6日）
 
 - 10個のアカウントを本番のCognitoプールに作成しました。10個とも`CONFIRMED`、有効、メール確認済みです（プールで読み取り確認）。
-- `verify`（サインインの確認）は、オーナーの実行待ちです。
-- 無償Pro資格の付与は未了です。デプロイ済みのAPI（`9f45a39`）では、課金がトークン制（plus月100万、pro月300万トークン）になっていますが、`grant`の引数は現行のCLIと一致しています。実行には次の3つが要ります。
-  - `pals_billing_test_admin`の所属で、API用ログインとは別の運用者用DBログイン（`PALS_BILLING_OPERATOR_DATABASE_URL`）。
-  - Cognitoのプールの指定（`PALS_COGNITO_USER_POOL_ID`）と、そのプールの`ListUsers`権限。
-  - 到達経路。AuroraはVPCの外から接続できないため、制御ホスト経由（SSM）などが要ります。
-- 本番のAurora上に、この運用者用ログインがあるかは確認できていません。ない場合は、DB管理者が作成する必要があります。
+- `verify`（サインインの確認）は、10個すべて成功しました。
+- 無償Pro資格の付与は未了です。経路の調査結果は次のとおりです。
+  - `pals_billing_test_admin`は、ログインできないロール（`NOLOGIN NOINHERIT`）です。ログイン用ユーザーは、本番のAuroraにも、SSMとSecrets Managerにもありません（SSMは5件のパラメータのみ、Secrets Managerは RDS管理のマスターのみ）。
+  - AuroraはVPCの外から接続できず、5432ポートは制御ホストにだけ開いています。制御ホストの権限では、マスターの認証情報を読めません。
+  - 付与関数`pals_billing.grant_complimentary_pro`は、呼び出し元のセッションが`pals_billing_test_admin`のメンバーで、API用ロールのメンバーでないことを要求します。同じ引数での再実行は何も変えません。有効な付与が重複する場合は受け付けません。
+  - 以前のMac mini時代は、マスター接続で5分有効の一時ログインを作り、付与して削除する方式でした。同じ方式を、AWS用に作り直しました。
+
+## 無償Proの付与
+
+[pals-scripts/loadtest-pro-grant.py](../pals-scripts/loadtest-pro-grant.py)を、オーナーが実行します。
+
+**事前準備（1回だけ）:**
+
+1. SSMのプラグイン: `brew install --cask session-manager-plugin`
+2. Pythonは、`psycopg`が入った`pals-api/.venv`のものを使います。
+
+**手順:**
+
+| 順番 | コマンド（`<repo>/pals-api/.venv/bin/python pals-scripts/loadtest-pro-grant.py` に続ける） | 内容 |
+|---|---|---|
+| 1 | `grant` | dry-run。AWSのメタデータだけを読み、10個のCognitoユーザーが有効であることを確認 |
+| 2 | `check --execute --confirm-pool pals-mini-prod` | SSMのトンネル、TLS、マスターのログイン、事前検査（読み取りだけ）を確認。何も作らない |
+| 3 | `grant --execute --confirm-pool pals-mini-prod` | 一時ログイン（10分で失効）を作り、10個に72時間の無償Proを付与し、読み戻して確認し、ログインを削除 |
+| 試験後 | `revoke --execute --confirm-pool pals-mini-prod` | 付与を取り消す |
+
+**仕組みと安全策:**
+
+- あなたのSSOで、SSMのポート転送を開き、RDSのマスターのシークレットをメモリ内だけで読みます。マスターのパスワードも、一時ログインのパスワードも、画面やコマンドラインには出ません。
+- 接続は`verify-ca`で、AWSの公開CAバンドル（初回に`truststore.pki.rds.amazonaws.com`から取得）を使って、証明書の連鎖を検証します。ホスト名は、トンネルの都合で`127.0.0.1`のため、検証しません。
+- 付与の記録（`sub`と付与ID）は、`~/.pals-loadtest/grants.json`（権限0600）にだけ残ります。監査上の実行者は、一時ログイン名（`pals_op_lt_...`）です。
+- 途中で失敗しても、一時ログインは必ず削除します。削除に失敗したときは、ログイン名を表示して、手動での削除を求めます。10分で失効し、パスワードは誰にも表示されていません。
+- 事前検査で、ロールの属性、関数の存在、マスターのADMIN OPTION、前回の一時ログインの残りを確認します。1つでも外れれば、何も作らずに止まります。
+
+**検証の範囲:** ローカルの使い捨てPostgreSQL 16で、本番の移行SQLの付与・取り消し関数を使い、一連の流れを通しました（`NOINHERIT`のログインは`SET ROLE`なしでは関数を呼べないことも確認）。本物のAWSには、読み取りのdry-runだけを実行しました。**SSMのトンネルとAuroraへのTLS接続は、まだ一度も通していません。** 手順2の`check`で、本番の付与の前に確かめます。
 
 ## 実行前にオーナーが決めること
 
