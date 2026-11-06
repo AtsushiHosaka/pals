@@ -168,13 +168,25 @@ linked jobは`verified`で、最終更新は12:06:17.065551 JSTだった。説�
 
 別の読取専用inventoryでは、現fingerprintに対応するtoolchainは既に存在する一方、平方専用IDと同一sourceのrevision・公開Entryは0件だった。既存release loginのcatalog owner membershipを確認した。vector storageは未配置で、現APIは字句検索へfallbackする設計である。DB更新やDDL追加は行わず、隔離containerとRAM設定の削除を確認した。本番Recipe審査鍵の所在は未確認で、公開準備と説明判定の修正を分けて進めている。
 
+## R3の修正と署名済み候補
+
+[R3の検証記録](incident-square-validator-r3-preparation-2026-11-06.md)に、正しい表記14通り、数学的な誤り42通り、評価の結び方に関する対照14通りを固定して比較した結果を記録した。最終Agentは`210ece8912b65e9bbb023b3341f7a1af9de09ae4`、Infraは`d3661e3b69ccb9b277a99703a59d3e76db198a6d`。関連526テスト、Infraのcompute・recovery 282テスト、独立レビューが通過した。新しい隔離sampleは、実66行Leanの全参照を含むparserでも通過した。本番の元3出力を再現した結果ではない。
+
+workerを固定baseから実ビルドし、二つのimport先のsource・Lean child・21 layerを照合してECRへ保存した。新imageは`sha256:221d2c3fe7ba05a110a68b25a2ecd43c87e53bfaa07d7dc8065e4d93a5853d02`。実OCIのindex、amd64 manifest、configとrootfsも別途照合した。新parent capture `741afc844899e3456c4a770881f1d2ea0e77de62`はseq22 sourceの直接の子で、AgentとInfraのgitlinkだけを変えている。正式な四役割のpublication receiptは`dbf36b83d8c62d519d96dfeced540eaf0fd36484a9c64b2620db96275724c6c3`で、API・Web・verifierのimageを保持した。
+
+seq23候補のmanifestは`3f8e3dd94323d13d41292cf4f7594c68363a31235e1e73cb7536f7370c809d11`。既存KMS鍵で新たに署名し、公開鍵による検証とKMSの検証が成功した。signatureのSHAは`dc9b0a217d876cd4e7712fc77a5e571ab5350325ec902b5b351872a3045949a1`、候補の期限は2026年11月7日13:29:39 JSTである。schema35、API・Web・verifier、toolchain、TLSとruntime bindingはseq22と同一で、変更imageはworkerだけである。
+
+この時点ではR3の本番ホスト配置、一時IAM権限、DB admission、切替、公開画面の受入を行っていない。現在の本番は引き続きseq22で、期限も11月7日10:52:38 JSTのままである。前の承認は別候補を対象としていたため、新候補の配置・検証用一時権限・条件付き切替を改めて確認する。
+
+Recipeについて、現APIのモデル呼出し0回の対応は、固定した一般べき乗の日本語2文とEntry等の完全一致条件に限られる。平方専用Recipeを公開するだけで、今回の入力や言い換えを即時に返せるとは保証できない。専用Entryの公開と、対応する入力の安全な照合を分けて検証する。
+
 ## 本番反映の残作業
 
 残る作業は次のとおり。
 
 1. R2反映後の説明生成失敗を固定された段階・理由で調べ、必要な修正後に公開UIの説明完走・Lean参照・保存・再読み込みを受け入れる。今回のruntime切替とreadinessだけで、説明障害の復旧済みとはしない。
 2. 次の署名期限までに正規更新を行う。再起動を伴う復旧の実試験は未実施で、導入済み復旧設定の検証と区別する。
-3. [平方専用RecipeのIssue #287](https://github.com/AtsushiHosaka/pals/issues/287)で、正規のcompiler証拠・独立審査・署名・実embeddingへ結び付けて公開し、言い換えで新規DSPへ進まず保存回答を返すことを確認する。日本語保存回答は著作草稿であり、Recipeは未公開である。旧localのcompiler receiptは本番へ流用しない。
+3. [平方専用RecipeのIssue #287](https://github.com/AtsushiHosaka/pals/issues/287)で、現toolchainのcompiler証拠・独立審査・署名に結び付けて公開し、保存回答を返すことを確認する。現vector storageは未配置のため、既存の字句検索による公開と、将来のvector導入を分ける。日本語回答は著作草稿で、Recipeは未公開である。旧localのcompiler receiptは本番へ流用しない。公開後も意味対応の審査は残るため、モデルを呼ばず即時に返す経路は別途検証する。
 4. DLQの時刻・失敗種別と、品質監視の実収集・抽出・警報を確認する。再配信・削除は原因調査と分ける。
 
 ## 再発防止の実施計画
