@@ -148,8 +148,13 @@ class Runner:
         session = Session(self.http, self.args.region, self.client_id, account["email"], account["password"])
         chat = None
         if session.login():
-            status, body = self.http("POST", f"{self.args.api}/v1/chats", session.headers(), None)
-            chat = (body or {}).get("id") if status == 201 else None
+            # The account default is English, and the published Recipe catalog is Japanese only,
+            # so a new account never reuses a Recipe (found in the first run). Set it first.
+            lang_status, _ = self.http("PUT", f"{self.args.api}/v1/auth/me/preferences", session.headers(),
+                                       {"output_language": self.args.language})
+            if lang_status == 200:
+                status, body = self.http("POST", f"{self.args.api}/v1/chats", session.headers(), None)
+                chat = (body or {}).get("id") if status == 201 else None
         try:
             self.barrier.wait(timeout=180)  # start everyone together: the worst-case burst
         except threading.BrokenBarrierError:
@@ -301,6 +306,8 @@ def main(argv: list[str] | None = None, http: Http | None = None, client_id: str
     parser.add_argument("--poll", type=float, default=2.0)
     parser.add_argument("--timeout", type=float, default=900.0)
     parser.add_argument("--stop-after-failures", type=int, default=4)
+    parser.add_argument("--language", default="ja", choices=["ja", "en", "zh-Hans", "zh-Hant"],
+                        help="the account output language set before the run (the Recipe catalog is ja only)")
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--approve-max-usd", type=float, default=0.0)

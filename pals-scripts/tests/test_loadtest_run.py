@@ -47,6 +47,9 @@ class FakeApi:
                                                   "ExpiresIn": self.expires_in}}
         if "Authorization" not in headers:
             return 401, {"code": "auth_token_missing"}
+        if method == "PUT" and url.endswith("/v1/auth/me/preferences"):
+            self.language = body["output_language"]
+            return 200, {"output_language": body["output_language"]}
         if method == "POST" and url.endswith("/v1/chats"):
             self.chat_n += 1
             return 201, {"id": f"chat-{self.chat_n}"}
@@ -135,6 +138,11 @@ class RunTest(unittest.TestCase):
                        *STATEMENTS.keys()):
             self.assertNotIn(secret, blob)
         self.assertEqual(oct(runs[0].stat().st_mode & 0o777), "0o700")
+
+    def test_the_account_language_is_set_to_japanese_before_the_chat_is_created(self):
+        api = FakeApi()
+        self.run_main(["--problems", str(self.approved), "--execute", "--approve-max-usd", "5"], api)
+        self.assertEqual(api.language, "ja")
 
     def test_each_user_gets_a_different_problem_of_each_class(self):
         api = FakeApi()
