@@ -107,6 +107,8 @@ worker storyは43成功・1失敗だった。失敗は合成clockの330と既存
 
 [Infra PR #103](https://github.com/AtsushiHosaka/pals-infra/pull/103)のR2固定commitは`eb5a3536f7bdeaa988bb4d74bbe78de388aa79c6`、親のsource captureは`57ea82521152a1076fdf37c3ba314eebec8a0126`である。worker image `sha256:99d290e7b7197c03db494b9cd3bc63e9d72d942fa5855567fca76e8e22ea9cf3`は保存済みで、receiptは`published_not_deployed`を示す。API・Web・verifier・schema35を保持する構成である。
 
+親担当はR2固定Infraでもcompute・recoveryの2suiteを再実行し、280件成功を確認した。必要なsibling checkoutへの一時リンクは実行後に削除した。この件数もモデル精度や本番受入の成功数には加算しない。
+
 R2候補のmanifest `0a7d1267d08665dec24e7e37afcec709bf1b3e2791e535fc8db7e08c5a51b311`は署名済みで、実manifest・正式receipt・OCI・事前image読込資産を独立照合した。新しいhost所有者の配置をSSM送信しようとした際、自動承認審査が、旧承認では新候補のhost変更が明示されていないとして拒否した。SSM送信は0回で、本番は変更していない。
 
 新候補の配置、4項目の一時検証権限を45分間付与すること、検証後の切替を含む操作について、オーナーへ承認を依頼し、回答を待っている。旧候補の承認や削除済み権限を流用せず、承認後に新候補と現在の本番状態を照合する。
