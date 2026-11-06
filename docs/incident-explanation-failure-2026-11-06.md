@@ -2,7 +2,7 @@
 
 担当はCodex。[障害Issue #223](https://github.com/AtsushiHosaka/pals/issues/223)、[担当チャット](codex://threads/01a1ae34-04ec-7050-b060-e31d0be7ad3b)。関連は[#222](https://github.com/AtsushiHosaka/pals/issues/222)、品質監視の[#217](https://github.com/AtsushiHosaka/pals/issues/217)、署名更新の[#142](https://github.com/AtsushiHosaka/pals/issues/142)。
 
-本番ログと読み取り専用DB照会で、今回の失敗経路を特定した。平方専用Recipeは本番検索の公開一覧に存在せず、一般の自然数冪のRecipeは特殊化の再利用を認めない照合で却下された。新規証明はLean検証を通ったが、説明は`x_squared_epsilon_delta`検査で3回とも拒否された。旧修正候補は追加レビューの指摘により停止した。修正したR2のsourceとworker imageは公開済みだが、新候補は未署名で、本番はseq21のまま、復旧は未確認である。
+本番ログと読み取り専用DB照会で、今回の失敗経路を特定した。平方専用Recipeは本番検索の公開一覧に存在せず、一般の自然数冪のRecipeは特殊化の再利用を認めない照合で却下された。新規証明はLean検証を通ったが、説明は`x_squared_epsilon_delta`検査で3回とも拒否された。旧修正候補は追加レビューの指摘により停止した。修正したR2は署名と独立照合が完了し、新しい本番操作の承認待ちである。本番はseq21のまま、復旧は未確認である。
 
 AWS SSOは当初期限切れだったが、オーナーの再認証後に調査を再開した。以下では、実機確認、保存済み配備記録、オフライン再現を区別する。
 
@@ -105,7 +105,11 @@ HOLD後、10:32:55 JSTに一時権限を削除し、`NoSuchEntity`で不存在�
 
 worker storyは43成功・1失敗だった。失敗は合成clockの330と既存reconciliation timeoutの2000の不一致で、実配備基準でも同じ失敗を確認した。この失敗と本番timeoutは変更していない。
 
-[Infra PR #103](https://github.com/AtsushiHosaka/pals-infra/pull/103)のR2固定commitは`eb5a3536f7bdeaa988bb4d74bbe78de388aa79c6`、親のsource captureは`57ea82521152a1076fdf37c3ba314eebec8a0126`である。worker image `sha256:99d290e7b7197c03db494b9cd3bc63e9d72d942fa5855567fca76e8e22ea9cf3`は保存済みで、receiptは`published_not_deployed`を示す。API・Web・verifier・schema35を保持する構成で、新候補の署名と本番反映は未実施である。
+[Infra PR #103](https://github.com/AtsushiHosaka/pals-infra/pull/103)のR2固定commitは`eb5a3536f7bdeaa988bb4d74bbe78de388aa79c6`、親のsource captureは`57ea82521152a1076fdf37c3ba314eebec8a0126`である。worker image `sha256:99d290e7b7197c03db494b9cd3bc63e9d72d942fa5855567fca76e8e22ea9cf3`は保存済みで、receiptは`published_not_deployed`を示す。API・Web・verifier・schema35を保持する構成である。
+
+R2候補のmanifest `0a7d1267d08665dec24e7e37afcec709bf1b3e2791e535fc8db7e08c5a51b311`は署名済みで、実manifest・正式receipt・OCI・事前image読込資産を独立照合した。新しいhost所有者の配置をSSM送信しようとした際、自動承認審査が、旧承認では新候補のhost変更が明示されていないとして拒否した。SSM送信は0回で、本番は変更していない。
+
+新候補の配置、4項目の一時検証権限を45分間付与すること、検証後の切替を含む操作について、オーナーへ承認を依頼し、回答を待っている。旧候補の承認や削除済み権限を流用せず、承認後に新候補と現在の本番状態を照合する。
 
 旧Infra `e7cc50c`のcompute・recoveryの2suiteは280件成功したが、これは初版workerの許可に対する当時の証拠である。初回の10失敗はsiblingのAgent checkout不在によるもので、既存の正確なGit objectへの一時リンクを使って解消し、そのリンクは削除した。これらをR2の本番受入に読み替えない。
 
@@ -113,7 +117,7 @@ worker storyは43成功・1失敗だった。失敗は合成clockの330と既存
 
 残る作業は次のとおり。
 
-1. R2の4役割の正式receiptとfreshな本番状態を照合し、現在のseq21に対する新seq22候補を検証する。旧署名・旧候補・削除済みの一時権限は使わない。API・Web・verifier・schema35を保持し、未配備のクーポンやschema36/37を混ぜない。
+1. オーナーの新承認後、署名済みR2を配置し、4役割の正式receiptと現在のseq21を照合して、新seq22候補を実機検証する。旧署名・旧候補・削除済みの一時権限は使わない。API・Web・verifier・schema35を保持し、未配備のクーポンやschema36/37を混ぜない。
 2. 正式な署名・排他・drain・admission・切替・復旧設定の更新を行い、readinessと公開経路での説明完走・保存・再読み込みを確認する。HTTP 200や単体テストだけで復旧済みとしない。
 3. [平方専用RecipeのIssue #287](https://github.com/AtsushiHosaka/pals/issues/287)で、正規のcompiler証拠・独立審査・署名・実embeddingへ結び付けて公開し、言い換えで新規DSPへ進まず保存回答を返すことを確認する。日本語保存回答は著作草稿であり、Recipeは未公開である。旧localのcompiler receiptは本番へ流用しない。
 4. DLQの時刻・失敗種別と、品質監視の実収集・抽出・警報を確認する。再配信・削除は原因調査と分ける。
