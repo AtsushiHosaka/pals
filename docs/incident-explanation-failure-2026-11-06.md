@@ -2,7 +2,7 @@
 
 担当はCodex。[障害Issue #223](https://github.com/AtsushiHosaka/pals/issues/223)、[担当チャット](codex://threads/01a1ae34-04ec-7050-b060-e31d0be7ad3b)。関連は[#222](https://github.com/AtsushiHosaka/pals/issues/222)、品質監視の[#217](https://github.com/AtsushiHosaka/pals/issues/217)、署名更新の[#142](https://github.com/AtsushiHosaka/pals/issues/142)。
 
-本番ログと読み取り専用DB照会で、今回の失敗経路を特定した。平方専用Recipeは本番検索の公開一覧に存在せず、一般の自然数冪のRecipeは特殊化の再利用を認めない照合で却下された。新規証明はLean検証を通ったが、説明は`x_squared_epsilon_delta`検査で3回とも拒否された。修正候補は独立レビュー中で、本番は未復旧である。
+本番ログと読み取り専用DB照会で、今回の失敗経路を特定した。平方専用Recipeは本番検索の公開一覧に存在せず、一般の自然数冪のRecipeは特殊化の再利用を認めない照合で却下された。新規証明はLean検証を通ったが、説明は`x_squared_epsilon_delta`検査で3回とも拒否された。旧修正候補は追加レビューの指摘により停止した。修正したR2のsourceとworker imageは公開済みだが、新候補は未署名で、本番はseq21のまま、復旧は未確認である。
 
 AWS SSOは当初期限切れだったが、オーナーの再認証後に調査を再開した。以下では、実機確認、保存済み配備記録、オフライン再現を区別する。
 
@@ -22,7 +22,7 @@ AWS SSOは当初期限切れだったが、オーナーの再認証後に調査�
 
 09:24 JSTのSSM読み取りで、両ホストの現行設定とmanifestを保存原本へ照合した。seq21と同じsource、実ECDSA署名、公開鍵pin、有効期限を確認し、所有する7サービスは稼働中、OOMによる停止はなかった。この検査は内部readinessの全項目や負荷時の容量を検証するものではない。
 
-期限後の起動・復旧では正規validatorが拒否する設計のため、署名更新は別の継続運用課題として確認する。今回の調査ではKMS署名、IAM変更、DB更新、サービス再起動・切替を行っていない。
+期限後の起動・復旧では正規validatorが拒否する設計のため、署名更新は別の継続運用課題として確認する。初期の原因調査は読み取りで行った。その後の旧修正候補の署名、一時権限、事前検査と停止は後述する。DB更新と本番切替は行っていない。
 
 ## 本番で確認した失敗経路と時間
 
@@ -85,21 +85,37 @@ AWS SSOは当初期限切れだったが、オーナーの再認証後に調査�
 
 ローカルの再現一式はGit外の`/tmp/pals-incident-20261106-validator/`に保存した。親担当も`python3 /tmp/pals-incident-20261106-validator/reproduce.py`を実行し、同じ5件の挙動を再確認した。入力は合成した証明文で、本番の質問・応答・ログではない。
 
-## 修正候補と本番反映の残作業
+## 旧修正候補の停止と一時権限の削除
 
-[Agent PR #60](https://github.com/AtsushiHosaka/pals-agent/pull/60)、固定commit`0b340f8877f93bfb4ac9c94c926eeb673018c113`で、変数名・数式の同値な順序・完結した日本語の定義句・正のεで始まる同値表現を扱う修正を準備した。δの十分条件、近傍、因数分解、ε評価、Lean参照、独立QA、試行上限を保持する。
+[Agent PR #60](https://github.com/AtsushiHosaka/pals-agent/pull/60)の初版`0b340f8877f93bfb4ac9c94c926eeb673018c113`では、変数名・数式の同値な順序・完結した日本語の定義句・正のεで始まる同値表現を扱う修正を準備した。
 
-独立レビューで日本語の演算修飾による誤受理と、別文で同じ積を評価する説明の過剰拒否を発見し、どちらも修正した。新43回帰は基準14失敗・29成功から候補43成功、関連8suiteは255成功。Ruff・sourceのstrict mypy・差分検査も通過した。最終差分の独立確認は109件と追加5例で成功し、追加P0〜P2指摘はなかった。これらの件数をモデル精度の台帳へ加算しない。
+初回の独立レビューで、日本語の演算修飾による誤受理と、別文で同じ積を評価する説明の過剰拒否を発見し、修正した。当時の43回帰、関連255件、独立109件と追加5例は通過したが、追加レビューで、正しい連結等式の評価と先行する一般恒等式を含む説明を拒否する回帰が判明した。これらの追加正例では実配備基準は受理し、初版は拒否したため、初版の配備をHOLDにした。初回の通過結果は当時の範囲の記録として保持し、最終受入の根拠には使わない。
 
-worker storyの1件は合成clockの330と既存reconciliation timeoutの2000の不一致で、exact基準でも同じ失敗を確認した。この失敗と本番timeoutは変更していない。
+初版を含むseq22候補のmanifestは`917eb3eb7cf1b23ee8d83b2cb7a21af46d6763ed93aeb5d659f103aa21e92ca1`で、署名と照合は完了した。しかし本番admission、drain、サービス切替は0回である。署名済みであることを、本番に反映済みという意味には使わない。
 
-[Infra PR #103](https://github.com/AtsushiHosaka/pals-infra/pull/103)、固定commit`e7cc50ce3f6a25663423b62a350d844162687447`は、このworkerの許可リスト1行と既存の正負検証2パラメータだけを追加した。compute・recoveryの2suiteは280件成功した。初回の10失敗はsiblingのAgent checkout不在によるもので、既存の正確なGit objectへの一時リンクを使って解消し、そのリンクは削除した。verifierとそのtoolchain、ネットワーク、権限は保持する。
+既存の承認範囲で、一時検証権限を11月6日10:04:47 JSTに付与した。10:23:56–10:24:06 JSTの読み取り専用preflightは、schema35の35段階についてrelease計画とruntime確認を通過した。これは複合事前検査1回であり、35回の配備成功ではない。結果の`database_apply_executed`と`drain_or_activation_executed`はともにfalseで、既存の稼働サービスは保持された。
+
+HOLD後、10:32:55 JSTに一時権限を削除し、`NoSuchEntity`で不存在を確認した。この権限を新候補の検証へ流用しない。付与から削除確認までの28分8秒を、モデルの処理時間や本番回答の所要時間へ加算しない。
+
+## R2の修正と公開済み資産
+
+追加修正は固定commit[`cc75c3fb2d4ec18b2e30b1f4eea9fa0c304ea171`](https://github.com/AtsushiHosaka/pals-agent/commit/cc75c3fb2d4ec18b2e30b1f4eea9fa0c304ea171)で公開した。δが依存する点と近傍・因数分解・ε評価の変数を字面のまま結び付け、適切な変数組と後続の因数分解を探索する。連結等式を経た評価を受理し、先行する一般恒等式だけに固定しない。全本文をa/xへ置換することによる、無関係な点・変数の混入も防いだ。δの十分条件、Lean参照、独立QA、試行上限は保持する。
+
+同じ最終62回帰を実行した結果は、実配備基準`6e5c58d`が39成功・23失敗、初版`0b340f8`が51成功・11失敗、R2が62成功だった。関連8suiteは274成功、Ruff・sourceのstrict mypy・差分検査も通過した。最終差分の独立確認は128件と26正負例が成功し、追加P0〜P2指摘はなかった。62、274、128には重複があるため合算せず、単体テスト件数をモデル精度の台帳へ加算しない。
+
+worker storyは43成功・1失敗だった。失敗は合成clockの330と既存reconciliation timeoutの2000の不一致で、実配備基準でも同じ失敗を確認した。この失敗と本番timeoutは変更していない。
+
+[Infra PR #103](https://github.com/AtsushiHosaka/pals-infra/pull/103)のR2固定commitは`eb5a3536f7bdeaa988bb4d74bbe78de388aa79c6`、親のsource captureは`57ea82521152a1076fdf37c3ba314eebec8a0126`である。worker image `sha256:99d290e7b7197c03db494b9cd3bc63e9d72d942fa5855567fca76e8e22ea9cf3`は保存済みで、receiptは`published_not_deployed`を示す。API・Web・verifier・schema35を保持する構成で、新候補の署名と本番反映は未実施である。
+
+旧Infra `e7cc50c`のcompute・recoveryの2suiteは280件成功したが、これは初版workerの許可に対する当時の証拠である。初回の10失敗はsiblingのAgent checkout不在によるもので、既存の正確なGit objectへの一時リンクを使って解消し、そのリンクは削除した。これらをR2の本番受入に読み替えない。
+
+## 本番反映の残作業
 
 残る作業は次のとおり。
 
-1. 正規worker imageと4役割の正式receiptを固定し、現在のseq21に対するseq22候補を検証する。API・Web・verifier・schema35を保持し、未配備のクーポンやschema36/37を混ぜない。
+1. R2の4役割の正式receiptとfreshな本番状態を照合し、現在のseq21に対する新seq22候補を検証する。旧署名・旧候補・削除済みの一時権限は使わない。API・Web・verifier・schema35を保持し、未配備のクーポンやschema36/37を混ぜない。
 2. 正式な署名・排他・drain・admission・切替・復旧設定の更新を行い、readinessと公開経路での説明完走・保存・再読み込みを確認する。HTTP 200や単体テストだけで復旧済みとしない。
-3. 平方専用Recipeを正規のcompiler証拠・独立審査・署名・実embeddingへ結び付けて公開し、言い換えで新規DSPへ進まず保存回答を返すことを確認する。旧localのcompiler receiptは本番へ流用しない。
+3. [平方専用RecipeのIssue #287](https://github.com/AtsushiHosaka/pals/issues/287)で、正規のcompiler証拠・独立審査・署名・実embeddingへ結び付けて公開し、言い換えで新規DSPへ進まず保存回答を返すことを確認する。日本語保存回答は著作草稿であり、Recipeは未公開である。旧localのcompiler receiptは本番へ流用しない。
 4. DLQの時刻・失敗種別と、品質監視の実収集・抽出・警報を確認する。再配信・削除は原因調査と分ける。
 
 ## 再発防止の実施計画
