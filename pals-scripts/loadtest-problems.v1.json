@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "status": "draft: the owner approves this list before any run",
+  "notes": [
+    "A = simple new problems (the ~1 minute goal applies); B = questions that should hit a published Recipe; C = medium-depth new proofs (recorded only).",
+    "No (x+y)^2 expansion (AGENTS.md); no problem here is a published Recipe topic in class A or C.",
+    "Class B paraphrases the 20 published Recipe topics; roughly 80% reuse is expected, so a miss is recorded as a miss."
+  ],
+  "problems": [
+    {"id": "A01", "class": "A", "statement": "任意の実数 x について x^2 ≥ 0 を証明してください。"},
+    {"id": "A02", "class": "A", "statement": "任意の実数 a, b について a^2 + b^2 ≥ 2ab を証明してください。"},
+    {"id": "A03", "class": "A", "statement": "任意の実数 x について x^2 - 2x + 1 ≥ 0 を証明してください。"},
+    {"id": "A04", "class": "A", "statement": "任意の自然数 n について n(n+1) は偶数であることを証明してください。"},
+    {"id": "A05", "class": "A", "statement": "任意の実数 x について |x| ≥ x を証明してください。"},
+    {"id": "A06", "class": "A", "statement": "x > 0 のとき x + 1/x ≥ 2 を証明してください。"},
+    {"id": "A07", "class": "A", "statement": "偶数と偶数の和は偶数であることを証明してください。"},
+    {"id": "A08", "class": "A", "statement": "奇数の二乗は奇数であることを証明してください。"},
+    {"id": "A09", "class": "A", "statement": "任意の実数 a, b について (a + b)(a - b) = a^2 - b^2 を証明してください。"},
+    {"id": "A10", "class": "A", "statement": "任意の自然数 n について 1 + 3 + 5 + ... + (2n - 1) = n^2 を数学的帰納法で証明してください。"},
+
+    {"id": "B01", "class": "B", "statement": "f(x) = |x| が x = 0 で微分可能でないことを示してください。"},
+    {"id": "B02", "class": "B", "statement": "写像 f: A → B と g: B → C の合成 g∘f が単射なら、f も単射であることを証明してください。"},
+    {"id": "B03", "class": "B", "statement": "閉区間 [a, b] 上の連続関数 f が f(a) < 0 < f(b) を満たすとき、f(c) = 0 となる c が存在することを示してください。"},
+    {"id": "B04", "class": "B", "statement": "線形写像が単射であることと、その核が零ベクトルだけであることは同値であることを証明してください。"},
+    {"id": "B05", "class": "B", "statement": "関数 f(x) = x^n（n は自然数）が実数全体で連続であることを証明してください。"},
+    {"id": "B06", "class": "B", "statement": "二つの正方行列 A, B について、積 AB の行列式が 0 でないための必要十分条件を述べて証明してください。"},
+    {"id": "B07", "class": "B", "statement": "f(x) = 1/x の導関数が -1/x^2 であることを、導関数の定義から示してください。"},
+    {"id": "B08", "class": "B", "statement": "二つの関数の和の導関数は、それぞれの導関数の和であることを証明してください。"},
+    {"id": "B09", "class": "B", "statement": "有限次元ベクトル空間の線形写像について、階数と退化次数の和が定義域の次元に等しいこと(階数・退化次数の定理)を証明してください。"},
+    {"id": "B10", "class": "B", "statement": "二次関数 f(x) = a x^2 + b x + c（a ≠ 0）が実数全体で単射でないことを示してください。"},
+
+    {"id": "C01", "class": "C", "statement": "√2 は無理数であることを証明してください。"},
+    {"id": "C02", "class": "C", "statement": "素数は無限に存在することを証明してください。"},
+    {"id": "C03", "class": "C", "statement": "任意の自然数 n について n^3 - n は 6 の倍数であることを証明してください。"},
+    {"id": "C04", "class": "C", "statement": "集合 A, B, C について A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C) を証明してください。"},
+    {"id": "C05", "class": "C", "statement": "収束する実数列は有界であることを証明してください。"},
+    {"id": "C06", "class": "C", "statement": "任意の整数 n について n^2 を 4 で割った余りは 0 または 1 であることを証明してください。"},
+    {"id": "C07", "class": "C", "statement": "a, b が正の実数のとき、相加平均は相乗平均以上である(a + b)/2 ≥ √(ab) ことを証明してください。"},
+    {"id": "C08", "class": "C", "statement": "2 × 2 の実対称行列の固有値は、すべて実数であることを証明してください。"},
+    {"id": "C09", "class": "C", "statement": "任意の自然数 n について 2^n > n を数学的帰納法で証明してください。"},
+    {"id": "C10", "class": "C", "statement": "任意の整数 a, b について、a と b の最大公約数が 1 なら、a + b と ab の最大公約数も 1 であることを証明してください。"}
+  ]
+}
