@@ -141,6 +141,8 @@ python -m venv .venv && .venv/bin/pip install pandas matplotlib   # 初回のみ
 - オーナーのメモリのファイルにある数値のうち、リポジトリの docs や PR から根拠をたどれないもの。27 米ドルの評価費用は、Issue の記録とあわせて1行にしました。ほかにメモリだけを根拠とする記述(seq16 のリリースメモ)は入れていません。
 - 出典に数値のない Issue と PR。
 
+PR #274で追加したセキュリティ回帰の集計11行も、この規約に合わせて[検証記録](../verification/security-review-followup-2026-11-05.md)へ移しました。実DBやLinuxを含む確認と純粋な単体スイートを区別し、元の成功・失敗の数値は保存しています。
+
 ## Langfuse
 
 リポジトリで確認できたことと、台帳との関係です。
