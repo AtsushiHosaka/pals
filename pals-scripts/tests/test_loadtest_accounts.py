@@ -114,6 +114,34 @@ class LoadtestAccountsTest(unittest.TestCase):
             self.assertEqual(code, 2)
             self.assertEqual(fake.calls, [])
 
+    def test_email_option_builds_plus_addresses_from_one_real_address(self):
+        fake = FakeCognito()
+        code, out, err = self.run_main(
+            ["create", "--email", "name@gmail.com", "--count", "10",
+             "--execute", "--confirm-pool", "pals-mini-prod"], fake)
+        self.assertEqual(code, 0, err)
+        manifest = json.loads((Path(self.state) / "manifest.json").read_text())
+        emails = [a["email"] for a in manifest["accounts"]]
+        self.assertEqual(emails[0], "name+pals-lt01@gmail.com")
+        self.assertEqual(emails[-1], "name+pals-lt10@gmail.com")
+        self.assertEqual(len(set(emails)), 10)
+
+    def test_email_option_refuses_placeholders_non_ascii_and_tagged_addresses(self):
+        for bad in ("あなたのアドレス", "あなた@gmail.com", "name+tag@gmail.com", "name", "@gmail.com"):
+            fake = FakeCognito()
+            code, _, err = self.run_main(["create", "--email", bad], fake)
+            self.assertEqual(code, 2, bad)
+            self.assertEqual(fake.calls, [], bad)
+
+    def test_exactly_one_of_email_and_template_is_required(self):
+        for argv in (["create"],
+                     ["create", "--email", "a@gmail.com", "--email-template", "lt+{n}@gmail.com"]):
+            fake = FakeCognito()
+            code, _, err = self.run_main(argv, fake)
+            self.assertEqual(code, 2)
+            self.assertIn("exactly one", err)
+            self.assertEqual(fake.calls, [])
+
     def test_create_writes_private_manifest_and_never_prints_passwords(self):
         fake = FakeCognito()
         code, out, err = self.run_main(

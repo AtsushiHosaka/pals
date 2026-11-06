@@ -10,8 +10,8 @@ Passwords and subject ids live in a 0600 manifest under --state-dir (default
 to the AWS CLI through a 0600 temporary file, not on the command line.
 
 Usage (run from anywhere; needs the AWS CLI and credentials for the PALS account):
-  python3 pals-scripts/loadtest-accounts.py create --email-template 'you+pals-lt{n}@example.com'
-  python3 pals-scripts/loadtest-accounts.py create --email-template '...' --execute --confirm-pool pals-mini-prod
+  python3 pals-scripts/loadtest-accounts.py create --email name@gmail.com
+  python3 pals-scripts/loadtest-accounts.py create --email name@gmail.com --execute --confirm-pool pals-mini-prod
   python3 pals-scripts/loadtest-accounts.py verify --execute --confirm-pool pals-mini-prod
   python3 pals-scripts/loadtest-accounts.py delete --execute --confirm-pool pals-mini-prod
 """
@@ -147,15 +147,31 @@ class Tool:
             raise Refusal(f"--execute also needs --confirm-pool {self.args.pool_name}")
 
     # ---- subcommands -------------------------------------------------------
+    def template(self) -> str:
+        """--email BASE (one real address) or --email-template with {n}."""
+        base, template = self.args.email, self.args.email_template
+        if bool(base) == bool(template):
+            raise Refusal("give exactly one of --email (your address) or --email-template")
+        if template:
+            if "{n}" not in template:
+                raise Refusal("--email-template must contain {n}")
+            return template
+        if not EMAIL.match(base) or "+" in base.split("@")[0]:
+            raise Refusal(f"--email must be one plain address such as name@gmail.com (got {base!r})")
+        local, domain = base.split("@")
+        # Plus addressing: mail for name+tag@domain reaches name@domain, so the owner stays
+        # in control of every test address, and the tag makes the accounts easy to spot.
+        return f"{local}+pals-lt{{n}}@{domain}"
+
     def create(self) -> int:
-        count, template = self.args.count, self.args.email_template
+        count = self.args.count
         if not 1 <= count <= MAX_COUNT:
             raise Refusal(f"--count must be between 1 and {MAX_COUNT}")
-        if not template or "{n}" not in template:
-            raise Refusal("--email-template must contain {n}, e.g. 'you+pals-lt{n}@example.com'")
+        template = self.template()
         emails = [template.format(n=f"{i:02d}") for i in range(1, count + 1)]
-        if any(not EMAIL.match(e) for e in emails) or len(set(emails)) != count:
-            raise Refusal("the email template does not produce distinct, valid addresses")
+        bad = [e for e in emails if not EMAIL.match(e)]
+        if bad or len(set(emails)) != count:
+            raise Refusal(f"this would produce an invalid or repeated address, e.g. {(bad or emails)[0]!r}")
         if self.manifest_path.exists():
             raise Refusal(f"{self.manifest_path} already exists; delete or move it first")
         pool = self.pool()
@@ -262,7 +278,9 @@ def parser() -> argparse.ArgumentParser:
     p.add_argument("--pool-name", default=DEFAULT_POOL)
     p.add_argument("--client-name", default=DEFAULT_CLIENT)
     p.add_argument("--count", type=int, default=10)
-    p.add_argument("--email-template", help="must contain {n}, e.g. 'you+pals-lt{n}@example.com'")
+    p.add_argument("--email", help="your own address, e.g. name@gmail.com; accounts become "
+                   "name+pals-lt01@gmail.com ... (mail still reaches you; none is sent)")
+    p.add_argument("--email-template", help="alternative to --email; must contain {n}")
     p.add_argument("--entitlement-hours", type=int, default=72)
     p.add_argument("--state-dir", default="~/.pals-loadtest")
     p.add_argument("--execute", action="store_true")
