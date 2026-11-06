@@ -13,7 +13,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-2026-08-28から2026-11-06までの447行です。出典の内訳は、docsが204行、pals-agentのPRが80行、palsのIssueが135行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
+2026-08-28から2026-11-06までの451行です。出典の内訳は、docsが208行、pals-agentのPRが80行、palsのIssueが135行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
 
 11月5日の説明回帰は、[Agent #50の記録](https://github.com/AtsushiHosaka/pals-agent/blob/36ea6a2b106d5782ca2012b8a75ee4fbfa4c2b52/testdata/explanation-grounding-v1/README.md)に対応する9行を追加しました。初回の同条件比較、書式不備で採点を除外したQA、不備を直した負例、最終修正後の確認を分けています。実モデル24呼出しの推計費用0.02573375 USDを重複なく記録しました。初回比較は両版2/2で、精度向上は確認していません。後の別条件の結果を加えて改善率を作りません。
 
@@ -21,7 +21,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 これらの外部ベンチマークの費用は、使用量に事前登録した全入力0.25・出力0.50 USD/百万tokenを掛けた保守値です。通常入力の標準単価、アプリの版付き原価推計、請求額とは分けます。過去289行を変更せず、今回の6行だけを追記しました。
 
-系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 47、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 143、`availability` 11、`other` 37です。
+系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 48、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 143、`availability` 13、`other` 38です。
 
 2026-11-04の[引き継ぎ確認](../quality-observability-audit-2026-11-04.md)に、CloudWatchの実装と未検証の範囲、プロンプトの変更前後を比較するために今後記録する項目をまとめています。既存の散布図には、題材や成功の定義が違う点が含まれます。図全体からモデルの精度向上を判断しません。
 
@@ -157,3 +157,5 @@ python -m venv .venv && .venv/bin/pip install pandas matplotlib   # 初回のみ
 同じ再開記録に、未署名クーポン候補1組のoffline照合と、支払周期処理の固定5運用ケースの初回4/5・修正後5/5を3行追加しました。本番・実Stripe・モデル精度は未検証で、単体や既存回帰の件数は加算していません。
 
 [seq21本番配備準備](../coupon21-production-preparation-2026-11-05.md)で、署名前の4host metadata照合・承認済み1署名束・Aurora1対応束・OCI2役割の照合を4行追加しました。native準備・本番受理・数学やモデルの精度とは分けています。
+
+2026年11月6日の[説明生成障害の調査](../incident-explanation-failure-2026-11-06.md)を4行追加しました。公開入口3点、署名と稼働stateの2ホスト、表記変更の過剰拒否2例、実依頼1件の終端失敗を分けています。HTTP応答やコンテナ稼働を説明の成功率には使いません。実依頼はLean検証後の専用説明検査で3回拒否されましたが、モデル出力が保存されていないため詳細分類は未確定です。修正の単体テスト件数は台帳へ加算していません。
