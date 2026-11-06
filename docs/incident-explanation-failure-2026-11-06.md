@@ -148,9 +148,13 @@ ALBは元と同じ単一targetをhealthyへ戻し、14項目の設定値を維�
 
 公開UIでは12:00:35–12:00:55 JSTの間に、元の障害と同じ数学依頼を新規に1回送信した。署名有効・seq22の実runtimeに結び付けた読み取り専用metadataで、このゲストchatの現行jobとの対応を確認した。DBのrequest作成は12:00:50.518790 JST、失敗確定は12:07:11.394797 JSTで、差は約380.88秒だった。クリックから表示までの計時やp95ではなく、単発のDB作成から終端までの値である。
 
-linked jobは`verified`で、最終更新は12:06:17.065551 JSTだった。説明stateは12:07:04.148938 JSTに`failed`となり、診断コードは`pals.explanation_failed`、`output_review_approved=false`だった。requestの終端コードは`lean_explanation_failed`である。この集約コードだけでは、専用検査、独立QA、参照、provider、期限のどこで失敗したかを確定できない。親担当が固定された失敗理由を調査中で、原因分類は未確定として残す。
+linked jobは`verified`で、最終更新は12:06:17.065551 JSTだった。説明stateは12:07:04.148938 JSTに`failed`となり、診断コードは`pals.explanation_failed`、`output_review_approved=false`だった。requestの終端コードは`lean_explanation_failed`である。
 
-実原本`guest-recheck-metadata-2-result.json`のSHA-256先頭16桁は`26a139475e20b8c4c`で、SSMの実行自体はSuccess・exit 0だった。metadata取得の成功を数学回答の成功には数えない。説明の完走・保存・再読み込みの受入は未達であり、runtime切替の成功と元の説明障害の復旧を分けて扱う。今回の1件は、冒頭の実配備基準の失敗1件とは別の実試行である。
+後続の固定log抽出で同じ現行jobとの対応を照合し、理由は`validation:x_squared_epsilon_delta,x_squared_epsilon_delta,x_squared_epsilon_delta`と確定した。日本語の平方専用検査が有効で、説明候補は3回とも固定ルールの専用検査で拒否された。独立QAによる却下とは扱わない。記録された説明処理時間は46.431秒、Leanコードは66行だった。生成に失敗した説明本文は保存されておらず、どの式・表記・数学的条件が拒否されたか、生成文の欠陥か検査の誤拒否かは特定できない。このため失敗分類は`unclassified`を維持する。
+
+固定理由の実原本は`guest-recheck-failure-reason-result.json`、SHA-256先頭16桁は`9de89c5e301fc52f`である。raw logは転送せず、この診断によるモデル呼出しと変更操作は0回だった。3回の拒否を、独立した3件の利用者試行に増やさない。
+
+実原本`guest-recheck-metadata-2-result.json`のSHA-256先頭16桁は`26a139475e20b8c4`で、SSMの実行自体はSuccess・exit 0だった。metadata取得の成功を数学回答の成功には数えない。説明の完走・保存・再読み込みの受入は未達であり、runtime切替の成功と元の説明障害の復旧を分けて扱う。今回の1件は、冒頭の実配備基準の失敗1件とは別の実試行である。
 
 ## 本番反映の残作業
 
