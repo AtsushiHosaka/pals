@@ -287,6 +287,21 @@ class GrantTest(unittest.TestCase):
         self.assertEqual(code, 2)
         self.assertIn("already exists", err)
 
+    def test_stopping_the_tunnel_also_stops_the_plugin_it_spawned(self):
+        import subprocess
+        import time
+
+        # Like `aws ssm start-session`: a parent that spawns a long-running child.
+        parent = subprocess.Popen(["sh", "-c", "sleep 300 & echo $! ; wait"], stdout=subprocess.PIPE,
+                                  text=True, start_new_session=True)
+        child = int(parent.stdout.readline())
+        os.kill(child, 0)  # the child is alive
+        module.stop_process_group(parent, grace=5)
+        time.sleep(0.2)
+        with self.assertRaises(ProcessLookupError):
+            os.kill(child, 0)
+        parent.stdout.close()
+
     def test_identifier_and_literal_helpers_refuse_odd_input(self):
         self.assertEqual(module.ident("pals_op_lt_ab12"), '"pals_op_lt_ab12"')
         for bad in ('a"b', "a b", "x;drop", "1abc", ""):

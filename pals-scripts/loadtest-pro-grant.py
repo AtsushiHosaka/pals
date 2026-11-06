@@ -26,6 +26,7 @@ import os
 import re
 import secrets
 import shutil
+import signal
 import socket
 import ssl
 import stat
@@ -70,6 +71,25 @@ def lit(value: str) -> str:
     if not _LITERAL.match(value):
         raise Refusal("unexpected characters in a SQL literal")
     return f"'{value}'"
+
+
+def stop_process_group(process: subprocess.Popen[Any], grace: float = 8.0) -> None:
+    """Stop a child and everything it spawned (the aws CLI launches session-manager-plugin,
+    which would otherwise outlive it and keep the tunnel open)."""
+    with contextlib.suppress(ProcessLookupError, PermissionError):
+        os.killpg(process.pid, signal.SIGTERM)
+    deadline = time.monotonic() + grace
+    while time.monotonic() < deadline:
+        try:
+            os.killpg(process.pid, 0)  # raises once the whole group is gone
+        except (ProcessLookupError, PermissionError):
+            break
+        time.sleep(0.1)
+    else:
+        with contextlib.suppress(ProcessLookupError, PermissionError):
+            os.killpg(process.pid, signal.SIGKILL)
+    with contextlib.suppress(Exception):
+        process.wait(timeout=5)
 
 
 def inside_git_checkout(path: Path) -> bool:
@@ -154,7 +174,8 @@ class Tool:
             process = subprocess.Popen(
                 ["aws", "--profile", self.args.profile, "--region", self.args.region, "ssm", "start-session",
                  "--target", info["control"], "--document-name", "AWS-StartPortForwardingSessionToRemoteHost",
-                 "--parameters", parameters], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+                 "--parameters", parameters], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True,
+                start_new_session=True)  # own process group, so cleanup reaches the plugin too
             try:
                 deadline = time.monotonic() + 45
                 while time.monotonic() < deadline:
@@ -168,9 +189,7 @@ class Tool:
                     raise Refusal("the SSM port-forward did not open in time")
                 yield
             finally:
-                process.terminate()
-                with contextlib.suppress(Exception):
-                    process.wait(timeout=10)
+                stop_process_group(process)
         return tunnel()
 
     def ca_bundle(self) -> Path:
