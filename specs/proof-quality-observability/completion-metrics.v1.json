@@ -1,0 +1,52 @@
+{
+  "contract_version": "pals.proof-quality-completion.v1",
+  "namespace": "PALS/ProofQuality",
+  "environments": ["prod", "staging", "dev", "local", "probe"],
+  "states": ["accepted", "queued", "verifying", "explaining", "awaiting_application"],
+  "events": {
+    "proof_request_accepted": ["ProofRequestsAccepted"],
+    "proof_request_in_flight": ["ProofRequestsInFlight", "ProofRequestOldestAgeSeconds"],
+    "lean_jobs_unreconciled": ["LeanJobsUnreconciled", "LeanJobsUnreconciledOldestAgeSeconds"]
+  },
+  "metrics": {
+    "ProofRequestsAccepted": {"unit": "Count", "dimensions": ["Environment"], "kind": "counter", "value": 1},
+    "ProofRequestsInFlight": {"unit": "Count", "dimensions": ["Environment", "State"], "kind": "nonnegative_integer_gauge"},
+    "ProofRequestOldestAgeSeconds": {"unit": "Seconds", "dimensions": ["Environment", "State"], "kind": "nonnegative_finite_gauge"},
+    "LeanJobsUnreconciled": {"unit": "Count", "dimensions": ["Environment"], "kind": "nonnegative_integer_gauge"},
+    "LeanJobsUnreconciledOldestAgeSeconds": {"unit": "Seconds", "dimensions": ["Environment"], "kind": "nonnegative_finite_gauge"}
+  },
+  "snapshot": {
+    "interval_seconds": 300,
+    "require_all_states": true,
+    "empty_count": 0,
+    "empty_oldest_age_seconds": 0,
+    "oldest_age_origin": "request_accepted_at",
+    "unreconciled_age_origin": "job_became_applicable_at"
+  },
+  "alarms": {
+    "state_oldest_age": {
+      "metric_name": "ProofRequestOldestAgeSeconds",
+      "unit": "Seconds",
+      "dimensions": ["Environment", "State"],
+      "statistic": "Maximum",
+      "period_seconds": 300,
+      "evaluation_periods": 1,
+      "datapoints_to_alarm": 1,
+      "comparison_operator": "GreaterThanThreshold",
+      "default_threshold_seconds": 900,
+      "treat_missing_data": "breaching"
+    },
+    "unreconciled_oldest_age": {
+      "metric_name": "LeanJobsUnreconciledOldestAgeSeconds",
+      "unit": "Seconds",
+      "dimensions": ["Environment"],
+      "statistic": "Maximum",
+      "period_seconds": 300,
+      "evaluation_periods": 1,
+      "datapoints_to_alarm": 1,
+      "comparison_operator": "GreaterThanThreshold",
+      "default_threshold_seconds": 900,
+      "treat_missing_data": "breaching"
+    }
+  }
+}
