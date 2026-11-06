@@ -25,6 +25,9 @@ Status: WORKING; 全タスクは未着手。この文書は [requirements](requi
 | PQO-T015 | **本番配備**: アプリの新しい版（発行は有効）と、ホストの置き換え（エージェント導入）。 | PQO-010、PQO-022 | ヘルスチェックが通る。ハートビートのメトリクスが現れる。配備の記録を docs に残す | owner が承認、claude が手順を用意 | **オーナー承認が必須。ホストの置き換えを伴う** |
 | PQO-T016 | 擬似失敗の注入と受け入れ。分類ごとに `Environment=probe` で1件ずつ発行し、アラームは一時アラームで検証し、読み取りの権限でクエリを実行する。 | PQO-024、requirements の受け入れ条件の全項目 | 各条件の実測を docs に記録する。一時リソースは削除する。本番のアラームが誤って `ALARM` にならない | claude | owner の確認 |
 | PQO-T017 | 14日分の実測で、率のアラームのしきい値と最小サンプル数を見直す。月の実測費用を、見積もりと比べる。 | PQO-013、PQO-023 | 見直したしきい値と根拠、実測費用を docs に記録する。費用が上限（約44 USD）を超えるなら、縮小手順を実行する | claude | しきい値の変更: owner |
+| PQO-T018 | pals-api に、受付数のイベントと、非終端・未適用のゲージ（PQO-026〜PQO-028）の定期集計を足す。状態名と時刻列は pals-api のスキーマから確認する。 | PQO-026–PQO-028 | 実 PostgreSQL の統合テスト: 検証中のまま止めた要求が件数と最古の経過秒数に現れ、終端すると消える。ジョブ終了済みで未適用の要求が別ゲージに現れる。集計クエリが本文の列を選ばない | claude | |
+| PQO-T019 | pals-infra に、非終端の経過秒数のアラーム（欠測は `breaching`）と、ゲージ途絶のアラームを足す。`alarm_actions` は空。 | PQO-029 | `terraform test`: 比較・期限・欠測の扱いが D11 の表と一致する | claude | |
+| PQO-T020 | 診断コードが空の `lean_verification_failed` を `unclassified` に置く（PQO-030）。 | PQO-030 | 単体テスト: 診断なしの失敗が `model.could_not_prove` に入らず `unclassified` になる | claude | |
 
 ## Completion gate
 
