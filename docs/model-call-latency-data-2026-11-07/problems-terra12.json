@@ -1,0 +1,74 @@
+[
+ {
+  "id": "calculus_supp_v5_ftc_point_spike_counterexample",
+  "history": "catalog_exact_failed",
+  "statement": "For every a,b and v≠0, let f equal zero except f(a)=v. The variable-upper-endpoint integral x↦∫[b,x]f has derivative zero at a and does not have derivative f(a)=v there.",
+  "formal_statement": "theorem pals_card_target (a b v : ℝ) (hv : v ≠ 0) : HasDerivAt (fun x => ∫ t in b..x, Function.update (fun _ : ℝ => 0) a v t) 0 a ∧ ¬HasDerivAt (fun x => ∫ t in b..x, Function.update (fun _ : ℝ => 0) a v t) v a"
+ },
+ {
+  "id": "mv_line_supp_v5_orientation_counterexample",
+  "history": "catalog_exact_failed",
+  "statement": "For every dimension n with coordinate i, base vector x, distinct real endpoints a,b, and constant velocity u(t)=e_i, the curve obtained by replacing coordinate i of x by t has actual velocity u. Integrating the exact coordinate form dx_i along this curve from a to b differs from integrating it from b to a.",
+  "formal_statement": "theorem pals_card_target (n : ℕ) (i : Fin n) (x : Fin n → ℝ) (u : ℝ → (Fin n → ℝ)) (a b : ℝ) (hu : ∀ t, u t = Pi.single i 1) (hab : a ≠ b) : (∀ t, HasDerivAt (fun s => Function.update x i s) (u t) t) ∧ (∫ t in a..b, fderiv ℝ (fun y : Fin n → ℝ => y i) (Function.update x i t) (u t)) ≠ (∫ t in b..a, fderiv ℝ (fun y : Fin n → ℝ => y i) (Function.update x i t) (u t))"
+ },
+ {
+  "id": "mv_foundation_lagrange_multiplier_from_direction",
+  "history": "catalog_exact_failed",
+  "statement": "At a constrained local extremum of g on f=f(x), assume strict derivatives A,B and choose a direction u with A(u)≠0. Then the unique normalized multiplier c is determined by c A(u)=B(u), and the full derivative identity is B=cA. Thus one scalar division computes the multiplier after the regularity check.",
+  "formal_statement": "theorem pals_card_target (n : ℕ) (f g : (Fin n → ℝ) → ℝ) (A B : (Fin n → ℝ) →L[ℝ] ℝ) (x u : Fin n → ℝ) (he : IsLocalExtrOn g {y | f y = f x} x) (hf : HasStrictFDerivAt f A x) (hg : HasStrictFDerivAt g B x) (hu : A u ≠ 0) : ∃ c : ℝ, B = c • A ∧ c * A u = B u ∧ ∀ t : ℝ, t * A u = B u → t = c"
+ },
+ {
+  "id": "calculus_v3_limit_order",
+  "history": "catalog_exact_failed",
+  "statement": "If u(n)≤v(n) for every natural n and both sequences converge to a,b, then a≤b.",
+  "formal_statement": "theorem pals_card_target (u v : ℕ → ℝ) (a b : ℝ) (hu : Filter.Tendsto u Filter.atTop (nhds a)) (hv : Filter.Tendsto v Filter.atTop (nhds b)) (hle : ∀ n, u n ≤ v n) : a ≤ b"
+ },
+ {
+  "id": "calculus_supp_v3_geometric_boundary_counterexample",
+  "history": "catalog_exact_failed",
+  "statement": "For every real q with |q|≥1, the geometric power series Σ q^n is not summable. In particular, interior convergence does not license its boundary values.",
+  "formal_statement": "theorem pals_card_target (q : ℝ) (hq : 1 ≤ |q|) : ¬Summable (fun n : ℕ => q^n)"
+ },
+ {
+  "id": "la_reuse_kernel_detects_zero",
+  "history": "catalog_exact_failed",
+  "statement": "線形写像 f:M→N の核が M 全体であることと f が零写像であることは同値である。",
+  "formal_statement": "theorem pals_card_target {R M N : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R N] (f : M →ₗ[R] N) : (LinearMap.ker f = ⊤ → f = 0) ∧ (f = 0 → LinearMap.ker f = ⊤)"
+ },
+ {
+  "id": "commalg_modules_exact_id_zero",
+  "history": "catalog_exact_failed",
+  "statement": "id_M と 0:M→M は M で正確である。",
+  "formal_statement": "theorem pals_card_target {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] : LinearMap.range (LinearMap.id : M →ₗ[R] M) = LinearMap.ker (0 : M →ₗ[R] M)"
+ },
+ {
+  "id": "la_v6_nonzero_maps_zero_composite",
+  "history": "catalog_exact_failed",
+  "statement": "Over any field K and finite-dimensional K-vector spaces, coordinate projections onto two distinct vectors of a basis are both nonzero but their composite is zero; a zero composite does not force either factor to vanish.",
+  "formal_statement": "theorem pals_card_target {K : Type*} [Field K] {V : Type*} [AddCommGroup V] [Module K V] [FiniteDimensional K V] {n : ℕ} (b : Module.Basis (Fin n) K V) (i j : Fin n) (hij : i ≠ j) : let p := (b.coord i).smulRight (b i); let q := (b.coord j).smulRight (b j); p ≠ 0 ∧ q ≠ 0 ∧ p.comp q = 0"
+ },
+ {
+  "id": "la_reuse_right_inverse_surjective",
+  "history": "catalog_exact_failed",
+  "statement": "線形写像 f:M→N が線形右逆写像 g:N→M（f∘g=id_N）を持つなら f は全射である。",
+  "formal_statement": "theorem pals_card_target {R M N : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R N] (f : M →ₗ[R] N) (g : N →ₗ[R] M) : f.comp g = LinearMap.id → Function.Surjective f"
+ },
+ {
+  "id": "la_v6_basis_recognition",
+  "history": "catalog_exact_failed",
+  "statement": "Over any field K and finite-dimensional K-vector spaces, a Fin n family is the vector family of some basis exactly when it is independent and spans the whole space.",
+  "formal_statement": "theorem pals_card_target {K : Type*} [Field K] {V : Type*} [AddCommGroup V] [Module K V] [FiniteDimensional K V] {n : ℕ} (v : Fin n → V) : (∃ b : Module.Basis (Fin n) K V, (fun i => b i)=v) ↔ LinearIndependent K v ∧ Submodule.span K (Set.range v)=⊤"
+ },
+ {
+  "id": "calculus_v4_gradient_direction_bound",
+  "history": "catalog_exact_failed",
+  "statement": "Let all vector spaces be finite-dimensional real inner product spaces. If f has gradient u at x, the absolute directional slope |Df(x)[w]| is at most ‖u‖‖w‖.",
+  "formal_statement": "theorem pals_card_target {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] (f : E → ℝ) (x u : E) (hf : HasGradientAt f u x) (w : E) : |lineDeriv ℝ f x w| ≤ ‖u‖*‖w‖"
+ },
+ {
+  "id": "calculus_v5_two_sided_limit_characterization",
+  "history": "catalog_exact_failed",
+  "statement": "A real function has punctured two-sided limit u at a if and only if its left-hand and right-hand limits at a both equal u.",
+  "formal_statement": "theorem pals_card_target (f : ℝ → ℝ) (a u : ℝ) : Filter.Tendsto f (nhdsWithin a {a}ᶜ) (nhds u) ↔ Filter.Tendsto f (nhdsWithin a (Set.Iio a)) (nhds u) ∧ Filter.Tendsto f (nhdsWithin a (Set.Ioi a)) (nhds u)"
+ }
+]
