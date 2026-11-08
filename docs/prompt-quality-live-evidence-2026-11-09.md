@@ -20,11 +20,11 @@ helper defect was repaired. No account was created or credential reset.
   Closed step/error diagnostics and private token retention avoid blind repeated
   password prompts. A subsequent real owner, token-capacity and Japanese-language
   preflight succeeded. Credentials remain outside tracked artifacts.
-- Exact published observability tree: **1,129 passed, 1 credential-dependent Langfuse
-  smoke skipped** in 21.97 seconds. Ruff and strict mypy passed. Actual deployed API
+- Latest observability tree: **1,130 passed, 1 credential-dependent Langfuse
+  smoke skipped** in 30.98 seconds. Ruff and strict mypy passed. Actual deployed API
   source contracts accepted the request/quote/terminal/source forms in source checks.
   Boundary fixtures do not count as live proof evaluation.
-- Observability commit: `1d08533533a4d6e6a0b88076a995e7594a7f4202`.
+- Observability commit: `f588a0ec16e7af98ce4762089f3b46b97f366ae0`.
 - Infrastructure commit including live query repair: `fcad5bbbd883bd42f7cbc9a197974ac815fcc4a7`.
 
 ## Actual infrastructure deployment
@@ -76,8 +76,13 @@ The backend itself remained healthy: internal API health/readiness both 200,
 unchanged protected containers, zero restarts/OOMs and ready unexpired credential
 brokers. The measurement Terraform apply did not touch load balancing.
 
-Ingress restoration must be coordinated with its drain owner. This task did not
-blindly reregister the target or interfere with a release. At this evidence point,
-there are no proof benchmark outcomes or CloudWatch quality observations to graph.
-Resume actual collection after a serving window is confirmed, re-attest deployment
-and catalog identities, then publish/fetch and chart only those real observations.
+This task did not blindly reregister the target or interfere with a release.
+Public serving later returned without an application mutation from this task.
+Fresh read-back again confirmed the same sequence-28 services and catalog.
+The user's access token had meanwhile expired: its actual validity is 900 seconds.
+The helper now detects expiry and performs normal local sign-in again, with no
+long-lived refresh credential stored. Collection deadlines are fingerprinted and
+the initial batch is bounded to 780 seconds. A fresh local session is the current
+prerequisite. No benchmark chat/request/journal has been created, and no quality
+observation has been fabricated or published. Resume collection immediately after
+fresh sign-in, recheck the cohort, then publish/fetch and chart the real results.

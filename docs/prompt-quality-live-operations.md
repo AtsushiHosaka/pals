@@ -17,6 +17,12 @@ is stored in a mode-0600 owner-private file; the normal PALS `/v1/auth/me` check
 then verifies owner access. If this later check fails, the token remains private
 and a retry checks it without asking for the password again. Challenges and password
 changes remain on the normal website. Neither passwords nor tokens belong in chat.
+The current Cognito access session lasts 15 minutes. If it expires, the helper
+prompts for normal local sign-in and atomically replaces the expired private token;
+it does not store a long-lived refresh credential. Start collection promptly after
+sign-in. Collection deadlines are fingerprinted, and the initial batch is bounded
+to 780 seconds so it can finish within the short session. Pending work remains
+resumable rather than being relabelled failed.
 
 The API client identifies itself as PALS-PromptQuality. The original helper's default
 Python client received an HTTP 403 at the API boundary. This was reproduced without
