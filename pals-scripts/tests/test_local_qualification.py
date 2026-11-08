@@ -24,6 +24,10 @@ def load(name, path):
 proxy = load("local_budget_proxy", ROOT / "local-qualification/budget_proxy.py")
 gate = load("local_qualification", ROOT / "local-qualification.py")
 builder = load("local_web_build_test", ROOT / "local-web-build.py")
+bootstrap = load(
+    "local_bootstrap_contract", ROOT / "local-qualification/bootstrap_database.py"
+)
+prepare = load("local_prepare_contract", ROOT / "local-qualification-prepare.py")
 
 
 class BudgetTests(unittest.TestCase):
@@ -177,6 +181,7 @@ class RuntimeTests(unittest.TestCase):
                 patch.object(gate, "web_provenance", return_value={}),
                 patch.object(gate, "verifier_provenance", return_value={}),
                 patch.object(gate, "budget_status", return_value={}),
+                patch.object(gate, "database_readiness", return_value={}),
                 patch.object(gate, "runtime", return_value={}),
                 patch.object(
                     gate,
@@ -192,6 +197,114 @@ class RuntimeTests(unittest.TestCase):
                 "failed",
             )
             self.assertFalse((root / "capture/submission.json").exists())
+
+
+class LocalSetupBoundaryTests(unittest.TestCase):
+    def test_private_file_dsn_rejects_query_fragment_remote_and_keyword_forms(self):
+        with tempfile.TemporaryDirectory() as d:
+            file = Path(d) / "local.env"
+            valid = "postgresql://local_user:" + ("a" * 64) + "@127.0.0.1:55432/pals"
+            file.write_text("PALS_HOST_DATABASE_URL=" + valid + "\n")
+            file.chmod(0o600)
+            self.assertEqual(
+                bootstrap.validate_local_dsn(
+                    gate.private_env(file)["PALS_HOST_DATABASE_URL"]
+                ).hostname,
+                "127.0.0.1",
+            )
+            for bad in (
+                valid + "?host=remote.invalid",
+                valid + "#host=remote.invalid",
+                valid.replace("127.0.0.1", "remote.invalid"),
+                valid.replace("postgresql:", "http:"),
+                "host=remote.invalid dbname=pals",
+            ):
+                file.write_text("PALS_HOST_DATABASE_URL=" + bad + "\n")
+                with self.assertRaises(ValueError):
+                    bootstrap.validate_local_dsn(
+                        gate.private_env(file)["PALS_HOST_DATABASE_URL"]
+                    )
+            selector = (
+                "postgresql://pals_local_recipe_selector:"
+                + ("b" * 64)
+                + "@postgres:5432/pals"
+            )
+            self.assertEqual(
+                bootstrap.validate_local_dsn(
+                    bootstrap.runtime_login_url(selector)
+                ).port,
+                55432,
+            )
+            with self.assertRaises(ValueError):
+                bootstrap.runtime_login_url(selector + "?host=remote.invalid")
+
+    def test_actual_role_label_file_rejects_one_foreign_or_unknown_role(self):
+        with tempfile.TemporaryDirectory() as d:
+            file = Path(d) / "roles.json"
+            owned = {
+                "codex.owner": gate.OWNER,
+                "com.docker.compose.project": prepare.PROJECT,
+                "com.docker.compose.service": "api",
+            }
+            file.write_text(json.dumps([owned]))
+            prepare.validate_existing_role_owners(json.loads(file.read_text()))
+            for changed in (
+                {"codex.owner": "foreign"},
+                {"com.docker.compose.service": "unexpected"},
+                {"com.docker.compose.project": "foreign"},
+            ):
+                file.write_text(json.dumps([owned, {**owned, **changed}]))
+                with self.assertRaises(prepare.gate.Refusal):
+                    prepare.validate_existing_role_owners(json.loads(file.read_text()))
+
+    def test_missing_database_rowlock_privilege_blocks_before_browser(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            subject = root / "subject.json"
+            subject.write_text(
+                json.dumps(
+                    {
+                        "schema_version": "pals.local-qualification-subject.v1",
+                        "basis": "approved-local-real-db-lean-model",
+                        "fixture": {
+                            "paid_submissions": 1,
+                            "maximum_approved_usd": 1,
+                            "output_language": "en",
+                        },
+                        "local_profile": {},
+                    }
+                )
+            )
+            argv = [
+                "gate",
+                "--subject",
+                str(subject),
+                "--state-dir",
+                str(root / "capture"),
+                "--web-root",
+                str(root),
+                "--database-env",
+                str(root / "private.env"),
+            ]
+            with (
+                patch.object(sys, "argv", argv),
+                patch.object(gate, "web_provenance", return_value={}),
+                patch.object(gate, "verifier_provenance", return_value={}),
+                patch.object(gate, "budget_status", return_value={}),
+                patch.object(gate, "runtime", return_value={}),
+                patch.object(
+                    gate,
+                    "database_readiness",
+                    side_effect=gate.Refusal("actual_local_rowlock_privilege_missing"),
+                ),
+                patch.object(gate.subprocess, "Popen") as browser,
+            ):
+                self.assertEqual(gate.main(), 1)
+                browser.assert_not_called()
+            self.assertEqual(
+                json.loads((root / "capture/latest.json").read_text())["state"],
+                "failed",
+            )
 
 
 class ProvenanceTests(unittest.TestCase):
