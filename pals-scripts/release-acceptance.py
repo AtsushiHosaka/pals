@@ -30,6 +30,12 @@ class Refusal(ValueError):
     pass
 
 
+class ProductFailure(Refusal):
+    def __init__(self, code, observation):
+        super().__init__(code)
+        self.observation = observation
+
+
 def need(value, code):
     if not value:
         raise Refusal(code)
@@ -260,7 +266,10 @@ def browser_capture(payload, timeout):
         stdout, stderr = process.communicate(encoded(payload), timeout=timeout)
         if process.returncode != 0:
             code = stderr.decode(errors="replace")
-            raise Refusal(code if re.fullmatch(r"[a-z0-9_]{1,96}", code) else "live_product_acceptance_failed")
+            observation = document(stdout) if 0 < len(stdout) <= 2**20 else None
+            if observation is not None:
+                need(observation.get("run_id") == payload["run_id"], "failed_observation_not_this_run")
+            raise ProductFailure(code if re.fullmatch(r"[a-z0-9_]{1,96}", code) else "live_product_acceptance_failed", observation)
         need(len(stdout) <= 2**20, "browser_output_unbounded")
         return document(stdout)
     finally:
@@ -315,6 +324,7 @@ def main():
             need(args.session, "authenticated_browser_session_required")
             private_file(args.session)
             runtime = inspect_runtime(contract, manifest)
+            record["runtime"] = runtime
             activation = max(stamp(x["started_at"]) for x in runtime.values()).isoformat()
             payload = {"contract": contract, "session_path": str(args.session), "activated_at": activation,
                        "run_id": record["run_id"]}
@@ -329,6 +339,8 @@ def main():
                           manifest_sha256=contract["manifest"]["sha256"], runtime=runtime, observation=observation)
         except Exception as error:
             record.update(state="failed", code=str(error) if isinstance(error, Refusal) else "acceptance_dependency_or_execution_failed")
+            if isinstance(error, ProductFailure) and error.observation is not None:
+                record["observation"] = error.observation
         record["finished_at"] = datetime.now(UTC).isoformat()
         append_attempt(stream, record)
         print(json.dumps(record))
