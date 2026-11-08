@@ -53,6 +53,24 @@ pals-api の `main` ではなく、品質イベントの PR(API #49 / #52)と in
 - 実行の識別は `proof_job_id` の SHA-256 の先頭16桁です。ローカルの計測ツールだけが、自分で決めた `label` を渡せます。
 - テスト(`tests/unit/test_step_timing.py`)は、質問・Lean 本文・利用者 ID・診断メッセージ・モデル回答・API キーに見立てた目印の文字列を実パイプラインに通し、JSONL と EMF のどちらにも現れないことを確認します。キーの許可リストと、全文字列のトークン形式も検査します。
 
+## 本番の回答経路(テンプレート経路)の段への対応
+
+x² の連続性は、本番ではモデルを呼ばない決定論的テンプレートで 22〜24 秒かかります。この内訳を取るため、モデル以外の段も同じ形式で記録します。`claude/seq27-worker` の系統に載せた枝は `claude/step-timing-seq27` です(pals-agent にあり、PR は未作成)。
+
+| 段 | 記録の出どころ | 備考 |
+|---|---|---|
+| テンプレ命中 | `template_hit`(`hit` / `miss`) | seq27 の枝のみ。テンプレ検索の判定時間 |
+| Draft 検索・文脈取得 | `context_retrieval` | `latency_stage` を step として写したもの |
+| 意味審査 | `semantic_review`(container)と、その中のモデル呼び出し(`recipe_semantic_assessment` ほか) | container は他の段を囲むので割合に足さない |
+| 説明生成 | `explain`(モデル) | `explanation`(container)が囲む |
+| 説明審査 | `explanation_review`(モデル) | |
+| 投機的説明 | 同じ `explain`。意味審査と並行するため `pipeline_run.overlap_ms` に出る | `busy_ms` は同時刻を1回だけ数えた時間、`unattributed_ms` は壁時計から `busy_ms` を引いた時間 |
+| worker の job 取得待ち | `queue_wait`(SQS の `SentTimestamp` から) | 時計のずれで近似 |
+| API → 検証器の Lean 検査 | worker の `lean_reconcile_wait`、検証器の `lean_stage`(`environment_prepare` `compile` `audit` `total`、環境キャッシュ)、API の `candidate_verification`(`candidate_wait_ms` `verify_ms`) | 既存の `latency_report.py` が集計する。API 側のイベントは品質 PR の枝にあり、main にはない |
+| 結果確定から画面反映 | API の `proof_request_terminal_read.terminal_age_ms`、`client_answer_timing` | step 形式ではなく既存イベントのまま |
+
+Lean 検査の「キュー待ち・起動・import・検査」の分割は、検証器の `lean_stage` が `environment_prepare`(起動と import の準備)、`compile`(検査)、`audit` を分けています。キュー待ちは `candidate_wait_ms` が近い値ですが、いずれも本計測とは別のログで、1件ごとの結合キーがありません。結合できるのは時刻の近さだけです。この点は未解決です。
+
 ## CloudWatch の形
 
 名前空間は `PALS/Pipeline` です。EMF の行は、既存の `quality_events` の送信経路(CloudWatch エージェントへの UDP、またはファイル)が設定されていればそこへ、なければ stderr へ出します。コンテナのログドライバが拾う前提です。
@@ -157,7 +175,7 @@ PALS_STEP_TIMING_EMF=1
 
 ## 検証
 
-- 追加テスト 29 件(`tests/unit/test_step_timing.py`)が通ります。無効時に何も出さないこと、provider 失敗が有限の `outcome` になって例外が元のまま出ること、sink 失敗が呼び出しを変えないこと、EMF のディメンション、禁止項目の漏れなしを含みます。
+- 追加テスト 33 件(`tests/unit/test_step_timing.py`)が通ります。無効時に何も出さないこと、provider 失敗が有限の `outcome` になって例外が元のまま出ること、sink 失敗が呼び出しを変えないこと、EMF のディメンション、禁止項目の漏れなしを含みます。
 - `tests/unit` 全体は 49 件失敗しますが、Mathlib が見つからない、docker-compose のファイルがない、ポート競合など環境が原因です。関連ファイル(`test_pipeline` `test_openai` `test_lean` `test_worker` `test_quality_events` ほか)は単独で全件通ります。ベースライン(origin/main)との件数比較は、別 worktree の収集エラーで取れていません。
 - 変更した各ファイルの ruff と、新規 2 モジュールの mypy は通ります。
 
