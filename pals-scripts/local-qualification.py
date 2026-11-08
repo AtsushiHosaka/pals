@@ -152,19 +152,21 @@ from dataclasses import asdict
 from uuid import uuid4
 from app.release.verified_reconciler import VerifiedReconcilerSettings,_tls_reader
 from app.infrastructure.verifier.tls_material import build_reconciler_ssl_context
-from app.infrastructure.verifier.isolated_http import HttpxIsolatedVerifierClient
+from app.infrastructure.verifier.isolated_http import HttpxIsolatedVerifierClient,IsolatedVerifierTransportError
 from app.domain.ports.isolated_verifier import IsolatedVerifierRequest
 async def check():
  s=VerifiedReconcilerSettings.from_env()
  client=HttpxIsolatedVerifierClient(base_url=s.verifier_url,binding=s.binding,ssl_context=build_reconciler_ssl_context(s.tls,reader=_tls_reader(s)))
  ready=await client.readiness()
  source="theorem pals_local_readiness_canary : True := by trivial\\n"
- token=str(uuid4());job="local-readiness-"+token;uri="s3://pals-local-artifacts/proof-jobs/"+job+"/result.lean"
+ job=str(uuid4());uri="s3://pals-local-artifacts/proof-jobs/"+job+"/result.lean"
  answer=await client.verify(IsolatedVerifierRequest(proof_job_id=job,lean_code=source,result_artifact_uri=uri))
- if answer.attestation is None:raise RuntimeError("actual_http_compiler_canary_failed")
+ if answer.attestation is None:return {"state":"rejected","failure_code":answer.failure_code,"retryable":answer.retryable,"diagnostic_codes":[x.code for x in answer.diagnostics]}
  assert answer.attestation.verification_succeeded and answer.attestation.proof_job_id==job and answer.attestation.result_artifact_uri==uri and answer.attestation.lean_sha256==hashlib.sha256(source.encode()).hexdigest()
- return {"scope":"dependency_readiness_only_not_product_acceptance","source_sha256":hashlib.sha256(source.encode()).hexdigest(),"verifier_image_digest":ready.verifier_image_digest,"toolchain_sha256":ready.verifier_toolchain_sha256,"release_id":str(ready.release_id),"deployment_binding_sha256":ready.deployment_binding_sha256,"attestation_sha256":hashlib.sha256(json.dumps(asdict(answer.attestation),sort_keys=True).encode()).hexdigest(),"elapsed_ms":answer.elapsed_ms}
-print(json.dumps(asyncio.run(asyncio.wait_for(check(),timeout=45))))
+ return {"state":"verified","scope":"dependency_readiness_only_not_product_acceptance","source_sha256":hashlib.sha256(source.encode()).hexdigest(),"verifier_image_digest":ready.verifier_image_digest,"toolchain_sha256":ready.verifier_toolchain_sha256,"release_id":str(ready.release_id),"deployment_binding_sha256":ready.deployment_binding_sha256,"attestation_sha256":hashlib.sha256(json.dumps(asdict(answer.attestation),sort_keys=True).encode()).hexdigest(),"elapsed_ms":answer.elapsed_ms}
+try:print(json.dumps(asyncio.run(asyncio.wait_for(check(),timeout=45))))
+except IsolatedVerifierTransportError:print(json.dumps({"state":"unavailable","failure_code":"verifier_contract_or_transport_invalid"}))
+except TimeoutError:print(json.dumps({"state":"unavailable","failure_code":"verifier_canary_deadline"}))
 """
     try:
         result = json.loads(
@@ -181,7 +183,12 @@ print(json.dumps(asyncio.run(asyncio.wait_for(check(),timeout=45))))
             )
         )
     except (Refusal, subprocess.TimeoutExpired):
-        raise Refusal("actual_http_compiler_canary_unavailable") from None
+        raise Refusal("actual_http_compiler_canary_dependency_failed") from None
+    need(
+        result.get("state") == "verified",
+        "actual_http_compiler_canary_"
+        + str(result.get("failure_code", "invalid_result")),
+    )
     need(
         result["verifier_image_digest"] == subject["images"]["verifier"]["image_id"],
         "actual_http_canary_runtime_mismatch",

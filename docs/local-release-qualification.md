@@ -36,6 +36,32 @@ blocks promotion. Deterministic CI tests do not create live acceptance. The cano
 controller must invoke the runner, freeze its code and inputs, and require exit zero; this
 script alone does not enforce branch protection or every possible deployment entrypoint.
 
+## Prepare the reused local stack
+
+`local-qualification-prepare.py` upgrades the existing owned E2E stack in one command. Its
+explicit prerequisites are the dedicated owned PostgreSQL service, private `local.env`,
+existing LocalStack/Cognito services, private provider TLS files, and the cumulative known
+budget ledger. It rotates local verifier mTLS, applies the actual local database migrations,
+builds the versioned guard, starts one stable stack, freezes actual configuration into a new
+subject, and executes the actual HTTP compiler canary. It never submits a mathematical proof.
+It preserves prior captures, database rows and spending; missing/uncertain inputs fail closed.
+
+```sh
+python3 pals-scripts/local-qualification-prepare.py \
+  --runtime-dir /private/path/owned-runtime \
+  --compose-root /path/to/pinned-initialized-parent \
+  --api-source /path/to/exact-clean-api-source \
+  --base-subject /private/path/base-subject.json \
+  --web-build-receipt /private/path/web/provenance.json \
+  --verifier-build-receipt /private/path/verifier/provenance.json \
+  --api-python /path/to/api/.venv/bin/python \
+  --agent-python /path/to/agent/.venv/bin/python
+```
+
+The versioned local SQL bootstrap uses real sealed catalog data and migration modules. It
+does not install production admission or insert a completed answer. The owned local profile
+is task-scoped; cold provisioning and a different owner require an explicit setup contract.
+
 ## Build provenance
 
 The Web variant permits only the eight fixed local public settings in `local-web-build.py`.
@@ -71,6 +97,8 @@ separate production test allowance inside the thread's $1 total. Unknown model/p
 uncertain forwarded calls and exceeded reservations fail closed without retry. A restart
 cannot reset spending. Explicit hash-bound resumption requires every prior call to have a
 known completed cost and preserves the complete ledger while lowering its limit.
+Paid Responses require confirmed default service tier; inputs above 272,000 tokens and
+embedding batches are rejected before forwarding rather than priced with an unsafe estimate.
 
 The first real local epsilon–N trial on 2026-11-09 failed and remains failed: the retained
 AMD64 verifier on the local ARM machine could not establish Landlock (`ENOSYS`). HTTP error

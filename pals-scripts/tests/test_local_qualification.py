@@ -83,6 +83,33 @@ class BudgetTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             proxy.Budget(self.path)
 
+    def test_unpriced_priority_long_context_and_embedding_batches_block_prepaid(self):
+        for tier in (None, "priority", "auto", "flex", "scale"):
+            with self.assertRaises(ValueError):
+                proxy.validate_paid_payload(
+                    "/v1/responses",
+                    {
+                        "model": "gpt-6.1-terra",
+                        "input": "proof",
+                        "max_output_tokens": 12000,
+                        "service_tier": tier,
+                    },
+                )
+        with self.assertRaises(ValueError):
+            self.b.reserve("gpt-6.1-terra", 272001, 1)
+        for value in (["one", "two"], ["one"], "", {"text": "one"}):
+            with self.assertRaises(ValueError):
+                proxy.validate_paid_payload(
+                    "/v1/embeddings",
+                    {
+                        "model": "text-embedding-3-small",
+                        "input": value,
+                        "dimensions": 384,
+                    },
+                )
+        self.assertEqual(self.b.held, 0)
+        self.assertEqual(self.b.calls, [])
+
     def test_explicit_hash_bound_lower_limit_resume_preserves_every_prior_charge(self):
         import hashlib
 
