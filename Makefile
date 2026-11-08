@@ -26,6 +26,7 @@ release-qualify:
 
 release-cycle:
 	@test -n "$(RELEASE_PLAN)" -a -n "$(RELEASE_PLAN_SHA256)" -a -n "$(RELEASE_STATE_DIR)" || { echo 'Set the private RELEASE_PLAN, reviewed RELEASE_PLAN_SHA256 and RELEASE_STATE_DIR.' >&2; exit 2; }
+	$(RELEASE_PYTHON) pals-scripts/require-release-cycle-v2.py --plan "$(RELEASE_PLAN)" --plan-sha256 "$(RELEASE_PLAN_SHA256)"
 	$(RELEASE_PYTHON) pals-infra/scripts/release-cycle.py --plan "$(RELEASE_PLAN)" --plan-sha256 "$(RELEASE_PLAN_SHA256)" --state-dir "$(RELEASE_STATE_DIR)" $(RELEASE_APPLY)
 
 pals-up:
