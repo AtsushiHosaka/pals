@@ -2,6 +2,8 @@
 
 Follow AGENTS.md for repository-specific conventions.
 
+Release only from a clean, reviewed parent worktree with exact submodules and the versioned gates. If this active checkout lacks them, preserve its work and use the [canonical release contract](https://github.com/AtsushiHosaka/pals/blob/main/docs/release-reliability-policy.md) from the reviewed worktree. Missing gates block signing and traffic/admission/runtime changes.
+
 Read [the shared release reliability contract](docs/release-reliability-policy.md) before implementation or release work. Pin the exact issue/revisions and expected user behavior; report missing evidence explicitly. A release is `deployed_unverified` until terminal result, persistence, rendering, and reload acceptance are demonstrated. Health, merge, and test counts alone do not establish functional completion.
 
 Use the same contract as Codex. Keep detailed rules in AGENTS.md and the shared contract rather than maintaining a separate, divergent Claude release procedure.

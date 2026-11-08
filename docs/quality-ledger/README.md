@@ -13,7 +13,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-2026-08-28から2026-11-06までの472行です。出典の内訳は、docsが227行、pals-agentのPRが80行、palsのIssueが137行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
+現在は2026-11-09までの477行です。2026-11-06時点の472行の出典は、docsが227行、pals-agentのPRが80行、palsのIssueが137行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
 
 11月5日の説明回帰は、[Agent #50の記録](https://github.com/AtsushiHosaka/pals-agent/blob/36ea6a2b106d5782ca2012b8a75ee4fbfa4c2b52/testdata/explanation-grounding-v1/README.md)に対応する9行を追加しました。初回の同条件比較、書式不備で採点を除外したQA、不備を直した負例、最終修正後の確認を分けています。実モデル24呼出しの推計費用0.02573375 USDを重複なく記録しました。初回比較は両版2/2で、精度向上は確認していません。後の別条件の結果を加えて改善率を作りません。
 
@@ -91,6 +91,8 @@ The [release reliability audit](../release-reliability-audit-2026-11-08.md) adds
 The subsequent [repair record](../reliability-repair-2026-11-08.md) adds two operational observations, bringing the ledger to 475 rows: the same ingress episode's successful follow-up (linked as overlapping, not a second trial), and one composite real SSM transport check across the two existing hosts. Neither is counted as successful mathematical answering or activation of the repaired images. The first 473 rows remain unchanged.
 
 The [November 9 real local qualification](../local-release-qualification-2026-11-09.md) adds one failed trial, bringing the ledger to 476 rows and preserving the prior 475 rows byte-for-byte. The AMD64 emulator could not establish the mandatory Lean sandbox; the failure is runtime unavailability, not evidence that the mathematical statement is invalid. Nineteen actual model calls cost a versioned-price upper-bound estimate of US$0.141154; they are internal calls for one trial. There was no completed-answer/save/render/reload acceptance and no production deployment.
+
+同じ[ローカル検証記録](../local-release-qualification-2026-11-09.md)の二回目を1行追加し、既存476行を保持しました。ネイティブARM64の実Leanコンパイルは成功しましたが、ローカルDBの行ロック権限不足で結果を保存できず、受入は不合格でした。追加8呼び出しの保守的見積もり0.030474ドルだけを新行に記録し、合計27呼び出し・0.171628ドルを二重計上していません。本文の完了・保存・表示・再読込には到達しておらず、ローカル権限の追加も承認待ちです。
 
 ## グラフ
 
