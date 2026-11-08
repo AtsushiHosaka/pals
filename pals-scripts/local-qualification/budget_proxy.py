@@ -33,8 +33,37 @@ def cost(model, inputs, outputs):
         or min(inputs, outputs) < 0
     ):
         raise ValueError("unknown_price_or_usage")
+    if inputs > 272000:
+        raise ValueError("long_context_price_not_admitted")
     amount = RATES[model][0] * inputs + RATES[model][1] * outputs
     return (amount.numerator + amount.denominator - 1) // amount.denominator
+
+
+def validate_paid_payload(path, payload):
+    if type(payload) is not dict:
+        raise ValueError("unsupported_provider_payload")
+    if path == "/v1/embeddings":
+        if (
+            set(payload) != {"model", "input", "dimensions"}
+            or payload.get("model") != "text-embedding-3-small"
+            or type(payload.get("input")) is not str
+            or not payload["input"]
+            or payload.get("dimensions") != 384
+        ):
+            raise ValueError("unsupported_single_embedding_payload")
+        return
+    if path != "/v1/responses" or payload.get("service_tier") != "default":
+        raise ValueError("standard_service_tier_required")
+    if set(payload) - {
+        "model",
+        "input",
+        "max_output_tokens",
+        "text",
+        "service_tier",
+        "reasoning",
+        "store",
+    }:
+        raise ValueError("unsupported_response_fields")
 
 
 class Budget:
@@ -204,6 +233,7 @@ class Handler(BaseHTTPRequestHandler):
                 raise ValueError("unsupported_model_or_stream")
             if self.path.endswith("/input_tokens"):
                 return self.respond(200, upstream(self.path, payload))
+            validate_paid_payload(self.path, payload)
             if self.path.endswith("/embeddings"):
                 if model != "text-embedding-3-small":
                     raise ValueError("unsupported_embedding")
@@ -243,6 +273,8 @@ class Handler(BaseHTTPRequestHandler):
             usage = body["usage"]
             if body.get("model") != model:
                 raise ValueError("upstream_model_changed")
+            if outputs and body.get("service_tier") != "default":
+                raise ValueError("upstream_standard_tier_unconfirmed")
             actual_in = (
                 usage["prompt_tokens"] if outputs == 0 else usage["input_tokens"]
             )
