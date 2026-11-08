@@ -119,7 +119,7 @@ function readRendered(root) {
   return tokens;
 }
 
-async function observe(payload) {
+async function observe(payload, trace) {
   const { contract: c, run_id: runId } = payload;
   const resolve = name => require.resolve(name, { paths: [c.web_root] });
   const { chromium } = require(resolve("playwright"));
@@ -182,6 +182,7 @@ async function observe(payload) {
     need(token, "authenticated_context_not_observed");
     async function get(endpoint) {
       const response = await context.request.get(c.api_origin + endpoint, { headers: { Authorization: token, "Cache-Control": "no-cache" }, maxRedirects: 0, timeout: 30_000 });
+      trace.last_http_status = response.status();
       need(response.status() === 200, "required_api_read_failed");
       need(response.headers()["x-pals-release-manifest-sha256"] === c.manifest.sha256, "public_api_not_candidate");
       const bytes = await response.body();
@@ -189,9 +190,12 @@ async function observe(payload) {
       return JSON.parse(bytes.toString("utf8"));
     }
     const statuses = [];
+    trace.status_transitions = statuses;
     let request;
     do {
       request = await get(`/v1/proof-requests/${c.request.id}`);
+      need(["queued", "assessing", "verifying", "answered", "failed", "needs_input"].includes(request.status)
+        && Number.isSafeInteger(request.revision), "request_response_invalid");
       if (statuses.at(-1)?.status !== request.status) statuses.push({ status: request.status, at: new Date().toISOString(), revision: request.revision });
       need(!["failed", "needs_input"].includes(request.status), "request_did_not_answer");
       if (request.status === "answered") break;
@@ -243,7 +247,17 @@ if (require.main === module) {
   process.stdin.setEncoding("utf8");
   process.stdin.on("data", chunk => { raw += chunk; if (raw.length > 2**20) process.exit(1); });
   process.stdin.on("end", async () => {
-    try { process.stdout.write(JSON.stringify(await observe(JSON.parse(raw)))); }
-    catch (error) { process.stderr.write(error instanceof Refusal ? error.message : "browser_dependency_or_execution_failed"); process.exitCode = 1; }
+    const trace = {};
+    try {
+      const payload = JSON.parse(raw);
+      trace.run_id = payload.run_id;
+      trace.request_sha256 = sha(payload.contract.request.id);
+      process.stdout.write(JSON.stringify(await observe(payload, trace)));
+    } catch (error) {
+      trace.observed_at = new Date().toISOString();
+      process.stdout.write(JSON.stringify(trace));
+      process.stderr.write(error instanceof Refusal ? error.message : "browser_dependency_or_execution_failed");
+      process.exitCode = 1;
+    }
   });
 }
