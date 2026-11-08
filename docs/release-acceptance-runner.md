@@ -33,7 +33,7 @@ The private contract has exactly these fields:
 | `web_root` | Existing Web dependency directory; never install a substitute/shim to obtain PASS. |
 | `web_origin`, `api_origin` | Exact HTTPS origins. HTTP is allowed only for loopback staging. Credentials/query/fragment are rejected. |
 | `auth_origin` | Exact approved HTTPS auth origin, or null to disallow auth POSTs. |
-| `request` | Existing canonical UUID `id` and `chat_id`; `generation_model`, `reasoning_effort`, `output_language`, `required_conclusion_text` and `required_conclusion_math` arrays. At least one unique conclusion fragment is required. |
+| `request` | Existing canonical UUID `id` and `chat_id` (both may be null for a frozen post-deployment scenario); `generation_model`, `reasoning_effort`, `output_language`, `required_conclusion_text` and `required_conclusion_math` arrays. At least one unique conclusion fragment is required. |
 | `timeout_seconds`, `max_age_seconds` | Bounded observation timeout (30–1800 seconds) and accepted-evidence age (1–3600 seconds). |
 
 `endpoint_sha256` hashes sorted compact JSON of Docker context `Endpoints`. `environment_sha256` hashes sorted compact JSON of the container's sorted `Config.Env` array. Compute these from reviewed target configuration; never copy an unexpected live value into the contract merely to make the gate pass. Configuration labels follow the existing native owner contract. The native controller's admission, mount, TLS, and isolation checks remain mandatory; this runner does not replace them.
@@ -47,6 +47,8 @@ python3 pals-scripts/release-acceptance.py run \
   --session /absolute/private/session.json \
   --state-dir /absolute/private/runner-state
 ```
+
+For post-deployment capture, a separately authorized test submission may create the request **after** activation. Supply its actual IDs using `--request-id <uuid> --chat-id <uuid>`; the frozen scenario's model/language/conclusion remains unchanged. Both overrides are required together and are rejected for pre-release. The journal records an effective-contract hash binding those IDs; `status` must receive the same overrides. This avoids pre-freezing fictitious future IDs and prevents a different request from reusing an accepted result. The capture itself never creates that request.
 
 The API must return server-owned `X-PALS-Release-Manifest-SHA256` on the observed GETs, matching the contract's manifest. Web must expose `[data-proof-request-id="<id>"] [data-proof-answer]` around only the actual answer body. Old images lacking these bindings cannot qualify and need the corresponding API/Web changes.
 
