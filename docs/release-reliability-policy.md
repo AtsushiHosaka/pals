@@ -37,6 +37,8 @@ Before removing traffic, verify all prerequisites and a workable recovery plan. 
 
 Reusable release code belongs in the owning repository. Freeze the exact executing driver revision/hash and arguments, not only generated artifacts. Changing it during a cutover requires renewed affected verification; a comment claiming approval is not approval evidence.
 
+For a planned sole-target cutover, the v2 controller requires its frozen notification-window helper and contract. It targets only the exact incident 5xx alarm, verifies the actual account/configuration and active one-time mute, and fixes an AWS-enforced expiry of at most ten minutes. It retains metrics, alarm evaluation and all other alarms; no open-ended disable/re-enable is allowed. Failure attempts early cancellation. Healthy restoration may shorten the remaining tail to at most three minutes without extending the original deadline. Overrun restores notifications and fails acceptance, while compatible, independently checked recovery can continue. Local fault injection and dedicated notification probes must not manufacture production ALB failures. See [the observed causes and limits](release-5xx-cause-and-control-2026-11-09.md); code/CI success does not establish live AWS activation, expiration or notification delivery.
+
 ## Treat recovery as a product requirement
 
 Specify behavior after a transient network error, reconnect/focus, access-token expiry, provider/queue failure, worker exit, and host reboot. Recover observation of the same request rather than resubmitting work. Preserve account isolation, unsent drafts, idempotency, billing, and terminal-state integrity.
