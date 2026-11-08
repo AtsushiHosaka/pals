@@ -1,5 +1,9 @@
 # Measure prompt-source changes to ordinary mathematical answers
 
+For the real claim-bound Lean evaluator and deployed standalone infrastructure,
+use [the live workflow](prompt-quality-live-operations.md). The direct-runtime
+instructions below retain their narrower explanation scope.
+
 The private `pals-observability` workflow evaluates the ordinary natural-answer path.
 It scores mathematical correctness, logical completeness, notation consistency,
 undergraduate clarity and concision separately. Definitions, assumptions and justified
@@ -119,7 +123,7 @@ The implementation itself has produced no real quality measurements.
 
 ## Publish and retrieve
 
-`pals-infra/terraform/production/prompt_quality.tf` defines the dedicated log group with
+`pals-infra/terraform/prompt-quality/main.tf` defines the dedicated log group with
 90-day retention, scoped publisher/reader policies, saved diagnostic score/conflict
 queries and `prompt_quality_*` outputs. Apply it through the normal infrastructure
 process and attach the policy to the intended operator principal. It is not attached

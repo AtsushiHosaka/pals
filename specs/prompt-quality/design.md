@@ -8,11 +8,12 @@ and `pals-infra`. Existing dirty files are outside this slice's write ownership.
 
 The explicit private evaluator imports the installed `pals-agent` runtime and calls
 the factory-composed runtime's `answer` without the SQS processor or settlement APIs.
-Current upstream uses `ChatRuntime` around `ProofReuseRuntime`; execution preserves
-the outer routing. Direct concept explanations are covered. Claim-bound Recipe/Lean
-proof tasks cannot complete without their live worker callbacks and remain failed
-with unavailable scores, never an unverified natural-language fallback. Full
-proof-answer collection is a separate rollout integration task.
+Current upstream uses `ChatRuntime` around `ProofReuseRuntime`; direct execution
+preserves the outer routing and covers concept explanations. The separate live
+runner creates empty projectless benchmark chats, obtains ordinary billing quotes
+when required, submits normal proof requests and polls their owner-scoped API.
+Existing workers supply real claims and Lean services; the evaluator never
+impersonates a worker or bypasses verification.
 Dataset requests and reference evidence remain in operator-owned private files.
 Reference evidence goes only to the independent evaluator, never generation.
 
@@ -35,7 +36,16 @@ their observation and missing score, so the denominator cannot silently shrink.
 
 ## Records and comparisons
 
-`pals.prompt-quality.v1` is a closed JSON object with run identity and up to 256
+`pals.prompt-quality.v1` remains the legacy format. The closed v2 format adds a
+required per-case formal-verification record: required flag, status, evidence kind
+and source/answer/compiler/toolchain hashes. Catalog source/entry bindings are
+fetched from the owned source endpoint; generated proofs require the linked
+verified job and matching source. Formal success may coexist with failed delivery.
+The deployment manifest comes from actual deployed image/source read-back, rather
+than local agent source. The operator checks deployment identity before/after the run.
+Pending/not-submitted observations are distinct from actual terminal failures.
+
+Records have run identity and up to 256
 case/repetition observations, bounded to 256 KiB. Case identifiers are SHA-256
 fingerprints. Scores, usage and every nested object's keys are validated before any
 export. Local output is exclusive and private; existing artifacts are not overwritten.
@@ -58,7 +68,17 @@ increments. A retry may duplicate an event; exporters deduplicate canonical cont
 and reject a reused run identity with conflicting data. The publisher confirms an
 identical event is readable before reporting success. It never creates an unknown
 log group or changes IAM. New Terraform policies belong to explicit operator roles,
-not the application host by default.
+not the application host by default. The independent Terraform root is
+`pals-infra/terraform/prompt-quality`, with encrypted/locked S3 state at
+`pals/prod/prompt-quality.tfstate`. The inspected saved plan contains only five
+measurement resources and does not use the application's state key.
+
+The live command accepts a mode-0600 access-token file. A local terminal helper
+uses normal Cognito authentication, retains only the access token after the PALS
+owner check, and never stores the password. Account challenges remain on the website.
+A locked private append-only journal records mutation intent, returned identifiers,
+terminal state and measurements. Ambiguous submissions recover with read-only calls;
+the normal ten-request rolling-hour limit and product credits remain enforced.
 
 The CLI emits summary JSON and paired JSON/CSV suitable for charts in this chat.
 Recording environments `dev`, `staging` and `prod` match Terraform; `offline` is
@@ -80,6 +100,7 @@ current explanation route and 12 proof/counterexample/clarification cases. They 
 authored, independently checked starter corpora, not human calibration or
 broad production coverage. Non-Python assets and transitive dependency versions
 remain outside the current source fingerprint; reuse the same environment and locks.
-After deployment, use an operator-owned holdout dataset, run both variants with
-equal controls, publish and fetch them, then inspect paired results and human
-calibration before selecting a prompt.
+After deployment, establish a real baseline using the selected account, publish/read
+back/fetch it, and render the fetched observations. A later distinct candidate can
+be compared with matching controls and a holdout dataset. Human calibration remains
+necessary before selecting a prompt from small benchmark changes.
