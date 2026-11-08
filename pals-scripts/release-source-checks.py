@@ -15,6 +15,7 @@ CHECKS = {"pals": "repository-safety", "pals-api": "api-regression",
 WORKFLOWS = {"pals": ".github/workflows/pals-scripts-pr.yml",
              "pals-infra": ".github/workflows/release-cycle-regression.yml"}
 APPLICATION_WORKFLOW = ".github/workflows/application-regression.yml"
+EXTRA_CHECKS = {"pals": ("release-acceptance-contracts",)}
 COMMIT = re.compile(r"[a-f0-9]{40}\Z")
 GITHUB_ACTIONS_APP = 15368
 
@@ -42,7 +43,9 @@ def check_sources(candidate: dict, previous: dict, fetch) -> list[dict]:
         if source == previous["source_commits"].get(repo):
             rows.append({"repository": repo, "source": source, "status": "unchanged_from_predecessor"})
             continue
-        require_check(fetch(repo, source), check, WORKFLOWS.get(repo, APPLICATION_WORKFLOW))
+        runs = fetch(repo, source)
+        for context in (check, *EXTRA_CHECKS.get(repo, ())):
+            require_check(runs, context, WORKFLOWS.get(repo, APPLICATION_WORKFLOW))
         rows.append({"repository": repo, "source": source, "status": "actual_required_check_passed", "check": check})
     # The verifier can deliberately retain an older agent revision while the
     # worker moves forward. Its independent override must never evade CI.
@@ -69,7 +72,7 @@ def fetch(repo: str, source: str) -> list[dict]:
         raise ValueError("github_check_pages_invalid")
     runs = [run for page in pages for run in page["check_runs"]]
     for run in runs:
-        if run.get("name") != CHECKS[repo] or run.get("app", {}).get("id") != GITHUB_ACTIONS_APP:
+        if run.get("name") not in (CHECKS[repo], *EXTRA_CHECKS.get(repo, ())) or run.get("app", {}).get("id") != GITHUB_ACTIONS_APP:
             continue
         url = run.get("details_url", "")
         match = re.fullmatch(r"https://github[.]com/AtsushiHosaka/" + re.escape(repo)

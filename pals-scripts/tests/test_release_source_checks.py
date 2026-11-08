@@ -54,6 +54,14 @@ class SourceChecksTest(unittest.TestCase):
         self.assertEqual(calls, [("pals-agent", "b" * 40)])
         self.assertEqual(rows[-1]["role"], "verifier")
 
+    def test_parent_acceptance_contract_job_is_required_alongside_secret_checks(self):
+        old = {"source_commits": {name: "a" * 40 for name in C.CHECKS}}
+        new = {"source_commits": {**old["source_commits"], "pals": "b" * 40}}
+        def fetch(_repo, _source):
+            return [run(name="repository-safety", verified_workflow_path=C.WORKFLOWS["pals"])]
+        with self.assertRaisesRegex(ValueError, "required_check_missing:release-acceptance-contracts"):
+            C.check_sources(new, old, fetch)
+
     def test_only_changed_sources_require_fresh_checks(self):
         old = {"source_commits": {name: "a" * 40 for name in C.CHECKS}}
         new = {"source_commits": {**old["source_commits"], "pals-api": "b" * 40}}
