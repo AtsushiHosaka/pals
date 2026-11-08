@@ -13,6 +13,8 @@
 | 2026-11-08 | 機械修復（Sketch失敗の決定的修復）、同じ12枚 | Terra medium、修復上限6 | 10/12（変化なし） | 176→186秒（偶然の範囲）、初回に使えたSketch 6→12枚、修復 26→19回 | 約1.19ドル（全工程） | [sketch-failure-repair](entries/2026-11-08-sketch-failure-repair.md) |
 | 2026-11-08 | 命題の固定（Sketch/修復で命題を書き換え不可に）、同じ12枚 | 同上 | 10/12（変化なし） | 186→172秒（偶然の範囲）、食い違いの試行 14→0、呼び出し 97→82 | 約1.2ドル | 同上 |
 | 2026-11-08 | 保留24枚（機械修復＋命題固定の1腕） | Terra medium、修復上限6、各1回 | 23/24 | 平均113.5秒、中央値87.6秒 | 約1.25ドル（24枚） | 同上 |
+| 2026-11-08 | 本番の x² 連続性、High（各 n=1、seq27 配備後） | Terra High、リリース担当の4件 | — | 138〜143秒（原因は語彙表の取りこぼし。テンプレートに外れ、Sketch が34〜55秒） | 未集計 | [x-squared-structure-recognition](entries/2026-11-08-x-squared-structure-recognition.md) |
+| 2026-11-09 | x² の短絡と固定説明（seq28 の本番実測 英語48.4秒・日本語68.6秒、見込みは算術のみ・実モデルなし） | Terra High、各 n=1 | — | 英語 48→約19秒、日本語 69→約22秒（見込み） | 未集計 | [x-squared-chat-fastpath-fixed-explanation](entries/2026-11-09-x-squared-chat-fastpath-fixed-explanation.md) |
 | 2026-11-09 | 同日のベース腕（保留24枚） | 同上、機械修復・命題固定なし | 実行中 | 実行中 | 上限2.5ドル | 同上（追記予定） |
 
 ## 指標の表に入らないエントリ
@@ -27,3 +29,4 @@
 | 2026-11-08 | x² の検証結果キャッシュ（ローカルで約18秒→約1.3ms。x² 専用・未配備） | [x-squared-verifier-cache](entries/2026-11-08-x-squared-verifier-cache.md) |
 | 2026-11-08 | 段別計測（#77）と注入対策（#78）の実装とレビュー対応 | [step-timing-and-injection-defense](entries/2026-11-08-step-timing-and-injection-defense.md) |
 | 2026-11-08 | 本番の障害（seq27 cutover の停止、01:19〜08:19 JST） | [production-incident-seq27-halt](entries/2026-11-08-production-incident-seq27-halt.md) |
+| 2026-11-09 | x² の検証結果キャッシュの有効化の段取り（検証器 image は必ず変わる。toolchain hash の導出は未確認） | [verifier-cache-enablement-plan](entries/2026-11-09-verifier-cache-enablement-plan.md) |
