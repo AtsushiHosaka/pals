@@ -98,18 +98,24 @@ function validateAnswer(request, job, explanation, source, expected, activatedAt
 function readRendered(root) {
   const tokens = [];
   const blocks = new Set(["P", "DIV", "SECTION", "LI", "UL", "OL", "PRE", "BLOCKQUOTE", "H1", "H2", "H3", "H4", "BR", "HR"]);
+  function hidden(node) {
+    const style = getComputedStyle(node);
+    return style.display === "none" || style.visibility === "hidden" || Number(style.opacity) === 0;
+  }
+  for (let parent = root; parent; parent = parent.parentElement) {
+    if (hidden(parent)) throw new Error("answer_not_visible");
+  }
   function visit(node) {
     if (node.nodeType === Node.TEXT_NODE) { tokens.push({ kind: "text", value: node.textContent }); return; }
     if (node.nodeType !== Node.ELEMENT_NODE) return;
     if (node.classList.contains("learner-math-source")) {
       const next = node.nextElementSibling;
       const katex = next?.matches(".katex") ? next : next?.querySelector(".katex");
-      if (!katex || katex.getBoundingClientRect().width <= 0) throw new Error("visible_math_missing");
+      if (!katex || katex.getBoundingClientRect().width <= 0 || hidden(katex)) throw new Error("visible_math_missing");
       tokens.push({ kind: "math", value: node.textContent }); return;
     }
     if (node.matches(".katex, .katex-display, [aria-hidden='true']")) return;
-    const style = getComputedStyle(node);
-    if (style.display === "none" || style.visibility === "hidden") return;
+    if (hidden(node)) return;
     if (blocks.has(node.tagName)) tokens.push({ kind: "text", value: " " });
     for (const child of node.childNodes) visit(child);
     if (blocks.has(node.tagName)) tokens.push({ kind: "text", value: " " });
@@ -121,6 +127,7 @@ function readRendered(root) {
 
 async function observe(payload, trace) {
   const { contract: c, run_id: runId } = payload;
+  const deadline = Date.now() + c.timeout_seconds * 1000;
   const resolve = name => require.resolve(name, { paths: [c.web_root] });
   const { chromium } = require(resolve("playwright"));
   const [{ unified }, { default: remarkParse }, { default: remarkMath }] = await Promise.all(
@@ -177,11 +184,12 @@ async function observe(payload, trace) {
     });
     const url = `${c.web_origin}/chats/${c.request.chat_id}`;
     await page.goto(url, { waitUntil: "domcontentloaded" });
-    const deadline = Date.now() + c.timeout_seconds * 1000;
     while (!token && Date.now() < deadline) await page.waitForTimeout(100);
     need(token, "authenticated_context_not_observed");
     async function get(endpoint) {
-      const response = await context.request.get(c.api_origin + endpoint, { headers: { Authorization: token, "Cache-Control": "no-cache" }, maxRedirects: 0, timeout: 30_000 });
+      const remaining = deadline - Date.now();
+      need(remaining > 0, "acceptance_deadline_exceeded");
+      const response = await context.request.get(c.api_origin + endpoint, { headers: { Authorization: token, "Cache-Control": "no-cache" }, maxRedirects: 0, timeout: Math.min(30_000, remaining) });
       trace.last_http_status = response.status();
       need(response.status() === 200, "required_api_read_failed");
       need(response.headers()["x-pals-release-manifest-sha256"] === c.manifest.sha256, "public_api_not_candidate");
@@ -231,6 +239,7 @@ async function observe(payload, trace) {
     need(attemptedWrites === 0, "observer_attempted_mutation");
     await Promise.all(assetReads);
     need(!assetError, "served_asset_read_failed");
+    need(Date.now() <= deadline, "acceptance_deadline_exceeded");
     return { run_id: runId, request_sha256: sha(c.request.id), chat_sha256: sha(c.request.chat_id),
       created_at: request.created_at, status_transitions: statuses, terminal_status: request.status,
       evidence_kind: answer.evidence_kind, answer_sha256: saved, conclusion_sha256: sha(explanation.content.conclusion),
