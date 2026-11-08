@@ -59,3 +59,5 @@ Each invocation appends `running` before checking prerequisites, followed by `ac
 ## Verification boundary
 
 Run `bash pals-scripts/tests/release-acceptance.sh` for deterministic contract/signature regressions. These tests include real local OpenSSL signing/verification and real failure when live dependencies are absent. Markdown/browser boundaries in unit tests are isolated explicitly; they do not claim actual service or UI acceptance. A real staging/prod run remains NOT VERIFIED until approved contexts, session, signed target, and a fresh proof fixture exist and the live command exits zero.
+
+With an approved existing Web dependency tree, `PALS_ACCEPTANCE_WEB_ROOT=/absolute/web node --test pals-scripts/tests/release-acceptance-render.test.cjs` also checks the extractor in real Chromium against offline prose/KaTeX fixtures, including absent/hidden conclusions and invisible formulas. It starts one task-owned browser and closes it; it makes no network or model call. This verifies extraction behavior, not the application, saved production data, or a staging/prod journey.
