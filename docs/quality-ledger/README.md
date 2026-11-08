@@ -84,6 +84,10 @@ Two [release handoff checks](../settings-production-release-2026-11-05.md) add f
 
 The [actual production settings checks](https://github.com/AtsushiHosaka/pals/issues/265) add three distinct records after the integrated release: all three desktop, phone-width and native 200% Chrome zoom layouts passed; one phone-width empty-identifier notice passed; and Escape focus return passed on desktop but failed on a clean phone-width viewport ([P3 #285](https://github.com/AtsushiHosaka/pals/issues/285)). Both forms retained 20px spacing with 36 real notation rows and no horizontal overflow. The focus defect is separate from layout acceptance, does not establish a keyboard trap, and uses the same focus source path as pre-repair `41b3d1c`. These were visual and transient validation checks without account saves or API writes; phone-width emulation is not physical-phone verification.
 
+## November 8 reliability audit
+
+The [release reliability audit](../release-reliability-audit-2026-11-08.md) adds one composite public-ingress observation: Web and API health both returned HTTP 503 during an active cutover. This is one operational failure, not two users, a mathematical trial, or a product-wide failure rate. The prior 472 rows remain byte-for-byte unchanged; the ledger now has 473 rows. CloudWatch aggregate counts and code-probe/unit-test results are documented in the audit and are not added as independent product trials.
+
 ## グラフ
 
 <picture>

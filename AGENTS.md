@@ -53,6 +53,16 @@ The implementation submodules may be empty until initialized. Parent-level plann
 - During review and release, check for unintended loss of existing capabilities. If a change would remove a feature without approval, preserve it or stop that part of the change and ask the user.
 - See [the feature preservation policy](docs/feature-preservation-policy.md) for examples.
 
+## Release Reliability (Claude and Codex)
+
+- Follow [the shared release contract](docs/release-reliability-policy.md). It defines required evidence; do not claim an unimplemented gate already runs.
+- Before changing behavior, pin the issue, owning repository, starting revision, expected user outcome, affected contracts, and failure/recovery cases. For a bug, reproduce it and add a behavioral regression that fails on the bad revision; do not adjust expectations to preserve a defect.
+- Required checks must match the candidate's exact source, image, schema, catalog, model/config, and executing release-driver revisions. Missing, skipped, stale, or mock-only integration evidence is `BLOCKED`/`NOT VERIFIED`, never PASS. Keep unresolved failures visible.
+- Distinguish `deployed_unverified` from `accepted`. Functional completion requires the expected terminal result, persisted data, actual rendered answer, and history after reload; startup, health, merge, publication, or submission alone cannot close a functional issue.
+- Verify prerequisites before traffic removal; define bounded maintenance and safe pre-admission restoration, plus compatible post-admission repair. Keep cleanup and owner release possible even when acceptance fails. Preserve signatures, admission, authorization, idempotency, and existing features.
+- Keep reusable release drivers in the owning repository and freeze the code actually executing the release. Test recovery after transient network failure, auth expiry, worker exit, and release-window expiry where affected. Recover observation without duplicating paid jobs.
+- Production settings, branch rules, services, IAM, test data, and paid evaluations remain subject to the user's existing authorization. A proposed policy is not permission to mutate those resources. Documentation alone does not complete the missing CI, telemetry, or recovery implementation.
+
 ## 数学のテスト題材
 
 - 平方展開 `(x+y)^2=x^2+2xy+y^2` の証明問題は、今後のテスト、描画プレビュー、デモ、dogfood では使わない。ユーザーが簡単すぎる題材として使用を禁止したため。
