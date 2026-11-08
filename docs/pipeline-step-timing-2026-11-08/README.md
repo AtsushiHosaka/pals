@@ -175,7 +175,7 @@ PALS_STEP_TIMING_EMF=1
 
 ## 検証
 
-- 追加テスト 33 件(`tests/unit/test_step_timing.py`)が通ります。無効時に何も出さないこと、provider 失敗が有限の `outcome` になって例外が元のまま出ること、sink 失敗が呼び出しを変えないこと、EMF のディメンション、禁止項目の漏れなしを含みます。
+- 追加テスト 32 件(seq27 の枝では 33 件)(`tests/unit/test_step_timing.py`)が通ります。無効時に何も出さないこと、provider 失敗が有限の `outcome` になって例外が元のまま出ること、sink 失敗が呼び出しを変えないこと、EMF のディメンション、禁止項目の漏れなしを含みます。
 - `tests/unit` 全体は 49 件失敗しますが、Mathlib が見つからない、docker-compose のファイルがない、ポート競合など環境が原因です。関連ファイル(`test_pipeline` `test_openai` `test_lean` `test_worker` `test_quality_events` ほか)は単独で全件通ります。ベースライン(origin/main)との件数比較は、別 worktree の収集エラーで取れていません。
 - 変更した各ファイルの ruff と、新規 2 モジュールの mypy は通ります。
 
