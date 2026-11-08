@@ -2,6 +2,8 @@
 
 Shared operating rules for Claude, Codex, and human contributors. Rationale and known gaps: [November 8 audit](release-reliability-audit-2026-11-08.md), [#309](https://github.com/AtsushiHosaka/pals/issues/309). These rules specify required evidence; they do not imply that missing automation already exists.
 
+The executable paths are `make release-source-checks` (actual changed-source GitHub CI), `make release-qualify` (direct live capture), and `make release-cycle` (versioned native sequencing). See [the runner contract](release-acceptance-runner.md) and `pals-infra/host/private-runtime/RELEASE_CYCLE.md`. Cutover blocks without a valid staging session/runtime, live proof, exact source/image bindings, and executable native recovery adapters. Passing deterministic controller/parser tests does not fill those prerequisites.
+
 ## Start from observable behavior
 
 Before implementation, record the issue, owning repository, exact starting revision, expected user outcome, affected cross-repository contracts, failure/recovery cases, and non-goals. Inspect the existing behavior rather than treating a bug report or prior completion claim as established fact. Use one release owner; give parallel agents disjoint write ownership or read-only scopes.

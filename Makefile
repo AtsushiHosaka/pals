@@ -1,4 +1,5 @@
 COMPOSE_ENV_FILE ?= $(if $(wildcard .env.local),.env.local,.env.example)
+RELEASE_PYTHON ?= python3
 COMPOSE := docker compose --env-file $(COMPOSE_ENV_FILE)
 PALS_LOCAL_ENV_FILE ?= .env.local
 PALS_LOCAL_COGNITO_COMPOSE := docker compose --project-name pals-local --env-file "$(PALS_LOCAL_ENV_FILE)" -f pals-infra/docker-compose.localstack.yml
@@ -8,6 +9,20 @@ OBSERVABILITY_PYTHON ?= .venv/bin/python
 LOAD_ENV = set -a; . ./$(COMPOSE_ENV_FILE); set +a;
 
 .PHONY: pals-up pals-qa local-cognito-bootstrap dev-up dev-down dev-logs dev-ps api-deps api-test web-deps web-test web-build web-lint draft-admin-deps draft-admin-test agent-deps agent-test agent-lean-deps agent-evaluation-history agent-evaluation-smoke agent-evaluation-full agent-evaluation-compare observability-deps observability-test pals-scripts-test repository-gates infra-test test openapi
+
+.PHONY: release-source-checks release-qualify release-cycle
+
+release-source-checks:
+	@test -n "$(RELEASE_MANIFEST)" -a -n "$(RELEASE_PREDECESSOR)" || { echo 'Set RELEASE_MANIFEST and RELEASE_PREDECESSOR to the exact private manifest files.' >&2; exit 2; }
+	$(RELEASE_PYTHON) pals-scripts/release-source-checks.py --manifest "$(RELEASE_MANIFEST)" --predecessor "$(RELEASE_PREDECESSOR)"
+
+release-qualify:
+	@test -n "$(RELEASE_CONTRACT)" -a -n "$(RELEASE_SESSION)" -a -n "$(RELEASE_STATE_DIR)" || { echo 'Set the private RELEASE_CONTRACT, RELEASE_SESSION and RELEASE_STATE_DIR.' >&2; exit 2; }
+	$(RELEASE_PYTHON) pals-scripts/release-acceptance.py run --contract "$(RELEASE_CONTRACT)" --session "$(RELEASE_SESSION)" --state-dir "$(RELEASE_STATE_DIR)" $(RELEASE_REQUEST_ARGS)
+
+release-cycle:
+	@test -n "$(RELEASE_PLAN)" -a -n "$(RELEASE_PLAN_SHA256)" -a -n "$(RELEASE_STATE_DIR)" || { echo 'Set the private RELEASE_PLAN, reviewed RELEASE_PLAN_SHA256 and RELEASE_STATE_DIR.' >&2; exit 2; }
+	$(RELEASE_PYTHON) pals-infra/scripts/release-cycle.py --plan "$(RELEASE_PLAN)" --plan-sha256 "$(RELEASE_PLAN_SHA256)" --state-dir "$(RELEASE_STATE_DIR)" $(RELEASE_APPLY)
 
 pals-up:
 	./tests/e2e/run-local.sh --up-only

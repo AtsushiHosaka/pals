@@ -88,6 +88,8 @@ The [actual production settings checks](https://github.com/AtsushiHosaka/pals/is
 
 The [release reliability audit](../release-reliability-audit-2026-11-08.md) adds one composite public-ingress observation: Web and API health both returned HTTP 503 during an active cutover. This is one operational failure, not two users, a mathematical trial, or a product-wide failure rate. The prior 472 rows remain byte-for-byte unchanged; the ledger now has 473 rows. CloudWatch aggregate counts and code-probe/unit-test results are documented in the audit and are not added as independent product trials.
 
+The subsequent [repair record](../reliability-repair-2026-11-08.md) adds two operational observations, bringing the ledger to 475 rows: the same ingress episode's successful follow-up (linked as overlapping, not a second trial), and one composite real SSM transport check across the two existing hosts. Neither is counted as successful mathematical answering or activation of the repaired images. The first 473 rows remain unchanged.
+
 ## グラフ
 
 <picture>

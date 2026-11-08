@@ -36,6 +36,8 @@ jobs:
         run: |
           bash pals-scripts/tests/secret-ignore.sh
           bash pals-scripts/tests/secrets-gate.sh
+      - name: Verify release source CI selection
+        run: python3 pals-scripts/tests/test_release_source_checks.py
       - name: Check out the pinned public agent
         run: |
           git -c url."https://github.com/".insteadOf=git@github.com: \
