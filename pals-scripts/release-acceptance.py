@@ -212,6 +212,9 @@ def sanitize_runtime(container, image):
     def bounded(value, pattern):
         return value if isinstance(value, str) and re.fullmatch(pattern, value) else None
     state = container["State"]
+    health = state.get("Health", {}).get("Status")
+    if "Health" in state and health not in {"healthy", "unhealthy", "starting"}:
+        health = "invalid"
     return {"schema_version": "pals.release-runtime-observation.v1",
             "container_sha256": hashlib.sha256(container["Id"].encode()).hexdigest(),
             "image_id": bounded(container["Image"], r"sha256:[a-f0-9]{64}"),
@@ -224,7 +227,7 @@ def sanitize_runtime(container, image):
             "state": {"running": state["Running"], "paused": state.get("Paused", False),
                       "restarting": state.get("Restarting", False), "oom_killed": state.get("OOMKilled", False),
                       "started_at": bounded(state["StartedAt"], r"[0-9T:.+Z-]{20,40}"),
-                      "health": bounded(state.get("Health", {}).get("Status"), r"healthy|unhealthy|starting")},
+                      "health": health},
             "image": {"id": bounded(image["Id"], r"sha256:[a-f0-9]{64}"),
                       "repo_digests": [uri for uri in image.get("RepoDigests", [])[:16] if bounded(uri, uri_pattern)],
                       "revision": bounded((image["Config"].get("Labels") or {}).get("org.opencontainers.image.revision"), r"[a-f0-9]{40}"),

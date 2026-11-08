@@ -165,6 +165,8 @@ class SSMTransportContracts(unittest.TestCase):
         self.assertEqual(observed["environment_sha256"], gate.digest(gate.encoded(sorted(container["Config"]["Env"]))))
         image["Config"]["Labels"]["org.opencontainers.image.revision"] = "SECRET_WRONGLY_LABELLED_VALUE"
         self.assertNotIn(b"SECRET", gate.encoded(gate.sanitize_runtime(container, image)))
+        container["State"]["Health"] = {"Status": "UNKNOWN_OR_SECRET_VALUE"}
+        self.assertEqual(gate.sanitize_runtime(container, image)["state"]["health"], "invalid")
 
     def test_remote_program_is_fixed_read_only_and_rejects_command_or_path_injection(self):
         program = gate.remote_program("acceptance-api")
