@@ -16,6 +16,7 @@
 | 2026-11-08 | 本番の x² 連続性、High（各 n=1、seq27 配備後） | Terra High、リリース担当の4件 | — | 138〜143秒（原因は語彙表の取りこぼし。テンプレートに外れ、Sketch が34〜55秒） | 未集計 | [x-squared-structure-recognition](entries/2026-11-08-x-squared-structure-recognition.md) |
 | 2026-11-09 | x² の短絡と固定説明（seq28 の本番実測 英語48.4秒・日本語68.6秒、見込みは算術のみ・実モデルなし） | Terra High、各 n=1 | — | 英語 48→約19秒、日本語 69→約22秒（見込み） | 未集計 | [x-squared-chat-fastpath-fixed-explanation](entries/2026-11-09-x-squared-chat-fastpath-fixed-explanation.md) |
 | 2026-11-09 | 同日のベース腕（保留24枚） | 同上、機械修復・命題固定なし | 実行中 | 実行中 | 上限2.5ドル | 同上（追記予定） |
+| 2026-11-09 | スキーム論の易しい命題・腕a（Mathlibのみ）、M01〜M09（中間、予算で停止） | Terra medium、修復上限6、各1回、命題固定＋意味審査、Lean 4.35 | 7/9（上限3では5/9） | 中央値174秒（全実行）、113秒（成功のみ） | 合計2.87ドル（$0.18/枚の中央値） | [scheme-theory-frontier-measurement](entries/2026-11-09-scheme-theory-frontier-measurement.md) |
 
 ## 指標の表に入らないエントリ
 
