@@ -102,6 +102,27 @@ class ContractTests(unittest.TestCase):
         with self.assertRaisesRegex(gate.Refusal, "latest_acceptance_not_green"):
             gate.latest_status([record], "3" * 64, "2" * 64, now, 60)
 
+    def test_deferred_postdeployment_ids_are_bound_without_changing_frozen_scenario(self):
+        fixed = contract(); fixed.update(phase="post_deployment", target="production")
+        fixed["request"].update(id=None, chat_id=None)
+        gate.validate_contract(fixed)
+        ids = contract()["request"]
+        captured = gate.effective_contract(fixed, ids["id"], ids["chat_id"])
+        self.assertIsNone(fixed["request"]["id"])
+        self.assertEqual(captured["request"]["required_conclusion_text"], fixed["request"]["required_conclusion_text"])
+        self.assertEqual(captured["request"]["id"], ids["id"])
+        with self.assertRaisesRegex(gate.Refusal, "post_deployment_request_identity_required"):
+            gate.effective_contract(fixed, None, None)
+        with self.assertRaisesRegex(gate.Refusal, "both_request_identity_overrides_required"):
+            gate.effective_contract(fixed, ids["id"], None)
+        with self.assertRaisesRegex(gate.Refusal, "identity_override_only_after_deployment"):
+            gate.effective_contract(contract(), ids["id"], ids["chat_id"])
+        now = datetime.now(UTC)
+        record = {"state": "accepted", "contract_sha256": "1" * 64, "runner_sha256": "2" * 64,
+                  "effective_contract_sha256": gate.digest(gate.encoded(captured)), "finished_at": now.isoformat()}
+        with self.assertRaisesRegex(gate.Refusal, "acceptance_request_binding_changed"):
+            gate.latest_status([record], "1" * 64, "2" * 64, now, 60, "3" * 64)
+
 
 class SignatureAndFailClosedTests(unittest.TestCase):
     def setUp(self):

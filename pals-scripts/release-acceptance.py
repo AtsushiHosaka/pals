@@ -118,8 +118,10 @@ def validate_contract(value):
     request = value["request"]
     need(set(request) == {"id", "chat_id", "generation_model", "reasoning_effort", "output_language",
                           "required_conclusion_text", "required_conclusion_math"}, "request_contract_invalid")
-    for key in ("id", "chat_id"):
-        need(str(UUID(request[key])) == request[key], "canonical_request_id_required")
+    deferred = value["phase"] == "post_deployment" and request["id"] is None and request["chat_id"] is None
+    if not deferred:
+        for key in ("id", "chat_id"):
+            need(str(UUID(request[key])) == request[key], "canonical_request_id_required")
     need(request["output_language"] in {"en", "ja", "zh-Hans", "zh-Hant"}
          and request["reasoning_effort"] in {None, "low", "medium", "high"}
          and isinstance(request["generation_model"], str) and request["generation_model"].strip(),
@@ -130,6 +132,19 @@ def validate_contract(value):
              "conclusion_expectation_invalid")
     need(request["required_conclusion_text"] or request["required_conclusion_math"], "conclusion_oracle_required")
     return value
+
+
+def effective_contract(contract, request_id, chat_id):
+    result = json.loads(encoded(contract))
+    need((request_id is None) == (chat_id is None), "both_request_identity_overrides_required")
+    if request_id is not None:
+        need(contract["phase"] == "post_deployment", "identity_override_only_after_deployment")
+        for identifier in (request_id, chat_id):
+            need(str(UUID(identifier)) == identifier, "canonical_request_id_required")
+        result["request"].update(id=request_id, chat_id=chat_id)
+    need(result["request"]["id"] is not None and result["request"]["chat_id"] is not None,
+         "post_deployment_request_identity_required")
+    return result
 
 
 def verify_manifest(contract):
@@ -219,18 +234,20 @@ def verify_web_assets(contract, observation):
             "process.stdout.write(c.createHash('sha256').update(f.readFileSync('/app/.next/static/'+process.argv[1])).digest('hex'))")
     for item in assets:
         need(set(item) == {"path", "sha256"} and HEX.fullmatch(item["sha256"])
-             and re.fullmatch(r"/_next/static/[A-Za-z0-9_./-]+[.](js|css)", item["path"])
+             and re.fullmatch(r"/_next/static/[A-Za-z0-9_./@()+\[\]-]+[.](js|css)", item["path"])
              and ".." not in item["path"], "served_web_asset_invalid")
         actual = command(["docker", "--context", web["context"], "exec", web["container"], "node", "-e", code,
                           item["path"].removeprefix("/_next/static/")])
         need(actual.decode() == item["sha256"], "served_web_not_candidate_image")
 
 
-def latest_status(records, contract_sha256, runner_sha256, now, max_age):
+def latest_status(records, contract_sha256, runner_sha256, now, max_age, effective_contract_sha256=None):
     need(records, "no_live_acceptance")
     last = records[-1]
     need(last.get("state") == "accepted" and last.get("contract_sha256") == contract_sha256
          and last.get("runner_sha256") == runner_sha256, "latest_acceptance_not_green")
+    if effective_contract_sha256 is not None:
+        need(last.get("effective_contract_sha256") == effective_contract_sha256, "acceptance_request_binding_changed")
     need(0 <= (now - stamp(last["finished_at"])).total_seconds() <= max_age, "acceptance_stale")
     return last
 
@@ -240,8 +257,11 @@ def browser_capture(payload, timeout):
                                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                start_new_session=True)
     try:
-        stdout, _stderr = process.communicate(encoded(payload), timeout=timeout)
-        need(process.returncode == 0 and len(stdout) <= 2**20, "live_product_acceptance_failed")
+        stdout, stderr = process.communicate(encoded(payload), timeout=timeout)
+        if process.returncode != 0:
+            code = stderr.decode(errors="replace")
+            raise Refusal(code if re.fullmatch(r"[a-z0-9_]{1,96}", code) else "live_product_acceptance_failed")
+        need(len(stdout) <= 2**20, "browser_output_unbounded")
         return document(stdout)
     finally:
         if process.poll() is None:
@@ -259,6 +279,8 @@ def main():
     parser.add_argument("--contract", type=Path)
     parser.add_argument("--session", type=Path)
     parser.add_argument("--state-dir", type=Path)
+    parser.add_argument("--request-id")
+    parser.add_argument("--chat-id")
     args = parser.parse_args()
     if args.operation == "fingerprint":
         print(runner_fingerprint()); return 0
@@ -276,17 +298,20 @@ def main():
              and metadata.st_nlink == 1 and stat.S_IMODE(metadata.st_mode) == 0o600, "protected_journal_required")
         fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
         if args.operation == "status":
-            contract = validate_contract(document(private_file(args.contract)))
+            contract = effective_contract(validate_contract(document(private_file(args.contract))), args.request_id, args.chat_id)
             stream.seek(0)
             records = [document(line) for line in stream if line.strip()]
-            record = latest_status(records, digest(private_file(args.contract)), runner_fingerprint(), datetime.now(UTC), contract["max_age_seconds"])
+            record = latest_status(records, digest(private_file(args.contract)), runner_fingerprint(), datetime.now(UTC),
+                                   contract["max_age_seconds"], digest(encoded(contract)))
             print(json.dumps(record)); return 0
         record = {"schema_version": SCHEMA, "state": "running", "run_id": str(uuid4()),
                   "started_at": datetime.now(UTC).isoformat(), "runner_sha256": runner_fingerprint()}
         append_attempt(stream, record)
         try:
             raw = private_file(args.contract); record["contract_sha256"] = digest(raw)
-            contract = validate_contract(document(raw)); manifest = verify_manifest(contract)
+            contract = effective_contract(validate_contract(document(raw)), args.request_id, args.chat_id)
+            record["effective_contract_sha256"] = digest(encoded(contract))
+            manifest = verify_manifest(contract)
             need(args.session, "authenticated_browser_session_required")
             private_file(args.session)
             runtime = inspect_runtime(contract, manifest)

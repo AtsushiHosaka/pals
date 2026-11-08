@@ -157,12 +157,14 @@ async function observe(payload) {
     let assetError = null;
     page.on("response", response => {
       const url = new URL(response.url());
-      if (url.origin === c.web_origin && /^\/_next\/static\/[A-Za-z0-9_./-]+\.(js|css)$/u.test(url.pathname)) {
+      let assetPath;
+      try { assetPath = decodeURIComponent(url.pathname); } catch { return; }
+      if (url.origin === c.web_origin && /^\/_next\/static\/[A-Za-z0-9_./@()+\[\]-]+\.(js|css)$/u.test(assetPath) && !assetPath.includes("..")) {
         assetReads.push(response.body().then(bytes => {
           need(response.status() === 200 && bytes.length <= 2**23, "served_asset_read_failed");
-          const prior = assets.get(url.pathname), hash = sha(bytes);
+          const prior = assets.get(assetPath), hash = sha(bytes);
           need(!prior || prior === hash, "served_asset_changed_during_capture");
-          assets.set(url.pathname, hash);
+          assets.set(assetPath, hash);
         }).catch(error => { assetError = error; }));
       }
     });
