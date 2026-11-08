@@ -9,6 +9,32 @@ from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit
 
 
+def validate_local_dsn(value, *, service=False):
+    parts = urlsplit(value)
+    hosts = ("postgres",) if service else ("127.0.0.1", "localhost")
+    if (
+        parts.scheme != "postgresql"
+        or parts.hostname not in hosts
+        or parts.port != (5432 if service else 55432)
+        or parts.path != "/pals"
+        or parts.query
+        or parts.fragment
+        or not parts.username
+        or not parts.password
+    ):
+        raise ValueError("closed_local_database_uri_required")
+    return parts
+
+
+def runtime_login_url(value):
+    parts = validate_local_dsn(value, service=True)
+    result = urlunsplit(
+        parts._replace(netloc=parts.netloc.rsplit("@", 1)[0] + "@127.0.0.1:55432")
+    )
+    validate_local_dsn(result)
+    return result
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--runtime-dir", type=Path, required=True)
@@ -42,13 +68,12 @@ def main():
 
     local, recipe = env("local.env"), env("recipe.env")
     url = local["PALS_HOST_DATABASE_URL"]
-    parts = urlsplit(url)
-    if (
-        parts.hostname not in ("127.0.0.1", "localhost")
-        or parts.port != 55432
-        or parts.path != "/pals"
-        or local.get("PALS_ENV") != "local"
-    ):
+    parts = validate_local_dsn(url)
+    selector_url = runtime_login_url(
+        recipe["PALS_RECIPE_CATALOG_SELECTOR_DATABASE_URL"]
+    )
+    reader_url = runtime_login_url(recipe["PALS_PFI_DRAFT_READER_DATABASE_URL"])
+    if local.get("PALS_ENV") != "local":
         raise ValueError("explicit_dedicated_local_database_required")
     base = urlunsplit(parts._replace(path="/pals_reliability_test"))
     with psycopg.connect(base, autocommit=True) as c:
@@ -132,21 +157,12 @@ def main():
             if cls(url).apply().status != "installed":
                 raise ValueError("local_foundation_migration_failed")
 
-    def host(value):
-        return urlunsplit(
-            urlsplit(value)._replace(
-                netloc=urlsplit(value).netloc.replace(
-                    "@postgres:5432", "@127.0.0.1:55432"
-                )
-            )
-        )
-
     result = LocalLegacyDatabaseRelease(
         url,
         environment="local",
         contract="legacy-local-v1",
-        selector_database_url=host(recipe["PALS_RECIPE_CATALOG_SELECTOR_DATABASE_URL"]),
-        draft_reader_database_url=host(recipe["PALS_PFI_DRAFT_READER_DATABASE_URL"]),
+        selector_database_url=selector_url,
+        draft_reader_database_url=reader_url,
     ).apply()
     if result.status != "current":
         raise ValueError("actual_local_legacy_release_failed")

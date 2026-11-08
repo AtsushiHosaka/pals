@@ -260,6 +260,60 @@ def budget_status(subject):
     return ledger
 
 
+def database_readiness(subject, environment_file, *, require_frozen=True):
+    contract = subject["database_contract"]
+    need(
+        contract["api_source_revision"] == subject["images"]["api"]["source_revision"],
+        "database_source_contract_changed",
+    )
+    sql_file = file_reference(contract["migration_sql"])
+    manifest = file_reference(contract["migration_manifest"])
+    source = Path(contract["api_source_root"])
+    need(
+        sql_file
+        == source / "app/db/migrations/draft_addition_candidates/001_candidates.sql"
+        and manifest
+        == source / "app/db/migrations/draft_addition_candidates/manifest.json",
+        "closed_database_migration_files_required",
+    )
+    program = """import sys,json
+from pathlib import Path
+sys.path.insert(0,sys.argv[1])
+from database_readiness import inspect
+values=dict(line.split('=',1) for line in Path(sys.argv[2]).read_text().splitlines() if line and not line.startswith('#'))
+try:
+ result=inspect(values['PALS_HOST_DATABASE_URL'],Path(sys.argv[3]),sys.argv[4])
+ print(json.dumps({'state':'ready','observation':result},sort_keys=True))
+except ValueError as error:print(json.dumps({'state':'unavailable','code':str(error)}))
+"""
+    result = json.loads(
+        command(
+            [
+                sys.executable,
+                "-c",
+                program,
+                str(HERE / "local-qualification"),
+                str(environment_file),
+                str(source),
+                contract["api_source_revision"],
+            ]
+        )
+    )
+    need(
+        result.get("state") == "ready",
+        "actual_local_database_readiness_failed:"
+        + str(result.get("code", "dependency_failed")),
+    )
+    observation = result["observation"]
+    if require_frozen:
+        need(
+            contract.get("schema_fingerprint_sha256")
+            == observation["schema_fingerprint_sha256"],
+            "actual_database_schema_or_privileges_differ_from_subject",
+        )
+    return observation
+
+
 def runtime(subject):
     result = {}
     role_images = {
@@ -519,6 +573,7 @@ def main():
         record["runtime_before"] = before
         private_json(state / "latest.json", record)
         record["provider_budget_before"] = budget_status(subject)
+        record["database_before"] = database_readiness(subject, args.database_env)
         # Never launch a browser that could submit a paid proof while the actual
         # mTLS verifier cannot establish its mandatory compiler sandbox.
         record["compiler_canary"] = compiler_canary(subject)
@@ -551,6 +606,11 @@ def main():
         record["browser"] = observed
         record["database"] = database(
             private_env(args.database_env)["PALS_HOST_DATABASE_URL"], observed, subject
+        )
+        record["database_after"] = database_readiness(subject, args.database_env)
+        need(
+            record["database_before"] == record["database_after"],
+            "database_schema_or_privileges_changed_during_capture",
         )
         ledger = budget_status(subject)
         need(

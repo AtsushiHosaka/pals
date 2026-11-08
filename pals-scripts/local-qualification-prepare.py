@@ -23,6 +23,63 @@ def load(name, path):
 
 
 gate = load("local_qualification_prepare_gate", HERE / "local-qualification.py")
+PROJECT = "pals-reliability-local"
+KNOWN_ROLES = {
+    "api",
+    "reconciler",
+    "worker",
+    "assessment-worker",
+    "recipe-reviewer",
+    "verifier",
+    "webfront",
+    "worker-network-guard",
+    "localstack",
+    "cognito-local",
+    "schema-release",
+}
+
+
+def validate_existing_role_owners(labels):
+    for item in labels:
+        gate.need(
+            item.get("com.docker.compose.project") == PROJECT
+            and item.get("codex.owner") == gate.OWNER
+            and item.get("com.docker.compose.service") in KNOWN_ROLES,
+            "foreign_or_unknown_local_project_role_refused",
+        )
+
+
+def assert_existing_project_owned():
+    ids = set(
+        run(
+            [
+                "docker",
+                "ps",
+                "-aq",
+                "--filter",
+                "label=com.docker.compose.project=" + PROJECT,
+            ]
+        ).split()
+    )
+    ids.update(
+        run(["docker", "ps", "-aq", "--filter", "name=^/" + PROJECT + "-"]).split()
+    )
+    labels = []
+    for container in ids:
+        labels.append(
+            json.loads(
+                run(
+                    [
+                        "docker",
+                        "inspect",
+                        "--format",
+                        "{{json .Config.Labels}}",
+                        container,
+                    ]
+                )
+            )
+        )
+    validate_existing_role_owners(labels)
 
 
 def run(args, timeout=45):
@@ -111,6 +168,7 @@ def main():
     gate.need(
         labels.get("codex.owner") == gate.OWNER, "dedicated_owned_postgres_required"
     )
+    assert_existing_project_owned()
     env = read_env(r / "local.env")
     gate.need(
         env.get("PALS_ENV") == "local" and env.get("PALS_ENVIRONMENT") == "local",
@@ -416,6 +474,24 @@ def main():
             )
         },
     }
+    sql = (
+        a.api_source / "app/db/migrations/draft_addition_candidates/001_candidates.sql"
+    )
+    manifest = (
+        a.api_source / "app/db/migrations/draft_addition_candidates/manifest.json"
+    )
+    subject["database_contract"] = {
+        "api_source_root": str(a.api_source.resolve()),
+        "api_source_revision": subject["images"]["api"]["source_revision"],
+        "migration_sql": ref(sql),
+        "migration_manifest": ref(manifest),
+    }
+    observed_database = gate.database_readiness(
+        subject, r / "local.env", require_frozen=False
+    )
+    subject["database_contract"]["schema_fingerprint_sha256"] = observed_database[
+        "schema_fingerprint_sha256"
+    ]
     out = r / "subject-native.json"
     gate.private_json(out, subject)
     digest = gate.sha(out.read_bytes())

@@ -10,6 +10,10 @@ prove production AWS, account authentication, billing, ingress or runtime isolat
 verifies actual runtime image/source/platform/configuration, real build provenance and a fresh
 compiler canary through the configured mTLS HTTP verifier before launching a browser. The
 fixed True theorem is dependency readiness only; it cannot qualify the mathematical journey.
+The runner also reads actual definer functions, owners, migration revisions and row-lock
+permissions before any paid browser action. The subject pins the schema/ACL fingerprint and
+the capture rechecks it after completion. This is local dependency readiness, not production
+database admission.
 
 The browser submits one approved guest request through `/try`. A durable exclusive marker is
 written before clicking. A timeout or ambiguous result cannot trigger a second submission.
@@ -61,6 +65,9 @@ python3 pals-scripts/local-qualification-prepare.py \
 The versioned local SQL bootstrap uses real sealed catalog data and migration modules. It
 does not install production admission or insert a completed answer. The owned local profile
 is task-scoped; cold provisioning and a different owner require an explicit setup contract.
+Private database URIs require the PostgreSQL scheme, exact local host/port/database and no
+query or fragment. Existing project roles and named containers must have the expected owner
+before preparation stops anything.
 
 ## Build provenance
 
@@ -106,6 +113,14 @@ classification presented that infrastructure failure as a compilation failure an
 spent six repair attempts. This does not establish that the model could not prove the theorem,
 or that production has the same kernel limitation. Its 19 actual provider calls cost a
 conservative $0.141154; separate request and formal-job usage records reconcile exactly.
+
+The second trial used the native sandbox and its mathematical Lean verification returned
+HTTP 200. Final settlement failed because the local definer role lacked a privilege required
+for its row lock; the capture timed out and remains failed. Both trials together used 27
+provider calls and a conservative $0.171628. PostgreSQL requires UPDATE permission on a
+column for these locking reads, including `FOR SHARE`. [PostgreSQL 16 SELECT privileges](https://www.postgresql.org/docs/16/sql-select.html).
+The complete local privilege repair plan needs separate approval. These failed captures
+imply neither a production permission change nor successful mathematical acceptance.
 
 Real captures, private sessions, certificates, environment files, generated receipts, images
 and compiler diagnostics remain outside Git. Preserve failed runs and their budget ledger.
