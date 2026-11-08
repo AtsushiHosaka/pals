@@ -8,14 +8,20 @@ on:
 permissions:
   contents: read
 
+env:
+  EXPECTED_SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+
 jobs:
   release-acceptance-contracts:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           submodules: false
           persist-credentials: false
+      - name: Require the exact candidate source
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_COMMIT"
       - name: Verify deterministic acceptance contracts (not live E2E)
         run: bash pals-scripts/tests/release-acceptance.sh
   repository-safety:
@@ -23,9 +29,12 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           submodules: false
           fetch-depth: 0
           persist-credentials: false
+      - name: Require the exact candidate source
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_COMMIT"
       - name: Install the checksum-pinned history scanner
         run: |
           bash pals-scripts/install-gitleaks.sh "$RUNNER_TEMP/pals-gitleaks"
