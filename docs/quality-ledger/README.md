@@ -90,6 +90,8 @@ The [release reliability audit](../release-reliability-audit-2026-11-08.md) adds
 
 The subsequent [repair record](../reliability-repair-2026-11-08.md) adds two operational observations, bringing the ledger to 475 rows: the same ingress episode's successful follow-up (linked as overlapping, not a second trial), and one composite real SSM transport check across the two existing hosts. Neither is counted as successful mathematical answering or activation of the repaired images. The first 473 rows remain unchanged.
 
+The [November 9 real local qualification](../local-release-qualification-2026-11-09.md) adds one failed trial, bringing the ledger to 476 rows and preserving the prior 475 rows byte-for-byte. The AMD64 emulator could not establish the mandatory Lean sandbox; the failure is runtime unavailability, not evidence that the mathematical statement is invalid. Nineteen actual model calls cost a versioned-price upper-bound estimate of US$0.141154; they are internal calls for one trial. There was no completed-answer/save/render/reload acceptance and no production deployment.
+
 ## グラフ
 
 <picture>
