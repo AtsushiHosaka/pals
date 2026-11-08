@@ -10,7 +10,11 @@ LOAD_ENV = set -a; . ./$(COMPOSE_ENV_FILE); set +a;
 
 .PHONY: pals-up pals-qa local-cognito-bootstrap dev-up dev-down dev-logs dev-ps api-deps api-test web-deps web-test web-build web-lint draft-admin-deps draft-admin-test agent-deps agent-test agent-lean-deps agent-evaluation-history agent-evaluation-smoke agent-evaluation-full agent-evaluation-compare observability-deps observability-test pals-scripts-test repository-gates infra-test test openapi
 
-.PHONY: release-source-checks release-qualify release-cycle
+.PHONY: release-source-checks release-qualify release-local-qualify release-cycle
+
+release-local-qualify:
+	@test -n "$(RELEASE_LOCAL_SUBJECT)" -a -n "$(RELEASE_STATE_DIR)" -a -n "$(RELEASE_WEB_ROOT)" -a -n "$(RELEASE_DATABASE_ENV)" || { echo 'Set RELEASE_LOCAL_SUBJECT, RELEASE_STATE_DIR, RELEASE_WEB_ROOT and RELEASE_DATABASE_ENV.' >&2; exit 2; }
+	$(RELEASE_PYTHON) pals-scripts/local-qualification.py --subject "$(RELEASE_LOCAL_SUBJECT)" --state-dir "$(RELEASE_STATE_DIR)" --web-root "$(RELEASE_WEB_ROOT)" --database-env "$(RELEASE_DATABASE_ENV)" $(RELEASE_LOCAL_VERIFY)
 
 release-source-checks:
 	@test -n "$(RELEASE_MANIFEST)" -a -n "$(RELEASE_PREDECESSOR)" || { echo 'Set RELEASE_MANIFEST and RELEASE_PREDECESSOR to the exact private manifest files.' >&2; exit 2; }
