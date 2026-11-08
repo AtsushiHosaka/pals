@@ -28,7 +28,7 @@ The private contract has exactly these fields:
 | `schema_version` | `pals.release-acceptance.v1` |
 | `phase`, `target` | `pre_release`/`post_deployment`; `staging`/`production`. Pre-release must target staging. |
 | `manifest` | Absolute `path`, exact `sha256`, `signature_path`, `public_key_path` (DER), independent `public_key_spki_sha256`. |
-| `runtime` | Exactly `api`, `reconciler`, `web`, `proof`, `assessment`, `verifier`; each specifies Docker `context`, `endpoint_sha256`, `container`, `config_sha256`, `environment_sha256`. |
+| `runtime` | Exactly `api`, `reconciler`, `web`, `proof`, `assessment`, `verifier`. Each specifies `container`, `config_sha256`, `environment_sha256`, plus either Docker `context`/`endpoint_sha256` or the fixed `ssm` binding below. |
 | `runner_sha256` | Output of the `fingerprint` command; binds both executing scripts. |
 | `web_root` | Existing Web dependency directory; never install a substitute/shim to obtain PASS. |
 | `web_origin`, `api_origin` | Exact HTTPS origins. HTTP is allowed only for loopback staging. Credentials/query/fragment are rejected. |
@@ -37,6 +37,8 @@ The private contract has exactly these fields:
 | `timeout_seconds`, `max_age_seconds` | Bounded observation timeout (30–1800 seconds) and accepted-evidence age (1–3600 seconds). |
 
 `endpoint_sha256` hashes sorted compact JSON of Docker context `Endpoints`. `environment_sha256` hashes sorted compact JSON of the container's sorted `Config.Env` array. Compute these from reviewed target configuration; never copy an unexpected live value into the contract merely to make the gate pass. Configuration labels follow the existing native owner contract. The native controller's admission, mount, TLS, and isolation checks remain mandatory; this runner does not replace them.
+
+SSM-only hosts use `ssm: {profile: "pals-prod-member", region: "ap-northeast-1", account_id: "<exact 12 digits>", instance_id: "<exact instance>"}` instead of Docker context fields. The runner verifies the actual STS account against both contract and signed manifest. It sends only the reviewed fixed read-only observer through `AWS-RunShellScript` and consumes its exact successful invocation/instance result. Full Docker configuration/environment is processed **only on the observed host**; SSM output contains fixed metadata and hashes, never credentials, arbitrary labels, raw environment, or error/traceback contents. Web asset observations return hashes only. This transport changes no service, port, IAM role, queue message, or application data; SSM command history is an ordinary operational side effect. Actual AWS permission/delivery remains unverified until the real authorized observation succeeds.
 
 The private session format is `{"schema_version":"pals.acceptance-session.v1","origin":"<web_origin>","session_storage":{"<existing-app-key>":"<value>"}}`. Provision it through the approved test login, never by requesting a password/token in chat or extracting credentials through an unrelated browser-control tool. Credentials stay in that file and browser memory.
 

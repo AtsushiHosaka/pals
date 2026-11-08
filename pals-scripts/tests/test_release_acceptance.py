@@ -11,6 +11,7 @@ import tempfile
 import unittest
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from unittest.mock import patch
 
 SCRIPT = Path(__file__).resolve().parents[1] / "release-acceptance.py"
 spec = importlib.util.spec_from_file_location("release_acceptance", SCRIPT)
@@ -122,6 +123,80 @@ class ContractTests(unittest.TestCase):
                   "effective_contract_sha256": gate.digest(gate.encoded(captured)), "finished_at": now.isoformat()}
         with self.assertRaisesRegex(gate.Refusal, "acceptance_request_binding_changed"):
             gate.latest_status([record], "1" * 64, "2" * 64, now, 60, "3" * 64)
+
+
+class SSMTransportContracts(unittest.TestCase):
+    """AWS is an isolated unit boundary here; only a real runner can qualify a target."""
+    def binding(self):
+        return {"ssm": {"profile": "pals-prod-member", "region": "ap-northeast-1",
+                         "account_id": "000000000001", "instance_id": "i-0123456789abcdef0"},
+                "container": "acceptance-api", "config_sha256": "4" * 64, "environment_sha256": "5" * 64}
+
+    def metadata(self):
+        uri = "000000000001.dkr.ecr.ap-northeast-1.amazonaws.com/pals-prod-api@sha256:" + "a" * 64
+        image_id = "sha256:" + "b" * 64
+        container = {"Id": "c" * 64, "Image": image_id,
+                     "Config": {"Image": uri, "Env": ["PALS_DATABASE_URL=SECRET_DATABASE_VALUE", "API_KEY=SECRET_PROVIDER_VALUE",
+                                                        "PALS_CLOUD_RESTORE_MANIFEST_SHA256=" + "1" * 64],
+                                "Labels": {"com.pals.private-control": "4" * 64, "unexpected": "SECRET_LABEL_VALUE"}},
+                     "State": {"Running": True, "StartedAt": "2026-11-08T10:00:00Z", "Error": "SECRET_ERROR_VALUE"}}
+        image = {"Id": image_id, "RepoDigests": [uri], "Os": "linux", "Architecture": "arm64",
+                 "Config": {"Labels": {"org.opencontainers.image.revision": "d" * 40, "extra": "SECRET_IMAGE_LABEL"}}}
+        return container, image
+
+    def test_fixed_transport_allows_only_approved_profile_region_and_exact_instance(self):
+        value = contract(); value["runtime"]["api"] = self.binding()
+        gate.validate_contract(value)
+        for key, bad in (("profile", "another-profile"), ("region", "another-region"), ("instance_id", "*")):
+            modified = copy.deepcopy(value); modified["runtime"]["api"]["ssm"][key] = bad
+            with self.assertRaisesRegex(gate.Refusal, "ssm_target_invalid"): gate.validate_contract(modified)
+        with self.assertRaisesRegex(gate.Refusal, "ssm_manifest_account_differs"):
+            gate.ssm_observe(self.binding(), account_id="000000000002")
+
+    def test_remote_sanitizer_never_returns_secrets_full_env_config_or_errors(self):
+        container, image = self.metadata()
+        observed = gate.sanitize_runtime(container, image)
+        raw = gate.encoded(observed)
+        self.assertNotIn(b"SECRET", raw)
+        self.assertNotIn(b"PALS_DATABASE_URL", raw)
+        self.assertNotIn(b'"Env"', raw)
+        self.assertNotIn(b'"Config"', raw)
+        self.assertEqual(observed["api_manifest_sha256"], "1" * 64)
+        self.assertEqual(observed["environment_sha256"], gate.digest(gate.encoded(sorted(container["Config"]["Env"]))))
+        image["Config"]["Labels"]["org.opencontainers.image.revision"] = "SECRET_WRONGLY_LABELLED_VALUE"
+        self.assertNotIn(b"SECRET", gate.encoded(gate.sanitize_runtime(container, image)))
+
+    def test_remote_program_is_fixed_read_only_and_rejects_command_or_path_injection(self):
+        program = gate.remote_program("acceptance-api")
+        compile(program, "observer", "exec")
+        self.assertIn("capture_output=True", program)
+        self.assertIn("result = sanitize_runtime(container, image)", program)
+        self.assertNotIn("SECRET_DATABASE_VALUE", program)
+        self.assertNotIn("print(container)", program)
+        compile(gate.remote_program("acceptance-web", "/_next/static/chunks/[runtime].js"), "asset", "exec")
+        for bad in ("api;id", "api\nwhoami"):
+            with self.assertRaisesRegex(gate.Refusal, "remote_container_invalid"): gate.remote_program(bad)
+        with self.assertRaisesRegex(gate.Refusal, "remote_asset_path_invalid"):
+            gate.remote_program("web", "/_next/static/../../credentials.js")
+
+    def test_only_exact_successful_ssm_invocation_is_consumed(self):
+        binding = self.binding(); identifier = "c7512219-d918-4a67-b823-a78ac71e7bb8"
+        observed = gate.sanitize_runtime(*self.metadata())
+        response = {"Status": "Success", "ResponseCode": 0, "CommandId": identifier,
+                    "InstanceId": binding["ssm"]["instance_id"], "StandardErrorContent": "",
+                    "StandardOutputContent": json.dumps(observed)}
+        prefix = [{"Account": "000000000001"}, {"Command": {"CommandId": identifier}}]
+        with patch.object(gate, "aws_read", side_effect=prefix + [gate.SSMNotReady(), response]), patch.object(gate.time, "sleep"):
+            self.assertEqual(gate.ssm_observe(binding, account_id="000000000001"), observed)
+        for field, bad in (("InstanceId", "i-00000000000000000"), ("ResponseCode", 1), ("Status", "Failed")):
+            rejected = dict(response); rejected[field] = bad
+            with patch.object(gate, "aws_read", side_effect=prefix + [rejected]), patch.object(gate.time, "sleep"):
+                with self.assertRaisesRegex(gate.Refusal, "ssm_runtime_observation_failed"):
+                    gate.ssm_observe(binding, account_id="000000000001")
+        with patch.object(gate, "aws_read", return_value={"Account": "000000000002"}) as request:
+            with self.assertRaisesRegex(gate.Refusal, "ssm_caller_account_differs"):
+                gate.ssm_observe(binding, account_id="000000000001")
+            self.assertEqual(request.call_count, 1)
 
 
 class SignatureAndFailClosedTests(unittest.TestCase):
