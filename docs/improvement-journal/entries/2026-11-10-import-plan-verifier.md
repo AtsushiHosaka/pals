@@ -1,0 +1,22 @@
+# import plan を検証器へつなぐ（2026-11-10）
+
+- 指標: 時間（Frontier のロード約7〜8秒、7.2GB を、命題ごとの最小 import で下げる）
+- 仮説: 索引（#72、#86）から作る最小 import を検証器に渡すと、読み込みが軽くなる。計画が足りないときは、全 import へ一度だけ戻せば、成功率を落とさない。
+- 変更: pals-agent PR #92（merge commit `89496010`、既定 off）。
+  - `LeanVerifier.import_planning`（既定 `None`）が `_timed_verify` に入ります。有効化は `PALS_LEAN_IMPORT_PLAN=true`、`PALS_LEAN_IMPORT_INDEX`（絶対パス）、任意で `PALS_LEAN_IMPORT_PLAN_BASE_MODULES`。
+  - 先頭の import 行だけを置き換え、行番号を保ちます。計画の元は、証明を `sorry` にした文だけです。
+  - 索引の provenance が、プロファイルの pins と違えば、起動を拒否します。対象は証明用 verifier のみ（admission verifier には付けません）。
+  - 全 import への代替は一度だけです。元のソースへの政策検査は先に走り、計画が禁止 import を隠すことはできません。計画を使わない場合は `declined.*`（空、未知の識別子、同名定義の衝突、本文に def がある、ヘッダが書き換えられない、許可しない module を含む、など）。計画でコンパイルして失敗した場合は `retried.*`（`unknown identifier`、`unknown namespace`、`unknown constant`、`unknown tactic`、module が未ビルド）。再検証は、300秒の締切の残りだけで行います。
+  - 記録は、閉じた語彙の状態コードと、読み込み module 数だけです（`lean_import_plan status=... loaded_modules=...`）。質問、Lean 本文、module 名、メッセージは含みません。
+- 測定の条件: 実モデルの測定なし（費用ゼロ）。モックの検証器と `_Compiler` 方式の偽プロセスによる単体テスト48件、変更ファイルの `ruff` と `mypy --strict`。実 Lean 4.35 のテストで、計画が通る場合と、`unknown identifier` で再検証に回る場合を確認。
+- 結果: 時間の短縮は未測定です。実装と動作確認だけです。
+- 判断: 既定 off のまま採用。測定してから有効化を決める。
+- 限界・未確認:
+  - 実モデルの出力での再検証率と時間の短縮は未測定です。証明が計画に無い補題や戦術（`ring`、`nlinarith` など）を使う場合と、存在しない補題名を書く失敗は、どちらも再検証に回ります。そのとき、失敗した試行のコストは約2倍になりえます。調整手段として `PALS_LEAN_IMPORT_PLAN_BASE_MODULES`（例: `Mathlib.Tactic`）を用意しました。
+  - 最小 import では instance の経路が全 import と違うまま通る可能性があります（#86 の測定で5/15）。`failed to synthesize` は再検証の対象外です。
+  - 未解決の判定は、「修飾名か大文字始まり」だけを未知の定数扱いにしています。`x.level` のような小文字の末尾名は、コンパイルと再検証に任せます。この線引きは、再検証率を見て見直す余地があります。
+  - 本番イメージには、`tools/stacks_index` と索引ファイル（約232MB）が入っていません。有効化にはイメージ側の変更が要り、この PR では扱っていません。
+  - pals-agent には CI がなく、マージの時点でレビューは入っていませんでした（CodeRabbit は無料枠の上限）。マージ後に Codex が commit `e7d89fd` をレビューし、指摘は0件でした。
+  - 既存テストの一部（親リポジトリの `docker-compose.e2e.yml` と `docs/` を前提にするもの、ローカル Lean 4.35 では audit が通らない `test_real_lean_accepts_a_hole_free_verified_source`）が、この変更と無関係に失敗します。
+- 次にやること: 実モデルで、再検証率と時間を測る（Frontier を使う小さなカード群。費用は事前に確認する）。有効化するなら、本番イメージへの索引の同梱が先に要る。
+- 出典: pals-agent PR #92（`89496010`）、#72、#86、[stacks-import-index](2026-11-09-stacks-import-index.md)。
