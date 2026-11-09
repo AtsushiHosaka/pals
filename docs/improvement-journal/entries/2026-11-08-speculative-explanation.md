@@ -11,3 +11,9 @@
 - 限界・未確認: 測定区間が全体の一部。Luna での測定。
 - 次にやること: 段別計測（pals-agent #77）で、x² の22〜24秒の内訳を測る。検証結果キャッシュ（#80、#81）。
 - 出典: pals-agent #77、branch `claude/seq27-real-ab`
+
+## 訂正（2026-11-09、pals#320 のレビュー指摘）
+
+- 「測定の条件」の測定ハーネスの branch は、3ペアの実行については `claude/seq27-timing-ab-steps` が正しい記録です（pals の `docs/pipeline-step-timing-2026-11-08/README.md`）。`claude/seq27-timing-ab` にはハーネス `tools/speculative_ab.py` の初版があり、`-steps` は、段別計測を足した続きです（pals-agent の branch、2026-11-08）。
+- 最大バッチ（19ペア）を、どちらの branch で実行したかは、記録が見つかりません。未確認です。
+- 元の記述は書き換えていません。

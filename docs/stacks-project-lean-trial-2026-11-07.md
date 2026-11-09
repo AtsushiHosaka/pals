@@ -53,8 +53,11 @@ PALS の `docs/*.lean` 42ファイル（宣言744件）を、同じ手順で `la
 ## 再現手順
 
 ```bash
-git clone --depth 1 https://github.com/AxiomMath/Stacks.git repo
-cd repo && lake exe cache get
+git init repo && cd repo
+git remote add origin https://github.com/AxiomMath/Stacks.git
+git fetch --depth 1 origin 5ed82d14634e8d9576bb844c7bd4e3da66d450e7   # 測定したコミット（5ed82d1）
+git checkout FETCH_HEAD
+lake exe cache get
 lake build StacksFrontier.AlgebraicGeometry.Crystalline.DividedPowerEnvelope.FlatRelation
 ```
 
