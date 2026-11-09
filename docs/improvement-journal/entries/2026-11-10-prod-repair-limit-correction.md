@@ -8,13 +8,14 @@
 - 誤りの内容: 値3は、pals-agent の **main**（`adec962`、`DEFAULT_MAX_REPAIR_ATTEMPTS = 3`）の既定でした。本番の worker は、main ではなくリリース系統（seq24〜29）から配備されます。この系統の既定は **6** です（`d313d9f`「Lean修復の上限を6回へ」）。そのため、3 を本番の値と書いたのは根拠が足りませんでした。
 - 現時点で分かっていること（出典: リリース担当セッションの報告、2026-11-10）:
   - 本番は seq29（DB admission 29、2026-11-08 16:45Z）です。pals-agent は `427caf8a` 系のはずです。
-  - 配備物（worker image の context）の `DEFAULT_MAX_REPAIR_ATTEMPTS` は 6 です。release 成果物に `PALS_MAX_REPAIR_ATTEMPTS` の上書きはありません。
+  - 配備物（worker image の build context）の `DEFAULT_MAX_REPAIR_ATTEMPTS` は 6 です。根拠: ローカルの `/private/tmp/pals-seq29-release-20261108/worker-image/context/pals_agent/models.py` の16行目（リリース担当が報告し、2026-11-10 にこのセッションでも読んで確認。この `/private/tmp` は一時領域で、永続しません）。
+  - 同じ `/private/tmp/pals-seq29-release-20261108` を検索したところ、`PALS_MAX_REPAIR_ATTEMPTS` を設定する箇所は、macmini 用のテスト（`work/pals-infra/host/macmini-deploy/test_full_runtime_templates.py`、値 "3"）だけでした。本番用の上書きは見つかっていません（ただし、配備後のインフラ設定や、コンテナの実環境は含みません）。
   - 親リポジトリ main が指す pals-agent（`adec962`）は、seq29 に含まれません。
 - 未確認: 稼働中コンテナの環境変数（上書きの有無）と、コンテナ上の実コミットです。配備物の読み取りだけが根拠です。確認する読み取り専用の SSM コマンドは、自動モードの分類器に拒否されました。迂回していません。確認には、ユーザーの許可が要ります。
 - 影響:
   - 本番の上限が6なら、実験の上限6の列（成功 腕a 12/18 など）は、本番の構成に近い測定です。上限3の列は「本番を3に下げたら」の反事実で、本番の現状ではありません。
   - 反事実の数字（上限3で 10/18 など）そのものは、記録した実行に当てはめた計算なので、変わりません。
-  - 見落とせない点: 親リポジトリの main をそのまま配備すると、pals-agent の pin（`adec962`）により、リリース系統の変更（x² のテンプレート、固定説明、ジョブの終了処理など）が外れ、修復上限は 3 に下がります。統合・配備のときは、上限を 6 と 3 のどちらにするかを、意図して決める必要があります。
+  - 見落とせない点: 親リポジトリの main をそのまま配備すると、pals-agent の pin（`adec962`）により、リリース系統の変更（x² のテンプレート、固定説明、ジョブの終了処理など）が外れ、コードの**既定**の修復上限は 3 になります。実効値は `PALS_MAX_REPAIR_ATTEMPTS` で設定できるため、配備時の設定に依存します（今の本番のコンテナ env は未確認）。統合・配備のときは、既定と実効値を、意図して決める必要があります。
 - 関連する整理（pals-agent の PR、`git cherry` による確認）: #70・#71・#83・#84 の commit は、すべて seq29 に含まれます（重複）。#80・#81（検証結果キャッシュ）には、seq29 に無い commit が各2件・4件あります。本番には未配備です。
 - 次にやること: 稼働中コンテナの環境変数の確認（ユーザーの許可を得てから）。統合の方針（main とリリース系統のどちらを土台にするか）は、オーナーの決定待ちです。
 - 出典: pals-agent の `origin/main` と `origin/claude/seq29-worker`（`DEFAULT_MAX_REPAIR_ATTEMPTS`）、リリース担当セッションの報告、`git cherry`。
