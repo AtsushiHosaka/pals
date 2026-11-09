@@ -35,7 +35,7 @@ def success(r, cap):
 
 rows = []
 for path in sys.argv[1:]:
-    for line in Path(path).read_text().splitlines():
+    for line in Path(path).read_text(encoding="utf-8").splitlines():
         if line.strip():
             rows.append(json.loads(line))
 # keep the last run per (id, arm)

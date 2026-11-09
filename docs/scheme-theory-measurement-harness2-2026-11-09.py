@@ -177,7 +177,9 @@ def run() -> None:
     args = parser.parse_args()
     ws, out, spent_file = Path(args.ws), Path(args.out), Path(args.spent)
     out.mkdir(parents=True, exist_ok=True)
-    cards = json.load(open(args.cards))
+    cards = json.load(open(args.cards, encoding="utf-8"))
+    if isinstance(cards, dict):  # the committed cards file keeps the list under "cards"
+        cards = cards["cards"]
     only = set(filter(None, args.only.split(",")))
     built = set(json.load(open(args.built)))
     index = StacksIndex(Path(args.index) / "index.sqlite")
@@ -262,7 +264,7 @@ def run() -> None:
                 imports_frontier=bool(re.search(r"^import StacksFrontier", code, re.M)),
                 has_sorry_text=bool(re.search(r"\bsorry\b", code)),
             )
-            (out / f"{card['id']}-{args.arm}.lean").write_text(code)
+            (out / f"{card['id']}-{args.arm}.lean").write_text(code, encoding="utf-8")
             attempts_dir = out / "art" / f"{card['id']}-{args.arm}" / f"ag-{card['id']}-{args.arm}" / "attempts"
             row["attempts"] = len(list(attempts_dir.glob("*.json"))) if attempts_dir.exists() else None
             row["repairs_used"] = None if row["attempts"] is None else max(0, row["attempts"] - 1)
@@ -292,7 +294,7 @@ def run() -> None:
                 row["review_s"] = round(time.monotonic() - review_start, 1)
                 row["review_usd"] = round(review_meter.usd, 4)
         row["usd"] = round(meter.usd + review_meter.usd, 4)
-        with open(out / "rows.jsonl", "a") as handle:
+        with open(out / "rows.jsonl", "a", encoding="utf-8") as handle:
             handle.write(json.dumps(row, ensure_ascii=False) + "\n")
         total = (json.loads(spent_file.read_text())["usd"] if spent_file.exists() else 0.0) + row["usd"]
         spent_file.write_text(json.dumps({"usd": round(total, 4)}))
