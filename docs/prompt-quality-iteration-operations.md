@@ -10,7 +10,7 @@
 PYTHONPATH=pals-observability/src pals-observability/.venv/bin/python \
   -m pals_observability.prompt_quality_registry \
   --registry pals-observability/datasets/benchmark-problems-ja-v1.json \
-  --dataset pals-observability/datasets/undergraduate-live-ja-v1.json
+  --dataset pals-observability/datasets/undergraduate-regression-ja-v2.json
 ```
 
 新しい問題を登録するときは、同じコマンドに`--register-case 問題ID --dataset-commit 完全なコミットID --topic-group 分野ID --split regression`を追加します。データセットを保存した正確なコミットを指定します。今後用意する検証用問題は、調整前に`prospective_holdout`として分離し、関連する問題を同じ側にまとめます。結果を見て調整に使ったら、その問題は以後の未知の検証には使いません。
@@ -71,3 +71,12 @@ PYTHONPATH=pals-observability/src pals-observability/.venv/bin/python \
 ```
 
 問題、試行数、モデル、採点、取得元などが違えば比較を拒否します。条件の異なる実験を一本の改善曲線につなぎません。同じ条件でも、未採点や生成失敗を含む分母、問題単位のばらつき、悪化した問題を確認します。新しい反復では、同じマニフェストの末尾に比較を加えます。取得した値でグラフと品質台帳を更新し、変更したポリシーと根拠を一緒に保存します。
+
+
+## 追加した証明問題の再評価
+
+現在の問題一覧は11題です。元の8題を保持し、新規3題を`undergraduate-regression-ja-v2.json`に追加しています。入力のLeanソースはobservabilityの`datasets/lean/`に置き、コンパイルの生出力はローカルに保存します。
+
+新しい3題の説明比較は、`prompt_quality_replay`の代わりに`prompt_quality_local_replay`を使います。マニフェストに処理系の出典、各ソースと実コンパイル記録のハッシュ、対象定理を指定します。コマンドは実際に再コンパイルし、元と同じ生成・公開レビュー・採点へ進みます。環境はPATH、LEAN_PATH、LANG、LC_ALL、TMPDIRだけで、モデルの認証情報はコンパイラに渡しません。本番の証明記録を偽造しません。
+
+次回も同じ追加問題集を比較するときは、今回作った`local-compile-authority.json`の原本を変更せず、次の空の出力ディレクトリへコピーして使います。入力や処理系、読み込み実装が一致すれば、実際の再コンパイルを経て同じ出典を再利用できます。一致しなければ拒否します。ハッシュや実行IDを編集して比較を成立させないでください。ソースや読み込み実装を変える場合は、別の比較系列として扱います。

@@ -27,3 +27,11 @@ November 9 continuation, issue #316, starting parent 3153f68 / observability a3a
 - [x] PQ-013: Add manifest-driven multi-iteration reporting with strict comparison and per-case regressions. Forty-one focused regressions passed.
 - [x] Execute two bounded real prompt comparisons (24 trials, 23 scored), publish/read back/fetch all four records, independently verify 48 calculations, and show measured changes and uncertainty in chat. Neither candidate is promoted; clarity did not improve, and v2 lost one delivered explanation.
 - [x] Record evidence and five quality-ledger observations (487 rows, original 482-row byte prefix preserved), regenerate six charts, and pass the ledger audit plus 1,216 observability regressions/Ruff/mypy. Publish only this chat's paths and owning submodule reference.
+
+Next iteration, issue #317; starting parent 764338a / observability 7891f8d:
+
+- [x] PQ-014: Inspect 24 earlier trials/26 drafts and all 14 negative metric pairs; distinguish terminology/domain-order issues, reviewer mistakes and projection defects; freeze generic undergraduate-v4.
+- [x] PQ-015: Add three substantive authored cases, actually compile/audit them locally, independently review their mathematical inputs, and implement real source-snapshot recompilation before replay. Local compiler artifacts never impersonate live v2 proof records.
+- [x] Preserve the frozen core collector/manifest and run two separate paired cohorts: six unique problems, 24 fresh trials, all delivered and scored. V4 clarity delta is +0.00833 on core3, -0.005 on new3; not a general improvement or production promotion.
+- [x] Publish/read back/fetch four new records, retain all eight historical/current records, verify 96 numerical calculations, and render both cohorts with improvements, regressions, fixed denominators and uncertainty.
+- [x] Expand registry to 11 cases/18 observations; append seven ledger rows (494 total, original 487-row byte prefix preserved); regenerate six charts; pass 1,254 tests, Ruff, strict mypy and ledger audit. Push only this chat's paths and owning submodule reference.

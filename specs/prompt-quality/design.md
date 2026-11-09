@@ -89,6 +89,30 @@ comparator; unrelated observations and regrades never form a connected improveme
 curve. Repeated measurements preserve failures and missing scores. The exposed
 starter corpus is tuning/regression material, not an independently blind holdout.
 
+## Answer analysis and corpus expansion
+
+Issue #317 and the next November 9 user request extend the WORKING contract with
+PQ-014/PQ-015. Inspect the actual rejected drafts, repaired drafts, delivered prose
+and reviewer reasons before choosing the next generic policy. Keep source terminology
+errors and misleading ordering separate from false mathematical conclusions. A
+reviewer's refusal may itself be wrong. The API projection defect is a separate
+application contract and stays fixed in prompt-only comparisons.
+
+The original three-case manifest and frozen collector remain usable unchanged for
+longitudinal measurements. New authored proof problems form a separate population.
+Actual installed Lean and Mathlib compile the exact source files with a bounded
+command and a standard-axiom audit. A separate local-compile authority adapter may
+validate those real artifacts and call the same production explanation/review loop.
+It binds its own implementation and authority provenance in the generation controls,
+and explicitly labels local compilation versus the explanation replay stage. It
+never fabricates a v2 live measurement as proof authority. Unavailable or invalid
+compiler evidence blocks only the dependent new-case replay.
+
+Before model calls, freeze each population, references, policy, order, repetition
+count and source/authority digests. Each baseline/candidate pair has the same controls.
+Report the stable core and additional problems separately; different corpus or
+collector controls cannot be joined into a single controlled improvement curve.
+
 ## Storage and operation
 
 A dedicated CloudWatch Logs group stores one complete content-free run per event.
