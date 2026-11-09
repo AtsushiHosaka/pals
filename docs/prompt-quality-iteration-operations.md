@@ -10,7 +10,7 @@
 PYTHONPATH=pals-observability/src pals-observability/.venv/bin/python \
   -m pals_observability.prompt_quality_registry \
   --registry pals-observability/datasets/benchmark-problems-ja-v1.json \
-  --dataset pals-observability/datasets/undergraduate-regression-ja-v3.json
+  --dataset pals-observability/datasets/undergraduate-regression-ja-v4.json
 ```
 
 新しい問題を登録するときは、同じコマンドに`--register-case 問題ID --dataset-commit 完全なコミットID --topic-group 分野ID --split regression`を追加します。データセットを保存した正確なコミットを指定します。今後用意する検証用問題は、調整前に`prospective_holdout`として分離し、関連する問題を同じ側にまとめます。結果を見て調整に使ったら、その問題は以後の未知の検証には使いません。
@@ -107,3 +107,15 @@ PYTHONPATH=pals-observability/src pals-agent/.venv/bin/python \
 未採点や拒否は元の分母に残し、修正稿の条件や論理も確認します。一般的な正答率、理解度、本番の動作と、LLMによる説明の採点は区別します。特に、採点器の満点でも条件の書き換えを見逃したため、[実文分析](prompt-quality-v6-analysis-2026-11-09.md)を併用します。
 
 AWS認証が切れたときは、確定した記録を保持して送信だけを待ちます。通常の`aws sso login --profile pals-prod-member`で認証が回復した後、保存・同一読み戻し・再取得を行います。数学の評価や不明な外部呼び出しは再送しません。未取得の図には「ローカル計測値・CloudWatch取得待ち」を表示し、CloudWatchを出典にした図とは別の名前で保存します。
+
+## QAの指示と製品側の効率を併せて測る
+
+11月10日の追加後はv4の20題です。新しい6題は、今回の結果を開いた後は回帰用として扱います。[今回の測定](prompt-quality-efficiency-2026-11-10.md)に、固定回答のQA判定150件、新しい説明84試行、失敗した案、計画変更、実際の使用量を記録しています。
+
+`prompt_quality_policy_experiment`に`--capture-efficiency`を付けると、既存の実モデル応答からusageを取得します。生成・公開QA・独立採点を別々に保存し、標準評価記録のusageは生成とQAの合計にします。計測を有効にした設定は実行前のfreezeに含まれます。途中で有効化したり、過去の実行へ後付けしたりしません。呼び出しの開始前に、全プロセスで共有する永続上限を予約します。計測や保存に失敗したら次の無観測の呼び出しを止めます。
+
+処理時間は説明生成開始から公開QAと本文への変換までで、独立採点とLean実行を含みません。トークン数は実usage、請求額は不明のままです。cached inputとreasoning outputを合計に再加算しません。修正回数、キャッシュ、問題の違う群の速度を、そのまま通常運用の改善率にはしません。
+
+QA実装だけを変える比較は、`prompt_quality_review_treatment.compare_review_runs`へ両側の元の評価記録とfreezeを渡します。許されたQA指示の差、実ソース、同一の生成方針・問題・モデル・採点・API表示処理、開封記録とjournalの結び付きを検証します。`preflight_only=True`はモデル実行前の未測定の入力確認専用です。実測結果には既定の検証を使います。過去の比較器を緩めたり、設定ハッシュを編集したりしません。
+
+固定回答の正誤判定は、新しい説明の生成・公開・採点とは別の母数です。判定が正しくても理由に誤りがある場合、正しい数学でも依頼された証明の核心が欠ける場合、妥当な文体指摘で修正した場合を区別します。同じ試行を複数の比較で使っても、新しい試行数には重複計上しません。
