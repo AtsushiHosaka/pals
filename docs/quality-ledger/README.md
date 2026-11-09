@@ -13,7 +13,9 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-2026-08-28から2026-11-06までの472行です。出典の内訳は、docsが227行、pals-agentのPRが80行、palsのIssueが137行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
+[本番評価の途中結果](https://github.com/AtsushiHosaka/pals/pull/311)を1行追加し、既存472行を保持しました。8題を計画し、4題を送信しました。この記録時点で3題はLean検証と回答作成、独立評価が完了し、1題は処理中です。残る4題は未送信です。成功率と費用は空欄にし、所要時間の中央値は完了した3題だけから記録しました。処理中や未送信を失敗とは数えず、数学全般の正答率やプロンプトの改善率とも扱いません。
+
+2026-08-28から2026-11-09までの473行です。出典の内訳は、docsが227行、pals-agentのPRが80行、palsのIssueが137行、palsのPRが29行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
 
 11月5日の説明回帰は、[Agent #50の記録](https://github.com/AtsushiHosaka/pals-agent/blob/36ea6a2b106d5782ca2012b8a75ee4fbfa4c2b52/testdata/explanation-grounding-v1/README.md)に対応する9行を追加しました。初回の同条件比較、書式不備で採点を除外したQA、不備を直した負例、最終修正後の確認を分けています。実モデル24呼出しの推計費用0.02573375 USDを重複なく記録しました。初回比較は両版2/2で、精度向上は確認していません。後の別条件の結果を加えて改善率を作りません。
 
@@ -21,7 +23,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 これらの外部ベンチマークの費用は、使用量に事前登録した全入力0.25・出力0.50 USD/百万tokenを掛けた保守値です。通常入力の標準単価、アプリの版付き原価推計、請求額とは分けます。過去289行を変更せず、今回の6行だけを追記しました。
 
-系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 51、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 160、`availability` 14、`other` 38です。
+系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 52、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 160、`availability` 14、`other` 38です。
 
 The [production guest-proof smoke](../production-guest-proof-smoke-2026-11-06.md) has two observations of one submission: an unfinished snapshot and a terminal UI failure follow-up. The latter links to the former through `overlap_with`; the prior 470 rows remain byte-for-byte unchanged. The first observed failure gives a 1522.140-second UI observation upper bound, not an exact backend execution time or a diagnosed mathematical failure. Existing chart rules exclude the overlapping follow-up from success and failure aggregates; they do not coalesce these observations into a latest-outcome point or count them as two independent trials.
 
