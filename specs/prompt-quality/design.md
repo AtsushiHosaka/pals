@@ -184,3 +184,29 @@ After deployment, establish a real baseline using the selected account, publish/
 back/fetch it, and render the fetched observations. A later distinct candidate can
 be compared with matching controls and a holdout dataset. Human calibration remains
 necessary before selecting a prompt from small benchmark changes.
+
+## Further generator-policy experiments
+
+Issue #321 authorizes another bounded policy improvement. Both arms use repaired
+agent64f01b8 and the ce5cd2f conclusion projector; only the generator suffix differs.
+The v4 baseline is byte-identical to the prior v4 policy. A new policy-pair schema
+allows two identified nonempty suffixes without weakening the older empty-baseline
+loader. A manifest selects an explicit population and verifies all controls and
+content-free case/source inventories, including disjoint development/holdout cases.
+The original strict comparator must accept the untouched records.
+
+Candidate design uses only the exposed six-question evidence. Another agent authors
+and actually compiles three substantive fixtures without reading the candidate.
+The question/reference content remains sealed during development. At most two
+development candidates are measured, retaining failed attempts. A final selected
+policy is frozen before opening the additional population; an exclusive stable
+marker binds that policy/source identity and private journal, allowing observation
+recovery but preventing adaptation followed by a second opening. Fresh v4 and
+candidate runs use two repetitions per case with fixed source/model/judge/rubric
+and execution limits. Individual changes, delivery failures and unavailable scores
+remain explicit; historical collector changes never become an uncontrolled gain.
+
+The recorded selection preference is no delivered-answer or confirmed-content
+regression, nonnegative clarity and concision case means, and at least one positive
+mean; it is exploratory and never production promotion. Added authored cases and
+LLM grades do not replace a representative sample or human calibration.

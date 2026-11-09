@@ -10,7 +10,7 @@
 PYTHONPATH=pals-observability/src pals-observability/.venv/bin/python \
   -m pals_observability.prompt_quality_registry \
   --registry pals-observability/datasets/benchmark-problems-ja-v1.json \
-  --dataset pals-observability/datasets/undergraduate-regression-ja-v2.json
+  --dataset pals-observability/datasets/undergraduate-regression-ja-v3.json
 ```
 
 新しい問題を登録するときは、同じコマンドに`--register-case 問題ID --dataset-commit 完全なコミットID --topic-group 分野ID --split regression`を追加します。データセットを保存した正確なコミットを指定します。今後用意する検証用問題は、調整前に`prospective_holdout`として分離し、関連する問題を同じ側にまとめます。結果を見て調整に使ったら、その問題は以後の未知の検証には使いません。
@@ -75,7 +75,7 @@ PYTHONPATH=pals-observability/src pals-observability/.venv/bin/python \
 
 ## 追加した証明問題の再評価
 
-現在の問題一覧は11題です。元の8題を保持し、新規3題を`undergraduate-regression-ja-v2.json`に追加しています。入力のLeanソースはobservabilityの`datasets/lean/`に置き、コンパイルの生出力はローカルに保存します。
+この追加時点の問題一覧は11題です。元の8題を保持し、新規3題を`undergraduate-regression-ja-v2.json`に追加しています。入力のLeanソースはobservabilityの`datasets/lean/`に置き、コンパイルの生出力はローカルに保存します。
 
 新しい3題の説明比較は、`prompt_quality_replay`の代わりに`prompt_quality_local_replay`を使います。マニフェストに処理系の出典、各ソースと実コンパイル記録のハッシュ、対象定理を指定します。コマンドは実際に再コンパイルし、元と同じ生成・公開レビュー・採点へ進みます。環境はPATH、LEAN_PATH、LANG、LC_ALL、TMPDIRだけで、モデルの認証情報はコンパイラに渡しません。本番の証明記録を偽造しません。
 
@@ -88,3 +88,22 @@ Issue #319の比較は、両条件とも同じv4の生成指示を使い、QAの
 条件ごとに独立したプロセスとジャーナルを使います。実装が違うため実際の設定ハッシュも異なり、元のプロンプト比較器へ通すために書き換えません。取得した2記録は`compare_treatment_runs`で、許された変更と固定条件を照合して比較します。欠測や回答失敗を含む12組すべてを確認し、採点できた組の差だけで改善と判断しません。
 
 [今回の結果](prompt-quality-qa-conclusion-fix-2026-11-09.md)に、CloudWatchの読み戻しハッシュ、改善・悪化・同点、問題ごとの差、採点器の不確かさを記録しました。本番反映には別のリリース検証が必要です。
+
+## 修正済み実装で生成指示だけを変える
+
+v5・v6以後の実験には`pals_observability.prompt_quality_policy_experiment`を使います。QA・APIを両側で同じ修正済み実装に固定し、識別子付きの非空の基準方針と候補方針を比較します。古い空の基準方針用ローダーや厳密比較器は変更しません。今回のデータセットはv3の14題で、元のv2の11題と履歴も保持しています。レジストリのデータセットのコミット・パス・内容SHAは、実際に登録した版へ合わせて点検します。
+
+```bash
+PYTHONPATH=pals-observability/src pals-agent/.venv/bin/python \
+  -m pals_observability.prompt_quality_policy_experiment \
+  --manifest /非公開の作業場所/experiment.json \
+  --population fixed6 \
+  --output-dir /非公開の作業場所/空の既存ディレクトリ \
+  --preflight-only
+```
+
+実ソース、生成と修正時の指示、factory、APIの結論追加、Leanの出典を照合した後、最後のフラグを外すと明示した比較を実行します。問題・証明の内容を含まない一覧で、調整用と追加群の重複を拒否します。追加群の本文は調整時に読み込まず、候補を凍結してから専用ジャーナルと開封記録へ結び付けます。一度開いた追加群で候補を変更し、未知の検証に成功したとは扱いません。
+
+未採点や拒否は元の分母に残し、修正稿の条件や論理も確認します。一般的な正答率、理解度、本番の動作と、LLMによる説明の採点は区別します。特に、採点器の満点でも条件の書き換えを見逃したため、[実文分析](prompt-quality-v6-analysis-2026-11-09.md)を併用します。
+
+AWS認証が切れたときは、確定した記録を保持して送信だけを待ちます。通常の`aws sso login --profile pals-prod-member`で認証が回復した後、保存・同一読み戻し・再取得を行います。数学の評価や不明な外部呼び出しは再送しません。未取得の図には「ローカル計測値・CloudWatch取得待ち」を表示し、CloudWatchを出典にした図とは別の名前で保存します。

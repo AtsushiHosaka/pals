@@ -45,3 +45,13 @@ QA/conclusion repair, issue #319; starting parent fe3ecf0 / observability 896421
 - [x] Update problem observations, evidence and quality ledger/charts; run relevant checks and publish only this task's changes. Distinguish source/measurement completion from production release acceptance.
 
 Production follow-up is separate: worker exact-source agent-regression and full release acceptance remain unverified; do not promote these replay measurements to deployed acceptance.
+
+Further quality iteration, issue #321; starting parent844286c / observability9d86c2e:
+
+- [x] PQ-018: implement frozen same-runtime policy-pair experiments with real preflight, actual fixed projection, strict comparison and separate population journals.
+- [x] PQ-019: independently author/compile/audit three new substantive proof fixtures and preserve input-preparation failures; keep content out of candidate design until final freeze.
+- [x] Inspect existing failures, freeze v5 then v6 on exposed cases, and run 60 fresh real trials: 24 v4/v5 on fixed6, 24 v4/v6 on fixed6, then 12 v4/v6 on the sealed additional3 after final selection. Preserve the flat/worse additional-population scores and confirmed hypothesis mismatch; do not promote v6.
+- [x] Publish/read back/fetch all six closed actual records through CloudWatch, independently recompute gains/losses/missingness and show both fixed and additional populations in charts.
+- [x] Extend the problem registry/evidence/quality ledger append-only, regenerate charts, run checks, and publish only this chat's source and data. Production gates remain separate.
+
+All six closed records were published, read back identically and fetched from CloudWatch after normal AWS SSO reauthentication. The earlier expiry occurred before publication; completed model trials were not repeated. Both local previews and separately named CloudWatch-derived figures retain gains, losses and missingness. Registry now contains14 cases/76 observations with the original11 cases/37 observations unchanged. The ledger contains548 rows, preserving the540-row byte prefix and adding six replay-arm plus two input-compiler groups; its audit and six regenerated charts passed. Observability checks passed1,298 tests, with one explicit live Langfuse skip, Ruff and strict mypy34sources. Additional findings and actual measurement scope are recorded in `docs/prompt-quality-v6-analysis-2026-11-09.md`. Ordinary worker telemetry lacks policy identification and production release acceptance remains separately blocked in#319.
