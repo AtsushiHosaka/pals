@@ -13,7 +13,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-2026-08-28から2026-11-06までの472行です。出典の内訳は、docsが227行、pals-agentのPRが80行、palsのIssueが137行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
+現在は2026-11-09までの479行です。2026-11-06時点の472行の出典は、docsが227行、pals-agentのPRが80行、palsのIssueが137行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
 
 11月5日の説明回帰は、[Agent #50の記録](https://github.com/AtsushiHosaka/pals-agent/blob/36ea6a2b106d5782ca2012b8a75ee4fbfa4c2b52/testdata/explanation-grounding-v1/README.md)に対応する9行を追加しました。初回の同条件比較、書式不備で採点を除外したQA、不備を直した負例、最終修正後の確認を分けています。実モデル24呼出しの推計費用0.02573375 USDを重複なく記録しました。初回比較は両版2/2で、精度向上は確認していません。後の別条件の結果を加えて改善率を作りません。
 
@@ -32,6 +32,8 @@ The [production guest-proof smoke](../production-guest-proof-smoke-2026-11-06.md
 同日の[seq18署名更新](../seq18-renewal-result-2026-11-05.md)後の稼働確認も1行記録しました。7サービスのその時点のコンテナ状態であり、継続的な稼働率や回答成功率ではありません。
 
 [容量の読み取り調査](../aws-cost-capacity-2026-11-05.md)も1行記録しました。分母9はメトリクスの系列数で、各系列は72時間・864点です。CPUやメモリの観測であり、成功率・モデル費用・リクエストの所要時間は空欄にしています。
+
+[リリース時5xxの調査](../release-5xx-cause-and-control-2026-11-09.md)では、seq29の三つの接続先登録解除区間と受信した通知を照合し、一つのリリース事象として追記しました。既存477行は保持しています。約8分31秒・8分27秒・14分1秒は登録解除から接続先の正常確認までの区間で、個別の回答時間ではありません。九回のdrain拒否や内部の要求数を独立試行へ加算せず、5xxの内訳・アクセス元・残ったclaimの出自は未確定としています。
 
 ## 台帳だけを検査する
 
@@ -83,6 +85,16 @@ The [guarded owner postponement](../settings-production-release-2026-11-05.md) a
 Two [release handoff checks](../settings-production-release-2026-11-05.md) add fresh previous-runtime health and one composite read-only readiness snapshot, preserving the prior 395 rows byte-for-byte. The isolated settings candidate remains on HOLD; integrated [Web #56](https://github.com/AtsushiHosaka/pals-webfront/pull/56), merge `82867a02`, is the next source candidate. These observations neither claim ownership nor admit or activate a release, and do not establish deployment acceptance.
 
 The [actual production settings checks](https://github.com/AtsushiHosaka/pals/issues/265) add three distinct records after the integrated release: all three desktop, phone-width and native 200% Chrome zoom layouts passed; one phone-width empty-identifier notice passed; and Escape focus return passed on desktop but failed on a clean phone-width viewport ([P3 #285](https://github.com/AtsushiHosaka/pals/issues/285)). Both forms retained 20px spacing with 36 real notation rows and no horizontal overflow. The focus defect is separate from layout acceptance, does not establish a keyboard trap, and uses the same focus source path as pre-repair `41b3d1c`. These were visual and transient validation checks without account saves or API writes; phone-width emulation is not physical-phone verification.
+
+## November 8 reliability audit
+
+The [release reliability audit](../release-reliability-audit-2026-11-08.md) adds one composite public-ingress observation: Web and API health both returned HTTP 503 during an active cutover. This is one operational failure, not two users, a mathematical trial, or a product-wide failure rate. The prior 472 rows remain byte-for-byte unchanged; the ledger now has 473 rows. CloudWatch aggregate counts and code-probe/unit-test results are documented in the audit and are not added as independent product trials.
+
+The subsequent [repair record](../reliability-repair-2026-11-08.md) adds two operational observations, bringing the ledger to 475 rows: the same ingress episode's successful follow-up (linked as overlapping, not a second trial), and one composite real SSM transport check across the two existing hosts. Neither is counted as successful mathematical answering or activation of the repaired images. The first 473 rows remain unchanged.
+
+The [November 9 real local qualification](../local-release-qualification-2026-11-09.md) adds one failed trial, bringing the ledger to 476 rows and preserving the prior 475 rows byte-for-byte. The AMD64 emulator could not establish the mandatory Lean sandbox; the failure is runtime unavailability, not evidence that the mathematical statement is invalid. Nineteen actual model calls cost a versioned-price upper-bound estimate of US$0.141154; they are internal calls for one trial. There was no completed-answer/save/render/reload acceptance and no production deployment.
+
+同じ[ローカル検証記録](../local-release-qualification-2026-11-09.md)の二回目を1行追加し、既存476行を保持しました。ネイティブARM64の実Leanコンパイルは成功しましたが、ローカルDBの行ロック権限不足で結果を保存できず、受入は不合格でした。追加8呼び出しの保守的見積もり0.030474ドルだけを新行に記録し、合計27呼び出し・0.171628ドルを二重計上していません。本文の完了・保存・表示・再読込には到達しておらず、ローカル権限の追加も承認待ちです。
 
 ## グラフ
 
