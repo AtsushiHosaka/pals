@@ -35,3 +35,6 @@
 | 2026-11-08 | 本番の障害（seq27 cutover の停止、01:19〜08:19 JST） | [production-incident-seq27-halt](entries/2026-11-08-production-incident-seq27-halt.md) |
 | 2026-11-09 | x² の検証結果キャッシュの有効化の段取り（検証器 image は必ず変わる。toolchain hash の導出は未確認） | [verifier-cache-enablement-plan](entries/2026-11-09-verifier-cache-enablement-plan.md) |
 | 2026-11-10 | 訂正: 「本番の修復上限は3」は main の既定で、本番（seq29、配備物の読み取り）は6の見込み。コンテナ env は未確認 | [prod-repair-limit-correction](entries/2026-11-10-prod-repair-limit-correction.md) |
+| 2026-11-10 | 机上試算: 時間・費用が失敗実行にどう偏るか、修復上限・早期停止の反事実（モデル呼び出し0回） | [offline-savings-analysis](entries/2026-11-10-offline-savings-analysis.md) |
+| 2026-11-10 | 早期停止の専用終了理由（#91、既定 off）。既存の停止は API に拒否され、本番で働くのは harness 不一致だけ | [early-stop-terminal-reason](entries/2026-11-10-early-stop-terminal-reason.md) |
+| 2026-11-10 | import plan を検証器へ接続（#92、既定 off、実モデル測定なし） | [import-plan-verifier](entries/2026-11-10-import-plan-verifier.md) |
