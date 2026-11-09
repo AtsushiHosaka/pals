@@ -1,0 +1,594 @@
+{
+ "F01": [
+  {
+   "name": "Stacks.Algebraization.quasiAffine_neighbourhoodSectionsComplete_implies_amplePower",
+   "module": "StacksFrontier.AlgebraicGeometry.FormalGeometry.CompletionFullyFaithful.Neighbourhoods",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.Divisors.mulGlobalFunction",
+   "module": "StacksFrontier.AlgebraicGeometry.Divisors.IdealSheafGlobalSectionGenerators",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.EtaleCohomology.QcqsLimitCohomology.preimage_oneHypercover_data",
+   "module": "StacksFrontier.AlgebraicGeometry.EtaleCohomology.Colimits.QcqsEtaleCohomologyColimitGlobal",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.FormalFunctions.isQuasicoherent_unit_structureSheafRing",
+   "module": "StacksFrontier.AlgebraicGeometry.FormalFunctions.StalkFlatBaseChange",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.AlgebraicGeometry.AmpleLimit.exists_isAmple_pullback_map_of_sectionsDescent",
+   "module": "StacksFrontier.AlgebraicGeometry.AmpleLimit.Basic",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.Divisors.unitGlobalSection",
+   "module": "StacksFrontier.AlgebraicGeometry.Divisors.IdealSheafGlobalSectionGenerators",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.Scheme.Modules.isAmple_unit",
+   "module": "StacksFrontier.AlgebraicGeometry.Ample.StructureSheaf",
+   "trust": "frontier",
+   "in_B": true
+  },
+  {
+   "name": "Stacks.AmpleTheory.isAmple_unitModule_iff_isBasisAffineNonvanishing",
+   "module": "StacksFrontier.AlgebraicGeometry.AmpleTheory.Basic",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.unitGeneratingSections",
+   "module": "StacksFrontier.AlgebraicGeometry.ResolutionOfSurfaces.RationalSingularities.ExceptionalIdealPowers",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "SheafOfModules.preservesFiniteLimits_openSubspaceRestriction",
+   "module": "StacksFrontier.AlgebraicGeometry.Modules.OpenSubspaceRestrictionTransport",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.Scheme.not_isZero_unit_toRingedSpace",
+   "module": "StacksFrontier.AlgebraicGeometry.Nondegeneracy.StructureSheafNotIsZero",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.Modules.isQuasicoherent_of_isFinitePresentation",
+   "module": "StacksFrontier.AlgebraicGeometry.Modules.FinitePresentationPullbackScheme",
+   "trust": "frontier",
+   "in_B": false
+  }
+ ],
+ "F02": [
+  {
+   "name": "AlgebraicGeometry.isProjectiveMorphism_projectiveSpaceOver",
+   "module": "StacksFrontier.AlgebraicGeometry.ProjectiveSpace.SmoothProjectiveVariety",
+   "trust": "frontier",
+   "in_B": true
+  },
+  {
+   "name": "Stacks.DerivedIndexing.rightAcyclic_iff_forall_nat",
+   "module": "StacksFrontier.Homology.DerivedIndexing.Basic",
+   "trust": "frontier",
+   "in_B": true
+  },
+  {
+   "name": "AlgebraicGeometry.IsProjectiveMorphism.comp",
+   "module": "StacksFrontier.AlgebraicGeometry.Morphisms.Proper.Projective",
+   "trust": "frontier",
+   "in_B": true
+  },
+  {
+   "name": "Stacks.Modules.isQuasicoherent_of_isFinitePresentation",
+   "module": "StacksFrontier.AlgebraicGeometry.Modules.FinitePresentationPullbackScheme",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.isProjectiveMorphism_id",
+   "module": "StacksFrontier.AlgebraicGeometry.Chow.SplittingPrinciple.TowerProjective",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "SheafOfModules.preservesFiniteLimits_openSubspaceRestriction",
+   "module": "StacksFrontier.AlgebraicGeometry.Modules.OpenSubspaceRestrictionTransport",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.IsProjectiveMorphism.iso_comp",
+   "module": "StacksFrontier.AlgebraicGeometry.FundamentalGroup.PurityRamification.ResolutionSpreadOutProjective",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.Space.PrivateChern.instHasCokernelsModules",
+   "module": "StacksFrontier.AlgebraicGeometry.Spaces.Chow.ChernClassDualFiltered",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.IsProjectiveMorphism.of_iso",
+   "module": "StacksFrontier.AlgebraicGeometry.QuasiProjective.HProjective",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.EtaleCohomology.QcqsLimitCohomology.preimage_oneHypercover_data",
+   "module": "StacksFrontier.AlgebraicGeometry.EtaleCohomology.Colimits.QcqsEtaleCohomologyColimitGlobal",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.ProperRelativeAmpleProjective.isProjectiveMorphism_iso_hom_comp",
+   "module": "StacksFrontier.AlgebraicGeometry.ProperRelativeAmpleProjective.Basic",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.Sheaves.RelationSheaf.hasColimitsOfShape_discreteNat",
+   "module": "StacksFrontier.Algebra.Category.ModuleCat.Sheaf.PullbackFlatInverseImage",
+   "trust": "frontier",
+   "in_B": false
+  }
+ ],
+ "F03": [
+  {
+   "name": "Stacks.Algebraization.NonAlgebraizableExample.subsingleton_picardGroup_ambientOpen",
+   "module": "StacksFrontier.AlgebraicGeometry.FormalGeometry.AlgebraizationCoherentFormal.NonAlgebraizablePicard",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.subsingleton_picardGroup_spec_field",
+   "module": "StacksFrontier.AlgebraicGeometry.EtaleCohomology.CohomologyOfAPoint",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.Algebraization.NonAlgebraizableExample.subsingleton_picardGroup_situationOpen",
+   "module": "StacksFrontier.AlgebraicGeometry.FormalGeometry.AlgebraizationCoherentFormal.NonAlgebraizablePicard",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.PuncturedSpectrumArtinian.subsingleton_picardGroup_of_discreteTopology",
+   "module": "StacksFrontier.AlgebraicGeometry.PicardGroup.PuncturedSpectrumDimensionOne",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.PicardUFD.subsingleton_picardGroup_projectiveSpaceOverRing_zero",
+   "module": "StacksFrontier.AlgebraicGeometry.PicardUFD.ProjectiveSpaceRigidity",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.Scheme.subsingleton_picardGroup",
+   "module": "StacksFrontier.AlgebraicGeometry.PicardGroup.Scheme",
+   "trust": "frontier",
+   "in_B": true
+  },
+  {
+   "name": "Stacks.PicardUFD.subsingleton_picardGroup_dim_zero",
+   "module": "StacksFrontier.AlgebraicGeometry.PicardUFD.ProjectiveSpaceCocycle",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.PicardUFD.subsingleton_picardGroup_open_affineSpace",
+   "module": "StacksFrontier.AlgebraicGeometry.PicardGroup.OpenUFD",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.AlgebraicGeometry.Refute05M5Heart.subsingleton_specRat",
+   "module": "StacksFrontier.AlgebraicGeometry.Heart.Basic",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.PicardUFD.subsingleton_picardGroup_basicOpen",
+   "module": "StacksFrontier.AlgebraicGeometry.PicardGroup.OpenUFD",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.VectorBundleCodimensionOne.subsingleton_spec_field",
+   "module": "StacksFrontier.AlgebraicGeometry.Descent.VectorBundleCodimensionOne.Counterexample",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Deformation.Examples.subsingleton_specField",
+   "module": "StacksFrontier.Deformation.Examples.Geometric.SchemeMorphismObstructionPulledIdeal",
+   "trust": "frontier",
+   "in_B": false
+  }
+ ],
+ "F04": [
+  {
+   "name": "Stacks.Chow.isEffectiveCartierDivisor_fibreIdealAtInfinity",
+   "module": "StacksFrontier.AlgebraicGeometry.Chow.InfinityCentreBlowup",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.isEffectiveCartierDivisor_comap_of_mem_prod",
+   "module": "StacksFrontier.AlgebraicGeometry.Blowup.Transform.FittingProduct",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.Blowup.isEffectiveCartierDivisor_comap_relativeProjToBase",
+   "module": "StacksFrontier.AlgebraicGeometry.Spaces.BlowupDivisorPullback",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.isEffectiveCartierDivisor_mul",
+   "module": "StacksFrontier.AlgebraicGeometry.Divisors.EffectiveCartier.Sum",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.Divisors.Eta.DerivedEta",
+   "module": "StacksFrontier.AlgebraicGeometry.Divisors.EtaDerivedQuasicoherent",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.isEffectiveCartierDivisor_finsetProd_pow",
+   "module": "StacksFrontier.AlgebraicGeometry.Divisors.WeilDivisorClass.FirstChernClassSurjective",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.Divisors.exists_affineOpen_ideal_mul_eq_span",
+   "module": "StacksFrontier.AlgebraicGeometry.DivisorSum.Basic",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.isEffectiveCartierDivisor_comap_of_mul_eq",
+   "module": "StacksFrontier.AlgebraicGeometry.Blowup.Transform.FittingProductAll",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.Divisors.IsEffectiveCartierDivisor.mul",
+   "module": "StacksFrontier.AlgebraicGeometry.Divisors.DivisorPicardClass",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.Blowup.isEffectiveCartierDivisor_exceptionalIdeal",
+   "module": "StacksFrontier.AlgebraicGeometry.Blowup.ExceptionalCartier",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.Divisors.picardClass_mul",
+   "module": "StacksFrontier.AlgebraicGeometry.Divisors.DivisorPicardClass",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.Divisors.invertibleSheafSumIso",
+   "module": "StacksFrontier.AlgebraicGeometry.Divisors.InvertibleSheafSum",
+   "trust": "frontier",
+   "in_B": false
+  }
+ ],
+ "F05": [
+  {
+   "name": "AlgebraicGeometry.isVariety_Spec_map_algebraMap",
+   "module": "StacksFrontier.AlgebraicGeometry.Morphisms.Smooth.LocalizationAwayPolynomial",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.isVariety_generalLinearTwoPowerStructureMap",
+   "module": "StacksFrontier.AlgebraicGeometry.Spaces.Groupoids.GroupSpaces.GeneralLinearTwoPowerSmooth",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.GenericFiniteEtale.isCurve_specMap_away",
+   "module": "StacksFrontier.AlgebraicGeometry.Curves.AffineLineBasicOpenCurve",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.IsVariety",
+   "module": "StacksFrontier.AlgebraicGeometry.Variety.Defs.Basic",
+   "trust": "frontier",
+   "in_B": true
+  },
+  {
+   "name": "AlgebraicGeometry.specMap_algebraMap_comp",
+   "module": "StacksFrontier.AlgebraicGeometry.Variety.Geometrically.BaseChange",
+   "trust": "frontier",
+   "in_B": true
+  },
+  {
+   "name": "Stacks.GenericFiniteEtale.exists_finite_etale_away_mvPolynomial",
+   "module": "StacksFrontier.RingTheory.Etale.FiniteEtaleAffineSpace",
+   "trust": "frontier",
+   "in_B": true
+  },
+  {
+   "name": "AlgebraicGeometry.flat_spec_map_algebraMap",
+   "module": "StacksFrontier.AlgebraicGeometry.Variety.Geometrically.FaithfullyFlatStalk",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "isNormalRing_integralClosure_fractionRing_of_finite_minimalPrimes",
+   "module": "StacksFrontier.AlgebraicGeometry.NormalizationBaseChange.Separable",
+   "trust": "frontier",
+   "in_B": true
+  },
+  {
+   "name": "AlgebraicGeometry.exists_nonempty_open_iso_spec_of_isFractionRing_of_field",
+   "module": "StacksFrontier.AlgebraicGeometry.MoreMorphisms.GenericFibre.ModelOverField",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.EtaleCohomology.smooth_specMap_algebraMap_polynomial",
+   "module": "StacksFrontier.AlgebraicGeometry.EtaleCohomology.FourierDeligne.FourierTwistModelFinite",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.locallyOfFiniteType_specMap",
+   "module": "StacksFrontier.AlgebraicGeometry.Smooth.SmoothLocusAffine",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "IsIntegralClosure.universallyOpen_specMap_algebraMap",
+   "module": "StacksFrontier.RingTheory.DedekindDomain.IntegralClosureFlat",
+   "trust": "frontier",
+   "in_B": false
+  }
+ ],
+ "F06": [
+  {
+   "name": "AlgebraicGeometry.isProper_of_isProjectiveMorphism",
+   "module": "StacksFrontier.AlgebraicGeometry.Morphisms.Proper.Projective",
+   "trust": "frontier",
+   "in_B": true
+  },
+  {
+   "name": "Deformation.Artin.isSmoothOnPredeformationCategories_of_isRelativelySmooth",
+   "module": "StacksFrontier.Deformation.Artin.Versality.SmoothPredeformation",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.isProjectiveMorphism_iff_isHQuasiProjective_and_isProper",
+   "module": "StacksFrontier.AlgebraicGeometry.QuasiProjective.HProjective",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.WeilCohomology.SmoothProjective.isProper_hom_left",
+   "module": "StacksFrontier.AlgebraicGeometry.WeilCohomology.ClassicalTheoryChow",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.PicardCurve.isProper_of_isPullback",
+   "module": "StacksFrontier.AlgebraicGeometry.PicardScheme.CurvePicard.SectionDivisor",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.WeilCohomology.SmoothProjective.isProper",
+   "module": "StacksFrontier.AlgebraicGeometry.WeilCohomology.ClassicalTheoryChow",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.Modules.isQuasicoherent_of_isFinitePresentation",
+   "module": "StacksFrontier.AlgebraicGeometry.Modules.FinitePresentationPullbackScheme",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.SteinFactorization.IsSteinFactorization",
+   "module": "StacksFrontier.AlgebraicGeometry.MoreMorphisms.SteinFactorization.Noetherian",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.ProperCoherenceFrontier.higherDirectImageIsCoherent_of_integralIdeals",
+   "module": "StacksFrontier.AlgebraicGeometry.ProperCoherenceFrontier.Basic",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.TwoAffineCech.isProper_of_isPullback",
+   "module": "StacksFrontier.AlgebraicGeometry.TwoAffineCech.OverScheme",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.CoherentConverse.isProper_projToSpecCoeff",
+   "module": "StacksFrontier.AlgebraicGeometry.DerivedVarieties.CoherentConverse.Assembly",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.ProperCoherenceFrontier.forall_moduleFinite_cohomology_iff_integralIdeals",
+   "module": "StacksFrontier.AlgebraicGeometry.ProperCoherenceFrontier.Basic",
+   "trust": "frontier",
+   "in_B": false
+  }
+ ],
+ "F07": [
+  {
+   "name": "Stacks.AmpleRestrict.isInvertible_pullback",
+   "module": "StacksFrontier.AlgebraicGeometry.FormalGeometry.CompletionFullyFaithful.AmpleRestrict",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.AlgebraicGeometry.AmpleLimit.algebraicGeometryIsInvertible_pullback",
+   "module": "StacksFrontier.AlgebraicGeometry.AmpleLimit.Basic",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.AlgebraicGeometry.AmpleLimit.transportSection",
+   "module": "StacksFrontier.AlgebraicGeometry.AmpleLimit.Basic",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.Space.exists_isOpenSubspace_factors_iff_isRelativelyAmple_of_isProper",
+   "module": "StacksFrontier.AlgebraicGeometry.Spaces.Limits.ProperLimitOfFinitePresentationEmbedding",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.Modules.instIsInvertiblePullbackObj",
+   "module": "StacksFrontier.AlgebraicGeometry.PullbackInvertible.Basic",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.Space.exists_le_isRelativelyAmple_fibre_of_isRelativelyAmple_fibre",
+   "module": "StacksFrontier.AlgebraicGeometry.Spaces.Limits.RelativeAmpleFibreStage",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.Modules.isInvertible_pullback",
+   "module": "StacksFrontier.AlgebraicGeometry.PullbackInvertible.Basic",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.Space.exists_isOpenSubspace_factors_iff_isRelativelyAmple_of_finitePresentationEmbedding",
+   "module": "StacksFrontier.AlgebraicGeometry.Spaces.Limits.ProperLimitOfFinitePresentationEmbedding",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.VectorBundleKZero.isInvertible_toRingedSpace",
+   "module": "StacksFrontier.AlgebraicGeometry.Chow.SecondAdamsOperator",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.AmplePredicateBridge.stacksIsInvertible",
+   "module": "StacksFrontier.AlgebraicGeometry.AmplePredicateBridge.Basic",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.Space.exists_mem_isRelativelyAmple_openSub_of_forall_isRelativelyAmple_residueField",
+   "module": "StacksFrontier.AlgebraicGeometry.Spaces.AmpleSchemeFibreTwistAndNeighbourhood",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.SectionProduct.isInvertible_stacks",
+   "module": "StacksFrontier.AlgebraicGeometry.SectionProduct.MulSecInjective",
+   "trust": "frontier",
+   "in_B": false
+  }
+ ],
+ "F08": [
+  {
+   "name": "AlgebraicGeometry.isProjectiveMorphism_projectiveSpaceOver",
+   "module": "StacksFrontier.AlgebraicGeometry.ProjectiveSpace.SmoothProjectiveVariety",
+   "trust": "frontier",
+   "in_B": true
+  },
+  {
+   "name": "Stacks.SectionsVanishingOnSubscheme.exists_projective_smooth_geometricallyIrreducible_divisor_pair",
+   "module": "StacksFrontier.AlgebraicGeometry.Variety.Bertini.ProjectiveDivisorReduction",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.SectionsVanishingOnSubscheme.exists_projective_smooth_geometricallyIrreducible_curve_pair",
+   "module": "StacksFrontier.AlgebraicGeometry.Variety.Bertini.ProjectiveDivisorReduction",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.IsProjectiveMorphism.comp",
+   "module": "StacksFrontier.AlgebraicGeometry.Morphisms.Proper.Projective",
+   "trust": "frontier",
+   "in_B": true
+  },
+  {
+   "name": "SheafOfModules.preservesFiniteLimits_openSubspaceRestriction",
+   "module": "StacksFrontier.AlgebraicGeometry.Modules.OpenSubspaceRestrictionTransport",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.isProjectiveMorphism_id",
+   "module": "StacksFrontier.AlgebraicGeometry.Chow.SplittingPrinciple.TowerProjective",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.Duality.CompositionData.tripleHq'",
+   "module": "StacksFrontier.AlgebraicGeometry.Duality.Compactification.ShriekPseudofunctor.Cocycle",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.exists_isOpenImmersion_projectiveSpaceOfModule_of_isQuasiProjectiveVariety",
+   "module": "StacksFrontier.AlgebraicGeometry.Variety.Projective.QuasiProjectiveEmbedding",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "Stacks.SectionsVanishingOnSubscheme.isProjectiveMorphism_comp_of_isClosedImmersion",
+   "module": "StacksFrontier.AlgebraicGeometry.Variety.Bertini.ProjectiveDivisorReduction",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.IsProjectiveMorphism.iso_comp",
+   "module": "StacksFrontier.AlgebraicGeometry.FundamentalGroup.PurityRamification.ResolutionSpreadOutProjective",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.RingedSpace.restrictHom_eq_morphismRestrict'",
+   "module": "StacksFrontier.AlgebraicGeometry.PseudoCoherent.RestrictTarget",
+   "trust": "frontier",
+   "in_B": false
+  },
+  {
+   "name": "AlgebraicGeometry.IsProjectiveMorphism.of_iso",
+   "module": "StacksFrontier.AlgebraicGeometry.QuasiProjective.HProjective",
+   "trust": "frontier",
+   "in_B": false
+  }
+ ]
+}
