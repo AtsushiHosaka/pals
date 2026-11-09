@@ -324,7 +324,7 @@ F 群の 3 通り（同じカードごと。時間と費用は 1 回の実行の
 - 原因: 開始停止の線（3.85）は、次のカードを始める前に見る。F03 の完了で 3.807 ドルだったため、F04 が始まり、その途中で上限に達した。ハーネスは、各リクエストの前に累計を見て上限を判定するため、最後のリクエストの費用が超過分になる。F04 の c2 は、上限で打ち切られ（`Budget: budget cap reached`）、モデルの失敗としては数えていない。
 - 次に同様の測定を行うときは、開始停止の線を「1 枚あたりの最大費用（約 0.8 ドル）」分、上限から離す。
 - 順 3（c2）は、F01〜F03 の 3 枚しか取れなかった。事前登録の 3 枚未満という見込み（約 3〜5 枚）の下限に収まる。
-- 作業用のビルドの変更点: 事前登録の範囲 B'（523 モジュール）より多い 2,546 モジュールをビルドした（10.3 節）。`imports_outside_B` は、ハーネスではなく、保存した最終ファイルから事後に計算した（[スクリプト](scheme-theory-measurement-imports-outside-b-2026-11-09.py)、[出力](scheme-theory-measurement-imports-outside-b-2026-11-09.json)。B' の追加分 523 モジュールは[一覧](scheme-theory-measurement-b-prime-added-modules-2026-11-09.json)）。B の外のモジュールを import したのは、腕 d の F04 と F07 の 2 件だけ（c と c2 の実行には 0 件）。
+- 作業用のビルドの変更点: 事前登録の範囲 B'（523 モジュール）より多い 2,546 モジュールをビルドした（10.3 節）。`imports_outside_B` は、ハーネスではなく、保存した最終ファイルから事後に計算した（[スクリプト](scheme-theory-measurement-imports-outside-b-2026-11-09.py)、[出力](scheme-theory-measurement-imports-outside-b-2026-11-09.json)。B' の追加分 523 モジュールは[一覧（gzip。モジュール名の一部が、秘密検査の AWS キーの形に誤検知されるため、圧縮して置く）](scheme-theory-measurement-b-prime-added-modules-2026-11-09.json.gz)）。B の外のモジュールを import したのは、腕 d の F04 と F07 の 2 件だけ（c と c2 の実行には 0 件）。
 
 ### 10.7 足りない点と次の手
 

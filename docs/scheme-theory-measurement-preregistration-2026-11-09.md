@@ -134,7 +134,7 @@ Frontier 全体（62,972 モジュール、ソース 1.1 GB）の完全なビル
 2. 組み込み済みの範囲の拡張。失敗した F の 5 枚（F03、F04、F05、F07、F08）について、ハーネスの検索を、組み込み済みの範囲 B の絞り込みなしで実行し（[スクリプト](scheme-theory-measurement-range-check-2026-11-09.py)、[出力](scheme-theory-measurement-range-check-2026-11-09.json)）、上位 12 件のうち B の外にある宣言を調べた。
    - 追加するモジュールは、命題に対応する補題（F03: `nonempty_iso_unit_of_isInvertible_spec_isLocalRing`、F04: `Stacks.Divisors.IsEffectiveCartierDivisor.mul`、F05: `isVariety_Spec_map_algebraMap`、F07: `Stacks.Modules.isInvertible_pullback`）を持つ 4 モジュールと、その import 閉包のうち B に無いもの。合計 523 モジュール。補題の選定は私の読みによる判断で、機械的な規則ではない。
    - F08 に対応する補題（`isProjectiveMorphism_isClosedImmersion_comp`）の閉包は +2,437 モジュールで、上限（1,000）を超えるため、追加しない。F08 は範囲が広がらない。
-   - 閉包の計算は、pals-agent PR #86 の import 索引（宣言→モジュール、import の辺）で行った。モジュールの一覧は[データファイル](scheme-theory-measurement-extra-modules-2026-11-09.json)にある。
+   - 閉包の計算は、pals-agent PR #86 の import 索引（宣言→モジュール、import の辺）で行った。モジュールの一覧は[データファイル](scheme-theory-measurement-extra-modules-2026-11-09.json.gz)にある。
    - F05 の補題は `Algebra.Smooth` を仮定するため、カードの仮定（有限生成の整域）では直接は使えない可能性が高い。+1 モジュールなので含めた。
    - 追加後の範囲 B' = B + 523 モジュール。
 
