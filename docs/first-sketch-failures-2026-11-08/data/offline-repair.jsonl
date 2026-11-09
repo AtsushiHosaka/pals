@@ -1,0 +1,14 @@
+{"file": "diag1-calculus_v5_convex_derivative_monotone-1.json", "repaired": true, "steps": ["header", "sorry", "sorry"], "secs": 12.3}
+{"file": "diag1-calculus_v5_second_derivative_minimum-1.json", "repaired": true, "steps": ["header"], "secs": 4.2}
+{"file": "diag2-calculus_v5_second_derivative_minimum-1.json", "repaired": false, "steps": null, "secs": null}
+{"file": "diag2-commalg_v4_clopen_unique_idempotent-1.json", "repaired": true, "steps": ["header"], "secs": 4.2}
+{"file": "diag2-la_reuse_exact_sequence_zero_composite-1.json", "repaired": true, "steps": ["header"], "secs": 4.1}
+{"file": "diag2-la_v6_fredholm_solvability-1.json", "repaired": false, "steps": null, "secs": null}
+{"file": "diag2-la_v6_rectangular_determinant_transfer-1.json", "repaired": true, "steps": ["sorry"], "secs": 4.1}
+{"file": "diag2-mv_foundation_nondifferentiable_minimum-1.json", "repaired": true, "steps": ["header", "sorry"], "secs": 8.3}
+{"file": "diag3-commalg_v4_clopen_unique_idempotent-1.json", "repaired": true, "steps": ["header"], "secs": 4.5}
+{"file": "diag3-la_reuse_exact_sequence_zero_composite-1.json", "repaired": true, "steps": ["header"], "secs": 4.0}
+{"file": "diag3-la_v3_polarization-1.json", "repaired": true, "steps": ["header", "sorry"], "secs": 8.1}
+{"file": "diag3-mv_foundation_exceptional_section_counterexample-1.json", "repaired": false, "steps": null, "secs": null}
+{"file": "diag3-mv_foundation_nondifferentiable_minimum-1.json", "repaired": false, "steps": null, "secs": null}
+{"file": "diag3-mv_v5_absolute_section_criterion-1.json", "repaired": true, "steps": ["header"], "secs": 4.1}
