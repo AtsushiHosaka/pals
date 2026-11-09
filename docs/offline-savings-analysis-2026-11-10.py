@@ -290,7 +290,7 @@ def q2_pinning_and_sketch():
                 share * p * (st.mean(cost(r) for r in ee) - st.mean(cost(r) for r in nn)),
             )
         )
-    for j, lab in ((0, "seconds per card"), (1, "usd per card")):
+    for j, lab in ((0, "SAVING seconds per card (positive = faster; the entry reports it as a negative delta)"), (1, "SAVING usd per card (positive = cheaper)")):
         v = sorted(x[j] for x in res)
         print(f"  desk ceiling {lab}: {st.mean(v):.3f} [{v[int(0.025 * len(v))]:.3f}, {v[int(0.975 * len(v))]:.3f}] (assumes the whole excess of empty-first runs is removed in the fixed share)")
     bb = {r["problem"]: r for r in BASE_A}
