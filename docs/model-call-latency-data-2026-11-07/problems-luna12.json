@@ -1,0 +1,74 @@
+[
+ {
+  "id": "calculus_v5_second_derivative_minimum",
+  "history": "catalog_exact_failed",
+  "statement": "If f′(a)=0 with an actual derivative witness and the derivative function has a positive derivative u at a, then f has an unconstrained local minimum at a.",
+  "formal_statement": "theorem pals_card_target (f : ℝ → ℝ) (a u : ℝ) (hf : HasDerivAt f 0 a) (h2 : HasDerivAt (deriv f) u a) (hu : 0 < u) : IsLocalMin f a"
+ },
+ {
+  "id": "la_v6_rectangular_determinant_transfer",
+  "history": "catalog_exact_failed",
+  "statement": "Over any field K and finite-dimensional K-vector spaces, for rectangular A:n×m and B:m×n, det(Iₙ+AB)=det(Iₘ+BA); consequently one of these square systems is invertible exactly when the other is, even when m≠n.",
+  "formal_statement": "theorem pals_card_target {K : Type*} [Field K] {V : Type*} [AddCommGroup V] [Module K V] [FiniteDimensional K V] {n m : ℕ} (A : Matrix (Fin n) (Fin m) K) (B : Matrix (Fin m) (Fin n) K) : (1+A*B).det=(1+B*A).det ∧ (IsUnit (1+A*B) ↔ IsUnit (1+B*A))"
+ },
+ {
+  "id": "la_v3_polarization",
+  "history": "catalog_exact_failed",
+  "statement": "Let V be any finite-dimensional real inner product space. For all x,y, 4⟨x,y⟩ = ‖x+y‖²-‖x-y‖².",
+  "formal_statement": "theorem pals_card_target {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [FiniteDimensional ℝ V] (x y : V) : 4 * inner ℝ x y = ‖x + y‖ ^ 2 - ‖x - y‖ ^ 2"
+ },
+ {
+  "id": "la_v2_distinct_eigenspaces_intersection",
+  "history": "catalog_exact_failed",
+  "statement": "体 K 上の有限次元ベクトル空間について、a≠b なら f の a 固有空間と b 固有空間の共通部分は零である。",
+  "formal_statement": "theorem pals_card_target {K V : Type*} [Field K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] (f : V →ₗ[K] V) (a : K) (b : K) : a ≠ b → Module.End.eigenspace f a ⊓ Module.End.eigenspace f b = ⊥"
+ },
+ {
+  "id": "la_reuse_exact_sequence_zero_composite",
+  "history": "catalog_exact_failed",
+  "statement": "線形写像 f:M→N、g:N→P が N で完全（im(f)=ker(g)）なら g∘f=0。",
+  "formal_statement": "theorem pals_card_target {R M N P : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R N] [AddCommGroup P] [Module R P] (f : M →ₗ[R] N) (g : N →ₗ[R] P) : LinearMap.range f = LinearMap.ker g → g.comp f = 0"
+ },
+ {
+  "id": "calculus_v2_integral_scalar_linearity",
+  "history": "catalog_exact_failed",
+  "statement": "If f is interval-integrable, multiplying it by any real constant c preserves integrability and multiplies its integral by c.",
+  "formal_statement": "theorem pals_card_target (f : ℝ → ℝ) (a b c : ℝ) (hf : IntervalIntegrable f (MeasureTheory.volume : MeasureTheory.Measure ℝ) a b) : IntervalIntegrable (fun x => c * f x) (MeasureTheory.volume : MeasureTheory.Measure ℝ) a b ∧ (∫ x : ℝ in a..b, c * f x) = c * (∫ x : ℝ in a..b, f x)"
+ },
+ {
+  "id": "mv_foundation_exceptional_section_counterexample",
+  "history": "catalog_exact_failed",
+  "statement": "For all nonempty coordinate dimensions m,n and nonzero real c, there exists a Lebesgue-integrable f on ℝᵐ×ℝⁿ whose entire section at x=0 equals c and is not integrable. Fubini ensures integrable sections almost everywhere, not at every point.",
+  "formal_statement": "theorem pals_card_target (m n : ℕ) (i : Fin m) (j : Fin n) (c : ℝ) (hc : c ≠ 0) :\n ∃ f : ((Fin m → ℝ) × (Fin n → ℝ)) → ℝ,\n MeasureTheory.Integrable f ∧ (∀ y, f (0,y) = c) ∧ ¬ MeasureTheory.Integrable (fun y => f (0,y))"
+ },
+ {
+  "id": "la_v6_fredholm_solvability",
+  "history": "catalog_exact_failed",
+  "statement": "Over any field K and finite-dimensional K-vector spaces, f(x)=y is solvable exactly when every linear functional on W annihilating all outputs of f also annihilates y.",
+  "formal_statement": "theorem pals_card_target {K : Type*} [Field K] {V : Type*} [AddCommGroup V] [Module K V] [FiniteDimensional K V] {W : Type*} [AddCommGroup W] [Module K W] [FiniteDimensional K W] (f : V →ₗ[K] W) (y : W) : (∃ x, f x = y) ↔ ∀ phi : W →ₗ[K] K, (∀ x, phi (f x) = 0) → phi y = 0"
+ },
+ {
+  "id": "mv_v5_absolute_section_criterion",
+  "history": "catalog_exact_failed",
+  "statement": "For product-a.e. strongly measurable real f on ℝᵐ×ℝⁿ, product integrability is equivalent to almost every right section being integrable and x↦∫y |f(x,y)| being integrable. Signed iterated integrals alone are insufficient.",
+  "formal_statement": "theorem pals_card_target (m n : ℕ) (f : ((Fin m → ℝ) × (Fin n → ℝ)) → ℝ) (hf : MeasureTheory.AEStronglyMeasurable f) : MeasureTheory.Integrable f ↔ (∀ᵐ x, MeasureTheory.Integrable (fun y => f (x,y))) ∧ MeasureTheory.Integrable (fun x => ∫ y, ‖f (x,y)‖)"
+ },
+ {
+  "id": "mv_foundation_nondifferentiable_minimum",
+  "history": "catalog_exact_failed",
+  "statement": "On any finite-dimensional real inner-product space with a nonzero vector, there exists a function with a local minimum at the origin that is not differentiable there. A local minimum does not imply the differentiability premise of Fermat’s theorem.",
+  "formal_statement": "theorem pals_card_target (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] (u : E) (hu : u ≠ 0) : ∃ f : E → ℝ, IsLocalMin f 0 ∧ ¬DifferentiableAt ℝ f 0"
+ },
+ {
+  "id": "commalg_v4_clopen_unique_idempotent",
+  "history": "catalog_exact_failed",
+  "statement": "For any commutative ring R, every clopen subset T of Spec R is D(e) for a unique idempotent e∈R.",
+  "formal_statement": "theorem pals_card_target {R : Type*} [CommRing R] (T : Set (PrimeSpectrum R)) (hT : IsClopen T) : ∃ x : R, IsIdempotentElem x ∧ T = PrimeSpectrum.basicOpen x ∧ ∀ y : R, IsIdempotentElem y ∧ T = PrimeSpectrum.basicOpen y → y = x"
+ },
+ {
+  "id": "calculus_v5_convex_derivative_monotone",
+  "history": "catalog_exact_failed",
+  "statement": "A differentiable globally convex real function has a nondecreasing derivative.",
+  "formal_statement": "theorem pals_card_target (f : ℝ → ℝ) (hc : ConvexOn ℝ Set.univ f) (hf : Differentiable ℝ f) : Monotone (deriv f)"
+ }
+]
