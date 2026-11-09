@@ -37,10 +37,12 @@ Lean 検査で失敗した14件の内訳です。「直った」は、後述の�
 | タクティクの失敗(`linarith` など) | 1 | 7% | 1 | 0 | 該当なし |
 | 構文エラー | 1 | 7% | 1 | 0 | 該当なし |
 
+出典と、記録のラベルについてです。この表と下の位置の件数は、`data/diag-first-errors-recomputed.jsonl`(14件、1行1件)と一致します。この表は、現在の分類器(`tools/mathlib_index/sketch_failures.py`)で、ローカルの生の診断(本文を含むためコミットしていません)から再計算した値です。`data/diag1〜3.jsonl` の `sketch_checks` に保存されたラベルは、実行時点の古い分類器のもので、現在の値と次の点で違います。(1) 保存ラベルでは `unknown_identifier` が5件ですが、うち1件(`𝓝` の `open` 不足)は現在 `unknown_notation` です。(2) 保存ラベルで `other` の1件(import したファイルが存在しない)は、現在 `missing_module` です。(3) 保存ラベルでは最初のエラーの位置が `statement` 7件、`body` 6件、`imports` 1件ですが、うち `unsolved goals` の4件は、エラーが `:= by` の `by` の位置にあり、命題部ではなく定理本体です。古い分類器は、`:=` の直後の `by` を命題部と判定していました。再計算すると `body` 10件、`statement` 3件、`imports` 1件です。再計算ファイルには、保存ラベルも `stored_*` 列として残してあります。
+
 読み方です。
 
 - 手作業のラベルとして、「未解決の識別子」4件のうち3件は、実在する名前の import 不足です。`import Mathlib` に置き換えるだけで通ったことが根拠です。名前の幻覚と呼べるのは、Mathlib の名前でなく Sketch 内の局所名を使った1件程度です。
-- 最初のエラーの位置は、定理本体が10件、命題部が3件、import が1件でした。命題部の3件は、いずれもモデルが選んだ import が足りず、固定された命題が読めなかったもので、`import Mathlib` で直りました。
+- 最初のエラーの位置は、定理本体が10件、命題部が3件、import が1件でした。命題部の3件は、いずれも `unknown_identifier` で、モデルが選んだ import が足りず、固定された命題が読めなかったものです。3件とも `import Mathlib` への置換だけ(`data/diag-first-errors-recomputed.jsonl` の `repair_steps` が `["header"]` のみ)で直りました。
 - 今回の12カードでは、`formal_harness_mismatch`(モデルが命題を書き換える)は Sketch 検査では出ませんでした。Prove の後で出ます(後述)。
 - 3回とも通ったカードは2枚、3回とも落ちたカードはありません。通過する確率はカードごとにばらつきます。
 
@@ -83,7 +85,8 @@ pals-agent の PR [#82](https://github.com/AtsushiHosaka/pals-agent/pull/82)(#79
 
 ## 測定: 同じ12カードの全工程
 
-Terra medium、修復上限6、同じ12カード。ベースは 2026-11-08 の記録(`proof-pipeline-speed-2026-11-08`)です。処理ありは `--sketch-repair` のみ有効、各カード1回です。
+Terra medium、修復上限6、同じ12カード。ベースの記録は、`data/pf-base-terra-med.jsonl` と `data/pf-base2-terra-med.jsonl`(診断コードと件数のみで、質問本文・Lean 本文は含みません)です。前者は11行で、11行目の `commalg_v4_clopen_unique_idempotent` は予算上限で打ち切られたため、後者の2行(同じカードと `calculus_v5_convex_derivative_monotone`)で置き換え、12カードにしています。元の実験は、別ブランチ `claude/proof-pipeline-speed-3d1b40` のコミット `49dae3e`(`docs/proof-pipeline-speed-2026-11-08/README.md`)で、このPRの時点では main に入っていません。「初回の Sketch が空にならなかったカード」は、各カードの最初の試行の診断コードに `pals.generation_empty` を含まない枚数です(ベース12枚で6)。修復の回数は `repairs_used` の合計(26)、成功は `state` が `verified` の枚数(10)、秒数と呼び出しは `elapsed_seconds` と `model_calls` の合計と平均です。ベースは機械修復がなく、Sketch の検査に失敗した出力は空として扱われるため、「空にならなかった」6枚は「直さずに通った」6枚と同じです(下の表の2行の6はこの理由で同じ値)。
+処理ありは `--sketch-repair` のみ有効、各カード1回です。
 
 | 指標 | ベース | 処理あり |
 |---|---:|---:|
