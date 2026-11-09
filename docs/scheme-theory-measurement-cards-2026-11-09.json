@@ -1,0 +1,241 @@
+{
+ "preregistered": "2026-11-09",
+ "stacks_rev": "5ed82d14634e8d9576bb844c7bd4e3da66d450e7",
+ "mathlib_rev": "56a005855ea17e0b0958f73ec801ae140b0a1679",
+ "built_set": {
+  "rule": "AG hubs (module path after StacksFrontier.AlgebraicGeometry. matches any regex) whose own import closure has <=cap modules; built set = union of closures",
+  "regexes": [
+   "^Scheme\\.",
+   "^Ample(\\.|$)",
+   "^Picard(Group)?(\\.|$)",
+   "^Divisors\\.EffectiveCartier$|^Divisors\\.[A-Za-z]+$",
+   "^Morphisms\\.Projective\\.|^Morphisms\\.QuasiProjective\\.|^ProjectiveSpace\\.",
+   "^Variety\\.Defs\\.",
+   "^Morphisms\\.CohenMacaulay\\.Defs$",
+   "^Cohomology\\.|^AffineCohomologyVanishing\\.",
+   "^Constructions\\.",
+   "^Morphisms\\.[A-Za-z]+$"
+  ],
+  "stages": {
+   "s1": {
+    "cap": 200,
+    "hubs": 487,
+    "closure_modules": 2393
+   },
+   "s2": {
+    "cap": 500,
+    "hubs": 589,
+    "closure_modules": 3748
+   }
+  },
+  "used_for_retrieval_and_arms": "s2"
+ },
+ "cards": [
+  {
+   "id": "M01",
+   "group": "M",
+   "topic": "affine quasi-compact",
+   "nl": "Show that the spectrum of every commutative ring is a quasi-compact space.",
+   "formal": "import Mathlib\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace\n\nuniverse u\ntheorem t (R : CommRingCat.{u}) : CompactSpace (Spec R) := by\n"
+  },
+  {
+   "id": "M02",
+   "group": "M",
+   "topic": "open immersion composition",
+   "nl": "Show that the composition of two open immersions of schemes is an open immersion.",
+   "formal": "import Mathlib\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace\n\nuniverse u\ntheorem t {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) [IsOpenImmersion f] [IsOpenImmersion g] :\n    IsOpenImmersion (f ≫ g) := by\n"
+  },
+  {
+   "id": "M03",
+   "group": "M",
+   "topic": "affine morphism composition",
+   "nl": "Show that the composition of two affine morphisms of schemes is affine.",
+   "formal": "import Mathlib\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace\n\nuniverse u\ntheorem t {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) [IsAffineHom f] [IsAffineHom g] :\n    IsAffineHom (f ≫ g) := by\n"
+  },
+  {
+   "id": "M04",
+   "group": "M",
+   "topic": "quasi-compact morphism composition",
+   "nl": "Show that the composition of two quasi-compact morphisms of schemes is quasi-compact.",
+   "formal": "import Mathlib\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace\n\nuniverse u\ntheorem t {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) [QuasiCompact f] [QuasiCompact g] :\n    QuasiCompact (f ≫ g) := by\n"
+  },
+  {
+   "id": "M05",
+   "group": "M",
+   "topic": "stalk is local",
+   "nl": "Show that the stalk of the structure sheaf of a scheme at any point is a local ring.",
+   "formal": "import Mathlib\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace\n\nuniverse u\ntheorem t (X : Scheme.{u}) (x : X) : IsLocalRing (X.presheaf.stalk x) := by\n"
+  },
+  {
+   "id": "M06",
+   "group": "M",
+   "topic": "stalk of Spec",
+   "nl": "Show that the stalk of the structure sheaf of Spec R at a prime p is isomorphic, as a commutative ring, to the localization of R at p.",
+   "formal": "import Mathlib\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace\n\nuniverse u\ntheorem t (R : CommRingCat.{u}) (p : PrimeSpectrum R) :\n    Nonempty ((Spec R).presheaf.stalk p ≅ CommRingCat.of (Localization.AtPrime p.asIdeal)) := by\n"
+  },
+  {
+   "id": "M07",
+   "group": "M",
+   "topic": "global sections of Spec",
+   "nl": "Show that the ring of global sections of the structure sheaf of Spec R is isomorphic to R.",
+   "formal": "import Mathlib\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace\n\nuniverse u\ntheorem t (R : CommRingCat.{u}) : Nonempty (Γ(Spec R, ⊤) ≅ R) := by\n"
+  },
+  {
+   "id": "M08",
+   "group": "M",
+   "topic": "closed immersion into affine",
+   "nl": "Show that a scheme admitting a closed immersion into an affine scheme is affine.",
+   "formal": "import Mathlib\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace\n\nuniverse u\ntheorem t {X Y : Scheme.{u}} (f : X ⟶ Y) [IsClosedImmersion f] [IsAffine Y] : IsAffine X := by\n"
+  },
+  {
+   "id": "M09",
+   "group": "M",
+   "topic": "locality on the target",
+   "nl": "Let f : X → Y be a morphism of schemes and 𝒰 an open cover of Y. Show that f is quasi-compact if and only if each base change of f along a member of 𝒰 is quasi-compact.",
+   "formal": "import Mathlib\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace\n\nuniverse u\ntheorem t {X Y : Scheme.{u}} (f : X ⟶ Y) (𝒰 : Y.OpenCover) :\n    QuasiCompact f ↔ ∀ i, QuasiCompact (pullback.snd f (𝒰.f i)) := by\n"
+  },
+  {
+   "id": "M10",
+   "group": "M",
+   "topic": "Spec of a domain is integral",
+   "nl": "Show that the spectrum of an integral domain is an integral scheme.",
+   "formal": "import Mathlib\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace\n\nuniverse u\ntheorem t (R : Type u) [CommRing R] [IsDomain R] : IsIntegral (Spec (CommRingCat.of R)) := by\n"
+  },
+  {
+   "id": "M11",
+   "group": "M",
+   "topic": "Spec of a noetherian ring",
+   "nl": "Show that the spectrum of a noetherian ring is a locally noetherian scheme.",
+   "formal": "import Mathlib\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace\n\nuniverse u\ntheorem t (R : Type u) [CommRing R] [IsNoetherianRing R] :\n    IsLocallyNoetherian (Spec (CommRingCat.of R)) := by\n"
+  },
+  {
+   "id": "M12",
+   "group": "M",
+   "topic": "integral scheme sections are a domain",
+   "nl": "Show that the ring of global sections of an integral scheme is an integral domain.",
+   "formal": "import Mathlib\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace\n\nuniverse u\ntheorem t (X : Scheme.{u}) [IsIntegral X] : IsDomain Γ(X, ⊤) := by\n"
+  },
+  {
+   "id": "M13",
+   "group": "M",
+   "topic": "Spec reduced iff ring reduced",
+   "nl": "Show that Spec R is a reduced scheme if and only if the ring R is reduced.",
+   "formal": "import Mathlib\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace\n\nuniverse u\ntheorem t (R : CommRingCat.{u}) : IsReduced (Spec R) ↔ IsReduced R := by\n"
+  },
+  {
+   "id": "M14",
+   "group": "M",
+   "topic": "Spec of a field is a point",
+   "nl": "Show that the underlying space of the spectrum of a field has exactly one point.",
+   "formal": "import Mathlib\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace\n\nuniverse u\ntheorem t (K : Type u) [Field K] : Nonempty (Unique (Spec (CommRingCat.of K))) := by\n"
+  },
+  {
+   "id": "M15",
+   "group": "M",
+   "topic": "fibre product of affines",
+   "nl": "Show that the fibre product of two affine schemes over an affine scheme is affine.",
+   "formal": "import Mathlib\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace\n\nuniverse u\ntheorem t {X Y S : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) [IsAffine X] [IsAffine Y] [IsAffine S] :\n    IsAffine (pullback f g) := by\n"
+  },
+  {
+   "id": "M16",
+   "group": "M",
+   "topic": "Proj is proper over Spec A_0",
+   "nl": "Let A be an ℕ-graded commutative ring such that A is a finitely generated algebra over its degree-zero part A₀. Show that the structure morphism Proj A → Spec A₀ is proper.",
+   "formal": "import Mathlib\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace\n\nuniverse u\ntheorem t {A σ : Type*} [CommRing A] [SetLike σ A] [AddSubgroupClass σ A] (𝒜 : ℕ → σ) [GradedRing 𝒜]\n    [Algebra.FiniteType (𝒜 0) A] : IsProper (Proj.toSpecZero 𝒜) := by\n"
+  },
+  {
+   "id": "C01",
+   "group": "M",
+   "topic": "cohomology of affine schemes vanishes",
+   "nl": "Let X be an affine scheme and F a quasi-coherent sheaf of modules on X. Show that the sheaf cohomology Hⁿ(X, F) vanishes for every n > 0.",
+   "formal": "import Mathlib\nopen CategoryTheory CategoryTheory.Limits AlgebraicGeometry\nattribute [local instance] HasDerivedCategory.standard\nuniverse u v\n\ntheorem t (X : Scheme.{u}) [IsAffine X] (F : X.Modules) [F.IsQuasicoherent] (n : ℕ) (hn : 0 < n) :\n    IsZero (Sheaf.H ((SheafOfModules.toSheaf X.ringCatSheaf).obj F) n) := by\n"
+  },
+  {
+   "id": "C02",
+   "group": "M",
+   "topic": "cohomology at the terminal object",
+   "nl": "Let J be a Grothendieck topology on a category C and F an abelian sheaf. For a terminal object U of C, show that the cohomology of F over U in degree n is isomorphic as an abelian group to the sheaf cohomology Hⁿ(F).",
+   "formal": "import Mathlib\nopen CategoryTheory CategoryTheory.Limits AlgebraicGeometry\nattribute [local instance] HasDerivedCategory.standard\nuniverse u v\n\ntheorem t {C : Type u} [Category.{v} C] (J : GrothendieckTopology C)\n    [HasSheafify J AddCommGrpCat.{v}] [HasExt.{v} (Sheaf J AddCommGrpCat.{v})]\n    (F : Sheaf J AddCommGrpCat.{v}) (n : ℕ) (U : C) (hU : IsTerminal U) :\n    Nonempty (Sheaf.H' F n U ≃+ Sheaf.H.{v} F n) := by\n"
+  },
+  {
+   "id": "F01",
+   "group": "F",
+   "topic": "ample structure sheaf of an affine scheme",
+   "frontier_modules": [
+    "StacksFrontier.AlgebraicGeometry.Ample.StructureSheaf"
+   ],
+   "nl": "Show that the structure sheaf of an affine scheme is an ample invertible sheaf.",
+   "formal": "import Mathlib\nimport StacksFrontier.AlgebraicGeometry.Ample.StructureSheaf\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits\n\nuniverse u\ntheorem t (Y : Scheme.{u}) [IsAffine Y] :\n    Scheme.Modules.IsAmple Y (SheafOfModules.unit (structureSheafRing Y.toRingedSpace)) := by\n"
+  },
+  {
+   "id": "F02",
+   "group": "F",
+   "topic": "projective space is projective",
+   "frontier_modules": [
+    "StacksFrontier.AlgebraicGeometry.ProjectiveSpace.SmoothProjectiveVariety"
+   ],
+   "nl": "Show that projective n-space over a scheme S, with its structure morphism to S, is a projective morphism.",
+   "formal": "import Mathlib\nimport StacksFrontier.AlgebraicGeometry.ProjectiveSpace.SmoothProjectiveVariety\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits\n\nuniverse u\ntheorem t (n : ℕ) (S : Scheme.{u}) : IsProjectiveMorphism (projectiveSpaceOver n S ↘ S) := by\n"
+  },
+  {
+   "id": "F03",
+   "group": "F",
+   "topic": "Picard group of a local spectrum is trivial",
+   "frontier_modules": [
+    "StacksFrontier.AlgebraicGeometry.PicardGroup.Scheme"
+   ],
+   "nl": "Show that the Picard group of the spectrum of a local ring is trivial.",
+   "formal": "import Mathlib\nimport StacksFrontier.AlgebraicGeometry.PicardGroup.Scheme\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits\n\nuniverse u\ntheorem t (R : Type u) [CommRing R] [IsLocalRing R] :\n    Subsingleton (Spec (CommRingCat.of R)).picardGroup := by\n"
+  },
+  {
+   "id": "F04",
+   "group": "F",
+   "topic": "product of effective Cartier divisors",
+   "frontier_modules": [
+    "StacksFrontier.AlgebraicGeometry.Divisors.EffectiveCartier"
+   ],
+   "nl": "Let X be a scheme and D, D' two effective Cartier divisors on X, given as ideal sheaves. Show that their product D·D' is again an effective Cartier divisor.",
+   "formal": "import Mathlib\nimport StacksFrontier.AlgebraicGeometry.Divisors.EffectiveCartier\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits\n\nuniverse u\ntheorem t {X : Scheme.{u}} (D D' : X.IdealSheafData) (hD : Stacks.Divisors.IsEffectiveCartierDivisor D)\n    (hD' : Stacks.Divisors.IsEffectiveCartierDivisor D') :\n    Stacks.Divisors.IsEffectiveCartierDivisor (D * D') := by\n"
+  },
+  {
+   "id": "F05",
+   "group": "F",
+   "topic": "affine space is a variety",
+   "frontier_modules": [
+    "StacksFrontier.AlgebraicGeometry.Variety.Defs.Basic"
+   ],
+   "nl": "Let k be a field and R a finitely generated k-algebra that is an integral domain. Show that Spec R, with its structure morphism to Spec k, is a variety over k.",
+   "formal": "import Mathlib\nimport StacksFrontier.AlgebraicGeometry.Variety.Defs.Basic\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits\n\nuniverse u\ntheorem t (k : Type u) [Field k] (R : Type u) [CommRing R] [Algebra k R] [Algebra.FiniteType k R] [IsDomain R] :\n    IsVariety k (Spec.map (CommRingCat.ofHom (algebraMap k R))) := by\n"
+  },
+  {
+   "id": "F06",
+   "group": "F",
+   "topic": "projective morphisms are proper",
+   "frontier_modules": [
+    "StacksFrontier.AlgebraicGeometry.ProjectiveSpace.SmoothProjectiveVariety"
+   ],
+   "nl": "Show that every projective morphism of schemes is proper.",
+   "formal": "import Mathlib\nimport StacksFrontier.AlgebraicGeometry.ProjectiveSpace.SmoothProjectiveVariety\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits\n\nuniverse u\ntheorem t {X S : Scheme.{u}} (f : X ⟶ S) (hf : IsProjectiveMorphism f) : IsProper f := by\n"
+  },
+  {
+   "id": "F07",
+   "group": "F",
+   "topic": "pullback of an invertible sheaf",
+   "frontier_modules": [
+    "StacksFrontier.AlgebraicGeometry.Ample.Defs"
+   ],
+   "nl": "Show that the pullback of an invertible sheaf of modules along a morphism of schemes is an invertible sheaf of modules.",
+   "formal": "import Mathlib\nimport StacksFrontier.AlgebraicGeometry.Ample.Defs\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits\n\nuniverse u\ntheorem t {X Y : Scheme.{u}} (f : X ⟶ Y) (L : Y.Modules)\n    [Stacks.SheafOfModules.IsInvertible Y.presheaf (structureSheafRing Y.toRingedSpace).property L] :\n    Stacks.SheafOfModules.IsInvertible X.presheaf (structureSheafRing X.toRingedSpace).property\n      ((Scheme.Modules.pullback f).obj L) := by\n"
+  },
+  {
+   "id": "F08",
+   "group": "F",
+   "topic": "closed immersion into a projective morphism",
+   "frontier_modules": [
+    "StacksFrontier.AlgebraicGeometry.ProjectiveSpace.SmoothProjectiveVariety"
+   ],
+   "nl": "Let q : Y → S be a projective morphism of schemes and i : X → Y a closed immersion. Show that the composite i followed by q is a projective morphism.",
+   "formal": "import Mathlib\nimport StacksFrontier.AlgebraicGeometry.ProjectiveSpace.SmoothProjectiveVariety\nopen AlgebraicGeometry CategoryTheory CategoryTheory.Limits\n\nuniverse u\ntheorem t {X Y S : Scheme.{u}} (i : X ⟶ Y) (q : Y ⟶ S) [IsClosedImmersion i]\n    (hq : IsProjectiveMorphism q) : IsProjectiveMorphism (i ≫ q) := by\n"
+  }
+ ]
+}
