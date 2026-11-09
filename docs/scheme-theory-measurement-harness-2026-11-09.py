@@ -38,7 +38,7 @@ from tools.stacks_index.search import (
 # gpt-6.1-terra has no rate in the repo; gpt-5.6-terra's ($2.5 / $12 per 1M tokens) is the proxy.
 RATE_IN, RATE_OUT = 2.5 / 1e6, 12.0 / 1e6
 RUN_CAP_USD = 1.0
-TOTAL_CAP_USD = 3.0
+TOTAL_CAP_USD = 10.0
 MAX_REPAIRS = 6
 NOTE_K = 12
 ARMS = {
@@ -194,7 +194,7 @@ def run() -> None:
         if only and card["id"] not in only:
             continue
         total = json.loads(spent_file.read_text())["usd"] if spent_file.exists() else 0.0
-        if total >= TOTAL_CAP_USD - 0.25:
+        if total >= TOTAL_CAP_USD - 0.4:
             print(f"STOP before {card['id']}: spent {total:.3f} of {TOTAL_CAP_USD}", flush=True)
             break
         meter = Meter()
