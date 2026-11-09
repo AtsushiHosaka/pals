@@ -35,3 +35,13 @@ Next iteration, issue #317; starting parent 764338a / observability 7891f8d:
 - [x] Preserve the frozen core collector/manifest and run two separate paired cohorts: six unique problems, 24 fresh trials, all delivered and scored. V4 clarity delta is +0.00833 on core3, -0.005 on new3; not a general improvement or production promotion.
 - [x] Publish/read back/fetch four new records, retain all eight historical/current records, verify 96 numerical calculations, and render both cohorts with improvements, regressions, fixed denominators and uncertainty.
 - [x] Expand registry to 11 cases/18 observations; append seven ledger rows (494 total, original 487-row byte prefix preserved); regenerate six charts; pass 1,254 tests, Ruff, strict mypy and ledger audit. Push only this chat's paths and owning submodule reference.
+
+QA/conclusion repair, issue #319; starting parent fe3ecf0 / observability 8964217:
+
+- [x] PQ-016 QA: reproduce saved false-rejection cases; add the narrow review-grounding repair with unchanged generator/validators/checklist/repair budgets; run fixed real-model positive and negative probes.
+- [x] PQ-016 API: reuse existing ce5cd2f conclusion append; demonstrate failure on14e9 and success after repair, including real helper parity and local persistence/history where available.
+- [x] PQ-017: implement isolated-arm treatment execution and comparison with truthful source identities, explicit allowed changes and preserved strict prompt comparison.
+- [x] Freeze six cases and identical v4/model/judge controls; execute fresh interleaved pre/post measurements, publish/read back/fetch them, and graph gains, regressions and missingness.
+- [x] Update problem observations, evidence and quality ledger/charts; run relevant checks and publish only this task's changes. Distinguish source/measurement completion from production release acceptance.
+
+Production follow-up is separate: worker exact-source agent-regression and full release acceptance remain unverified; do not promote these replay measurements to deployed acceptance.

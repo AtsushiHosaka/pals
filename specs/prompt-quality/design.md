@@ -113,6 +113,33 @@ count and source/authority digests. Each baseline/candidate pair has the same co
 Report the stable core and additional problems separately; different corpus or
 collector controls cannot be joined into a single controlled improvement curve.
 
+## QA and conclusion implementation treatment
+
+The next user request and issue #319 authorize PQ-016/PQ-017. Source inspection
+confirms that the current production API still omits conclusion, while the existing
+production-source branch already contains the ce5cd2f projection fix. Reuse that
+narrow change. A task-owned worker candidate adds only reviewer evidence-grounding
+instructions; generation, parsing, model roles, checklist and repair limits stay
+unchanged. Fixed valid and invalid mathematical explanations test the actual review
+model; approval alone is not sufficient acceptance evidence.
+
+This is a joint QA-plus-projection treatment. Both arms use the exact same v4
+generation suffix. Fresh Python workers load one pinned agent/API source per arm,
+because global module names cannot safely hold both source trees in one process.
+Separate private journals preserve arm identity and uncertain-call recovery. A
+parent orchestrator alternates the same six case/repetition inputs, validates the
+reviewed component differences before paid calls, and retains actual source and
+configuration hashes in the closed records.
+
+The original strict prompt comparator remains unchanged. A dedicated treatment
+comparison validates raw identities, pinned configurations and allowed code
+differences before computing paired statistics. It must not normalize fingerprints
+or hide source drift. The fixed projection executes the actual ordered production
+AST, including the append and text-size guard; selecting only assignment nodes
+would silently discard the fix. Owning API tests compare it with the real helper
+and verify persistence, fresh reads and history. Production rollout/acceptance is
+a separate release contract and is not implied by a successful local experiment.
+
 ## Storage and operation
 
 A dedicated CloudWatch Logs group stores one complete content-free run per event.
