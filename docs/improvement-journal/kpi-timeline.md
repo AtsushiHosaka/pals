@@ -34,3 +34,4 @@
 | 2026-11-08 | 段別計測（#77）と注入対策（#78）の実装とレビュー対応 | [step-timing-and-injection-defense](entries/2026-11-08-step-timing-and-injection-defense.md) |
 | 2026-11-08 | 本番の障害（seq27 cutover の停止、01:19〜08:19 JST） | [production-incident-seq27-halt](entries/2026-11-08-production-incident-seq27-halt.md) |
 | 2026-11-09 | x² の検証結果キャッシュの有効化の段取り（検証器 image は必ず変わる。toolchain hash の導出は未確認） | [verifier-cache-enablement-plan](entries/2026-11-09-verifier-cache-enablement-plan.md) |
+| 2026-11-10 | 訂正: 「本番の修復上限は3」は main の既定で、本番（seq29、配備物の読み取り）は6の見込み。コンテナ env は未確認 | [prod-repair-limit-correction](entries/2026-11-10-prod-repair-limit-correction.md) |
