@@ -74,7 +74,9 @@ Lean 検査の「キュー待ち・起動・import・検査」の分割は、検
 
 ### 実測: 投機的説明の有効・無効(実モデル、各3回、約0.019 USD)
 
-x2-root-cure の `tools/speculative_ab.py`(枝 `claude/seq27-timing-ab-steps`)を `--real --confirm-spend -n 3` で実行しました。意味審査の状態から始め、`PALS_SPECULATIVE_EXPLANATION_ENABLED` だけを切り替えて、off・on を交互に3回ずつ走らせています。命題と Lean は検証済みの x² テンプレート(ε-δ)に手元で差し替えました(言語はハーネス既定の zh-Hans。同じ枝に追加された `--lean x2 --language ja` は使っていません)。モデルは意味審査・説明・説明審査とも gpt-6-luna です。API は stub で、Lean の検証は行いません。生の出力は [raw/](raw/) にあります。
+x2-root-cure の `tools/speculative_ab.py`(枝 `claude/seq27-timing-ab-steps`)を `--real --confirm-spend -n 3` で実行しました。意味審査の状態から始め、`PALS_SPECULATIVE_EXPLANATION_ENABLED` だけを切り替えて、off・on を交互に3回ずつ走らせています。命題と Lean は検証済みの x² テンプレート(ε-δ)に手元で差し替えました(言語はハーネス既定の zh-Hans。同じ枝に追加された `--lean x2 --language ja` は使っていません)。モデルは意味審査・説明・説明審査とも gpt-6-luna です。API は stub で、Lean の検証は行いません。
+
+生のイベント行と標準出力は、AGENTS.md の「ログと生成物をコミットしない」規則に従い、コミットしていません。下の表と箇条書きが、その実行から転記した集計です。取り直すときは、OpenAI キーを環境に置いたうえで、`PALS_STEP_TIMING_JSONL=<出力先> python tools/speculative_ab.py --real --confirm-spend -n 3 --lean x2 --language ja` を実行します(約0.02 USD。上の実測を取った時点では `--lean x2` が無く、命題と Lean を手元で差し替えたため、再実行すると条件が少し変わります)。
 
 | 段 | off の p50 | on の p50 | 備考 |
 |---|---|---|---|
@@ -84,6 +86,7 @@ x2-root-cure の `tools/speculative_ab.py`(枝 `claude/seq27-timing-ab-steps`)�
 | 開始から説明の書き込みまで | 22.4 秒(平均 20.1) | 20.2 秒(平均 21.0) | |
 
 - 対応のある差(off − on、正なら有効側が速い)は、合計で平均 −0.9 秒、95% 信頼区間 [−9.0, +4.0] 秒でした。3回ずつでは、フラグの効果は検出できません。
+- 段ごとの対応のある差(off − on、95% 信頼区間、各3組)は、意味審査が平均 −1.6 秒 [−2.3, −1.0]、説明生成が −2.1 秒 [−7.1, +1.6]、説明審査が −4.1 秒 [−7.4, −0.8] でした(元の標準出力から転記)。
 - 意味審査と説明審査は on の方が遅い傾向でしたが、これも3回の範囲で、原因は調べていません。並行実行による競合か、モデル応答の揺れかは区別できていません。
 - 段別の内訳は、説明生成が約47%、説明審査が約38%、意味審査が約14%です(container の `explanation` `semantic_review` は除く)。説明の2段で約8割を占めます。
 - 範囲外: この実測は意味審査から説明の書き込みまでです。API → 検証器の Lean 検査、独立2審査の1つ目、worker の job 取得待ち、画面反映は含みません。本番の22〜24秒との直接比較はできません。
@@ -116,7 +119,7 @@ x2-root-cure の `tools/speculative_ab.py`(枝 `claude/seq27-timing-ab-steps`)�
 |---|---|
 | ステップ別の p50/p95 | CloudWatch の `step_duration_ms` を `p50` / `p95` 統計で。ローカルは `python -m pals_agent.step_timing_report` |
 | 1件あたりの合計 | `run_total_ms`(p50/p95)。実行を結べるのでログ側では `pipeline_run.total_ms` |
-| 段ごとの割合 | `pipeline_run.step_ms` ÷ `total_ms`。レポートの「share of run time」と「unattributed」 |
+| 段ごとの割合 | `step_ms` ÷ `total_ms`。ローカルの JSONL では `pipeline_run.step_ms`(オブジェクト)を使う。CloudWatch の EMF 行は `step_ms` を持たず、同じ内容を JSON 文字列の `step_ms_json` に入れるので、Logs Insights では `jsonParse(step_ms_json)` で読んでから割る。レポート(`step_timing_report`)はどちらの形も復号し、「share of run time」と「unattributed」を出す |
 | 試行ごとの内訳 | `pipeline_step` を `run` と `attempt` で集計する(Logs Insights) |
 | トークンと費用 | `pipeline_step` のトークン項目をモデル別に合計する |
 
@@ -145,8 +148,10 @@ fields step, model, outcome_detail, duration_ms
 | アラーム | 条件の案 |
 |---|---|
 | 実行時間の悪化 | `run_total_ms` p95 が 600 秒超、1時間周期で 2/3 |
-| Lean 検査の時間切れ | `step_duration_ms`(`lean_check`、`outcome=timeout`)の `SampleCount` が 1時間で 3 以上 |
-| 待ち行列の悪化 | `step_duration_ms`(`queue_wait`)p95 が 300 秒超。既存の backlog アラーム(最古メッセージ 900 秒)の前段 |
+| Lean 検査の時間切れ | `step_duration_ms` のディメンション `step=lean_check`、`model=none`、`outcome=timeout` の `SampleCount` が 1時間で 3 以上 |
+| 待ち行列の悪化 | `step_duration_ms` のディメンション `step=queue_wait`、`model=none`、`outcome=ok` の p95 が 300 秒超。既存の backlog アラーム(最古メッセージ 900 秒)の前段 |
+
+`step_duration_ms` は `step` `model` `outcome` の3つを必ず揃えて出し、モデルを使わないステップの `model` は `none` です。CloudWatch はディメンションを省いた集計をしないため、アラームの条件には3つとも指定します。`outcome` をまたいだ値(たとえば `lean_check` 全体の p95)が要るときは、結果ごとの系列をメトリクス演算で合わせるか、ログのクエリを使います。
 
 既存の品質アラーム(infra PR #94 / #96)は失敗の種類を見ます。本案は所要時間だけを見ます。重複させません。
 
@@ -167,9 +172,12 @@ fields step, model, outcome_detail, duration_ms
 ## 使い方
 
 ```bash
-# ファイルへ出力(ローカル)
-PALS_STEP_TIMING_JSONL=/path/steps.jsonl python tools/mathlib_index/hint_ab.py ... --step-timing
+# ファイルへ出力(ローカル)。出力先は環境変数で決め、--step-timing は付けない
+PALS_STEP_TIMING_JSONL=/path/steps.jsonl python tools/mathlib_index/hint_ab.py ... --out /path --run-label results
 python -m pals_agent.step_timing_report /path/steps.jsonl --hint-ab /path/results.jsonl
+
+# --step-timing を付けると、環境変数を上書きして <out>/<run-label>.steps.jsonl に書く。
+# その場合、レポートにはそのファイルを渡す
 
 # CloudWatch(本番。送信経路は quality_events の設定を共用)
 PALS_STEP_TIMING_EMF=1
@@ -177,7 +185,7 @@ PALS_STEP_TIMING_EMF=1
 
 ## 実測の例: x² の連続性(Terra medium、1回)
 
-条件: `hint_ab.py --arms baseline --model gpt-6.1-terra --effort medium --max-repairs 6`、固定版 Lean 4.32.0-rc1、形式命題 `Continuous (fun x : ℝ => x ^ 2)`、依頼文「x² が連続であることを示してください。」。結果は検証成功、修復 0 回、経過 30.1 秒、推計費用 約0.010 USD(入力 4,329、出力 1,001 トークン、Terra の価格 1.25 / 5.00 USD/百万トークン)です。生の出力は [raw/](raw/) にあります。
+条件: `hint_ab.py --arms baseline --model gpt-6.1-terra --effort medium --max-repairs 6`、固定版 Lean 4.32.0-rc1、形式命題 `Continuous (fun x : ℝ => x ^ 2)`、依頼文「x² が連続であることを示してください。」。結果は検証成功、修復 0 回、経過 30.1 秒、推計費用 約0.010 USD(入力 4,329、出力 1,001 トークン、Terra の価格 1.25 / 5.00 USD/百万トークン)です。生のイベント行はコミットしていません(規則は上の節のとおり)。下の表が、その `pipeline_step` 5行の転記です。同じ条件で `PALS_STEP_TIMING_JSONL=<出力先> python tools/mathlib_index/hint_ab.py --problems <1件の JSONL> --arms baseline --out <出力先> --run-label x2 ...` を実行すると取り直せます。
 
 | 順 | ステップ | モデル | 推論量 | 所要 ms | 割合 | 入力 | 出力 | 推論 | 結果 |
 |---|---|---|---|---|---|---|---|---|---|
