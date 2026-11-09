@@ -1,0 +1,73 @@
+# 問題の蓄積とプロンプトの反復評価
+
+問題一覧は[初回の登録](prompt-quality-problems-2026-11-09.md)、進行は[Issue #316](https://github.com/AtsushiHosaka/pals/issues/316)に記録します。ここでは、問題の追加から比較までの手順を示します。コマンドは親リポジトリから実行します。秘密や生成回答を含む作業ファイルは、コミットしないローカルの出力ディレクトリに保存します。
+
+## 問題を追加する
+
+作成した評価問題は、参考解答を点検してからデータセットに追加します。既存の問題を修正するときは新しいIDを付けます。既存のIDで問題文や参考解答を変更すると、レジストリの検証は失敗します。一般の利用者の非公開の質問を、作成した評価問題として公開したり、今回の承認で外部採点に送ったりしません。
+
+```bash
+PYTHONPATH=pals-observability/src pals-observability/.venv/bin/python \
+  -m pals_observability.prompt_quality_registry \
+  --registry pals-observability/datasets/benchmark-problems-ja-v1.json \
+  --dataset pals-observability/datasets/undergraduate-live-ja-v1.json
+```
+
+新しい問題を登録するときは、同じコマンドに`--register-case 問題ID --dataset-commit 完全なコミットID --topic-group 分野ID --split regression`を追加します。データセットを保存した正確なコミットを指定します。今後用意する検証用問題は、調整前に`prospective_holdout`として分離し、関連する問題を同じ側にまとめます。結果を見て調整に使ったら、その問題は以後の未知の検証には使いません。
+
+観測は内容を含まないJSONにし、`--append 観測ファイル.json`で追記します。形式は初回レジストリの`episodes`を参照します。採点の低さだけなら`observation.score_hint`とし、確認した説明上の指摘や数学的誤りと分けます。回復や再採点では、元の観測IDと同じ試行IDを指定します。変更前の観測は削除しません。
+
+## 説明プロンプトを比較する
+
+実行前に、問題、参考解答、検証済みLeanソース、元の正式な評価記録、実装ソースをマニフェストに固定します。Leanファイルのハッシュが、元の検証記録と一致しない場合は実行できません。プロンプトの候補は版付きのポリシーファイルで指定できます。基準条件の追加指示は空とし、候補条件だけに一般的な説明方針を追加します。参考解答は採点だけに使います。
+
+```bash
+PYTHONPATH=pals-observability/src:/固定したagentソースのルート \
+  pals-agent/.venv/bin/python -m pals_observability.prompt_quality_replay \
+  --manifest /非公開の作業場所/replay-manifest.json \
+  --agent-source-root /固定したagentソースのルート \
+  --api-source-root /固定したAPIソースのルート \
+  --journal /非公開の作業場所/replay-journal.jsonl \
+  --output-dir /非公開の作業場所/空の既存ディレクトリ \
+  --namespace replay-20261109-pilot1 \
+  --judge-model gpt-5.4-2026-03-05 \
+  --judge-revision gpt-5.4-2026-03-05 \
+  --repetitions 2 --timeout-seconds 360 \
+  --total-timeout-seconds 4200 --maximum-calls 16 --environment prod
+```
+
+認証は通常のモデル用環境変数から読みます。環境ファイル全体を読み込んだり、認証情報をコマンドや出力に表示したりしません。この説明段階の実験は、PALSへの再ログインや新しい証明リクエストを必要としません。外部呼び出しの結果が不明な場合は自動再送せず、その試行を欠測として残します。実行途中の条件変更も拒否します。
+
+実行は本番と同じ生成・構文検証・公開レビュー・修正ループを使います。両条件を新しく生成し、同じAPIの本文への変換を通して採点します。`baseline.json`と`candidate.json`は内容を含まない測定値、`evidence.json`は条件と対象範囲の記録です。新しいLean検証や、本番へのプロンプト反映を表すものではありません。
+
+## CloudWatchの結果を比較する
+
+[既存の運用手順](prompt-quality-operations.md)の`publish`で両方の測定記録を保存し、同一内容の読み戻しを確認します。`fetch`で取得したJSONLを、次の比較に使います。送達が不明な書き込みは、取得を確かめてから判断します。
+
+```json
+{
+  "schema_version": "pals.prompt-quality.trend-manifest.v1",
+  "iterations": [
+    {
+      "iteration_id": "iteration-1",
+      "label": "undergraduate-v2",
+      "stage": "explanation_replay",
+      "baseline_run_id": "replay-20261109-pilot1-baseline-v1",
+      "candidate_run_id": "replay-20261109-pilot1-undergraduate-v2"
+    }
+  ]
+}
+```
+
+ラベルと実行IDには、記録された英数字の識別子を使います。説明段階と証明全体の実験を分け、比較する順序を明示します。
+
+```bash
+PYTHONPATH=pals-observability/src pals-observability/.venv/bin/python \
+  -m pals_observability.prompt_quality_trend \
+  --runs /非公開の作業場所/cloudwatch.jsonl \
+  --manifest /非公開の作業場所/iterations.json \
+  --output /非公開の作業場所/trend.json \
+  --csv /非公開の作業場所/trend.csv
+```
+
+問題、試行数、モデル、採点、取得元などが違えば比較を拒否します。条件の異なる実験を一本の改善曲線につなぎません。同じ条件でも、未採点や生成失敗を含む分母、問題単位のばらつき、悪化した問題を確認します。新しい反復では、同じマニフェストの末尾に比較を加えます。取得した値でグラフと品質台帳を更新し、変更したポリシーと根拠を一緒に保存します。

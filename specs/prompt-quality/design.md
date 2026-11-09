@@ -60,6 +60,35 @@ Repeated trials are clustered by case when calculating uncertainty. Intervals
 describe benchmark sampling uncertainty, not truth or causal guarantees. Holdout
 cases must be separated from tuning cases to limit benchmark overfitting.
 
+## Problem registry and repeated prompt experiments
+
+The November 9 user request and issue #316 extend the WORKING contract with
+PQ-011–PQ-013. A content-free registry pins each authored fixture and its dataset
+revision. Append-only episodes retain source record digests, observation type and
+diagnostic category. A later successful observation does not rewrite pending
+history. Reviewed explanation weaknesses are distinguished from false mathematical
+claims; application projection defects and operational delays are separate categories.
+
+The first controlled iteration reuses verified Lean source bytes whose hashes match
+the original benchmark evidence. It calls the production factory's real proof
+explainer, strict output parser and grounded reviewer with the existing repair
+loop. Both arms generate fresh text; cached catalog/template answers are not a
+fresh baseline. A real-client adapter appends only the selected versioned explanation
+policy. The baseline suffix is empty. References remain judge-only. The unchanged
+production chat projection is applied to both arms before judging, including its
+known omission of the structured conclusion. This measures that explanation stage,
+not a newly compiled proof, an unchanged catalog answer or a deployed product gain.
+
+Before paid calls, the explicit command freezes fixture/source hashes, prompt
+policies, generator/reviewer/judge settings, projection, repetitions and interleaved
+order. A private durable journal prevents an uncertain provider call from being
+blindly replayed. Content-free arm records use the existing closed schema; stage
+and registry lineage stay in sidecars. An ordered iteration manifest selects runs
+from a validated CloudWatch fetch. Every comparison uses the existing strict paired
+comparator; unrelated observations and regrades never form a connected improvement
+curve. Repeated measurements preserve failures and missing scores. The exposed
+starter corpus is tuning/regression material, not an independently blind holdout.
+
 ## Storage and operation
 
 A dedicated CloudWatch Logs group stores one complete content-free run per event.
