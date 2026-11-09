@@ -20,11 +20,12 @@ helper defect was repaired. No account was created or credential reset.
   Closed step/error diagnostics and private token retention avoid blind repeated
   password prompts. A subsequent real owner, token-capacity and Japanese-language
   preflight succeeded. Credentials remain outside tracked artifacts.
-- Latest observability tree: **1,130 passed, 1 credential-dependent Langfuse
-  smoke skipped** in 30.98 seconds. Ruff and strict mypy passed. Actual deployed API
+- Latest observability tree: **1,139 passed, 1 credential-dependent Langfuse
+  smoke skipped** in 38.96 seconds. Ruff and strict mypy passed. Actual deployed API
   source contracts accepted the request/quote/terminal/source forms in source checks.
   Boundary fixtures do not count as live proof evaluation.
-- Observability commit: `f588a0ec16e7af98ce4762089f3b46b97f366ae0`.
+- Actual evaluation source: `f588a0ec16e7af98ce4762089f3b46b97f366ae0`.
+- Subsequent language-preflight guard: `a3ab37db2e72b03a7ab64834efbe4a374ea03173`.
 - Infrastructure commit including live query repair: `fcad5bbbd883bd42f7cbc9a197974ac815fcc4a7`.
 
 ## Actual infrastructure deployment
@@ -144,3 +145,56 @@ API source、verifier source、対象カタログは準備時と同じです。
 確認しました。未送信の時間は空欄で、処理中は完了時間と区別して観測下限を表示します。
 JSONL・集計JSON・CSV・訂正の証跡は、認証情報と分けてGit外の非公開領域に保持します。
 今回の3件を数学全般の精度や、完成した8件のベンチマークとして扱いません。
+
+## 継続評価と認証設定の変更
+
+再ログイン後、既存の4題目を読み取りだけで追跡しました。189回のGETに対して
+PALSへのPOSTは0回で、同じ証明の再送はしていません。観測終了時も依頼はverifying、
+最後に確認した関連ジョブはsemantic_reviewでした。観測下限は1660.243879秒です。
+未完了なので形式検証の成否と説明の点数は不明のままです。
+
+別journalの残り4題では、2題が受理されましたが、回答言語が想定の日本語から
+英語へ変わっていました。条件照合が不一致を検出したため、日本語の採点には含めません。
+次の送信は429の`proof_request_rate_limited`で拒否され、最後の1題は送信を止めました。
+これらを数学的失敗や0点とは扱いません。利用者の明示的な許可を受け、回答言語を
+日本語へ戻し、通常の本人向けAPIで保存と読み戻しを確認しました。
+
+事前確認が不足していた評価器は、今後の新規chat・quote・proof requestの直前に
+回答言語を照合するよう修正しました。条件が異なる場合は送信せず、閉じた診断コードを
+残します。既に受理された依頼の読み取り回収は妨げません。
+実測時の評価器は`f588a0ec16e7af98ce4762089f3b46b97f366ae0`で、
+この後続修正を実測時から存在したものとは扱いません。
+
+追加の外部採点を含む回収操作は、自動承認審査で評価内容の外部モデル送信に対する
+個別承認を確認できないとして拒否されました。代替として、外部採点器やその鍵を使わず、
+本人向けのGETだけで状態を確認する操作が承認されました。実際の回収では外部モデルを
+呼んでいません。完了していない説明の点数を補完していません。
+
+### 30分のアクセストークン
+
+利用者から15分ごとの再ログインを30分へ延ばす明示的な依頼を受け、
+既存CognitoクライアントのAccessTokenValidityだけを15分から30分へ変更しました。
+適用前の取得値と設定差分を固定し、適用後は更新可能な設定すべてを読み戻して、
+この1項目以外に差分がないことを確認しました。発行済みトークンの期限は変わらず、
+変更後に発行されるアクセストークンが対象です。新しいJWTを実発行して有効期間を
+再測定したとは主張しません。
+
+この既存クライアントは現行Terraformで参照だけのため、別stateへの二重importや
+古いfoundation全体のapplyはしていません。再利用するguard付きoperatorと8件の
+回帰検証をinfraに追加しました。初回のCLI入力搬送エラーはAWS APIへ到達する前に停止し、
+0600一時ファイルへ修正後に適用しました。設定の読み戻しで目的の状態を確認しています。
+operatorのcommitは`73b60387c9e24423b0722ed465fffa4a39198b25`です。
+
+### 継続観測のCloudWatch取得
+
+GETだけの追跡は`seq29-ja-baseline-20261109-001-recovery-cut2`、条件不一致と
+送信制限の継続4題は`seq29-ja-remaining4-20261109-001`として保存しました。
+両方とも読み戻しと別ファイルへのfetchを行い、送信元と完全に一致することを確認しました。
+前者の正規化SHA-256は`217d913b32116761874c8ab3fe0a57ea6349f66df9350dac9e6b94cd8365977d`、
+後者は`b0788ec64894f563b23b4f13587ada429acc77b28082e0cfc40e36866ae3c8ae`です。
+
+チャットのグラフはrecovery-cut2から取得した日本語評価の観測値を表示します。
+初回の3題を再採点したものではなく、処理中の1題の観測下限を更新したものです。
+英語になった2題のDB上のansweredは、日本語の成功件数へ加えていません。
+品質台帳には初回の1行に続き、重複を明示した継続2行と、30分設定operatorの2回の
+実行を1行にまとめて追記しました。既存472行を保持した476行で、6グラフを再生成しました。

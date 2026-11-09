@@ -17,7 +17,9 @@ is stored in a mode-0600 owner-private file; the normal PALS `/v1/auth/me` check
 then verifies owner access. If this later check fails, the token remains private
 and a retry checks it without asking for the password again. Challenges and password
 changes remain on the normal website. Neither passwords nor tokens belong in chat.
-The current Cognito access session lasts 15 minutes. If it expires, the helper
+New Cognito access tokens last 30 minutes following the owner's explicit
+November 9 request; tokens issued before that change retain their original expiry.
+If a token expires, the helper
 prompts for normal local sign-in and atomically replaces the expired private token;
 it does not store a long-lived refresh credential. Start collection promptly after
 sign-in. Collection deadlines are fingerprinted, and the initial batch is bounded
@@ -29,6 +31,24 @@ Python client received an HTTP 403 at the API boundary. This was reproduced with
 credentials, repaired, and followed by successful owner/quota preflight using the
 user's local token. Diagnostics now expose only the failing step and closed error
 code, not the Cognito message, email, password, token or raw response.
+
+### アクセストークンの30分設定
+
+2026年11月9日の依頼に基づき、評価に使う既存Cognitoクライアントの
+AccessTokenValidityを15分から30分へ変更し、設定を読み戻して確認しました。
+この設定は変更後に発行されるトークンから適用されます。
+IDトークンの15分、refresh tokenの1日、その他の設定は変更していません。
+
+既存クライアントは現行のprivate-runtime Terraformでは参照だけで再利用しています。
+別stateへ二重importしたり、古いfoundation全体をapplyしたりせず、
+`pals-infra/scripts/update-web-access-token-validity.py`で設定を取得し、
+差分とplanのhashを確認してから適用します。AWSの更新APIは省略した項目を
+既定値へ戻すため、更新可能な既存設定をすべて保持し、直前の再取得と適用後の
+読み戻しが一致しなければ停止します。planと結果はGit外の0600ファイルに保存します。
+
+同じアカウントを別の操作でも使う場合は、回答言語と新規送信の上限に注意します。
+今回の継続評価では英語設定への変更と429を実際に観測しました。
+条件が一致しない回答は日本語の比較データへ入れず、送信上限を迂回しません。
 
 ## Infrastructure
 
