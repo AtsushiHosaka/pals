@@ -18,7 +18,7 @@ pals-agent/
     manifest.py                スキーマ、決定的な分割、チェックサム、検証
     records.py                 閉じたスキーマの追記専用 JSONL
     runner.py                  RecordingVerifier / RecordingGenerator、Tier 0・1・全工程
-    analysis.py                McNemar（正確）、題を単位とする対ブートストラップ、MDE
+    analysis.py                題単位の並べ替え検定・対ブートストラップ、対の2値だけの McNemar（正確）、MDE
 ```
 
 ## 問題集合の作り方（`build_manifest.py`）
@@ -60,8 +60,9 @@ pals-agent/
 ## 分析（`analysis.compare`）
 
 1. 題ごとに反復を平均し、両腕にある題だけを使う。
-2. 指標: `first_attempt_ok`、`success`、`repairs_used`、`wall_s`、`cost_usd`。差は B − A。
-3. 全指標に、題を単位とする対ブートストラップの 95% 区間（1万回、固定の種）。二値には題単位の正確な McNemar 検定を添える。
+2. 指標: `first_attempt_ok`、`success`、`repairs_used`、`wall_s`、`cost_usd`。差は B − A。二値指標も、題ごとの反復平均（0.5 のような値）の差を主解析にする。
+3. 全指標に、題をクラスタにした**符号反転の並べ替え検定**（非ゼロの題が16以下は全列挙、超えれば種固定のモンテカルロ）と、題を単位とする対ブートストラップの 95% 区間（1万回、固定の種）。
+   McNemar は対になった2値にだけ使う: 反復が全題1回のときに全体で1回、複数反復のときは「A の r 回目と B の r 回目」を対にして反復番号ごとに別々に出す（プールしない。平均した値には使わない）。主な判定は並べ替え検定と区間で行い、McNemar は補助。
 4. 区間が 0 をまたぐ指標は「効果は確認できない」。報告に MDE を添える（`mde_binary`、`mde_continuous`）。
 5. 複数の指標・複数の分野を見るときは、見た数を書く（多重比較の補正はしない。見た指標を事前に1つ決める）。
 
@@ -85,4 +86,4 @@ pals-agent/
 
 ## 検証
 
-`tests/unit/test_generation_eval_{manifest,analysis,runner}.py`（計28件）: 一意 ID、層の件数、保留の固定チェックサム（分割や文面の改ざんで落ちる）、禁止題材、共有題と Codex の記録の一致、McNemar の既知値、偽陽性率、MDE と検出力のシミュレーション、実行計画の交互性、記録の閉じたスキーマ、Tier 0・1 の記録。
+`tests/unit/test_generation_eval_{manifest,analysis,runner}.py`（計34件）: 一意 ID、層の件数、保留の固定チェックサム（分割や文面の改ざんで落ちる）、禁止題材、共有題と Codex の記録の一致、並べ替え検定の既知値と全列挙・モンテカルロの一致、分数の結果で McNemar を使わないこと、反復2回の偽陽性率、MDE と検出力のシミュレーション、実行計画の交互性、記録の閉じたスキーマ、Tier 0・1 の記録。
