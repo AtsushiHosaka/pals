@@ -60,14 +60,38 @@ Each invocation appends `running` before checking prerequisites, followed by `ac
 
 ## Post-deployment request submission
 
-`pals-scripts/release-post-request.py` is the release cycle's `post-request` command. Its command line now uses a live adapter by default; tests still inject a transport through `main()`. The adapter is two versioned files beside the runner, referenced from the entry script as literals joined to `HERE` so the release plan can freeze them by hash:
+`pals-scripts/release-post-request.py` is the release cycle's `post-request` command. Its command line uses a live adapter by default; tests still inject a transport through `main()`. The adapter is two versioned files beside the runner, referenced from the entry script as literals joined to `HERE` so the release plan can freeze them by hash. `runner_fingerprint()` does not cover them.
 
-- `release-post-request-browser.cjs` holds the credential. It reads the same private session file as the observer (regular file, owner-only `0600`, one link, never written), seeds one browser context from it, takes the bearer the product itself sends to `api_origin`, closes the browser, and then serves only these calls on `api_origin`: `POST /v1/chats`, `GET /v1/chats/{id}`, `GET|POST /v1/chats/{id}/proof-requests`, `GET /v1/proof-requests/{id}`. The page may not write (same allowances as the observer). HTTPS only, no redirect is followed, every call has a deadline, and inherited settings that weaken TLS or add a proxy are removed. The bearer and session contents stay in that process.
-- `release-post-request-transport.py` holds the policy. Before the paid call it reads the chat and its request list, which proves the account, the chat and `X-PALS-Release-Manifest-SHA256 == manifest.sha256`. A request already in the run's dedicated chat is adopted; otherwise the create is sent once per process with the journal's key in the body field `idempotency_key` (the product's own contract). A 4xx reply is a definitive rejection. A lost reply, timeout, 5xx or 3xx is unresolved: the adapter observes the chat and never sends the create again in that process. A later invocation observes first and sends the same key only when the chat is still empty, relying on the API's replay for that key.
+**Credential holder: `release-post-request-browser.cjs`.**
 
-Refusals are fixed codes, an HTTP status and at most the API's bounded `error.code`. Statements, tokens, session contents and response text are not printed, journaled or raised. The adapter does not request a token quote: an account on a token-billed plan is rejected with `create_rejected_http_422:token_quote_required` and nothing is created. An expired session fails closed (`authenticated_context_not_observed` or `session_not_authorized`); renewal works only if `auth_origin` permits it.
+- It reads the same private session file as the observer (regular file, owner-only `0600`, one link) and never writes it.
+- It seeds one browser context, loads `web_origin`, and takes the first bearer the product sends on a `GET` to `api_origin` for `/v1/chats`, `/v1/projects` or `/v1/auth/me`. It refuses (`conflicting_bearers_observed`) if a different bearer was seen on `api_origin` before that. Then it closes the browser.
+- The seeded page may only read `web_origin` and `api_origin`, plus the passive `POST /v1/product-events`. Every other origin is aborted, including `auth_origin`. The session file is never written back, so a renewal could rotate away the owner's stored refresh token. An expired session fails closed with `authenticated_context_not_observed`. **Provision the session fresh shortly before the cycle.**
+- It serves only these calls on `api_origin`: `POST /v1/chats`, `GET /v1/chats/{id}`, `GET|POST /v1/chats/{id}/proof-requests`, `GET /v1/proof-requests/{id}`, `POST /v1/billing/token-quotes`. HTTPS only, no redirect is followed, every call has a deadline. The bearer and session contents stay in that process.
+- Its environment is an allow-list: `PATH`, `HOME`, `TMPDIR`, `LANG`, `LC_ALL`, `LC_CTYPE`. An inherited `PLAYWRIGHT_BROWSERS_PATH` is ignored. If `web_root/node_modules/playwright-core/.local-browsers` exists, that browser is used; otherwise Playwright's default cache under `HOME`.
 
-`python3 pals-scripts/tests/test_release_post_request_transport.py` runs the real adapter, helper and CLI against a loopback TLS server with a stub browser package. It proves the wire policy only. Seeding a real session, the production API's replay and release header, and the first real submission remain NOT VERIFIED until a production run.
+**Policy: `release-post-request-transport.py`.**
+
+- Before the paid call it reads the chat and its request list. These reads prove the account, the chat and `X-PALS-Release-Manifest-SHA256 == manifest.sha256`.
+- A request already in the run's dedicated chat is adopted. Otherwise the create is sent once per process with the journal's key in the body field `idempotency_key` (the product's own contract).
+- Free calls (the reads and the quote) are retried on a lost reply, 5xx, 408 or 429 with a bounded backoff, and no retry starts after `--wait-seconds` has elapsed. 401/403 and a wrong release header are fatal. The create is never retried.
+- A 4xx create reply is a definitive rejection. A lost reply, timeout, 5xx or 3xx is unresolved: the adapter observes the chat and does not send the create again in that process. A later invocation observes first and sends the same key only when the chat is still empty; the API replays that key before it looks at the quote.
+
+**Token quote.** An account on a token plan (plus, pro, research, or a complimentary token month) must quote before a create. The scenario may carry the optional integer member `max_utilization_tokens` (1 to 1,500,000, the API's own bound; the owner chooses the value and there is no default). The schema string stays `pals.post-request-scenario.v1`, and the member is covered by `--scenario-sha256` and the journal's payload hash. When it is present, every invocation that will send the create first posts `{action: "create", chat_id, request_id: null, request: <create body>, max_utilization_tokens}` to `/v1/billing/token-quotes`, as the web client does, and adds the returned `quote_id` to the create. Quotes are free and single use. When it is absent, no quote is requested; a token-plan account is then refused with `scenario_requires_max_utilization_tokens` and nothing is created. An account without a token plan must not carry the member (the quote or the create is rejected and nothing is created).
+
+**Refusals to know.**
+
+| Code | Meaning |
+| --- | --- |
+| `public_api_not_candidate` on the create reply | The reply lacked the candidate's release header. The request may already exist and will bill once. The run refuses; a rerun adopts it if the reads are bound to the candidate. |
+| `create_rejected_http_409:idempotency_conflict` | A request with this key exists with another body or chat. Reconcile manually; do not rerun with a new cycle id to get past it. |
+| `create_rejected_http_429:*`, `quote_rejected_http_429:*` | The account's request limits apply to the acceptance request too. Nothing was created. |
+| `quote_rejected_http_4xx:*`, `quote_unresolved`, `quote_response_invalid` | The quote failed before the paid call. Nothing was created. |
+| `create_unresolved_not_observed` | The create's outcome is unknown and the chat still looks empty. Rerun the same cycle; it observes first. |
+
+Refusals are fixed codes, an HTTP status and at most the API's bounded `error.code`. Statements, tokens, session contents and response text are not printed, journaled or raised.
+
+`python3 pals-scripts/tests/test_release_post_request_transport.py` runs the real adapter, helper and CLI against a loopback TLS server with a stub browser package. It proves the wire policy and the helper's own capture and routing rules against that stub. Real Chromium capture and route filtering, seeding a real session, the production API's replay, quote and release header, and the first real submission remain NOT VERIFIED until a production run.
 
 ## Verification boundary
 

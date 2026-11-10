@@ -39,6 +39,11 @@ HEX = re.compile(r"[a-f0-9]{64}\Z")
 LIVE_OK = {"queued", "assessing", "verifying", "answered"}
 KEEP_WAITING = {"accepted"}
 STATE_KEYS = {"chat_id", "request_id", "intent", "terminal_failure"}
+SCENARIO_KEYS = {"schema_version", "scenario_id", "statement", "generation_model",
+                 "reasoning_effort", "output_language"}
+# Optional scenario member `max_utilization_tokens`: the token cap of the quote a token-plan
+# account needs. The bound is the API's own limit for a quote; the owner chooses the value.
+MAX_UTILIZATION_TOKENS = 1_500_000
 # Executed by the default command line. Keep each path as a literal joined to HERE: the
 # release plan's frozen-set scan follows that form to pin the adapter by hash.
 LIVE_ADAPTER_FILES = (HERE / "release-post-request-transport.py", HERE / "release-post-request-browser.cjs")
@@ -170,8 +175,10 @@ def load_inputs(contract_path: Path, contract_sha256: str | None, candidate_sha2
         need(HEX.fullmatch(scenario_sha256) and acceptance.digest(scenario_raw) == scenario_sha256,
              "scenario_hash_changed")
     scenario = acceptance.document(scenario_raw)
-    need(set(scenario) == {"schema_version", "scenario_id", "statement", "generation_model",
-                           "reasoning_effort", "output_language"}
+    need(set(scenario) - {"max_utilization_tokens"} == SCENARIO_KEYS
+         and ("max_utilization_tokens" not in scenario
+              or type(scenario["max_utilization_tokens"]) is int
+              and 1 <= scenario["max_utilization_tokens"] <= MAX_UTILIZATION_TOKENS)
          and scenario["schema_version"] == SCENARIO_SCHEMA
          and isinstance(scenario["statement"], str) and 0 < len(scenario["statement"].strip()) <= 20000,
          "scenario_shape_invalid")
@@ -238,7 +245,8 @@ def main(argv: list[str] | None = None,
                                          args.candidate_sha256, args.scenario, args.scenario_sha256)
         key = idempotency_key(args.candidate_sha256, scenario["scenario_id"], args.cycle_id)
         transport = (transport_factory or live_transport)(
-            api_origin=contract["api_origin"], session=args.session, contract=contract)
+            api_origin=contract["api_origin"], session=args.session, contract=contract,
+            wait_seconds=args.wait_seconds)
         try:
             journal = Journal(args.state_dir, key, payload_sha256(scenario))
             try:

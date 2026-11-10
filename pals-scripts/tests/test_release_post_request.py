@@ -272,6 +272,22 @@ class CliTests(Base):
             post.load_inputs(c, None, CAND, s, "0" * 64)
         post.load_inputs(c, None, CAND, s, gate.digest(s.read_bytes()))
 
+    def test_optional_token_cap_is_bounded_and_part_of_the_journal_binding(self):
+        c, _ = self.files()
+        for index, good in enumerate((1, 40000, post.MAX_UTILIZATION_TOKENS)):
+            s = private(self.root / f"cap-{index}.json", scenario(max_utilization_tokens=good))
+            self.assertEqual(post.load_inputs(c, None, CAND, s)[1]["max_utilization_tokens"], good)
+        for index, bad in enumerate((0, -1, post.MAX_UTILIZATION_TOKENS + 1, True, 1.5, "40000", None)):
+            s = private(self.root / f"bad-{index}.json", scenario(max_utilization_tokens=bad))
+            with self.assertRaisesRegex(post.Refusal, "scenario_shape_invalid"):
+                post.load_inputs(c, None, CAND, s)
+        s = private(self.root / "extra.json", scenario(unknown_member=1))
+        with self.assertRaisesRegex(post.Refusal, "scenario_shape_invalid"):
+            post.load_inputs(c, None, CAND, s)
+        self.assertEqual(post.SCENARIO_SCHEMA, "pals.post-request-scenario.v1")
+        self.assertEqual(post.MAX_UTILIZATION_TOKENS, 1_500_000)
+        self.assertNotEqual(post.payload_sha256(scenario()), post.payload_sha256(scenario(max_utilization_tokens=1)))
+
     def test_contract_hash_pin_is_enforced(self):
         c, s = self.files()
         with self.assertRaisesRegex(post.Refusal, "contract_hash_changed"):

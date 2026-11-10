@@ -9,6 +9,10 @@ against the contract's API origin. This module owns the policy around those call
 * every response it relies on must carry the candidate's release manifest digest;
 * the create is sent at most once per process, and only after the dedicated chat was
   observed to be empty; an existing request is adopted instead of created;
+* when the scenario carries `max_utilization_tokens`, a fresh token quote (free, single
+  use) is requested with the body the web client sends and bound into the create;
+* free reads and the quote are retried on a lost reply, 5xx, 408 or 429 with a bounded
+  backoff inside the command's overall wait; 401/403 and a wrong release are fatal;
 * a 4xx create reply is a definitive rejection (nothing was created); a lost reply, 5xx,
   3xx or timeout is unresolved and is settled by observing the chat, never by resubmitting;
 * refusals are fixed codes, an HTTP status and at most the server's bounded error code.
@@ -35,10 +39,15 @@ CODE = re.compile(r"[a-z0-9_]{1,64}\Z")
 STATUSES = {"queued", "assessing", "needs_input", "verifying", "answered", "failed"}
 # A 4xx that does not prove the server refused the command before creating anything.
 AMBIGUOUS_4XX = {408, 421, 425, 499}
-# Inherited settings that could weaken TLS verification or reroute the helper's traffic.
-BLOCKED_ENVIRONMENT = {"NODE_OPTIONS", "NODE_EXTRA_CA_CERTS", "NODE_TLS_REJECT_UNAUTHORIZED",
-                       "NODE_USE_ENV_PROXY", "SSL_CERT_FILE", "SSL_CERT_DIR", "HTTP_PROXY",
-                       "HTTPS_PROXY", "ALL_PROXY", "NO_PROXY"}
+RETRYABLE = {408, 429}  # plus every 5xx; only for free calls, never for the create
+# The helper's whole environment. Everything else is dropped, in particular SSLKEYLOGFILE,
+# NODE_OPTIONS, NODE_PATH, NODE_EXTRA_CA_CERTS, NODE_TLS_REJECT_UNAUTHORIZED, OPENSSL_CONF,
+# proxy settings, PLAYWRIGHT_BROWSERS_PATH, DYLD_INSERT_LIBRARIES and LD_PRELOAD.
+#   PATH   -- locates `node`.
+#   HOME   -- Playwright's default browser cache and Chromium's user data live under it.
+#   TMPDIR -- Playwright creates the temporary browser profile there.
+#   LANG, LC_ALL, LC_CTYPE -- text encoding for Node and Chromium.
+ALLOWED_ENVIRONMENT = ("PATH", "HOME", "TMPDIR", "LANG", "LC_ALL", "LC_CTYPE")
 
 
 class _Lost(Exception):
@@ -52,7 +61,9 @@ class LiveTransport:
                  refusal: type[Exception], helper: Path, extra_ca: Path | None = None,
                  call_seconds: float = 30.0, start_seconds: float = 90.0,
                  settle_seconds: tuple[float, ...] = (1.0, 2.0, 4.0),
-                 sleep: Callable[[float], None] = time.sleep):
+                 sleep: Callable[[float], None] = time.sleep,
+                 retry_seconds: tuple[float, ...] = (1.0, 2.0, 4.0, 8.0),
+                 wait_seconds: float = 120.0, clock: Callable[[], float] = time.monotonic):
         self._refusal = refusal
         self._need(api_origin == contract["api_origin"], "api_origin_differs_from_contract")
         for name in ("api_origin", "web_origin"):
@@ -71,6 +82,9 @@ class LiveTransport:
         self._helper, self._extra_ca = Path(helper), extra_ca
         self._call_seconds, self._start_seconds = call_seconds, start_seconds
         self._settle, self._sleep = settle_seconds, sleep
+        # Retries of free calls stop here; one call already in flight may still finish.
+        self._retry, self._clock = retry_seconds, clock
+        self._retry_until = clock() + wait_seconds
         self._process: subprocess.Popen[bytes] | None = None
         self._replies: queue.Queue[bytes | None] = queue.Queue()
         self._sequence = 0
@@ -103,14 +117,10 @@ class LiveTransport:
     # -- helper process ---------------------------------------------------------------
 
     def _start(self) -> None:
-        environment = {name: value for name, value in os.environ.items()
-                       if name.upper() not in BLOCKED_ENVIRONMENT}
-        if self._extra_ca is not None:  # tests only: trust anchor of a loopback server
-            environment["NODE_EXTRA_CA_CERTS"] = str(self._extra_ca)
         try:
             self._process = subprocess.Popen(
                 ["node", str(self._helper)], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                stderr=subprocess.DEVNULL, env=environment, start_new_session=True)
+                stderr=subprocess.DEVNULL, env=self._environment(), start_new_session=True)
         except OSError:
             raise self._refusal("live_session_helper_unavailable") from None
         threading.Thread(target=self._pump, args=(self._process.stdout, self._replies), daemon=True).start()
@@ -123,6 +133,16 @@ class LiveTransport:
             code = ready.get("code")
             raise self._refusal(code if isinstance(code, str) and CODE.fullmatch(code)
                                 else "live_session_helper_unavailable")
+
+    def _environment(self) -> dict[str, str]:
+        environment = {name: os.environ[name] for name in ALLOWED_ENVIRONMENT if name in os.environ}
+        # Playwright's hermetic mode ("0"): use the browser installed inside the contract's
+        # reviewed web root when there is one. An inherited browser path is never honoured.
+        if (Path(self._init["web_root"]) / "node_modules" / "playwright-core" / ".local-browsers").is_dir():
+            environment["PLAYWRIGHT_BROWSERS_PATH"] = "0"
+        if self._extra_ca is not None:  # tests only: trust anchor of a loopback server
+            environment["NODE_EXTRA_CA_CERTS"] = str(self._extra_ca)
+        return environment
 
     @staticmethod
     def _pump(stream: Any, replies: "queue.Queue[bytes | None]") -> None:
@@ -190,17 +210,55 @@ class LiveTransport:
     def _bound(self, reply: dict[str, Any]) -> None:
         self._need(reply.get("release") == self._manifest, "public_api_not_candidate")
 
+    def _free(self, method: str, path: str, body: dict[str, Any] | None = None) -> dict[str, Any] | None:
+        """A call that costs nothing and creates no request: retried while its outcome is transient."""
+        delays = iter(self._retry)
+        while True:
+            try:
+                reply: dict[str, Any] | None = self._wire(method, path, body)
+            except _Lost:
+                reply = None
+            if reply is not None and reply["status"] < 500 and reply["status"] not in RETRYABLE:
+                return reply
+            delay = next(delays, None)
+            if delay is None or self._clock() >= self._retry_until:
+                return reply
+            self._sleep(delay)
+
     def _read(self, path: str, failure: str) -> dict[str, Any]:
         """A GET that must succeed, as the session account, on the candidate."""
-        try:
-            reply = self._wire("GET", path)
-        except _Lost:
-            raise self._refusal(failure + "_unresolved") from None
+        reply = self._free("GET", path)
+        self._need(reply is not None, failure + "_unresolved")
         self._need(reply["status"] not in {401, 403}, "session_not_authorized")
         self._need(reply["status"] == 200, f"{failure}_failed_http_{reply['status']}")
         self._bound(reply)
         self._need(isinstance(reply.get("body"), dict), f"{failure}_response_invalid")
         return reply["body"]
+
+    @staticmethod
+    def _error_code(payload: Any) -> str:
+        error = payload.get("error") if isinstance(payload, dict) else None
+        code = error.get("code") if isinstance(error, dict) else None
+        return code if isinstance(code, str) and CODE.fullmatch(code) else ""
+
+    def _quote(self, chat_id: str, create: dict[str, Any], maximum: int) -> str:
+        """A fresh single-use token quote for exactly this create, as the web client requests it."""
+        reply = self._free("POST", "/v1/billing/token-quotes", {
+            "action": "create", "chat_id": chat_id, "request_id": None, "request": create,
+            "max_utilization_tokens": maximum})
+        self._need(reply is not None, "quote_unresolved")
+        status, payload = reply["status"], reply.get("body")
+        self._need(status not in {401, 403}, "session_not_authorized")
+        if 400 <= status < 500:
+            code = self._error_code(payload)
+            raise self._refusal(f"quote_rejected_http_{status}" + (":" + code if code else ""))
+        self._need(status == 200, f"quote_failed_http_{status}")
+        self._bound(reply)
+        self._need(isinstance(payload, dict) and isinstance(payload.get("quote_id"), str)
+                   and UUID4.fullmatch(payload["quote_id"])
+                   and type(payload.get("max_utilization_tokens")) is int
+                   and payload["max_utilization_tokens"] == maximum, "quote_response_invalid")
+        return payload["quote_id"]
 
     def _uuid(self, value: Any, code: str) -> str:
         self._need(isinstance(value, str) and UUID4.fullmatch(value), code)
@@ -241,11 +299,14 @@ class LiveTransport:
         if found is not None:
             return found
         self._need(not self._submitted, "create_already_attempted")
-        self._submitted = True
         body = {"statement": statement, "idempotency_key": key,
                 "generation_model": scenario["generation_model"]}
         if scenario["reasoning_effort"] is not None:
             body["generation_reasoning_effort"] = scenario["reasoning_effort"]
+        quoted = "max_utilization_tokens" in scenario
+        if quoted:  # free; a rejection here is definitive and precedes the paid call
+            body = {**body, "quote_id": self._quote(chat_id, body, scenario["max_utilization_tokens"])}
+        self._submitted = True
         try:
             reply = self._wire("POST", f"/v1/chats/{chat_id}/proof-requests", body)
         except _Lost:
@@ -258,10 +319,11 @@ class LiveTransport:
                         and isinstance(payload.get("id"), str) and UUID4.fullmatch(payload["id"])):
                     return payload["id"]
             elif 400 <= status < 500 and status not in AMBIGUOUS_4XX:
-                error = payload.get("error") if isinstance(payload, dict) else None
-                code = error.get("code") if isinstance(error, dict) else None
-                suffix = ":" + code if isinstance(code, str) and CODE.fullmatch(code) else ""
-                raise self._refusal(f"create_rejected_http_{status}{suffix}")
+                code = self._error_code(payload)
+                # The account is on a token plan and the reviewed scenario names no cap.
+                self._need(quoted or (status, code) != (422, "token_quote_required"),
+                           "scenario_requires_max_utilization_tokens")
+                raise self._refusal(f"create_rejected_http_{status}" + (":" + code if code else ""))
         # Unresolved: the create may or may not exist. Observe only; never send it again.
         for delay in self._settle:
             self._sleep(delay)

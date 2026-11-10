@@ -22,7 +22,10 @@ const ROUTES = [
   ["GET", new RegExp(`^/v1/chats/${UUID}/proof-requests$`, "u"), false],
   ["POST", new RegExp(`^/v1/chats/${UUID}/proof-requests$`, "u"), true],
   ["GET", new RegExp(`^/v1/proof-requests/${UUID}$`, "u"), false],
+  ["POST", /^\/v1\/billing\/token-quotes$/u, true],
 ];
+// Owner reads the signed-in workspace issues on load. The bearer is taken only from one of these.
+const CAPTURE = [/^\/v1\/chats$/u, /^\/v1\/projects$/u, /^\/v1\/auth\/me(?:\/[a-z-]{1,64})?$/u];
 const MAX_BODY = 2 ** 20;
 
 function httpsOrigin(value, code) {
@@ -50,8 +53,10 @@ function readSession(sessionPath, webOrigin) {
   } finally { fs.closeSync(fd); }
 }
 
-// The page may only read. Token renewal against the approved auth origin and the product's
-// passive telemetry are let through, as in the acceptance observer; every other write is aborted.
+// The page may only read the web and API origins (plus the product's passive telemetry POST).
+// Every other origin is aborted, the auth origin included: the session file is never written
+// back, so a renewal here could rotate away the owner's stored refresh token. An expired
+// session therefore fails closed and must be provisioned again.
 async function bearerFromBrowser(init, session) {
   const deadline = Date.now() + init.start_ms;
   const resolve = name => require.resolve(name, { paths: [init.web_root] });
@@ -63,25 +68,38 @@ async function bearerFromBrowser(init, session) {
       if (location.origin === origin) for (const [key, value] of entries) sessionStorage.setItem(key, value);
     }, { origin: session.origin, entries: Object.entries(session.session_storage) });
     await context.route("**/*", async route => {
-      const request = route.request(), url = new URL(request.url());
-      if (["GET", "HEAD", "OPTIONS"].includes(request.method())) await route.continue();
-      else if (request.method() === "POST" && url.origin === init.api_origin && url.pathname === "/v1/product-events" && !url.search) await route.continue();
-      else if (request.method() === "POST" && init.auth_origin && url.origin === init.auth_origin && !url.search
-        && ["/", "/oauth2/token"].includes(url.pathname)) await route.continue();
+      const request = route.request();
+      let url = null;
+      try { url = new URL(request.url()); } catch { url = null; }
+      const read = ["GET", "HEAD", "OPTIONS"].includes(request.method());
+      if (url && read && (url.origin === init.web_origin || url.origin === init.api_origin)) await route.continue();
+      else if (url && request.method() === "POST" && url.origin === init.api_origin
+        && url.pathname === "/v1/product-events" && !url.search) await route.continue();
       else await route.abort();
     });
     const page = await context.newPage();
     page.setDefaultTimeout(30_000);
     let bearer = null;
-    page.on("request", request => {
-      if (new URL(request.url()).origin === init.api_origin) {
-        const value = request.headers().authorization;
-        if (typeof value === "string" && value.startsWith("Bearer ")) bearer = value;
+    const seen = new Set();
+    // First bearer on an allow-listed owner read wins; then the listener is removed.
+    const listener = request => {
+      let url;
+      try { url = new URL(request.url()); } catch { return; }
+      if (url.origin !== init.api_origin) return;
+      const value = request.headers().authorization;
+      if (typeof value !== "string" || !value.startsWith("Bearer ")) return;
+      seen.add(value);
+      if (request.method() === "GET" && CAPTURE.some(pattern => pattern.test(url.pathname))) {
+        bearer = value;
+        page.off("request", listener);
       }
-    });
-    await page.goto(`${init.web_origin}/chats`, { waitUntil: "domcontentloaded" });
+    };
+    page.on("request", listener);
+    await page.goto(`${init.web_origin}/`, { waitUntil: "domcontentloaded" });
     while (!bearer && Date.now() < deadline) await page.waitForTimeout(100);
+    page.off("request", listener);
     need(bearer, "authenticated_context_not_observed");
+    need(seen.size === 1, "conflicting_bearers_observed");
     // A header-safe token only: no whitespace or control characters can reach the wire.
     need(/^Bearer [A-Za-z0-9._~+/=-]{16,8192}$/u.test(bearer), "authenticated_context_not_observed");
     return bearer;
