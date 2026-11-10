@@ -38,3 +38,4 @@
 | 2026-11-10 | 机上試算: 時間・費用が失敗実行にどう偏るか、修復上限・早期停止の反事実（モデル呼び出し0回） | [offline-savings-analysis](entries/2026-11-10-offline-savings-analysis.md) |
 | 2026-11-10 | 早期停止の専用終了理由（#91、既定 off）。既存の停止は API に拒否され、本番で働くのは harness 不一致だけ | [early-stop-terminal-reason](entries/2026-11-10-early-stop-terminal-reason.md) |
 | 2026-11-10 | import plan を検証器へ接続（#92、既定 off、実モデル測定なし） | [import-plan-verifier](entries/2026-11-10-import-plan-verifier.md) |
+| 2026-11-10 | 生成側の評価セット（約100題、調整70・保留30）と対比較ツール。Tier 0 の実 Lean 再検査を3件で確認（モデル呼び出し0、費用0） | [generation-eval-set](entries/2026-11-10-generation-eval-set.md) |
