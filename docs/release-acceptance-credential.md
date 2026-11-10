@@ -1,6 +1,6 @@
 # リリース受入リクエスト用の認証情報設計（提案）
 
-状態: 提案。ライブのトランスポートは実装しない。`docs/release-reliability-policy.md` と `AGENTS.md` は現在「所有者がログイン済みのブラウザアカウント」だけを承認しており、本書の方式は所有者の承認後に適用する。参照: AtsushiHosaka/pals#318。
+状態: 提案。本書の短命トークン方式は未実装。承認済みのセッションファイルを使うアダプタは [release-acceptance-runner.md](release-acceptance-runner.md) の「Post-deployment request submission」に記載した。`docs/release-reliability-policy.md` と `AGENTS.md` は現在「所有者がログイン済みのブラウザアカウント」だけを承認しており、本書の方式は所有者の承認後に適用する。参照: AtsushiHosaka/pals#318。
 
 ## 目的
 `pals-scripts/release-post-request.py` が本番へ有償の受入リクエストを1件だけ作るための、最小権限で短命な認証手段を定める。ブラウザの sessionStorage の写しにはトークンのキー名の契約がなく、非対話で使えない。

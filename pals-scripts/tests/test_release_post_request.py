@@ -245,11 +245,12 @@ class CliTests(Base):
         self.assertEqual(out.strip(), json.dumps(value, sort_keys=True))
         self.assertNotIn(SECRET_STATEMENT, out + err)
 
-    def test_without_live_adapter_it_refuses_and_creates_nothing(self):
+    def test_default_live_adapter_refuses_a_missing_session_and_creates_nothing(self):
         c, s = self.files()
-        code, out, err = self.invoke(c, s, None)
+        code, out, err = self.invoke(c, s, None)  # no injected transport: the real adapter is used
         self.assertEqual((code, out), (2, ""))
-        self.assertIn("live_transport_adapter_not_supplied", err)
+        self.assertEqual(json.loads(err)["reason"], "private_session_required")
+        self.assertFalse(self.state.exists())
 
     def test_candidate_mismatch_pre_release_contract_and_scenario_drift_refused(self):
         c, s = self.files()
