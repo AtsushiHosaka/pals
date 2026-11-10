@@ -70,7 +70,7 @@
 
 - 初回コンパイルは**同数（20/28）で、一致しない題は3対3**。差は検出できない。n=28 で、一致しない題が約3割のとき、80%の検出力で拾える差は**約29ポイント（net 8題）以上**に限られる。これより小さい差は、このサンプルでは見えない。
 - **「import 起因の失敗が減る」は見えなかった。** base でも21/28 の Sketch は絞った import（例: `Mathlib.Data.Real.Basic`）を書いていたが、import 起因のエラーは0件で、combined も0件。減る余地がまず無かった。
-- 方向がはっきり出たのは次の2点。(1) combined は Sketch の出力が約15%短く、生成が約3秒速い。(2) full import 固定で Lean の Sketch 検査が約2秒（+71%）遅い（[stacks-import-index](2026-11-09-stacks-import-index.md) の測定、`import Mathlib` 5.1 s と最小 import 2.4 s の差と整合する）。**生成の短縮と検査の遅延がほぼ打ち消し合い、題あたりの合計時間は変わらない。**
+- 方向がはっきり出たのは次の2点。(1) combined は Sketch の出力が約15%短く、生成が約3秒速い。(2) combined 腕では Lean の Sketch 検査が約2秒（+71%）遅い。full import 固定の影響とは整合する（[stacks-import-index](2026-11-09-stacks-import-index.md) の測定、`import Mathlib` 5.1 s と最小 import 2.4 s の差）が、3フラグと生成された Sketch が同時に変わっているので、`PROMPT_FULL_MATHLIB_IMPORT` 単独の効果とは分けられない。**生成の短縮と検査の遅延がほぼ打ち消し合い、題あたりの合計時間は変わらない。**
 - `Unknown identifier` は base 1 → combined 6 件（3題）と悪い方向だが、件数が少なく、1題（`seed-rank_nullity` の `Basis`）で3件を占める。偶然を排除できない。
 - 一致しない6題: base のみ成功は `disc_size_difference_closed`・`seed-absolute_value_not_differentiable`・`seed-rank_nullity`、combined のみ成功は `calc_derivative_cubic_minus_linear`・`pq-prime-above-every-bound`・`rat_adjacent_partial_fractions`。いずれも反復なし1回の試行なので、モデルの抽出のばらつきと区別できない。
 
@@ -78,7 +78,7 @@
 
 | 指標 | base | combined | 差 | 95%区間 |
 |---|---|---|---|---|
-| 最終成功 | 11/12 | 11/12 | 0 | 0〜0（差なし） |
+| 最終成功 | 11/12 | 11/12 | 0 | 未算出（12組すべてで成否が一致し、題でのブートストラップは 0〜0 に退化する。差が0とは言えない） |
 | 初回コンパイル（最初の試行で検証済み） | 8/12 | 6/12 | −2題（−0.17） | −0.50〜+0.17、McNemar p=0.63 |
 | 修復の合計（回） | 9 | 9 | 0 | |
 | 題あたりの時間（平均／中央値） | 121.5 s／79.7 s | 114.1 s／64.6 s | −7.4 s（平均） | −39.5〜+18.8、p=0.71 |
@@ -86,7 +86,7 @@
 | 出力トークン（平均） | 8230 | 7043 | −1187（−14%） | −3535〜+722 |
 | 費用（12題合計、補正後の推計※） | US$0.620 | US$0.549 | −US$0.071（−12%） | |
 
-- 最終成功は両腕とも11/12。失敗した1題は同じ `mv_foundation_exceptional_section_counterexample`（修復上限3まで使い切り、両腕で同じ）。n=12、成功が両腕で11/12なので、成功率の差はこの標本では**検出できない**（差が出るには、ほぼ全題で結果が割れる必要がある）。
+- 最終成功は両腕とも11/12。失敗した1題は同じ `mv_foundation_exceptional_section_counterexample`（修復上限3まで使い切り、両腕で同じ）。n=12、成功が両腕で11/12なので、この標本では成否が割れた題が**0題**で、成功率の差は検出できない。両側の厳密 McNemar は、一方向にだけ6題割れれば p=0.03125 になる。つまり n=12 でも半数が割れれば拾えるが、割れた題が少ないと差は見えず、「差がない」の証拠にはならない。
 - 初回コンパイルは base 8 → combined 6 と悪い向きだが、割れた題は3対1。p=0.63 で、偶然と区別できない。費用・時間・出力トークンは combined のほうが小さい向きだが、区間はどれも0をまたぐ。
 - 参考: 全パイプラインの1題あたり費用は、推計で約US$0.05（平均）。前提にしていたUS$0.070より低い。
 
@@ -126,7 +126,7 @@
 | フラグ | 判断 | 理由 |
 |---|---|---|
 | `PROMPT_STATIC_PREFIX` | **off のまま** | 期待する効果（prefix キャッシュ）がこの経路で再現しなかった（40呼び出しで hit 0、共通 prefix だけの対照でも0）。入力は約3%減るだけ。本番の経路で hit するかを先に確かめる |
-| `PROMPT_FULL_MATHLIB_IMPORT` | **off のまま** | 狙った import 起因の失敗は base でも0件で、減る余地がなかった。Lean の検査が約2秒（+71%）遅くなる。最小 import の計画（#92）の方向と逆 |
+| `PROMPT_FULL_MATHLIB_IMPORT` | **off のまま** | 狙った import 起因の失敗は base でも0件で、減る余地がなかった。combined 腕では Lean の検査が約2秒（+71%）遅かったが、このフラグ単独の効果は分けられない。最小 import の計画（#92）の方向と逆 |
 | `PROMPT_CONDITIONAL_GUIDANCE` | **Tier 3 が要る** | 単独の測定をしていない。束ねた腕では出力が約14〜15%短く、費用が約12%減る向きだが、初回コンパイルの変化（Tier 2 で 8→6/12）は検出できず、悪化の可能性も残る。個別腕と held-out を含む Tier 3 で決める |
 | `DRAFT_STRUCTURED_FIELDS` | **off のまま。次は下流の効果を測る** | 欄は28/28で読め、判定の題の結論は6/6一致。壊れる心配は小さいが、欄を使う側（Sketch への入力など）の効果は未測定 |
 
@@ -141,5 +141,5 @@
 ## 出典・生データ
 
 - pals-agent#104（道具）、pals-agent#96・#97・#98、AtsushiHosaka/pals#327。
-- 生データ（JSONL。Lean 本文・Draft 本文は含まない）: `/Users/atsushi/Library/Application Support/Claude/side-session-notes/local_9cbdcd9c-4fc2-4716-a1cd-bc3f475ff312/flag-measurement-data/`（A: `runA/cache.jsonl`、B: `runB/records.jsonl`・`sketch_errors.jsonl`、C: `runC/records.jsonl`、構造化欄: `runF/`（6題）・`runF2/`（28題）、費用の台帳: `spend.jsonl`）。
+- 生データ（JSONL。Lean 本文・Draft 本文は含まない）: 作者の端末内の `flag-measurement-data/`。リポジトリにもレビュー担当者にも共有していないので、題ごとの時間の区間はここからは再計算できない（A: `runA/cache.jsonl`、B: `runB/records.jsonl`・`sketch_errors.jsonl`、C: `runC/records.jsonl`、構造化欄: `runF/`（6題）・`runF2/`（28題）、費用の台帳: `spend.jsonl`）。
 - 台帳の行: `2026-11-10-flagmeas-*`。
