@@ -153,6 +153,7 @@ async function serve(input, output, bearerSource = bearerFromBrowser) {
   const write = value => output.write(JSON.stringify(value) + "\n");
   const lines = readline.createInterface({ input, crlfDelay: Infinity })[Symbol.asyncIterator]();
   let api, bearer, init;
+  const nonce = () => (init && typeof init.nonce === "string" ? { nonce: init.nonce } : {});
   try {
     const first = await lines.next();
     need(!first.done, "live_session_helper_unavailable");
@@ -164,10 +165,10 @@ async function serve(input, output, bearerSource = bearerFromBrowser) {
       && Number.isSafeInteger(init.call_ms) && init.call_ms > 0 && init.call_ms <= 120_000, "bounded_wait_required");
     bearer = await bearerSource(init, readSession(init.session_path, init.web_origin));
   } catch (error) {
-    write({ ready: false, code: error instanceof Refusal ? error.message : "browser_dependency_or_execution_failed" });
+    write({ ready: false, code: error instanceof Refusal ? error.message : "browser_dependency_or_execution_failed", ...nonce() });
     return 1;
   }
-  write({ ready: true });
+  write({ ready: true, ...nonce() });
   for (;;) {
     const next = await lines.next();
     if (next.done) return 0;

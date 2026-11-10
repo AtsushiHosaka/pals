@@ -13,11 +13,13 @@ import io
 import json
 import os
 import re
+import signal
 import ssl
 import subprocess
 import sys
 import tempfile
 import threading
+import time
 import unittest
 import unittest.mock
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -120,7 +122,8 @@ class FakeApi:
         self.status = "queued"
         self.create_mode = "ok"   # ok | drop_reply | 503_before | 503_after | 422 | 409 | 429 | no_header | redirect
         self.require_quote = False
-        self.quote_mode = "ok"    # ok | 409 | 503_once
+        self.quote_mode = "ok"    # ok | 409 | 503_once | 503_no_plan
+        self.fail_chat_create = 0
         self.quotes, self.quote_bodies = {}, []
         self.fail_observe = 0
         self.redirect_to = None
@@ -175,6 +178,9 @@ class FakeApi:
                 if auth != "Bearer " + FAKE_BEARER:
                     return self.reply(401, {"error": {"code": "unauthorized"}})
                 if method == "POST" and self.path == "/v1/chats":
+                    if api.fail_chat_create:
+                        api.fail_chat_create -= 1
+                        return self.reply(503, {"error": {"code": "unavailable"}}, bound=False)
                     chat = str(uuid4())
                     api.chats.add(chat)
                     return self.reply(201, {"id": chat, "project_id": None})
@@ -207,6 +213,8 @@ class FakeApi:
                 if api.quote_mode == "503_once":
                     api.quote_mode = "ok"
                     return self.reply(503, {"error": {"code": "unavailable"}}, bound=False)
+                if api.quote_mode == "503_no_plan":
+                    return self.reply(503, {"error": {"code": "token_accounting_unavailable"}})
                 if api.quote_mode == "409":
                     return self.reply(409, {"error": {"code": "token_quote_plan_changed"}})
                 quote = str(uuid4())
@@ -411,6 +419,59 @@ class WireTests(Base):
             transport.create_request(chat, self.key, scenario())
         self.assertEqual(len(self.api.posts()), 1)
 
+    # -- helper process loss ----------------------------------------------------------
+
+    def test_helper_killed_after_the_create_is_replaced_and_the_request_is_adopted_in_the_same_run(self):
+        self.api.create_mode = "503_after"  # created server-side; the caller only sees a failure
+        transport = self.transport()
+        real = transport._wire
+
+        def kill_after_create(method, path, body=None):
+            reply = real(method, path, body)
+            if method == "POST" and path.endswith("/proof-requests"):
+                process = transport._process
+                os.killpg(process.pid, signal.SIGKILL)
+                process.wait(timeout=10)
+                time.sleep(0.3)  # let the reader of the dead helper report end of stream
+            return reply
+
+        transport._wire = kill_after_create
+        result = self.run_once(transport)
+        self.assertEqual(result["id"], self.api.keys[self.key])
+        self.assertEqual((len(self.api.posts()), len(self.api.requests)), (1, 1))
+
+    def test_a_timed_out_helper_is_replaced_and_its_late_output_is_never_matched(self):
+        transport = self.transport()
+        chat = transport.create_chat()
+        old = transport._process
+        with self.assertRaises(Exception):  # the exchange gives up; the helper is terminated
+            transport._exchange({"id": 999, "method": "GET", "path": "/v1/chats/" + chat}, 0.0)
+        old.wait(timeout=10)
+        time.sleep(0.3)
+        self.assertEqual(transport._read("/v1/chats/" + chat, "preflight")["id"], chat)
+        self.assertIsNot(transport._process, old)
+
+    def test_chat_creation_is_retried_on_a_transient_failure(self):
+        self.api.fail_chat_create = 2
+        result = self.run_once(self.transport())
+        self.assertEqual((len(self.api.chats), len(self.api.posts())), (1, 1))
+        self.assertIn(result["chat_id"], self.api.chats)
+
+    def test_quote_failure_surfaces_the_bounded_api_code(self):
+        self.api.require_quote, self.api.quote_mode = True, "503_no_plan"
+        with self.assertRaisesRegex(post.Refusal, r"^quote_failed_http_503:token_accounting_unavailable$"):
+            self.run_once(self.transport(), scenario(max_utilization_tokens=40000))
+        self.assertEqual((self.api.posts(), self.api.requests), ([], {}))
+
+    def test_read_retries_are_available_to_calls_made_after_the_overall_wait_elapsed(self):
+        result = self.run_once(self.transport())
+        now = [0.0]
+        late = self.transport(wait_seconds=5, clock=lambda: now[0])
+        late.observe(result["id"])
+        now[0] = 1000.0  # long after the wait given at construction
+        self.api.fail_observe = 2
+        self.assertEqual(late.observe(result["id"])["status"], "queued")
+
     # -- token quote ------------------------------------------------------------------
 
     def test_quoted_create_mirrors_the_web_quote_and_binds_it_to_the_create(self):
@@ -514,7 +575,7 @@ class WireTests(Base):
         seen = len(self.api.seen)
         with self.assertRaisesRegex(post.Refusal, r"^observe_failed_http_503$"):
             late.observe(result["id"])
-        self.assertEqual(len(self.api.seen) - seen, 1)  # the deadline has passed: one attempt, no retry
+        self.assertEqual(len(self.api.seen) - seen, 1)  # this call outlived the wait: one attempt, no retry
         self.api.fail_observe, self.api.release = 0, "b" * 64
         seen = len(self.api.seen)
         with self.assertRaisesRegex(post.Refusal, r"^public_api_not_candidate$"):

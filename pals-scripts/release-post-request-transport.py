@@ -29,6 +29,7 @@ import stat
 import subprocess
 import threading
 import time
+import uuid
 from pathlib import Path
 from typing import Any, Callable
 from urllib.parse import urlsplit
@@ -82,9 +83,8 @@ class LiveTransport:
         self._helper, self._extra_ca = Path(helper), extra_ca
         self._call_seconds, self._start_seconds = call_seconds, start_seconds
         self._settle, self._sleep = settle_seconds, sleep
-        # Retries of free calls stop here; one call already in flight may still finish.
-        self._retry, self._clock = retry_seconds, clock
-        self._retry_until = clock() + wait_seconds
+        # A free call may retry for at most the command's wait, counted from that call's start.
+        self._retry, self._clock, self._wait_seconds = retry_seconds, clock, wait_seconds
         self._process: subprocess.Popen[bytes] | None = None
         self._replies: queue.Queue[bytes | None] = queue.Queue()
         self._sequence = 0
@@ -123,11 +123,18 @@ class LiveTransport:
                 stderr=subprocess.DEVNULL, env=self._environment(), start_new_session=True)
         except OSError:
             raise self._refusal("live_session_helper_unavailable") from None
+        # One queue per helper: the end-of-stream marker or a late line of an earlier helper
+        # can never be read as this helper's reply. The nonce ties the handshake to this start.
+        self._replies = queue.Queue()
         threading.Thread(target=self._pump, args=(self._process.stdout, self._replies), daemon=True).start()
+        nonce = uuid.uuid4().hex
         try:
-            ready = self._exchange(self._init, self._start_seconds + 15)
+            ready = self._exchange({**self._init, "nonce": nonce}, self._start_seconds + 15)
         except _Lost:
             raise self._refusal("live_session_helper_unavailable") from None
+        if ready.get("nonce") != nonce:
+            self.close()
+            raise self._refusal("live_session_helper_unavailable")
         if ready.get("ready") is not True:
             self.close()
             code = ready.get("code")
@@ -213,6 +220,7 @@ class LiveTransport:
     def _free(self, method: str, path: str, body: dict[str, Any] | None = None) -> dict[str, Any] | None:
         """A call that costs nothing and creates no request: retried while its outcome is transient."""
         delays = iter(self._retry)
+        until = self._clock() + self._wait_seconds
         while True:
             try:
                 reply: dict[str, Any] | None = self._wire(method, path, body)
@@ -221,7 +229,7 @@ class LiveTransport:
             if reply is not None and reply["status"] < 500 and reply["status"] not in RETRYABLE:
                 return reply
             delay = next(delays, None)
-            if delay is None or self._clock() >= self._retry_until:
+            if delay is None or self._clock() >= until:
                 return reply
             self._sleep(delay)
 
@@ -252,7 +260,9 @@ class LiveTransport:
         if 400 <= status < 500:
             code = self._error_code(payload)
             raise self._refusal(f"quote_rejected_http_{status}" + (":" + code if code else ""))
-        self._need(status == 200, f"quote_failed_http_{status}")
+        if status != 200:
+            code = self._error_code(payload)
+            raise self._refusal(f"quote_failed_http_{status}" + (":" + code if code else ""))
         self._bound(reply)
         self._need(isinstance(payload, dict) and isinstance(payload.get("quote_id"), str)
                    and UUID4.fullmatch(payload["quote_id"])
@@ -278,10 +288,9 @@ class LiveTransport:
     # -- Transport surface ------------------------------------------------------------
 
     def create_chat(self) -> str:
-        try:
-            reply = self._wire("POST", "/v1/chats")
-        except _Lost:
-            raise self._refusal("create_chat_unresolved") from None
+        # Free and unbilled: a retry after a lost reply can only leave an empty orphan chat.
+        reply = self._free("POST", "/v1/chats")
+        self._need(reply is not None, "create_chat_unresolved")
         self._need(reply["status"] not in {401, 403}, "session_not_authorized")
         self._need(reply["status"] == 201, f"create_chat_failed_http_{reply['status']}")
         self._bound(reply)
