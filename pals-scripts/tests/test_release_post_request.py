@@ -95,7 +95,7 @@ class Base(unittest.TestCase):
         self.key = post.idempotency_key(CAND, "s1", CYCLE)
 
     def journal(self):
-        return post.Journal(self.state, self.key)
+        return post.Journal(self.state, self.key, post.payload_sha256(scenario()))
 
     def run_once(self, fake, **kw):
         journal = self.journal()
@@ -177,6 +177,16 @@ class Tests(Base):
         self.assertNotEqual(first["id"], second["id"])
         self.assertEqual(len(fake.requests), 2)
 
+    def test_resume_with_changed_scenario_payload_is_refused(self):
+        fake = Fake()
+        self.run_once(fake)
+        journal = None
+        with self.assertRaisesRegex(post.Refusal, "scenario_payload_changed_since_journal"):
+            journal = post.Journal(self.state, self.key, post.payload_sha256(scenario(statement="other statement")))
+        self.assertIsNone(journal)
+        self.assertEqual(fake.calls.count("create_request"), 1)
+        self.assertNotEqual(post.payload_sha256(scenario()), post.payload_sha256(scenario(statement="x")))
+
     def test_cycle_id_must_be_canonical_uuid(self):
         for bad in ("", "x", "AAAAAAAA-AAAA-4AAA-8AAA-AAAAAAAAAAAA", CYCLE.replace("-", "")):
             with self.assertRaises(post.Refusal):
@@ -200,7 +210,7 @@ class Tests(Base):
     def test_journal_for_another_key_and_concurrent_runs_are_refused(self):
         self.run_once(Fake())
         with self.assertRaisesRegex(post.Refusal, "journal_belongs_to_another_request"):
-            post.Journal(self.state, post.idempotency_key(CAND, "other", CYCLE))
+            post.Journal(self.state, post.idempotency_key(CAND, "other", CYCLE), post.payload_sha256(scenario()))
         held = self.journal()
         self.addCleanup(held.stream.close)
         with self.assertRaisesRegex(post.Refusal, "post_request_already_running"):
@@ -254,6 +264,12 @@ class CliTests(Base):
         code, _, err = self.invoke(c, s2, lambda **kw: Fake())
         self.assertEqual(code, 2)
         self.assertIn("scenario_differs_from_contract", err)
+
+    def test_scenario_hash_pin_is_enforced_and_matching_pin_accepted(self):
+        c, s = self.files()
+        with self.assertRaisesRegex(post.Refusal, "scenario_hash_changed"):
+            post.load_inputs(c, None, CAND, s, "0" * 64)
+        post.load_inputs(c, None, CAND, s, gate.digest(s.read_bytes()))
 
     def test_contract_hash_pin_is_enforced(self):
         c, s = self.files()

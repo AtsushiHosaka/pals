@@ -79,7 +79,7 @@ class Transport(Protocol):
 
 
 class Journal:
-    def __init__(self, state_dir: Path, key: str):
+    def __init__(self, state_dir: Path, key: str, payload: str):
         if not state_dir.exists():
             state_dir.mkdir(mode=0o700, parents=True)
         info = state_dir.lstat()
@@ -87,6 +87,7 @@ class Journal:
              and stat.S_IMODE(info.st_mode) == 0o700, "private_state_directory_required")
         self.path = state_dir / "post-request.jsonl"
         self.key = key
+        self.payload = payload
         fd = os.open(self.path, os.O_RDWR | os.O_APPEND | os.O_CREAT | os.O_NOFOLLOW, 0o600)
         self.stream = os.fdopen(fd, "a+b")
         meta = os.fstat(self.stream.fileno())
@@ -109,6 +110,7 @@ class Journal:
                 raise Refusal("journal_corrupt") from error
             need(isinstance(record, dict) and record.get("schema_version") == JOURNAL_SCHEMA
                  and record.get("key") == key, "journal_belongs_to_another_request")
+            need(record.get("payload_sha256") == payload, "scenario_payload_changed_since_journal")
             self.state.update({k: v for k, v in record.items() if k in STATE_KEYS})
         if torn:  # a crash mid-append: that record never completed, so discard it
             self.stream.truncate(offset)
@@ -116,11 +118,17 @@ class Journal:
             os.fsync(self.stream.fileno())
 
     def write(self, **fields: Any) -> None:
-        record = {"schema_version": JOURNAL_SCHEMA, "key": self.key, **fields}
+        record = {"schema_version": JOURNAL_SCHEMA, "key": self.key, "payload_sha256": self.payload, **fields}
         self.stream.write(json.dumps(record, sort_keys=True).encode() + b"\n")
         self.stream.flush()
         os.fsync(self.stream.fileno())
         self.state.update({k: v for k, v in fields.items() if k in STATE_KEYS})
+
+
+def payload_sha256(scenario: dict[str, Any]) -> str:
+    """Hash of the FULL scenario payload (statement included); the statement itself is never stored."""
+    return hashlib.sha256(json.dumps(scenario, sort_keys=True, separators=(",", ":"),
+                                     ensure_ascii=False).encode()).hexdigest()
 
 
 def canonical_uuid(value: Any) -> str:
@@ -133,7 +141,7 @@ def canonical_uuid(value: Any) -> str:
 
 
 def load_inputs(contract_path: Path, contract_sha256: str | None, candidate_sha256: str,
-                scenario_path: Path) -> tuple[dict[str, Any], dict[str, Any]]:
+                scenario_path: Path, scenario_sha256: str | None = None) -> tuple[dict[str, Any], dict[str, Any]]:
     acceptance = _load_acceptance()
     raw = acceptance.private_file(contract_path)
     if contract_sha256 is not None:
@@ -142,7 +150,11 @@ def load_inputs(contract_path: Path, contract_sha256: str | None, candidate_sha2
     need(contract["phase"] == "post_deployment" and contract["target"] == "production",
          "production_post_deployment_contract_required")
     need(contract["manifest"]["sha256"] == candidate_sha256, "contract_not_for_candidate")
-    scenario = acceptance.document(acceptance.private_file(scenario_path))
+    scenario_raw = acceptance.private_file(scenario_path)
+    if scenario_sha256 is not None:  # the plan pins the exact statement bytes
+        need(HEX.fullmatch(scenario_sha256) and acceptance.digest(scenario_raw) == scenario_sha256,
+             "scenario_hash_changed")
+    scenario = acceptance.document(scenario_raw)
     need(set(scenario) == {"schema_version", "scenario_id", "statement", "generation_model",
                            "reasoning_effort", "output_language"}
          and scenario["schema_version"] == SCENARIO_SCHEMA
@@ -198,6 +210,7 @@ def main(argv: list[str] | None = None,
     parser.add_argument("--contract-sha256")
     parser.add_argument("--candidate-sha256", required=True)
     parser.add_argument("--cycle-id", required=True)
+    parser.add_argument("--scenario-sha256")
     parser.add_argument("--scenario", required=True, type=Path)
     parser.add_argument("--session", required=True, type=Path)
     parser.add_argument("--state-dir", required=True, type=Path)
@@ -207,11 +220,11 @@ def main(argv: list[str] | None = None,
         os.umask(0o077)
         need(1 <= args.wait_seconds <= 900, "bounded_wait_required")
         contract, scenario = load_inputs(args.contract, args.contract_sha256,
-                                         args.candidate_sha256, args.scenario)
+                                         args.candidate_sha256, args.scenario, args.scenario_sha256)
         key = idempotency_key(args.candidate_sha256, scenario["scenario_id"], args.cycle_id)
         need(transport_factory is not None, "live_transport_adapter_not_supplied")
         transport = transport_factory(api_origin=contract["api_origin"], session=args.session)
-        journal = Journal(args.state_dir, key)
+        journal = Journal(args.state_dir, key, payload_sha256(scenario))
         try:
             result = run(transport, journal, key, scenario, wait_seconds=args.wait_seconds)
         finally:
