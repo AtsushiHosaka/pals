@@ -23,6 +23,8 @@ def load(name, file):
 gate = load("release_acceptance", "release-acceptance.py")
 post = load("release_post_request", "release-post-request.py")
 CAND = "a" * 64
+CYCLE = "11111111-1111-4111-8111-111111111111"
+CYCLE2 = "22222222-2222-4222-8222-222222222222"
 SECRET_STATEMENT = "PRIVATE-STATEMENT-DO-NOT-LEAK"
 
 
@@ -90,7 +92,7 @@ class Base(unittest.TestCase):
         self.addCleanup(self._dir.cleanup)
         self.root = Path(self._dir.name).resolve()
         self.state = self.root / "state"
-        self.key = post.idempotency_key(CAND, "s1")
+        self.key = post.idempotency_key(CAND, "s1", CYCLE)
 
     def journal(self):
         return post.Journal(self.state, self.key)
@@ -106,11 +108,11 @@ class Base(unittest.TestCase):
 
 class Tests(Base):
     def test_key_depends_on_candidate_and_scenario_and_fits_api_pattern(self):
-        a = post.idempotency_key(CAND, "s1")
+        a = post.idempotency_key(CAND, "s1", CYCLE)
         self.assertRegex(a, r"^[A-Za-z0-9_-]{32,128}$")
-        self.assertNotEqual(a, post.idempotency_key("b" * 64, "s1"))
-        self.assertNotEqual(a, post.idempotency_key(CAND, "s2"))
-        self.assertEqual(a, post.idempotency_key(CAND, "s1"))
+        self.assertNotEqual(a, post.idempotency_key("b" * 64, "s1", CYCLE))
+        self.assertNotEqual(a, post.idempotency_key(CAND, "s2", CYCLE))
+        self.assertEqual(a, post.idempotency_key(CAND, "s1", CYCLE))
 
     def test_first_run_creates_exactly_one_request_and_returns_contract(self):
         fake = Fake()
@@ -154,13 +156,51 @@ class Tests(Base):
         self.assertEqual(fake.calls.count("create_request"), 1)
 
     def test_failed_or_foreign_requests_are_refused(self):
-        with self.assertRaisesRegex(post.Refusal, "request_not_live"):
+        with self.assertRaisesRegex(post.Refusal, "request_failed_not_resubmitted:failed"):
             self.run_once(Fake(statuses=("failed",)))
+
+    def test_failed_request_reported_not_resubmitted_in_same_cycle(self):
+        fake = Fake(statuses=("needs_input",))
+        for _ in range(2):
+            with self.assertRaisesRegex(post.Refusal, "request_failed_not_resubmitted:needs_input"):
+                self.run_once(fake)
+        self.assertEqual(fake.calls.count("create_request"), 1)
+        self.assertIn("terminal_failure", (self.state / "post-request.jsonl").read_text())
+
+    def test_same_candidate_new_cycle_gets_new_key_and_never_adopts_old_request(self):
+        fake = Fake()
+        first = self.run_once(fake)
+        self.state = self.root / "state2"
+        self.key = post.idempotency_key(CAND, "s1", CYCLE2)
+        self.assertNotEqual(self.key, post.idempotency_key(CAND, "s1", CYCLE))
+        second = self.run_once(fake)
+        self.assertNotEqual(first["id"], second["id"])
+        self.assertEqual(len(fake.requests), 2)
+
+    def test_cycle_id_must_be_canonical_uuid(self):
+        for bad in ("", "x", "AAAAAAAA-AAAA-4AAA-8AAA-AAAAAAAAAAAA", CYCLE.replace("-", "")):
+            with self.assertRaises(post.Refusal):
+                post.idempotency_key(CAND, "s1", bad)
+
+    def test_torn_last_journal_line_is_discarded_and_corrupt_middle_refused(self):
+        fake = Fake()
+        first = self.run_once(fake)
+        path = self.state / "post-request.jsonl"
+        good = path.read_bytes()
+        path.write_bytes(good + b'{"schema_version": "pals.post-req')  # torn append
+        self.assertEqual(self.run_once(fake), first)
+        self.assertNotIn(b"pals.post-req\"", path.read_bytes().split(b"\n")[-1])
+        self.assertTrue(path.read_bytes().startswith(good))
+        self.assertEqual(fake.calls.count("create_request"), 1)
+        lines = path.read_bytes().split(b"\n")
+        path.write_bytes(b"\n".join([lines[0][:20]] + lines[1:]))
+        with self.assertRaisesRegex(post.Refusal, "journal_corrupt"):
+            self.journal()
 
     def test_journal_for_another_key_and_concurrent_runs_are_refused(self):
         self.run_once(Fake())
         with self.assertRaisesRegex(post.Refusal, "journal_belongs_to_another_request"):
-            post.Journal(self.state, post.idempotency_key(CAND, "other"))
+            post.Journal(self.state, post.idempotency_key(CAND, "other", CYCLE))
         held = self.journal()
         self.addCleanup(held.stream.close)
         with self.assertRaisesRegex(post.Refusal, "post_request_already_running"):
@@ -180,7 +220,7 @@ class CliTests(Base):
     def invoke(self, c, s, factory, cand=CAND):
         out, err = io.StringIO(), io.StringIO()
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
-            code = post.main(["--contract", str(c), "--candidate-sha256", cand, "--scenario", str(s),
+            code = post.main(["--contract", str(c), "--candidate-sha256", cand, "--cycle-id", CYCLE, "--scenario", str(s),
                               "--session", str(self.root / "session"), "--state-dir", str(self.state)],
                              transport_factory=factory)
         return code, out.getvalue(), err.getvalue()

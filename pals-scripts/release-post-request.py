@@ -3,7 +3,11 @@
 
 stdout contract (consumed by pals-infra release-cycle.py): one JSON object
 {"id": <uuid>, "chat_id": <uuid>} and nothing else. Idempotency key =
-sha256(candidate manifest sha256, scenario id). A durable private journal plus the
+sha256(candidate manifest sha256, scenario id, cycle id). The cycle id is a canonical
+UUID minted once per release-cycle attempt (see docs/release-acceptance-credential.md);
+a re-release of the same candidate is a new cycle and gets a new key, while a retry
+inside one cycle observes the same request. A failed/needs_input request is observed
+and reported, never resubmitted within its cycle. A durable private journal plus the
 server-side Idempotency-Key replay guarantee make a retry or a crash observe the
 existing request instead of creating a second paid job. User content (the scenario
 statement), credentials and raw provider errors are never printed or journaled.
@@ -30,7 +34,7 @@ JOURNAL_SCHEMA = "pals.post-request-journal.v1"
 HEX = re.compile(r"[a-f0-9]{64}\Z")
 LIVE_OK = {"queued", "assessing", "verifying", "answered"}
 KEEP_WAITING = {"accepted"}
-STATE_KEYS = {"chat_id", "request_id", "intent"}
+STATE_KEYS = {"chat_id", "request_id", "intent", "terminal_failure"}
 
 
 class Refusal(RuntimeError):
@@ -49,13 +53,14 @@ def need(value: Any, code: str) -> None:
         raise Refusal(code)
 
 
-def idempotency_key(candidate_sha256: str, scenario_id: str) -> str:
+def idempotency_key(candidate_sha256: str, scenario_id: str, cycle_id: str) -> str:
     need(isinstance(candidate_sha256, str) and HEX.fullmatch(candidate_sha256), "candidate_sha256_required")
     need(isinstance(scenario_id, str) and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}", scenario_id),
          "scenario_id_invalid")
+    canonical_uuid(cycle_id)
     # 64 hex chars satisfy the API's ^[A-Za-z0-9_-]{32,128}$ Idempotency-Key rule.
-    return hashlib.sha256(b"pals.post-request.v1\0" + candidate_sha256.encode() + b"\0"
-                          + scenario_id.encode()).hexdigest()
+    return hashlib.sha256(b"pals.post-request.v2\0" + candidate_sha256.encode() + b"\0"
+                          + scenario_id.encode() + b"\0" + cycle_id.encode()).hexdigest()
 
 
 class Transport(Protocol):
@@ -93,13 +98,22 @@ class Journal:
             raise Refusal("post_request_already_running") from error
         self.state: dict[str, Any] = {}
         self.stream.seek(0)
-        for line in self.stream:
-            if not line.strip():
-                continue
-            record = json.loads(line)
-            need(record.get("schema_version") == JOURNAL_SCHEMA and record.get("key") == key,
-                 "journal_belongs_to_another_request")
+        lines = self.stream.read().split(b"\n")
+        torn = lines.pop()  # bytes after the last newline: empty, or a torn append
+        offset = 0
+        for line in lines:
+            offset += len(line) + 1
+            try:
+                record = json.loads(line)
+            except ValueError as error:
+                raise Refusal("journal_corrupt") from error
+            need(isinstance(record, dict) and record.get("schema_version") == JOURNAL_SCHEMA
+                 and record.get("key") == key, "journal_belongs_to_another_request")
             self.state.update({k: v for k, v in record.items() if k in STATE_KEYS})
+        if torn:  # a crash mid-append: that record never completed, so discard it
+            self.stream.truncate(offset)
+            self.stream.flush()
+            os.fsync(self.stream.fileno())
 
     def write(self, **fields: Any) -> None:
         record = {"schema_version": JOURNAL_SCHEMA, "key": self.key, **fields}
@@ -157,12 +171,18 @@ def run(transport: Transport, journal: Journal, key: str, scenario: dict[str, An
         journal.write(request_id=canonical_uuid(
             transport.create_request(state["chat_id"], key, scenario)))
     request_id, chat_id = state["request_id"], state["chat_id"]
+    if state.get("terminal_failure"):
+        raise Refusal("request_failed_not_resubmitted:" + state["terminal_failure"])
     deadline = clock() + wait_seconds
     while True:
         observed = transport.observe(request_id)
         need(isinstance(observed, dict) and observed.get("id") == request_id
              and observed.get("chat_id") == chat_id, "observed_request_identity_differs")
         status = observed.get("status")
+        if status in {"failed", "needs_input"}:
+            # Reported, never resubmitted in this cycle; a new cycle has a new key.
+            journal.write(terminal_failure=status)
+            raise Refusal("request_failed_not_resubmitted:" + status)
         need(status in LIVE_OK | KEEP_WAITING, "request_not_live")
         if status in LIVE_OK:
             journal.write(observed_status=status)
@@ -177,6 +197,7 @@ def main(argv: list[str] | None = None,
     parser.add_argument("--contract", required=True, type=Path)
     parser.add_argument("--contract-sha256")
     parser.add_argument("--candidate-sha256", required=True)
+    parser.add_argument("--cycle-id", required=True)
     parser.add_argument("--scenario", required=True, type=Path)
     parser.add_argument("--session", required=True, type=Path)
     parser.add_argument("--state-dir", required=True, type=Path)
@@ -187,7 +208,7 @@ def main(argv: list[str] | None = None,
         need(1 <= args.wait_seconds <= 900, "bounded_wait_required")
         contract, scenario = load_inputs(args.contract, args.contract_sha256,
                                          args.candidate_sha256, args.scenario)
-        key = idempotency_key(args.candidate_sha256, scenario["scenario_id"])
+        key = idempotency_key(args.candidate_sha256, scenario["scenario_id"], args.cycle_id)
         need(transport_factory is not None, "live_transport_adapter_not_supplied")
         transport = transport_factory(api_origin=contract["api_origin"], session=args.session)
         journal = Journal(args.state_dir, key)
