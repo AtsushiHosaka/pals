@@ -11,6 +11,10 @@ and reported, never resubmitted within its cycle. A durable private journal plus
 server-side Idempotency-Key replay guarantee make a retry or a crash observe the
 existing request instead of creating a second paid job. User content (the scenario
 statement), credentials and raw provider errors are never printed or journaled.
+
+The command line uses the live adapter in release-post-request-transport.py (policy) and
+release-post-request-browser.cjs (session credential and HTTPS); see
+docs/release-acceptance-runner.md. Tests inject another transport through main().
 """
 from __future__ import annotations
 
@@ -35,6 +39,14 @@ HEX = re.compile(r"[a-f0-9]{64}\Z")
 LIVE_OK = {"queued", "assessing", "verifying", "answered"}
 KEEP_WAITING = {"accepted"}
 STATE_KEYS = {"chat_id", "request_id", "intent", "terminal_failure"}
+SCENARIO_KEYS = {"schema_version", "scenario_id", "statement", "generation_model",
+                 "reasoning_effort", "output_language"}
+# Optional scenario member `max_utilization_tokens`: the token cap of the quote a token-plan
+# account needs. The bound is the API's own limit for a quote; the owner chooses the value.
+MAX_UTILIZATION_TOKENS = 1_500_000
+# Executed by the default command line. Keep each path as a literal joined to HERE: the
+# release plan's frozen-set scan follows that form to pin the adapter by hash.
+LIVE_ADAPTER_FILES = (HERE / "release-post-request-transport.py", HERE / "release-post-request-browser.cjs")
 
 
 class Refusal(RuntimeError):
@@ -51,6 +63,14 @@ def _load_acceptance():
 def need(value: Any, code: str) -> None:
     if not value:
         raise Refusal(code)
+
+
+def live_transport(**options: Any) -> "Transport":
+    """The real adapter: the approved session account against the contract's API origin."""
+    spec = importlib.util.spec_from_file_location("release_post_request_transport", LIVE_ADAPTER_FILES[0])
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.LiveTransport(refusal=Refusal, helper=LIVE_ADAPTER_FILES[1], **options)
 
 
 def idempotency_key(candidate_sha256: str, scenario_id: str, cycle_id: str) -> str:
@@ -155,8 +175,10 @@ def load_inputs(contract_path: Path, contract_sha256: str | None, candidate_sha2
         need(HEX.fullmatch(scenario_sha256) and acceptance.digest(scenario_raw) == scenario_sha256,
              "scenario_hash_changed")
     scenario = acceptance.document(scenario_raw)
-    need(set(scenario) == {"schema_version", "scenario_id", "statement", "generation_model",
-                           "reasoning_effort", "output_language"}
+    need(set(scenario) - {"max_utilization_tokens"} == SCENARIO_KEYS
+         and ("max_utilization_tokens" not in scenario
+              or type(scenario["max_utilization_tokens"]) is int
+              and 1 <= scenario["max_utilization_tokens"] <= MAX_UTILIZATION_TOKENS)
          and scenario["schema_version"] == SCENARIO_SCHEMA
          and isinstance(scenario["statement"], str) and 0 < len(scenario["statement"].strip()) <= 20000,
          "scenario_shape_invalid")
@@ -222,13 +244,19 @@ def main(argv: list[str] | None = None,
         contract, scenario = load_inputs(args.contract, args.contract_sha256,
                                          args.candidate_sha256, args.scenario, args.scenario_sha256)
         key = idempotency_key(args.candidate_sha256, scenario["scenario_id"], args.cycle_id)
-        need(transport_factory is not None, "live_transport_adapter_not_supplied")
-        transport = transport_factory(api_origin=contract["api_origin"], session=args.session)
-        journal = Journal(args.state_dir, key, payload_sha256(scenario))
+        transport = (transport_factory or live_transport)(
+            api_origin=contract["api_origin"], session=args.session, contract=contract,
+            wait_seconds=args.wait_seconds)
         try:
-            result = run(transport, journal, key, scenario, wait_seconds=args.wait_seconds)
+            journal = Journal(args.state_dir, key, payload_sha256(scenario))
+            try:
+                result = run(transport, journal, key, scenario, wait_seconds=args.wait_seconds)
+            finally:
+                journal.stream.close()
         finally:
-            journal.stream.close()
+            close = getattr(transport, "close", None)
+            if close is not None:
+                close()
         print(json.dumps(result, sort_keys=True))
         return 0
     except Exception as error:  # noqa: BLE001 -- never print provider text or user content.

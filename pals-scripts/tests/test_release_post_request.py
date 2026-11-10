@@ -245,11 +245,12 @@ class CliTests(Base):
         self.assertEqual(out.strip(), json.dumps(value, sort_keys=True))
         self.assertNotIn(SECRET_STATEMENT, out + err)
 
-    def test_without_live_adapter_it_refuses_and_creates_nothing(self):
+    def test_default_live_adapter_refuses_a_missing_session_and_creates_nothing(self):
         c, s = self.files()
-        code, out, err = self.invoke(c, s, None)
+        code, out, err = self.invoke(c, s, None)  # no injected transport: the real adapter is used
         self.assertEqual((code, out), (2, ""))
-        self.assertIn("live_transport_adapter_not_supplied", err)
+        self.assertEqual(json.loads(err)["reason"], "private_session_required")
+        self.assertFalse(self.state.exists())
 
     def test_candidate_mismatch_pre_release_contract_and_scenario_drift_refused(self):
         c, s = self.files()
@@ -270,6 +271,22 @@ class CliTests(Base):
         with self.assertRaisesRegex(post.Refusal, "scenario_hash_changed"):
             post.load_inputs(c, None, CAND, s, "0" * 64)
         post.load_inputs(c, None, CAND, s, gate.digest(s.read_bytes()))
+
+    def test_optional_token_cap_is_bounded_and_part_of_the_journal_binding(self):
+        c, _ = self.files()
+        for index, good in enumerate((1, 40000, post.MAX_UTILIZATION_TOKENS)):
+            s = private(self.root / f"cap-{index}.json", scenario(max_utilization_tokens=good))
+            self.assertEqual(post.load_inputs(c, None, CAND, s)[1]["max_utilization_tokens"], good)
+        for index, bad in enumerate((0, -1, post.MAX_UTILIZATION_TOKENS + 1, True, 1.5, "40000", None)):
+            s = private(self.root / f"bad-{index}.json", scenario(max_utilization_tokens=bad))
+            with self.assertRaisesRegex(post.Refusal, "scenario_shape_invalid"):
+                post.load_inputs(c, None, CAND, s)
+        s = private(self.root / "extra.json", scenario(unknown_member=1))
+        with self.assertRaisesRegex(post.Refusal, "scenario_shape_invalid"):
+            post.load_inputs(c, None, CAND, s)
+        self.assertEqual(post.SCENARIO_SCHEMA, "pals.post-request-scenario.v1")
+        self.assertEqual(post.MAX_UTILIZATION_TOKENS, 1_500_000)
+        self.assertNotEqual(post.payload_sha256(scenario()), post.payload_sha256(scenario(max_utilization_tokens=1)))
 
     def test_contract_hash_pin_is_enforced(self):
         c, s = self.files()
