@@ -8,7 +8,7 @@
   - 評価セットは `generation-eval-v1` の tuning split から 14 項目。両腕とも同じ項目、各 1 回。2 腕は同じ 1 台で同時に走らせた。修復上限は 6（前回のフラグ測定は 3）。
   - ハーネスは main にしかない。prod 腕では、ハーネスを無変更で本番コードの横に置いた。さらに、ハーネスだけの腕 `default`（`PALS_*` を一切設定しない）を使った。
   - 項目: la_v2_distinct_eigenspaces_intersection、calculus_v5_derivative_difference_quotient_limit、seed-absolute_value_not_differentiable、la_reuse_kernel_detects_zero、pq-bounded-monotone-real-sequence-convergence、pq-prime-above-every-bound、mv_foundation_exceptional_section_counterexample、seed-quadratic_not_injective、disc_size_difference_closed、scheme-M13、scheme-M10、pq-compact-hausdorff-continuous-bijection-inverse、rat_adjacent_partial_fractions、seed-rank_nullity。
-  - 実行日: 未確認（記録日 2026-11-11）。
+  - 実行日: 2026-11-11（JST）。
 
 ## 結果
 
