@@ -42,3 +42,4 @@
 | 2026-11-10 | Mathlib Archive/Counterexamples 113ファイルを既定プロファイルでコンパイル、公理確認（モデル0回） | Lean 4.32.0-rc1、Mathlib 8b62164、Leanは1プロセス | 113/113コンパイル、1,378 theoremの公理は標準3つのみ（sorryAx 0） | 未集計（1ファイル中央値2秒、合計267秒） | 0ドル | [library-manifest-archive-pilot](entries/2026-11-10-library-manifest-archive-pilot.md) |
 | 2026-11-11 | Settings select chevron spacing: 5px → 17px visible inset in two local layouts; no answer-speed, accuracy or cost claim | [settings-select-chevron](entries/2026-11-11-settings-select-chevron.md) |
 | 2026-11-11 | T2 生成レーン（No-Sketch・2候補競争・パッチ修復・並列説明、既定 off）。検証までの時間 p50 68.8→54.2 s、回答完成 p50 85.4→61.5 s。p50 30 s には未到達。n=14、1回、端末高負荷 | [t2-lane-first-measurement](entries/2026-11-11-t2-lane-first-measurement.md) |
+| 2026-11-11 | T2 の切り分け: Draft を外した No-Draft＋2候補（nd_k2）は初回成功 7→13/14（p=0.031）、検証まで p50 92.5→29.1 s、回答完成 p50 106.6→40.1 s（負荷10前後、n=14、1回）。30 s は検証までのみぎりぎり。名前の指示は効果なし | [t2-no-draft-isolation](entries/2026-11-11-t2-no-draft-isolation.md) |
