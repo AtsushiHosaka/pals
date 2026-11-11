@@ -66,3 +66,19 @@ def test_disjoint_from_generation_eval_v1():
     assert {p["statement_sha256"] for p in ITEMS}.isdisjoint(p["statement_sha256"] for p in v1)
     norm = lambda s: re.sub(r"\s+", "", s.lower())  # noqa: E731
     assert {norm(p["statement"]) for p in ITEMS}.isdisjoint(norm(p["statement"]) for p in v1)
+
+
+def test_faithfulness_rule_and_trivial_marks():
+    assert "証明方法" in MANIFEST["faithfulness_rule"]
+    assert {p["id"][4:] for p in ITEMS if p["trivial"]} == set(b.TRIVIAL)
+    probe = {k: v for k, v in MANIFEST.items() if k != "faithfulness_rule"}
+    assert any("faithfulness_rule" in e for e in b.validate(probe))
+
+
+def test_balance_between_splits():
+    for field in ("inequalities", "calculus-analysis", "linear-algebra"):
+        n = Counter(p["split"] for p in ITEMS if p["field"] == field)
+        assert abs(n["held_out"] - n["dev_unseen"]) <= 1, field
+    assert not any(
+        p["id"] == "fy1-sqrt-three-irrational" for p in ITEMS
+    )

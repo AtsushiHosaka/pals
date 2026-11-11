@@ -30,6 +30,16 @@ SPLIT_SALT = "pals-generation-eval-freshman-v1"
 HELD_OUT_FRACTION = 0.5
 SPLITS = ("dev_unseen", "held_out")
 TIERS = ("easy", "medium", "hard")
+# 一手で終わる自明な題。測定で区別できるよう印を付ける（`trivial: true`）。
+TRIVIAL = frozenset({
+    "two-to-ten-mod-eleven", "mean-and-squared-deviation", "union-monotone",
+    "fair-die-even-probability", "abs-continuous-at-zero", "set-difference-of-union",
+})
+FAITHFULNESS_RULE = (
+    "期待される結論の主張が定理文として述べられていれば忠実とみなす。題文にある証明方法の"
+    "指定（「定義から」「直接の計算で」「ε-N 論法で」等）は定理文に反映できないため、"
+    "忠実さの判定には使わない。定式化の自由度がある題は、その結論に認める形を書いた。"
+)
 OUTLOOKS = ("direct", "lemma-needed", "awkward", "unlikely")
 TAGS = (
     "needs-induction",
@@ -62,7 +72,7 @@ _TAG_RULES = {
 REQUIRED = (
     "id", "source", "field", "tier", "tier_basis", "split", "language", "statement",
     "statement_sha256", "expected_conclusion", "mathlib_outlook", "tags", "history",
-    "fixed_lean_statement", "expected_answer",
+    "fixed_lean_statement", "expected_answer", "trivial",
 )
 POLICY = (
     "held_out は最終確認専用。誰も調整・探索・試走に使わない。開くときは理由を"
@@ -120,7 +130,7 @@ P: list[tuple[str, str, str, str, str, str, str | None]] = [
      "Prove that if a real square matrix A satisfies A·A = A, then every real "
      "eigenvalue of A is 0 or 1.",
      "A が正方行列で A·A=A、λ が A の固有値なら λ=0 または λ=1。", "lemma-needed", None),
-    ("transpose-of-product", "linear-algebra", "medium",
+    ("transpose-of-product", "linear-algebra", "easy",
      "実数成分の行列 A (m×n)、B (n×p) について、積の転置 (AB)^T が B^T A^T に等しいことを示せ。",
      "任意の m×n 行列 A、n×p 行列 B について (AB)^T = B^T A^T。", "direct", None),
     ("zero-sum-plane-subspace", "linear-algebra", "easy",
@@ -136,8 +146,9 @@ P: list[tuple[str, str, str, str, str, str, str | None]] = [
     ("image-of-intersection", "discrete-logic", "medium",
      "写像 f:A→B と部分集合 X,Y⊆A について f(X∩Y) ⊆ f(X)∩f(Y) を示せ。"
      "また、逆の包含が一般には成り立たない例を挙げよ。",
-     "f(X∩Y)⊆f(X)∩f(Y) は常に成り立つ。等号は成り立たない例がある"
-     "（例: f が単射でないとき）。", "lemma-needed", "反例あり"),
+     "f(X∩Y)⊆f(X)∩f(Y) は常に成り立つ。逆の包含（等号）が成り立たない f,X,Y が存在する"
+     "（具体例: f:ℝ→ℝ を定数関数 0、X={0}、Y={1} とすると f(X∩Y)=∅、f(X)∩f(Y)={0}）。",
+     "lemma-needed", "反例あり"),
     ("powerset-cardinality", "discrete-logic", "medium",
      "Prove that a finite set with n elements has exactly 2^n subsets.",
      "要素数 n の有限集合の部分集合の個数は 2^n。", "direct", None),
@@ -157,9 +168,9 @@ P: list[tuple[str, str, str, str, str, str, str | None]] = [
     ("coprime-sum-and-product", "number-theory", "medium",
      "整数 a,b が互いに素ならば、a+b と ab も互いに素であることを示せ。",
      "gcd(a,b)=1 ならば gcd(a+b, ab)=1。", "lemma-needed", None),
-    ("sqrt-three-irrational", "number-theory", "medium",
-     "Show that √3 is irrational.",
-     "√3 は有理数でない（p/q の形に書けない）。", "direct", None),
+    ("cube-minus-self-divisible-by-six", "number-theory", "medium",
+     "整数 n について、n³−n は 6 の倍数であることを示せ。",
+     "任意の整数 n について 6 ∣ n³−n。", "lemma-needed", None),
     ("two-to-ten-mod-eleven", "number-theory", "easy",
      "2^10 を 11 で割った余りが 1 であることを、直接の計算で示せ。",
      "2^10=1024 であり 1024=11×93+1。したがって 2^10 ≡ 1 (mod 11)。", "direct", "1"),
@@ -167,9 +178,9 @@ P: list[tuple[str, str, str, str, str, str, str | None]] = [
     ("am-gm-two-variables", "inequalities", "easy",
      "Prove that (a + b)/2 ≥ √(ab) for all nonnegative real numbers a and b.",
      "任意の非負実数 a,b について (a+b)/2 ≥ √(ab)。", "lemma-needed", None),
-    ("ratio-plus-reciprocal", "inequalities", "easy",
-     "正の実数 a,b について、a/b + b/a ≥ 2 を示せ。",
-     "任意の正の実数 a,b について a/b + b/a ≥ 2。", "lemma-needed", None),
+    ("bounded-rational-function", "inequalities", "medium",
+     "Show that x / (1 + x^2) ≤ 1/2 for every real number x.",
+     "任意の実数 x について x/(1+x^2) ≤ 1/2。", "lemma-needed", None),
     ("bernoulli-inequality", "inequalities", "medium",
      "Prove Bernoulli's inequality: for every real x ≥ −1 and every natural number n, "
      "(1 + x)^n ≥ 1 + n·x.",
@@ -181,11 +192,11 @@ P: list[tuple[str, str, str, str, str, str, str | None]] = [
     ("alternating-over-n-tends-to-zero", "sequences-limits", "easy",
      "Show that the sequence a_n = (−1)^n / n (n ≥ 1) converges to 0.",
      "n→∞ のとき (−1)^n / n → 0（|a_n| = 1/n で挟み撃ち）。", "lemma-needed", "0"),
-    ("rational-sequence-epsilon-n", "sequences-limits", "medium",
-     "数列 a_n=(3n−1)/(2n+5) が 3/2 に収束することを、ε-N 論法で示せ。",
-     "任意の ε>0 に対し、ある N が存在して n≥N なら |(3n−1)/(2n+5) − 3/2| < ε。",
-     "lemma-needed", "3/2"),
-    ("n-over-n-plus-one-monotone", "sequences-limits", "medium",
+    ("sqrt-difference-tends-to-zero", "sequences-limits", "medium",
+     "数列 a_n=√(n+1)−√n が 0 に収束することを示せ。",
+     "n→∞ のとき √(n+1)−√n → 0（有理化して a_n=1/(√(n+1)+√n) とみなせる）。",
+     "lemma-needed", "0"),
+    ("n-over-n-plus-one-monotone", "sequences-limits", "easy",
      "Show that the sequence a_n = n/(n+1) is strictly increasing and a_n < 1 for every n.",
      "任意の自然数 n について a_n < a_{n+1} かつ a_n < 1。", "direct", None),
     ("geometric-sequence-tends-to-zero", "sequences-limits", "easy",
@@ -194,27 +205,37 @@ P: list[tuple[str, str, str, str, str, str, str | None]] = [
     ("limit-of-sum", "sequences-limits", "medium",
      "Suppose a_n → a and b_n → b as n → ∞. Prove from the ε-N definition that "
      "a_n + b_n → a + b.",
-     "a_n→a かつ b_n→b ならば a_n+b_n → a+b。", "direct", None),
+     "a_n→a かつ b_n→b ならば a_n+b_n → a+b。認める定理文: ε-N 形、または "
+     "Filter.Tendsto による形のどちらでもよい（証明方法の指定は定理文に反映しない）。",
+     "direct", None),
     # --- probability-statistics (5) ---
     ("fair-die-even-probability", "probability-statistics", "easy",
      "公正なサイコロを1回振るとき、偶数の目が出る確率は 1/2 であることを示せ。",
-     "標本空間 {1,…,6} の一様分布で、事象 {2,4,6} の確率は 3/6=1/2。", "lemma-needed", "1/2"),
+     "標本空間 {1,…,6} の一様分布で、事象 {2,4,6} の確率は 3/6=1/2。"
+     "認める定式化: 一様な有限集合上の数え上げの比、または同等の確率測度での記述。",
+     "lemma-needed", "1/2"),
     ("two-dice-sum-seven", "probability-statistics", "medium",
      "Two fair six-sided dice are rolled. Show that the probability that the sum "
      "is 7 equals 1/6.",
-     "36 通りの等確率の組のうち和が 7 になるのは 6 通りなので確率は 6/36=1/6。",
+     "36 通りの等確率の組のうち和が 7 になるのは 6 通りなので確率は 6/36=1/6。"
+     "認める定式化: 36 要素の一様な有限集合上の数え上げの比、または同等の確率測度での記述。",
      "lemma-needed", "1/6"),
     ("independent-union-probability", "probability-statistics", "medium",
      "事象 A,B が独立で P(A)=1/2, P(B)=1/3 のとき、P(A∪B)=2/3 であることを示せ。",
-     "独立なので P(A∩B)=1/6。P(A∪B)=1/2+1/3−1/6=2/3。", "lemma-needed", "2/3"),
+     "独立なので P(A∩B)=1/6。P(A∪B)=1/2+1/3−1/6=2/3。"
+     "認める定式化: 確率測度 P と独立 P(A∩B)=P(A)P(B) の仮定のもとでの主張。"
+     "（標本空間を具体に取る場合は、条件を満たす一様な有限空間でもよい）。",
+     "lemma-needed", "2/3"),
     ("mean-and-squared-deviation", "probability-statistics", "easy",
      "Show that the mean of the numbers 1, 2, 3, 4, 5 is 3, and that the sum of "
      "the squared deviations from this mean is 10.",
      "(1+2+3+4+5)/5=3 であり、Σ(k−3)^2 = 4+1+0+1+4 = 10。", "direct", "mean 3, sum 10"),
-    ("binomial-expectation", "probability-statistics", "medium",
-     "独立な試行を n 回繰り返し、各回の成功確率が p のとき、成功回数 X の期待値は "
-     "E[X]=np であることを示せ。",
-     "X が二項分布 B(n,p) に従うとき E[X]=np。", "awkward", "np"),
+    ("three-tosses-two-heads", "probability-statistics", "medium",
+     "A fair coin is tossed three times. Show that the probability of getting exactly "
+     "two heads is 3/8.",
+     "8 通りの等確率の結果のうち、表がちょうど2回になるのは 3 通りなので確率は 3/8。"
+     "認める定式化: 有限一様空間での数え上げの比、または同等の確率測度での記述。",
+     "lemma-needed", "3/8"),
 ]
 
 
@@ -274,6 +295,7 @@ def build() -> dict[str, Any]:
             "mathlib_outlook": outlook,
             "expected_answer": answer,
             "fixed_lean_statement": None,
+            "trivial": slug in TRIVIAL,
             "tags": derive_tags(statement),
             "history": [],
         })
@@ -284,6 +306,7 @@ def build() -> dict[str, Any]:
         "version": VERSION,
         "split_salt": SPLIT_SALT,
         "held_out_policy": POLICY,
+        "faithfulness_rule": FAITHFULNESS_RULE,
         "problems": items,
         "split_checksum": split_checksum(items),
     }
@@ -339,6 +362,8 @@ def validate(manifest: dict[str, Any], frozen: str | None = None) -> list[str]:
         errors.append("splits are not the deterministic stratified assignment")
     if "held_out" not in str(manifest.get("held_out_policy", "")):
         errors.append("held_out_policy must be stated in the manifest")
+    if not manifest.get("faithfulness_rule"):
+        errors.append("faithfulness_rule must be stated in the manifest")
     return errors
 
 

@@ -1,4 +1,5 @@
 {
+ "faithfulness_rule": "期待される結論の主張が定理文として述べられていれば忠実とみなす。題文にある証明方法の指定（「定義から」「直接の計算で」「ε-N 論法で」等）は定理文に反映できないため、忠実さの判定には使わない。定式化の自由度がある題は、その結論に認める形を書いた。",
  "held_out_policy": "held_out は最終確認専用。誰も調整・探索・試走に使わない。開くときは理由を改善ジャーナルに書き、開いた後の題は調整に使わない。dev_unseen は作成時点でどの調整・評価・試走にも未使用。",
  "problems": [
   {
@@ -18,7 +19,8 @@
     "epsilon-delta"
    ],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": true
   },
   {
    "expected_answer": "0",
@@ -30,7 +32,7 @@
    "language": "en",
    "mathlib_outlook": "lemma-needed",
    "source": "authored:freshman-textbook-exercise",
-   "split": "held_out",
+   "split": "dev_unseen",
    "statement": "Show that the sequence a_n = (−1)^n / n (n ≥ 1) converges to 0.",
    "statement_sha256": "1dc7bc418eb2bac2dcf8f8ae18e044f6822ddd4ac24fe40e563679f6bb23f199",
    "tags": [
@@ -38,7 +40,8 @@
     "inequality"
    ],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -57,7 +60,8 @@
     "inequality"
    ],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -76,7 +80,8 @@
     "inequality"
    ],
    "tier": "medium",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -88,31 +93,35 @@
    "language": "en",
    "mathlib_outlook": "direct",
    "source": "authored:freshman-textbook-exercise",
-   "split": "held_out",
+   "split": "dev_unseen",
    "statement": "Prove Bernoulli's inequality: for every real x ≥ −1 and every natural number n, (1 + x)^n ≥ 1 + n·x.",
    "statement_sha256": "2bd72a89fc547369724f6c33eae7ba8249c4c6d8f259c57e5af18c4b4411e4c2",
    "tags": [
     "inequality"
    ],
    "tier": "medium",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
-   "expected_answer": "np",
-   "expected_conclusion": "X が二項分布 B(n,p) に従うとき E[X]=np。",
-   "field": "probability-statistics",
+   "expected_answer": null,
+   "expected_conclusion": "任意の実数 x について x/(1+x^2) ≤ 1/2。",
+   "field": "inequalities",
    "fixed_lean_statement": null,
    "history": [],
-   "id": "fy1-binomial-expectation",
-   "language": "ja",
-   "mathlib_outlook": "awkward",
+   "id": "fy1-bounded-rational-function",
+   "language": "en",
+   "mathlib_outlook": "lemma-needed",
    "source": "authored:freshman-textbook-exercise",
-   "split": "dev_unseen",
-   "statement": "独立な試行を n 回繰り返し、各回の成功確率が p のとき、成功回数 X の期待値は E[X]=np であることを示せ。",
-   "statement_sha256": "e18a41efe0f7f0a0bbb27d296e416b1b81be1e5fa4772e182378ffc0fab8ce9a",
-   "tags": [],
+   "split": "held_out",
+   "statement": "Show that x / (1 + x^2) ≤ 1/2 for every real number x.",
+   "statement_sha256": "40923189f75aad633e5575d42a16db6e2a8c710c903b8ab2f79fa6aeed1c49ee",
+   "tags": [
+    "inequality"
+   ],
    "tier": "medium",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -129,7 +138,8 @@
    "statement_sha256": "e04759f4d0b5cd052c5e98400cae3b1b2274fb7d587fafbcfcabd537aaec08b1",
    "tags": [],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -146,7 +156,26 @@
    "statement_sha256": "7a7a6524d26bb58bb3317a0fc669aad0b9c80697b244fda2bb36433b50c2573f",
    "tags": [],
    "tier": "medium",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
+  },
+  {
+   "expected_answer": null,
+   "expected_conclusion": "任意の整数 n について 6 ∣ n³−n。",
+   "field": "number-theory",
+   "fixed_lean_statement": null,
+   "history": [],
+   "id": "fy1-cube-minus-self-divisible-by-six",
+   "language": "ja",
+   "mathlib_outlook": "lemma-needed",
+   "source": "authored:freshman-textbook-exercise",
+   "split": "held_out",
+   "statement": "整数 n について、n³−n は 6 の倍数であることを示せ。",
+   "statement_sha256": "0ff332f10de7c76a663f0165e4d7f253e3c8ff9525483d7cda4ed9d07751d553",
+   "tags": [],
+   "tier": "medium",
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -163,7 +192,8 @@
    "statement_sha256": "82eb764ea2e71b6911b183147554410422065ae387a7ff69b3bb1e6188ba223d",
    "tags": [],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -180,7 +210,8 @@
    "statement_sha256": "6c8aaab0c6112831a3c8de320280616b6a5431f6f7eed181964144903f4fe3d9",
    "tags": [],
    "tier": "medium",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -199,7 +230,8 @@
     "linear-algebra"
    ],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -218,7 +250,8 @@
     "linear-algebra"
    ],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": "2e^{2x}",
@@ -235,11 +268,12 @@
    "statement_sha256": "723bd1e61e16d2125aa76a98868eb4f4988e26bd5d10038f426d4dfc4a5ab675",
    "tags": [],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": "1/2",
-   "expected_conclusion": "標本空間 {1,…,6} の一様分布で、事象 {2,4,6} の確率は 3/6=1/2。",
+   "expected_conclusion": "標本空間 {1,…,6} の一様分布で、事象 {2,4,6} の確率は 3/6=1/2。認める定式化: 一様な有限集合上の数え上げの比、または同等の確率測度での記述。",
    "field": "probability-statistics",
    "fixed_lean_statement": null,
    "history": [],
@@ -252,7 +286,8 @@
    "statement_sha256": "2ec34ac9ca5c50c5d967a0f475e38b64412b99d2748d818c400952d3b1a8ecb1",
    "tags": [],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": true
   },
   {
    "expected_answer": "0",
@@ -272,7 +307,8 @@
     "inequality"
    ],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -291,11 +327,12 @@
     "linear-algebra"
    ],
    "tier": "medium",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": "反例あり",
-   "expected_conclusion": "f(X∩Y)⊆f(X)∩f(Y) は常に成り立つ。等号は成り立たない例がある（例: f が単射でないとき）。",
+   "expected_conclusion": "f(X∩Y)⊆f(X)∩f(Y) は常に成り立つ。逆の包含（等号）が成り立たない f,X,Y が存在する（具体例: f:ℝ→ℝ を定数関数 0、X={0}、Y={1} とすると f(X∩Y)=∅、f(X)∩f(Y)={0}）。",
    "field": "discrete-logic",
    "fixed_lean_statement": null,
    "history": [],
@@ -308,11 +345,12 @@
    "statement_sha256": "d7ce417f6c781a3a4d16f3496b83b9d5c56a3c83b6c3ca3bdee08a6bddf4b1f4",
    "tags": [],
    "tier": "medium",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": "2/3",
-   "expected_conclusion": "独立なので P(A∩B)=1/6。P(A∪B)=1/2+1/3−1/6=2/3。",
+   "expected_conclusion": "独立なので P(A∩B)=1/6。P(A∪B)=1/2+1/3−1/6=2/3。認める定式化: 確率測度 P と独立 P(A∩B)=P(A)P(B) の仮定のもとでの主張。（標本空間を具体に取る場合は、条件を満たす一様な有限空間でもよい）。",
    "field": "probability-statistics",
    "fixed_lean_statement": null,
    "history": [],
@@ -325,7 +363,8 @@
    "statement_sha256": "05c5934f675dfeb34557f82dd0d48294b6da6b123390aeae2c2b8e696ca72eab",
    "tags": [],
    "tier": "medium",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": "2",
@@ -342,7 +381,8 @@
    "statement_sha256": "7edf796b5e4bd57e2eb6e69c6ce74e6c49f5aa672c507b8ae012ddb17e465d2f",
    "tags": [],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -361,7 +401,8 @@
     "linear-algebra"
    ],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": "-2x/(1+x^2)^2",
@@ -378,11 +419,12 @@
    "statement_sha256": "a2c5781570de737cf41ac3ae7afc5961d1545a1fb847e7b72b596e36e7e3b1e2",
    "tags": [],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
-   "expected_conclusion": "a_n→a かつ b_n→b ならば a_n+b_n → a+b。",
+   "expected_conclusion": "a_n→a かつ b_n→b ならば a_n+b_n → a+b。認める定理文: ε-N 形、または Filter.Tendsto による形のどちらでもよい（証明方法の指定は定理文に反映しない）。",
    "field": "sequences-limits",
    "fixed_lean_statement": null,
    "history": [],
@@ -395,7 +437,8 @@
    "statement_sha256": "5e9328b0ca6ce5542b769520c1fe05b42294d0e71c40592d2de68f2adfa890b1",
    "tags": [],
    "tier": "medium",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": "mean 3, sum 10",
@@ -412,7 +455,8 @@
    "statement_sha256": "3578c329fe4e621d4ad2f71c21f6cffa492a6dfc73fca13d27e00af255cdffad",
    "tags": [],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": true
   },
   {
    "expected_answer": null,
@@ -430,8 +474,9 @@
    "tags": [
     "inequality"
    ],
-   "tier": "medium",
-   "tier_basis": "assigned"
+   "tier": "easy",
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -448,7 +493,8 @@
    "statement_sha256": "7d1d6d20aecdc204f6523d349df7c08c0d7dc3b8ed0a4a05483e24fd5b0f716f",
    "tags": [],
    "tier": "medium",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -465,7 +511,8 @@
    "statement_sha256": "615a79507224ab0c16a1964f852d597284259c3b94866486f9c32358e2849610",
    "tags": [],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -482,7 +529,8 @@
    "statement_sha256": "0c183fd580e4f50514270e1846f95583b4234342eb168c87426c08b0243be524",
    "tags": [],
    "tier": "medium",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": "6x-5",
@@ -502,45 +550,8 @@
     "epsilon-delta"
    ],
    "tier": "easy",
-   "tier_basis": "assigned"
-  },
-  {
-   "expected_answer": null,
-   "expected_conclusion": "任意の正の実数 a,b について a/b + b/a ≥ 2。",
-   "field": "inequalities",
-   "fixed_lean_statement": null,
-   "history": [],
-   "id": "fy1-ratio-plus-reciprocal",
-   "language": "ja",
-   "mathlib_outlook": "lemma-needed",
-   "source": "authored:freshman-textbook-exercise",
-   "split": "held_out",
-   "statement": "正の実数 a,b について、a/b + b/a ≥ 2 を示せ。",
-   "statement_sha256": "329760a3b5981939a8e16442bd009bac46bb3081ee863478ebf9cff7defdb1e2",
-   "tags": [
-    "inequality"
-   ],
-   "tier": "easy",
-   "tier_basis": "assigned"
-  },
-  {
-   "expected_answer": "3/2",
-   "expected_conclusion": "任意の ε>0 に対し、ある N が存在して n≥N なら |(3n−1)/(2n+5) − 3/2| < ε。",
-   "field": "sequences-limits",
-   "fixed_lean_statement": null,
-   "history": [],
-   "id": "fy1-rational-sequence-epsilon-n",
-   "language": "ja",
-   "mathlib_outlook": "lemma-needed",
-   "source": "authored:freshman-textbook-exercise",
-   "split": "dev_unseen",
-   "statement": "数列 a_n=(3n−1)/(2n+5) が 3/2 に収束することを、ε-N 論法で示せ。",
-   "statement_sha256": "5d3d0bc548ad08eed0950b8884373d0fc6476ead0d48b291644a72ef16e9e54c",
-   "tags": [
-    "epsilon-delta"
-   ],
-   "tier": "medium",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -559,7 +570,8 @@
     "inequality"
    ],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -576,7 +588,8 @@
    "statement_sha256": "f2fdd4e19a376ab2fcc805666a1c3ef187db9f9c9193368cf885a7adf2085b08",
    "tags": [],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": true
   },
   {
    "expected_answer": null,
@@ -595,24 +608,28 @@
     "inequality"
    ],
    "tier": "medium",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
-   "expected_answer": null,
-   "expected_conclusion": "√3 は有理数でない（p/q の形に書けない）。",
-   "field": "number-theory",
+   "expected_answer": "0",
+   "expected_conclusion": "n→∞ のとき √(n+1)−√n → 0（有理化して a_n=1/(√(n+1)+√n) とみなせる）。",
+   "field": "sequences-limits",
    "fixed_lean_statement": null,
    "history": [],
-   "id": "fy1-sqrt-three-irrational",
-   "language": "en",
-   "mathlib_outlook": "direct",
+   "id": "fy1-sqrt-difference-tends-to-zero",
+   "language": "ja",
+   "mathlib_outlook": "lemma-needed",
    "source": "authored:freshman-textbook-exercise",
    "split": "held_out",
-   "statement": "Show that √3 is irrational.",
-   "statement_sha256": "2cb0f514725ce7ce81950248d9eae9f2411a415c50d27c13c3a16f9d1fadc54e",
-   "tags": [],
+   "statement": "数列 a_n=√(n+1)−√n が 0 に収束することを示せ。",
+   "statement_sha256": "b43313fc4cb2587fa087f808ce31cf1774b79b608287cb908ec06d157a66dac2",
+   "tags": [
+    "epsilon-delta"
+   ],
    "tier": "medium",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -624,14 +641,33 @@
    "language": "ja",
    "mathlib_outlook": "lemma-needed",
    "source": "authored:freshman-textbook-exercise",
-   "split": "dev_unseen",
+   "split": "held_out",
    "statement": "線形写像 T:ℝ²→ℝ², T(x,y)=(x+y, x−y) は全単射であることを示せ。",
    "statement_sha256": "618946618b298096cdff928e0a931e40dfceaf5ce9a50ad831b1a4ea0d52b963",
    "tags": [
     "linear-algebra"
    ],
    "tier": "medium",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
+  },
+  {
+   "expected_answer": "3/8",
+   "expected_conclusion": "8 通りの等確率の結果のうち、表がちょうど2回になるのは 3 通りなので確率は 3/8。認める定式化: 有限一様空間での数え上げの比、または同等の確率測度での記述。",
+   "field": "probability-statistics",
+   "fixed_lean_statement": null,
+   "history": [],
+   "id": "fy1-three-tosses-two-heads",
+   "language": "en",
+   "mathlib_outlook": "lemma-needed",
+   "source": "authored:freshman-textbook-exercise",
+   "split": "dev_unseen",
+   "statement": "A fair coin is tossed three times. Show that the probability of getting exactly two heads is 3/8.",
+   "statement_sha256": "0a48b19dea4816e8ae2332f4a2c77b7aeddab0e925f3a64f4e693529de7ac6cf",
+   "tags": [],
+   "tier": "medium",
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -649,12 +685,13 @@
    "tags": [
     "linear-algebra"
    ],
-   "tier": "medium",
-   "tier_basis": "assigned"
+   "tier": "easy",
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": "1/6",
-   "expected_conclusion": "36 通りの等確率の組のうち和が 7 になるのは 6 通りなので確率は 6/36=1/6。",
+   "expected_conclusion": "36 通りの等確率の組のうち和が 7 になるのは 6 通りなので確率は 6/36=1/6。認める定式化: 36 要素の一様な有限集合上の数え上げの比、または同等の確率測度での記述。",
    "field": "probability-statistics",
    "fixed_lean_statement": null,
    "history": [],
@@ -667,7 +704,8 @@
    "statement_sha256": "b2853385a2941906e19283d65098c6c5d10058d71aaf2d81e67bf77f85e829ce",
    "tags": [],
    "tier": "medium",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   },
   {
    "expected_answer": "1",
@@ -684,7 +722,8 @@
    "statement_sha256": "6882a9fcc5b9a4dcdc0a7e91e0cc1907a0949c9c3525e35a0bf565abdd925bf1",
    "tags": [],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": true
   },
   {
    "expected_answer": null,
@@ -701,7 +740,8 @@
    "statement_sha256": "fa18890f97fc53cdf925e3bea408e8658c9184419a509e9fddc53806de59bdda",
    "tags": [],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": true
   },
   {
    "expected_answer": null,
@@ -718,11 +758,12 @@
    "statement_sha256": "4c0d934e1fd623f72b762da7bc3425439802938152c83fcef336544f787120db",
    "tags": [],
    "tier": "easy",
-   "tier_basis": "assigned"
+   "tier_basis": "assigned",
+   "trivial": false
   }
  ],
  "schema_version": "pals.generation-eval-manifest.v1",
- "split_checksum": "889d5a237944272044c3b71c0a25d512df1e5b2707c781521757429f122485f0",
+ "split_checksum": "6130e3bf012ec8128cd5b718c68967cc2de82489714b3ad045d7e8d00577f555",
  "split_salt": "pals-generation-eval-freshman-v1",
  "version": "generation-eval-freshman-v1"
 }
