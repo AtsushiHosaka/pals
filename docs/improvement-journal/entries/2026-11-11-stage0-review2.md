@@ -19,3 +19,9 @@
 - 限界・未確認: 低負荷の測定がない。実 Lean のテストは CI で動かない(ローカルのみ)。許可リストの 105 種は手作業の確認で、第三者の確認は未実施。macOS のサンドボックスだけで封じているもの(許可リストを通った命題による elaborate 中の資源消費、許可リストの穴が見つかった場合の最後の砦)は、本番の Landlock・seccomp・cgroup ではない。
 - 次にやること: 3回目のレビュー(項目 1・3・5)、低負荷での測り直し、起動済みワーカープールの設計、`exact?` を新しいワーカーに戻すかの測定。
 - 出典: [pals-agent#106](https://github.com/AtsushiHosaka/pals-agent/pull/106)(`docs/verification/stage0-review2-fixes-2026-11-11.md`、pals-agent@405f144)、生データ `docs/improvement-journal/data/2026-11-11-stage0-review2/`、台帳の行 `2026-11-11-stage0-review2-e2e-all100`。
+
+## 3回目のレビューの結果(最終)
+- 3回目(405f144)は「先に直す」。封じ込めの backend がなければ段階0を起動しない、`Stage0` の再入可能化と同時実行の上限、CI の skip 一覧、層 1 の文書と挙動の一致、層 0 の長さ上限、出力の上限・cputime の `D-HH:MM`・scratch の掃除、Mac プロファイルの `(deny default)` 化を実施した(pals-agent@989243f、[pals-agent#106](https://github.com/AtsushiHosaka/pals-agent/pull/106))。再レビューは **MERGE**、既定 off でマージ済み。
+- **被覆は 18 → 12 のまま**。review 3 の修正後の100題の再測定はしていない(リードの指示: Mac の設計にこれ以上の被覆の作業をしない)。12 は負荷 15〜33、同時実行の上限と層 1 のフィールド検査の追加より前の数字で、安全性の修正の代償か負荷の影響かは分離できていない。
+- 残る既知の穴: (1) 型が core の名前空間の外にある束縛変数のフィールド参照は未検査。(2) `setsid` する二重 fork は watchdog が数えない。(3) CI は実 Lean のテストを動かさない(ローカル macOS のみ)。Mac の `sandbox-exec` は開発用の補助で境界ではない。
+- 方針: 本番の検証器の中で動かす案 B(層 1・探索・検証を検証器サービス内)を採る。案 A(model の文を agent ホストで elaborate する)は却下。いまは作らない(検証器サービスは別の担当、API/web の `evidence_kind` の契約、常駐ワーカープールが前提)。
