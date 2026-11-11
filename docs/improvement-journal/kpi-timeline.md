@@ -40,6 +40,7 @@
 | 2026-11-10 | 机上試算: 時間・費用が失敗実行にどう偏るか、修復上限・早期停止の反事実（モデル呼び出し0回） | [offline-savings-analysis](entries/2026-11-10-offline-savings-analysis.md) |
 | 2026-11-10 | 早期停止の専用終了理由（#91、既定 off）。既存の停止は API に拒否され、本番で働くのは harness 不一致だけ | [early-stop-terminal-reason](entries/2026-11-10-early-stop-terminal-reason.md) |
 | 2026-11-10 | import plan を検証器へ接続（#92、既定 off、実モデル測定なし） | [import-plan-verifier](entries/2026-11-10-import-plan-verifier.md) |
+| 2026-11-10 | プロンプト4フラグの初回実測（Terra medium、tuning 28題/12題、US$2.33）: prefix キャッシュは hit 0（共通 prefix の対照も0）、束ねた腕の初回コンパイルは 20/28 同数・Tier 2 の最終成功は 11/12 同数で、検出できる差なし。出力は約15%短く生成は約3秒速いが、full import で Lean 検査が約2秒遅く、合計時間は同等。構造化欄は28/28で読めた | [prompt-flag-first-measurement](entries/2026-11-10-prompt-flag-first-measurement.md) |
 | 2026-11-10 | Mathlib Archive/Counterexamples 113ファイルを既定プロファイルでコンパイル、公理確認（モデル0回） | Lean 4.32.0-rc1、Mathlib 8b62164、Leanは1プロセス | 113/113コンパイル、1,378 theoremの公理は標準3つのみ（sorryAx 0） | 未集計（1ファイル中央値2秒、合計267秒） | 0ドル | [library-manifest-archive-pilot](entries/2026-11-10-library-manifest-archive-pilot.md) |
 | 2026-11-11 | Settings select chevron spacing: 5px → 17px visible inset in two local layouts; no answer-speed, accuracy or cost claim | [settings-select-chevron](entries/2026-11-11-settings-select-chevron.md) |
 | 2026-11-11 | T2 生成レーン（No-Sketch・2候補競争・パッチ修復・並列説明、既定 off）。検証までの時間 p50 68.8→54.2 s、回答完成 p50 85.4→61.5 s。p50 30 s には未到達。n=14、1回、端末高負荷 | [t2-lane-first-measurement](entries/2026-11-11-t2-lane-first-measurement.md) |
