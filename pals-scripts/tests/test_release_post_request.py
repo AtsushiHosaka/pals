@@ -1,0 +1,298 @@
+"""Deterministic contracts for release-post-request.py with a fake transport. No network."""
+from __future__ import annotations
+
+import contextlib
+import importlib.util
+import io
+import json
+import tempfile
+import unittest
+from pathlib import Path
+from uuid import uuid4
+
+HERE = Path(__file__).resolve().parents[1]
+
+
+def load(name, file):
+    spec = importlib.util.spec_from_file_location(name, HERE / file)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+gate = load("release_acceptance", "release-acceptance.py")
+post = load("release_post_request", "release-post-request.py")
+CAND = "a" * 64
+CYCLE = "11111111-1111-4111-8111-111111111111"
+CYCLE2 = "22222222-2222-4222-8222-222222222222"
+SECRET_STATEMENT = "PRIVATE-STATEMENT-DO-NOT-LEAK"
+
+
+class Fake:
+    def __init__(self, replay_safe=True, statuses=("queued",)):
+        self.replay_safe, self.statuses = replay_safe, list(statuses)
+        self.calls, self.requests = [], {}
+        self.chat = str(uuid4())
+        self.crash_after_create = False
+
+    def create_chat(self):
+        self.calls.append("create_chat")
+        return self.chat
+
+    def create_request(self, chat_id, key, scenario):
+        self.calls.append("create_request")
+        if key not in self.requests:  # server-side Idempotency-Key replay
+            self.requests[key] = str(uuid4())
+        if self.crash_after_create:
+            self.crash_after_create = False
+            raise ConnectionError("lost reply")
+        return self.requests[key]
+
+    def observe(self, request_id):
+        self.calls.append("observe")
+        status = self.statuses.pop(0) if len(self.statuses) > 1 else self.statuses[0]
+        return {"id": request_id, "chat_id": self.chat, "status": status}
+
+
+def private(path, value):
+    path.write_text(value if isinstance(value, str) else json.dumps(value))
+    path.chmod(0o600)
+    return path
+
+
+def contract(**over):
+    value = {
+        "schema_version": gate.SCHEMA, "phase": "post_deployment", "target": "production",
+        "manifest": {"path": "/m", "sha256": CAND, "signature_path": "/s", "public_key_path": "/k",
+                     "public_key_spki_sha256": "2" * 64},
+        "runtime": {role: {"ssm": {"profile": "pals-prod-member", "region": "ap-northeast-1",
+                                    "account_id": "123456789012", "instance_id": "i-0123456789abcdef0"},
+                           "container": "c-" + role, "config_sha256": "4" * 64,
+                           "environment_sha256": "5" * 64} for role in gate.ROLES},
+        "runner_sha256": gate.runner_fingerprint(), "web_root": "/w",
+        "web_origin": "https://web.example.test", "api_origin": "https://api.example.test",
+        "auth_origin": None,
+        "request": {"id": None, "chat_id": None, "generation_model": "m", "reasoning_effort": "high",
+                    "output_language": "ja", "required_conclusion_text": ["x"], "required_conclusion_math": []},
+        "timeout_seconds": 60, "max_age_seconds": 600}
+    value.update(over)
+    return value
+
+
+def scenario(**over):
+    value = {"schema_version": post.SCENARIO_SCHEMA, "scenario_id": "s1", "statement": SECRET_STATEMENT,
+             "generation_model": "m", "reasoning_effort": "high", "output_language": "ja"}
+    value.update(over)
+    return value
+
+
+class Base(unittest.TestCase):
+    def setUp(self):
+        self._dir = tempfile.TemporaryDirectory()
+        self.addCleanup(self._dir.cleanup)
+        self.root = Path(self._dir.name).resolve()
+        self.state = self.root / "state"
+        self.key = post.idempotency_key(CAND, "s1", CYCLE)
+
+    def journal(self):
+        return post.Journal(self.state, self.key, post.payload_sha256(scenario()))
+
+    def run_once(self, fake, **kw):
+        journal = self.journal()
+        try:
+            return post.run(fake, journal, self.key, scenario(), wait_seconds=kw.get("wait", 10),
+                            sleep=lambda _: None, clock=kw.get("clock", lambda: 0.0))
+        finally:
+            journal.stream.close()
+
+
+class Tests(Base):
+    def test_key_depends_on_candidate_and_scenario_and_fits_api_pattern(self):
+        a = post.idempotency_key(CAND, "s1", CYCLE)
+        self.assertRegex(a, r"^[A-Za-z0-9_-]{32,128}$")
+        self.assertNotEqual(a, post.idempotency_key("b" * 64, "s1", CYCLE))
+        self.assertNotEqual(a, post.idempotency_key(CAND, "s2", CYCLE))
+        self.assertEqual(a, post.idempotency_key(CAND, "s1", CYCLE))
+
+    def test_first_run_creates_exactly_one_request_and_returns_contract(self):
+        fake = Fake()
+        result = self.run_once(fake)
+        self.assertEqual(set(result), {"id", "chat_id"})
+        self.assertEqual(fake.calls.count("create_request"), 1)
+
+    def test_rerun_observes_existing_without_second_create(self):
+        fake = Fake()
+        first = self.run_once(fake)
+        second = self.run_once(fake)
+        self.assertEqual(first, second)
+        self.assertEqual(fake.calls.count("create_request"), 1)
+        self.assertEqual(fake.calls.count("create_chat"), 1)
+
+    def test_crash_after_server_create_replays_same_key_not_new_job(self):
+        fake = Fake()
+        fake.crash_after_create = True
+        with self.assertRaises(ConnectionError):
+            self.run_once(fake)
+        result = self.run_once(fake)
+        self.assertEqual(len(fake.requests), 1)  # one paid job server-side
+        self.assertEqual(result["id"], fake.requests[self.key])
+
+    def test_ambiguous_create_without_server_replay_is_refused(self):
+        fake = Fake(replay_safe=False)
+        fake.crash_after_create = True
+        with self.assertRaises(ConnectionError):
+            self.run_once(fake)
+        with self.assertRaisesRegex(post.Refusal, "ambiguous_create_requires_manual_reconciliation"):
+            self.run_once(fake)
+        self.assertEqual(fake.calls.count("create_request"), 1)
+
+    def test_bounded_wait_and_resumable_observation(self):
+        fake = Fake(statuses=("accepted",))
+        ticks = iter(range(0, 1000, 5))
+        with self.assertRaisesRegex(post.Refusal, "request_observation_deadline_exceeded"):
+            self.run_once(fake, wait=12, clock=lambda: next(ticks))
+        fake.statuses = ["queued"]
+        self.run_once(fake)  # resumes observation; no second create
+        self.assertEqual(fake.calls.count("create_request"), 1)
+
+    def test_failed_or_foreign_requests_are_refused(self):
+        with self.assertRaisesRegex(post.Refusal, "request_failed_not_resubmitted:failed"):
+            self.run_once(Fake(statuses=("failed",)))
+
+    def test_failed_request_reported_not_resubmitted_in_same_cycle(self):
+        fake = Fake(statuses=("needs_input",))
+        for _ in range(2):
+            with self.assertRaisesRegex(post.Refusal, "request_failed_not_resubmitted:needs_input"):
+                self.run_once(fake)
+        self.assertEqual(fake.calls.count("create_request"), 1)
+        self.assertIn("terminal_failure", (self.state / "post-request.jsonl").read_text())
+
+    def test_same_candidate_new_cycle_gets_new_key_and_never_adopts_old_request(self):
+        fake = Fake()
+        first = self.run_once(fake)
+        self.state = self.root / "state2"
+        self.key = post.idempotency_key(CAND, "s1", CYCLE2)
+        self.assertNotEqual(self.key, post.idempotency_key(CAND, "s1", CYCLE))
+        second = self.run_once(fake)
+        self.assertNotEqual(first["id"], second["id"])
+        self.assertEqual(len(fake.requests), 2)
+
+    def test_resume_with_changed_scenario_payload_is_refused(self):
+        fake = Fake()
+        self.run_once(fake)
+        journal = None
+        with self.assertRaisesRegex(post.Refusal, "scenario_payload_changed_since_journal"):
+            journal = post.Journal(self.state, self.key, post.payload_sha256(scenario(statement="other statement")))
+        self.assertIsNone(journal)
+        self.assertEqual(fake.calls.count("create_request"), 1)
+        self.assertNotEqual(post.payload_sha256(scenario()), post.payload_sha256(scenario(statement="x")))
+
+    def test_cycle_id_must_be_canonical_uuid(self):
+        for bad in ("", "x", "AAAAAAAA-AAAA-4AAA-8AAA-AAAAAAAAAAAA", CYCLE.replace("-", "")):
+            with self.assertRaises(post.Refusal):
+                post.idempotency_key(CAND, "s1", bad)
+
+    def test_torn_last_journal_line_is_discarded_and_corrupt_middle_refused(self):
+        fake = Fake()
+        first = self.run_once(fake)
+        path = self.state / "post-request.jsonl"
+        good = path.read_bytes()
+        path.write_bytes(good + b'{"schema_version": "pals.post-req')  # torn append
+        self.assertEqual(self.run_once(fake), first)
+        self.assertNotIn(b"pals.post-req\"", path.read_bytes().split(b"\n")[-1])
+        self.assertTrue(path.read_bytes().startswith(good))
+        self.assertEqual(fake.calls.count("create_request"), 1)
+        lines = path.read_bytes().split(b"\n")
+        path.write_bytes(b"\n".join([lines[0][:20]] + lines[1:]))
+        with self.assertRaisesRegex(post.Refusal, "journal_corrupt"):
+            self.journal()
+
+    def test_journal_for_another_key_and_concurrent_runs_are_refused(self):
+        self.run_once(Fake())
+        with self.assertRaisesRegex(post.Refusal, "journal_belongs_to_another_request"):
+            post.Journal(self.state, post.idempotency_key(CAND, "other", CYCLE), post.payload_sha256(scenario()))
+        held = self.journal()
+        self.addCleanup(held.stream.close)
+        with self.assertRaisesRegex(post.Refusal, "post_request_already_running"):
+            self.journal()
+
+    def test_journal_has_no_user_content(self):
+        self.run_once(Fake())
+        self.assertNotIn(SECRET_STATEMENT, (self.state / "post-request.jsonl").read_text())
+
+
+class CliTests(Base):
+    def files(self, **scen):
+        c = private(self.root / "contract.json", contract())
+        s = private(self.root / "scenario.json", scenario(**scen))
+        return c, s
+
+    def invoke(self, c, s, factory, cand=CAND):
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = post.main(["--contract", str(c), "--candidate-sha256", cand, "--cycle-id", CYCLE, "--scenario", str(s),
+                              "--session", str(self.root / "session"), "--state-dir", str(self.state)],
+                             transport_factory=factory)
+        return code, out.getvalue(), err.getvalue()
+
+    def test_stdout_is_exactly_the_release_cycle_contract_and_leaks_nothing(self):
+        c, s = self.files()
+        fake = Fake()
+        code, out, err = self.invoke(c, s, lambda **kw: fake)
+        self.assertEqual(code, 0)
+        value = json.loads(out)
+        self.assertEqual(set(value), {"id", "chat_id"})
+        self.assertEqual(out.strip(), json.dumps(value, sort_keys=True))
+        self.assertNotIn(SECRET_STATEMENT, out + err)
+
+    def test_default_live_adapter_refuses_a_missing_session_and_creates_nothing(self):
+        c, s = self.files()
+        code, out, err = self.invoke(c, s, None)  # no injected transport: the real adapter is used
+        self.assertEqual((code, out), (2, ""))
+        self.assertEqual(json.loads(err)["reason"], "private_session_required")
+        self.assertFalse(self.state.exists())
+
+    def test_candidate_mismatch_pre_release_contract_and_scenario_drift_refused(self):
+        c, s = self.files()
+        self.assertEqual(self.invoke(c, s, lambda **kw: Fake(), cand="b" * 64)[0], 2)
+        pre = contract(phase="pre_release", target="staging")
+        pre["request"].update(id=str(uuid4()), chat_id=str(uuid4()))
+        bad = private(self.root / "bad.json", pre)
+        code, _, err = self.invoke(bad, s, lambda **kw: Fake())
+        self.assertEqual(code, 2)
+        self.assertIn("production_post_deployment_contract_required", err)
+        s2 = private(self.root / "s2.json", scenario(generation_model="other"))
+        code, _, err = self.invoke(c, s2, lambda **kw: Fake())
+        self.assertEqual(code, 2)
+        self.assertIn("scenario_differs_from_contract", err)
+
+    def test_scenario_hash_pin_is_enforced_and_matching_pin_accepted(self):
+        c, s = self.files()
+        with self.assertRaisesRegex(post.Refusal, "scenario_hash_changed"):
+            post.load_inputs(c, None, CAND, s, "0" * 64)
+        post.load_inputs(c, None, CAND, s, gate.digest(s.read_bytes()))
+
+    def test_optional_token_cap_is_bounded_and_part_of_the_journal_binding(self):
+        c, _ = self.files()
+        for index, good in enumerate((1, 40000, post.MAX_UTILIZATION_TOKENS)):
+            s = private(self.root / f"cap-{index}.json", scenario(max_utilization_tokens=good))
+            self.assertEqual(post.load_inputs(c, None, CAND, s)[1]["max_utilization_tokens"], good)
+        for index, bad in enumerate((0, -1, post.MAX_UTILIZATION_TOKENS + 1, True, 1.5, "40000", None)):
+            s = private(self.root / f"bad-{index}.json", scenario(max_utilization_tokens=bad))
+            with self.assertRaisesRegex(post.Refusal, "scenario_shape_invalid"):
+                post.load_inputs(c, None, CAND, s)
+        s = private(self.root / "extra.json", scenario(unknown_member=1))
+        with self.assertRaisesRegex(post.Refusal, "scenario_shape_invalid"):
+            post.load_inputs(c, None, CAND, s)
+        self.assertEqual(post.SCENARIO_SCHEMA, "pals.post-request-scenario.v1")
+        self.assertEqual(post.MAX_UTILIZATION_TOKENS, 1_500_000)
+        self.assertNotEqual(post.payload_sha256(scenario()), post.payload_sha256(scenario(max_utilization_tokens=1)))
+
+    def test_contract_hash_pin_is_enforced(self):
+        c, s = self.files()
+        with self.assertRaisesRegex(post.Refusal, "contract_hash_changed"):
+            post.load_inputs(c, "0" * 64, CAND, s)
+
+
+if __name__ == "__main__":
+    unittest.main()
