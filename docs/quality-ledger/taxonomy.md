@@ -99,3 +99,18 @@
 - **通知しない**: `policy.*` の正規の拒否、`verifier.exact_not_closed`、`audit.coverage_gap`。
 - 「台帳での行数 / 件数」は、重複を除いた行のうち`overlap_with`が空のものを数えた、2026-11-04時点の値です。件数は同じ質問を繰り返した実行も数えるため、行数と一緒に読みます。
 - 2026-11-05に説明QA用の2コードを追加しました。これらはCloudWatchの送信Schemaや運用アラームへ自動追加するものではありません。過去の`unclassified`行は当時の採点記録として保持し、新しい反復評価から使います。
+
+## 2026-11-11 の lane・ポートフォリオ・段階0の行の対応づけ
+
+`failures_raw_json` の語を、次のコードに数えました(`failures_json` に入れています)。レーンが対象外として何も答えなかったものは障害でなく `policy.unsupported_request`、それ以外は上の定義に最も近いコードです。
+
+| 出典の語 | コード | 理由 |
+|---|---|---|
+| `request_not_a_plain_proposition`、`explain_request`、`no_honest_template`、`statement_refused_by_lean_check`、`grammar_no_parse`、`language_filter`、`no_formal_statement_without_model`、`no_exact_profile_and_grammar_inert` | `policy.unsupported_request` | レーンの設計上の対象外で、通常のパイプラインへ回った(障害ではない) |
+| `lean_rejected_all`、`statement_not_elaborated` | `verifier.lean_compile_error` | Lean が命題を受け付けなかった |
+| `no_attempt_succeeded` | `model.could_not_prove` | 自動化の全試行で閉じなかった(モデル呼び出しはない。最も近いコード) |
+| `budget_exhausted` | `infra.timeout` | 時間の予算を使い切った |
+| `fidelity_gate_failed` | `review.rejected` | 関所(意味審査)が却下した |
+| `stage0_error` 2件 | `infra.app_defect` 1、`infra.timeout` 1 | 出典の記録: ワーカー関連の `RuntimeError` 1、`TimeoutError` 1 |
+
+`2026-11-11-recipe-lane-probes-baseline` の `grammar_no_parse` と `language_filter` は1題に重なるので、件数の合計は失敗題数を超える。
