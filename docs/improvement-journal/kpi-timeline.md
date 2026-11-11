@@ -55,3 +55,4 @@
 | 2026-11-11 | T2 生成レーン（No-Sketch・2候補競争・パッチ修復・並列説明、既定 off）。検証までの時間 p50 68.8→54.2 s、回答完成 p50 85.4→61.5 s。p50 30 s には未到達。n=14、1回、端末高負荷 | [t2-lane-first-measurement](entries/2026-11-11-t2-lane-first-measurement.md) |
 | 2026-11-11 | T2 の5腕再測定（負荷15前後）: 並列レビュー・説明（nd_k2_par）は回答完成 p50 55.8→39.5 s だが nd_k2 と区別できない（n=14）。テンプレート＋補完は退行（最終成功 13→11/14、修復 6→20、費用 +68%）。Lean枠1は差なし。初回成功 7→13/14 は再現 | [t2-five-arm-measurement](entries/2026-11-11-t2-five-arm-measurement.md) |
 | 2026-11-12 | T2 の低負荷再測定（実際は負荷11.5前後のまま）: nd_k2_par の回答完成 p50 95.8→40.0 s、p90 332.7→112.5 s（実測）。p50 30 s は実測で未達、Lean を3 sに切った推計で18.1 s。worker 配線は pals-agent#119（既定 off）。n=14、1回 | [t2-lowload-remeasure](entries/2026-11-12-t2-lowload-remeasure.md) |
+| 2026-11-13 | 大学1年レベルの未使用の題 40 題（調整用20・最終確認用20）を追加。既存集合の easy は使い尽くしだった（tuning 17 全て使用、held_out 8 のうち未使用で命題固定なしは 3） | [freshman-eval-items](entries/2026-11-13-freshman-eval-items.md) |
