@@ -38,3 +38,4 @@
 | 2026-11-10 | 机上試算: 時間・費用が失敗実行にどう偏るか、修復上限・早期停止の反事実（モデル呼び出し0回） | [offline-savings-analysis](entries/2026-11-10-offline-savings-analysis.md) |
 | 2026-11-10 | 早期停止の専用終了理由（#91、既定 off）。既存の停止は API に拒否され、本番で働くのは harness 不一致だけ | [early-stop-terminal-reason](entries/2026-11-10-early-stop-terminal-reason.md) |
 | 2026-11-10 | import plan を検証器へ接続（#92、既定 off、実モデル測定なし） | [import-plan-verifier](entries/2026-11-10-import-plan-verifier.md) |
+| 2026-11-10 | Recipe 具体化の被覆: 現行 `exact` と追加 closer、使用定数検査（モデル呼び出し0回、実 Lean） | 正例38・負例10の手書き文、Lean 4.32.0-rc1、並走負荷あり | (i) 現行 10/38、追加 closer で近道なしに 36/38。負例9/10は全 closer 失敗（1件はラベル誤りで正しく通過） | import 約4.0〜4.3秒、append 約4.8〜5.2秒（中央値、参考値） | 0ドル（モデルなし） | [recipe-instantiation-experiment](entries/2026-11-10-recipe-instantiation-experiment.md) |
