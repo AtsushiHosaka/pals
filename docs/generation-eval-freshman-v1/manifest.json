@@ -149,7 +149,7 @@
    "language": "ja",
    "mathlib_outlook": "lemma-needed",
    "source": "authored:freshman-textbook-exercise",
-   "split": "held_out",
+   "split": "dev_unseen",
    "statement": "整数 n について、n³−n は 6 の倍数であることを示せ。",
    "statement_sha256": "0ff332f10de7c76a663f0165e4d7f253e3c8ff9525483d7cda4ed9d07751d553",
    "tags": [],
@@ -214,6 +214,44 @@
    "trivial": false
   },
   {
+   "expected_answer": "0",
+   "expected_conclusion": "m = (x_1+…+x_n)/n ならば Σ_{i=1}^{n} (x_i − m) = 0。",
+   "field": "probability-statistics",
+   "fixed_lean_statement": null,
+   "history": [],
+   "id": "fy1-deviations-from-mean-sum-to-zero",
+   "language": "ja",
+   "mathlib_outlook": "lemma-needed",
+   "source": "authored:freshman-textbook-exercise",
+   "split": "dev_unseen",
+   "statement": "n 個の実数 x_1, …, x_n（n ≥ 1）の平均を m とするとき、平均からの偏差の和 Σ_{i=1}^{n} (x_i − m) が 0 であることを示せ。",
+   "statement_sha256": "6e4f01a95aed41db5f7a21f1f9ffcbd87448018e55a8587dea8359f17ebbd5d5",
+   "tags": [
+    "inequality"
+   ],
+   "tier": "easy",
+   "tier_basis": "assigned",
+   "trivial": false
+  },
+  {
+   "expected_answer": null,
+   "expected_conclusion": "任意の整数 a,b と自然数 k について (a−b) ∣ (a^k − b^k)。",
+   "field": "number-theory",
+   "fixed_lean_statement": null,
+   "history": [],
+   "id": "fy1-difference-divides-power-difference",
+   "language": "en",
+   "mathlib_outlook": "lemma-needed",
+   "source": "authored:freshman-textbook-exercise",
+   "split": "held_out",
+   "statement": "Prove that for all integers a and b and every natural number k, a − b divides a^k − b^k.",
+   "statement_sha256": "c179f49b6b5fb723ac725bde573c3a5a8c36105f840d937e8a824bb7525c312e",
+   "tags": [],
+   "tier": "medium",
+   "tier_basis": "assigned",
+   "trivial": false
+  },
+  {
    "expected_answer": null,
    "expected_conclusion": "A(1,1)=3(1,1) かつ A(1,−1)=1·(1,−1)。どちらも零ベクトルでない。",
    "field": "linear-algebra",
@@ -270,24 +308,6 @@
    "tier": "medium",
    "tier_basis": "assigned",
    "trivial": false
-  },
-  {
-   "expected_answer": "1/2",
-   "expected_conclusion": "標本空間 {1,…,6} の一様分布で、事象 {2,4,6} の確率は 3/6=1/2。認める定式化: 一様な有限集合上の数え上げの比、または同等の確率測度での記述。",
-   "field": "probability-statistics",
-   "fixed_lean_statement": null,
-   "history": [],
-   "id": "fy1-fair-die-even-probability",
-   "language": "ja",
-   "mathlib_outlook": "lemma-needed",
-   "source": "authored:freshman-textbook-exercise",
-   "split": "held_out",
-   "statement": "公正なサイコロを1回振るとき、偶数の目が出る確率は 1/2 であることを示せ。",
-   "statement_sha256": "2ec34ac9ca5c50c5d967a0f475e38b64412b99d2748d818c400952d3b1a8ecb1",
-   "tags": [],
-   "tier": "easy",
-   "tier_basis": "assigned",
-   "trivial": true
   },
   {
    "expected_answer": "0",
@@ -439,24 +459,6 @@
    "tier": "medium",
    "tier_basis": "assigned",
    "trivial": false
-  },
-  {
-   "expected_answer": "mean 3, sum 10",
-   "expected_conclusion": "(1+2+3+4+5)/5=3 であり、Σ(k−3)^2 = 4+1+0+1+4 = 10。",
-   "field": "probability-statistics",
-   "fixed_lean_statement": null,
-   "history": [],
-   "id": "fy1-mean-and-squared-deviation",
-   "language": "en",
-   "mathlib_outlook": "direct",
-   "source": "authored:freshman-textbook-exercise",
-   "split": "dev_unseen",
-   "statement": "Show that the mean of the numbers 1, 2, 3, 4, 5 is 3, and that the sum of the squared deviations from this mean is 10.",
-   "statement_sha256": "3578c329fe4e621d4ad2f71c21f6cffa492a6dfc73fca13d27e00af255cdffad",
-   "tags": [],
-   "tier": "easy",
-   "tier_basis": "assigned",
-   "trivial": true
   },
   {
    "expected_answer": null,
@@ -708,22 +710,22 @@
    "trivial": false
   },
   {
-   "expected_answer": "1",
-   "expected_conclusion": "2^10=1024 であり 1024=11×93+1。したがって 2^10 ≡ 1 (mod 11)。",
-   "field": "number-theory",
+   "expected_answer": null,
+   "expected_conclusion": "任意の A⊆Ω について P(Ω\\A) = 1 − P(A)（P(A)=|A|/|Ω|）。認める定式化: 一様な有限集合上の数え上げの比、または同等の確率測度での記述。",
+   "field": "probability-statistics",
    "fixed_lean_statement": null,
    "history": [],
-   "id": "fy1-two-to-ten-mod-eleven",
+   "id": "fy1-uniform-complement-probability",
    "language": "ja",
-   "mathlib_outlook": "direct",
+   "mathlib_outlook": "lemma-needed",
    "source": "authored:freshman-textbook-exercise",
-   "split": "dev_unseen",
-   "statement": "2^10 を 11 で割った余りが 1 であることを、直接の計算で示せ。",
-   "statement_sha256": "6882a9fcc5b9a4dcdc0a7e91e0cc1907a0949c9c3525e35a0bf565abdd925bf1",
+   "split": "held_out",
+   "statement": "空でない有限集合 Ω 上の一様な確率について、任意の事象 A⊆Ω で、A の補集合の確率が 1−P(A) であることを示せ。",
+   "statement_sha256": "5f5e807acef437fcb7387d1a27ca8d0b70197c22a952ec4a9228a0ee9ae2a136",
    "tags": [],
    "tier": "easy",
    "tier_basis": "assigned",
-   "trivial": true
+   "trivial": false
   },
   {
    "expected_answer": null,
@@ -763,7 +765,7 @@
   }
  ],
  "schema_version": "pals.generation-eval-manifest.v1",
- "split_checksum": "c32b5b3c3534855bde3ba1492ad52a651c8c67a74e982bbfb434d707a855319f",
+ "split_checksum": "7ea01a290ee0dd12217c5d84c1e4f31d17e5258b728d801931e75af805390cac",
  "split_salt": "pals-generation-eval-freshman-v1",
  "version": "generation-eval-freshman-v1"
 }

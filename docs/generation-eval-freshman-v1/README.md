@@ -7,11 +7,11 @@
 - `manifest.json`: 40題。generation-eval-v1 と同じ項目（`id`・`field`・`tier`・`tier_basis`・`split`・`language`・`statement`・`statement_sha256`・`tags`・`history`）に、`expected_conclusion`（証明すべき主張を自然言語で。忠実さを人が判定するため）、`mathlib_outlook`（Mathlib で述べられる見込み。`direct` 直接 / `lemma-needed` 補題が要る / `awkward` 述べにくい / `unlikely`）、`expected_answer` を加えた。`fixed_lean_statement` は全題 null（Lean の固定文は付けない）。
 - `SPLIT.sha256`: (id, split, 文面ハッシュ) の SHA-256。変更不可。
 - `build_freshman_set.py`: 題の定義、決定的な分割、検査。`build` は manifest を作り直し、`validate`（既定）は検査だけ。標準ライブラリのみ。
-- `test_freshman_set.py`: 検査のテスト（10件）。`pals-agent/.venv/bin/python -m pytest docs/generation-eval-freshman-v1`。
+- `test_freshman_set.py`: 検査のテスト（10件。v1 との重複確認はサブモジュールがあるときだけ）。`pals-agent/.venv/bin/python -m pytest docs/generation-eval-freshman-v1`。
 
 ## 水準
 
-大学1年の標準的な教科書の演習で、**自明なものからやや難しいものまで幅がある**。generation-eval-v1 の `easy` と同水準とは言えない（medium が17題ある）。一手で終わる自明な6題には `trivial: true` を付けた（`two-to-ten-mod-eleven`、`mean-and-squared-deviation`、`union-monotone`、`fair-die-even-probability`、`abs-continuous-at-zero`、`set-difference-of-union`）。10秒の判定では、`trivial` を除いた集計も併記して、易しい題で達成が水増しされないようにする。
+大学1年の標準的な教科書の演習で、**自明なものからやや難しいものまで幅がある**。generation-eval-v1 の `easy` と同水準とは言えない（medium が17題ある）。補題1つで閉じる一般的な主張の3題（`union-monotone`、`abs-continuous-at-zero`、`set-difference-of-union`）に `trivial: true` を付けた。固定の数値を計算するだけの題（2^10 mod 11、固定データの平均、さいころの目の確率）は、10秒の達成率を計算問題で水増しするため、変数・量化子を含む一般の証明問題（`difference-divides-power-difference`、`deviations-from-mean-sum-to-zero`、`uniform-complement-probability`）に差し替えた。10秒の判定では、`trivial` を除いた集計も併記して、易しい題で達成が水増しされないようにする。
 
 ## 忠実さの判定
 
@@ -22,10 +22,10 @@ manifest の `faithfulness_rule` に従う: 期待される結論の主張が定
 | 区分 | 題数 |
 |---|---|
 | 分割 | dev_unseen 20 / held_out 20 |
-| 難度（すべて assigned） | easy 23 / medium 17 |
+| 難度（すべて assigned） | easy 22 / medium 18 |
 | 言語 | ja 20 / en 20 |
 | 分野 | calculus-analysis 9、linear-algebra 7、discrete-logic 5、number-theory 5、probability-statistics 5、sequences-limits 5、inequalities 4 |
-| Mathlib の見込み | direct 21 / lemma-needed 19 |
+| Mathlib の見込み | direct 19 / lemma-needed 21 |
 
 分割は (分野, 難度) の層ごとに 50% を held_out にする決定的な関数（塩 `pals-generation-eval-freshman-v1`、順は `sha256(塩:id)`）。generation-eval-v1 の 30% とは別の版・別の塩で、v1 の `SPLIT.sha256` には触れていない。
 

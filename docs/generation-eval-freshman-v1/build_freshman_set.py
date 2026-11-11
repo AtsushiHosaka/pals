@@ -30,10 +30,9 @@ SPLIT_SALT = "pals-generation-eval-freshman-v1"
 HELD_OUT_FRACTION = 0.5
 SPLITS = ("dev_unseen", "held_out")
 TIERS = ("easy", "medium", "hard")
-# 一手で終わる自明な題。測定で区別できるよう印を付ける（`trivial: true`）。
+# 補題1つで閉じる一般的な主張（固定の数値計算は含めない）。測定で区別できるよう印を付ける（`trivial: true`）。
 TRIVIAL = frozenset({
-    "two-to-ten-mod-eleven", "mean-and-squared-deviation", "union-monotone",
-    "fair-die-even-probability", "abs-continuous-at-zero", "set-difference-of-union",
+    "union-monotone", "abs-continuous-at-zero", "set-difference-of-union",
 })
 FAITHFULNESS_RULE = (
     "期待される結論の主張が定理文として述べられていれば忠実とみなす。題文にある証明方法の"
@@ -171,10 +170,10 @@ P: list[tuple[str, str, str, str, str, str, str | None]] = [
     ("cube-minus-self-divisible-by-six", "number-theory", "medium",
      "整数 n について、n³−n は 6 の倍数であることを示せ。",
      "任意の整数 n について 6 ∣ n³−n。", "lemma-needed", None),
-    ("two-to-ten-mod-eleven", "number-theory", "easy",
-     "2^10 を 11 で割った余りが 1 であることを、直接の計算で示せ。",
-     "2^10=1024 であり 1024=11×93+1。したがって 2^10 ≡ 1 (mod 11)。", "direct", "1"),
-    # --- inequalities (4) ---
+    ("difference-divides-power-difference", "number-theory", "medium",
+     "Prove that for all integers a and b and every natural number k, "
+     "a − b divides a^k − b^k.",
+     "任意の整数 a,b と自然数 k について (a−b) ∣ (a^k − b^k)。", "lemma-needed", None),
     ("am-gm-two-variables", "inequalities", "easy",
      "Prove that (a + b)/2 ≥ √(ab) for all nonnegative real numbers a and b.",
      "任意の非負実数 a,b について (a+b)/2 ≥ √(ab)。", "lemma-needed", None),
@@ -209,11 +208,12 @@ P: list[tuple[str, str, str, str, str, str, str | None]] = [
      "Filter.Tendsto による形のどちらでもよい（証明方法の指定は定理文に反映しない）。",
      "direct", None),
     # --- probability-statistics (5) ---
-    ("fair-die-even-probability", "probability-statistics", "easy",
-     "公正なサイコロを1回振るとき、偶数の目が出る確率は 1/2 であることを示せ。",
-     "標本空間 {1,…,6} の一様分布で、事象 {2,4,6} の確率は 3/6=1/2。"
+    ("uniform-complement-probability", "probability-statistics", "easy",
+     "空でない有限集合 Ω 上の一様な確率について、任意の事象 A⊆Ω で、"
+     "A の補集合の確率が 1−P(A) であることを示せ。",
+     "任意の A⊆Ω について P(Ω\\A) = 1 − P(A)（P(A)=|A|/|Ω|）。"
      "認める定式化: 一様な有限集合上の数え上げの比、または同等の確率測度での記述。",
-     "lemma-needed", "1/2"),
+     "lemma-needed", None),
     ("two-dice-sum-seven", "probability-statistics", "medium",
      "Two fair six-sided dice are rolled. Show that the probability that the sum "
      "is 7 equals 1/6.",
@@ -226,10 +226,10 @@ P: list[tuple[str, str, str, str, str, str, str | None]] = [
      "認める定式化: 確率測度 P と独立 P(A∩B)=P(A)P(B) の仮定のもとでの主張。"
      "（標本空間を具体に取る場合は、条件を満たす一様な有限空間でもよい）。",
      "lemma-needed", "2/3"),
-    ("mean-and-squared-deviation", "probability-statistics", "easy",
-     "Show that the mean of the numbers 1, 2, 3, 4, 5 is 3, and that the sum of "
-     "the squared deviations from this mean is 10.",
-     "(1+2+3+4+5)/5=3 であり、Σ(k−3)^2 = 4+1+0+1+4 = 10。", "direct", "mean 3, sum 10"),
+    ("deviations-from-mean-sum-to-zero", "probability-statistics", "easy",
+     "n 個の実数 x_1, …, x_n（n ≥ 1）の平均を m とするとき、平均からの偏差の和 "
+     "Σ_{i=1}^{n} (x_i − m) が 0 であることを示せ。",
+     "m = (x_1+…+x_n)/n ならば Σ_{i=1}^{n} (x_i − m) = 0。", "lemma-needed", "0"),
     ("three-tosses-two-heads", "probability-statistics", "medium",
      "A fair coin is tossed three times. Show that the probability of getting exactly "
      "two heads is 3/8.",
