@@ -31,7 +31,9 @@ pals-agent/
 | 要求シード `requested-math-seeds-v1` | 20 | assigned（手動。表は `build_manifest.py`） | 日本語。判定・計算の9題に期待する答えを付ける |
 | Codex の題（`pq-` 付き） | 18 | assigned（構造から手動） | 日本語。Codex の登録に難度欄がないため |
 | スキーム論の M カード（Mathlib のみ） | 6 | observed（腕 a の結果） | 固定の Lean 命題つき。Frontier を使う F カードは除く |
-| 宣言難度つきの候補カード（高校・大学の問い） | 20 | declared（introductory/standard/advanced → easy/medium/hard） | Lean の証明なし。分野ごとの枠を、題の ID の SHA-256 順に medium → hard → easy の順で回して選ぶ |
+| 候補カード（高校・大学の問い） | 20 | declared 19（introductory/standard/advanced → easy/medium/hard）。宣言難度のない1題（`number_theory_gcd_dvd_left`）だけ assigned | Lean の証明なし。分野ごとの枠を、題の ID の SHA-256 順に medium → hard → easy の順で回して選ぶ |
+
+難度の根拠の合計は observed 42（36+6）・assigned 39（20+18+1）・declared 19。件数は `manifest.json` の `tier_basis` を数えた値で、[requirements.md](requirements.md) と journal も同じ。
 
 除外: `(x+y)^2` 系（正規表現と ID）、同じ文面の重複。分野・タグは文面と ID から決定的に付ける。
 
@@ -43,7 +45,7 @@ pals-agent/
 
 ## 記録のスキーマ（追記専用 JSONL、閉じている）
 
-- `pals.generation-eval.attempt.v1`: 1回の段。`stage`（draft / sketch / sketch_check / prove / lean_check / repair / replay_check）、`started_at`・`ended_at`・`elapsed_ms`、`success`、`error_codes`、`model`・`effort`、`input_tokens`・`cached_input_tokens`・`output_tokens`、`diagnostics`（コード・行・300字までのメッセージ、5件まで）、失敗時は `lean_sha256` と `lean_path`。**Lean 本文は JSONL に入れず、`<artifacts>/<run_id>/<題>/<n>.lean` に保存**する（既知の欠落: 失敗した Sketch の本文が残らない）。
+- `pals.generation-eval.attempt.v1`: 1回の段。`stage`（draft / sketch / sketch_check / prove / lean_check / repair / replay_check）、`started_at`・`ended_at`・`elapsed_ms`、`success`、`error_codes`、`model`・`effort`、`input_tokens`・`cached_input_tokens`・`output_tokens`、`diagnostics`（コード・行・メッセージの SHA-256、5件まで。**コンパイラのメッセージ本文は JSONL に入れない**。Lean の診断は問題の項や識別子を含みうるため。本文は失敗した Lean と同じく `<artifacts>/` 側にだけ置く）、失敗時は `lean_sha256` と `lean_path`。**Lean 本文は JSONL に入れず、`<artifacts>/<run_id>/<題>/<n>.lean` に保存**する（既知の欠落: 失敗した Sketch の本文が残らない）。**実装との差（未修正）:** pals-agent の `runner.py` の `_diagnostic_summary` は、いまメッセージ本文を300字まで `diagnostics` に書いている。R10 と合わせるには、本文を落とすか SHA-256 に置き換える修正が要る。
 - `pals.generation-eval.run.v1`: 1回の (題, 腕, 反復)。`tier`、`split`、`success`、`first_attempt_ok`、`repairs_used`、`wall_s`、`cost_usd`、`model_calls`、トークン合計、`termination_reason`、`config`（モデル・推論量・フラグ）、`error`。
 - 未知のフィールドは書き込みで拒否する（問題文・秘密・利用者内容の混入を防ぐ）。`error` が立った行（検証器の異常、API 失敗）は比較から除き、除いた数を報告する（失敗として数えない）。
 - 保存先: 既定でリポジトリの外（`PALS_EVAL_ARTIFACTS`、例 `~/.local/share/pals-eval/<run_id>/`）。コミットするのは集計（docs）だけ。
@@ -59,11 +61,12 @@ pals-agent/
 
 ## 分析（`analysis.compare`）
 
-1. 題ごとに反復を平均し、両腕にある題だけを使う。
+1. 題と反復番号で腕 A・B の行を対にする。`error` のある行は除く。反復番号が**両腕に揃っている**ものだけを使い、題ごとにその反復を平均する。片腕にしかない反復（例: A は反復1・2、B は反復2が `error` → 使うのは反復1だけ）は平均に入れず、除いた対の数を腕ごとに報告する。揃った反復が1つもない題は分析から外し、外した題の数を報告する。
+   **実装との差（未修正）:** `analysis.compare` の `per_problem_means` は、腕ごとに `error` のない行を題ごとに別々に平均してから、両腕にある題の差を取る。反復番号は合わせないので、上の例では A=[1,0] の平均 0.5 と B=[1] の 1.0 の差 +0.5 が出る（対になる反復1は差0）。`error` 行の除外と McNemar の反復番号ごとの対（`_binary_cells`）は実装済みだが、主解析の平均は対になっていない。直すまで、反復に `error` が混じる比較では主解析を使わない。
 2. 指標: `first_attempt_ok`、`success`、`repairs_used`、`wall_s`、`cost_usd`。差は B − A。二値指標も、題ごとの反復平均（0.5 のような値）の差を主解析にする。
 3. 全指標に、題をクラスタにした**符号反転の並べ替え検定**（非ゼロの題が16以下は全列挙、超えれば種固定のモンテカルロ）と、題を単位とする対ブートストラップの 95% 区間（1万回、固定の種）。
    McNemar は対になった2値にだけ使う: 反復が全題1回のときに全体で1回、複数反復のときは「A の r 回目と B の r 回目」を対にして反復番号ごとに別々に出す（プールしない。平均した値には使わない）。主な判定は並べ替え検定と区間で行い、McNemar は補助。
-4. 区間が 0 をまたぐ指標は「効果は確認できない」。報告に MDE を添える（`mde_binary`、`mde_continuous`）。
+4. 区間が 0 をまたぐ指標は「効果は確認できない」。報告に MDE を添える（`mde_binary`、`mde_continuous`）。MDE は検出力 80%（両側5%）となる真の差で、それより小さい差も有意になりうるが、検出力は 80% を下回る。
 5. 複数の指標・複数の分野を見るときは、見た数を書く（多重比較の補正はしない。見た指標を事前に1つ決める）。
 
 ## 台帳・失敗分類への対応
@@ -82,7 +85,9 @@ pals-agent/
 
 - 共有題 18 は `pq-<id>` と `shared.{prompt_quality_id, case_id, fixture_sha256}` を持つ。Codex の `fixture_sha256` が変わったら（問題文の改訂）、`codex_shared_problems.json` との照合テストが落ちる。
 - Codex の分割名（tuning / regression / prospective_holdout）は**別の意味**（説明の調整・開封済み）。この評価の `split`（tuning / held_out）とは独立に持つ。共有題 18 の割り当ては 調整14・保留4。
-- 結合して見たいもの（生成が成功した題で、説明が届き QA を通る率）は、`(題の ID, 実行 ID)` で結合する別ファイル `user_level` に置く。v1 のランナーは書かない（説明と QA の実行は Codex の側が持つ）。
+- 結合して見たいもの（生成が成功した題で、説明が届き QA を通る率）は、別ファイル `user_level` に置く。v1 のランナーは書かない（説明と QA の実行は Codex の側が持つ）。
+- 結合の鍵は `(題の ID, 実行 ID, 証明の SHA-256)`。Codex の説明の再生は固定の検証済み証明を入力に使うため、題の ID と実行 ID だけでは、生成が出した証明と別の証明の説明が結びつきうる。`user_level` の行は説明に渡した Lean の SHA-256 を持ち、その実行の最終証明の SHA-256 と一致した行だけを利用者側の指標に使う。一致しない行と証明を持たない実行は指標から除き、その数を報告する。
+- **実装との差（未修正）:** run 行は最終証明の SHA-256 を持たない（`lean_sha256` は失敗した試行の行だけ）。成功した実行の最終証明の SHA-256 を run 行に足すまで、結合は定義だけで使えない。
 
 ## 検証
 
