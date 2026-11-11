@@ -178,9 +178,9 @@ P: list[tuple[str, str, str, str, str, str, str | None]] = [
     ("am-gm-two-variables", "inequalities", "easy",
      "Prove that (a + b)/2 ≥ √(ab) for all nonnegative real numbers a and b.",
      "任意の非負実数 a,b について (a+b)/2 ≥ √(ab)。", "lemma-needed", None),
-    ("bounded-rational-function", "inequalities", "medium",
-     "Show that x / (1 + x^2) ≤ 1/2 for every real number x.",
-     "任意の実数 x について x/(1+x^2) ≤ 1/2。", "lemma-needed", None),
+    ("factorial-dominates-power-of-two", "inequalities", "medium",
+     "Prove that n! ≥ 2^(n−1) for every positive integer n.",
+     "任意の正の整数 n について n! ≥ 2^(n−1)。", "lemma-needed", None),
     ("bernoulli-inequality", "inequalities", "medium",
      "Prove Bernoulli's inequality: for every real x ≥ −1 and every natural number n, "
      "(1 + x)^n ≥ 1 + n·x.",

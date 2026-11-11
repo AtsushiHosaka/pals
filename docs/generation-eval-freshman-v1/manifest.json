@@ -93,29 +93,9 @@
    "language": "en",
    "mathlib_outlook": "direct",
    "source": "authored:freshman-textbook-exercise",
-   "split": "dev_unseen",
+   "split": "held_out",
    "statement": "Prove Bernoulli's inequality: for every real x ≥ −1 and every natural number n, (1 + x)^n ≥ 1 + n·x.",
    "statement_sha256": "2bd72a89fc547369724f6c33eae7ba8249c4c6d8f259c57e5af18c4b4411e4c2",
-   "tags": [
-    "inequality"
-   ],
-   "tier": "medium",
-   "tier_basis": "assigned",
-   "trivial": false
-  },
-  {
-   "expected_answer": null,
-   "expected_conclusion": "任意の実数 x について x/(1+x^2) ≤ 1/2。",
-   "field": "inequalities",
-   "fixed_lean_statement": null,
-   "history": [],
-   "id": "fy1-bounded-rational-function",
-   "language": "en",
-   "mathlib_outlook": "lemma-needed",
-   "source": "authored:freshman-textbook-exercise",
-   "split": "held_out",
-   "statement": "Show that x / (1 + x^2) ≤ 1/2 for every real number x.",
-   "statement_sha256": "40923189f75aad633e5575d42a16db6e2a8c710c903b8ab2f79fa6aeed1c49ee",
    "tags": [
     "inequality"
    ],
@@ -268,6 +248,26 @@
    "statement_sha256": "723bd1e61e16d2125aa76a98868eb4f4988e26bd5d10038f426d4dfc4a5ab675",
    "tags": [],
    "tier": "easy",
+   "tier_basis": "assigned",
+   "trivial": false
+  },
+  {
+   "expected_answer": null,
+   "expected_conclusion": "任意の正の整数 n について n! ≥ 2^(n−1)。",
+   "field": "inequalities",
+   "fixed_lean_statement": null,
+   "history": [],
+   "id": "fy1-factorial-dominates-power-of-two",
+   "language": "en",
+   "mathlib_outlook": "lemma-needed",
+   "source": "authored:freshman-textbook-exercise",
+   "split": "dev_unseen",
+   "statement": "Prove that n! ≥ 2^(n−1) for every positive integer n.",
+   "statement_sha256": "23cdc0126a5fde392ae3d5f31473b7b3dc01528ccdea2a77136faa71f92d18e0",
+   "tags": [
+    "inequality"
+   ],
+   "tier": "medium",
    "tier_basis": "assigned",
    "trivial": false
   },
@@ -763,7 +763,7 @@
   }
  ],
  "schema_version": "pals.generation-eval-manifest.v1",
- "split_checksum": "6130e3bf012ec8128cd5b718c68967cc2de82489714b3ad045d7e8d00577f555",
+ "split_checksum": "c32b5b3c3534855bde3ba1492ad52a651c8c67a74e982bbfb434d707a855319f",
  "split_salt": "pals-generation-eval-freshman-v1",
  "version": "generation-eval-freshman-v1"
 }
