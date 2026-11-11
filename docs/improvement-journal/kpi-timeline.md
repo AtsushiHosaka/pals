@@ -41,3 +41,4 @@
 | 2026-11-10 | import plan を検証器へ接続（#92、既定 off、実モデル測定なし） | [import-plan-verifier](entries/2026-11-10-import-plan-verifier.md) |
 | 2026-11-10 | Mathlib Archive/Counterexamples 113ファイルを既定プロファイルでコンパイル、公理確認（モデル0回） | Lean 4.32.0-rc1、Mathlib 8b62164、Leanは1プロセス | 113/113コンパイル、1,378 theoremの公理は標準3つのみ（sorryAx 0） | 未集計（1ファイル中央値2秒、合計267秒） | 0ドル | [library-manifest-archive-pilot](entries/2026-11-10-library-manifest-archive-pilot.md) |
 | 2026-11-11 | 一般形 Recipe を Lean の単一化で具体化する lane(pals-agent#106、既定 off、モデル0回)。評価セットは fixtures で 0/100、元カード由来の未公開 Recipe を足して 7/100(恒等のみ)、探針は 2/15 から 15/15、時間 p50 約5秒(Lean 起動が床) | [general-recipe-lane](entries/2026-11-11-general-recipe-lane.md) |
+| 2026-11-11 | Mathlib を書庫にする自動化ポートフォリオ(pals-agent#106、既定 off)と形式化1回(費用 推計 0.0087 ドル)。温(常駐 Lean)で100題中47題(元カード由来の7題を除くと40題)、1題あたり p50 0.6 秒。冷は起動が床で約4秒。形式化の忠実さは1題の誤りを検出 | [portfolio-lane](entries/2026-11-11-portfolio-lane.md) |
