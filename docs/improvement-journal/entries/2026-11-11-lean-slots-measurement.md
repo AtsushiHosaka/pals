@@ -10,7 +10,7 @@
 - 1 compile ずつの強制: `pals-agent` の `http_server.py:51`（`MAX_CONCURRENT_COMPILES = 2` が上限）、`:207`（`BoundedSemaphore(設定値)`）、`:283`・`:351`（非ブロッキングで取得できないと 503。**待たせずに断る**）。スロット数の環境変数は `http_runtime.py:190-197`（`PALS_LEAN_MAX_CONCURRENT_COMPILES`、既定1）。
 - 上限は `http_server.py` にあるので、3〜4スロットに上げるには `MAX_CONCURRENT_COMPILES` の変更が必要（同ファイルは Codex が編集中のため、パッチを PR #111 の説明に書いた）。
 - 待ち行列は verifier 側にない: スロットが埋まっていると `verifier_unavailable`（503、`retryable=True`）を即座に返す（`http_server.py:283-285`、recipe 登録は `:351-`）。呼び出し元は reconciler で、同時検証数は `PALS_RECONCILER_MAX_CONCURRENT_VERIFICATIONS`（infra `control_runtime.py`、既定1、許可値1〜2）。**reconciler 本体と再試行の挙動は pals-api にあり、この worktree では submodule がなく読めていない（未確認）。**
-- コンテナの上限: `pals-infra/host/private-runtime/compute_runtime.py` の `--cpus 2`（従来 `:714`）、メモリは `RETAINED_VERIFIER_MEMORY = 4 GiB`（`:267`）、レビュー済み source は `REVIEWED_VERIFIER_MEMORY = 8 GiB`（`:268`、`:614-617`）。スロット数は `VERIFIER_COMPILE_VALUES`（従来 `{1,2}`、`:246`）。agent 側の起動時 attestation も CPU 2、メモリ 8 GiB を上限にしていた（`boundary.py:9-14`）。
+- コンテナの上限: `pals-infra/host/private-runtime/compute_runtime.py` の `--cpus 2`（変更前 `:714`）、メモリは `RETAINED_VERIFIER_MEMORY = 4 GiB`（`:267`）、レビュー済み source は `REVIEWED_VERIFIER_MEMORY = 8 GiB`（`:268`、`:614-617`）。スロット数は `VERIFIER_COMPILE_VALUES`（従来 `{1,2}`、`:246`）。agent 側の起動時 attestation も CPU 2、メモリ 8 GiB を上限にしていた（`boundary.py:9-14`）。
 - `private_compute_capacity_mode`（`terraform/production/private_compute_operator.tf:5,72`）: `normal`=r8a.large、`event`=r8a.xlarge のインスタンス種別を切り替えるだけ。コンテナ上限とスロット数は変わらない。
 
 ## 測定の条件
@@ -48,8 +48,8 @@
 
 ## 判断・推奨
 
-- 現行インスタンス（r8a.large）: **2 CPU / 8 GiB / 2スロット**（C）。8 GiB は infra が既にレビュー済みの値で、全 actor の上限合計（verifier 8＋proof 1＋assessment 1＋reviewer 1＝11 GiB、並列プロファイルでも 13.5 GiB）が 16 GiB から OS 用 2.5 GiB を引いた 13.5 GiB に収まる。それ以上のメモリは足せない。
-- **今の 4 GiB（保持された source）は、page cache が cgroup に載らないとき compile が約40 s になる。** 本番の実際の cache 課金は未確認（親 cgroup に課金されている可能性がある）。2スロットの前に、8 GiB 化だけでも効く可能性がある。
+- 現行インスタンス（r8a.large）: **2 CPU / 8 GiB / 2スロット**（C）。8 GiB は infra が既にレビュー済みの値（本番 seq29 は 189b4437 を名指しするので、すでに 8 GiB の見込み）で、全 actor の上限合計（verifier 8＋proof 1＋assessment 1＋reviewer 1＝11 GiB、並列プロファイルでも 13.5 GiB）が 16 GiB から OS 用 2.5 GiB を引いた 13.5 GiB に収まる。それ以上のメモリは足せない。
+- **訂正（レビュー反映）:** コードの経路では、verifier source が `189b4437` を名指しする manifest は 8 GiB を描画する（`compute_runtime.py` の `CONCURRENT_VERIFIER_COMMITS` と `REVIEWED_VERIFIER_MEMORY`）。本番の seq29 の manifest はこの source を名指しするので、**本番はすでに 8 GiB で動いている見込み**で、「本番で 4 GiB のため compile が約40 s」という仮説はコードからは支持されない（ホストでの確認は未了）。4 GiB の測定が示すのは、メモリ上限が低いと page cache の追い出しで compile が約10倍遅くなる、という一般の傾向だけである。4 GiB で動くのは、`verifier_source` を持たない保持された旧 manifest だけ。
 - (a) 2候補を毎回競争させる: **xlarge は不要。** r8a.large で2スロット・8 GiB なら、2本とも約5.5 s、最初の1本は約2.4 s（この Mac での値）。
 - (b) 10人同時で30秒以内: 各人が1 compile なら2スロットで10件目の待ちが約17 s（この Mac）。2候補競争なら20 compile で約36 s（推計: 2倍）、2スロットでは30秒の枠に収まらない。**4スロット（xlarge 形、4 CPU/16 GiB）なら20 compile で約24 s（推計）。** 本番の Lean は通常2〜5 s、負荷時11 s の記録がある（t2 の測定）。11 s なら、1 compile 10人でも2スロットは約55 s で足りない。xlarge は、(b) を競争ありで満たす場合に必要（モデル呼び出しの時間が別にあるので、Lean に使える枠は30秒より小さい）。
 - 費用は計算していない（リード判断）。
