@@ -8,6 +8,7 @@ import os
 import shutil
 import ssl
 import stat
+import subprocess
 import sys
 import tarfile
 import tempfile
@@ -37,6 +38,12 @@ provider_tls = load(
     "local_provider_tls_contract", ROOT / "bootstrap-local-provider-tls.py"
 )
 native = load("local_verifier_build_test", ROOT / "local-verifier-build.py")
+archives = load("local_verifier_archives_test", ROOT / "local-verifier-archives.py")
+INFRA = ROOT.parent / "pals-infra" / "scripts"
+INFRA_REASON = (
+    "pals-infra submodule is not initialised: the real release-plan validators were "
+    "NOT exercised (the self-contained contract tests still pin key set and archives)"
+)
 
 
 class BudgetTests(unittest.TestCase):
@@ -1431,6 +1438,524 @@ class BuildRecordWorkingDirectoryTests(unittest.TestCase):
                     observe("ref", self.elsewhere, self.REVISION, self.IMAGE)
             finally:
                 module.run = old
+
+
+class VerifierVariantFixture(unittest.TestCase):
+    """A real git repository with two commits whose compiler recipe files are identical."""
+
+    IDENTITY = ["-c", "user.name=fixture", "-c", "user.email=fixture@example.invalid"]
+    PRODUCTION = "sha256:" + "9" * 64
+    IMAGE = "sha256:" + "b" * 64
+    LEAN = "leanprover/lean4:v4"
+
+    def git(self, *args):
+        return subprocess.run(
+            ["git", "-C", str(self.repo), *self.IDENTITY, *args],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+
+    def raw_archive(self, commit, *paths):
+        return subprocess.run(
+            ["git", "-C", str(self.repo), "archive", "--format=tar", commit, *paths],
+            check=True,
+            capture_output=True,
+        ).stdout
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name).resolve()
+        self.repo = self.root / "agent"
+        files = {
+            "docker/lean-verifier.Dockerfile": "FROM exact-compiler\nCOPY pyproject.toml README.md ./\n",
+            "lean-workspace/lean-toolchain": self.LEAN + "\n",
+            "lean-workspace/lake-manifest.json": "{}\n",
+            "lean-workspace/Extra.lean": "one\n",
+            "pals_agent/lean_child.py": "child = 1\n",
+            "pyproject.toml": "[project]\nname='fixture'\n",
+            "README.md": "fixture\n",
+            "tests/test_other.py": "x = 1\n",
+        }
+        for name, text in files.items():
+            (self.repo / name).parent.mkdir(parents=True, exist_ok=True)
+            (self.repo / name).write_text(text)
+        self.git("init", "-q")
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "one")
+        self.first = self.git("rev-parse", "HEAD")
+        # Same Dockerfile, toolchain and manifest; other recipe and source files differ.
+        (self.repo / "lean-workspace/Extra.lean").write_text("two\n")
+        (self.repo / "pals_agent/lean_child.py").write_text("child = 2\n")
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "two")
+        self.second = self.git("rev-parse", "HEAD")
+
+    def reference(self, path):
+        return {"path": str(path), "sha256": gate.sha(Path(path).read_bytes())}
+
+    def write(self, name, raw):
+        path = self.root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(raw)
+        return path
+
+    def build(self, commit, name="build"):
+        """Everything the real builder records, without Docker: its own derivation code."""
+        out = self.root / name
+        out.mkdir()
+        complete = self.write(name + "-complete.tar", self.raw_archive(commit))
+        derived = archives.derive(self.repo, commit, complete, out)
+        dockerfile, lean, lake = archives.recipe(derived["recipe_archive"])
+        receipt = {
+            "schema_version": native.SCHEMA,
+            "source_root": str(self.repo),
+            "source_revision": commit,
+            "build_archive": self.reference(complete),
+            "source_archive": self.reference(derived["source_archive"]),
+            "recipe_archive": self.reference(derived["recipe_archive"]),
+            "dockerfile_sha256": gate.sha(dockerfile),
+            "lean_version": lean.decode().strip(),
+            "lake_manifest_sha256": gate.sha(lake),
+            "built_image_id": self.IMAGE,
+            "platform": "linux/arm64",
+            "difference_scope": "fixture",
+        }
+        return receipt
+
+    def subject(self, receipt, name="provenance.json"):
+        """The variant exactly as the preparation driver writes it."""
+        file = self.write(name, json.dumps(receipt).encode())
+        return {
+            "images": {
+                "verifier": {
+                    "source_revision": receipt["source_revision"],
+                    "image_id": self.IMAGE,
+                    "platform": "linux/arm64",
+                }
+            },
+            "verifier_variant": prepare.verifier_variant(
+                self.PRODUCTION, receipt, self.reference(file)
+            ),
+        }
+
+    def candidate(self, commit):
+        return {
+            "platforms": {"verifier": "linux/amd64"},
+            "images": {"verifier": self.PRODUCTION},
+            "recipe_active_lean_version": self.LEAN,
+            "recipe_active_lake_manifest_sha256": gate.sha(b"{}\n"),
+            "verifier_source": {
+                "commit": commit,
+                "source_archive_sha256": gate.sha(
+                    self.raw_archive(commit, "pals_agent")
+                ),
+            },
+        }
+
+
+class VerifierVariantContractTests(VerifierVariantFixture):
+    """Self-contained pin of what pals-infra's release plan requires (runs in every CI)."""
+
+    def test_variant_has_exactly_the_plans_key_set_and_gits_own_archives(self):
+        variant = self.subject(self.build(self.second))["verifier_variant"]
+        # release-cycle.py `local_verifier_variant`: closed key set.
+        self.assertEqual(
+            set(variant),
+            {
+                "production_image_digest",
+                "source_archive",
+                "recipe_archive",
+                "local_build_provenance",
+                "dockerfile_sha256",
+                "lean_version",
+                "lake_manifest_sha256",
+            },
+        )
+        # release_plan.py `VERIFIER_VARIANT_ARCHIVES`: path tuples in this exact order.
+        self.assertEqual(
+            archives.PROJECTIONS,
+            {
+                "source_archive": ("pals_agent",),
+                "recipe_archive": ("docker/lean-verifier.Dockerfile", "lean-workspace"),
+            },
+        )
+        for name, paths in archives.PROJECTIONS.items():
+            expected = self.raw_archive(self.second, *paths)
+            self.assertEqual(Path(variant[name]["path"]).read_bytes(), expected)
+            self.assertEqual(variant[name]["sha256"], gate.sha(expected))
+            self.assertEqual(set(variant[name]), {"path", "sha256"})
+        # The reviewed manifest pin is the hash of the pals_agent archive.
+        self.assertEqual(
+            variant["source_archive"]["sha256"],
+            self.candidate(self.second)["verifier_source"]["source_archive_sha256"],
+        )
+        self.assertNotEqual(
+            variant["source_archive"]["sha256"], gate.sha(self.raw_archive(self.second))
+        )
+        self.assertEqual(variant["production_image_digest"], self.PRODUCTION)
+        self.assertEqual(variant["lean_version"], self.LEAN)
+
+    def test_git_command_form_and_environment_match_the_plan(self):
+        seen = []
+        real = archives.subprocess.run
+
+        def run(argv, **options):
+            seen.append((argv, options.get("env")))
+            return real(argv, **options)
+
+        with (
+            patch.object(archives.subprocess, "run", run),
+            patch.dict(os.environ, {"GIT_DIR": "/nonexistent", "GIT_WORK_TREE": "/x"}),
+        ):
+            raw = archives.git_archive(self.repo, self.second, ("pals_agent",))
+        self.assertEqual(raw, self.raw_archive(self.second, "pals_agent"))
+        argv, environment = seen[0]
+        self.assertEqual(
+            argv,
+            [
+                "git",
+                "-C",
+                str(self.repo),
+                "archive",
+                "--format=tar",
+                self.second,
+                "pals_agent",
+            ],
+        )
+        self.assertFalse(
+            [
+                k
+                for k in environment
+                if k.startswith("GIT_")
+                and k not in ("GIT_CONFIG_NOSYSTEM", "GIT_TERMINAL_PROMPT")
+            ]
+        )
+        for bad in ("HEAD", "--output=/tmp/x", self.second[:12], self.second.upper()):
+            with self.assertRaises(ValueError):
+                archives.git_archive(self.repo, bad, ("pals_agent",))
+
+    def test_runner_accepts_the_prepared_variant_and_reads_the_recipe_archive(self):
+        subject = self.subject(self.build(self.second))
+        calls = []
+        old = gate.command
+        gate.command = lambda args, timeout=0: calls.append(args) or ""
+        try:
+            result = gate.verifier_provenance(subject)
+        finally:
+            gate.command = old
+        variant = subject["verifier_variant"]
+        self.assertEqual(
+            result["source_archive_sha256"], variant["source_archive"]["sha256"]
+        )
+        self.assertEqual(
+            result["recipe_archive_sha256"], variant["recipe_archive"]["sha256"]
+        )
+        self.assertEqual(
+            result["build_archive_sha256"], gate.sha(self.raw_archive(self.second))
+        )
+        # The receipt, and through it the built archive, stays hash-bound in the subject.
+        self.assertEqual(
+            result["build_provenance_sha256"],
+            variant["local_build_provenance"]["sha256"],
+        )
+        self.assertEqual(
+            calls[0][1:3], [str(ROOT / "local-verifier-build.py"), "--verify-receipt"]
+        )
+
+    def refused(self, subject, code):
+        old = gate.command
+        gate.command = lambda args, timeout=0: ""
+        try:
+            with self.assertRaises(gate.Refusal) as caught:
+                gate.verifier_provenance(subject)
+        finally:
+            gate.command = old
+        self.assertEqual(str(caught.exception), code)
+
+    def test_runner_refuses_an_open_or_incomplete_variant(self):
+        subject = self.subject(self.build(self.second))
+        missing = json.loads(json.dumps(subject))
+        del missing["verifier_variant"]["recipe_archive"]
+        self.refused(missing, "closed_native_local_verifier_variant_required")
+        extra = json.loads(json.dumps(subject))
+        extra["verifier_variant"]["build_archive"] = extra["verifier_variant"][
+            "source_archive"
+        ]
+        self.refused(extra, "closed_native_local_verifier_variant_required")
+
+    def test_runner_refuses_archives_of_another_commit_or_an_old_receipt(self):
+        good = self.build(self.second)
+        other = self.build(self.first, "other")
+        differs = "native_verifier_plan_archive_differs_from_the_built_commit"
+        # A recipe archive of another commit has the SAME Dockerfile, toolchain and manifest.
+        self.assertEqual(other["dockerfile_sha256"], good["dockerfile_sha256"])
+        self.assertEqual(other["lake_manifest_sha256"], good["lake_manifest_sha256"])
+        for name in ("recipe_archive", "source_archive"):
+            self.assertNotEqual(other[name]["sha256"], good[name]["sha256"])
+            self.refused(
+                self.subject({**good, name: other[name]}, name + ".json"), differs
+            )
+        # The image built from another commit's complete archive.
+        self.refused(
+            self.subject(
+                {**good, "build_archive": other["build_archive"]}, "built.json"
+            ),
+            differs,
+        )
+        # A consistent set, but git at the recorded commit produces other bytes.
+        self.refused(
+            self.subject({**other, "source_revision": self.second}, "commit.json"),
+            differs,
+        )
+        # A changed frozen file.
+        subject = self.subject(good, "frozen.json")
+        Path(good["recipe_archive"]["path"]).write_bytes(
+            Path(other["recipe_archive"]["path"]).read_bytes()
+        )
+        self.refused(subject, "frozen_provenance_file_changed")
+        # Identical bytes at another path are still not what the receipt recorded.
+        copied = self.build(self.second, "copied")
+        subject = self.subject(copied, "copied.json")
+        for name in ("recipe_archive", "source_archive"):
+            moved = self.write(
+                name + "-moved.tar", Path(copied[name]["path"]).read_bytes()
+            )
+            changed = json.loads(json.dumps(subject))
+            changed["verifier_variant"][name] = self.reference(moved)
+            self.refused(changed, "native_verifier_build_binding_changed")
+        again = self.build(self.second, "again")
+        self.refused(
+            self.subject(
+                {**again, "schema_version": "pals.local-verifier-build.v1"}, "v1.json"
+            ),
+            "native_verifier_build_binding_changed",
+        )
+        receipt = {**again, "dockerfile_sha256": "0" * 64}
+        self.refused(
+            self.subject(receipt, "docker.json"),
+            "actual_native_verifier_toolchain_changed",
+        )
+
+    def test_projection_proof_compares_every_member_with_the_built_archive(self):
+        complete = self.write("complete.tar", self.raw_archive(self.second))
+        other = self.write("other-complete.tar", self.raw_archive(self.first))
+        out = self.root / "derived"
+        out.mkdir()
+        derived = archives.derive(self.repo, self.second, complete, out)
+        for name, paths in archives.PROJECTIONS.items():
+            self.assertGreater(
+                archives.require_projection(complete, derived[name], paths, "code"), 0
+            )
+            with self.assertRaises(ValueError) as caught:
+                archives.require_projection(other, derived[name], paths, "code")
+            self.assertEqual(str(caught.exception), "code")
+        # Not a projection of the claimed paths: too few and too many members.
+        with self.assertRaises(ValueError):
+            archives.require_projection(
+                complete, derived["recipe_archive"], ("lean-workspace",), "code"
+            )
+        with self.assertRaises(ValueError):
+            archives.require_projection(
+                complete, derived["source_archive"], ("pals_agent", "tests"), "code"
+            )
+        with self.assertRaises(ValueError):
+            archives.require_projection(
+                complete, derived["source_archive"], ("absent",), "code"
+            )
+        # Same content, changed mode.
+        changed = self.root / "changed.tar"
+        with (
+            tarfile.open(derived["source_archive"]) as source,
+            tarfile.open(changed, "w") as target,
+        ):
+            for member in source.getmembers():
+                data = source.extractfile(member) if member.isfile() else None
+                if member.isfile():
+                    member.mode = 0o777
+                target.addfile(member, data)
+        with self.assertRaises(ValueError):
+            archives.require_projection(complete, changed, ("pals_agent",), "code")
+        # Building from another commit's complete archive is refused at build time.
+        out2 = self.root / "derived-2"
+        out2.mkdir()
+        with self.assertRaises(ValueError) as caught:
+            archives.derive(self.repo, self.second, other, out2)
+        self.assertIn("not_of_the_built_commit", str(caught.exception))
+        references = {name: self.reference(path) for name, path in derived.items()}
+        archives.verify(self.repo, self.second, complete, references, "code")
+        for broken in (
+            {"source_archive": references["source_archive"]},
+            {
+                **references,
+                "recipe_archive": {**references["recipe_archive"], "sha256": "0" * 64},
+            },
+            {**references, "recipe_archive": references["source_archive"]},
+        ):
+            with self.assertRaises(ValueError):
+                archives.verify(self.repo, self.second, complete, broken, "code")
+        with self.assertRaises(ValueError):
+            archives.verify(self.repo, self.first, complete, references, "code")
+
+    def test_builder_receipt_verification_requires_the_new_schema_and_proof(self):
+        source = inspect.getsource(native.main)
+        self.assertEqual(native.SCHEMA, "pals.local-verifier-build.v2")
+        self.assertIn("archives.derive(", source)
+        self.assertLess(source.index("archives.derive("), source.index('"buildx"'))
+        self.assertIn("archives.verify(", source)
+
+
+@unittest.skipUnless((INFRA / "release_plan.py").is_file(), INFRA_REASON)
+class RealReleasePlanValidatorTests(VerifierVariantFixture):
+    """The prepared variant is fed to pals-infra's own validators, unmodified."""
+
+    @classmethod
+    def setUpClass(cls):
+        sys.path.insert(0, str(INFRA))
+        try:
+            import release_plan
+
+            cls.plan = release_plan
+            cls.cli = load("pals_release_plan_cli_contract", INFRA / "release-plan.py")
+            cls.cycle = load("pals_release_cycle_contract", INFRA / "release-cycle.py")
+        finally:
+            sys.path.remove(str(INFRA))
+
+    def context(self, commit):
+        from types import SimpleNamespace
+
+        return SimpleNamespace(
+            manifest={"verifier_source": {"commit": commit}},
+            git=self.cli.Git(root=self.root, agent_repo=self.repo),
+            derived_files={},
+        )
+
+    def cycle_check(self, variant, candidate, frozen=None):
+        from types import SimpleNamespace
+
+        if frozen is None:
+            frozen = {
+                variant[name]["path"]: variant[name]["sha256"]
+                for name in (
+                    "source_archive",
+                    "recipe_archive",
+                    "local_build_provenance",
+                )
+            }
+        self.cycle.Cycle.local_verifier_variant(
+            SimpleNamespace(plan={"frozen_files": frozen}), variant, candidate
+        )
+
+    def test_release_plan_accepts_the_prepared_variant(self):
+        subject = self.subject(self.build(self.second))
+        self.assertTrue(
+            self.plan.check_local_verifier_variant(self.context(self.second), subject)
+        )
+        self.cycle_check(subject["verifier_variant"], self.candidate(self.second))
+
+    def test_release_plan_refuses_what_the_runner_refuses(self):
+        good = self.build(self.second)
+        other = self.build(self.first, "other")
+        for name in ("recipe_archive", "source_archive"):
+            subject = self.subject({**good, name: other[name]}, name + ".json")
+            with self.assertRaises(self.plan.Refusal) as caught:
+                self.plan.check_local_verifier_variant(
+                    self.context(self.second), subject
+                )
+            self.assertEqual(
+                str(caught.exception),
+                "local_verifier_%s_differs_from_the_verifier_commit" % name,
+            )
+        variant = self.subject(good)["verifier_variant"]
+        # The former shape: no recipe archive, complete archive as source archive.
+        former = {k: v for k, v in variant.items() if k != "recipe_archive"}
+        with self.assertRaises(self.cycle.Refusal) as caught:
+            self.cycle_check(former, self.candidate(self.second), {})
+        self.assertEqual(
+            str(caught.exception), "closed_native_local_verifier_variant_required"
+        )
+        complete = {**variant, "source_archive": good["build_archive"]}
+        with self.assertRaises(self.cycle.Refusal) as caught:
+            self.cycle_check(complete, self.candidate(self.second))
+        self.assertEqual(
+            str(caught.exception), "native_local_verifier_source_archive_differs"
+        )
+        with self.assertRaises(self.cycle.Refusal) as caught:
+            self.cycle_check(variant, self.candidate(self.second), {})
+        self.assertEqual(
+            str(caught.exception), "frozen_actual_local_verifier_provenance_required"
+        )
+
+
+class RuntimeDirectoryRelocationTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name).resolve()
+
+    def test_any_existing_private_plain_path_is_an_accepted_runtime_directory(self):
+        persistent = (
+            self.root / "pals-release-archive" / "pals-local-qualification-runtime"
+        )
+        persistent.mkdir(parents=True, mode=0o700)
+        persistent.chmod(0o700)
+        self.assertEqual(prepare.require_runtime_directory(persistent), persistent)
+        for bad, mode in (
+            (self.root / "open", 0o755),
+            (self.root / "with space", 0o700),
+        ):
+            bad.mkdir(mode=mode)
+            bad.chmod(mode)
+            with self.assertRaises(prepare.gate.Refusal) as caught:
+                prepare.require_runtime_directory(bad)
+            self.assertEqual(
+                str(caught.exception), "existing_private_runtime_directory_required"
+            )
+        with self.assertRaises((prepare.gate.Refusal, OSError)):
+            prepare.require_runtime_directory(self.root / "absent")
+
+    def test_every_bind_mount_follows_the_given_runtime_directory(self):
+        template = (ROOT / "local-qualification/compose.override.yml.in").read_text()
+        values = {
+            "@@RUNTIME@@": "/Users/example/pals-local-qualification-runtime",
+            "@@API_IMAGE@@": "api",
+            "@@WORKER_IMAGE@@": "worker",
+            "@@WEB_IMAGE@@": "web",
+            "@@VERIFIER_IMAGE@@": "verifier",
+            "@@GUARD_IMAGE@@": "guard",
+        }
+        rendered = prepare.render_profile(template, values)
+        binds = [
+            line.strip().lstrip("- ")
+            for line in rendered.splitlines()
+            if ":/run/" in line and line.strip().startswith("- ")
+        ]
+        self.assertGreaterEqual(len(binds), 5)
+        for bind in binds:
+            self.assertTrue(bind.startswith(values["@@RUNTIME@@"] + "/"), bind)
+        with self.assertRaises(prepare.gate.Refusal):
+            prepare.render_profile(template, {"@@RUNTIME@@": "/x"})
+
+    def test_copied_ledger_continues_with_the_same_calls_and_spending(self):
+        import hashlib
+        import shutil as copier
+
+        old = self.root / "old" / "budget"
+        old.mkdir(parents=True)
+        budget = proxy.Budget(old / "ledger.json")
+        for tokens in (1000, 2000):
+            budget.complete(budget.reserve("gpt-6.1-terra", tokens, 1000), tokens, 100)
+        raw = (old / "ledger.json").read_bytes()
+        new = self.root / "persistent" / "budget"
+        copier.copytree(old, new)
+        resumed = proxy.Budget(
+            new / "ledger.json", resume_sha256=hashlib.sha256(raw).hexdigest()
+        )
+        self.assertEqual(len(resumed.calls), 2)
+        self.assertEqual(resumed.actual, budget.actual)
+        self.assertEqual(resumed.held, budget.held)
+        self.assertEqual((old / "ledger.json").read_bytes(), raw)
 
 
 if __name__ == "__main__":

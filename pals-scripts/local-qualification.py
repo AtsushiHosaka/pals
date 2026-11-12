@@ -388,24 +388,62 @@ except TimeoutError:print(json.dumps({"state":"unavailable","failure_code":"veri
     return result
 
 
+# Exactly the key set pals-infra's release-cycle.py `local_verifier_variant` accepts.
+VERIFIER_VARIANT_KEYS = {
+    "production_image_digest",
+    "source_archive",
+    "recipe_archive",
+    "local_build_provenance",
+    "dockerfile_sha256",
+    "lean_version",
+    "lake_manifest_sha256",
+}
+
+
 def verifier_provenance(subject):
     v = subject["verifier_variant"]
+    need(
+        type(v) is dict and set(v) == VERIFIER_VARIANT_KEYS,
+        "closed_native_local_verifier_variant_required",
+    )
     archive = file_reference(v["source_archive"])
+    recipe = file_reference(v["recipe_archive"])
     provenance = file_reference(v["local_build_provenance"])
     receipt = json.loads(provenance.read_bytes())
     image = subject["images"]["verifier"]
     need(
-        receipt["schema_version"] == "pals.local-verifier-build.v1"
+        receipt["schema_version"] == "pals.local-verifier-build.v2"
         and receipt["source_archive"] == v["source_archive"]
+        and receipt["recipe_archive"] == v["recipe_archive"]
         and receipt["source_revision"] == image["source_revision"]
         and receipt["built_image_id"] == image["image_id"]
         and receipt["platform"] == image["platform"] == "linux/arm64",
         "native_verifier_build_binding_changed",
     )
-    with tarfile.open(archive) as t:
-        dockerfile = t.extractfile("docker/lean-verifier.Dockerfile").read()
-        lean = t.extractfile("lean-workspace/lean-toolchain").read().decode().strip()
-        lake = t.extractfile("lean-workspace/lake-manifest.json").read()
+    # The image was built from the complete archive of the commit, which the receipt
+    # (itself hash-bound into the subject) pins. The two archives the release plan
+    # pins must be exact projections of that same commit: re-derived from git and
+    # compared member by member with the built archive.
+    complete = file_reference(receipt["build_archive"])
+    spec = importlib.util.spec_from_file_location(
+        "local_verifier_archives", HERE / "local-verifier-archives.py"
+    )
+    archives = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(archives)
+    try:
+        archives.verify(
+            receipt["source_root"],
+            receipt["source_revision"],
+            complete,
+            {name: v[name] for name in archives.PROJECTIONS},
+            "differs",
+        )
+        dockerfile, lean, lake = archives.recipe(recipe)
+        lean = lean.decode().strip()
+    except (ValueError, OSError, tarfile.TarError, subprocess.TimeoutExpired):
+        raise Refusal(
+            "native_verifier_plan_archive_differs_from_the_built_commit"
+        ) from None
     need(
         sha(dockerfile) == v["dockerfile_sha256"] == receipt["dockerfile_sha256"]
         and lean == v["lean_version"] == receipt["lean_version"]
@@ -423,6 +461,8 @@ def verifier_provenance(subject):
     )
     return {
         "source_archive_sha256": sha(archive.read_bytes()),
+        "recipe_archive_sha256": sha(recipe.read_bytes()),
+        "build_archive_sha256": sha(complete.read_bytes()),
         "build_provenance_sha256": sha(provenance.read_bytes()),
         "difference_scope": receipt["difference_scope"],
     }

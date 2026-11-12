@@ -130,6 +130,54 @@ def require_child_modules(python, modules, prefix, *, run_=None):
     gate.need(not missing, prefix + "_missing_module:" + missing.split(",")[0])
 
 
+def require_runtime_directory(path):
+    """The owned runtime directory: existing, private, with a plain absolute path.
+
+    Any such location is accepted. Every bind mount, the subject and the environment
+    files are derived from it on each run, so a copy in a persistent place continues
+    the same ledger. Do not keep it under a path that is cleared on reboot.
+    """
+    path = Path(path).resolve()
+    gate.need(
+        path.is_dir()
+        and path.stat().st_mode & 0o777 == 0o700
+        and re.fullmatch(r"/[A-Za-z0-9_./-]+", str(path)),
+        "existing_private_runtime_directory_required",
+    )
+    return path
+
+
+def render_profile(template, values):
+    for key, value in values.items():
+        template = template.replace(key, value)
+    gate.need("@@" not in template, "unresolved_local_profile_binding")
+    return template
+
+
+def verifier_variant(production_image_digest, receipt, receipt_reference):
+    """Exactly what pals-infra's release plan accepts for a native local verifier.
+
+    `release-cycle.py` (`local_verifier_variant`) requires this closed key set, and
+    `release_plan.py` (`VERIFIER_VARIANT_ARCHIVES`) requires `source_archive` and
+    `recipe_archive` to be git's own archives of the manifest's verifier commit. Both
+    come from the build receipt, which proves them against the built archive.
+    """
+    variant = {
+        "production_image_digest": production_image_digest,
+        "source_archive": receipt["source_archive"],
+        "recipe_archive": receipt["recipe_archive"],
+        "local_build_provenance": receipt_reference,
+        "dockerfile_sha256": receipt["dockerfile_sha256"],
+        "lean_version": receipt["lean_version"],
+        "lake_manifest_sha256": receipt["lake_manifest_sha256"],
+    }
+    gate.need(
+        set(variant) == gate.VERIFIER_VARIANT_KEYS,
+        "closed_native_local_verifier_variant_required",
+    )
+    return variant
+
+
 def require_provider_tls(directory, *, inspect=None):
     """Refuse before quiescing anything when the local proxy certificate cannot last.
 
@@ -267,14 +315,8 @@ def main():
         p.add_argument("--" + name, type=Path, required=True)
     a = p.parse_args()
     gate.require_modules()
-    r = a.runtime_dir.resolve()
+    r = require_runtime_directory(a.runtime_dir)
     source = a.compose_root.resolve()
-    gate.need(
-        r.is_dir()
-        and r.stat().st_mode & 0o777 == 0o700
-        and re.fullmatch(r"/[A-Za-z0-9_./-]+", str(r)),
-        "existing_private_runtime_directory_required",
-    )
     gate.set_diagnostic_directory(r / "diagnostics")
     for prefix, modules in CHILD_MODULES.items():
         require_child_modules(getattr(a, prefix), modules, prefix)
@@ -444,10 +486,9 @@ def main():
         "@@VERIFIER_IMAGE@@": native_id,
         "@@GUARD_IMAGE@@": guard["Id"],
     }
-    template = (HERE / "local-qualification/compose.override.yml.in").read_text()
-    for key, value in values.items():
-        template = template.replace(key, value)
-    gate.need("@@" not in template, "unresolved_local_profile_binding")
+    template = render_profile(
+        (HERE / "local-qualification/compose.override.yml.in").read_text(), values
+    )
     (r / "override.yml").write_text(template)
     run([*compose, "config", "--quiet"])
 
@@ -568,16 +609,11 @@ def main():
         source_archive=web["source_archive"],
         local_build_provenance=ref(a.web_build_receipt),
     )
-    subject["verifier_variant"] = {
-        "production_image_digest": json.loads(a.base_subject.read_bytes())["images"][
-            "verifier"
-        ]["image_id"],
-        "source_archive": verifier["source_archive"],
-        "local_build_provenance": ref(a.verifier_build_receipt),
-        "dockerfile_sha256": verifier["dockerfile_sha256"],
-        "lean_version": verifier["lean_version"],
-        "lake_manifest_sha256": verifier["lake_manifest_sha256"],
-    }
+    subject["verifier_variant"] = verifier_variant(
+        json.loads(a.base_subject.read_bytes())["images"]["verifier"]["image_id"],
+        verifier,
+        ref(a.verifier_build_receipt),
+    )
     subject["guard"].update(
         source_sha256={
             n: gate.sha((HERE / "local-qualification" / n).read_bytes())
