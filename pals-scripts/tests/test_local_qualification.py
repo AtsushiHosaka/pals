@@ -1937,6 +1937,179 @@ class RuntimeDirectoryRelocationTests(unittest.TestCase):
         with self.assertRaises(prepare.gate.Refusal):
             prepare.render_profile(template, {"@@RUNTIME@@": "/x"})
 
+    def ledgers(self, extra_call_after_copy):
+        import shutil as copier
+
+        old = self.root / "serving" / "budget"
+        old.mkdir(parents=True)
+        budget = proxy.Budget(old / "ledger.json")
+        budget.complete(budget.reserve("gpt-6.1-terra", 1000, 1000), 1000, 100)
+        new = self.root / "persistent" / "budget"
+        copier.copytree(old, new)
+        if extra_call_after_copy:
+            # A provider call the still-running guard records after the copy was taken.
+            budget.complete(budget.reserve("gpt-6.1-terra", 2000, 1000), 2000, 100)
+        return old, new
+
+    def test_call_recorded_after_the_copy_is_detected_not_under_counted(self):
+        old, new = self.ledgers(extra_call_after_copy=True)
+        with self.assertRaises(prepare.gate.Refusal) as caught:
+            prepare.require_ledger_continuity(new / "ledger.json", old)
+        self.assertEqual(
+            str(caught.exception),
+            "relocated_budget_ledger_differs_from_the_serving_ledger",
+        )
+        # Re-copying the final ledger (producers are stopped by then) is accepted.
+        (new / "ledger.json").write_bytes((old / "ledger.json").read_bytes())
+        self.assertEqual(
+            prepare.require_ledger_continuity(new / "ledger.json", old),
+            "relocated_identical",
+        )
+        for field, value in (("actual_microusd", 1), ("blocked", True), ("calls", [])):
+            changed = json.loads((old / "ledger.json").read_bytes())
+            changed[field] = value
+            (new / "ledger.json").write_text(json.dumps(changed))
+            with self.assertRaises(prepare.gate.Refusal):
+                prepare.require_ledger_continuity(new / "ledger.json", old)
+
+    def test_unrelocated_and_fresh_stacks_and_a_lost_serving_ledger(self):
+        old, new = self.ledgers(extra_call_after_copy=False)
+        self.assertEqual(
+            prepare.require_ledger_continuity(old / "ledger.json", old),
+            "same_directory",
+        )
+        self.assertEqual(
+            prepare.require_ledger_continuity(new / "ledger.json", None),
+            "same_directory",
+        )
+        self.assertEqual(
+            prepare.require_ledger_continuity(new / "ledger.json", old),
+            "relocated_identical",
+        )
+        (old / "ledger.json").unlink()
+        with self.assertRaises(prepare.gate.Refusal) as caught:
+            prepare.require_ledger_continuity(new / "ledger.json", old)
+        self.assertEqual(
+            str(caught.exception), "relocated_budget_serving_ledger_required"
+        )
+
+    def test_serving_directory_is_read_from_the_actual_guard_container(self):
+        name = "pals-reliability-local-worker-network-guard-1"
+        mounts = [
+            {"Destination": "/run/provider", "Source": "/old/provider-tls"},
+            {"Destination": "/run/budget", "Source": "/old/budget"},
+        ]
+
+        def run(args):
+            if args[:2] == ["docker", "ps"]:
+                self.assertIn("name=^/" + name + "$", args)
+                return "abc123\n"
+            self.assertEqual(args[-1], name)
+            return json.dumps(mounts)
+
+        self.assertEqual(
+            prepare.serving_budget_directory(run_=run), Path("/old/budget")
+        )
+        self.assertIsNone(prepare.serving_budget_directory(run_=lambda args: ""))
+        mounts.pop()
+        with self.assertRaises(prepare.gate.Refusal):
+            prepare.serving_budget_directory(run_=run)
+
+    def prepare_until_build(self, extra_call_after_copy):
+        """The real entry point against a fake Docker, up to the guard image build."""
+        old, new = self.ledgers(extra_call_after_copy)
+        runtime = new.parent
+        runtime.chmod(0o700)
+        (runtime / "local.env").write_text("PALS_ENV=local\nPALS_ENVIRONMENT=local\n")
+        (runtime / "local.env").chmod(0o600)
+        revision = "a" * 40
+        subject = {
+            "images": {
+                role: {"source_revision": revision, "image_reference": role}
+                for role in ("api", "worker", "web", "verifier")
+            }
+        }
+        receipt = {"source_revision": revision, "built_image_id": "sha256:" + "b" * 64}
+        files = {}
+        for name, value in (
+            ("base-subject", subject),
+            ("web-build-receipt", receipt),
+            ("verifier-build-receipt", receipt),
+        ):
+            files[name] = self.root / (name + ".json")
+            files[name].write_text(json.dumps(value))
+        commands = []
+
+        def run(args, timeout=45):
+            args = [str(x) for x in args]
+            commands.append(args)
+            if args[:3] == ["docker", "context", "inspect"]:
+                return "unix:///var/run/docker.sock\n"
+            if args[:2] == ["docker", "ps"] and any("network-guard" in x for x in args):
+                return "abc123\n"
+            if args[:2] == ["docker", "inspect"] and "{{json .Mounts}}" in args:
+                return json.dumps([{"Destination": "/run/budget", "Source": str(old)}])
+            if args[:2] == ["docker", "inspect"]:
+                return json.dumps({"codex.owner": prepare.gate.OWNER})
+            if "rev-parse" in args:
+                return revision + "\n"
+            return ""
+
+        def reached_build(*_args, **_kwargs):
+            raise prepare.gate.Refusal("fixture_reached_the_guard_build")
+
+        argv = ["prepare", "--runtime-dir", str(runtime)]
+        for name in ("compose-root", "api-source", "api-python", "agent-python"):
+            argv += ["--" + name, str(self.root / name)]
+        for name, path in files.items():
+            argv += ["--" + name, str(path)]
+        previous = dict(prepare.gate._DIAGNOSTICS)
+        try:
+            with (
+                patch.object(sys, "argv", argv),
+                patch.object(prepare, "run", run),
+                patch.object(prepare, "build", reached_build),
+                patch.object(prepare, "require_child_modules", lambda *a, **k: None),
+                patch.object(prepare, "require_provider_tls", lambda *a, **k: {}),
+                patch.object(prepare.gate, "require_modules", lambda *a, **k: None),
+            ):
+                with self.assertRaises(prepare.gate.Refusal) as caught:
+                    prepare.main()
+        finally:
+            prepare.gate._DIAGNOSTICS.update(previous)
+        return str(caught.exception), commands, runtime
+
+    def test_preparation_compares_ledgers_only_after_it_stopped_the_producers(self):
+        code, commands, runtime = self.prepare_until_build(extra_call_after_copy=True)
+        self.assertEqual(
+            code, "relocated_budget_ledger_differs_from_the_serving_ledger"
+        )
+        words = [" ".join(c) for c in commands]
+        mounts = next(i for i, c in enumerate(words) if "{{json .Mounts}}" in c)
+        stop = next(i for i, c in enumerate(commands) if "stop" in c)
+        self.assertLess(mounts, stop)
+        self.assertEqual(stop, len(commands) - 1)
+        for role in (
+            "worker",
+            "assessment-worker",
+            "recipe-reviewer",
+            "worker-network-guard",
+        ):
+            self.assertIn(role, commands[stop])
+        # Refused before the copy was adopted: no resume binding, no backup written.
+        self.assertNotIn(
+            "PALS_BUDGET_RESUME_SHA256", (runtime / "local.env").read_text()
+        )
+        self.assertFalse(list(runtime.glob("budget-before-prepare-*")))
+        code, commands, runtime = self.prepare_until_build_in_new_root(False)
+        self.assertEqual(code, "fixture_reached_the_guard_build")
+        self.assertIn("PALS_BUDGET_RESUME_SHA256", (runtime / "local.env").read_text())
+
+    def prepare_until_build_in_new_root(self, extra_call_after_copy):
+        self.root = self.root / "second"
+        self.root.mkdir()
+        return self.prepare_until_build(extra_call_after_copy)
+
     def test_copied_ledger_continues_with_the_same_calls_and_spending(self):
         import hashlib
         import shutil as copier

@@ -77,18 +77,38 @@ Two locations must outlive the stack:
   the private environment files, and the guard binds from it. Keep it in a persistent
   mode-0700 location. Do not place it under a path that is cleared on reboot or by
   periodic cleanup (`/tmp`, `/private/tmp`, `$TMPDIR`): losing the ledger blocks every
-  further run, because spending is never reset. To relocate it, copy the whole directory
-  with modes preserved (`cp -Rp`) while no capture is running, and run preparation once
-  with `--runtime-dir` at the new place. `--runtime-dir` accepts any existing mode-0700
-  directory with a plain absolute path; every bind mount, `override.yml`, the subject and
-  the environment files are derived from it on that run, and the ledger continues with the
-  same calls and spending because resumption is bound to its bytes, not its path. The
-  subject path, the `local.env` path and both their hashes change, so relocate before the
-  release plan freezes them. Keep the old directory until the new stack is prepared.
+  further run, because spending is never reset.
 - The `--compose-root` directory is the bind-mount source of LocalStack and Cognito
   (`pals-infra/localstack/init/ready.d`, `pals-infra/cognito-local/*`). Keep that checkout
   in place and unchanged for as long as the stack runs; removing it breaks the next start
   of those containers, and preparing from another root recreates them.
+
+Relocating the runtime directory, in this order:
+
+1. Confirm that nothing can spend: no capture or other request is running, no request or
+   proof job is in a non-terminal state, and all four queues are empty. The guard keeps
+   recording into the OLD ledger until preparation stops it, so a provider call made after
+   step 2 would exist only there.
+2. Copy the whole directory with modes preserved (`cp -Rp`) to a persistent mode-0700
+   place. Leave the old directory untouched.
+3. Run preparation once with `--runtime-dir` at the new place.
+
+Step 1 is not left to care alone. Preparation reads from the existing guard container
+which host directory it has been recording in, stops the task containers and the guard,
+and only then compares that serving ledger with the one in `--runtime-dir`: `calls`,
+`actual_microusd`, `reserved_microusd` and `blocked` must be identical. A copy that misses
+a later call is refused with `relocated_budget_ledger_differs_from_the_serving_ledger`
+before it is adopted (no resume binding is written), so spending cannot be under-counted;
+`relocated_budget_serving_ledger_required` means the old ledger is gone or unreadable and
+the copy cannot be proven current. After such a refusal the producers are stopped: copy
+`budget/ledger.json` again from the old directory (it can no longer change) and rerun.
+
+`--runtime-dir` accepts any existing mode-0700 directory with a plain absolute path; every
+bind mount, `override.yml`, the subject and the environment files are derived from it on
+that run, and the ledger continues with the same calls and spending because resumption is
+bound to its bytes, not its path. The subject path, the `local.env` path and both their
+hashes change, so relocate before the release plan freezes them. Keep the old directory
+until the new stack is prepared.
 
 ```sh
 python3 pals-scripts/local-qualification-prepare.py \

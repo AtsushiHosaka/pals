@@ -147,6 +147,54 @@ def require_runtime_directory(path):
     return path
 
 
+def serving_budget_directory(*, run_=None):
+    """Host directory the existing guard container records provider spending in.
+
+    ``None`` when no guard container exists: then nothing could have forwarded a call.
+    """
+    run_ = run_ or run
+    name = PROJECT + "-worker-network-guard-1"
+    if not run_(["docker", "ps", "-aq", "--filter", "name=^/" + name + "$"]).strip():
+        return None
+    mounts = json.loads(
+        run_(["docker", "inspect", "--format", "{{json .Mounts}}", name])
+    )
+    sources = [m["Source"] for m in mounts if m.get("Destination") == "/run/budget"]
+    gate.need(len(sources) == 1, "serving_budget_directory_required")
+    return Path(sources[0])
+
+
+def require_ledger_continuity(ledger, serving):
+    """A relocated runtime directory must hold the ledger the guard last wrote.
+
+    Call this only AFTER the task containers and the guard are stopped: from then on no
+    provider call can be recorded. If the guard served another directory, a call made
+    after that directory was copied exists only in its ledger; continuing with the copy
+    would under-count spending, so the two must agree exactly.
+    """
+    if serving is None or Path(serving).resolve() == ledger.parent.resolve():
+        return "same_directory"
+    source = Path(serving) / "ledger.json"
+    gate.need(
+        source.is_file() and not source.is_symlink(),
+        "relocated_budget_serving_ledger_required",
+    )
+    try:
+        old, new = json.loads(source.read_bytes()), json.loads(ledger.read_bytes())
+    except (OSError, ValueError):
+        raise gate.Refusal("relocated_budget_serving_ledger_required") from None
+    gate.need(
+        type(old) is dict
+        and type(new) is dict
+        and all(
+            name in old and old[name] == new.get(name)
+            for name in ("calls", "actual_microusd", "reserved_microusd", "blocked")
+        ),
+        "relocated_budget_ledger_differs_from_the_serving_ledger",
+    )
+    return "relocated_identical"
+
+
 def render_profile(template, values):
     for key, value in values.items():
         template = template.replace(key, value)
@@ -413,6 +461,8 @@ def main():
         "-f",
         r / "override.yml",
     ]
+    # Where the guard has been recording spending, read before anything is recreated.
+    serving = serving_budget_directory()
     # Quiesce only this owned project before rotating local release/TLS bindings.
     run(
         [
@@ -431,6 +481,9 @@ def main():
         60,
     )
     ledger = r / "budget/ledger.json"
+    # Producers and guard are stopped: the serving ledger is final. A relocated copy
+    # that misses a call made after it was copied is refused here.
+    require_ledger_continuity(ledger, serving)
     raw = ledger.read_bytes()
     previous = json.loads(raw)
     gate.need(
