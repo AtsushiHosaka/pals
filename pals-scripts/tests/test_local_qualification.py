@@ -445,11 +445,122 @@ class DiagnosabilityTests(unittest.TestCase):
             Path(sys.executable).name + " child-tool.py",
         )
         self.assertEqual(error.detail["failed_command"], saved["failed_command"])
-        long = self.failing("x" * (gate.DIAGNOSTIC_LIMIT * 3) + "END")
+        lines = "".join("line %06d\n" % i for i in range(gate.DIAGNOSTIC_LIMIT))
+        long = self.failing(lines + "END")
         saved = json.loads(Path(long.detail["diagnostic_file"]).read_text())
         self.assertTrue(saved["stderr_truncated"])
-        self.assertEqual(len(saved["stderr_tail_redacted"]), gate.DIAGNOSTIC_LIMIT)
-        self.assertTrue(saved["stderr_tail_redacted"].endswith("END"))
+        tail = saved["stderr_tail_redacted"]
+        self.assertLessEqual(len(tail), gate.DIAGNOSTIC_LIMIT)
+        self.assertGreater(len(tail), gate.DIAGNOSTIC_LIMIT - 20)
+        self.assertTrue(tail.endswith("END"))
+        self.assertTrue(tail.startswith("line "))
+
+    def test_secret_or_key_block_cut_by_the_size_limit_never_leaves_a_remainder(self):
+        gate.set_diagnostic_directory(self.root / "diagnostics")
+        limit = gate.DIAGNOSTIC_LIMIT
+        # Neither value is caught by a generic rule once cut: only redacting BEFORE the
+        # tail is taken (and dropping the partial first line) keeps the remainder out.
+        registered = "R!" + "s!" * 30 + "Z!"
+        gate.register_secrets({"PALS_WORKER_SHARED_SECRET": registered})
+        body = "".join(chr(65 + i % 26) * 30 + "\n" for i in range(40))
+        pem = (
+            "-----BEGIN "
+            + "PRIVATE KEY-----\n"
+            + body
+            + "-----END "
+            + "PRIVATE KEY-----\n"
+        )
+        for secret, markers in (
+            (registered + "\n", ("s!s!s!s!", "Z!")),
+            (pem, tuple(chr(65 + i) * 30 for i in range(26))),
+        ):
+            # Every offset puts the 16 KiB boundary at a different place inside the secret.
+            for inside in range(1, len(secret), max(1, len(secret) // 23)):
+                filler = "f" * 30 + "\n"
+                after = (filler * (limit // len(filler) + 2))[: limit - inside]
+                stderr = "before\n" + secret + after
+                self.assertGreater(len(stderr), limit)
+                error = self.failing(stderr)
+                raw = Path(error.detail["diagnostic_file"]).read_text()
+                for marker in markers:
+                    self.assertNotIn(marker, raw, (inside, marker[:8]))
+        # The same holds for the bounded input scan in front of the redaction.
+        with (
+            patch.object(gate, "DIAGNOSTIC_SCAN_LIMIT", 2000),
+            patch.object(gate, "DIAGNOSTIC_LIMIT", 4000),
+        ):
+            for inside in range(1, len(registered), 7):
+                after = ("g" * 30 + "\n") * 80
+                stderr = "before\n" + registered + "\n" + after[: 1999 - inside]
+                error = self.failing(stderr)
+                raw = Path(error.detail["diagnostic_file"]).read_text()
+                self.assertNotIn("s!s!s!s!", raw, inside)
+                self.assertNotIn(registered[-20:], raw, inside)
+
+    def test_tail_never_starts_inside_a_line(self):
+        self.assertEqual(gate._tail_from_line_start("abc", 10), ("abc", False))
+        self.assertEqual(
+            gate._tail_from_line_start("aaa\nbbb\nccc", 7), ("bbb\nccc", True)
+        )
+        self.assertEqual(gate._tail_from_line_start("aaa\nbbb\nccc", 5), ("ccc", True))
+        self.assertEqual(gate._tail_from_line_start("aaaaaaaaaaaa", 5), ("", True))
+
+    def test_quoted_pairs_uri_passwords_short_values_and_process_environment(self):
+        gate.set_diagnostic_directory(self.root / "diagnostics")
+        slash = "pa/ss:w@rd" + "x" * 6
+        short = "s3cr"
+        env_only = "envonly" + "7" * 9
+        dsn_password = "d" * 5 + "/q"
+        env_file = self.root / "local.env"
+        env_file.write_text(
+            "POSTGRES_PASSWORD="
+            + short
+            + "\nPALS_HOST_DATABASE_URL=postgresql://local_user:"
+            + dsn_password
+            + "@127.0.0.1:55432/pals\nPALS_ENV=local\n"
+        )
+        env_file.chmod(0o600)
+        gate.register_private_env(env_file)
+        gate.register_private_env(self.root / "absent.env")
+        cases = {
+            "json": '{"password": "' + "j" * 9 + ' with space", "user": "kept-user"}',
+            "repr": "{'api_key': '" + "p" * 9 + "', 'port': 5432}",
+            "upper": 'PALS_GUEST_HASH_KEY="' + "h" * 12 + '"',
+            "colon": "client_secret : " + "c" * 10,
+            "uri": "connect postgresql://user:"
+            + slash
+            + "@db.internal:5432/pals failed",
+            "short": "role password was " + short + " today",
+            "dsn": "could not use " + dsn_password + " for login",
+            "environment": "upstream answered " + env_only,
+            "basic": "Authorization: Basic " + "Zm9v" * 3,
+        }
+        with patch.dict(os.environ, {"UPSTREAM_ACCESS_TOKEN": env_only}):
+            error = self.failing("\n".join(cases.values()) + "\nplain kept line\n")
+        raw = json.loads(Path(error.detail["diagnostic_file"]).read_text())[
+            "stderr_tail_redacted"
+        ]
+        for secret in (
+            "j" * 9,
+            "with space",
+            "p" * 9,
+            "h" * 12,
+            "c" * 10,
+            slash,
+            "pa/ss",
+            "w@rd",
+            short,
+            dsn_password,
+            env_only,
+            "Zm9v" * 3,
+        ):
+            self.assertNotIn(secret, raw, secret[:6])
+        self.assertIn("plain kept line", raw)
+        self.assertIn("db.internal:5432/pals failed", raw)
+        self.assertIn("'port': 5432", raw)
+        # Ordinary short settings stay readable; only secret-named short values are hidden.
+        self.assertNotIn("local", gate._SECRET_VALUES)
+        self.assertIn(short, gate._SECRET_VALUES)
 
     def test_environment_values_keys_tokens_and_arguments_never_reach_the_file(self):
         gate.set_diagnostic_directory(self.root / "diagnostics")
@@ -573,13 +684,114 @@ class InterpreterTests(unittest.TestCase):
                 first_dependency.assert_not_called()
             self.assertFalse((root / "capture").exists())
 
-    def test_runner_and_preparation_check_the_driver_first(self):
-        for module in (gate, prepare):
-            body = inspect.getsource(module.main)
-            self.assertLess(
-                body.index("require_modules()"),
-                body.index("mkdir" if module is gate else "docker"),
-            )
+    def prepare_main(self, root):
+        """Run the real preparation entry point against a recorded fake Docker."""
+        runtime = root / "runtime"
+        runtime.mkdir(mode=0o700)
+        (runtime / "local.env").write_text("PALS_ENV=local\nPALS_ENVIRONMENT=local\n")
+        (runtime / "local.env").chmod(0o600)
+        commands = []
+
+        def run(args, timeout=45):
+            args = [str(x) for x in args]
+            commands.append(args)
+            if args[:3] == ["docker", "context", "inspect"]:
+                return "unix:///var/run/docker.sock\n"
+            if args[:2] == ["docker", "inspect"]:
+                return json.dumps({"codex.owner": prepare.gate.OWNER})
+            return ""
+
+        argv = ["prepare"]
+        for name in (
+            "runtime-dir",
+            "compose-root",
+            "api-source",
+            "base-subject",
+            "web-build-receipt",
+            "verifier-build-receipt",
+            "api-python",
+            "agent-python",
+        ):
+            argv += [
+                "--" + name,
+                str(runtime if name == "runtime-dir" else root / name),
+            ]
+        previous = dict(prepare.gate._DIAGNOSTICS)
+        try:
+            with (
+                patch.object(sys, "argv", argv),
+                patch.object(prepare, "run", run),
+                patch.object(prepare, "require_child_modules", lambda *a, **k: None),
+                patch.object(prepare.gate, "require_modules", lambda *a, **k: None),
+            ):
+                with self.assertRaises(prepare.gate.Refusal) as caught:
+                    prepare.main()
+        finally:
+            prepare.gate._DIAGNOSTICS.update(previous)
+        return str(caught.exception), commands
+
+    def test_preparation_refuses_a_missing_driver_before_any_command(self):
+        def missing(*_a, **_k):
+            raise prepare.gate.Refusal("release_python_missing_module:psycopg")
+
+        with tempfile.TemporaryDirectory() as d:
+            previous = prepare.gate.require_modules
+            prepare.gate.require_modules = missing
+            try:
+                with (
+                    patch.object(
+                        sys,
+                        "argv",
+                        ["prepare"]
+                        + [
+                            x
+                            for name in (
+                                "runtime-dir",
+                                "compose-root",
+                                "api-source",
+                                "base-subject",
+                                "web-build-receipt",
+                                "verifier-build-receipt",
+                                "api-python",
+                                "agent-python",
+                            )
+                            for x in ("--" + name, d)
+                        ],
+                    ),
+                    patch.object(prepare, "run") as run,
+                ):
+                    with self.assertRaises(prepare.gate.Refusal) as caught:
+                        prepare.main()
+                    run.assert_not_called()
+            finally:
+                prepare.gate.require_modules = previous
+        self.assertEqual(str(caught.exception), "release_python_missing_module:psycopg")
+
+    def test_preparation_refuses_dead_provider_tls_before_it_stops_anything(self):
+        with tempfile.TemporaryDirectory() as d:
+            code, commands = self.prepare_main(Path(d))
+        # No material exists in the fake runtime: the real inspection refuses.
+        self.assertEqual(code, "local_provider_tls_missing_or_invalid")
+        self.assertTrue(commands)
+        for command in commands:
+            for word in ("stop", "up", "tag", "build", "buildx"):
+                self.assertNotIn(word, command, command[:4])
+        for state, expected in (
+            ("expired", "local_provider_tls_expired"),
+            (
+                "expires_within_window",
+                "local_provider_tls_expires_before_capture_window",
+            ),
+        ):
+            with tempfile.TemporaryDirectory() as d:
+                with patch.object(
+                    prepare.provider_tls,
+                    "inspect",
+                    lambda *a, state=state, **k: {"state": state},
+                ):
+                    code, commands = self.prepare_main(Path(d))
+            self.assertEqual(code, expected)
+            self.assertFalse(any("stop" in c for c in commands))
 
     def test_child_interpreters_are_named_with_their_missing_module(self):
         calls = []
@@ -801,12 +1013,40 @@ class ProviderTlsTests(unittest.TestCase):
         provider_tls.issue(self.directory, lifetime_hours=12)
         self.assertEqual(prepare.require_provider_tls(self.directory)["state"], "valid")
 
-    def test_preparation_checks_material_before_it_quiesces_the_stack(self):
-        body = inspect.getsource(prepare.main)
-        self.assertLess(
-            body.index('require_provider_tls(r / "provider-tls")'), body.index('"stop"')
-        )
+    def test_preparation_only_checks_and_covers_its_own_duration(self):
         self.assertNotIn("provider_tls.issue", inspect.getsource(prepare))
+        self.assertEqual(prepare.PROVIDER_TLS_SERVED_SECONDS, 3600 + 900)
+        # The first check must cover every bounded step up to the served check, so
+        # marginal material is refused before the stack is stopped and rebuilt.
+        self.assertGreaterEqual(
+            prepare.PREPARATION_BOUND_SECONDS, 600 + 120 + 120 + 60 + 60 + 55 + 45
+        )
+        self.assertEqual(
+            prepare.PROVIDER_TLS_MINIMUM_SECONDS,
+            prepare.PROVIDER_TLS_SERVED_SECONDS + prepare.PREPARATION_BOUND_SECONDS,
+        )
+        self.assertGreater(
+            provider_tls.DEFAULT_LIFETIME_HOURS * 3600,
+            prepare.PROVIDER_TLS_MINIMUM_SECONDS,
+        )
+
+    def test_replacement_never_follows_or_reuses_a_stale_temporary_file(self):
+        provider_tls.issue(self.directory, lifetime_hours=1)
+        outside = Path(self.temp.name) / "outside-target"
+        outside.write_text("untouched")
+        for name in provider_tls.FILES:
+            (self.directory / ("." + name + ".new")).symlink_to(outside)
+        result = provider_tls.issue(self.directory, lifetime_hours=1)
+        self.assertEqual(result["state"], "valid")
+        self.assertEqual(outside.read_text(), "untouched")
+        self.assertEqual(
+            sorted(x.name for x in self.directory.iterdir()), sorted(provider_tls.FILES)
+        )
+        for name in provider_tls.FILES:
+            self.assertFalse((self.directory / name).is_symlink())
+        source = inspect.getsource(provider_tls.write)
+        self.assertIn("O_EXCL", source)
+        self.assertIn("O_NOFOLLOW", source)
 
 
 class ServedProviderTlsTests(unittest.TestCase):
@@ -873,6 +1113,8 @@ class ServedProviderTlsTests(unittest.TestCase):
         compile(program, "probe", "exec")
         self.assertIn("cafile='/run/provider/ca-bundle.pem'", program)
         self.assertIn("('127.0.0.1',443)", program)
+        # A clean TLS close: the guard's handler sees EOF instead of a broken pipe.
+        self.assertIn("tls.unwrap()", program)
         for forbidden in (
             "POST",
             "GET ",
@@ -992,22 +1234,60 @@ class DependencyOrderTests(unittest.TestCase):
         self.assertIn("--no-build", seen[0])
         self.assertEqual(tuple(seen[0][-2:]), prepare.STABLE_DEPENDENCIES)
 
-    def test_preparation_writes_dependency_state_only_inside_the_ordered_step(self):
-        body = inspect.getsource(prepare.main)
-        inner = body.index("def bootstrap():")
-        ordered = body.index("bootstrap_on_stable_dependencies(compose, bootstrap)")
-        application = body.index('"webfront",')
-        unchanged = body.index("require_dependencies_unchanged(dependencies)")
-        self.assertLess(inner, ordered)
-        self.assertLess(ordered, application)
-        self.assertLess(application, unchanged)
-        for script in (
-            "bootstrap-local-verifier-tls.py",
-            "bootstrap-local-recipe-config.py",
-            "bootstrap_database.py",
+    def test_whole_start_keeps_the_secret_and_names_a_late_recreation(self):
+        stack = FakeLocalStack(compose_root_changed=True)
+        prepare.start_stack(
+            self.COMPOSE, stack.bootstrap, run_=stack.run, identity=stack.identity
+        )
+        self.assertEqual(stack.secrets, {"verifier-mtls"})
+        self.assertEqual([entry[0] for entry in stack.log], ["up", "bootstrap", "up"])
+        self.assertEqual(stack.log[0][1], prepare.STABLE_DEPENDENCIES)
+        self.assertEqual(stack.log[2][1], prepare.APPLICATION_ROLES)
+        self.assertEqual(stack.generation, 2)
+
+        class RecreatedByApplicationStart(FakeLocalStack):
+            def run(self, args, timeout=45):
+                if "up" in args and "api" in args:
+                    self.pending_recreation = True
+                return super().run(args, timeout)
+
+        late = RecreatedByApplicationStart(compose_root_changed=False)
+        with self.assertRaises(prepare.gate.Refusal) as caught:
+            prepare.start_stack(
+                self.COMPOSE, late.bootstrap, run_=late.run, identity=late.identity
+            )
+        # The specific code, immediately: not the generic readiness refusal 120 s later.
+        self.assertEqual(
+            str(caught.exception),
+            "local_dependency_recreated_after_verifier_tls_bootstrap",
+        )
+        self.assertEqual(late.secrets, set())
+
+    def test_preparation_main_runs_the_ordered_start(self):
+        calls = []
+        with (
+            patch.object(
+                prepare,
+                "bootstrap_on_stable_dependencies",
+                lambda *a, **k: calls.append("deps") or {"x": 1},
+            ),
+            patch.object(
+                prepare,
+                "run",
+                lambda args, timeout=45: (
+                    calls.append(tuple(args[-len(prepare.APPLICATION_ROLES) :])) or ""
+                ),
+            ),
+            patch.object(
+                prepare,
+                "require_dependencies_unchanged",
+                lambda before, **k: calls.append(("same", before)),
+            ),
         ):
-            self.assertEqual(body.count(script), 1 if "verifier" not in script else 2)
-            self.assertTrue(inner < body.index(script) < ordered, script)
+            prepare.start_stack(["docker", "compose"], lambda: None)
+        self.assertEqual(calls, ["deps", prepare.APPLICATION_ROLES, ("same", {"x": 1})])
+        body = inspect.getsource(prepare.main)
+        self.assertEqual(body.count("start_stack(compose, bootstrap)"), 1)
         self.assertNotIn("stay in place", body)
 
     def test_dependency_identity_reads_the_actual_owned_containers(self):

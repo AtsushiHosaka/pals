@@ -98,7 +98,14 @@ def tool(openssl, args, cwd):
 
 def write(path, raw, mode):
     temporary = path.with_name("." + path.name + ".new")
-    descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    # A stale leftover is removed (never followed or reused); the new file must be
+    # created by this call and must not be a link.
+    try:
+        os.unlink(temporary)
+    except FileNotFoundError:
+        pass
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
+    descriptor = os.open(temporary, flags, 0o600)
     with os.fdopen(descriptor, "wb") as output:
         output.write(raw)
         output.flush()

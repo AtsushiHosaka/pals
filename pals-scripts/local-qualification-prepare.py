@@ -34,7 +34,23 @@ STABLE_DEPENDENCIES = ("localstack", "cognito-local")
 # bounded paid journey that happen between this check and the capture.
 CAPTURE_FRESHNESS_SECONDS = 3600
 PROVIDER_TLS_MARGIN_SECONDS = 900
-PROVIDER_TLS_MINIMUM_SECONDS = CAPTURE_FRESHNESS_SECONDS + PROVIDER_TLS_MARGIN_SECONDS
+# What the running proxy must still have left when preparation has finished.
+PROVIDER_TLS_SERVED_SECONDS = CAPTURE_FRESHNESS_SECONDS + PROVIDER_TLS_MARGIN_SECONDS
+# Upper bound of everything preparation does after its first check (guard build 600 s,
+# dependency and application start, bootstraps, readiness 120 s, provenance, canary).
+# Marginal material is therefore refused BEFORE the stack is stopped and rebuilt.
+PREPARATION_BOUND_SECONDS = 1800
+PROVIDER_TLS_MINIMUM_SECONDS = PROVIDER_TLS_SERVED_SECONDS + PREPARATION_BOUND_SECONDS
+APPLICATION_ROLES = (
+    "verifier",
+    "reconciler",
+    "api",
+    "worker-network-guard",
+    "recipe-reviewer",
+    "worker",
+    "assessment-worker",
+    "webfront",
+)
 CHILD_MODULES = {
     "api_python": ("psycopg",),
     "agent_python": ("boto3", "cryptography"),
@@ -182,6 +198,21 @@ def require_dependencies_unchanged(before, *, identity=None):
         (identity or dependency_identity)() == before,
         "local_dependency_recreated_after_verifier_tls_bootstrap",
     )
+
+
+def start_stack(compose, bootstrap, *, run_=None, identity=None):
+    """The whole ordered start: dependencies, bootstrap, application roles, identity.
+
+    The identity is compared immediately after the application ``up``. A replaced
+    LocalStack has lost the verifier secret, the verifier never becomes healthy, and a
+    later check would only ever be reached after the generic readiness refusal.
+    """
+    before = bootstrap_on_stable_dependencies(
+        compose, bootstrap, run_=run_, identity=identity
+    )
+    (run_ or run)([*compose, "up", "-d", "--no-build", *APPLICATION_ROLES], 60)
+    require_dependencies_unchanged(before, identity=identity)
+    return before
 
 
 def read_env(path):
@@ -484,24 +515,7 @@ def main():
     # LocalStack and Cognito are converged to this compose root and profile first; only
     # then are the verifier mTLS secret, recipe configuration and schema written. The
     # database container is external to this project and is never recreated here.
-    dependencies = bootstrap_on_stable_dependencies(compose, bootstrap)
-    run(
-        [
-            *compose,
-            "up",
-            "-d",
-            "--no-build",
-            "verifier",
-            "reconciler",
-            "api",
-            "worker-network-guard",
-            "recipe-reviewer",
-            "worker",
-            "assessment-worker",
-            "webfront",
-        ],
-        60,
-    )
+    dependencies = start_stack(compose, bootstrap)
     roles = {
         "api": "api",
         "reconciler": "api",
@@ -529,8 +543,8 @@ def main():
             time.monotonic() - started < 120, "actual_local_runtime_readiness_failed"
         )
         time.sleep(1)
-    # Fail closed if the application start still replaced a dependency after the
-    # bootstrap: its in-memory secrets would be gone.
+    # Checked once more after readiness: nothing may have replaced a dependency while
+    # the roles were starting.
     require_dependencies_unchanged(dependencies)
     subject["images"]["web"].update(
         image_id=web["built_image_id"],
@@ -642,7 +656,7 @@ def main():
     budget = gate.budget_status(subject)
     # The restarted guard must actually serve the inspected certificate.
     served = gate.provider_tls_status(
-        subject, minimum_seconds=PROVIDER_TLS_MINIMUM_SECONDS - 300
+        subject, minimum_seconds=PROVIDER_TLS_SERVED_SECONDS
     )
     result = {
         "state": "prepared_dependency_ready_not_product_accepted",

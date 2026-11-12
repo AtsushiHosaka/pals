@@ -26,20 +26,40 @@ DIAGNOSTIC_LIMIT = 16 * 1024
 PROVIDER_TLS_CAPTURE_SECONDS = 1200
 _DIAGNOSTICS = {"directory": None}
 _SECRET_VALUES = set()
-_SECRET_NAME = re.compile(r"KEY|SECRET|TOKEN|PASSWORD|CREDENTIAL|DATABASE_URL", re.I)
+# Redaction input is bounded too; the cut is moved to a line start (see persist_diagnostic).
+DIAGNOSTIC_SCAN_LIMIT = 64 * DIAGNOSTIC_LIMIT
+_SECRET_WORD = (
+    r"pass(?:word|wd|phrase)?|secret|token|api[_-]?key|private[_-]?key|credential"
+    r"|authorization|auth|hash[_-]?key|dsn|database[_-]?url"
+)
+_SECRET_NAME = re.compile(r"KEY|" + _SECRET_WORD, re.I)
+_QUOTED = r"""\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*'"""
+# Deliberately conservative: losing harmless text is acceptable, writing a secret is not.
 _SECRET_PATTERNS = (
     (
-        re.compile(r"-----BEGIN [A-Z ]+-----.*?(?:-----END [A-Z ]+-----|\Z)", re.S),
+        re.compile(
+            r"-----BEGIN [A-Z0-9 ]+-----.*?(?:-----END [A-Z0-9 ]+-----|\Z)", re.S
+        ),
         "<pem>",
     ),
-    (re.compile(r"([a-z][a-z0-9+.-]*://)[^\s/@:]+:[^\s/@]+@"), r"\1<credentials>@"),
-    (re.compile(r"(?i)\b(bearer|basic)\s+[A-Za-z0-9._~+/=-]{8,}"), r"\1 <token>"),
+    # A key block whose BEGIN line is not in the text still shows as encoded lines.
+    (re.compile(r"(?m)^[ \t]*[A-Za-z0-9+/=_-]{40,}[ \t]*$"), "<encoded>"),
+    # Whole userinfo up to the LAST "@" of the token: passwords may contain "/" or ":".
+    (re.compile(r"([A-Za-z][A-Za-z0-9+.-]*://)[^\s\"'<>]*@"), r"\1<credentials>@"),
+    (re.compile(r"(?i)\b(bearer|basic)\s+[A-Za-z0-9._~+/=-]{4,}"), r"\1 <token>"),
     (re.compile(r"\bsk-[A-Za-z0-9_-]{8,}"), "<token>"),
     (re.compile(r"\b(?:AKIA|ASIA)[A-Z0-9]{16}\b"), "<access-key>"),
     (re.compile(r"\b\d{12}\b"), "<account>"),
+    # key=value, key: value, "key": "value", 'key': 'value' and dict/JSON reprs.
     (
-        re.compile(r"(?i)\b(password|secret|token|api[_-]?key)(\s*[=:]\s*)\S+"),
-        r"\1\2<redacted>",
+        re.compile(
+            r"(?i)([\"']?[A-Za-z0-9_.-]*(?:"
+            + _SECRET_WORD
+            + r")[A-Za-z0-9_.-]*[\"']?\s*[:=]\s*)(?:"
+            + _QUOTED
+            + r"|[^\s,;}\])]+)"
+        ),
+        r"\1<redacted>",
     ),
 )
 
@@ -99,22 +119,74 @@ def set_diagnostic_directory(path):
     _DIAGNOSTICS["directory"] = path
 
 
+def _secret_parts(name, value):
+    """Exact values to hide for one environment entry, including URI credentials."""
+    if type(value) is not str or not value:
+        return
+    named = bool(_SECRET_NAME.search(name or ""))
+    # Short values are hidden only under a secret-looking name: hiding every short
+    # ordinary setting ("local", "true") would leave nothing readable.
+    if len(value) >= (4 if named else 8):
+        yield value
+    match = re.match(r"[A-Za-z][A-Za-z0-9+.-]*://([^\s]*)@", value)
+    if match:
+        userinfo = match.group(1)
+        yield userinfo
+        user, _, password = userinfo.partition(":")
+        if password:
+            yield password
+        if len(user) >= 8:
+            yield user
+
+
 def register_secrets(values):
-    _SECRET_VALUES.update(v for v in values if type(v) is str and len(v) >= 8)
+    """``values`` is a mapping of names to values, or bare values of unknown name."""
+    items = values.items() if hasattr(values, "items") else (("", v) for v in values)
+    for name, value in items:
+        _SECRET_VALUES.update(_secret_parts(name, value))
+
+
+def register_private_env(path):
+    """Best effort: a missing or unsafe file is refused later by its real consumer."""
+    try:
+        private_env(Path(path))
+    except (OSError, ValueError, Refusal):
+        pass
 
 
 def redact(text):
     known = set(_SECRET_VALUES)
-    known.update(
-        value
-        for name, value in os.environ.items()
-        if _SECRET_NAME.search(name) and len(value) >= 8
-    )
+    for name, value in os.environ.items():
+        known.update(_secret_parts(name, value))
     for value in sorted(known, key=len, reverse=True):
         text = text.replace(value, "<redacted>")
     for pattern, replacement in _SECRET_PATTERNS:
         text = pattern.sub(replacement, text)
     return text
+
+
+def _tail_from_line_start(text, limit):
+    """Last ``limit`` characters, never starting inside a line.
+
+    A cut inside a line could keep the unrecognisable remainder of a secret or of a
+    redaction match, so the partial first line is dropped entirely.
+    """
+    if len(text) <= limit:
+        return text, False
+    tail = text[-limit:]
+    if text[-limit - 1] != "\n":
+        _, newline, tail = tail.partition("\n")
+        if not newline:
+            tail = ""
+    return tail, True
+
+
+def redacted_tail(stderr):
+    # Redact BEFORE taking the tail: truncating first can cut a secret or key block so
+    # that its remainder no longer matches any rule and is written in clear text.
+    scanned, cut = _tail_from_line_start(stderr or "", DIAGNOSTIC_SCAN_LIMIT)
+    tail, truncated = _tail_from_line_start(redact(scanned), DIAGNOSTIC_LIMIT)
+    return tail, cut or truncated
 
 
 def command_name(args):
@@ -139,7 +211,7 @@ def persist_diagnostic(args, returncode, stderr):
     directory = _DIAGNOSTICS["directory"]
     if directory is None:
         return detail
-    stderr = stderr or ""
+    tail, truncated = redacted_tail(stderr)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     file = directory / ("command-failure-" + stamp + "-" + uuid4().hex[:8] + ".json")
     descriptor = os.open(file, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
@@ -150,8 +222,8 @@ def persist_diagnostic(args, returncode, stderr):
                     "schema_version": "pals.local-qualification-command-failure.v1",
                     "failed_command": name,
                     "returncode": returncode,
-                    "stderr_tail_redacted": redact(stderr[-DIAGNOSTIC_LIMIT:]),
-                    "stderr_truncated": len(stderr) > DIAGNOSTIC_LIMIT,
+                    "stderr_tail_redacted": tail,
+                    "stderr_truncated": truncated,
                     "at": now(),
                 }
             )
@@ -185,7 +257,7 @@ def private_env(path):
         for line in path.read_text().splitlines()
         if line and not line.startswith("#")
     )
-    register_secrets(values.values())
+    register_secrets(values)
     return values
 
 
@@ -377,6 +449,8 @@ try:
  with socket.create_connection(('127.0.0.1',443),5) as raw:
   with context.wrap_socket(raw,server_hostname='api.openai.com') as tls:
    der=tls.getpeercert(binary_form=True);peer=tls.getpeercert()
+   try:tls.unwrap()
+   except (OSError,ssl.SSLError):pass
  print(json.dumps({'state':'trusted','sha256':hashlib.sha256(der).hexdigest(),'remaining_seconds':int(ssl.cert_time_to_seconds(peer['notAfter'])-time.time())}))
 except ssl.SSLCertVerificationError as error:print(json.dumps({'state':'expired' if error.verify_code==10 else 'untrusted'}))
 except (OSError,ssl.SSLError):print(json.dumps({'state':'unavailable'}))
@@ -682,6 +756,8 @@ def main():
         "private_state_directory_required",
     )
     set_diagnostic_directory(state / "diagnostics")
+    # Known private values are hidden from any diagnostic written from here on.
+    register_private_env(args.database_env)
     raw = args.subject.read_bytes()
     subject = json.loads(raw)
     digest = sha(raw)

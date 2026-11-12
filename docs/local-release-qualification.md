@@ -36,7 +36,8 @@ running local budget proxy, trusting only the task CA, before the compiler canar
 browser. `local_provider_tls_expired`, `local_provider_tls_expires_before_capture_window`
 (less than 1200 s left), `local_provider_tls_unavailable_or_untrusted` and
 `local_provider_tls_differs_from_subject` refuse before the single paid submission can be
-spent on a dead provider transport. The handshake sends no HTTP request.
+spent on a dead provider transport. The handshake sends no HTTP request and closes the
+TLS session cleanly, so the guard logs nothing for it.
 
 Use `--verify-existing` with the same arguments to re-read an unexpired successful capture.
 It reuses only the runner's own private Playwright guest session, observes the same real
@@ -67,7 +68,20 @@ its bind-mount sources, so `docker compose up` recreates it. The driver therefor
 recipe configuration and schema only afterwards; the first preparation after a compose-root
 change succeeds in one run. If a dependency is nevertheless replaced after that bootstrap,
 the driver refuses with `local_dependency_recreated_after_verifier_tls_bootstrap` instead of
-leaving a verifier that cannot load its TLS material.
+leaving a verifier that cannot load its TLS material. That identity check runs immediately
+after the application `up`, before the 120 s readiness wait, and once more after it.
+
+Two locations must outlive the stack:
+
+- The runtime directory holds the cumulative budget ledger, the provider TLS material and
+  the private environment files, and the guard binds from it. Keep it in a persistent
+  mode-0700 location. Do not place it under a path that is cleared on reboot or by
+  periodic cleanup (`/tmp`, `/private/tmp`, `$TMPDIR`): losing the ledger blocks every
+  further run, because spending is never reset.
+- The `--compose-root` directory is the bind-mount source of LocalStack and Cognito
+  (`pals-infra/localstack/init/ready.d`, `pals-infra/cognito-local/*`). Keep that checkout
+  in place and unchanged for as long as the stack runs; removing it breaks the next start
+  of those containers, and preparing from another root recreates them.
 
 ```sh
 python3 pals-scripts/local-qualification-prepare.py \
@@ -113,10 +127,16 @@ cause is no longer discarded: the last 16 KiB of the child's stderr are written,
 to a mode-0600 file under `diagnostics/` (mode 0700) in the runtime directory (preparation)
 or the capture state directory (runner). The refusal and `latest.json` carry
 `diagnostic.failed_command` (program and script or subcommand name only, never arguments or
-environment) and `diagnostic.diagnostic_file`. Values read from the private environment
-files, secret-named process environment values, credentials in URIs, bearer tokens, key
-blocks and account numbers are replaced before writing. Treat the file as private anyway
-and keep it outside Git.
+environment) and `diagnostic.diagnostic_file`. The whole text is redacted first and only then cut to
+its tail, and the tail always starts at a line start, so a value cut by the size limit
+cannot leave a readable remainder. Replaced are: values read from the private environment
+files (any value of eight or more characters, shorter ones under a secret-looking name,
+and the credentials inside their URIs), secret-named process environment values, the whole
+user-info part of any URI, bearer and basic tokens, key blocks and stray encoded lines,
+account numbers, and the value of every `password`/`secret`/`token`/`key`-like pair in
+`key=value`, `key: value`, JSON and Python-repr form. Redaction is deliberately
+conservative and may hide harmless text. Treat the file as private anyway and keep it
+outside Git.
 
 The versioned local SQL bootstrap uses real sealed catalog data and migration modules. It
 does not install production admission or insert a completed answer. The owned local profile
@@ -188,22 +208,35 @@ python3 pals-scripts/bootstrap-local-provider-tls.py \
   --directory /private/path/owned-runtime/provider-tls --issue
 python3 pals-scripts/bootstrap-local-provider-tls.py \
   --directory /private/path/owned-runtime/provider-tls --check \
-  --minimum-remaining-seconds 4500
+  --minimum-remaining-seconds 6300
 ```
 
 `--issue` needs the `openssl` command (OpenSSL or LibreSSL). It proves the new generation
 with a real handshake before replacing the previous files; a failed issuance changes nothing.
-`--check` needs only the Python standard library.
+`--check` needs only the Python standard library. Each file is written to a new
+exclusively created temporary file (a stale or linked leftover is removed, never followed)
+and renamed into place. The three files are replaced one at a time, not as one atomic set:
+a reader that catches a mixed generation fails closed, because key, leaf and CA no longer
+complete a handshake (`invalid`). Issue while no preparation or capture is running.
+
+Supported platform: macOS with OrbStack (or Docker Desktop), where bind mounts are served
+with the host user's access. On a native Linux Docker daemon the guard runs as root with
+`cap_drop: ALL`, has no `CAP_DAC_OVERRIDE`, and therefore cannot traverse a 0700 directory
+or read a 0600 key owned by the host user; it would not become healthy. The modes are not
+loosened to accommodate that. A Linux profile needs its own reviewed read path for the
+guard and is not supported by this tool.
 
 Preparation only checks and never issues. Reissuing replaces the CA the task containers
 trust, so it remains one explicit operator step instead of a side effect of every
 preparation. Before stopping any container it refuses with
 `local_provider_tls_expired`, `local_provider_tls_expires_before_capture_window` (less than
-the 3600 s capture freshness window plus a 900 s margin left) or
+6300 s left: the 3600 s capture freshness window, a 900 s margin and an 1800 s bound for
+preparation itself, so marginal material is refused before the stack is rebuilt) or
 `local_provider_tls_missing_or_invalid` (missing file, readable key, key/leaf mismatch,
 leaf not signed by the bundled CA, wrong host). It records the leaf and bundle digests in
 the subject, restarts the guard and task containers, which load the files at start, and
-confirms by handshake that the running proxy serves exactly that leaf.
+confirms by handshake that the running proxy serves exactly that leaf with at least 4500 s
+left.
 
 The first trial after this material had expired (2026-11-12) spent its single submission:
 all three provider calls of the request failed in the TLS handshake with the 12-hour
