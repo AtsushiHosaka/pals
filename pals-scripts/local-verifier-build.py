@@ -85,6 +85,8 @@ def observe(ref, context, revision, image):
         ),
         "actual_native_build_output_changed",
     )
+    # See local-web-build.stored_build_record: the printed value depends on the cwd.
+    record["Context"] = str(context.resolve())
     return record
 
 
@@ -136,7 +138,11 @@ def main():
                 old["source_revision"],
                 old["built_image_id"],
             )
-            == json.loads(Path(old["build_record"]["path"]).read_bytes()),
+            == common.stored_build_record(
+                old["build_record"]["path"],
+                old["build_context"],
+                "native_actual_build_record_changed",
+            ),
             "native_actual_build_record_changed",
         )
         need(

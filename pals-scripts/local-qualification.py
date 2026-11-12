@@ -7,6 +7,8 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import os
+import re
 import subprocess
 import sys
 import tarfile
@@ -18,8 +20,36 @@ HERE = Path(__file__).resolve().parent
 OWNER = "01a1bb4b-dec2-76f0-a6fe-32405e465d6e"
 
 
+REQUIRED_MODULES = ("psycopg",)
+DIAGNOSTIC_LIMIT = 16 * 1024
+# The paid browser journey is bounded at 620 s; the local proxy certificate must outlive it.
+PROVIDER_TLS_CAPTURE_SECONDS = 1200
+_DIAGNOSTICS = {"directory": None}
+_SECRET_VALUES = set()
+_SECRET_NAME = re.compile(r"KEY|SECRET|TOKEN|PASSWORD|CREDENTIAL|DATABASE_URL", re.I)
+_SECRET_PATTERNS = (
+    (
+        re.compile(r"-----BEGIN [A-Z ]+-----.*?(?:-----END [A-Z ]+-----|\Z)", re.S),
+        "<pem>",
+    ),
+    (re.compile(r"([a-z][a-z0-9+.-]*://)[^\s/@:]+:[^\s/@]+@"), r"\1<credentials>@"),
+    (re.compile(r"(?i)\b(bearer|basic)\s+[A-Za-z0-9._~+/=-]{8,}"), r"\1 <token>"),
+    (re.compile(r"\bsk-[A-Za-z0-9_-]{8,}"), "<token>"),
+    (re.compile(r"\b(?:AKIA|ASIA)[A-Z0-9]{16}\b"), "<access-key>"),
+    (re.compile(r"\b\d{12}\b"), "<account>"),
+    (
+        re.compile(r"(?i)\b(password|secret|token|api[_-]?key)(\s*[=:]\s*)\S+"),
+        r"\1\2<redacted>",
+    ),
+)
+
+
 class Refusal(Exception):
-    pass
+    """Closed refusal code. ``detail`` names a private diagnostic file, never its content."""
+
+    def __init__(self, code, detail=None):
+        super().__init__(code)
+        self.detail = detail or {}
 
 
 def need(value, code):
@@ -48,11 +78,99 @@ def private_json(path, value):
     path.chmod(0o600)
 
 
+def require_modules(modules=REQUIRED_MODULES, *, prefix="release_python"):
+    # Fail before any dependency is touched. A missing driver otherwise surfaces much
+    # later as an unexplained child-process failure.
+    for name in modules:
+        try:
+            found = importlib.util.find_spec(name) is not None
+        except (ImportError, ValueError):
+            found = False
+        need(found, prefix + "_missing_module:" + name)
+
+
+def set_diagnostic_directory(path):
+    path = Path(path)
+    path.mkdir(mode=0o700, parents=True, exist_ok=True)
+    need(
+        not path.is_symlink() and path.stat().st_mode & 0o777 == 0o700,
+        "private_diagnostic_directory_required",
+    )
+    _DIAGNOSTICS["directory"] = path
+
+
+def register_secrets(values):
+    _SECRET_VALUES.update(v for v in values if type(v) is str and len(v) >= 8)
+
+
+def redact(text):
+    known = set(_SECRET_VALUES)
+    known.update(
+        value
+        for name, value in os.environ.items()
+        if _SECRET_NAME.search(name) and len(value) >= 8
+    )
+    for value in sorted(known, key=len, reverse=True):
+        text = text.replace(value, "<redacted>")
+    for pattern, replacement in _SECRET_PATTERNS:
+        text = pattern.sub(replacement, text)
+    return text
+
+
+def command_name(args):
+    """Program and script/subcommand names only: never arguments, paths or environment."""
+    words = [Path(str(args[0])).name]
+    for value in args[1:]:
+        value = str(value)
+        if "/" in value:
+            if not value.startswith("-"):
+                words.append(Path(value).name)
+            break
+        if not re.fullmatch(r"[a-z][a-z0-9-]{0,31}", value) or len(words) >= 3:
+            break
+        words.append(value)
+    return " ".join(re.sub(r"[^A-Za-z0-9._-]", "_", word)[:64] for word in words)
+
+
+def persist_diagnostic(args, returncode, stderr):
+    """Keep a bounded, redacted stderr tail in a private file and return its reference."""
+    name = command_name(args)
+    detail = {"failed_command": name}
+    directory = _DIAGNOSTICS["directory"]
+    if directory is None:
+        return detail
+    stderr = stderr or ""
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+    file = directory / ("command-failure-" + stamp + "-" + uuid4().hex[:8] + ".json")
+    descriptor = os.open(file, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(descriptor, "w") as output:
+        output.write(
+            stable(
+                {
+                    "schema_version": "pals.local-qualification-command-failure.v1",
+                    "failed_command": name,
+                    "returncode": returncode,
+                    "stderr_tail_redacted": redact(stderr[-DIAGNOSTIC_LIMIT:]),
+                    "stderr_truncated": len(stderr) > DIAGNOSTIC_LIMIT,
+                    "at": now(),
+                }
+            )
+            + "\n"
+        )
+    detail["diagnostic_file"] = str(file)
+    return detail
+
+
 def command(args, timeout=30):
     result = subprocess.run(
         args, capture_output=True, text=True, timeout=timeout, check=False
     )
-    need(result.returncode == 0, "local_dependency_command_failed")
+    if result.returncode != 0:
+        # The closed code stays stable; the cause is kept in a private bounded file.
+        raise Refusal(
+            "local_dependency_command_failed",
+            persist_diagnostic(args, result.returncode, result.stderr),
+        )
     return result.stdout
 
 
@@ -62,11 +180,13 @@ def private_env(path):
         path.is_file() and not path.is_symlink() and st.st_mode & 0o777 == 0o600,
         "private_environment_required",
     )
-    return dict(
+    values = dict(
         line.split("=", 1)
         for line in path.read_text().splitlines()
         if line and not line.startswith("#")
     )
+    register_secrets(values.values())
+    return values
 
 
 def file_reference(value):
@@ -233,6 +353,67 @@ def verifier_provenance(subject):
         "source_archive_sha256": sha(archive.read_bytes()),
         "build_provenance_sha256": sha(provenance.read_bytes()),
         "difference_scope": receipt["difference_scope"],
+    }
+
+
+def provider_tls_status(subject, minimum_seconds=PROVIDER_TLS_CAPTURE_SECONDS):
+    """Real handshake with the running local budget proxy, trusting the task CA only.
+
+    Workers reach the provider solely through this proxy. An expired or replaced proxy
+    certificate fails every provider call, so refuse before the single paid submission.
+    No HTTP request is sent and no provider is contacted.
+    """
+    expected = subject["guard"].get("provider_tls")
+    need(
+        type(expected) is dict
+        and re.fullmatch(
+            r"[0-9a-f]{64}", str(expected.get("server_certificate_sha256"))
+        ),
+        "local_provider_tls_subject_binding_required",
+    )
+    program = """import hashlib,json,socket,ssl,time
+context=ssl.create_default_context(cafile='/run/provider/ca-bundle.pem')
+try:
+ with socket.create_connection(('127.0.0.1',443),5) as raw:
+  with context.wrap_socket(raw,server_hostname='api.openai.com') as tls:
+   der=tls.getpeercert(binary_form=True);peer=tls.getpeercert()
+ print(json.dumps({'state':'trusted','sha256':hashlib.sha256(der).hexdigest(),'remaining_seconds':int(ssl.cert_time_to_seconds(peer['notAfter'])-time.time())}))
+except ssl.SSLCertVerificationError as error:print(json.dumps({'state':'expired' if error.verify_code==10 else 'untrusted'}))
+except (OSError,ssl.SSLError):print(json.dumps({'state':'unavailable'}))
+"""
+    try:
+        result = json.loads(
+            command(
+                [
+                    "docker",
+                    "exec",
+                    "pals-reliability-local-worker-network-guard-1",
+                    "python",
+                    "-c",
+                    program,
+                ],
+                timeout=20,
+            )
+        )
+    except subprocess.TimeoutExpired:
+        raise Refusal("local_provider_tls_unavailable_or_untrusted") from None
+    need(result.get("state") != "expired", "local_provider_tls_expired")
+    need(
+        result.get("state") == "trusted", "local_provider_tls_unavailable_or_untrusted"
+    )
+    need(
+        result["sha256"] == expected["server_certificate_sha256"],
+        "local_provider_tls_differs_from_subject",
+    )
+    need(
+        type(result["remaining_seconds"]) is int
+        and result["remaining_seconds"] >= minimum_seconds,
+        "local_provider_tls_expires_before_capture_window",
+    )
+    return {
+        "scope": "local_budget_proxy_transport_only_not_provider_identity",
+        "server_certificate_sha256": result["sha256"],
+        "remaining_seconds": result["remaining_seconds"],
     }
 
 
@@ -493,12 +674,14 @@ def main():
     p.add_argument("--database-env", type=Path, required=True)
     p.add_argument("--verify-existing", action="store_true")
     args = p.parse_args()
+    require_modules()
     state = args.state_dir.resolve()
     state.mkdir(mode=0o700, parents=True, exist_ok=True)
     need(
         state.stat().st_mode & 0o777 == 0o700 and not state.is_symlink(),
         "private_state_directory_required",
     )
+    set_diagnostic_directory(state / "diagnostics")
     raw = args.subject.read_bytes()
     subject = json.loads(raw)
     digest = sha(raw)
@@ -574,6 +757,10 @@ def main():
         private_json(state / "latest.json", record)
         record["provider_budget_before"] = budget_status(subject)
         record["database_before"] = database_readiness(subject, args.database_env)
+        if not prior:
+            # Re-reading an accepted capture makes no provider call. A fresh capture
+            # must not spend its only submission on a dead local provider transport.
+            record["provider_tls_before"] = provider_tls_status(subject)
         # Never launch a browser that could submit a paid proof while the actual
         # mTLS verifier cannot establish its mandatory compiler sandbox.
         record["compiler_canary"] = compiler_canary(subject)
@@ -633,8 +820,18 @@ def main():
             if isinstance(error, Refusal)
             else "local_dependency_or_capture_failed",
         )
+        if isinstance(error, Refusal) and error.detail:
+            record["diagnostic"] = error.detail
         private_json(state / "latest.json", record)
-        print(stable({k: record[k] for k in ("state", "subject_sha256", "code")}))
+        print(
+            stable(
+                {
+                    k: record[k]
+                    for k in ("state", "subject_sha256", "code", "diagnostic")
+                    if k in record
+                }
+            )
+        )
         return 1
     private_json(state / "latest.json", record)
     print(
@@ -659,4 +856,6 @@ if __name__ == "__main__":
         raise SystemExit(main())
     except Refusal as error:
         print(str(error), file=sys.stderr)
+        if error.detail:
+            print(stable(error.detail), file=sys.stderr)
         raise SystemExit(1)
