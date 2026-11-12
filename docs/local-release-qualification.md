@@ -83,6 +83,33 @@ Two locations must outlive the stack:
   in place and unchanged for as long as the stack runs; removing it breaks the next start
   of those containers, and preparing from another root recreates them.
 
+Relocating the runtime directory, in this order:
+
+1. Confirm that nothing can spend: no capture or other request is running, no request or
+   proof job is in a non-terminal state, and all four queues are empty. The guard keeps
+   recording into the OLD ledger until preparation stops it, so a provider call made after
+   step 2 would exist only there.
+2. Copy the whole directory with modes preserved (`cp -Rp`) to a persistent mode-0700
+   place. Leave the old directory untouched.
+3. Run preparation once with `--runtime-dir` at the new place.
+
+Step 1 is not left to care alone. Preparation reads from the existing guard container
+which host directory it has been recording in, stops the task containers and the guard,
+and only then compares that serving ledger with the one in `--runtime-dir`: `calls`,
+`actual_microusd`, `reserved_microusd` and `blocked` must be identical. A copy that misses
+a later call is refused with `relocated_budget_ledger_differs_from_the_serving_ledger`
+before it is adopted (no resume binding is written), so spending cannot be under-counted;
+`relocated_budget_serving_ledger_required` means the old ledger is gone or unreadable and
+the copy cannot be proven current. After such a refusal the producers are stopped: copy
+`budget/ledger.json` again from the old directory (it can no longer change) and rerun.
+
+`--runtime-dir` accepts any existing mode-0700 directory with a plain absolute path; every
+bind mount, `override.yml`, the subject and the environment files are derived from it on
+that run, and the ledger continues with the same calls and spending because resumption is
+bound to its bytes, not its path. The subject path, the `local.env` path and both their
+hashes change, so relocate before the release plan freezes them. Keep the old directory
+until the new stack is prepared.
+
 ```sh
 python3 pals-scripts/local-qualification-prepare.py \
   --runtime-dir /private/path/owned-runtime \
@@ -168,11 +195,38 @@ context; every other field of the real build record is still compared exactly. N
 working directory" rule is needed any more.
 
 `local-verifier-build.py` creates the explicit native ARM64 verifier variant from the exact
-production verifier source and unmodified Dockerfile. `verifier_variant` contains
-`production_image_digest`, `source_archive`, `local_build_provenance`, `dockerfile_sha256`,
-`lean_version` and `lake_manifest_sha256`. It preserves the pinned Lean/Mathlib library and
-full compiler sandbox. Native architecture and observed resolver dependency versions differ
-from the production image; this is not byte equivalence. The receipt records actual versions.
+production verifier source and unmodified Dockerfile. It preserves the pinned Lean/Mathlib
+library and full compiler sandbox. Native architecture and observed resolver dependency
+versions differ from the production image; this is not byte equivalence. The receipt records
+actual versions.
+
+`verifier_variant` has exactly the key set the release plan accepts
+(`pals-infra/scripts/release-cycle.py`, `local_verifier_variant`): `production_image_digest`,
+`source_archive`, `recipe_archive`, `local_build_provenance`, `dockerfile_sha256`,
+`lean_version` and `lake_manifest_sha256`. The two archives are git's own, as
+`pals-infra/scripts/release_plan.py` (`VERIFIER_VARIANT_ARCHIVES`) re-derives them:
+
+| Reference | Bytes | Why |
+| --- | --- | --- |
+| `source_archive` | `git archive --format=tar <verifier commit> pals_agent` | its hash is the signed manifest's `verifier_source.source_archive_sha256` |
+| `recipe_archive` | `git archive --format=tar <verifier commit> docker/lean-verifier.Dockerfile lean-workspace` | the compiler recipe: Dockerfile, toolchain pin, manifest and workspace |
+
+Neither archive can build the image: the Dockerfile also copies `pyproject.toml` and
+`README.md`. The image is therefore still built from the complete `git archive` of the same
+commit (`--source-archive`), which the receipt records as `build_archive`. The builder
+writes both plan archives into its output directory (`source-archive.tar`,
+`recipe-archive.tar`) and proves them before building, and `--verify-receipt` and the runner
+repeat the proof: each archive must equal the bytes git produces at the recorded commit, and
+every member (name, type, mode, size, time, link target, content) must equal the member of
+the complete archive the image was built from, with no member missing or added below the
+archived paths. A recipe archive of another commit with the same Dockerfile, toolchain and
+manifest is refused (`native_plan_archive_differs_from_the_built_commit`,
+`native_verifier_plan_archive_differs_from_the_built_commit`). The runner reads the
+Dockerfile, toolchain pin and manifest from `recipe_archive`. The receipt
+(`pals.local-verifier-build.v2`) stays hash-bound in the subject through
+`local_build_provenance`, and through it the complete build archive. Receipts of the former
+schema are refused; rebuild them. Freeze `source_archive`, `recipe_archive` and
+`local_build_provenance` in the release plan.
 
 ## Cost and isolation
 

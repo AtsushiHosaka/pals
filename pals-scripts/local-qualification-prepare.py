@@ -130,6 +130,102 @@ def require_child_modules(python, modules, prefix, *, run_=None):
     gate.need(not missing, prefix + "_missing_module:" + missing.split(",")[0])
 
 
+def require_runtime_directory(path):
+    """The owned runtime directory: existing, private, with a plain absolute path.
+
+    Any such location is accepted. Every bind mount, the subject and the environment
+    files are derived from it on each run, so a copy in a persistent place continues
+    the same ledger. Do not keep it under a path that is cleared on reboot.
+    """
+    path = Path(path).resolve()
+    gate.need(
+        path.is_dir()
+        and path.stat().st_mode & 0o777 == 0o700
+        and re.fullmatch(r"/[A-Za-z0-9_./-]+", str(path)),
+        "existing_private_runtime_directory_required",
+    )
+    return path
+
+
+def serving_budget_directory(*, run_=None):
+    """Host directory the existing guard container records provider spending in.
+
+    ``None`` when no guard container exists: then nothing could have forwarded a call.
+    """
+    run_ = run_ or run
+    name = PROJECT + "-worker-network-guard-1"
+    if not run_(["docker", "ps", "-aq", "--filter", "name=^/" + name + "$"]).strip():
+        return None
+    mounts = json.loads(
+        run_(["docker", "inspect", "--format", "{{json .Mounts}}", name])
+    )
+    sources = [m["Source"] for m in mounts if m.get("Destination") == "/run/budget"]
+    gate.need(len(sources) == 1, "serving_budget_directory_required")
+    return Path(sources[0])
+
+
+def require_ledger_continuity(ledger, serving):
+    """A relocated runtime directory must hold the ledger the guard last wrote.
+
+    Call this only AFTER the task containers and the guard are stopped: from then on no
+    provider call can be recorded. If the guard served another directory, a call made
+    after that directory was copied exists only in its ledger; continuing with the copy
+    would under-count spending, so the two must agree exactly.
+    """
+    if serving is None or Path(serving).resolve() == ledger.parent.resolve():
+        return "same_directory"
+    source = Path(serving) / "ledger.json"
+    gate.need(
+        source.is_file() and not source.is_symlink(),
+        "relocated_budget_serving_ledger_required",
+    )
+    try:
+        old, new = json.loads(source.read_bytes()), json.loads(ledger.read_bytes())
+    except (OSError, ValueError):
+        raise gate.Refusal("relocated_budget_serving_ledger_required") from None
+    gate.need(
+        type(old) is dict
+        and type(new) is dict
+        and all(
+            name in old and old[name] == new.get(name)
+            for name in ("calls", "actual_microusd", "reserved_microusd", "blocked")
+        ),
+        "relocated_budget_ledger_differs_from_the_serving_ledger",
+    )
+    return "relocated_identical"
+
+
+def render_profile(template, values):
+    for key, value in values.items():
+        template = template.replace(key, value)
+    gate.need("@@" not in template, "unresolved_local_profile_binding")
+    return template
+
+
+def verifier_variant(production_image_digest, receipt, receipt_reference):
+    """Exactly what pals-infra's release plan accepts for a native local verifier.
+
+    `release-cycle.py` (`local_verifier_variant`) requires this closed key set, and
+    `release_plan.py` (`VERIFIER_VARIANT_ARCHIVES`) requires `source_archive` and
+    `recipe_archive` to be git's own archives of the manifest's verifier commit. Both
+    come from the build receipt, which proves them against the built archive.
+    """
+    variant = {
+        "production_image_digest": production_image_digest,
+        "source_archive": receipt["source_archive"],
+        "recipe_archive": receipt["recipe_archive"],
+        "local_build_provenance": receipt_reference,
+        "dockerfile_sha256": receipt["dockerfile_sha256"],
+        "lean_version": receipt["lean_version"],
+        "lake_manifest_sha256": receipt["lake_manifest_sha256"],
+    }
+    gate.need(
+        set(variant) == gate.VERIFIER_VARIANT_KEYS,
+        "closed_native_local_verifier_variant_required",
+    )
+    return variant
+
+
 def require_provider_tls(directory, *, inspect=None):
     """Refuse before quiescing anything when the local proxy certificate cannot last.
 
@@ -267,14 +363,8 @@ def main():
         p.add_argument("--" + name, type=Path, required=True)
     a = p.parse_args()
     gate.require_modules()
-    r = a.runtime_dir.resolve()
+    r = require_runtime_directory(a.runtime_dir)
     source = a.compose_root.resolve()
-    gate.need(
-        r.is_dir()
-        and r.stat().st_mode & 0o777 == 0o700
-        and re.fullmatch(r"/[A-Za-z0-9_./-]+", str(r)),
-        "existing_private_runtime_directory_required",
-    )
     gate.set_diagnostic_directory(r / "diagnostics")
     for prefix, modules in CHILD_MODULES.items():
         require_child_modules(getattr(a, prefix), modules, prefix)
@@ -371,6 +461,8 @@ def main():
         "-f",
         r / "override.yml",
     ]
+    # Where the guard has been recording spending, read before anything is recreated.
+    serving = serving_budget_directory()
     # Quiesce only this owned project before rotating local release/TLS bindings.
     run(
         [
@@ -389,6 +481,9 @@ def main():
         60,
     )
     ledger = r / "budget/ledger.json"
+    # Producers and guard are stopped: the serving ledger is final. A relocated copy
+    # that misses a call made after it was copied is refused here.
+    require_ledger_continuity(ledger, serving)
     raw = ledger.read_bytes()
     previous = json.loads(raw)
     gate.need(
@@ -444,10 +539,9 @@ def main():
         "@@VERIFIER_IMAGE@@": native_id,
         "@@GUARD_IMAGE@@": guard["Id"],
     }
-    template = (HERE / "local-qualification/compose.override.yml.in").read_text()
-    for key, value in values.items():
-        template = template.replace(key, value)
-    gate.need("@@" not in template, "unresolved_local_profile_binding")
+    template = render_profile(
+        (HERE / "local-qualification/compose.override.yml.in").read_text(), values
+    )
     (r / "override.yml").write_text(template)
     run([*compose, "config", "--quiet"])
 
@@ -568,16 +662,11 @@ def main():
         source_archive=web["source_archive"],
         local_build_provenance=ref(a.web_build_receipt),
     )
-    subject["verifier_variant"] = {
-        "production_image_digest": json.loads(a.base_subject.read_bytes())["images"][
-            "verifier"
-        ]["image_id"],
-        "source_archive": verifier["source_archive"],
-        "local_build_provenance": ref(a.verifier_build_receipt),
-        "dockerfile_sha256": verifier["dockerfile_sha256"],
-        "lean_version": verifier["lean_version"],
-        "lake_manifest_sha256": verifier["lake_manifest_sha256"],
-    }
+    subject["verifier_variant"] = verifier_variant(
+        json.loads(a.base_subject.read_bytes())["images"]["verifier"]["image_id"],
+        verifier,
+        ref(a.verifier_build_receipt),
+    )
     subject["guard"].update(
         source_sha256={
             n: gate.sha((HERE / "local-qualification" / n).read_bytes())
