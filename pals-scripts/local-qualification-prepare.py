@@ -23,7 +23,38 @@ def load(name, path):
 
 
 gate = load("local_qualification_prepare_gate", HERE / "local-qualification.py")
+provider_tls = load(
+    "local_qualification_provider_tls", HERE / "bootstrap-local-provider-tls.py"
+)
 PROJECT = "pals-reliability-local"
+# Services the application roles depend on. They hold the emulated secrets, queues and
+# identities, so they must be converged BEFORE anything is written into them.
+STABLE_DEPENDENCIES = ("localstack", "cognito-local")
+# The accepted capture stays fresh for 3600 s; the margin covers preparation and the
+# bounded paid journey that happen between this check and the capture.
+CAPTURE_FRESHNESS_SECONDS = 3600
+PROVIDER_TLS_MARGIN_SECONDS = 900
+# What the running proxy must still have left when preparation has finished.
+PROVIDER_TLS_SERVED_SECONDS = CAPTURE_FRESHNESS_SECONDS + PROVIDER_TLS_MARGIN_SECONDS
+# Upper bound of everything preparation does after its first check (guard build 600 s,
+# dependency and application start, bootstraps, readiness 120 s, provenance, canary).
+# Marginal material is therefore refused BEFORE the stack is stopped and rebuilt.
+PREPARATION_BOUND_SECONDS = 1800
+PROVIDER_TLS_MINIMUM_SECONDS = PROVIDER_TLS_SERVED_SECONDS + PREPARATION_BOUND_SECONDS
+APPLICATION_ROLES = (
+    "verifier",
+    "reconciler",
+    "api",
+    "worker-network-guard",
+    "recipe-reviewer",
+    "worker",
+    "assessment-worker",
+    "webfront",
+)
+CHILD_MODULES = {
+    "api_python": ("psycopg",),
+    "agent_python": ("boto3", "cryptography"),
+}
 KNOWN_ROLES = {
     "api",
     "reconciler",
@@ -86,6 +117,104 @@ def run(args, timeout=45):
     return gate.command([str(x) for x in args], timeout=timeout)
 
 
+def require_child_modules(python, modules, prefix, *, run_=None):
+    """Fail fast with the interpreter and module named instead of a late child failure."""
+    program = (
+        "import importlib.util,sys;"
+        "print(','.join(m for m in sys.argv[1:] if importlib.util.find_spec(m) is None))"
+    )
+    try:
+        missing = (run_ or run)([python, "-c", program, *modules]).strip()
+    except (OSError, gate.Refusal):
+        raise gate.Refusal(prefix + "_unavailable") from None
+    gate.need(not missing, prefix + "_missing_module:" + missing.split(",")[0])
+
+
+def require_provider_tls(directory, *, inspect=None):
+    """Refuse before quiescing anything when the local proxy certificate cannot last.
+
+    Preparation only checks. It never mints trust material implicitly: reissuing replaces
+    the CA the task containers trust, so it stays one explicit, documented operator step.
+    """
+    result = (inspect or provider_tls.inspect)(
+        directory, minimum_remaining_seconds=PROVIDER_TLS_MINIMUM_SECONDS
+    )
+    codes = {
+        "expired": "local_provider_tls_expired",
+        "expires_within_window": "local_provider_tls_expires_before_capture_window",
+    }
+    gate.need(
+        result.get("state") == "valid",
+        codes.get(result.get("state"), "local_provider_tls_missing_or_invalid"),
+    )
+    return result
+
+
+def dependency_identity(*, run_=None):
+    return {
+        role: json.loads(
+            (run_ or run)(
+                [
+                    "docker",
+                    "inspect",
+                    "--format",
+                    "{{json .Id}}",
+                    PROJECT + "-" + role + "-1",
+                ]
+            )
+        )
+        for role in STABLE_DEPENDENCIES
+    }
+
+
+def bootstrap_on_stable_dependencies(compose, bootstrap, *, run_=None, identity=None):
+    """Converge the dependency containers first, then write state into them.
+
+    A changed compose root changes the bind-mount sources of LocalStack and Cognito, so
+    ``up`` recreates them. LocalStack keeps secrets in memory only: a verifier mTLS
+    secret created before that recreation is silently lost and the verifier then cannot
+    start. Converging first makes the later application ``up`` a no-op for them.
+    """
+    (run_ or run)(
+        [
+            *compose,
+            "up",
+            "-d",
+            "--no-build",
+            "--wait",
+            "--wait-timeout",
+            "90",
+            *STABLE_DEPENDENCIES,
+        ],
+        120,
+    )
+    before = (identity or dependency_identity)()
+    bootstrap()
+    return before
+
+
+def require_dependencies_unchanged(before, *, identity=None):
+    gate.need(
+        (identity or dependency_identity)() == before,
+        "local_dependency_recreated_after_verifier_tls_bootstrap",
+    )
+
+
+def start_stack(compose, bootstrap, *, run_=None, identity=None):
+    """The whole ordered start: dependencies, bootstrap, application roles, identity.
+
+    The identity is compared immediately after the application ``up``. A replaced
+    LocalStack has lost the verifier secret, the verifier never becomes healthy, and a
+    later check would only ever be reached after the generic readiness refusal.
+    """
+    before = bootstrap_on_stable_dependencies(
+        compose, bootstrap, run_=run_, identity=identity
+    )
+    (run_ or run)([*compose, "up", "-d", "--no-build", *APPLICATION_ROLES], 60)
+    require_dependencies_unchanged(before, identity=identity)
+    return before
+
+
 def read_env(path):
     return gate.private_env(path)
 
@@ -137,6 +266,7 @@ def main():
     ):
         p.add_argument("--" + name, type=Path, required=True)
     a = p.parse_args()
+    gate.require_modules()
     r = a.runtime_dir.resolve()
     source = a.compose_root.resolve()
     gate.need(
@@ -145,6 +275,9 @@ def main():
         and re.fullmatch(r"/[A-Za-z0-9_./-]+", str(r)),
         "existing_private_runtime_directory_required",
     )
+    gate.set_diagnostic_directory(r / "diagnostics")
+    for prefix, modules in CHILD_MODULES.items():
+        require_child_modules(getattr(a, prefix), modules, prefix)
     gate.need(
         os.environ.get("DOCKER_HOST", "unix://").startswith("unix://")
         and run(
@@ -174,6 +307,11 @@ def main():
         env.get("PALS_ENV") == "local" and env.get("PALS_ENVIRONMENT") == "local",
         "explicit_local_environment_required",
     )
+    for name in ("release.env", "recipe.env"):
+        # Registers their values for redaction of any persisted child diagnostics.
+        if (r / name).is_file():
+            read_env(r / name)
+    observed_provider_tls = require_provider_tls(r / "provider-tls")
     # The reused private env/PG service are deliberate prerequisites. No other env files,
     # production database URLs or global Docker credentials are copied into this stack.
     subject = json.loads(a.base_subject.read_bytes())
@@ -267,55 +405,6 @@ def main():
         backup.chmod(0o600)
     write_env(r / "local.env", env)
     native_id = verifier["built_image_id"]
-    new_env = dict(os.environ, AWS_ACCESS_KEY_ID="test", AWS_SECRET_ACCESS_KEY="test")
-    new_env.pop("AWS_SESSION_TOKEN", None)
-    tls = subprocess.run(
-        [
-            str(a.agent_python),
-            str(HERE / "bootstrap-local-verifier-tls.py"),
-            "--endpoint-url",
-            "http://127.0.0.1:54566",
-            "--region",
-            "ap-northeast-1",
-            "--image-digest",
-            native_id,
-            "--toolchain-sha256",
-            native_id.removeprefix("sha256:"),
-            "--output",
-            str(r / "release.env"),
-        ],
-        env=new_env,
-        capture_output=True,
-        text=True,
-        timeout=30,
-        check=False,
-    )
-    gate.need(tls.returncode == 0, "actual_local_mtls_bootstrap_failed")
-    run(
-        [
-            a.api_python,
-            HERE / "bootstrap-local-recipe-config.py",
-            "--env-file",
-            r / "local.env",
-            "--release-env",
-            r / "release.env",
-            "--output",
-            r / "recipe.env",
-            "--lean-workspace",
-            Path(verifier["build_context"]) / "lean-workspace",
-        ]
-    )
-    run(
-        [
-            a.api_python,
-            HERE / "local-qualification/bootstrap_database.py",
-            "--runtime-dir",
-            r,
-            "--api-source",
-            a.api_source,
-        ],
-        60,
-    )
     worker = subject["images"]["worker"]["image_reference"]
     run(
         [
@@ -361,24 +450,72 @@ def main():
     gate.need("@@" not in template, "unresolved_local_profile_binding")
     (r / "override.yml").write_text(template)
     run([*compose, "config", "--quiet"])
-    # The underlying DB, LocalStack and Cognito containers/networks stay in place.
-    run(
-        [
-            *compose,
-            "up",
-            "-d",
-            "--no-build",
-            "verifier",
-            "reconciler",
-            "api",
-            "worker-network-guard",
-            "recipe-reviewer",
-            "worker",
-            "assessment-worker",
-            "webfront",
-        ],
-        60,
-    )
+
+    def bootstrap():
+        new_env = dict(
+            os.environ, AWS_ACCESS_KEY_ID="test", AWS_SECRET_ACCESS_KEY="test"
+        )
+        new_env.pop("AWS_SESSION_TOKEN", None)
+        tls = subprocess.run(
+            [
+                str(a.agent_python),
+                str(HERE / "bootstrap-local-verifier-tls.py"),
+                "--endpoint-url",
+                "http://127.0.0.1:54566",
+                "--region",
+                "ap-northeast-1",
+                "--image-digest",
+                native_id,
+                "--toolchain-sha256",
+                native_id.removeprefix("sha256:"),
+                "--output",
+                str(r / "release.env"),
+            ],
+            env=new_env,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+        if tls.returncode != 0:
+            raise gate.Refusal(
+                "actual_local_mtls_bootstrap_failed",
+                gate.persist_diagnostic(
+                    [a.agent_python, HERE / "bootstrap-local-verifier-tls.py"],
+                    tls.returncode,
+                    tls.stderr,
+                ),
+            )
+        run(
+            [
+                a.api_python,
+                HERE / "bootstrap-local-recipe-config.py",
+                "--env-file",
+                r / "local.env",
+                "--release-env",
+                r / "release.env",
+                "--output",
+                r / "recipe.env",
+                "--lean-workspace",
+                Path(verifier["build_context"]) / "lean-workspace",
+            ]
+        )
+        run(
+            [
+                a.api_python,
+                HERE / "local-qualification/bootstrap_database.py",
+                "--runtime-dir",
+                r,
+                "--api-source",
+                a.api_source,
+            ],
+            60,
+        )
+
+    # LocalStack and Cognito are converged to this compose root and profile first; only
+    # then are the verifier mTLS secret, recipe configuration and schema written. The
+    # database container is external to this project and is never recreated here.
+    dependencies = start_stack(compose, bootstrap)
     roles = {
         "api": "api",
         "reconciler": "api",
@@ -406,6 +543,9 @@ def main():
             time.monotonic() - started < 120, "actual_local_runtime_readiness_failed"
         )
         time.sleep(1)
+    # Checked once more after readiness: nothing may have replaced a dependency while
+    # the roles were starting.
+    require_dependencies_unchanged(dependencies)
     subject["images"]["web"].update(
         image_id=web["built_image_id"],
         image_reference=web["built_image_id"],
@@ -444,6 +584,14 @@ def main():
             for n in ("guard.py", "budget_proxy.py", "Dockerfile")
         },
         budget_limit_microusd=700000,
+        ca_bundle_sha256=observed_provider_tls["ca_bundle_sha256"],
+        provider_tls={
+            "server_certificate_sha256": observed_provider_tls[
+                "server_certificate_sha256"
+            ],
+            "not_after": observed_provider_tls["not_after"],
+            "trust_scope": "local CA only, name constrained to the proxied host",
+        },
         resumed_budget=ref(backup),
         helper_build_metadata=ref(r / "guard-build-metadata.json"),
     )
@@ -506,10 +654,15 @@ def main():
     gate.runtime(subject)
     canary = gate.compiler_canary(subject)
     budget = gate.budget_status(subject)
+    # The restarted guard must actually serve the inspected certificate.
+    served = gate.provider_tls_status(
+        subject, minimum_seconds=PROVIDER_TLS_SERVED_SECONDS
+    )
     result = {
         "state": "prepared_dependency_ready_not_product_accepted",
         "subject": ref(out),
         "compiler_canary": canary,
+        "provider_tls": served,
         "all_lane_cost_microusd": budget["actual_microusd"],
         "budget_limit_microusd": budget["limit_microusd"],
     }
@@ -518,4 +671,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except gate.Refusal as error:
+        # Closed code on stdout; the cause, if any, is in the named private file.
+        refusal = {"state": "refused", "code": str(error)}
+        if error.detail:
+            refusal["diagnostic"] = error.detail
+        print(gate.stable(refusal))
+        raise SystemExit(1) from None
