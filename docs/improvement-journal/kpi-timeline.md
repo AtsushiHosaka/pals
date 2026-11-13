@@ -63,3 +63,4 @@
 | 2026-11-13 | 大学1年レベルの未使用の題 40 題（調整用20・最終確認用20）を追加。既存集合の easy は使い尽くしだった（tuning 17 全て使用、held_out 8 のうち未使用で命題固定なしは 3） | [freshman-eval-items](entries/2026-11-13-freshman-eval-items.md) |
 | 2026-11-13 | 一般 Recipe の具体化の被覆（フラグ既定 off、pals-agent#126）: モデルなし 0/90、形式化 Luna 1 回つき 1/64（それも恒等の具体化）。誤採用 1 件を関連性検査で除去。届く範囲を決めるのは一般形の数でなく質問→形式命題の段。費用 US$0.02 | [general-recipe-instantiation-coverage](entries/2026-11-13-general-recipe-instantiation-coverage.md) |
 | 2026-11-14 | スキーム論 10 題（新しい区分 algebraic-geometry-v1）を worker 経路で測定。命題のすり替えを防ぐ案内と検査で、依頼どおりの通過が 5/10 → 8/10（Lean が通った数は 9/10 のまま）。n=1 | [scheme-theory-e2e](entries/2026-11-14-scheme-theory-e2e.md) |
+| 2026-11-14 | T2: 初回は low の1候補・失敗は medium で修復（cheap-first）と import/open の整形。dev_unseen 20題で回答完成30秒以内 9→12〜13/20、費用 US$0.032→0.012〜0.016/問。tuning 14題は 8→13/14。n=20、実 Terra、API 往復は固定1.1秒の代用、既定 off | [t2-cheap-first](entries/2026-11-14-t2-cheap-first.md) |
