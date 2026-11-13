@@ -6,10 +6,11 @@ import hashlib
 import ipaddress
 import json
 import os
+import re
 import socket
 import ssl
 from fractions import Fraction
-from http.client import HTTPSConnection
+from http.client import HTTPException, HTTPSConnection
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from threading import Lock
 
@@ -23,6 +24,213 @@ RATES = {
 LIMIT = (
     700_000  # Reserve a separate production test budget inside the thread's total $1.
 )
+ROLLOVER_SCHEMA = "pals.local-qualification-budget-rollover.v1"
+APPROVAL_SCHEMA = "pals.local-qualification-budget-rollover-approval.v1"
+APPROVAL_KEYS = {
+    "schema_version",
+    "approved_by",
+    "approved_at",
+    "approval_text",
+    "closed_ledger_sha256",
+    "new_limit_microusd",
+}
+ROLLOVER_KEYS = {
+    "schema_version",
+    "rolled_over_from_sha256",
+    "closed_totals",
+    "approval_sha256",
+    "rolled_over_at",
+}
+_SHA256 = re.compile(r"[0-9a-f]{64}")
+_REASON = re.compile(r"[a-z0-9_]{1,48}")
+# Closed, non-sensitive codes for a forward whose cost stays unknown. Never response text.
+_VALUE_REASONS = {
+    "upstream_too_large": "body_too_large",
+    "upstream_model_changed": "model_mismatch",
+    "upstream_standard_tier_unconfirmed": "service_tier",
+    "usage_exceeds_reservation": "usage_above_reservation",
+    "long_context_price_not_admitted": "usage_above_reservation",
+    "unknown_price_or_usage": "unparseable_usage",
+    "upstream_ip_not_public": "upstream_ip_not_public",
+}
+
+
+def unknown_reason(error):
+    """Which condition left a reserved call without a known cost."""
+    if isinstance(error, (json.JSONDecodeError, UnicodeDecodeError)):
+        return "unparseable_body"
+    if isinstance(error, TimeoutError):
+        return "timeout"
+    # Before ValueError: a certificate verification failure is both.
+    if isinstance(error, ssl.SSLError):
+        return "upstream_tls_error"
+    if isinstance(error, ValueError):
+        code = str(error)
+        if re.fullmatch(r"upstream_status_[0-9]{3}", code):
+            return code
+        return _VALUE_REASONS.get(code, "internal_error")
+    if isinstance(error, OSError):
+        return "upstream_transport_error"
+    if isinstance(error, HTTPException):
+        return "upstream_protocol_error"
+    if isinstance(error, (KeyError, TypeError, AttributeError)):
+        return "unparseable_usage"
+    return "internal_error"
+
+
+def validate_approval(approval):
+    """The owner's record: who, when, in which words, which ledger, which new bound."""
+    if (
+        type(approval) is not dict
+        or set(approval) != APPROVAL_KEYS
+        or approval["schema_version"] != APPROVAL_SCHEMA
+        or any(
+            type(approval[name]) is not str or not approval[name].strip()
+            for name in ("approved_by", "approved_at", "approval_text")
+        )
+        or not re.fullmatch(
+            r"[0-9]{4}-[0-9]{2}-[0-9]{2}(T[0-9:.+Z-]{1,24})?", approval["approved_at"]
+        )
+        or type(approval["closed_ledger_sha256"]) is not str
+        or not _SHA256.fullmatch(approval["closed_ledger_sha256"])
+    ):
+        raise ValueError("rollover_approval_record_invalid")
+    limit = approval["new_limit_microusd"]
+    if type(limit) is not int or not 0 < limit <= LIMIT:
+        raise ValueError("rollover_new_limit_invalid")
+    return approval
+
+
+def closed_totals(ledger):
+    """What a closed ledger leaves behind, including everything closed before it."""
+    calls = ledger["calls"]
+    reasons = {}
+    for row in calls:
+        if row["state"] == "unknown":
+            reason = row.get("unknown_reason", "not_recorded")
+            reasons[reason] = reasons.get(reason, 0) + 1
+    totals = {
+        "calls": len(calls),
+        "actual_microusd": ledger["actual_microusd"],
+        "reserved_microusd": ledger["reserved_microusd"],
+        "unknown_calls": sum(reasons.values()),
+        "unknown_reasons": reasons,
+        "limit_microusd": ledger["limit_microusd"],
+        "blocked": ledger["blocked"],
+    }
+    if (
+        any(
+            type(totals[name]) is not int or totals[name] < 0
+            for name in ("actual_microusd", "reserved_microusd", "limit_microusd")
+        )
+        or type(totals["blocked"]) is not bool
+    ):
+        raise ValueError("rollover_closed_ledger_invalid")
+    before = (ledger.get("rollover") or {}).get("closed_totals", {}).get("cumulative")
+    before = before or {"ledgers": 0, "actual_microusd": 0, "reserved_microusd": 0}
+    totals["cumulative"] = {
+        "ledgers": before["ledgers"] + 1,
+        "actual_microusd": before["actual_microusd"] + totals["actual_microusd"],
+        "reserved_microusd": before["reserved_microusd"] + totals["reserved_microusd"],
+    }
+    return totals
+
+
+def require_rollover_eligible(ledger):
+    """Only a ledger that can never be resumed may be closed; a healthy one continues."""
+    states = [row["state"] for row in ledger["calls"]]
+    if "reserved" in states:
+        # The outcome of that call was never recorded. It is not this tool's to guess.
+        raise ValueError("rollover_call_in_flight_refused")
+    if not (
+        ledger["blocked"]
+        or any(state != "completed" for state in states)
+        or ledger["reserved_microusd"] != ledger["actual_microusd"]
+    ):
+        raise ValueError("rollover_healthy_ledger_refused")
+
+
+def _closed_file(path):
+    if path.is_symlink() or not path.is_file():
+        raise ValueError("rollover_archive_missing")
+    return path.read_bytes()
+
+
+STARTED_MARKER = "started.json"
+
+
+def rollover_archive(ledger, directory):
+    return directory / ("closed-" + ledger["rollover"]["rolled_over_from_sha256"])
+
+
+def mark_rollover_started(archive):
+    """Record, once and for ever, that the ledger opened from ``archive`` was used.
+
+    Created exclusively before the first reservation is written. From then on a ledger
+    without calls for this archive is a reset, whatever bytes it is restored from.
+    """
+    path = archive / STARTED_MARKER
+    try:
+        descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o400)
+    except FileExistsError:
+        return False
+    with os.fdopen(descriptor, "w") as output:
+        output.write(
+            json.dumps({"schema_version": ROLLOVER_SCHEMA + ".started"}) + "\n"
+        )
+        output.flush()
+        os.fsync(output.fileno())
+    return True
+
+
+def validate_rollover(ledger, directory):
+    """Prove a rolled-over ledger against its archive; returns the approved bound.
+
+    The ledger names the closed ledger and the approval by hash. Both are re-read from
+    ``closed-<sha256>/`` next to it, so a header without its archive, an edited archive,
+    another approval or another bound is refused everywhere a ledger is accepted.
+    The approval is single-use: once the opened ledger has been used (the started
+    marker exists), a ledger without calls is refused for this archive.
+    """
+    header = ledger.get("rollover")
+    if (
+        type(header) is not dict
+        or set(header) != ROLLOVER_KEYS
+        or header["schema_version"] != ROLLOVER_SCHEMA
+        or type(header["rolled_over_at"]) is not str
+        or any(
+            type(header[name]) is not str or not _SHA256.fullmatch(header[name])
+            for name in ("rolled_over_from_sha256", "approval_sha256")
+        )
+    ):
+        raise ValueError("rollover_header_invalid")
+    archive = directory / ("closed-" + header["rolled_over_from_sha256"])
+    if archive.is_symlink() or not archive.is_dir():
+        raise ValueError("rollover_archive_missing")
+    closed_raw = _closed_file(archive / "ledger.json")
+    approval_raw = _closed_file(archive / "approval.json")
+    if hashlib.sha256(closed_raw).hexdigest() != header["rolled_over_from_sha256"]:
+        raise ValueError("rollover_closed_ledger_changed")
+    if hashlib.sha256(approval_raw).hexdigest() != header["approval_sha256"]:
+        raise ValueError("rollover_approval_changed")
+    try:
+        closed, approval = json.loads(closed_raw), json.loads(approval_raw)
+        validate_approval(approval)
+        require_rollover_eligible(closed)
+        totals = closed_totals(closed)
+    except (KeyError, TypeError, AttributeError, json.JSONDecodeError):
+        raise ValueError("rollover_archive_invalid") from None
+    if approval["closed_ledger_sha256"] != header["rolled_over_from_sha256"]:
+        raise ValueError("rollover_approval_names_another_ledger")
+    if ledger.get("limit_microusd") != approval["new_limit_microusd"]:
+        raise ValueError("rollover_limit_differs_from_approval")
+    if header["closed_totals"] != totals:
+        raise ValueError("rollover_closed_totals_changed")
+    marker = archive / STARTED_MARKER
+    if not ledger.get("calls") and (marker.exists() or marker.is_symlink()):
+        # Spending was recorded after this rollover. Zero calls now is a reset.
+        raise ValueError("rollover_already_started_no_reset")
+    return approval["new_limit_microusd"]
 
 
 def cost(model, inputs, outputs):
@@ -75,6 +283,9 @@ class Budget:
         self.blocked = False
         self.calls = []
         self.resumed_from_sha256 = None
+        self.limit = LIMIT
+        self.rollover = None
+        self.started = False
         if path.exists():
             raw = path.read_bytes()
             if (
@@ -83,9 +294,15 @@ class Budget:
             ):
                 raise ValueError("existing_budget_no_automatic_retry")
             old = json.loads(raw)
+            rolled = old.get("rollover") is not None
+            if rolled:
+                # Only the owner-approved rollover may start from zero calls, and only
+                # with its archive and approval intact. Its bound is never raised.
+                self.limit = validate_rollover(old, path.parent)
+                self.rollover = old["rollover"]
             if (
                 old["blocked"]
-                or not old["calls"]
+                or (not old["calls"] and not rolled)
                 or old["reserved_microusd"] != old["actual_microusd"]
             ):
                 raise ValueError("uncertain_budget_cannot_resume")
@@ -99,10 +316,14 @@ class Budget:
                 total += value
             if (
                 total != old["actual_microusd"]
-                or total > LIMIT
-                or old["limit_microusd"] < LIMIT
+                or total > self.limit
+                or (not rolled and old["limit_microusd"] < LIMIT)
             ):
                 raise ValueError("previous_budget_total_changed")
+            if rolled and old["calls"]:
+                # A used ledger always has its marker, also after a manual removal.
+                mark_rollover_started(rollover_archive(old, path.parent))
+                self.started = True
             self.actual = self.held = total
             self.calls = old["calls"]
             self.resumed_from_sha256 = resume_sha256
@@ -112,12 +333,13 @@ class Budget:
         self.path.write_text(
             json.dumps(
                 {
-                    "limit_microusd": LIMIT,
+                    "limit_microusd": self.limit,
                     "reserved_microusd": self.held,
                     "actual_microusd": self.actual,
                     "blocked": self.blocked,
                     "calls": self.calls,
                     "resumed_from_sha256": self.resumed_from_sha256,
+                    "rollover": self.rollover,
                 },
                 sort_keys=True,
             )
@@ -127,8 +349,18 @@ class Budget:
     def reserve(self, model, inputs, outputs):
         amount = cost(model, inputs, outputs)
         with self.lock:
-            if self.blocked or self.held + amount > LIMIT:
+            if self.blocked or self.held + amount > self.limit:
                 raise ValueError("aggregate_budget_exceeded")
+            if self.rollover is not None and not self.started:
+                # Before the first call of a rolled-over ledger is written or forwarded.
+                archive = rollover_archive(
+                    {"rollover": self.rollover}, self.path.parent
+                )
+                if not mark_rollover_started(archive):
+                    # Another ledger for this archive was used already.
+                    self.blocked = True
+                    raise ValueError("rollover_already_started_no_reset")
+                self.started = True
             self.held += amount
             self.calls.append(
                 {
@@ -164,10 +396,16 @@ class Budget:
             )
             self.save()
 
-    def uncertain(self, index):
+    def uncertain(self, index, reason="not_recorded"):
         with self.lock:
             self.blocked = True
             self.calls[index]["state"] = "unknown"
+            # A closed code only: which condition fired, never provider or request text.
+            self.calls[index]["unknown_reason"] = (
+                reason
+                if type(reason) is str and _REASON.fullmatch(reason)
+                else "internal_error"
+            )
             self.save()
 
 
@@ -195,7 +433,7 @@ def upstream(path, payload):
         )
         response = connection.getresponse()
         if response.status != 200:
-            raise ValueError("upstream_not_exact")
+            raise ValueError("upstream_status_%03d" % response.status)
         raw = response.read(8 * 1024 * 1024 + 1)
         if len(raw) > 8 * 1024 * 1024:
             raise ValueError("upstream_too_large")
@@ -281,9 +519,9 @@ class Handler(BaseHTTPRequestHandler):
             actual_out = 0 if outputs == 0 else usage["output_tokens"]
             self.server.budget.complete(index, actual_in, actual_out)
             self.respond(200, raw)
-        except Exception:  # noqa: BLE001 - Every ambiguous paid forward must retain its reservation.
+        except Exception as error:  # noqa: BLE001 - Every ambiguous paid forward must retain its reservation.
             if index is not None:
-                self.server.budget.uncertain(index)
+                self.server.budget.uncertain(index, unknown_reason(error))
             self.respond(
                 402,
                 b'{"error":{"message":"local_provider_budget_or_dependency_failed","type":"local_budget"}}',
