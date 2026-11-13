@@ -156,12 +156,41 @@ def _closed_file(path):
     return path.read_bytes()
 
 
+STARTED_MARKER = "started.json"
+
+
+def rollover_archive(ledger, directory):
+    return directory / ("closed-" + ledger["rollover"]["rolled_over_from_sha256"])
+
+
+def mark_rollover_started(archive):
+    """Record, once and for ever, that the ledger opened from ``archive`` was used.
+
+    Created exclusively before the first reservation is written. From then on a ledger
+    without calls for this archive is a reset, whatever bytes it is restored from.
+    """
+    path = archive / STARTED_MARKER
+    try:
+        descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o400)
+    except FileExistsError:
+        return False
+    with os.fdopen(descriptor, "w") as output:
+        output.write(
+            json.dumps({"schema_version": ROLLOVER_SCHEMA + ".started"}) + "\n"
+        )
+        output.flush()
+        os.fsync(output.fileno())
+    return True
+
+
 def validate_rollover(ledger, directory):
     """Prove a rolled-over ledger against its archive; returns the approved bound.
 
     The ledger names the closed ledger and the approval by hash. Both are re-read from
     ``closed-<sha256>/`` next to it, so a header without its archive, an edited archive,
     another approval or another bound is refused everywhere a ledger is accepted.
+    The approval is single-use: once the opened ledger has been used (the started
+    marker exists), a ledger without calls is refused for this archive.
     """
     header = ledger.get("rollover")
     if (
@@ -197,6 +226,10 @@ def validate_rollover(ledger, directory):
         raise ValueError("rollover_limit_differs_from_approval")
     if header["closed_totals"] != totals:
         raise ValueError("rollover_closed_totals_changed")
+    marker = archive / STARTED_MARKER
+    if not ledger.get("calls") and (marker.exists() or marker.is_symlink()):
+        # Spending was recorded after this rollover. Zero calls now is a reset.
+        raise ValueError("rollover_already_started_no_reset")
     return approval["new_limit_microusd"]
 
 
@@ -252,6 +285,7 @@ class Budget:
         self.resumed_from_sha256 = None
         self.limit = LIMIT
         self.rollover = None
+        self.started = False
         if path.exists():
             raw = path.read_bytes()
             if (
@@ -286,6 +320,10 @@ class Budget:
                 or (not rolled and old["limit_microusd"] < LIMIT)
             ):
                 raise ValueError("previous_budget_total_changed")
+            if rolled and old["calls"]:
+                # A used ledger always has its marker, also after a manual removal.
+                mark_rollover_started(rollover_archive(old, path.parent))
+                self.started = True
             self.actual = self.held = total
             self.calls = old["calls"]
             self.resumed_from_sha256 = resume_sha256
@@ -313,6 +351,16 @@ class Budget:
         with self.lock:
             if self.blocked or self.held + amount > self.limit:
                 raise ValueError("aggregate_budget_exceeded")
+            if self.rollover is not None and not self.started:
+                # Before the first call of a rolled-over ledger is written or forwarded.
+                archive = rollover_archive(
+                    {"rollover": self.rollover}, self.path.parent
+                )
+                if not mark_rollover_started(archive):
+                    # Another ledger for this archive was used already.
+                    self.blocked = True
+                    raise ValueError("rollover_already_started_no_reset")
+                self.started = True
             self.held += amount
             self.calls.append(
                 {

@@ -102,6 +102,11 @@ def rollover(runtime, approval_path, approval_sha256, *, guard_running_=None, no
         raise Refusal(str(error)) from None
     archive = budget / ("closed-" + closed_sha256)
     if archive.exists() or archive.is_symlink():
+        # Single use: once the ledger opened from this archive has recorded a call,
+        # neither this approval nor this closed ledger can open another one.
+        marker = archive / proxy.STARTED_MARKER
+        if marker.exists() or marker.is_symlink():
+            raise Refusal("rollover_already_used")
         # Never written twice and never edited: an existing archive must already be exact.
         if (
             archive.is_symlink()

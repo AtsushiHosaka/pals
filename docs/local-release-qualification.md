@@ -232,14 +232,22 @@ by hand. On an empty server `bootstrap_database.py`:
 2. installs the sealed catalog, the legacy local release and the model/settings/guest/typed
    catalog storage as before;
 3. reads the candidate's serving start (`app/infrastructure/bootstrap.py`) for every
-   imported `preflight`, runs each read-only, and for one that fails runs the candidate's
-   own release migrator: the single `app/release/*_migration.py` that imports from the
-   preflight's module and exposes `apply(database_url)`. With the current candidate that is
-   exactly `app.release.explanation_retry_migration`, without which the API refuses to
-   serve. No SQL is copied into this repository. A failing preflight without exactly one
-   such migrator is reported in the bootstrap output and left to the API's own start; a
-   migration after which the preflight still fails is
-   `local_serving_migration_failed:<module>`;
+   module-level import of a `preflight` and runs each read-only. It can install exactly
+   one kind of migration: a release module with a module-level `apply(database_url)`,
+   found as the preflight's own module or as the single `app/release/*_migration.py` that
+   imports from it. With the current candidate the start imports seven preflights and
+   only one of them has such a migrator, `app.release.explanation_retry_migration`; that
+   is the only migration this step applies. The other six (`proof_requests`,
+   `chat_shares`, `chat_experience`, `project_materials`, `project_materials_ocr`,
+   `reply_language`) are installed in step 2 by the legacy local release, not here. No
+   SQL is copied into this repository. The bootstrap result lists under
+   `not_applicable_migrators` every preflight module this step could not install whatever
+   its state, and under `serving_migrators` the state of each (`current`,
+   `installed_by:<module>`, `failing_no_discoverable_migrator`,
+   `not_checked_other_signature`). A future serving migration without a module-level
+   `apply(database_url)` is therefore reported by name, NOT applied; the API then refuses
+   to start and the migration must be added to the bootstrap deliberately. A migration
+   after which the preflight still fails is `local_serving_migration_failed:<module>`;
 4. grants `pals_api_schema_owner` column-level `UPDATE` on
    `proof_verification_candidates.candidate_id` and `proof_explanations.proof_job_id`,
    exactly the row locks `database_readiness.py` requires, and nothing else. A table-level
@@ -248,11 +256,9 @@ by hand. On an empty server `bootstrap_database.py`:
    `PALS_ENV=local`) and implies no production permission change.
 
 Every step is idempotent; a second run reports the preflights `current` and repeats the
-two grants without effect. Checked on 2026-11-13 against an empty throwaway
-`pgvector/pgvector:pg16` server without `pals_reliability_test`: one bootstrap run ended
-`actual_local_schema_ready`, the second preserved the data, and
-`database_readiness.inspect` accepted both functions. The API start itself was not part of
-that check.
+two grants without effect. The repository tests cover these steps with a faked database
+and a miniature source tree only; no test in this repository runs them against a real
+PostgreSQL server or starts the API.
 
 ### Leftover proof work of a failed capture
 
@@ -278,8 +284,16 @@ and proves that nothing is left. The job is `failed` with `pals.request_deadline
 the request `failed` with `proof_request_deadline_exceeded`; a worker that still receives
 the message acknowledges a failed job or finished request without a provider call. Rows are
 kept, not deleted. The subject records counts, previous states and SHA-256 digests of the
-identifiers under `preparation.leftover_local_jobs`. Local database only; a verified job
-whose explanation is unfinished and requests waiting in `needs_input` are not touched.
+identifiers under `preparation.leftover_local_jobs`. Local database only.
+
+Not ended, with or without the flag: a job that is already `verified` whose explanation
+is still `queued` or `generating` (with or without a request), and requests waiting in
+`needs_input`. A worker that receives such a verified job again may call the provider to
+write the explanation. The check does not refuse on them but counts them: the number is
+in the helper's output, in the subject (`preparation.leftover_local_jobs`) and in the
+preparation result as `verified_jobs_with_unfinished_explanation`. Look at it before a
+budget is used; when it is not zero, decide what to do with those jobs first. A verified
+job that has no explanation row at all is not counted.
 Private database URIs require the PostgreSQL scheme, exact local host/port/database and no
 query or fragment. Existing project roles and named containers must have the expected owner
 before preparation stops anything.
@@ -431,6 +445,13 @@ A blocked ledger, or one with an `unknown` call, can never be resumed: the proxy
 (`known_existing_budget_required_no_reset`). That stays true. The one way forward is an
 explicit rollover that the repository owner approves for exactly that ledger.
 
+The approval record is an audit record, not access control. It is not signed or otherwise
+authenticated: anyone who can write the runtime directory can write such a record, or
+edit the ledger, the archive and the marker described below. The hashes make a rollover
+deliberate, exact and visible to a reviewer; they do not prove who approved it. The
+reviewer of a qualification compares the recorded approval text and hashes with what the
+owner actually approved.
+
 1. Stop the stack's producers and the guard (the guard holds the ledger in memory):
    `docker stop pals-reliability-local-worker-1 pals-reliability-local-assessment-worker-1
    pals-reliability-local-recipe-reviewer-1 pals-reliability-local-worker-network-guard-1`.
@@ -484,6 +505,7 @@ closed so far).
 | `rollover_new_limit_invalid`, `rollover_approval_record_invalid` | bound above 700,000 or not a positive integer; missing, empty or additional field |
 | `rollover_requires_stopped_guard`, `rollover_guard_state_unknown` | the guard runs, or Docker could not be asked |
 | `rollover_approval_record_required`, `rollover_ledger_required`, `rollover_archive_differs` | missing or linked file; an existing archive with other bytes |
+| `rollover_already_used` | the ledger opened from this closed ledger has recorded a call; neither this approval nor another one for the same closed ledger opens a second one |
 
 Preparation and the proxy accept a ledger without calls only as the product of this tool,
 and both repeat the proof against the archive: the header's two hashes must match the
@@ -495,6 +517,18 @@ archive, an edited closed ledger, a raised bound, a removed header, a hand-made 
 ledger and a missing ledger (`existing_budget_ledger_required_no_reset`) are all still
 refused. The proxy enforces the approved bound instead of the fixed one and keeps the
 header across restarts.
+
+An approval is single-use. Before the proxy writes or forwards the first call of a
+rolled-over ledger it creates `closed-<sha256>/started.json` exclusively (mode 0400,
+synced). From then on a ledger without calls is refused for that archive by the proxy and
+by preparation (`rollover_already_started_no_reset`), whatever it is restored from:
+the ledger as the rollover wrote it, the `budget-before-prepare-<sha256>.json` copy
+preparation keeps, or the closed ledger followed by the same rollover command
+(`rollover_already_used`). Before the first call nothing has been spent, so restarting the
+proxy or repeating the same rollover yields the same empty ledger and is allowed. A
+further rollover needs a newly blocked ledger and a new approval record naming it. If the
+proxy stops between creating the marker and writing that first call, the ledger stays
+refused; no call was forwarded in that case.
 
 The rollover is visible to every reviewer of the qualification: the subject carries it as
 `guard.budget_rollover` with `guard.budget_limit_microusd` set to the approved bound, the

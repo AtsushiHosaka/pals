@@ -21,6 +21,15 @@ JOBS = (
 )
 
 
+# Not ended by this tool: an explanation still to be written for a job that is already
+# verified. A worker that receives that job again may call the provider for it.
+EXPLANATIONS = (
+    "SELECT count(*) FROM public.proof_explanations e JOIN public.proof_jobs j "
+    "ON j.id=e.proof_job_id WHERE j.state='verified' "
+    "AND e.state IN ('queued','generating')"
+)
+
+
 def terminal_job_states():
     # The candidate's own definition, so a new state is never treated as finished here.
     from app.domain.models.proof_job import TERMINAL_PROOF_JOB_STATES
@@ -44,6 +53,14 @@ def leftovers(connection, terminal):
         else []
     )
     return requests, jobs
+
+
+def unfinished_explanations(connection):
+    present = connection.execute(
+        "SELECT to_regclass('public.proof_jobs') IS NOT NULL "
+        "AND to_regclass('public.proof_explanations') IS NOT NULL"
+    ).fetchone()
+    return connection.execute(EXPLANATIONS).fetchone()[0] if present[0] else 0
 
 
 def summary(requests, jobs):
@@ -104,6 +121,10 @@ def inspect(url, *, fail=False, connect=None, terminal=None):
         connection.execute("SET LOCAL statement_timeout='20s'")
         requests, jobs = leftovers(connection, terminal)
         result = summary(requests, jobs)
+        # Reported, never ended and never a refusal: see the documentation.
+        result["verified_jobs_with_unfinished_explanation"] = unfinished_explanations(
+            connection
+        )
         if not requests and not jobs:
             return {"state": "none", **result}
         if not fail:

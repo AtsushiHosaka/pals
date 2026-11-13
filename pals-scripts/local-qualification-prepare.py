@@ -281,6 +281,7 @@ def require_no_leftover_jobs(runtime, api_source, api_python, *, fail, run_=None
             "job_states",
             "request_sha256",
             "job_sha256",
+            "verified_jobs_with_unfinished_explanation",
         )
         if key in result
     }
@@ -907,6 +908,10 @@ def main():
         "compiler_canary": canary,
         "provider_tls": served,
         "all_lane_cost_microusd": budget["actual_microusd"],
+        # Shown before any budget is used: work this driver reports but does not end.
+        "verified_jobs_with_unfinished_explanation": leftover_jobs.get(
+            "verified_jobs_with_unfinished_explanation"
+        ),
         "budget_limit_microusd": budget["limit_microusd"],
     }
     gate.private_json(r / "preparation-result.json", result)

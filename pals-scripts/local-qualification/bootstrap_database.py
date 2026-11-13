@@ -154,10 +154,22 @@ def apply_serving_migrators(api_source, url, *, import_module=importlib.import_m
 
     Never stricter than serving itself: a failing preflight without exactly one
     discoverable migrator is reported, and the API's own start remains the judge.
+    Returns the status per preflight module and the names of the modules this
+    bootstrap can NOT install whatever their state, because no single module-level
+    ``apply(database_url)`` exists for them.
     """
     report = {}
+    not_applicable = []
     for module_name in serving_preflight_modules(api_source):
         preflight = getattr(import_module(module_name), "preflight", None)
+        try:
+            migrator = release_migrator(
+                api_source, module_name, import_module=import_module
+            )
+        except Exception:  # noqa: BLE001 - An unimportable candidate is not a migrator.
+            migrator = None
+        if migrator is None:
+            not_applicable.append(module_name)
         if not callable(preflight) or not _takes_only_database_url(preflight):
             report[module_name] = "not_checked_other_signature"
             continue
@@ -167,9 +179,6 @@ def apply_serving_migrators(api_source, url, *, import_module=importlib.import_m
             continue
         except Exception:  # noqa: BLE001 - Any refusal of the read-only check means "not installed".
             pass
-        migrator = release_migrator(
-            api_source, module_name, import_module=import_module
-        )
         if migrator is None:
             report[module_name] = "failing_no_discoverable_migrator"
             continue
@@ -180,7 +189,7 @@ def apply_serving_migrators(api_source, url, *, import_module=importlib.import_m
         except Exception:  # noqa: BLE001 - Closed code; the cause is the candidate's own.
             raise ValueError("local_serving_migration_failed:" + name) from None
         report[module_name] = "installed_by:" + name
-    return report
+    return report, not_applicable
 
 
 def main():
@@ -326,7 +335,7 @@ def main():
     from app.release.typed_catalog import install
 
     install(url)
-    serving = apply_serving_migrators(a.api_source.resolve(), url)
+    serving, not_applicable = apply_serving_migrators(a.api_source.resolve(), url)
     with psycopg.connect(url) as c:
         rowlocks = grant_rowlock_privileges(c)
     print(
@@ -336,6 +345,7 @@ def main():
                 "profile": "legacy-local-v1 + model/settings/guest/typed catalog",
                 "preserved_existing_data": not empty,
                 "serving_migrators": serving,
+                "not_applicable_migrators": not_applicable,
                 "rowlock_column_grants": rowlocks,
             }
         )

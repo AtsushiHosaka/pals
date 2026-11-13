@@ -1,5 +1,6 @@
 """Contract/failure tests only. These never qualify a release or contact a provider."""
 
+import ast
 import importlib.util
 import inspect
 import io
@@ -2471,6 +2472,93 @@ class BudgetRolloverAcceptanceTests(BudgetRolloverFixture):
         )
         self.assertEqual(again.rollover, saved["rollover"])
 
+    def spend_once(self):
+        budget = proxy.Budget(
+            self.ledger, resume_sha256=sha256(self.ledger.read_bytes())
+        )
+        budget.complete(budget.reserve("gpt-6.1-terra", 1000, 1000), 1000, 100)
+        return budget
+
+    def assert_reset_refused(self):
+        raw = self.ledger.read_bytes()
+        with self.assertRaises(ValueError) as caught:
+            proxy.Budget(self.ledger, resume_sha256=sha256(raw))
+        self.assertEqual(str(caught.exception), "rollover_already_started_no_reset")
+        with self.assertRaises(prepare.gate.Refusal) as caught:
+            prepare.require_known_budget(self.ledger)
+        self.assertEqual(
+            str(caught.exception),
+            "budget_rollover_not_proven:rollover_already_started_no_reset",
+        )
+        self.assertEqual(self.ledger.read_bytes(), raw)
+
+    def test_restored_zero_call_ledger_cannot_reset_spending_after_first_use(self):
+        closed, _, _ = self.rolled()
+        archive = self.runtime / "budget" / ("closed-" + sha256(closed))
+        opened = self.ledger.read_bytes()
+        # The copy preparation itself keeps of the ledger it adopted.
+        backup = self.runtime / ("budget-before-prepare-" + sha256(opened) + ".json")
+        backup.write_bytes(opened)
+        # Unused, the ledger may be started any number of times: nothing was spent.
+        proxy.Budget(self.ledger, resume_sha256=sha256(opened))
+        started_unused = self.ledger.read_bytes()
+        proxy.Budget(self.ledger, resume_sha256=sha256(started_unused))
+        prepare.require_known_budget(self.ledger)
+        self.assertFalse((archive / proxy.STARTED_MARKER).exists())
+        self.spend_once()
+        spent = self.ledger.read_bytes()
+        marker = archive / proxy.STARTED_MARKER
+        self.assertTrue(marker.is_file())
+        self.assertEqual(stat.S_IMODE(marker.stat().st_mode), 0o400)
+        for restored in (backup.read_bytes(), opened, started_unused):
+            self.ledger.write_bytes(restored)
+            self.assert_reset_refused()
+        # The ledger with its recorded call continues, and restores a removed marker.
+        self.ledger.write_bytes(spent)
+        marker.chmod(0o600)
+        marker.unlink()
+        again = proxy.Budget(self.ledger, resume_sha256=sha256(spent))
+        self.assertEqual(again.actual, 1750)
+        self.assertTrue(marker.is_file())
+        self.ledger.write_bytes(opened)
+        self.assert_reset_refused()
+
+    def test_approval_and_closed_ledger_open_a_new_ledger_only_once(self):
+        closed, digest, _ = self.rolled()
+        path = self.runtime / "approval.json"
+        # Unused: repeating the rollover yields the same zero state, never more budget.
+        self.ledger.write_bytes(closed)
+        self.roll(path, digest)
+        self.spend_once()
+        spent = self.ledger.read_bytes()
+        self.ledger.write_bytes(closed)
+        self.assertEqual(self.refused(path, digest), "rollover_already_used")
+        # Another approval for the same closed ledger is refused as well.
+        other, other_digest = self.approval(approval_text="approved once more")
+        self.assertNotEqual(other_digest, digest)
+        self.assertEqual(self.refused(other, other_digest), "rollover_already_used")
+        self.assertEqual(self.ledger.read_bytes(), closed)
+        self.assertEqual(len(list((self.runtime / "budget").glob("closed-*"))), 1)
+        # Only the ledger that carries the spending continues.
+        self.ledger.write_bytes(spent)
+        self.assertEqual(
+            prepare.require_known_budget(self.ledger)[1]["calls"][0]["state"],
+            "completed",
+        )
+
+    def test_two_proxies_started_from_the_same_zero_call_ledger(self):
+        self.rolled()
+        opened = self.ledger.read_bytes()
+        first = proxy.Budget(self.ledger, resume_sha256=sha256(opened))
+        self.ledger.write_bytes(opened)
+        second = proxy.Budget(self.ledger, resume_sha256=sha256(opened))
+        first.reserve("gpt-6-luna", 1, 1)
+        with self.assertRaises(ValueError) as caught:
+            second.reserve("gpt-6-luna", 1, 1)
+        self.assertEqual(str(caught.exception), "rollover_already_started_no_reset")
+        self.assertEqual(second.calls, [])
+        self.assertTrue(second.blocked)
+
     def test_prepare_accepts_it_and_binds_the_approved_bound(self):
         self.rolled()
         raw, previous, limit = prepare.require_known_budget(self.ledger)
@@ -2882,6 +2970,10 @@ class FakeConnection:
             result = (parameters[1].split(".")[1] in state.get("table_update", ()),)
         elif "pg_database" in statement:
             result = (1,) if state.get("database") else None
+        elif "FROM public.proof_explanations e" in statement:
+            result = (state.get("explanations", 0),)
+        elif "to_regclass" in statement and "AND to_regclass" in statement:
+            result = (all(state.get("tables", (True, True))),)
         elif "to_regclass" in statement:
             result = state.get("tables", (True, True))
         elif "FROM public.proof_requests WHERE" in statement:
@@ -3074,7 +3166,12 @@ class ServingMigratorTests(ServingMigratorFixture):
 
     def test_empty_database_gets_the_candidates_own_migrator_once(self):
         url = "postgresql://local/pals"
-        report = bootstrap.apply_serving_migrators(self.source, url)
+        report, not_applicable = bootstrap.apply_serving_migrators(self.source, url)
+        # Named explicitly: what this bootstrap could never install, whatever its state.
+        self.assertEqual(
+            not_applicable,
+            ["app.release.keyed_migration", "app.release.orphan_schema"],
+        )
         self.assertEqual(
             report,
             {
@@ -3091,7 +3188,7 @@ class ServingMigratorTests(ServingMigratorFixture):
         self.assertEqual(current.CALLS, ["preflight"])
         # Second bootstrap: already current, the migrator is not run again.
         self.state().write_text("kept")
-        report = bootstrap.apply_serving_migrators(self.source, url)
+        report, _ = bootstrap.apply_serving_migrators(self.source, url)
         self.assertEqual(report[self.RETRY], "current")
         self.assertEqual(self.state().read_text(), "kept")
 
@@ -3114,11 +3211,12 @@ class ServingMigratorTests(ServingMigratorFixture):
             bootstrap.migrator_candidates(self.source, self.RETRY),
             ["app.release.retry_migration", "app.release.second_migration"],
         )
-        report = bootstrap.apply_serving_migrators(
+        report, not_applicable = bootstrap.apply_serving_migrators(
             self.source, "postgresql://local/pals"
         )
         self.assertEqual(report[self.RETRY], "failing_no_discoverable_migrator")
         self.assertFalse(self.state().exists())
+        self.assertIn(self.RETRY, not_applicable)
 
     @unittest.skipUnless(
         (ROOT.parent / "pals-api/app/infrastructure/bootstrap.py").is_file(),
@@ -3133,6 +3231,18 @@ class ServingMigratorTests(ServingMigratorFixture):
             bootstrap.migrator_candidates(api, schema),
             ["app.release.explanation_retry_migration"],
         )
+        # Every other serving preflight has no module-level apply(database_url): the
+        # bootstrap reports those by name and never installs them.
+        for module in modules:
+            if module == schema:
+                continue
+            file = api / (module.replace(".", "/") + ".py")
+            functions = [
+                node
+                for node in ast.parse(file.read_text()).body
+                if isinstance(node, ast.FunctionDef) and node.name == "apply"
+            ]
+            self.assertEqual(functions, [], module)
 
 
 class LeftoverJobTests(unittest.TestCase):
@@ -3183,6 +3293,7 @@ class LeftoverJobTests(unittest.TestCase):
         self.assertEqual(result["request_statuses"], {"verifying": 1})
         self.assertEqual(result["job_states"], {"repairing": 1})
         self.assertEqual(result["job_sha256"], [sha256(b"job-identifier")])
+        self.assertEqual(result["verified_jobs_with_unfinished_explanation"], 0)
         self.assertNotIn("identifier", json.dumps(result))
         # Read only unless asked: no statement but SET and SELECT was sent.
         for statement, _ in connections[1].statements:
@@ -3210,6 +3321,32 @@ class LeftoverJobTests(unittest.TestCase):
             with self.assertRaises(ValueError) as caught:
                 self.inspect(state, fail=True)
         self.assertEqual(str(caught.exception), "leftover_local_jobs_not_ended")
+
+    def test_verified_job_with_unfinished_explanation_is_reported_not_ended(self):
+        state = {"database": True, "requests": [], "jobs": [], "explanations": 2}
+        ended = []
+        with patch.object(leftover_jobs, "fail_leftovers", lambda *a: ended.append(a)):
+            for fail in (False, True):
+                result, _ = self.inspect(state, fail=fail)
+                # Not a refusal and nothing is written: the operator is told the count.
+                self.assertEqual(result["state"], "none")
+                self.assertEqual(result["verified_jobs_with_unfinished_explanation"], 2)
+        self.assertEqual(ended, [])
+        self.assertIn("j.state='verified'", leftover_jobs.EXPLANATIONS)
+        self.assertIn("('queued','generating')", leftover_jobs.EXPLANATIONS)
+        result, _ = self.run_prepare_check(
+            {
+                "state": "none",
+                "requests": 0,
+                "jobs": 0,
+                "verified_jobs_with_unfinished_explanation": 2,
+            }
+        )
+        self.assertEqual(result["verified_jobs_with_unfinished_explanation"], 2)
+        self.assertIn(
+            '"verified_jobs_with_unfinished_explanation": leftover_jobs.get(',
+            inspect.getsource(prepare.main),
+        )
 
     def test_only_the_closed_local_database_is_ever_read(self):
         for bad in (
