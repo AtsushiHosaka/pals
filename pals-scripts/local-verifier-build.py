@@ -18,6 +18,13 @@ spec = importlib.util.spec_from_file_location(
 common = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(common)
 sha, need, run, reference = common.sha, common.need, common.run, common.reference
+spec = importlib.util.spec_from_file_location(
+    "local_verifier_archives", HERE / "local-verifier-archives.py"
+)
+archives = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(archives)
+SCHEMA = "pals.local-verifier-build.v2"
+PLAN_ARCHIVES_DIFFER = "native_plan_archive_differs_from_the_built_commit"
 LEAN = "leanprover/lean4:v4.32.0-rc1"
 LAKE = "290f048c4a499d34a3b21f8db30ade48a2b8d05b0fe79709f1868fa6748944fa"
 
@@ -85,6 +92,8 @@ def observe(ref, context, revision, image):
         ),
         "actual_native_build_output_changed",
     )
+    # See local-web-build.stored_build_record: the printed value depends on the cwd.
+    record["Context"] = str(context.resolve())
     return record
 
 
@@ -99,17 +108,38 @@ def main():
     if a.verify_receipt:
         old = json.loads(a.verify_receipt.read_bytes())
         need(
-            old["builder_sha256"] == sha(Path(__file__).read_bytes())
+            old.get("schema_version") == SCHEMA
+            and old["builder_sha256"] == sha(Path(__file__).read_bytes())
             and old["context_checker_sha256"]
-            == sha((HERE / "local-web-build.py").read_bytes()),
+            == sha((HERE / "local-web-build.py").read_bytes())
+            and old["archive_checker_sha256"]
+            == sha((HERE / "local-verifier-archives.py").read_bytes()),
             "native_builder_changed",
         )
-        for key in ("source_archive", "build_metadata", "build_record"):
+        for key in (
+            "build_archive",
+            "source_archive",
+            "recipe_archive",
+            "build_metadata",
+            "build_record",
+        ):
             need(
                 reference(Path(old[key]["path"])) == old[key],
                 "native_frozen_artifact_changed",
             )
-        archive = Path(old["source_archive"]["path"])
+        archive = Path(old["build_archive"]["path"])
+        # Both plan archives are re-derived from git at the commit and compared, member
+        # by member, with the complete archive this image was built from.
+        try:
+            archives.verify(
+                old["source_root"],
+                old["source_revision"],
+                archive,
+                {name: old[name] for name in archives.PROJECTIONS},
+                PLAN_ARCHIVES_DIFFER,
+            )
+        except ValueError:
+            raise ValueError(PLAN_ARCHIVES_DIFFER) from None
         need(
             run(
                 [
@@ -136,7 +166,11 @@ def main():
                 old["source_revision"],
                 old["built_image_id"],
             )
-            == json.loads(Path(old["build_record"]["path"]).read_bytes()),
+            == common.stored_build_record(
+                old["build_record"]["path"],
+                old["build_context"],
+                "native_actual_build_record_changed",
+            ),
             "native_actual_build_record_changed",
         )
         need(
@@ -165,6 +199,12 @@ def main():
         "native_exact_git_archive_changed",
     )
     a.output_dir.mkdir(mode=0o700, parents=True, exist_ok=False)
+    # The release plan pins two partial archives of this commit; the image needs more
+    # files than they hold. Derive both now and prove them against the complete archive
+    # before anything is built from it.
+    projections = archives.derive(
+        a.source_root, a.revision, a.source_archive, a.output_dir
+    )
     context = a.output_dir / "context"
     context.mkdir(mode=0o700)
     with tarfile.open(a.source_archive) as t:
@@ -252,10 +292,16 @@ def main():
         + "\n"
     )
     receipt = {
-        "schema_version": "pals.local-verifier-build.v1",
+        "schema_version": SCHEMA,
         "source_root": str(a.source_root.resolve()),
         "source_revision": a.revision,
-        "source_archive": reference(a.source_archive),
+        # What the image was built from: the complete archive of the commit.
+        "build_archive": reference(a.source_archive),
+        # What the release plan pins: `git archive <commit> pals_agent` and
+        # `git archive <commit> docker/lean-verifier.Dockerfile lean-workspace`.
+        "source_archive": reference(projections["source_archive"]),
+        "recipe_archive": reference(projections["recipe_archive"]),
+        "plan_archive_paths": {k: list(v) for k, v in archives.PROJECTIONS.items()},
         "dockerfile_sha256": sha(dockerfile.read_bytes()),
         "lean_version": LEAN,
         "lake_manifest_sha256": LAKE,
@@ -268,6 +314,9 @@ def main():
         "build_record_ref": ref,
         "builder_sha256": sha(Path(__file__).read_bytes()),
         "context_checker_sha256": sha((HERE / "local-web-build.py").read_bytes()),
+        "archive_checker_sha256": sha(
+            (HERE / "local-verifier-archives.py").read_bytes()
+        ),
         "actual_image_probe": probe(image["Id"]),
         "difference_scope": "native ARM64 and actual resolver/dependency versions; same exact source/Dockerfile/Lean/Mathlib; not production byte equivalence",
     }
