@@ -56,3 +56,4 @@
 | 2026-11-11 | T2 の5腕再測定（負荷15前後）: 並列レビュー・説明（nd_k2_par）は回答完成 p50 55.8→39.5 s だが nd_k2 と区別できない（n=14）。テンプレート＋補完は退行（最終成功 13→11/14、修復 6→20、費用 +68%）。Lean枠1は差なし。初回成功 7→13/14 は再現 | [t2-five-arm-measurement](entries/2026-11-11-t2-five-arm-measurement.md) |
 | 2026-11-12 | T2 の低負荷再測定（実際は負荷11.5前後のまま）: nd_k2_par の回答完成 p50 95.8→40.0 s、p90 332.7→112.5 s（実測）。p50 30 s は実測で未達、Lean を3 sに切った推計で18.1 s。worker 配線は pals-agent#119（既定 off）。n=14、1回 | [t2-lowload-remeasure](entries/2026-11-12-t2-lowload-remeasure.md) |
 | 2026-11-13 | 大学1年レベルの未使用の題 40 題（調整用20・最終確認用20）を追加。既存集合の easy は使い尽くしだった（tuning 17 全て使用、held_out 8 のうち未使用で命題固定なしは 3） | [freshman-eval-items](entries/2026-11-13-freshman-eval-items.md) |
+| 2026-11-14 | 高速な初回候補(PALS_FAST_FIRST_ATTEMPT、既定 off)を worker 経路で測定: dev_unseen 20 題の 10 秒以内は off 3 → 常駐 Lean ありの on 4 → なしの on 1。p50 は 29.8 → 33.4 / 33.1 s。tuning 14 題は 5 → 2。有効化は勧めない(n 小・負荷 5〜10・API 代用) | [fast-first-attempt-wiring](entries/2026-11-14-fast-first-attempt-wiring.md) |
