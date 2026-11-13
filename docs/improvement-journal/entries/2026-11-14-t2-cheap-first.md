@@ -45,6 +45,8 @@ tuning 14題:
 
 ## 何が分かり、何が分からないか
 - 同じ整形・patch を入れた単独 medium と cheap-first の差（30秒以内 9 → 12〜13、20題）が、強度を「初回 low・修復 medium」にした効果です。整形と patch の効果は、異種レースの構成に入れた測定がないため、前の構成との差から切り分けられません（`hetero_fix` の arm は用意したが未実行）。
+- cheap-first の「初回 low」は、effort だけでなく、候補0の短い証明を促すスタイル指示（`variant_instruction`）も prove のプロンプトに足します（独立レビューの指摘）。測定した arm はこの2つの変更を含み、効果を effort だけの効果とは言えません。
+- 名前の案内の文（既存フラグの背後）は「import は `import Mathlib` だけ」と言います。formal statement の header が別の import を持つ依頼とは食い違うので、整形は formal statement を持つ依頼では何もしません。
 - 初回成功の増加（9〜10 → 13〜14）は、整形と案内の追加が主と考えられます（保存済み候補の再コンパイルで 3/10 を確認）。
 - 繰り返しのばらつきは大きいです。cheap-first の同じ設定を2回測ると、30秒以内が 13 と 12、初回成功が 14 と 13、費用が US$0.012 と 0.016。n=20 の1回ずつでは、差が 1〜2題のものを区別できません。
 - p90 は依然として 89〜103 秒です。初回に落ちる題（`arctan-lipschitz`、`exp-two-x-derivative`、`limit-of-sum`、`reverse-triangle-inequality`、`integral-of-sine-over-half-period`）は、修復を重ねて 70〜110 秒かかります。これらは戦術の不足か補題名の誤りで、決定的な整形では直りません。
