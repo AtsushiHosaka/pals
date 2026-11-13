@@ -70,3 +70,4 @@
 | 2026-11-14 | Lean 検証後の意味の審査: 「明示的な N を与えよ」の ε-N の題は、Lean が N を与えない形では 16/16 却下、N を命題に含めると 5/6 承認、要求なしでは 16/16 承認。審査役の過剰な厳しさではなく形式化が要件を落としている | [semantic-review-explicit-n](entries/2026-11-14-semantic-review-explicit-n.md) |
 | 2026-11-14 | 届くための一般形の調査（カードは作らない）: 35 個の一般形で 36/90（tuning 28、dev_unseen 8）、うち 28 題は G が題の命題そのもの。2 題以上に届く一般形は 1 個（2 題）。費用 0 | [general-forms-needed](entries/2026-11-14-general-forms-needed.md) |
 | 2026-11-14 | スキーム論の第2回（11題 v2、Stacks の Tag 名指しを含む）。Tag を Mathlib の宣言に引く案内と未完成検査（pals-agent#134）で、依頼どおりの通過 6/11 → 9/11、Tag の3題は 226〜536 秒 → 41〜48 秒。T2 経路で p50 43 秒。n=1 | [scheme-theory-e2e-part2](entries/2026-11-14-scheme-theory-e2e-part2.md) |
+| 2026-11-14 | 要件（明示的な証人・指定された定義）を生成プロンプトに伝える指針（既定 off）: 回答が返る 11/12→9/12、却下 1→0、検証失敗 +3、費用 +43
