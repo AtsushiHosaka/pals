@@ -543,16 +543,41 @@ def budget_status(subject):
             ]
         )
     )
+    rollover = ledger.get("rollover")
+    limit = ledger["limit_microusd"]
     need(
         not ledger["blocked"]
-        and ledger["limit_microusd"]
-        == subject["guard"]["budget_limit_microusd"]
-        == 700000
+        and type(limit) is int
+        and limit == subject["guard"]["budget_limit_microusd"]
+        # Only an owner-approved rollover may carry a bound below the fixed one.
+        and (limit == 700000 if rollover is None else 0 < limit <= 700000)
         and all(x["state"] == "completed" for x in ledger["calls"])
-        and 0 <= ledger["actual_microusd"] == ledger["reserved_microusd"] <= 700000,
+        and 0 <= ledger["actual_microusd"] == ledger["reserved_microusd"] <= limit,
         "bounded_known_all_lane_provider_usage_required",
     )
+    # A rolled-over budget is never silent: the serving ledger must carry exactly the
+    # rollover the prepared subject recorded, and none when the subject records none.
+    need(
+        rollover == subject["guard"].get("budget_rollover"),
+        "budget_rollover_differs_from_subject",
+    )
     return ledger
+
+
+def budget_rollover_evidence(subject, ledger):
+    """What a reviewer of the capture must see when the budget was reset by approval."""
+    rollover = ledger.get("rollover")
+    if rollover is None:
+        return {"state": "none_continuous_ledger"}
+    return {
+        "state": "owner_approved_rollover",
+        "rolled_over_from_sha256": rollover["rolled_over_from_sha256"],
+        "approval_sha256": rollover["approval_sha256"],
+        "rolled_over_at": rollover["rolled_over_at"],
+        "closed_totals": rollover["closed_totals"],
+        "new_limit_microusd": ledger["limit_microusd"],
+        "subject_budget": subject["guard"].get("resumed_budget"),
+    }
 
 
 def database_readiness(subject, environment_file, *, require_frozen=True):
@@ -872,6 +897,9 @@ def main():
         record["runtime_before"] = before
         private_json(state / "latest.json", record)
         record["provider_budget_before"] = budget_status(subject)
+        record["budget_rollover"] = budget_rollover_evidence(
+            subject, record["provider_budget_before"]
+        )
         record["database_before"] = database_readiness(subject, args.database_env)
         if not prior:
             # Re-reading an accepted capture makes no provider call. A fresh capture
