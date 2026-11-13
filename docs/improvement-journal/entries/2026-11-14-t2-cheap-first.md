@@ -15,7 +15,7 @@ dev_unseen 20題の測定（head c16c0ae、worker 経路）で初回に通らな
 | 構文 | 2 | 変数名に `λ`（予約語）、`expected no space before` |
 | 文の形式化の誤り・時間切れ・検証待ち | 0 | — |
 
-（種類の数は、1題が複数の理由を持つ場合は主な診断で数えた。題数の合計が10に合わない場合は主診断を採用。上表は 4+4+2=10。）
+（1題が複数の理由を持つ場合は、主な診断で数えた。）
 
 ## 一般的な対策
 1. **決定的な整形** `pals_agent/lean_hygiene.py`（`PALS_T2_SOURCE_HYGIENE_ENABLED`、既定 off）: 冗長な `import Mathlib.*` を落として `import Mathlib` にし、`𝓝`・`ℝ≥0` などに必要な `open` を補う。定理文と証明は触らない。**保存済みの失敗候補を再コンパイルして、費用なしで効果を確かめた**: 10題のうち3題（`alternating`、`cube`、`image-of-intersection`）がこれだけで通る。残り7題は変わらない。
