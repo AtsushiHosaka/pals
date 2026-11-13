@@ -13,4 +13,4 @@
 - 判断: 採用（v2 の x² 検査の修正、結論の検査）。v1 の誤拒否そのもの（#252、#319 の誤拒否）は、プロンプトの変更が要るため未解決。
 - 限界・未確認: 試行数が小さい。誤拒否の判定は理由文の目視で、独立採点者なし。正規表現による判定。本番は未配備、フラグも変更していない。
 - 次にやること: 審査プロンプトの変更案（[別エントリ](2026-11-14-pr88-review-instruction-measured.md)）のオーナー判断。意味の審査の却下後の作り直し（API の状態遷移）。
-- 出典: `pals-agent/testdata/answer-accuracy-regression-v1/`（README と `results/`）、[pals#319](https://github.com/AtsushiHosaka/pals/issues/319)、[#252](https://github.com/AtsushiHosaka/pals/issues/252)、[#233](https://github.com/AtsushiHosaka/pals/issues/233)、[#223](https://github.com/AtsushiHosaka/pals/issues/223)。
+- 出典: [pals-agent#127](https://github.com/AtsushiHosaka/pals-agent/pull/127)（マージコミット 6323633d90e8fa1e93b964b524b92180c6445a24）、意味の審査の追加分は [pals-agent#130](https://github.com/AtsushiHosaka/pals-agent/pull/130)。記録の場所: `pals-agent/testdata/answer-accuracy-regression-v1/`（README と `results/`）、[pals#319](https://github.com/AtsushiHosaka/pals/issues/319)、[#252](https://github.com/AtsushiHosaka/pals/issues/252)、[#233](https://github.com/AtsushiHosaka/pals/issues/233)、[#223](https://github.com/AtsushiHosaka/pals/issues/223)。
