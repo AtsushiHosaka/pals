@@ -7,6 +7,8 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import os
+import re
 import subprocess
 import sys
 import tarfile
@@ -18,8 +20,56 @@ HERE = Path(__file__).resolve().parent
 OWNER = "01a1bb4b-dec2-76f0-a6fe-32405e465d6e"
 
 
+REQUIRED_MODULES = ("psycopg",)
+DIAGNOSTIC_LIMIT = 16 * 1024
+# The paid browser journey is bounded at 620 s; the local proxy certificate must outlive it.
+PROVIDER_TLS_CAPTURE_SECONDS = 1200
+_DIAGNOSTICS = {"directory": None}
+_SECRET_VALUES = set()
+# Redaction input is bounded too; the cut is moved to a line start (see persist_diagnostic).
+DIAGNOSTIC_SCAN_LIMIT = 64 * DIAGNOSTIC_LIMIT
+_SECRET_WORD = (
+    r"pass(?:word|wd|phrase)?|secret|token|api[_-]?key|private[_-]?key|credential"
+    r"|authorization|auth|hash[_-]?key|dsn|database[_-]?url"
+)
+_SECRET_NAME = re.compile(r"KEY|" + _SECRET_WORD, re.I)
+_QUOTED = r"""\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*'"""
+# Deliberately conservative: losing harmless text is acceptable, writing a secret is not.
+_SECRET_PATTERNS = (
+    (
+        re.compile(
+            r"-----BEGIN [A-Z0-9 ]+-----.*?(?:-----END [A-Z0-9 ]+-----|\Z)", re.S
+        ),
+        "<pem>",
+    ),
+    # A key block whose BEGIN line is not in the text still shows as encoded lines.
+    (re.compile(r"(?m)^[ \t]*[A-Za-z0-9+/=_-]{40,}[ \t]*$"), "<encoded>"),
+    # Whole userinfo up to the LAST "@" of the token: passwords may contain "/" or ":".
+    (re.compile(r"([A-Za-z][A-Za-z0-9+.-]*://)[^\s\"'<>]*@"), r"\1<credentials>@"),
+    (re.compile(r"(?i)\b(bearer|basic)\s+[A-Za-z0-9._~+/=-]{4,}"), r"\1 <token>"),
+    (re.compile(r"\bsk-[A-Za-z0-9_-]{8,}"), "<token>"),
+    (re.compile(r"\b(?:AKIA|ASIA)[A-Z0-9]{16}\b"), "<access-key>"),
+    (re.compile(r"\b\d{12}\b"), "<account>"),
+    # key=value, key: value, "key": "value", 'key': 'value' and dict/JSON reprs.
+    (
+        re.compile(
+            r"(?i)([\"']?[A-Za-z0-9_.-]*(?:"
+            + _SECRET_WORD
+            + r")[A-Za-z0-9_.-]*[\"']?\s*[:=]\s*)(?:"
+            + _QUOTED
+            + r"|[^\s,;}\])]+)"
+        ),
+        r"\1<redacted>",
+    ),
+)
+
+
 class Refusal(Exception):
-    pass
+    """Closed refusal code. ``detail`` names a private diagnostic file, never its content."""
+
+    def __init__(self, code, detail=None):
+        super().__init__(code)
+        self.detail = detail or {}
 
 
 def need(value, code):
@@ -48,11 +98,151 @@ def private_json(path, value):
     path.chmod(0o600)
 
 
+def require_modules(modules=REQUIRED_MODULES, *, prefix="release_python"):
+    # Fail before any dependency is touched. A missing driver otherwise surfaces much
+    # later as an unexplained child-process failure.
+    for name in modules:
+        try:
+            found = importlib.util.find_spec(name) is not None
+        except (ImportError, ValueError):
+            found = False
+        need(found, prefix + "_missing_module:" + name)
+
+
+def set_diagnostic_directory(path):
+    path = Path(path)
+    path.mkdir(mode=0o700, parents=True, exist_ok=True)
+    need(
+        not path.is_symlink() and path.stat().st_mode & 0o777 == 0o700,
+        "private_diagnostic_directory_required",
+    )
+    _DIAGNOSTICS["directory"] = path
+
+
+def _secret_parts(name, value):
+    """Exact values to hide for one environment entry, including URI credentials."""
+    if type(value) is not str or not value:
+        return
+    named = bool(_SECRET_NAME.search(name or ""))
+    # Short values are hidden only under a secret-looking name: hiding every short
+    # ordinary setting ("local", "true") would leave nothing readable.
+    if len(value) >= (4 if named else 8):
+        yield value
+    match = re.match(r"[A-Za-z][A-Za-z0-9+.-]*://([^\s]*)@", value)
+    if match:
+        userinfo = match.group(1)
+        yield userinfo
+        user, _, password = userinfo.partition(":")
+        if password:
+            yield password
+        if len(user) >= 8:
+            yield user
+
+
+def register_secrets(values):
+    """``values`` is a mapping of names to values, or bare values of unknown name."""
+    items = values.items() if hasattr(values, "items") else (("", v) for v in values)
+    for name, value in items:
+        _SECRET_VALUES.update(_secret_parts(name, value))
+
+
+def register_private_env(path):
+    """Best effort: a missing or unsafe file is refused later by its real consumer."""
+    try:
+        private_env(Path(path))
+    except (OSError, ValueError, Refusal):
+        pass
+
+
+def redact(text):
+    known = set(_SECRET_VALUES)
+    for name, value in os.environ.items():
+        known.update(_secret_parts(name, value))
+    for value in sorted(known, key=len, reverse=True):
+        text = text.replace(value, "<redacted>")
+    for pattern, replacement in _SECRET_PATTERNS:
+        text = pattern.sub(replacement, text)
+    return text
+
+
+def _tail_from_line_start(text, limit):
+    """Last ``limit`` characters, never starting inside a line.
+
+    A cut inside a line could keep the unrecognisable remainder of a secret or of a
+    redaction match, so the partial first line is dropped entirely.
+    """
+    if len(text) <= limit:
+        return text, False
+    tail = text[-limit:]
+    if text[-limit - 1] != "\n":
+        _, newline, tail = tail.partition("\n")
+        if not newline:
+            tail = ""
+    return tail, True
+
+
+def redacted_tail(stderr):
+    # Redact BEFORE taking the tail: truncating first can cut a secret or key block so
+    # that its remainder no longer matches any rule and is written in clear text.
+    scanned, cut = _tail_from_line_start(stderr or "", DIAGNOSTIC_SCAN_LIMIT)
+    tail, truncated = _tail_from_line_start(redact(scanned), DIAGNOSTIC_LIMIT)
+    return tail, cut or truncated
+
+
+def command_name(args):
+    """Program and script/subcommand names only: never arguments, paths or environment."""
+    words = [Path(str(args[0])).name]
+    for value in args[1:]:
+        value = str(value)
+        if "/" in value:
+            if not value.startswith("-"):
+                words.append(Path(value).name)
+            break
+        if not re.fullmatch(r"[a-z][a-z0-9-]{0,31}", value) or len(words) >= 3:
+            break
+        words.append(value)
+    return " ".join(re.sub(r"[^A-Za-z0-9._-]", "_", word)[:64] for word in words)
+
+
+def persist_diagnostic(args, returncode, stderr):
+    """Keep a bounded, redacted stderr tail in a private file and return its reference."""
+    name = command_name(args)
+    detail = {"failed_command": name}
+    directory = _DIAGNOSTICS["directory"]
+    if directory is None:
+        return detail
+    tail, truncated = redacted_tail(stderr)
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+    file = directory / ("command-failure-" + stamp + "-" + uuid4().hex[:8] + ".json")
+    descriptor = os.open(file, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(descriptor, "w") as output:
+        output.write(
+            stable(
+                {
+                    "schema_version": "pals.local-qualification-command-failure.v1",
+                    "failed_command": name,
+                    "returncode": returncode,
+                    "stderr_tail_redacted": tail,
+                    "stderr_truncated": truncated,
+                    "at": now(),
+                }
+            )
+            + "\n"
+        )
+    detail["diagnostic_file"] = str(file)
+    return detail
+
+
 def command(args, timeout=30):
     result = subprocess.run(
         args, capture_output=True, text=True, timeout=timeout, check=False
     )
-    need(result.returncode == 0, "local_dependency_command_failed")
+    if result.returncode != 0:
+        # The closed code stays stable; the cause is kept in a private bounded file.
+        raise Refusal(
+            "local_dependency_command_failed",
+            persist_diagnostic(args, result.returncode, result.stderr),
+        )
     return result.stdout
 
 
@@ -62,11 +252,13 @@ def private_env(path):
         path.is_file() and not path.is_symlink() and st.st_mode & 0o777 == 0o600,
         "private_environment_required",
     )
-    return dict(
+    values = dict(
         line.split("=", 1)
         for line in path.read_text().splitlines()
         if line and not line.startswith("#")
     )
+    register_secrets(values)
+    return values
 
 
 def file_reference(value):
@@ -196,24 +388,62 @@ except TimeoutError:print(json.dumps({"state":"unavailable","failure_code":"veri
     return result
 
 
+# Exactly the key set pals-infra's release-cycle.py `local_verifier_variant` accepts.
+VERIFIER_VARIANT_KEYS = {
+    "production_image_digest",
+    "source_archive",
+    "recipe_archive",
+    "local_build_provenance",
+    "dockerfile_sha256",
+    "lean_version",
+    "lake_manifest_sha256",
+}
+
+
 def verifier_provenance(subject):
     v = subject["verifier_variant"]
+    need(
+        type(v) is dict and set(v) == VERIFIER_VARIANT_KEYS,
+        "closed_native_local_verifier_variant_required",
+    )
     archive = file_reference(v["source_archive"])
+    recipe = file_reference(v["recipe_archive"])
     provenance = file_reference(v["local_build_provenance"])
     receipt = json.loads(provenance.read_bytes())
     image = subject["images"]["verifier"]
     need(
-        receipt["schema_version"] == "pals.local-verifier-build.v1"
+        receipt["schema_version"] == "pals.local-verifier-build.v2"
         and receipt["source_archive"] == v["source_archive"]
+        and receipt["recipe_archive"] == v["recipe_archive"]
         and receipt["source_revision"] == image["source_revision"]
         and receipt["built_image_id"] == image["image_id"]
         and receipt["platform"] == image["platform"] == "linux/arm64",
         "native_verifier_build_binding_changed",
     )
-    with tarfile.open(archive) as t:
-        dockerfile = t.extractfile("docker/lean-verifier.Dockerfile").read()
-        lean = t.extractfile("lean-workspace/lean-toolchain").read().decode().strip()
-        lake = t.extractfile("lean-workspace/lake-manifest.json").read()
+    # The image was built from the complete archive of the commit, which the receipt
+    # (itself hash-bound into the subject) pins. The two archives the release plan
+    # pins must be exact projections of that same commit: re-derived from git and
+    # compared member by member with the built archive.
+    complete = file_reference(receipt["build_archive"])
+    spec = importlib.util.spec_from_file_location(
+        "local_verifier_archives", HERE / "local-verifier-archives.py"
+    )
+    archives = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(archives)
+    try:
+        archives.verify(
+            receipt["source_root"],
+            receipt["source_revision"],
+            complete,
+            {name: v[name] for name in archives.PROJECTIONS},
+            "differs",
+        )
+        dockerfile, lean, lake = archives.recipe(recipe)
+        lean = lean.decode().strip()
+    except (ValueError, OSError, tarfile.TarError, subprocess.TimeoutExpired):
+        raise Refusal(
+            "native_verifier_plan_archive_differs_from_the_built_commit"
+        ) from None
     need(
         sha(dockerfile) == v["dockerfile_sha256"] == receipt["dockerfile_sha256"]
         and lean == v["lean_version"] == receipt["lean_version"]
@@ -231,8 +461,73 @@ def verifier_provenance(subject):
     )
     return {
         "source_archive_sha256": sha(archive.read_bytes()),
+        "recipe_archive_sha256": sha(recipe.read_bytes()),
+        "build_archive_sha256": sha(complete.read_bytes()),
         "build_provenance_sha256": sha(provenance.read_bytes()),
         "difference_scope": receipt["difference_scope"],
+    }
+
+
+def provider_tls_status(subject, minimum_seconds=PROVIDER_TLS_CAPTURE_SECONDS):
+    """Real handshake with the running local budget proxy, trusting the task CA only.
+
+    Workers reach the provider solely through this proxy. An expired or replaced proxy
+    certificate fails every provider call, so refuse before the single paid submission.
+    No HTTP request is sent and no provider is contacted.
+    """
+    expected = subject["guard"].get("provider_tls")
+    need(
+        type(expected) is dict
+        and re.fullmatch(
+            r"[0-9a-f]{64}", str(expected.get("server_certificate_sha256"))
+        ),
+        "local_provider_tls_subject_binding_required",
+    )
+    program = """import hashlib,json,socket,ssl,time
+context=ssl.create_default_context(cafile='/run/provider/ca-bundle.pem')
+try:
+ with socket.create_connection(('127.0.0.1',443),5) as raw:
+  with context.wrap_socket(raw,server_hostname='api.openai.com') as tls:
+   der=tls.getpeercert(binary_form=True);peer=tls.getpeercert()
+   try:tls.unwrap()
+   except (OSError,ssl.SSLError):pass
+ print(json.dumps({'state':'trusted','sha256':hashlib.sha256(der).hexdigest(),'remaining_seconds':int(ssl.cert_time_to_seconds(peer['notAfter'])-time.time())}))
+except ssl.SSLCertVerificationError as error:print(json.dumps({'state':'expired' if error.verify_code==10 else 'untrusted'}))
+except (OSError,ssl.SSLError):print(json.dumps({'state':'unavailable'}))
+"""
+    try:
+        result = json.loads(
+            command(
+                [
+                    "docker",
+                    "exec",
+                    "pals-reliability-local-worker-network-guard-1",
+                    "python",
+                    "-c",
+                    program,
+                ],
+                timeout=20,
+            )
+        )
+    except subprocess.TimeoutExpired:
+        raise Refusal("local_provider_tls_unavailable_or_untrusted") from None
+    need(result.get("state") != "expired", "local_provider_tls_expired")
+    need(
+        result.get("state") == "trusted", "local_provider_tls_unavailable_or_untrusted"
+    )
+    need(
+        result["sha256"] == expected["server_certificate_sha256"],
+        "local_provider_tls_differs_from_subject",
+    )
+    need(
+        type(result["remaining_seconds"]) is int
+        and result["remaining_seconds"] >= minimum_seconds,
+        "local_provider_tls_expires_before_capture_window",
+    )
+    return {
+        "scope": "local_budget_proxy_transport_only_not_provider_identity",
+        "server_certificate_sha256": result["sha256"],
+        "remaining_seconds": result["remaining_seconds"],
     }
 
 
@@ -248,16 +543,41 @@ def budget_status(subject):
             ]
         )
     )
+    rollover = ledger.get("rollover")
+    limit = ledger["limit_microusd"]
     need(
         not ledger["blocked"]
-        and ledger["limit_microusd"]
-        == subject["guard"]["budget_limit_microusd"]
-        == 700000
+        and type(limit) is int
+        and limit == subject["guard"]["budget_limit_microusd"]
+        # Only an owner-approved rollover may carry a bound below the fixed one.
+        and (limit == 700000 if rollover is None else 0 < limit <= 700000)
         and all(x["state"] == "completed" for x in ledger["calls"])
-        and 0 <= ledger["actual_microusd"] == ledger["reserved_microusd"] <= 700000,
+        and 0 <= ledger["actual_microusd"] == ledger["reserved_microusd"] <= limit,
         "bounded_known_all_lane_provider_usage_required",
     )
+    # A rolled-over budget is never silent: the serving ledger must carry exactly the
+    # rollover the prepared subject recorded, and none when the subject records none.
+    need(
+        rollover == subject["guard"].get("budget_rollover"),
+        "budget_rollover_differs_from_subject",
+    )
     return ledger
+
+
+def budget_rollover_evidence(subject, ledger):
+    """What a reviewer of the capture must see when the budget was reset by approval."""
+    rollover = ledger.get("rollover")
+    if rollover is None:
+        return {"state": "none_continuous_ledger"}
+    return {
+        "state": "owner_approved_rollover",
+        "rolled_over_from_sha256": rollover["rolled_over_from_sha256"],
+        "approval_sha256": rollover["approval_sha256"],
+        "rolled_over_at": rollover["rolled_over_at"],
+        "closed_totals": rollover["closed_totals"],
+        "new_limit_microusd": ledger["limit_microusd"],
+        "subject_budget": subject["guard"].get("resumed_budget"),
+    }
 
 
 def database_readiness(subject, environment_file, *, require_frozen=True):
@@ -493,12 +813,16 @@ def main():
     p.add_argument("--database-env", type=Path, required=True)
     p.add_argument("--verify-existing", action="store_true")
     args = p.parse_args()
+    require_modules()
     state = args.state_dir.resolve()
     state.mkdir(mode=0o700, parents=True, exist_ok=True)
     need(
         state.stat().st_mode & 0o777 == 0o700 and not state.is_symlink(),
         "private_state_directory_required",
     )
+    set_diagnostic_directory(state / "diagnostics")
+    # Known private values are hidden from any diagnostic written from here on.
+    register_private_env(args.database_env)
     raw = args.subject.read_bytes()
     subject = json.loads(raw)
     digest = sha(raw)
@@ -573,7 +897,14 @@ def main():
         record["runtime_before"] = before
         private_json(state / "latest.json", record)
         record["provider_budget_before"] = budget_status(subject)
+        record["budget_rollover"] = budget_rollover_evidence(
+            subject, record["provider_budget_before"]
+        )
         record["database_before"] = database_readiness(subject, args.database_env)
+        if not prior:
+            # Re-reading an accepted capture makes no provider call. A fresh capture
+            # must not spend its only submission on a dead local provider transport.
+            record["provider_tls_before"] = provider_tls_status(subject)
         # Never launch a browser that could submit a paid proof while the actual
         # mTLS verifier cannot establish its mandatory compiler sandbox.
         record["compiler_canary"] = compiler_canary(subject)
@@ -633,8 +964,18 @@ def main():
             if isinstance(error, Refusal)
             else "local_dependency_or_capture_failed",
         )
+        if isinstance(error, Refusal) and error.detail:
+            record["diagnostic"] = error.detail
         private_json(state / "latest.json", record)
-        print(stable({k: record[k] for k in ("state", "subject_sha256", "code")}))
+        print(
+            stable(
+                {
+                    k: record[k]
+                    for k in ("state", "subject_sha256", "code", "diagnostic")
+                    if k in record
+                }
+            )
+        )
         return 1
     private_json(state / "latest.json", record)
     print(
@@ -659,4 +1000,6 @@ if __name__ == "__main__":
         raise SystemExit(main())
     except Refusal as error:
         print(str(error), file=sys.stderr)
+        if error.detail:
+            print(stable(error.detail), file=sys.stderr)
         raise SystemExit(1)
