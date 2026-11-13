@@ -46,6 +46,9 @@ patch の修復プロンプトに、失敗の種類（`failure_brief` の閉じ�
 - 次の候補（未実施）: (1) 難しい題を事前に判別して初回から強い effort にする（判別の信号が要る。`routine` は未配線）。(2) 修復モデルに残りの goal や名前を見せる（サニタイズ設計の見直しが要り、注入の観点でレビューが要る）。(3) 修復2回目を high effort にする（時間は30秒に収まらない）。
 - 実 API・SQS は通していません。held_out は読んでいません。
 
+## 出典（生データ）
+この entry の数値は、測定ごとの `records.jsonl`（`steps` に各呼び出しの所要・effort・試行番号、`submits_detail` に提出ごとの成否を持つ）と、保存した失敗候補の再コンパイル結果から集計しました。生データは Lean のソースと定理文を含むため git に入れず、共有ノートの `t2-lane/fix1`、`fix2`、`fix3`、`remeasure3` にあります。集計は `scripts/eval/recheck_first_candidates.py`、`scripts/eval/replay_patch_ab.py`（pals-agent）と、records の集計で行いました。
+
 ## 破棄・失敗した測定
 - cheap-first の dev20 の取り直し前の1回が API の不通で停止（記録は前のエントリ）。
 - 今回の費用: 対比測定 US$0.448、`hetero_fix` の3回 US$1.37（0.449＋0.433＋0.492 の合計、各実行は1回 US$1 以下）。
