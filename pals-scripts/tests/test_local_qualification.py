@@ -2472,6 +2472,44 @@ class BudgetRolloverAcceptanceTests(BudgetRolloverFixture):
         )
         self.assertEqual(again.rollover, saved["rollover"])
 
+    def test_crash_while_archiving_leaves_no_archive_and_a_rerun_succeeds(self):
+        closed = self.blocked_ledger()
+        path, digest = self.approval()
+        budget = self.runtime / "budget"
+        archive = budget / ("closed-" + sha256(closed))
+        real = rollover_tool.write_exclusive
+
+        def dies_before_the_second_file(target, raw, mode):
+            if target.name == "approval.json" and target.parent != self.runtime:
+                raise KeyboardInterrupt("process killed between the two file writes")
+            real(target, raw, mode)
+
+        with patch.object(
+            rollover_tool, "write_exclusive", dies_before_the_second_file
+        ):
+            with self.assertRaises(KeyboardInterrupt):
+                self.roll(path, digest)
+        # Nothing was published and the blocked ledger is untouched.
+        self.assertFalse(archive.exists())
+        self.assertEqual(self.ledger.read_bytes(), closed)
+        leftovers = list(budget.glob(".closed-*.tmp-*"))
+        self.assertEqual(len(leftovers), 1)
+        self.assertEqual([f.name for f in leftovers[0].iterdir()], ["ledger.json"])
+        # A file with another name is never removed by the cleanup.
+        (budget / ".closed-unrelated").write_text("keep")
+        result = self.roll(path, digest)
+        self.assertEqual(result["state"], "rolled_over_not_prepared")
+        self.assertEqual((archive / "ledger.json").read_bytes(), closed)
+        self.assertEqual(sha256((archive / "approval.json").read_bytes()), digest)
+        self.assertEqual(list(budget.glob(".closed-*.tmp-*")), [])
+        self.assertEqual((budget / ".closed-unrelated").read_text(), "keep")
+        prepare.require_known_budget(self.ledger)
+        # A complete existing archive with other bytes is still refused as before.
+        self.ledger.write_bytes(closed)
+        (archive / "approval.json").chmod(0o600)
+        (archive / "approval.json").write_bytes(b"{}")
+        self.assertEqual(self.refused(path, digest), "rollover_archive_differs")
+
     def spend_once(self):
         budget = proxy.Budget(
             self.ledger, resume_sha256=sha256(self.ledger.read_bytes())

@@ -8,6 +8,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -74,6 +75,37 @@ def write_exclusive(path, raw, mode):
     path.chmod(mode)
 
 
+def sync_directory(path):
+    descriptor = os.open(path, os.O_RDONLY)
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+
+def publish_archive(archive, closed_raw, approval_raw):
+    """Create ``closed-<sha256>/`` complete or not at all.
+
+    Both files are written and synced in a sibling temporary directory, which is then
+    renamed into place. A process that dies before the rename leaves no archive; only
+    its own leftover (this exact prefix) is removed by the next run.
+    """
+    prefix = "." + archive.name + ".tmp-"
+    for stale in archive.parent.glob(prefix + "*"):
+        if stale.is_symlink() or not stale.is_dir():
+            stale.unlink()
+        else:
+            shutil.rmtree(stale)
+    temporary = archive.parent / (prefix + str(os.getpid()))
+    temporary.mkdir(mode=0o700)
+    temporary.chmod(0o700)
+    write_exclusive(temporary / "ledger.json", closed_raw, 0o400)
+    write_exclusive(temporary / "approval.json", approval_raw, 0o400)
+    sync_directory(temporary)
+    os.rename(temporary, archive)
+    sync_directory(archive.parent)
+
+
 def rollover(runtime, approval_path, approval_sha256, *, guard_running_=None, now=None):
     """Archive the closed ledger byte-identically, then start the approved new one."""
     budget = Path(runtime).resolve() / "budget"
@@ -118,10 +150,7 @@ def rollover(runtime, approval_path, approval_sha256, *, guard_running_=None, no
         ):
             raise Refusal("rollover_archive_differs")
     else:
-        archive.mkdir(mode=0o700)
-        archive.chmod(0o700)
-        write_exclusive(archive / "ledger.json", closed_raw, 0o400)
-        write_exclusive(archive / "approval.json", approval_raw, 0o400)
+        publish_archive(archive, closed_raw, approval_raw)
     if sha((archive / "ledger.json").read_bytes()) != closed_sha256:
         raise Refusal("rollover_archive_differs")
     opened = {
