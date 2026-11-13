@@ -1,0 +1,18 @@
+{"covered": true, "code": null, "recipe": "continuity.power.natural.explicit-epsilon-delta", "ms": {"lean": 5942, "total": 5943}, "lean_compile": true, "id": "pow3-cont", "tier": "power-continuity", "split": "probe", "language": "ja"}
+{"covered": false, "code": "language_filter", "ms": {"total": 0.0}, "lean_compile": false, "id": "pow10-cont", "tier": "power-continuity", "split": "probe", "language": "en"}
+{"covered": false, "code": "language_filter", "ms": {"total": 0.0}, "lean_compile": false, "id": "pow0-cont", "tier": "power-continuity", "split": "probe", "language": "en"}
+{"covered": false, "code": "grammar_no_parse", "ms": {"total": 0.0}, "lean_compile": false, "id": "pow-succ-cont", "tier": "power-continuity-abstract", "split": "probe", "language": "en"}
+{"covered": false, "code": "language_filter", "ms": {"total": 0.0}, "lean_compile": false, "id": "pow5-diff", "tier": "power-differentiability", "split": "probe", "language": "en"}
+{"covered": true, "code": null, "recipe": "continuity.affine.real.explicit-epsilon-delta", "ms": {"lean": 4883, "total": 4883}, "lean_compile": true, "id": "affine-2x1-cont", "tier": "affine-continuity", "split": "probe", "language": "ja"}
+{"covered": false, "code": "grammar_no_parse", "ms": {"total": 0.01}, "lean_compile": false, "id": "affine-2x1-diff", "tier": "affine-differentiability", "split": "probe", "language": "en"}
+{"covered": false, "code": "grammar_no_parse", "ms": {"total": 0.0}, "lean_compile": false, "id": "affine-3x2-unif", "tier": "affine-uniform-continuity", "split": "probe", "language": "en"}
+{"covered": false, "code": "language_filter", "ms": {"total": 0.0}, "lean_compile": false, "id": "linear-7x-cont", "tier": "linear-continuity", "split": "probe", "language": "en"}
+{"covered": false, "code": "grammar_no_parse", "ms": {"total": 0.0}, "lean_compile": false, "id": "linear-9x-diff", "tier": "linear-differentiability", "split": "probe", "language": "en"}
+{"covered": false, "code": "grammar_no_parse", "ms": {"total": 0.0}, "lean_compile": false, "id": "linear-4x-unif", "tier": "linear-uniform-continuity", "split": "probe", "language": "en"}
+{"covered": false, "code": "grammar_no_parse", "ms": {"total": 0.0}, "lean_compile": false, "id": "linear-all-c", "tier": "linear-continuity-abstract", "split": "probe", "language": "en"}
+{"covered": false, "code": "grammar_no_parse", "ms": {"total": 0.0}, "lean_compile": false, "id": "odd-pow7-mono", "tier": "odd-power-monotone", "split": "probe", "language": "en"}
+{"covered": false, "code": "grammar_no_parse", "ms": {"total": 0.0}, "lean_compile": false, "id": "odd-pow-n-mono", "tier": "odd-power-monotone-abstract", "split": "probe", "language": "en"}
+{"covered": false, "code": "grammar_no_parse", "ms": {"total": 0.0}, "lean_compile": false, "id": "affine-sub-cont", "tier": "affine-continuity-boundary", "split": "probe", "language": "en"}
+{"covered": false, "code": "grammar_no_parse", "ms": {"total": 0.0}, "lean_compile": false, "id": "neg-pow2p1", "tier": "negative-control", "split": "probe", "language": "en"}
+{"covered": false, "code": "grammar_no_parse", "ms": {"total": 0.0}, "lean_compile": false, "id": "neg-abs-diff", "tier": "negative-control", "split": "probe", "language": "en"}
+{"covered": false, "code": "grammar_no_parse", "ms": {"total": 0.0}, "lean_compile": false, "id": "neg-wrong-prop", "tier": "negative-control", "split": "probe", "language": "en"}

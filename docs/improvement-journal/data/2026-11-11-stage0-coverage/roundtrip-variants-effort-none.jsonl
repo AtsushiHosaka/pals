@@ -1,0 +1,354 @@
+{"id": "extra-hypothesis", "label": "bad", "variant": "review", "approved": false, "seconds": 2.96, "issue": "STATEMENT adds a positivity hypothesis and is weaker than the requested claim for every real x.", "rep": 0}
+{"id": "extra-hypothesis", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.16, "issue": "The description weakens the claim by adding the hypothesis 0 < x.", "rep": 0}
+{"id": "extra-hypothesis", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.32, "issue": "The statement adds the hypothesis 0 < x, so it covers only positive real numbers rather than every real number.", "rep": 0}
+{"id": "extra-hypothesis", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.81, "issue": "", "rep": 0}
+{"id": "extra-hypothesis", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.1, "issue": "", "rep": 0}
+{"id": "extra-hypothesis", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 3.61, "issue": "inconsistent_verdict", "rep": 0}
+{"id": "field-for-division-ring", "label": "bad", "variant": "review", "approved": true, "seconds": 2.75, "issue": "", "rep": 0}
+{"id": "field-for-division-ring", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 5.82, "issue": "Kを可換体に限定しており、REQUESTの斜体Kという仮定を正確に保っていない。", "rep": 0}
+{"id": "field-for-division-ring", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 3.46, "issue": "REQUEST の「斜体」は一般に可換とは限らない除法環（DivisionRing）を指すが、STATEMENT は K を可換体（Field）に限定しており、より強い仮定である。また REQUEST は有限次元性を V について述べる一方、STATEMENT はこれを明示している。結論の内容は同じで、STATEMENT の finrank は有限次元の場合の次元を表す。", "rep": 0}
+{"id": "field-for-division-ring", "label": "faithful", "variant": "review", "approved": false, "seconds": 3.54, "issue": "The request assumes K is a field, but the statement assumes only a division ring, weakening the scalar-type assumption.", "rep": 0}
+{"id": "field-for-division-ring", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 5.34, "issue": "", "rep": 0}
+{"id": "field-for-division-ring", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 4.17, "issue": "REQUESTはKを斜体としており、STATEMENTもDivisionRingを指定しているので構造上の差はない。ただしREQUESTはV,WをK上の加群と述べるのに対し、STATEMENTはそれぞれ加法可換群であることも明示している。これは加群に必要な構造を明記したもので、主張の実質的な差ではない。有限次元の仮定、写像、値域・核、次元公式はいずれも一致しており、差はない。", "rep": 0}
+{"id": "exists-for-forall", "label": "bad", "variant": "review", "approved": false, "seconds": 3.89, "issue": "The statement uses ∃ instead of ∀, so it is weaker than the request.", "rep": 0}
+{"id": "exists-for-forall", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 3.7, "issue": "The description weakens the universal quantifier to an existential one.", "rep": 0}
+{"id": "exists-for-forall", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 3.11, "issue": "The request says the inequality holds for every real x, whereas the statement asserts it holds for at least one real x. The statement is weaker: it replaces the universal quantifier with an existential one.", "rep": 0}
+{"id": "exists-for-forall", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.42, "issue": "", "rep": 0}
+{"id": "exists-for-forall", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 3.64, "issue": "", "rep": 0}
+{"id": "exists-for-forall", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 1.96, "issue": "none", "rep": 0}
+{"id": "wrong-domain", "label": "bad", "variant": "review", "approved": false, "seconds": 3.02, "issue": "The request quantifies over all real numbers, whereas the statement quantifies only over natural numbers.", "rep": 0}
+{"id": "wrong-domain", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.9, "issue": "The domain is changed from the real numbers to the natural numbers.", "rep": 0}
+{"id": "wrong-domain", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.97, "issue": "The request quantifies over real numbers, while the statement quantifies over natural numbers, so the statement is a special case with a smaller domain.", "rep": 0}
+{"id": "wrong-domain", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.54, "issue": "", "rep": 0}
+{"id": "wrong-domain", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.23, "issue": "", "rep": 0}
+{"id": "wrong-domain", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.01, "issue": "none", "rep": 0}
+{"id": "off-by-one-bound", "label": "bad", "variant": "review", "approved": false, "seconds": 3.12, "issue": "The statement replaces +1 with +2, making the inequality weaker; it is not the requested claim.", "rep": 0}
+{"id": "off-by-one-bound", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 5.08, "issue": "The description uses x² + 2 instead of x² + 1, so it states a different and weaker inequality.", "rep": 0}
+{"id": "off-by-one-bound", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.03, "issue": "The statement uses the constant 2 instead of 1 in the right-hand side, so it is weaker than the request.", "rep": 0}
+{"id": "off-by-one-bound", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.84, "issue": "", "rep": 0}
+{"id": "off-by-one-bound", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 3.64, "issue": "", "rep": 0}
+{"id": "off-by-one-bound", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 1.73, "issue": "none", "rep": 0}
+{"id": "special-case", "label": "bad", "variant": "review", "approved": false, "seconds": 3.92, "issue": "STATEMENT proves only the instance m = 4 and n = 6, not the requested claim for all natural m and n.", "rep": 0}
+{"id": "special-case", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.33, "issue": "The description gives a specific numerical instance rather than the claim for all natural m and n.", "rep": 0}
+{"id": "special-case", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.84, "issue": "The request is a claim for all natural numbers m and n, whereas the statement checks only the specific pair 4 and 6. It replaces the universally quantified variables with constants, so it is a special case and is weaker.", "rep": 0}
+{"id": "special-case", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.91, "issue": "", "rep": 0}
+{"id": "special-case", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.23, "issue": "", "rep": 0}
+{"id": "special-case", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.49, "issue": "none", "rep": 0}
+{"id": "dropped-membership", "label": "bad", "variant": "review", "approved": false, "seconds": 3.4, "issue": "The request requires a zero in [a,b], whereas the statement only requires a zero somewhere in ℝ.", "rep": 0}
+{"id": "dropped-membership", "label": "bad", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.72, "issue": "", "rep": 0}
+{"id": "dropped-membership", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 3.09, "issue": "REQUESTでは、結論の点 x が [a,b] 内にあることを求めているが、STATEMENTにはその条件がなく、より弱い主張になっている。", "rep": 0}
+{"id": "dropped-membership", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.03, "issue": "", "rep": 0}
+{"id": "dropped-membership", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 5.14, "issue": "", "rep": 0}
+{"id": "dropped-membership", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.72, "issue": "none", "rep": 0}
+{"id": "different-function", "label": "bad", "variant": "review", "approved": false, "seconds": 3.15, "issue": "The statement omits the -2x term from the function and the corresponding -2 from the derivative.", "rep": 0}
+{"id": "different-function", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 5.27, "issue": "The function and derivative conclusion do not match the request.", "rep": 0}
+{"id": "different-function", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.41, "issue": "The request concerns the function x ↦ x³ − 2x and claims its derivative at a is 3a² − 2. The statement omits the −2x term from the function and the −2 term from the claimed derivative.", "rep": 0}
+{"id": "different-function", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.89, "issue": "", "rep": 0}
+{"id": "different-function", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.99, "issue": "", "rep": 0}
+{"id": "different-function", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.23, "issue": "none", "rep": 0}
+{"id": "commgroup-for-group", "label": "bad", "variant": "review", "approved": false, "seconds": 2.92, "issue": "STATEMENT assumes G is a commutative group, whereas the request requires only a group.", "rep": 0}
+{"id": "commgroup-for-group", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.77, "issue": "The description strengthens the hypothesis by requiring G to be commutative, so it does not state exactly the requested claim.", "rep": 0}
+{"id": "commgroup-for-group", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.47, "issue": "REQUEST assumes only that G is a group, whereas STATEMENT requires G to be a commutative group. This is a stronger hypothesis and restricts the claim to a special case.", "rep": 0}
+{"id": "commgroup-for-group", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.04, "issue": "", "rep": 0}
+{"id": "commgroup-for-group", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.56, "issue": "", "rep": 0}
+{"id": "commgroup-for-group", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.18, "issue": "inconsistent_verdict", "rep": 0}
+{"id": "log-dropped-positivity", "label": "bad", "variant": "review", "approved": false, "seconds": 2.94, "issue": "STATEMENT omits the positivity condition. It quantifies over all real x, so it is not the requested claim.", "rep": 0}
+{"id": "log-dropped-positivity", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.21, "issue": "DESCRIPTION changes the domain from positive real numbers to all real numbers.", "rep": 0}
+{"id": "log-dropped-positivity", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.77, "issue": "The request restricts x to positive real numbers, while the statement quantifies over all real numbers. Thus the statement adds cases where the real logarithm is not defined as a real-valued function (in Lean, Real.log is defined there by a convention).", "rep": 0}
+{"id": "log-dropped-positivity", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.53, "issue": "", "rep": 0}
+{"id": "log-dropped-positivity", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 3.81, "issue": "", "rep": 0}
+{"id": "log-dropped-positivity", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.45, "issue": "none", "rep": 0}
+{"id": "strict-vs-weak", "label": "bad", "variant": "review", "approved": false, "seconds": 2.99, "issue": "The statement only asserts x² + 1 ≥ 0, which is weaker than the requested strict inequality x² + 1 > 0.", "rep": 0}
+{"id": "strict-vs-weak", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 3.9, "issue": "The description weakens the conclusion from x^2+1 > 0 to x^2+1 ≥ 0.", "rep": 0}
+{"id": "strict-vs-weak", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.13, "issue": "The statement concludes ≥ 0, while the request concludes > 0; the statement is weaker because it allows equality.", "rep": 0}
+{"id": "strict-vs-weak", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.27, "issue": "", "rep": 0}
+{"id": "strict-vs-weak", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.24, "issue": "", "rep": 0}
+{"id": "strict-vs-weak", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 1.9, "issue": "none", "rep": 0}
+{"id": "nat-subtraction-no-hypothesis", "label": "bad", "variant": "review", "approved": false, "seconds": 2.77, "issue": "The statement omits the hypothesis a ≥ b, so it asserts a stronger claim than the request.", "rep": 0}
+{"id": "nat-subtraction-no-hypothesis", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.77, "issue": "The description is stronger than the request because it omits the condition a ≥ b.", "rep": 0}
+{"id": "nat-subtraction-no-hypothesis", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.84, "issue": "The request restricts the claim to a ≥ b; the statement omits that hypothesis and asserts the equality for all natural numbers a and b. Thus the statement is stronger than the request.", "rep": 0}
+{"id": "nat-subtraction-no-hypothesis", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.56, "issue": "", "rep": 0}
+{"id": "nat-subtraction-no-hypothesis", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.35, "issue": "", "rep": 0}
+{"id": "nat-subtraction-no-hypothesis", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.23, "issue": "none", "rep": 0}
+{"id": "quantifier-order", "label": "bad", "variant": "review", "approved": false, "seconds": 3.05, "issue": "The quantifiers are reversed: the request asserts ∀ x, ∃ y, while the statement asserts ∃ y, ∀ x.", "rep": 0}
+{"id": "quantifier-order", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.18, "issue": "The description is a stronger, different claim: it requires one real y to be greater than every real x, rather than allowing y to depend on x.", "rep": 0}
+{"id": "quantifier-order", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.38, "issue": "The request says that for every real x there exists a real y greater than x, with y allowed to depend on x. The statement instead asserts that there is one real y greater than every real x. The quantifiers are reversed, making the statement stronger.", "rep": 0}
+{"id": "quantifier-order", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.55, "issue": "", "rep": 0}
+{"id": "quantifier-order", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 3.96, "issue": "", "rep": 0}
+{"id": "quantifier-order", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.2, "issue": "none", "rep": 0}
+{"id": "injective-vs-surjective", "label": "bad", "variant": "review", "approved": false, "seconds": 2.96, "issue": "The request claims that x ↦ 2x is injective, whereas the statement claims it is surjective.", "rep": 0}
+{"id": "injective-vs-surjective", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.75, "issue": "The description states surjectivity instead of the requested injectivity.", "rep": 0}
+{"id": "injective-vs-surjective", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.53, "issue": "The request says the function is injective, meaning equal outputs imply equal inputs. The statement instead says it is surjective, meaning every real number is an output. The domain and codomain are ℝ in both.", "rep": 0}
+{"id": "injective-vs-surjective", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.87, "issue": "", "rep": 0}
+{"id": "injective-vs-surjective", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.71, "issue": "", "rep": 0}
+{"id": "injective-vs-surjective", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.37, "issue": "none", "rep": 0}
+{"id": "sum-odd-off-by-one", "label": "bad", "variant": "review", "approved": false, "seconds": 3.4, "issue": "The sum should have n terms, e.g. range n, rather than n+1 terms; as written it sums the first n+1 odd numbers.", "rep": 0}
+{"id": "sum-odd-off-by-one", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 5.5, "issue": "The description includes n+1 odd numbers rather than the first n, so its asserted sum is (n+1)², not n².", "rep": 0}
+{"id": "sum-odd-off-by-one", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.79, "issue": "The request says the sum of the first n odd numbers, which has n terms. The statement sums the first n + 1 odd numbers, through 2n + 1, so it is off by one.", "rep": 0}
+{"id": "sum-odd-off-by-one", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.73, "issue": "", "rep": 0}
+{"id": "sum-odd-off-by-one", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.61, "issue": "", "rep": 0}
+{"id": "sum-odd-off-by-one", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 3.1, "issue": "none", "rep": 0}
+{"id": "continuous-vs-uniform", "label": "bad", "variant": "review", "approved": false, "seconds": 3.33, "issue": "The request claims continuity, whereas the statement claims uniform continuity, which is strictly stronger; x ↦ x² is continuous on ℝ but not uniformly continuous there.", "rep": 0}
+{"id": "continuous-vs-uniform", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.41, "issue": "Uniform continuity is stronger than continuity, so the description does not state exactly the request.", "rep": 0}
+{"id": "continuous-vs-uniform", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.2, "issue": "REQUEST says the function is continuous, whereas STATEMENT asserts uniform continuity, a stronger property. The real domain and the function x ↦ x² match.", "rep": 0}
+{"id": "continuous-vs-uniform", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.69, "issue": "", "rep": 0}
+{"id": "continuous-vs-uniform", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.12, "issue": "", "rep": 0}
+{"id": "continuous-vs-uniform", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 1.95, "issue": "inconsistent_verdict", "rep": 0}
+{"id": "open-vs-closed-interval", "label": "bad", "variant": "review", "approved": false, "seconds": 3.38, "issue": "STATEMENT concerns continuity and boundedness on the open interval (0,1), rather than on the closed interval [0,1].", "rep": 0}
+{"id": "open-vs-closed-interval", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.81, "issue": "The description does not state the same claim: it replaces continuity and boundedness on [0,1] with continuity and boundedness on (0,1).", "rep": 0}
+{"id": "open-vs-closed-interval", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.39, "issue": "The request concerns the closed interval [0,1], while the statement uses the open interval (0,1), both for continuity and boundedness. Thus it omits the endpoints and is weaker than the requested claim.", "rep": 0}
+{"id": "open-vs-closed-interval", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.18, "issue": "", "rep": 0}
+{"id": "open-vs-closed-interval", "label": "faithful", "variant": "roundtrip_two_calls", "approved": false, "seconds": 5.33, "issue": "The description is more restrictive than the request by requiring functions to be defined on all of ℝ and to be real-valued.", "rep": 0}
+{"id": "open-vs-closed-interval", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.81, "issue": "The statement uses the same interval and conclusion as the request. It makes explicit that f is a real-valued function defined on all of ℝ, whereas the request does not specify the function's domain. Otherwise, the claim matches.", "rep": 0}
+{"id": "group-dropped-hypothesis", "label": "bad", "variant": "review", "approved": false, "seconds": 3.8, "issue": "STATEMENT omits the hypothesis that every element satisfies a*a=1, so it claims all groups are commutative rather than only groups of exponent at most 2.", "rep": 0}
+{"id": "group-dropped-hypothesis", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 5.02, "issue": "The mathematical claim is different.", "rep": 0}
+{"id": "group-dropped-hypothesis", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.94, "issue": "The request assumes that every element a satisfies a * a = 1, then asks for the conclusion that G is commutative. The statement omits that hypothesis and instead asserts commutativity for every group. It is therefore stronger than the requested claim.", "rep": 0}
+{"id": "group-dropped-hypothesis", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.98, "issue": "", "rep": 0}
+{"id": "group-dropped-hypothesis", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.52, "issue": "", "rep": 0}
+{"id": "group-dropped-hypothesis", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.79, "issue": "inconsistent_verdict", "rep": 0}
+{"id": "sqrt-domain", "label": "bad", "variant": "review", "approved": false, "seconds": 3.44, "issue": "The request restricts x to x ≥ 0, but the statement asserts the equality for every real x, including negative x.", "rep": 0}
+{"id": "sqrt-domain", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.36, "issue": "The description changes the domain from nonnegative real numbers to all real numbers.", "rep": 0}
+{"id": "sqrt-domain", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.58, "issue": "The statement quantifies over all real numbers, whereas the request restricts x to real numbers greater than or equal to zero. Thus the statement is stronger and includes a condition for negative x where the real square root is defined as zero, so the claimed equality does not hold there.", "rep": 0}
+{"id": "sqrt-domain", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.81, "issue": "", "rep": 0}
+{"id": "sqrt-domain", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 3.81, "issue": "", "rep": 0}
+{"id": "sqrt-domain", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.04, "issue": "none", "rep": 0}
+{"id": "calc_integral_square_zero_one", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.76, "issue": "", "rep": 0}
+{"id": "calc_integral_square_zero_one", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.46, "issue": "", "rep": 0}
+{"id": "calc_integral_square_zero_one", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.32, "issue": "none", "rep": 0}
+{"id": "coord_quarter_turn_orthogonal_components", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.51, "issue": "", "rep": 0}
+{"id": "coord_quarter_turn_orthogonal_components", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.04, "issue": "", "rep": 0}
+{"id": "coord_quarter_turn_orthogonal_components", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.3, "issue": "inconsistent_verdict", "rep": 0}
+{"id": "disc_size_difference_closed", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.82, "issue": "", "rep": 0}
+{"id": "disc_size_difference_closed", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.1, "issue": "", "rep": 0}
+{"id": "disc_size_difference_closed", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.42, "issue": "none", "rep": 0}
+{"id": "exlog_exp_strictly_positive", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.42, "issue": "", "rep": 0}
+{"id": "exlog_exp_strictly_positive", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.19, "issue": "", "rep": 0}
+{"id": "exlog_exp_strictly_positive", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 1.99, "issue": "none", "rep": 0}
+{"id": "logic_add_neq_contrapositive_real", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.62, "issue": "", "rep": 0}
+{"id": "logic_add_neq_contrapositive_real", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 3.8, "issue": "", "rep": 0}
+{"id": "logic_add_neq_contrapositive_real", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.43, "issue": "none", "rep": 0}
+{"id": "logic_no_negative_natural", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.76, "issue": "", "rep": 0}
+{"id": "logic_no_negative_natural", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.93, "issue": "", "rep": 0}
+{"id": "logic_no_negative_natural", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 1.92, "issue": "none", "rep": 0}
+{"id": "logic_set_union_absorption", "label": "faithful", "variant": "review", "approved": true, "seconds": 4.05, "issue": "", "rep": 0}
+{"id": "logic_set_union_absorption", "label": "faithful", "variant": "roundtrip_two_calls", "approved": false, "seconds": 5.17, "issue": "The description adds a type restriction on A and B that is absent from the request.", "rep": 0}
+{"id": "logic_set_union_absorption", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.4, "issue": "none", "rep": 0}
+{"id": "nt_gcd_lcm_product_identity", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.62, "issue": "", "rep": 0}
+{"id": "nt_gcd_lcm_product_identity", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.07, "issue": "", "rep": 0}
+{"id": "nt_gcd_lcm_product_identity", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.24, "issue": "none", "rep": 0}
+{"id": "number_theory_gcd_dvd_left", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.88, "issue": "", "rep": 0}
+{"id": "number_theory_gcd_dvd_left", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.51, "issue": "", "rep": 0}
+{"id": "number_theory_gcd_dvd_left", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.25, "issue": "none", "rep": 0}
+{"id": "ode_second_exponential_positive_root", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.99, "issue": "", "rep": 0}
+{"id": "ode_second_exponential_positive_root", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.58, "issue": "", "rep": 0}
+{"id": "ode_second_exponential_positive_root", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 3.88, "issue": "none", "rep": 0}
+{"id": "ode_separable_zero_solution", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.91, "issue": "", "rep": 0}
+{"id": "ode_separable_zero_solution", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.64, "issue": "", "rep": 0}
+{"id": "ode_separable_zero_solution", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.22, "issue": "none", "rep": 0}
+{"id": "poly_square_nonnegative", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.52, "issue": "", "rep": 0}
+{"id": "poly_square_nonnegative", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.25, "issue": "", "rep": 0}
+{"id": "poly_square_nonnegative", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 1.97, "issue": "none", "rep": 0}
+{"id": "pq-continuous-interval-self-map-fixed-point", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.2, "issue": "", "rep": 0}
+{"id": "pq-continuous-interval-self-map-fixed-point", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 5.17, "issue": "", "rep": 0}
+{"id": "pq-continuous-interval-self-map-fixed-point", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.74, "issue": "none", "rep": 0}
+{"id": "rat_adjacent_partial_fractions", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.76, "issue": "", "rep": 0}
+{"id": "rat_adjacent_partial_fractions", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.42, "issue": "", "rep": 0}
+{"id": "rat_adjacent_partial_fractions", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.77, "issue": "none", "rep": 0}
+{"id": "seed-absolute_value_not_differentiable", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.98, "issue": "", "rep": 0}
+{"id": "seed-absolute_value_not_differentiable", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.93, "issue": "", "rep": 0}
+{"id": "seed-absolute_value_not_differentiable", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.54, "issue": "REQUEST は微分可能かどうかを理由とともに判定するよう求めています。STATEMENT は「0 で微分可能ではない」という判定のみを表し、理由は含んでいません。", "rep": 0}
+{"id": "seed-composite_injective_implies_first", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.87, "issue": "", "rep": 0}
+{"id": "seed-composite_injective_implies_first", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.95, "issue": "", "rep": 0}
+{"id": "seed-composite_injective_implies_first", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.38, "issue": "none", "rep": 0}
+{"id": "seed-linear_injective_iff_zero_kernel", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.78, "issue": "", "rep": 0}
+{"id": "seed-linear_injective_iff_zero_kernel", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 5.47, "issue": "", "rep": 0}
+{"id": "seed-linear_injective_iff_zero_kernel", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 4.08, "issue": "REQUEST は体 K 上のベクトル空間 V, W と線形写像について述べており、STATEMENT もその内容を表している。ただし REQUEST の「体」は一般の体を指すのに対し、STATEMENT は K を Mathlib の Field と指定しており、これは可換体である。したがって、非可換の斜体まで含む読み方に対しては狭い。", "rep": 0}
+{"id": "seed-linear_system_inconsistent", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.1, "issue": "", "rep": 0}
+{"id": "seed-linear_system_inconsistent", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 5.04, "issue": "", "rep": 0}
+{"id": "seed-linear_system_inconsistent", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.74, "issue": "REQUEST は、その条件を同時に満たすものが存在するかを判定し、理由も示すよう求めています。STATEMENT は存在しないという結論だけを表し、理由を含んでいません。", "rep": 0}
+{"id": "seed-natural_power_continuous", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.52, "issue": "", "rep": 0}
+{"id": "seed-natural_power_continuous", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.84, "issue": "", "rep": 0}
+{"id": "seed-natural_power_continuous", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 3.24, "issue": "REQUEST はこの連続性を証明するよう求めているが、STATEMENT は命題だけを述べていて、証明を求める指示を含まない。連続性の主張そのものには違いがない。", "rep": 0}
+{"id": "seed-product_determinant_nonzero_iff", "label": "faithful", "variant": "review", "approved": false, "seconds": null, "issue": "OpenAIError", "rep": 0}
+{"id": "seed-product_determinant_nonzero_iff", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 5.84, "issue": "", "rep": 0}
+{"id": "seed-product_determinant_nonzero_iff", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 3.52, "issue": "inconsistent_verdict", "rep": 0}
+{"id": "seed-sum_derivative", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.01, "issue": "", "rep": 0}
+{"id": "seed-sum_derivative", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 5.15, "issue": "", "rep": 0}
+{"id": "seed-sum_derivative", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.83, "issue": "none", "rep": 0}
+{"id": "extra-hypothesis", "label": "bad", "variant": "review", "approved": false, "seconds": 2.96, "issue": "STATEMENT adds the hypothesis 0 < x, so it does not express the requested claim for every real x.", "rep": 1}
+{"id": "extra-hypothesis", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.15, "issue": "The description omits x = 0 and negative real numbers.", "rep": 1}
+{"id": "extra-hypothesis", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.14, "issue": "The statement only covers positive real x, whereas the request covers every real x, including zero and negative numbers.", "rep": 1}
+{"id": "extra-hypothesis", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.73, "issue": "", "rep": 1}
+{"id": "extra-hypothesis", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 3.69, "issue": "", "rep": 1}
+{"id": "extra-hypothesis", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 1.78, "issue": "none", "rep": 1}
+{"id": "field-for-division-ring", "label": "bad", "variant": "review", "approved": true, "seconds": 3.17, "issue": "", "rep": 1}
+{"id": "field-for-division-ring", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 6.15, "issue": "Kを可換体に限定しており、斜体上の一般の場合を正確に述べていない。", "rep": 1}
+{"id": "field-for-division-ring", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 3.31, "issue": "REQUEST は斜体上としているが、STATEMENT は K を可換体に限定しており、より強い仮定である。また、REQUEST では V,W が加群とされているだけだが、STATEMENT は V,W の加法構造を可換加法群と明示している。", "rep": 1}
+{"id": "field-for-division-ring", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.28, "issue": "", "rep": 1}
+{"id": "field-for-division-ring", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 5.46, "issue": "", "rep": 1}
+{"id": "field-for-division-ring", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 3.63, "issue": "REQUESTは「斜体K上の加群」としており、STATEMENTのKは除法環（斜体）なので一致する。REQUESTはVが有限次元とする点も一致する。ただしREQUESTは「証明せよ」と求めているが、STATEMENTは等式の主張だけで証明を要求していない。", "rep": 1}
+{"id": "exists-for-forall", "label": "bad", "variant": "review", "approved": false, "seconds": 2.78, "issue": "STATEMENT asserts that there exists a real x with positive exponential, which is weaker than REQUEST's claim that the exponential is positive for every real x.", "rep": 1}
+{"id": "exists-for-forall", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.36, "issue": "The universal quantifier was changed to an existential quantifier.", "rep": 1}
+{"id": "exists-for-forall", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.32, "issue": "The request asserts that the inequality holds for every real x; the statement asserts it for only some real x. Thus the statement is weaker and changes the quantifier from universal to existential.", "rep": 1}
+{"id": "exists-for-forall", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.51, "issue": "", "rep": 1}
+{"id": "exists-for-forall", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.35, "issue": "", "rep": 1}
+{"id": "exists-for-forall", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.46, "issue": "none", "rep": 1}
+{"id": "wrong-domain", "label": "bad", "variant": "review", "approved": false, "seconds": 3.74, "issue": "STATEMENT quantifies over natural numbers instead of real numbers, so it does not state the requested claim.", "rep": 1}
+{"id": "wrong-domain", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.16, "issue": "The domain is narrower: the request says every real x, but the description says every natural number x.", "rep": 1}
+{"id": "wrong-domain", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.11, "issue": "The request quantifies over every real number, whereas the statement quantifies over every natural number. The statement is a special case restricted to natural numbers, rather than covering all real numbers.", "rep": 1}
+{"id": "wrong-domain", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.82, "issue": "", "rep": 1}
+{"id": "wrong-domain", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 3.82, "issue": "", "rep": 1}
+{"id": "wrong-domain", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 1.8, "issue": "none", "rep": 1}
+{"id": "off-by-one-bound", "label": "bad", "variant": "review", "approved": false, "seconds": 2.62, "issue": "STATEMENT is weaker: it claims 2x ≤ x² + 2, not the requested 2x ≤ x² + 1.", "rep": 1}
+{"id": "off-by-one-bound", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.22, "issue": "The description changes the constant from 1 to 2, so it does not state the same mathematical claim.", "rep": 1}
+{"id": "off-by-one-bound", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.07, "issue": "The constant added to x squared is 2 instead of 1, making the stated inequality weaker than the request.", "rep": 1}
+{"id": "off-by-one-bound", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.63, "issue": "", "rep": 1}
+{"id": "off-by-one-bound", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 3.74, "issue": "", "rep": 1}
+{"id": "off-by-one-bound", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.11, "issue": "none", "rep": 1}
+{"id": "special-case", "label": "bad", "variant": "review", "approved": false, "seconds": 3.07, "issue": "The statement proves only the case m = 4 and n = 6, not the claim for all natural m and n.", "rep": 1}
+{"id": "special-case", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.1, "issue": "The description replaces the universally quantified variables m and n with the specific numbers 4 and 6.", "rep": 1}
+{"id": "special-case", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.18, "issue": "The request asserts the identity for all natural numbers m and n; the statement gives only the particular case m = 4 and n = 6.", "rep": 1}
+{"id": "special-case", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.69, "issue": "", "rep": 1}
+{"id": "special-case", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.31, "issue": "", "rep": 1}
+{"id": "special-case", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.06, "issue": "none", "rep": 1}
+{"id": "dropped-membership", "label": "bad", "variant": "review", "approved": false, "seconds": 4.04, "issue": "The conclusion must assert that the root lies in [a,b] (for example, a ≤ x ∧ x ≤ b); STATEMENT only asserts a real root without that restriction.", "rep": 1}
+{"id": "dropped-membership", "label": "bad", "variant": "roundtrip_two_calls", "approved": true, "seconds": 5.19, "issue": "", "rep": 1}
+{"id": "dropped-membership", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 3.32, "issue": "REQUEST は、f(x)=0 となる点が [a,b] 内に存在すると述べているが、STATEMENT の結論には x ∈ [a,b] がなく、実数全体での存在しか要求していない。", "rep": 1}
+{"id": "dropped-membership", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.94, "issue": "", "rep": 1}
+{"id": "dropped-membership", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 5.1, "issue": "", "rep": 1}
+{"id": "dropped-membership", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.55, "issue": "none", "rep": 1}
+{"id": "different-function", "label": "bad", "variant": "review", "approved": false, "seconds": 3.35, "issue": "STATEMENT omits the -2x term from the function and the corresponding -2 from its derivative.", "rep": 1}
+{"id": "different-function", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 5.39, "issue": "The function and derivative conclusion differ from the request.", "rep": 1}
+{"id": "different-function", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.31, "issue": "The request concerns the derivative of x ↦ x³ − 2x and claims it is 3a² − 2. The statement omits the term −2x from the function and omits −2 from the claimed derivative.", "rep": 1}
+{"id": "different-function", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.18, "issue": "", "rep": 1}
+{"id": "different-function", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 6.12, "issue": "", "rep": 1}
+{"id": "different-function", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.49, "issue": "inconsistent_verdict", "rep": 1}
+{"id": "commgroup-for-group", "label": "bad", "variant": "review", "approved": false, "seconds": 3.16, "issue": "STATEMENT assumes G is commutative, whereas the request applies to every group.", "rep": 1}
+{"id": "commgroup-for-group", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 5.2, "issue": "The description adds a commutativity hypothesis.", "rep": 1}
+{"id": "commgroup-for-group", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.74, "issue": "The request assumes only that G is a group, whereas the statement requires G to be a commutative group. The statement therefore adds a commutativity hypothesis.", "rep": 1}
+{"id": "commgroup-for-group", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.78, "issue": "", "rep": 1}
+{"id": "commgroup-for-group", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 5.23, "issue": "", "rep": 1}
+{"id": "commgroup-for-group", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.43, "issue": "inconsistent_verdict", "rep": 1}
+{"id": "log-dropped-positivity", "label": "bad", "variant": "review", "approved": false, "seconds": 3.08, "issue": "The statement omits the hypothesis x > 0 and asserts the inequality for every real x, which is not the requested claim.", "rep": 1}
+{"id": "log-dropped-positivity", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.57, "issue": "The domain is broadened from positive real numbers to all real numbers.", "rep": 1}
+{"id": "log-dropped-positivity", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.4, "issue": "The request quantifies only over positive real x, while the statement quantifies over all real x, including zero and negative values. Thus the statement has a broader domain of quantification and omits the positivity hypothesis.", "rep": 1}
+{"id": "log-dropped-positivity", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.76, "issue": "", "rep": 1}
+{"id": "log-dropped-positivity", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.08, "issue": "", "rep": 1}
+{"id": "log-dropped-positivity", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.2, "issue": "inconsistent_verdict", "rep": 1}
+{"id": "strict-vs-weak", "label": "bad", "variant": "review", "approved": false, "seconds": 2.7, "issue": "The statement allows x² + 1 = 0, whereas the request requires x² + 1 > 0.", "rep": 1}
+{"id": "strict-vs-weak", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.2, "issue": "The description weakens the strict inequality > 0 to ≥ 0.", "rep": 1}
+{"id": "strict-vs-weak", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.19, "issue": "The statement is weaker: REQUEST requires the expression to be strictly greater than 0, while STATEMENT only requires it to be greater than or equal to 0.", "rep": 1}
+{"id": "strict-vs-weak", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.89, "issue": "", "rep": 1}
+{"id": "strict-vs-weak", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 3.78, "issue": "", "rep": 1}
+{"id": "strict-vs-weak", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.01, "issue": "none", "rep": 1}
+{"id": "nat-subtraction-no-hypothesis", "label": "bad", "variant": "review", "approved": false, "seconds": 3.27, "issue": "STATEMENT omits the required hypothesis a ≥ b and claims the identity for all natural a,b; with truncated subtraction this is false when a < b.", "rep": 1}
+{"id": "nat-subtraction-no-hypothesis", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.53, "issue": "The description omits the hypothesis a ≥ b and therefore states a stronger, potentially undefined claim.", "rep": 1}
+{"id": "nat-subtraction-no-hypothesis", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 3.1, "issue": "The request includes the hypothesis a ≥ b, but the statement omits it. Thus the statement is stronger: it asserts the equality for all natural numbers a and b, including cases where a < b.", "rep": 1}
+{"id": "nat-subtraction-no-hypothesis", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.46, "issue": "", "rep": 1}
+{"id": "nat-subtraction-no-hypothesis", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.13, "issue": "", "rep": 1}
+{"id": "nat-subtraction-no-hypothesis", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 1.96, "issue": "none", "rep": 1}
+{"id": "quantifier-order", "label": "bad", "variant": "review", "approved": false, "seconds": 3.71, "issue": "STATEMENT is stronger than the request: it asserts a single real y greater than every real x, rather than a possibly x-dependent y.", "rep": 1}
+{"id": "quantifier-order", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.94, "issue": "DESCRIPTION asserts a single real number greater than all real numbers, rather than a real y for each x.", "rep": 1}
+{"id": "quantifier-order", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.28, "issue": "The quantifiers are reversed: the request says that for every real x there exists a real y greater than x, while the statement requires one fixed y to be greater than every real x.", "rep": 1}
+{"id": "quantifier-order", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.58, "issue": "", "rep": 1}
+{"id": "quantifier-order", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 3.66, "issue": "", "rep": 1}
+{"id": "quantifier-order", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 1.96, "issue": "none", "rep": 1}
+{"id": "injective-vs-surjective", "label": "bad", "variant": "review", "approved": false, "seconds": 2.93, "issue": "The request claims that x ↦ 2x is injective, whereas the statement claims it is surjective.", "rep": 1}
+{"id": "injective-vs-surjective", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.15, "issue": "The description replaces injectivity with surjectivity.", "rep": 1}
+{"id": "injective-vs-surjective", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.27, "issue": "The request claims the function is injective, while the statement claims it is surjective. These are different properties.", "rep": 1}
+{"id": "injective-vs-surjective", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.85, "issue": "", "rep": 1}
+{"id": "injective-vs-surjective", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.75, "issue": "", "rep": 1}
+{"id": "injective-vs-surjective", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.09, "issue": "none", "rep": 1}
+{"id": "sum-odd-off-by-one", "label": "bad", "variant": "review", "approved": false, "seconds": 3.07, "issue": "The statement sums the first n+1 odd numbers (giving (n+1)²), whereas the request says the sum of the first n odd numbers is n².", "rep": 1}
+{"id": "sum-odd-off-by-one", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.36, "issue": "The summation has n+1 terms, not the first n odd numbers.", "rep": 1}
+{"id": "sum-odd-off-by-one", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.75, "issue": "The statement sums the first n + 1 odd numbers, rather than the first n odd numbers. In particular, when n = 0 it sums one term and asserts that the sum is 0.", "rep": 1}
+{"id": "sum-odd-off-by-one", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.93, "issue": "", "rep": 1}
+{"id": "sum-odd-off-by-one", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.26, "issue": "", "rep": 1}
+{"id": "sum-odd-off-by-one", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.39, "issue": "none", "rep": 1}
+{"id": "continuous-vs-uniform", "label": "bad", "variant": "review", "approved": false, "seconds": 3.0, "issue": "The square function is continuous on ℝ but is not uniformly continuous, so STATEMENT does not express the requested claim.", "rep": 1}
+{"id": "continuous-vs-uniform", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.61, "issue": "Uniform continuity is not the same as continuity; x ↦ x² is continuous on ℝ but not uniformly continuous there.", "rep": 1}
+{"id": "continuous-vs-uniform", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.37, "issue": "The request says the function is continuous, whereas the statement says it is uniformly continuous. Uniform continuity is a stronger claim.", "rep": 1}
+{"id": "continuous-vs-uniform", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.06, "issue": "", "rep": 1}
+{"id": "continuous-vs-uniform", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.27, "issue": "", "rep": 1}
+{"id": "continuous-vs-uniform", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.06, "issue": "none", "rep": 1}
+{"id": "open-vs-closed-interval", "label": "bad", "variant": "review", "approved": false, "seconds": 4.15, "issue": "The statement uses (0,1) instead of the closed interval [0,1], so it does not formalize the requested claim.", "rep": 1}
+{"id": "open-vs-closed-interval", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 5.39, "issue": "The description replaces continuity and boundedness on [0,1] with continuity and boundedness on (0,1), changing the interval and weakening the claim.", "rep": 1}
+{"id": "open-vs-closed-interval", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.7, "issue": "The request concerns every continuous function on the closed interval [0,1] and boundedness above there. The statement instead assumes continuity only on the open interval (0,1) and asks for boundedness above only on that open interval; it does not require continuity or boundedness at the endpoints ", "rep": 1}
+{"id": "open-vs-closed-interval", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.95, "issue": "", "rep": 1}
+{"id": "open-vs-closed-interval", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.68, "issue": "", "rep": 1}
+{"id": "open-vs-closed-interval", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.4, "issue": "none", "rep": 1}
+{"id": "group-dropped-hypothesis", "label": "bad", "variant": "review", "approved": false, "seconds": 3.56, "issue": "STATEMENT omits the hypothesis that every element satisfies a * a = 1, and therefore asserts the stronger claim that all groups are commutative.", "rep": 1}
+{"id": "group-dropped-hypothesis", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 5.71, "issue": "The description changes the hypothesis and weakens the conclusion: it does not claim that every pair in G commutes.", "rep": 1}
+{"id": "group-dropped-hypothesis", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.98, "issue": "The request assumes that every element a satisfies a * a = 1; the statement omits this hypothesis. The request concludes that G is commutative under that assumption, while the statement asserts directly that every group G is commutative, a stronger claim.", "rep": 1}
+{"id": "group-dropped-hypothesis", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.93, "issue": "", "rep": 1}
+{"id": "group-dropped-hypothesis", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.65, "issue": "", "rep": 1}
+{"id": "group-dropped-hypothesis", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.81, "issue": "inconsistent_verdict", "rep": 1}
+{"id": "sqrt-domain", "label": "bad", "variant": "review", "approved": false, "seconds": 3.6, "issue": "STATEMENT omits the hypothesis x ≥ 0 and asserts the equality for every real x, which is false for negative x.", "rep": 1}
+{"id": "sqrt-domain", "label": "bad", "variant": "roundtrip_two_calls", "approved": false, "seconds": 4.7, "issue": "The description omits the restriction x ≥ 0.", "rep": 1}
+{"id": "sqrt-domain", "label": "bad", "variant": "roundtrip_single", "approved": false, "seconds": 2.37, "issue": "The request restricts x to be nonnegative (x ≥ 0), while the statement quantifies over all real x. Thus the statement is stronger and includes values outside the request's domain.", "rep": 1}
+{"id": "sqrt-domain", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.72, "issue": "", "rep": 1}
+{"id": "sqrt-domain", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.53, "issue": "", "rep": 1}
+{"id": "sqrt-domain", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.14, "issue": "none", "rep": 1}
+{"id": "calc_integral_square_zero_one", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.13, "issue": "", "rep": 1}
+{"id": "calc_integral_square_zero_one", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 5.06, "issue": "", "rep": 1}
+{"id": "calc_integral_square_zero_one", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.22, "issue": "none", "rep": 1}
+{"id": "coord_quarter_turn_orthogonal_components", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.59, "issue": "", "rep": 1}
+{"id": "coord_quarter_turn_orthogonal_components", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.21, "issue": "", "rep": 1}
+{"id": "coord_quarter_turn_orthogonal_components", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.76, "issue": "inconsistent_verdict", "rep": 1}
+{"id": "disc_size_difference_closed", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.97, "issue": "", "rep": 1}
+{"id": "disc_size_difference_closed", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.22, "issue": "", "rep": 1}
+{"id": "disc_size_difference_closed", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.19, "issue": "inconsistent_verdict", "rep": 1}
+{"id": "exlog_exp_strictly_positive", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.58, "issue": "", "rep": 1}
+{"id": "exlog_exp_strictly_positive", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 3.55, "issue": "", "rep": 1}
+{"id": "exlog_exp_strictly_positive", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.13, "issue": "inconsistent_verdict", "rep": 1}
+{"id": "logic_add_neq_contrapositive_real", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.7, "issue": "", "rep": 1}
+{"id": "logic_add_neq_contrapositive_real", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.21, "issue": "", "rep": 1}
+{"id": "logic_add_neq_contrapositive_real", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.11, "issue": "none", "rep": 1}
+{"id": "logic_no_negative_natural", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.45, "issue": "", "rep": 1}
+{"id": "logic_no_negative_natural", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.59, "issue": "", "rep": 1}
+{"id": "logic_no_negative_natural", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 1.85, "issue": "none", "rep": 1}
+{"id": "logic_set_union_absorption", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.75, "issue": "", "rep": 1}
+{"id": "logic_set_union_absorption", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 3.94, "issue": "", "rep": 1}
+{"id": "logic_set_union_absorption", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.24, "issue": "inconsistent_verdict", "rep": 1}
+{"id": "nt_gcd_lcm_product_identity", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.63, "issue": "", "rep": 1}
+{"id": "nt_gcd_lcm_product_identity", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.26, "issue": "", "rep": 1}
+{"id": "nt_gcd_lcm_product_identity", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.31, "issue": "none", "rep": 1}
+{"id": "number_theory_gcd_dvd_left", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.41, "issue": "", "rep": 1}
+{"id": "number_theory_gcd_dvd_left", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.01, "issue": "", "rep": 1}
+{"id": "number_theory_gcd_dvd_left", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.33, "issue": "none", "rep": 1}
+{"id": "ode_second_exponential_positive_root", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.67, "issue": "", "rep": 1}
+{"id": "ode_second_exponential_positive_root", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.76, "issue": "", "rep": 1}
+{"id": "ode_second_exponential_positive_root", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.45, "issue": "none", "rep": 1}
+{"id": "ode_separable_zero_solution", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.18, "issue": "", "rep": 1}
+{"id": "ode_separable_zero_solution", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.61, "issue": "", "rep": 1}
+{"id": "ode_separable_zero_solution", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 3.13, "issue": "The request says the function satisfies f'(x)=f(x)^2 for every real x, but does not require f to be the zero function. The statement specifies the zero function, so it is a special case of the request. It also explicitly includes the condition f(0)=0, which is not separately stated in the request (t", "rep": 1}
+{"id": "poly_square_nonnegative", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.57, "issue": "", "rep": 1}
+{"id": "poly_square_nonnegative", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 3.63, "issue": "", "rep": 1}
+{"id": "poly_square_nonnegative", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.22, "issue": "inconsistent_verdict", "rep": 1}
+{"id": "pq-continuous-interval-self-map-fixed-point", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.4, "issue": "", "rep": 1}
+{"id": "pq-continuous-interval-self-map-fixed-point", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 5.36, "issue": "", "rep": 1}
+{"id": "pq-continuous-interval-self-map-fixed-point", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 2.78, "issue": "none", "rep": 1}
+{"id": "rat_adjacent_partial_fractions", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.12, "issue": "", "rep": 1}
+{"id": "rat_adjacent_partial_fractions", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.44, "issue": "", "rep": 1}
+{"id": "rat_adjacent_partial_fractions", "label": "faithful", "variant": "roundtrip_single", "approved": true, "seconds": 5.56, "issue": "none", "rep": 1}
+{"id": "seed-absolute_value_not_differentiable", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.87, "issue": "", "rep": 1}
+{"id": "seed-absolute_value_not_differentiable", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 5.12, "issue": "", "rep": 1}
+{"id": "seed-absolute_value_not_differentiable", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.36, "issue": "REQUESTは0で微分可能かどうかを理由とともに判定するよう求めています。STATEMENTは「0で微分可能ではない」という判定だけを述べ、理由は含めていません。", "rep": 1}
+{"id": "seed-composite_injective_implies_first", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.93, "issue": "", "rep": 1}
+{"id": "seed-composite_injective_implies_first", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.73, "issue": "", "rep": 1}
+{"id": "seed-composite_injective_implies_first", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.59, "issue": "inconsistent_verdict", "rep": 1}
+{"id": "seed-linear_injective_iff_zero_kernel", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.78, "issue": "", "rep": 1}
+{"id": "seed-linear_injective_iff_zero_kernel", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 6.35, "issue": "", "rep": 1}
+{"id": "seed-linear_injective_iff_zero_kernel", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 4.39, "issue": "REQUEST の「体」は一般の体を指す一方、STATEMENT は K を可換体（Field）に限定している。したがって、非可換の斜体上の場合を含まず、より限定された主張である。", "rep": 1}
+{"id": "seed-linear_system_inconsistent", "label": "faithful", "variant": "review", "approved": true, "seconds": 2.97, "issue": "", "rep": 1}
+{"id": "seed-linear_system_inconsistent", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 5.15, "issue": "", "rep": 1}
+{"id": "seed-linear_system_inconsistent", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.96, "issue": "REQUESTは、そのような実数が存在するかを理由とともに判定するよう求めている。STATEMENTは非存在という判定のみを表し、理由は含んでいない。", "rep": 1}
+{"id": "seed-natural_power_continuous", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.13, "issue": "", "rep": 1}
+{"id": "seed-natural_power_continuous", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.79, "issue": "", "rep": 1}
+{"id": "seed-natural_power_continuous", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 2.99, "issue": "inconsistent_verdict", "rep": 1}
+{"id": "seed-product_determinant_nonzero_iff", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.0, "issue": "", "rep": 1}
+{"id": "seed-product_determinant_nonzero_iff", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 5.49, "issue": "", "rep": 1}
+{"id": "seed-product_determinant_nonzero_iff", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 3.79, "issue": "inconsistent_verdict", "rep": 1}
+{"id": "seed-sum_derivative", "label": "faithful", "variant": "review", "approved": true, "seconds": 3.13, "issue": "", "rep": 1}
+{"id": "seed-sum_derivative", "label": "faithful", "variant": "roundtrip_two_calls", "approved": true, "seconds": 4.84, "issue": "", "rep": 1}
+{"id": "seed-sum_derivative", "label": "faithful", "variant": "roundtrip_single", "approved": false, "seconds": 3.72, "issue": "inconsistent_verdict", "rep": 1}
