@@ -21,4 +21,4 @@
 - 失敗・無効だった点: (1) 最初の `du_sieve` は通信の一時不通で 8 題が OpenAIError(高速・通常の両方)となったため捨て、`du_sieve2` を取り直した。(2) on では高速経路の OpenAIError が 1 題あり、通常経路で検証済みになった。
 - 限界: n が小さい。負荷が一定でない。検証器は常駐 Lean の代用で、API の往復は固定値。10 秒の測定点は「検証済み」までで、解説と審査は含まない(回答までは別列)。同じ dev_unseen を on・off・on_sieve で使い回している。
 - 次にやること: ふるいの期限を短くして(例 3 秒)通らないときの上乗せを減らす案、通らない原因(ふるいが落とす理由)の調査。どちらも本線の効果が見えてから。
-- 出典: pals-agent の配線 PR(別記)、`data/2026-11-14-fast-first-attempt/tables.md`。生データは Lean の本文を含むためローカルのみ。費用: 本測定の 5 本で約 2.7 ドル(1 本 1 ドル以下)、取り直しの 1 本は 0.5 ドル程度。
+- 出典: [pals-agent#132](https://github.com/AtsushiHosaka/pals-agent/pull/132)(配線、マージ済み)・[#123](https://github.com/AtsushiHosaka/pals-agent/pull/123)(測定と改善2点、マージ済み)、`data/2026-11-14-fast-first-attempt/tables.md`。生データは Lean の本文を含むためローカルのみ。費用: 本測定の 5 本で約 2.7 ドル(1 本 1 ドル以下)、取り直しの 1 本は 0.5 ドル程度。
