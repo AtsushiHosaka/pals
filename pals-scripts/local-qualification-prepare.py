@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Prepare one owned local qualification stack. Never submit a proof or reset spending."""
+"""Prepare one owned local qualification stack. Never submit a proof or reset spending.
+
+The only way past a blocked budget ledger is the separate owner-approved rollover
+(local-qualification-budget-rollover.py); this driver only proves and records it.
+"""
 
 from __future__ import annotations
 
@@ -26,7 +30,13 @@ gate = load("local_qualification_prepare_gate", HERE / "local-qualification.py")
 provider_tls = load(
     "local_qualification_provider_tls", HERE / "bootstrap-local-provider-tls.py"
 )
+budget_proxy = load(
+    "local_qualification_prepare_budget", HERE / "local-qualification/budget_proxy.py"
+)
 PROJECT = "pals-reliability-local"
+# Recreating the API after the subject is frozen can change its host configuration once
+# (see docs/local-release-qualification.md); the freeze is repeated at most this often.
+API_FREEZE_ROUNDS = 3
 # Services the application roles depend on. They hold the emulated secrets, queues and
 # identities, so they must be converged BEFORE anything is written into them.
 STABLE_DEPENDENCIES = ("localstack", "cognito-local")
@@ -189,10 +199,140 @@ def require_ledger_continuity(ledger, serving):
         and all(
             name in old and old[name] == new.get(name)
             for name in ("calls", "actual_microusd", "reserved_microusd", "blocked")
+        )
+        and old.get("rollover") == new.get("rollover")
+        and (
+            old.get("rollover") is None
+            or old["limit_microusd"] == new["limit_microusd"]
         ),
         "relocated_budget_ledger_differs_from_the_serving_ledger",
     )
     return "relocated_identical"
+
+
+def require_known_budget(ledger):
+    """The cumulative ledger this stack continues: (bytes, content, bound).
+
+    Unchanged rule: every call has a known completed cost and nothing is blocked. A ledger
+    without calls is accepted only as the product of the owner-approved rollover, proven
+    against its byte-identical archive and approval record. Nothing here creates, empties
+    or repairs a ledger.
+    """
+    try:
+        raw = ledger.read_bytes()
+        previous = json.loads(raw)
+        rolled = previous.get("rollover") is not None
+        limit = (
+            budget_proxy.validate_rollover(previous, ledger.parent)
+            if rolled
+            else budget_proxy.LIMIT
+        )
+        known = (
+            not previous["blocked"]
+            and (previous["calls"] or rolled)
+            and all(x["state"] == "completed" for x in previous["calls"])
+            and previous["actual_microusd"] == previous["reserved_microusd"] <= limit
+            and (rolled or previous["limit_microusd"] >= budget_proxy.LIMIT)
+        )
+    except OSError:
+        raise gate.Refusal("existing_budget_ledger_required_no_reset") from None
+    except ValueError as error:
+        code = str(error)
+        raise gate.Refusal(
+            "budget_rollover_not_proven:" + code
+            if code.startswith("rollover_")
+            else "known_existing_budget_required_no_reset"
+        ) from None
+    except (KeyError, TypeError, AttributeError):
+        raise gate.Refusal("known_existing_budget_required_no_reset") from None
+    gate.need(known, "known_existing_budget_required_no_reset")
+    return raw, previous, limit
+
+
+def require_no_leftover_jobs(runtime, api_source, api_python, *, fail, run_=None):
+    """No unfinished local proof work may meet a reopened budget.
+
+    Called while the workers and the guard are stopped. A request or job a failed capture
+    left non-terminal would be received again and would spend as soon as the proxy
+    forwards. The default is to refuse; ``--fail-leftover-local-jobs`` ends them with
+    the candidate API's own failure calls, in the dedicated local database only.
+    """
+    args = [
+        api_python,
+        HERE / "local-qualification/leftover_jobs.py",
+        "--runtime-dir",
+        runtime,
+        "--api-source",
+        api_source,
+    ]
+    result = json.loads((run_ or run)(args + (["--fail"] if fail else []), 60))
+    gate.need(
+        result.get("state") in ("none", "no_local_database", "ended"),
+        "leftover_non_terminal_local_jobs:requests=%s,jobs=%s"
+        % (result.get("requests"), result.get("jobs")),
+    )
+    return {
+        key: result[key]
+        for key in (
+            "state",
+            "requests",
+            "jobs",
+            "request_statuses",
+            "job_states",
+            "request_sha256",
+            "job_sha256",
+        )
+        if key in result
+    }
+
+
+def runtime_config_entry(item):
+    environment = sorted(
+        x
+        for x in item["Config"]["Env"]
+        if not x.startswith("PALS_CLOUD_RESTORE_MANIFEST_SHA256=")
+    )
+    return {
+        "image_id": item["Image"],
+        "environment_sha256": gate.sha(gate.stable(environment).encode()),
+        "host_config_sha256": gate.sha(gate.stable(item["HostConfig"]).encode()),
+    }
+
+
+def freeze_until_api_is_stable(subject, api, write_and_recreate, inspect_api):
+    """Freeze the API that actually serves, in this one run.
+
+    The subject digest is part of the API environment, so writing the subject recreates
+    the API. The subject must describe that final container, not the one it replaced.
+    ``write_and_recreate`` writes the subject, binds its digest and recreates the API;
+    the freeze repeats until the recreated API equals the frozen one. Only names of the
+    changed host-configuration keys are recorded, never values.
+    """
+    rounds = []
+    for _ in range(API_FREEZE_ROUNDS):
+        subject["preparation"]["api_freeze_rounds"] = rounds
+        write_and_recreate()
+        observed = inspect_api()
+        entry = runtime_config_entry(observed)
+        if entry == subject["runtime_config"]["api"]:
+            return observed
+        rounds = rounds + [
+            {
+                "changed": sorted(
+                    key
+                    for key in entry
+                    if entry[key] != subject["runtime_config"]["api"][key]
+                ),
+                "changed_host_config_keys": sorted(
+                    key
+                    for key in set(api["HostConfig"]) | set(observed["HostConfig"])
+                    if api["HostConfig"].get(key) != observed["HostConfig"].get(key)
+                ),
+            }
+        ]
+        subject["runtime_config"]["api"] = entry
+        api = observed
+    raise gate.Refusal("frozen_runtime_configuration_did_not_converge_api")
 
 
 def render_profile(template, values):
@@ -361,6 +501,12 @@ def main():
         "agent-python",
     ):
         p.add_argument("--" + name, type=Path, required=True)
+    p.add_argument(
+        "--fail-leftover-local-jobs",
+        action="store_true",
+        help="end unfinished local requests/jobs with the candidate API's own failure "
+        "calls instead of refusing (dedicated local database only)",
+    )
     a = p.parse_args()
     gate.require_modules()
     r = require_runtime_directory(a.runtime_dir)
@@ -484,14 +630,10 @@ def main():
     # Producers and guard are stopped: the serving ledger is final. A relocated copy
     # that misses a call made after it was copied is refused here.
     require_ledger_continuity(ledger, serving)
-    raw = ledger.read_bytes()
-    previous = json.loads(raw)
-    gate.need(
-        not previous["blocked"]
-        and previous["calls"]
-        and all(x["state"] == "completed" for x in previous["calls"])
-        and previous["actual_microusd"] == previous["reserved_microusd"] <= 700000,
-        "known_existing_budget_required_no_reset",
+    raw, previous, budget_limit = require_known_budget(ledger)
+    # Still stopped: nothing left over from a failed capture may meet the open budget.
+    leftover_jobs = require_no_leftover_jobs(
+        r, a.api_source, a.api_python, fail=a.fail_leftover_local_jobs
     )
     env["PALS_BUDGET_RESUME_SHA256"] = gate.sha(raw)
     backup = r / ("budget-before-prepare-" + gate.sha(raw) + ".json")
@@ -672,7 +814,10 @@ def main():
             n: gate.sha((HERE / "local-qualification" / n).read_bytes())
             for n in ("guard.py", "budget_proxy.py", "Dockerfile")
         },
-        budget_limit_microusd=700000,
+        budget_limit_microusd=budget_limit,
+        # Present only after an owner-approved rollover: which ledger was closed, its
+        # totals and the approval record, as proven against the archive above.
+        budget_rollover=previous.get("rollover"),
         ca_bundle_sha256=observed_provider_tls["ca_bundle_sha256"],
         provider_tls={
             "server_certificate_sha256": observed_provider_tls[
@@ -689,17 +834,9 @@ def main():
     )
     subject["runtime_config"] = {}
     for role, item in actual.items():
-        environment = sorted(
-            x
-            for x in item["Config"]["Env"]
-            if not x.startswith("PALS_CLOUD_RESTORE_MANIFEST_SHA256=")
-        )
-        subject["runtime_config"][role] = {
-            "image_id": item["Image"],
-            "environment_sha256": gate.sha(gate.stable(environment).encode()),
-            "host_config_sha256": gate.sha(gate.stable(item["HostConfig"]).encode()),
-        }
+        subject["runtime_config"][role] = runtime_config_entry(item)
     subject["preparation"] = {
+        "leftover_local_jobs": leftover_jobs,
         "driver_sha256": gate.sha(Path(__file__).read_bytes()),
         "compose_sources": {
             str(path): gate.sha(path.read_bytes())
@@ -730,13 +867,30 @@ def main():
         "schema_fingerprint_sha256"
     ]
     out = r / "subject-native.json"
-    gate.private_json(out, subject)
-    digest = gate.sha(out.read_bytes())
-    env["PALS_LOCAL_CANDIDATE_SHA256"] = digest
-    write_env(r / "local.env", env)
-    run(
-        [*compose, "up", "-d", "--no-build", "--wait", "--wait-timeout", "45", "api"],
-        60,
+
+    def write_and_recreate():
+        gate.private_json(out, subject)
+        env["PALS_LOCAL_CANDIDATE_SHA256"] = gate.sha(out.read_bytes())
+        write_env(r / "local.env", env)
+        run(
+            [
+                *compose,
+                "up",
+                "-d",
+                "--no-build",
+                "--wait",
+                "--wait-timeout",
+                "45",
+                "api",
+            ],
+            60,
+        )
+
+    freeze_until_api_is_stable(
+        subject,
+        actual["api"],
+        write_and_recreate,
+        lambda: json.loads(run(["docker", "inspect", PROJECT + "-api-1"]))[0],
     )
     gate.web_provenance(subject)
     gate.verifier_provenance(subject)

@@ -34,6 +34,17 @@ bootstrap = load(
     "local_bootstrap_contract", ROOT / "local-qualification/bootstrap_database.py"
 )
 prepare = load("local_prepare_contract", ROOT / "local-qualification-prepare.py")
+rollover_tool = load(
+    "local_budget_rollover_contract", ROOT / "local-qualification-budget-rollover.py"
+)
+sys.path.insert(0, str(ROOT / "local-qualification"))
+readiness = load(
+    "local_database_readiness_contract",
+    ROOT / "local-qualification/database_readiness.py",
+)
+leftover_jobs = load(
+    "local_leftover_jobs_contract", ROOT / "local-qualification/leftover_jobs.py"
+)
 provider_tls = load(
     "local_provider_tls_contract", ROOT / "bootstrap-local-provider-tls.py"
 )
@@ -2015,9 +2026,15 @@ class RuntimeDirectoryRelocationTests(unittest.TestCase):
         with self.assertRaises(prepare.gate.Refusal):
             prepare.serving_budget_directory(run_=run)
 
-    def prepare_until_build(self, extra_call_after_copy):
+    def prepare_until_build(
+        self, extra_call_after_copy, *, mutate=None, leftover=None, extra_argv=()
+    ):
         """The real entry point against a fake Docker, up to the guard image build."""
         old, new = self.ledgers(extra_call_after_copy)
+        if mutate:
+            mutate(old)
+            shutil.rmtree(new)
+            shutil.copytree(old, new)
         runtime = new.parent
         runtime.chmod(0o700)
         (runtime / "local.env").write_text("PALS_ENV=local\nPALS_ENVIRONMENT=local\n")
@@ -2053,12 +2070,16 @@ class RuntimeDirectoryRelocationTests(unittest.TestCase):
                 return json.dumps({"codex.owner": prepare.gate.OWNER})
             if "rev-parse" in args:
                 return revision + "\n"
+            if any(x.endswith("leftover_jobs.py") for x in args):
+                return json.dumps(
+                    leftover or {"state": "none", "requests": 0, "jobs": 0}
+                )
             return ""
 
         def reached_build(*_args, **_kwargs):
             raise prepare.gate.Refusal("fixture_reached_the_guard_build")
 
-        argv = ["prepare", "--runtime-dir", str(runtime)]
+        argv = ["prepare", "--runtime-dir", str(runtime), *extra_argv]
         for name in ("compose-root", "api-source", "api-python", "agent-python"):
             argv += ["--" + name, str(self.root / name)]
         for name, path in files.items():
@@ -2105,6 +2126,72 @@ class RuntimeDirectoryRelocationTests(unittest.TestCase):
         self.assertEqual(code, "fixture_reached_the_guard_build")
         self.assertIn("PALS_BUDGET_RESUME_SHA256", (runtime / "local.env").read_text())
 
+    def test_preparation_main_accepts_only_the_proven_rolled_over_ledger(self):
+        def roll(budget_directory, *, keep_archive=True):
+            ledger = budget_directory / "ledger.json"
+            budget = proxy.Budget(ledger, resume_sha256=sha256(ledger.read_bytes()))
+            budget.uncertain(budget.reserve("gpt-6-luna", 1000, 1000), "timeout")
+            approval = budget_directory.parent / "approval.json"
+            approval.write_text(
+                json.dumps(
+                    {
+                        "schema_version": proxy.APPROVAL_SCHEMA,
+                        "approved_by": "repository owner",
+                        "approved_at": "2026-11-13",
+                        "approval_text": "approved",
+                        "closed_ledger_sha256": sha256(ledger.read_bytes()),
+                        "new_limit_microusd": 200000,
+                    }
+                )
+            )
+            rollover_tool.rollover(
+                budget_directory.parent,
+                approval,
+                sha256(approval.read_bytes()),
+                guard_running_=lambda: False,
+            )
+            if not keep_archive:
+                for archive in budget_directory.glob("closed-*"):
+                    shutil.rmtree(archive)
+
+        code, _, runtime = self.prepare_until_build(False, mutate=roll)
+        self.assertEqual(code, "fixture_reached_the_guard_build")
+        ledger = runtime / "budget/ledger.json"
+        self.assertEqual(json.loads(ledger.read_bytes())["calls"], [])
+        self.assertIn(
+            "PALS_BUDGET_RESUME_SHA256=" + sha256(ledger.read_bytes()),
+            (runtime / "local.env").read_text(),
+        )
+        self.root = self.root / "blocked"
+        self.root.mkdir()
+        code, _, runtime = self.prepare_until_build(
+            False, mutate=lambda d: roll(d, keep_archive=False)
+        )
+        self.assertEqual(code, "budget_rollover_not_proven:rollover_archive_missing")
+        self.assertNotIn(
+            "PALS_BUDGET_RESUME_SHA256", (runtime / "local.env").read_text()
+        )
+
+    def test_preparation_main_stops_on_leftover_jobs_before_anything_starts(self):
+        leftover = {"state": "leftover", "requests": 1, "jobs": 1}
+        code, commands, runtime = self.prepare_until_build(False, leftover=leftover)
+        self.assertEqual(code, "leftover_non_terminal_local_jobs:requests=1,jobs=1")
+        self.assertTrue(commands[-1][1].endswith("leftover_jobs.py"))
+        self.assertNotIn("--fail", commands[-1])
+        self.assertFalse(any("up" in c for c in commands))
+        self.assertNotIn(
+            "PALS_BUDGET_RESUME_SHA256", (runtime / "local.env").read_text()
+        )
+        self.root = self.root / "ended"
+        self.root.mkdir()
+        code, commands, _ = self.prepare_until_build(
+            False,
+            leftover={"state": "ended", "requests": 1, "jobs": 1},
+            extra_argv=("--fail-leftover-local-jobs",),
+        )
+        self.assertEqual(code, "fixture_reached_the_guard_build")
+        self.assertIn("--fail", next(c for c in commands if "leftover_jobs.py" in c[1]))
+
     def prepare_until_build_in_new_root(self, extra_call_after_copy):
         self.root = self.root / "second"
         self.root.mkdir()
@@ -2129,6 +2216,1126 @@ class RuntimeDirectoryRelocationTests(unittest.TestCase):
         self.assertEqual(resumed.actual, budget.actual)
         self.assertEqual(resumed.held, budget.held)
         self.assertEqual((old / "ledger.json").read_bytes(), raw)
+
+
+def sha256(raw):
+    import hashlib
+
+    return hashlib.sha256(raw).hexdigest()
+
+
+class BudgetRolloverFixture(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.runtime = Path(self.temp.name).resolve() / "runtime"
+        (self.runtime / "budget").mkdir(parents=True)
+        self.ledger = self.runtime / "budget/ledger.json"
+
+    def blocked_ledger(self):
+        """One completed call, then a forward whose cost stayed unknown: blocked."""
+        budget = proxy.Budget(self.ledger)
+        budget.complete(budget.reserve("gpt-6.1-terra", 1000, 1000), 1000, 100)
+        budget.uncertain(
+            budget.reserve("gpt-6-luna", 1000, 1000), "upstream_status_429"
+        )
+        return self.ledger.read_bytes()
+
+    def healthy_ledger(self):
+        budget = proxy.Budget(self.ledger)
+        budget.complete(budget.reserve("gpt-6.1-terra", 1000, 1000), 1000, 100)
+        return self.ledger.read_bytes()
+
+    def approval(self, closed_raw=None, **changed):
+        record = {
+            "schema_version": proxy.APPROVAL_SCHEMA,
+            "approved_by": "repository owner",
+            "approved_at": "2026-11-13",
+            "approval_text": "Close the blocked local ledger and open a new one.",
+            "closed_ledger_sha256": sha256(
+                self.ledger.read_bytes() if closed_raw is None else closed_raw
+            ),
+            "new_limit_microusd": 300000,
+        }
+        record.update(changed)
+        for name in [k for k, v in record.items() if v is ...]:
+            del record[name]
+        path = self.runtime / "approval.json"
+        path.write_text(json.dumps(record, indent=1))
+        return path, sha256(path.read_bytes())
+
+    def roll(self, path, digest, guard=False):
+        return rollover_tool.rollover(
+            self.runtime, path, digest, guard_running_=lambda: guard
+        )
+
+    def refused(self, path, digest, guard=False):
+        with self.assertRaises(rollover_tool.Refusal) as caught:
+            self.roll(path, digest, guard)
+        return str(caught.exception)
+
+
+class BudgetRolloverRefusalTests(BudgetRolloverFixture):
+    def assert_untouched(self, raw):
+        self.assertEqual(self.ledger.read_bytes(), raw)
+        self.assertFalse(list((self.runtime / "budget").glob("closed-*")))
+
+    def test_healthy_ledger_cannot_be_rolled_over(self):
+        raw = self.healthy_ledger()
+        self.assertEqual(
+            self.refused(*self.approval()), "rollover_healthy_ledger_refused"
+        )
+        self.assert_untouched(raw)
+        # A ledger without any call is healthy too: no reset of an unused budget.
+        self.ledger.unlink()
+        raw = (proxy.Budget(self.ledger), self.ledger.read_bytes())[1]
+        self.assertEqual(
+            self.refused(*self.approval()), "rollover_healthy_ledger_refused"
+        )
+        self.assert_untouched(raw)
+
+    def test_approval_hash_on_the_command_line_must_match_the_record(self):
+        raw = self.blocked_ledger()
+        path, digest = self.approval()
+        self.assertEqual(
+            self.refused(path, "0" * 64), "rollover_approval_sha256_mismatch"
+        )
+        # Editing the record after its hash was approved is the same refusal.
+        path.write_text(path.read_text().replace("300000", "700000"))
+        self.assertEqual(
+            self.refused(path, digest), "rollover_approval_sha256_mismatch"
+        )
+        self.assert_untouched(raw)
+
+    def test_approval_must_name_exactly_the_ledger_being_closed(self):
+        raw = self.blocked_ledger()
+        self.assertEqual(
+            self.refused(*self.approval(closed_raw=b"another ledger")),
+            "rollover_ledger_sha256_mismatch",
+        )
+        self.assert_untouched(raw)
+
+    def test_call_still_in_flight_is_refused(self):
+        budget = proxy.Budget(self.ledger)
+        budget.uncertain(budget.reserve("gpt-6-luna", 1000, 1000), "timeout")
+        raw = json.loads(self.ledger.read_bytes())
+        raw["calls"].append(
+            {
+                "model": "gpt-6-luna",
+                "input_bound": 1,
+                "output_bound": 1,
+                "reserved_microusd": 1,
+                "state": "reserved",
+            }
+        )
+        self.ledger.write_text(json.dumps(raw, sort_keys=True))
+        before = self.ledger.read_bytes()
+        self.assertEqual(
+            self.refused(*self.approval()), "rollover_call_in_flight_refused"
+        )
+        self.assert_untouched(before)
+
+    def test_running_guard_missing_record_and_links_are_refused(self):
+        raw = self.blocked_ledger()
+        path, digest = self.approval()
+        self.assertEqual(
+            self.refused(path, digest, guard=True), "rollover_requires_stopped_guard"
+        )
+        self.assertEqual(
+            self.refused(self.runtime / "absent.json", digest),
+            "rollover_approval_record_required",
+        )
+        link = self.runtime / "link.json"
+        link.symlink_to(path)
+        self.assertEqual(
+            self.refused(link, digest), "rollover_approval_record_required"
+        )
+        self.assert_untouched(raw)
+
+    def test_bound_above_the_limit_and_open_or_incomplete_records_are_refused(self):
+        raw = self.blocked_ledger()
+        for changed, code in (
+            ({"new_limit_microusd": proxy.LIMIT + 1}, "rollover_new_limit_invalid"),
+            ({"new_limit_microusd": 0}, "rollover_new_limit_invalid"),
+            ({"new_limit_microusd": True}, "rollover_new_limit_invalid"),
+            ({"new_limit_microusd": "300000"}, "rollover_new_limit_invalid"),
+            ({"approval_text": " "}, "rollover_approval_record_invalid"),
+            ({"approved_at": "yesterday"}, "rollover_approval_record_invalid"),
+            ({"approved_by": ...}, "rollover_approval_record_invalid"),
+            ({"extra": "field"}, "rollover_approval_record_invalid"),
+            ({"schema_version": "v0"}, "rollover_approval_record_invalid"),
+        ):
+            self.assertEqual(self.refused(*self.approval(**changed)), code, changed)
+        path = self.runtime / "approval.json"
+        path.write_text("not json")
+        self.assertEqual(
+            self.refused(path, sha256(path.read_bytes())),
+            "rollover_ledger_or_approval_unreadable",
+        )
+        self.assert_untouched(raw)
+
+    def test_guard_state_is_read_from_docker_and_unknown_is_refused(self):
+        calls = []
+
+        def fake(returncode, stdout):
+            def run(args, **_kwargs):
+                calls.append(args)
+                return subprocess.CompletedProcess(args, returncode, stdout, "")
+
+            return run
+
+        with patch.object(rollover_tool.subprocess, "run", fake(0, "abc\n")):
+            self.assertTrue(rollover_tool.guard_running())
+        with patch.object(rollover_tool.subprocess, "run", fake(0, "")):
+            self.assertFalse(rollover_tool.guard_running())
+        with patch.object(rollover_tool.subprocess, "run", fake(1, "")):
+            with self.assertRaises(rollover_tool.Refusal):
+                rollover_tool.guard_running()
+        self.assertIn("name=^/" + rollover_tool.GUARD + "$", calls[0])
+        self.assertIn("status=running", calls[0])
+
+
+class BudgetRolloverAcceptanceTests(BudgetRolloverFixture):
+    def rolled(self):
+        closed = self.blocked_ledger()
+        path, digest = self.approval()
+        return closed, digest, self.roll(path, digest)
+
+    def test_closed_ledger_is_archived_byte_identically_and_header_records_it(self):
+        closed, digest, result = self.rolled()
+        archive = self.runtime / "budget" / ("closed-" + sha256(closed))
+        self.assertEqual((archive / "ledger.json").read_bytes(), closed)
+        self.assertEqual(sha256((archive / "approval.json").read_bytes()), digest)
+        self.assertEqual(stat.S_IMODE(archive.stat().st_mode), 0o700)
+        self.assertEqual(stat.S_IMODE((archive / "ledger.json").stat().st_mode), 0o400)
+        opened = json.loads(self.ledger.read_bytes())
+        self.assertEqual(
+            (opened["calls"], opened["actual_microusd"], opened["reserved_microusd"]),
+            ([], 0, 0),
+        )
+        self.assertFalse(opened["blocked"])
+        self.assertEqual(opened["limit_microusd"], 300000)
+        header = opened["rollover"]
+        self.assertEqual(header["rolled_over_from_sha256"], sha256(closed))
+        self.assertEqual(header["approval_sha256"], digest)
+        self.assertEqual(
+            header["closed_totals"],
+            {
+                "calls": 2,
+                "actual_microusd": 1750,
+                "reserved_microusd": 1750 + 625,
+                "unknown_calls": 1,
+                "unknown_reasons": {"upstream_status_429": 1},
+                "limit_microusd": proxy.LIMIT,
+                "blocked": True,
+                "cumulative": {
+                    "ledgers": 1,
+                    "actual_microusd": 1750,
+                    "reserved_microusd": 2375,
+                },
+            },
+        )
+        self.assertEqual(result["state"], "rolled_over_not_prepared")
+        self.assertEqual(result["new_ledger_sha256"], sha256(self.ledger.read_bytes()))
+        # Repeating the same command finds a healthy ledger: no second reset.
+        path = self.runtime / "approval.json"
+        self.assertEqual(self.refused(path, digest), "rollover_ledger_sha256_mismatch")
+        self.assertEqual((archive / "ledger.json").read_bytes(), closed)
+
+    def test_proxy_accepts_the_rolled_over_ledger_only_with_its_exact_hash(self):
+        self.rolled()
+        raw = self.ledger.read_bytes()
+        # A restart without the hash prepare binds still cannot adopt it.
+        for resume in (None, "0" * 64):
+            with self.assertRaises(ValueError) as caught:
+                proxy.Budget(self.ledger, resume_sha256=resume)
+            self.assertEqual(
+                str(caught.exception), "existing_budget_no_automatic_retry"
+            )
+        budget = proxy.Budget(self.ledger, resume_sha256=sha256(raw))
+        self.assertEqual((budget.calls, budget.actual, budget.held), ([], 0, 0))
+        self.assertEqual(budget.limit, 300000)
+        # The approved bound, not the fixed one, limits the new ledger.
+        with self.assertRaises(ValueError):
+            budget.reserve("gpt-6.1-sol", 80000, 40000)
+        budget.complete(budget.reserve("gpt-6.1-terra", 1000, 1000), 1000, 100)
+        saved = json.loads(self.ledger.read_bytes())
+        self.assertEqual(saved["limit_microusd"], 300000)
+        self.assertEqual(saved["rollover"], json.loads(raw)["rollover"])
+        # A later restart keeps the header, the bound and the new call.
+        again = proxy.Budget(
+            self.ledger, resume_sha256=sha256(self.ledger.read_bytes())
+        )
+        self.assertEqual(
+            (again.limit, again.actual, len(again.calls)), (300000, 1750, 1)
+        )
+        self.assertEqual(again.rollover, saved["rollover"])
+
+    def test_prepare_accepts_it_and_binds_the_approved_bound(self):
+        self.rolled()
+        raw, previous, limit = prepare.require_known_budget(self.ledger)
+        self.assertEqual(raw, self.ledger.read_bytes())
+        self.assertEqual(limit, 300000)
+        self.assertEqual(previous["calls"], [])
+
+    def tampered(self):
+        """Every way to present a zero-call ledger without the approved rollover."""
+        closed, digest, _ = self.rolled()
+        archive = self.runtime / "budget" / ("closed-" + sha256(closed))
+        opened = self.ledger.read_bytes()
+
+        def restore():
+            shutil.rmtree(archive, ignore_errors=True)
+            archive.mkdir(mode=0o700)
+            (archive / "ledger.json").write_bytes(closed)
+            (archive / "approval.json").write_bytes(
+                (self.runtime / "approval.json").read_bytes()
+            )
+            self.ledger.write_bytes(opened)
+
+        def edit_ledger(change):
+            def apply():
+                value = json.loads(opened)
+                change(value)
+                self.ledger.write_text(json.dumps(value, sort_keys=True))
+
+            return apply
+
+        def healthy_archive():
+            value = json.loads(closed)
+            value["blocked"] = False
+            value["calls"] = value["calls"][:1]
+            value["reserved_microusd"] = value["actual_microusd"]
+            healthy = json.dumps(value, sort_keys=True).encode()
+            other = archive.with_name("closed-" + sha256(healthy))
+            other.mkdir()
+            self.addCleanup(shutil.rmtree, other, True)
+            (other / "ledger.json").write_bytes(healthy)
+            approval = json.loads((self.runtime / "approval.json").read_bytes())
+            approval["closed_ledger_sha256"] = sha256(healthy)
+            approval_raw = json.dumps(approval).encode()
+            (other / "approval.json").write_bytes(approval_raw)
+            edit_ledger(
+                lambda v: v["rollover"].update(
+                    rolled_over_from_sha256=sha256(healthy),
+                    approval_sha256=sha256(approval_raw),
+                    closed_totals=proxy.closed_totals(value),
+                )
+            )()
+
+        cases = {
+            "archive removed": lambda: shutil.rmtree(archive),
+            "closed ledger edited": lambda: (
+                (archive / "ledger.json").chmod(0o600),
+                (archive / "ledger.json").write_bytes(closed + b" "),
+            ),
+            "approval replaced": lambda: (
+                (archive / "approval.json").chmod(0o600),
+                (archive / "approval.json").write_bytes(b"{}"),
+            ),
+            "bound raised": edit_ledger(lambda v: v.update(limit_microusd=proxy.LIMIT)),
+            "totals rewritten": edit_ledger(
+                lambda v: v["rollover"]["closed_totals"].update(actual_microusd=0)
+            ),
+            "header removed": edit_ledger(lambda v: v.update(rollover=None)),
+            "header open": edit_ledger(lambda v: v["rollover"].update(note="x")),
+            "healthy ledger archived by hand": healthy_archive,
+        }
+        return cases, restore
+
+    def test_proxy_and_prepare_refuse_every_unproven_zero_call_ledger(self):
+        cases, restore = self.tampered()
+        for name, tamper in cases.items():
+            restore()
+            tamper()
+            raw = self.ledger.read_bytes()
+            with self.assertRaises(ValueError, msg=name):
+                proxy.Budget(self.ledger, resume_sha256=sha256(raw))
+            with self.assertRaises(prepare.gate.Refusal, msg=name) as caught:
+                prepare.require_known_budget(self.ledger)
+            self.assertRegex(
+                str(caught.exception),
+                r"^(budget_rollover_not_proven:rollover_[a-z_]+"
+                r"|known_existing_budget_required_no_reset)$",
+                name,
+            )
+            # Refused ledgers are never rewritten by the refusal.
+            self.assertEqual(self.ledger.read_bytes(), raw, name)
+        restore()
+        prepare.require_known_budget(self.ledger)
+
+    def test_paths_without_an_approval_still_cannot_reset_spending(self):
+        raw = self.blocked_ledger()
+        for code, action in (
+            ("known_existing_budget_required_no_reset", lambda: None),
+            ("existing_budget_ledger_required_no_reset", self.ledger.unlink),
+            (
+                "known_existing_budget_required_no_reset",
+                lambda: proxy.Budget(self.ledger),
+            ),
+        ):
+            action()
+            with self.assertRaises(prepare.gate.Refusal) as caught:
+                prepare.require_known_budget(self.ledger)
+            self.assertEqual(str(caught.exception), code)
+        self.ledger.write_bytes(raw)
+        with self.assertRaises(ValueError) as caught:
+            proxy.Budget(self.ledger, resume_sha256=sha256(raw))
+        self.assertEqual(str(caught.exception), "uncertain_budget_cannot_resume")
+
+    def test_second_rollover_keeps_the_cumulative_closed_spending(self):
+        self.rolled()
+        budget = proxy.Budget(
+            self.ledger, resume_sha256=sha256(self.ledger.read_bytes())
+        )
+        budget.uncertain(budget.reserve("gpt-6-luna", 1000, 1000), "timeout")
+        path, digest = self.approval(new_limit_microusd=100000)
+        self.roll(path, digest)
+        totals = json.loads(self.ledger.read_bytes())["rollover"]["closed_totals"]
+        self.assertEqual(totals["unknown_reasons"], {"timeout": 1})
+        self.assertEqual(
+            totals["cumulative"],
+            {"ledgers": 2, "actual_microusd": 1750, "reserved_microusd": 3000},
+        )
+        self.assertEqual(len(list((self.runtime / "budget").glob("closed-*"))), 2)
+        self.assertEqual(prepare.require_known_budget(self.ledger)[2], 100000)
+
+    def test_capture_evidence_and_subject_record_the_rollover(self):
+        self.rolled()
+        ledger = json.loads(self.ledger.read_bytes())
+        subject = {
+            "guard": {
+                "budget_limit_microusd": 300000,
+                "budget_rollover": ledger["rollover"],
+                "resumed_budget": {"path": "/private/backup", "sha256": "a" * 64},
+            }
+        }
+        with patch.object(gate, "command", return_value=json.dumps(ledger)):
+            self.assertEqual(gate.budget_status(subject), ledger)
+            for changed in (
+                {"budget_rollover": None},
+                {
+                    "budget_rollover": {
+                        **ledger["rollover"],
+                        "approval_sha256": "0" * 64,
+                    }
+                },
+                {"budget_limit_microusd": 700000},
+            ):
+                with self.assertRaises(gate.Refusal):
+                    gate.budget_status({"guard": {**subject["guard"], **changed}})
+        # A continuous ledger must not claim a rollover, and keeps the fixed bound.
+        plain = {**ledger, "rollover": None, "limit_microusd": 700000}
+        with patch.object(gate, "command", return_value=json.dumps(plain)):
+            with self.assertRaises(gate.Refusal) as caught:
+                gate.budget_status(
+                    {"guard": {**subject["guard"], "budget_limit_microusd": 700000}}
+                )
+            self.assertEqual(
+                str(caught.exception), "budget_rollover_differs_from_subject"
+            )
+            gate.budget_status({"guard": {"budget_limit_microusd": 700000}})
+        low = {**plain, "limit_microusd": 300000}
+        with patch.object(gate, "command", return_value=json.dumps(low)):
+            with self.assertRaises(gate.Refusal):
+                gate.budget_status({"guard": {"budget_limit_microusd": 300000}})
+        evidence = gate.budget_rollover_evidence(subject, ledger)
+        self.assertEqual(evidence["state"], "owner_approved_rollover")
+        self.assertEqual(evidence["closed_totals"]["unknown_calls"], 1)
+        self.assertEqual(evidence["new_limit_microusd"], 300000)
+        self.assertEqual(
+            gate.budget_rollover_evidence(subject, plain),
+            {"state": "none_continuous_ledger"},
+        )
+
+    def test_capture_record_carries_the_rollover_even_when_the_capture_fails(self):
+        self.rolled()
+        ledger = json.loads(self.ledger.read_bytes())
+        root = self.runtime.parent
+        subject = root / "subject.json"
+        subject.write_text(
+            json.dumps(
+                {
+                    "schema_version": "pals.local-qualification-subject.v1",
+                    "basis": "approved-local-real-db-lean-model",
+                    "fixture": {
+                        "paid_submissions": 1,
+                        "maximum_approved_usd": 1,
+                        "output_language": "en",
+                    },
+                    "local_profile": {},
+                    "guard": {
+                        "budget_limit_microusd": 300000,
+                        "budget_rollover": ledger["rollover"],
+                    },
+                }
+            )
+        )
+        argv = ["gate", "--subject", str(subject), "--state-dir", str(root / "capture")]
+        argv += ["--web-root", str(root), "--database-env", str(root / "private.env")]
+        with (
+            patch.object(sys, "argv", argv),
+            patch.object(gate, "require_modules"),
+            patch.object(gate, "web_provenance", return_value={}),
+            patch.object(gate, "verifier_provenance", return_value={}),
+            patch.object(gate, "runtime", return_value={}),
+            patch.object(gate, "command", return_value=json.dumps(ledger)),
+            patch.object(
+                gate, "database_readiness", side_effect=gate.Refusal("stop_here")
+            ),
+            patch.object(gate.subprocess, "Popen") as browser,
+        ):
+            self.assertEqual(gate.main(), 1)
+            browser.assert_not_called()
+        record = json.loads((root / "capture/latest.json").read_text())
+        self.assertEqual(record["budget_rollover"]["state"], "owner_approved_rollover")
+        self.assertEqual(
+            record["budget_rollover"]["rolled_over_from_sha256"],
+            ledger["rollover"]["rolled_over_from_sha256"],
+        )
+        self.assertEqual(
+            record["provider_budget_before"]["rollover"], ledger["rollover"]
+        )
+
+
+class UnknownReasonTests(unittest.TestCase):
+    def test_every_condition_has_its_own_closed_code(self):
+        import http.client
+
+        for error, code in (
+            (ValueError("upstream_status_429"), "upstream_status_429"),
+            (ValueError("upstream_status_500"), "upstream_status_500"),
+            (TimeoutError(), "timeout"),
+            (ValueError("upstream_too_large"), "body_too_large"),
+            (json.JSONDecodeError("x", "y", 0), "unparseable_body"),
+            (KeyError("usage"), "unparseable_usage"),
+            (TypeError(), "unparseable_usage"),
+            (ValueError("unknown_price_or_usage"), "unparseable_usage"),
+            (ValueError("upstream_model_changed"), "model_mismatch"),
+            (ValueError("upstream_standard_tier_unconfirmed"), "service_tier"),
+            (ValueError("usage_exceeds_reservation"), "usage_above_reservation"),
+            (ssl.SSLCertVerificationError("secret host text"), "upstream_tls_error"),
+            (ConnectionResetError("secret"), "upstream_transport_error"),
+            (http.client.IncompleteRead(b"secret"), "upstream_protocol_error"),
+            (ValueError("sk-secret provider text"), "internal_error"),
+            (RuntimeError("secret"), "internal_error"),
+        ):
+            self.assertEqual(proxy.unknown_reason(error), code, repr(error))
+
+    def test_reason_is_a_closed_code_and_never_free_text(self):
+        with tempfile.TemporaryDirectory() as d:
+            budget = proxy.Budget(Path(d) / "ledger.json")
+            for reason, stored in (
+                ("upstream_status_503", "upstream_status_503"),
+                ("Bearer sk-secret", "internal_error"),
+                (None, "internal_error"),
+                ("x" * 49, "internal_error"),
+            ):
+                budget.blocked = False
+                index = budget.reserve("gpt-6-luna", 1, 1)
+                budget.uncertain(index, reason)
+                row = json.loads((Path(d) / "ledger.json").read_bytes())["calls"][index]
+                self.assertEqual(
+                    (row["state"], row["unknown_reason"]), ("unknown", stored)
+                )
+
+    def forward(self, upstream):
+        """One paid Responses call through the real handler with a scripted upstream."""
+        with tempfile.TemporaryDirectory() as d:
+            budget = proxy.Budget(Path(d) / "ledger.json")
+            payload = json.dumps(
+                {
+                    "model": "gpt-6-luna",
+                    "input": "prove it",
+                    "max_output_tokens": 100,
+                    "service_tier": "default",
+                }
+            ).encode()
+            handler = proxy.Handler.__new__(proxy.Handler)
+            handler.path = "/v1/responses"
+            handler.headers = {"Content-Length": str(len(payload))}
+            handler.rfile = io.BytesIO(payload)
+            handler.server = type("Server", (), {"budget": budget})()
+            answers = []
+            handler.respond = lambda status, raw: answers.append(status)
+
+            def scripted(path, _payload):
+                if path.endswith("/input_tokens"):
+                    return b'{"object":"response.input_tokens","input_tokens":10}'
+                return upstream()
+
+            with patch.object(proxy, "upstream", scripted):
+                handler.do_POST()
+            return answers[0], json.loads((Path(d) / "ledger.json").read_bytes())
+
+    def test_handler_records_which_condition_fired_in_the_ledger_row(self):
+        def raises(error):
+            def call():
+                raise error
+
+            return call
+
+        def body(**changed):
+            value = {
+                "model": "gpt-6-luna",
+                "service_tier": "default",
+                "usage": {"input_tokens": 10, "output_tokens": 5},
+            }
+            value.update(changed)
+            return lambda: json.dumps(value).encode()
+
+        for upstream, reason in (
+            (raises(ValueError("upstream_status_429")), "upstream_status_429"),
+            (raises(TimeoutError()), "timeout"),
+            (raises(ValueError("upstream_too_large")), "body_too_large"),
+            (lambda: b"<html>", "unparseable_body"),
+            (body(usage=None), "unparseable_usage"),
+            (
+                body(usage={"input_tokens": "ten", "output_tokens": 5}),
+                "unparseable_usage",
+            ),
+            (body(model="gpt-6.1-sol"), "model_mismatch"),
+            (body(service_tier="priority"), "service_tier"),
+            (
+                body(usage={"input_tokens": 11, "output_tokens": 5}),
+                "usage_above_reservation",
+            ),
+        ):
+            status, ledger = self.forward(upstream)
+            self.assertEqual(status, 402, reason)
+            self.assertTrue(ledger["blocked"], reason)
+            self.assertEqual(
+                [(c["state"], c["unknown_reason"]) for c in ledger["calls"]],
+                [("unknown", reason)],
+            )
+            self.assertEqual(
+                set(ledger["calls"][0]) - {"unknown_reason"},
+                {"model", "input_bound", "output_bound", "reserved_microusd", "state"},
+            )
+        status, ledger = self.forward(body())
+        self.assertEqual(status, 200)
+        self.assertEqual(ledger["calls"][0]["state"], "completed")
+        self.assertNotIn("unknown_reason", ledger["calls"][0])
+
+    def test_upstream_names_the_actual_status(self):
+        class Connection:
+            def __init__(self, *args, **kwargs):
+                pass
+
+            def request(self, *args, **kwargs):
+                pass
+
+            def getresponse(self):
+                return type("Response", (), {"status": 429})()
+
+            def close(self):
+                pass
+
+        environment = {"PALS_OPENAI_UPSTREAM_IP": "8.8.8.8", "OPENAI_API_KEY": "test"}
+        with (
+            patch.object(proxy, "HTTPSConnection", Connection),
+            patch.dict(os.environ, environment),
+        ):
+            with self.assertRaises(ValueError) as caught:
+                proxy.upstream("/v1/responses", {})
+        self.assertEqual(str(caught.exception), "upstream_status_429")
+        self.assertEqual(proxy.unknown_reason(caught.exception), "upstream_status_429")
+
+
+class OperationalError(Exception):
+    """Stands in for psycopg.OperationalError, which is matched by its name."""
+
+
+class FakeConnection:
+    """Records statements; answers privilege and catalog reads from a small state."""
+
+    def __init__(self, state):
+        self.state = state
+        self.statements = []
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_args):
+        return False
+
+    def cursor(self):
+        return self
+
+    def execute(self, statement, parameters=()):
+        self.statements.append((statement, tuple(parameters)))
+        state = self.state
+        result = None
+        if statement.startswith("GRANT UPDATE"):
+            state.setdefault("column_update", set()).add(statement)
+        elif "has_column_privilege" in statement:
+            table, column = parameters[1].split(".")[1], parameters[2]
+            held = any(
+                '("%s") ON public."%s"' % (column, table) in grant
+                for grant in state.get("column_update", ())
+            )
+            result = (
+                held and not state.get("grant_ineffective"),
+                table in state.get("table_update", ()),
+            )
+        elif "has_table_privilege" in statement:
+            result = (parameters[1].split(".")[1] in state.get("table_update", ()),)
+        elif "pg_database" in statement:
+            result = (1,) if state.get("database") else None
+        elif "to_regclass" in statement:
+            result = state.get("tables", (True, True))
+        elif "FROM public.proof_requests WHERE" in statement:
+            return type("Rows", (), {"fetchall": lambda _s: list(state["requests"])})()
+        elif "FROM public.proof_jobs" in statement:
+            return type("Rows", (), {"fetchall": lambda _s: list(state["jobs"])})()
+        return type("Row", (), {"fetchone": lambda _s: result})()
+
+
+class EmptyServerBootstrapTests(unittest.TestCase):
+    PARTS = bootstrap.validate_local_dsn(
+        "postgresql://local_user:" + "a" * 64 + "@127.0.0.1:55432/pals"
+    )
+
+    def test_maintenance_connection_does_not_need_the_legacy_default_database(self):
+        seen = []
+
+        def server(existing):
+            def connect(url, autocommit=False):
+                name = url.rsplit("/", 1)[1]
+                seen.append((name, autocommit))
+                if name not in existing:
+                    raise OperationalError("database does not exist")
+                return name
+
+            return connect
+
+        # A freshly created server has ``postgres`` and nothing else.
+        self.assertEqual(
+            bootstrap.connect_maintenance(self.PARTS, connect=server({"postgres"})),
+            "postgres",
+        )
+        self.assertEqual(seen, [("postgres", True)])
+        # The container this stack was first created with keeps working either way.
+        self.assertEqual(
+            bootstrap.connect_maintenance(
+                self.PARTS, connect=server({"pals_reliability_test"})
+            ),
+            "pals_reliability_test",
+        )
+        with self.assertRaises(ValueError) as caught:
+            bootstrap.connect_maintenance(self.PARTS, connect=server(set()))
+        self.assertEqual(
+            str(caught.exception), "local_maintenance_database_unavailable"
+        )
+
+        def broken(url, autocommit=False):
+            raise RuntimeError("not a missing database")
+
+        with self.assertRaises(RuntimeError):
+            bootstrap.connect_maintenance(self.PARTS, connect=broken)
+        self.assertNotIn(
+            "/pals_reliability_test",
+            inspect.getsource(bootstrap.main),
+            "the maintenance database is no longer hardcoded in the bootstrap",
+        )
+
+    def test_rowlock_grants_are_exactly_what_the_readiness_check_requires(self):
+        self.assertEqual(
+            bootstrap.ROWLOCK_COLUMNS,
+            tuple((table, column) for _, table, column, _ in readiness.FUNCTIONS),
+        )
+        self.assertEqual(bootstrap.SCHEMA_OWNER, "pals_api_schema_owner")
+        connection = FakeConnection({})
+        self.assertEqual(
+            bootstrap.grant_rowlock_privileges(connection),
+            [
+                "proof_verification_candidates.candidate_id",
+                "proof_explanations.proof_job_id",
+            ],
+        )
+        grants = [s for s, _ in connection.statements if not s.startswith("SELECT")]
+        self.assertEqual(
+            grants,
+            [
+                'GRANT UPDATE ("candidate_id") ON public."proof_verification_candidates" TO "pals_api_schema_owner"',
+                'GRANT UPDATE ("proof_job_id") ON public."proof_explanations" TO "pals_api_schema_owner"',
+            ],
+        )
+        # Idempotent: a second bootstrap issues the same two statements and nothing else.
+        bootstrap.grant_rowlock_privileges(connection)
+        again = [s for s, _ in connection.statements if not s.startswith("SELECT")]
+        self.assertEqual(again, grants * 2)
+        self.assertEqual(len(connection.state["column_update"]), 2)
+
+    def test_table_level_update_or_an_ineffective_grant_is_refused(self):
+        broad = FakeConnection({"table_update": {"proof_explanations"}})
+        with self.assertRaises(ValueError) as caught:
+            bootstrap.grant_rowlock_privileges(broad)
+        self.assertEqual(
+            str(caught.exception),
+            "local_rowlock_table_update_too_broad:proof_explanations",
+        )
+        # Never widened and never revoked here: only the first, narrow grant was issued.
+        self.assertEqual(
+            [s for s, _ in broad.statements if not s.startswith("SELECT")],
+            [
+                'GRANT UPDATE ("candidate_id") ON public."proof_verification_candidates" TO "pals_api_schema_owner"'
+            ],
+        )
+        with self.assertRaises(ValueError) as caught:
+            bootstrap.grant_rowlock_privileges(
+                FakeConnection({"grant_ineffective": True})
+            )
+        self.assertEqual(
+            str(caught.exception),
+            "local_rowlock_grant_failed:proof_verification_candidates",
+        )
+        with patch.object(bootstrap, "ROWLOCK_COLUMNS", (('x"; DROP', "y"),)):
+            with self.assertRaises(ValueError):
+                bootstrap.grant_rowlock_privileges(FakeConnection({}))
+
+
+class ServingMigratorFixture(unittest.TestCase):
+    """A miniature API source tree with the same shape as the candidate's."""
+
+    SERVING = """from app.infrastructure.repositories.retry_schema import (
+    preflight as retry_preflight,
+)
+from app.release.current_migration import preflight as current_preflight
+from app.release.keyed_migration import preflight as keyed_preflight
+from app.release.orphan_schema import preflight as orphan_preflight
+from app.release.other import unrelated
+
+
+def build():
+    from app.release.late_migration import preflight
+"""
+    SCHEMA = """from pathlib import Path
+STATE = Path(__file__).with_name("installed")
+
+
+def preflight(database_url):
+    if not STATE.exists() or "broken" in STATE.read_text():
+        raise RuntimeError("Explanation retry migration is required before serving")
+"""
+    MIGRATION = """from app.infrastructure.repositories.retry_schema import STATE
+
+
+def apply(database_url: str) -> str:
+    STATE.write_text(database_url + MARK)
+    return "installed"
+"""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.source = Path(self.temp.name).resolve()
+        files = {
+            "app/infrastructure/bootstrap.py": self.SERVING,
+            "app/infrastructure/repositories/retry_schema.py": self.SCHEMA,
+            "app/release/retry_migration.py": self.MIGRATION.replace("MARK", "''"),
+            "app/release/current_migration.py": "CALLS = []\n\n\ndef preflight(database_url):\n    CALLS.append('preflight')\n\n\ndef apply(database_url):\n    CALLS.append('apply')\n",
+            "app/release/keyed_migration.py": "def preflight(database_url, key):\n    raise RuntimeError\n",
+            "app/release/orphan_schema.py": "def preflight(database_url):\n    raise RuntimeError\n",
+            "app/release/other.py": "unrelated = 1\n",
+        }
+        for name, text in files.items():
+            path = self.source / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(text)
+        for package in self.source.rglob("*"):
+            if package.is_dir():
+                (package / "__init__.py").write_text("")
+        sys.path.insert(0, str(self.source))
+        self.addCleanup(self.forget)
+
+    def forget(self):
+        sys.path.remove(str(self.source))
+        for name in [n for n in sys.modules if n == "app" or n.startswith("app.")]:
+            del sys.modules[name]
+
+    def state(self):
+        return self.source / "app/infrastructure/repositories/installed"
+
+
+class ServingMigratorTests(ServingMigratorFixture):
+    RETRY = "app.infrastructure.repositories.retry_schema"
+
+    def test_required_preflights_are_read_from_the_serving_source(self):
+        self.assertEqual(
+            bootstrap.serving_preflight_modules(self.source),
+            [
+                self.RETRY,
+                "app.release.current_migration",
+                "app.release.keyed_migration",
+                "app.release.orphan_schema",
+            ],
+        )
+
+    def test_empty_database_gets_the_candidates_own_migrator_once(self):
+        url = "postgresql://local/pals"
+        report = bootstrap.apply_serving_migrators(self.source, url)
+        self.assertEqual(
+            report,
+            {
+                self.RETRY: "installed_by:app.release.retry_migration",
+                "app.release.current_migration": "current",
+                "app.release.keyed_migration": "not_checked_other_signature",
+                # Never stricter than serving: reported, the API start stays the judge.
+                "app.release.orphan_schema": "failing_no_discoverable_migrator",
+            },
+        )
+        self.assertEqual(self.state().read_text(), url)
+        import app.release.current_migration as current
+
+        self.assertEqual(current.CALLS, ["preflight"])
+        # Second bootstrap: already current, the migrator is not run again.
+        self.state().write_text("kept")
+        report = bootstrap.apply_serving_migrators(self.source, url)
+        self.assertEqual(report[self.RETRY], "current")
+        self.assertEqual(self.state().read_text(), "kept")
+
+    def test_migration_that_does_not_satisfy_serving_is_a_closed_refusal(self):
+        (self.source / "app/release/retry_migration.py").write_text(
+            self.MIGRATION.replace("MARK", "'broken'")
+        )
+        with self.assertRaises(ValueError) as caught:
+            bootstrap.apply_serving_migrators(self.source, "postgresql://local/pals")
+        self.assertEqual(
+            str(caught.exception),
+            "local_serving_migration_failed:app.release.retry_migration",
+        )
+
+    def test_two_possible_migrators_are_not_guessed(self):
+        (self.source / "app/release/second_migration.py").write_text(
+            self.MIGRATION.replace("MARK", "'second'")
+        )
+        self.assertEqual(
+            bootstrap.migrator_candidates(self.source, self.RETRY),
+            ["app.release.retry_migration", "app.release.second_migration"],
+        )
+        report = bootstrap.apply_serving_migrators(
+            self.source, "postgresql://local/pals"
+        )
+        self.assertEqual(report[self.RETRY], "failing_no_discoverable_migrator")
+        self.assertFalse(self.state().exists())
+
+    @unittest.skipUnless(
+        (ROOT.parent / "pals-api/app/infrastructure/bootstrap.py").is_file(),
+        "pals-api submodule is not initialised: the real serving source was NOT read",
+    )
+    def test_pinned_api_source_yields_the_explanation_retry_migrator(self):
+        api = ROOT.parent / "pals-api"
+        modules = bootstrap.serving_preflight_modules(api)
+        schema = "app.infrastructure.repositories.explanation_retry_schema"
+        self.assertIn(schema, modules)
+        self.assertEqual(
+            bootstrap.migrator_candidates(api, schema),
+            ["app.release.explanation_retry_migration"],
+        )
+
+
+class LeftoverJobTests(unittest.TestCase):
+    URL = "postgresql://local_user:" + "a" * 64 + "@127.0.0.1:55432/pals"
+    TERMINAL = ["canceled", "failed", "verified"]
+
+    def inspect(self, state, **kwargs):
+        connections = []
+
+        def connect(url, autocommit=False):
+            connections.append(FakeConnection(state))
+            return connections[-1]
+
+        result = leftover_jobs.inspect(
+            self.URL, connect=connect, terminal=self.TERMINAL, **kwargs
+        )
+        return result, connections
+
+    def test_empty_server_and_finished_database_have_nothing_left_over(self):
+        result, connections = self.inspect({"database": False})
+        self.assertEqual(
+            result, {"state": "no_local_database", "requests": 0, "jobs": 0}
+        )
+        self.assertEqual(len(connections), 1)
+        result, _ = self.inspect({"database": True, "tables": (False, False)})
+        self.assertEqual(
+            (result["state"], result["requests"], result["jobs"]), ("none", 0, 0)
+        )
+        result, connections = self.inspect(
+            {"database": True, "requests": [], "jobs": []}
+        )
+        self.assertEqual(result["state"], "none")
+        statements = dict(connections[1].statements[1:])
+        self.assertEqual(
+            statements[leftover_jobs.REQUESTS], (["queued", "assessing", "verifying"],)
+        )
+        self.assertEqual(statements[leftover_jobs.JOBS], (self.TERMINAL,))
+
+    def test_unfinished_work_is_reported_by_count_and_digest_never_by_identifier(self):
+        state = {
+            "database": True,
+            "requests": [("request-identifier", "verifying")],
+            "jobs": [("job-identifier", "repairing", "en")],
+        }
+        result, connections = self.inspect(state)
+        self.assertEqual(result["state"], "leftover")
+        self.assertEqual((result["requests"], result["jobs"]), (1, 1))
+        self.assertEqual(result["request_statuses"], {"verifying": 1})
+        self.assertEqual(result["job_states"], {"repairing": 1})
+        self.assertEqual(result["job_sha256"], [sha256(b"job-identifier")])
+        self.assertNotIn("identifier", json.dumps(result))
+        # Read only unless asked: no statement but SET and SELECT was sent.
+        for statement, _ in connections[1].statements:
+            self.assertTrue(statement.startswith(("SET LOCAL", "SELECT")), statement)
+
+    def test_ending_uses_the_candidates_calls_and_proves_nothing_is_left(self):
+        state = {
+            "database": True,
+            "requests": [("r1", "verifying")],
+            "jobs": [("j1", "repairing", "ja")],
+        }
+        ended = []
+
+        def fail(connection, requests, jobs):
+            ended.append((requests, jobs))
+            state["requests"], state["jobs"] = [], []
+
+        with patch.object(leftover_jobs, "fail_leftovers", fail):
+            result, _ = self.inspect(state, fail=True)
+        self.assertEqual(result["state"], "ended")
+        self.assertEqual((result["requests"], result["jobs"]), (1, 1))
+        self.assertEqual(ended, [([("r1", "verifying")], [("j1", "repairing", "ja")])])
+        state.update(requests=[("r1", "verifying")], jobs=[])
+        with patch.object(leftover_jobs, "fail_leftovers", lambda *a: None):
+            with self.assertRaises(ValueError) as caught:
+                self.inspect(state, fail=True)
+        self.assertEqual(str(caught.exception), "leftover_local_jobs_not_ended")
+
+    def test_only_the_closed_local_database_is_ever_read(self):
+        for bad in (
+            self.URL.replace("127.0.0.1", "db.example.invalid"),
+            self.URL.replace("55432", "5432"),
+            self.URL + "?host=remote.invalid",
+        ):
+            with self.assertRaises(ValueError):
+                leftover_jobs.inspect(bad, connect=None, terminal=self.TERMINAL)
+
+    def run_prepare_check(self, answer, fail=False):
+        calls = []
+
+        def run(args, timeout=45):
+            calls.append([str(x) for x in args])
+            return json.dumps(answer)
+
+        result = prepare.require_no_leftover_jobs(
+            Path("/runtime"), Path("/api"), Path("/python"), fail=fail, run_=run
+        )
+        return result, calls[0]
+
+    def test_preparation_refuses_leftover_work_unless_told_to_end_it(self):
+        with self.assertRaises(prepare.gate.Refusal) as caught:
+            self.run_prepare_check({"state": "leftover", "requests": 1, "jobs": 2})
+        self.assertEqual(
+            str(caught.exception), "leftover_non_terminal_local_jobs:requests=1,jobs=2"
+        )
+        result, command = self.run_prepare_check(
+            {"state": "none", "requests": 0, "jobs": 0}
+        )
+        self.assertEqual(result, {"state": "none", "requests": 0, "jobs": 0})
+        self.assertNotIn("--fail", command)
+        self.assertEqual(command[0], "/python")
+        self.assertTrue(command[1].endswith("local-qualification/leftover_jobs.py"))
+        result, command = self.run_prepare_check(
+            {
+                "state": "ended",
+                "requests": 1,
+                "jobs": 1,
+                "job_states": {"repairing": 1},
+            },
+            fail=True,
+        )
+        self.assertEqual(command[-1], "--fail")
+        self.assertEqual(result["state"], "ended")
+        with self.assertRaises(prepare.gate.Refusal):
+            self.run_prepare_check({"state": "unexpected"})
+
+
+class ApiFreezeConvergenceTests(unittest.TestCase):
+    def container(self, **host):
+        return {
+            "Image": "sha256:api",
+            "Config": {"Env": ["A=1", "PALS_CLOUD_RESTORE_MANIFEST_SHA256=x"]},
+            "HostConfig": {"NetworkMode": "database", **host},
+        }
+
+    def freeze(self, containers):
+        first = containers[0]
+        subject = {
+            "runtime_config": {"api": prepare.runtime_config_entry(first)},
+            "preparation": {},
+        }
+        written = []
+        remaining = list(containers[1:])
+        result = prepare.freeze_until_api_is_stable(
+            subject,
+            first,
+            lambda: written.append(json.loads(json.dumps(subject))),
+            lambda: remaining.pop(0),
+        )
+        return subject, written, result
+
+    def test_rebuilt_stack_converges_in_one_run(self):
+        created, recreated = self.container(), self.container(ShmSize=1)
+        subject, written, result = self.freeze([created, recreated, recreated])
+        # The written subject equals the API that serves after the last recreate.
+        self.assertEqual(result, recreated)
+        self.assertEqual(
+            written[-1]["runtime_config"]["api"],
+            prepare.runtime_config_entry(recreated),
+        )
+        self.assertEqual(len(written), 2)
+        self.assertEqual(
+            written[-1]["preparation"]["api_freeze_rounds"],
+            [
+                {
+                    "changed": ["host_config_sha256"],
+                    "changed_host_config_keys": ["ShmSize"],
+                }
+            ],
+        )
+
+    def test_unchanged_api_is_frozen_once_and_the_digest_variable_is_ignored(self):
+        same = self.container()
+        other_digest = self.container()
+        other_digest["Config"]["Env"][1] = "PALS_CLOUD_RESTORE_MANIFEST_SHA256=y"
+        subject, written, _ = self.freeze([same, other_digest])
+        self.assertEqual(len(written), 1)
+        self.assertEqual(subject["preparation"]["api_freeze_rounds"], [])
+
+    def test_api_that_never_settles_is_refused(self):
+        changing = [
+            self.container(ShmSize=n) for n in range(prepare.API_FREEZE_ROUNDS + 1)
+        ]
+        with self.assertRaises(prepare.gate.Refusal) as caught:
+            self.freeze(changing)
+        self.assertEqual(
+            str(caught.exception), "frozen_runtime_configuration_did_not_converge_api"
+        )
+
+    def test_preparation_main_freezes_through_the_convergence_loop(self):
+        source = inspect.getsource(prepare.main)
+        self.assertIn("freeze_until_api_is_stable(", source)
+        self.assertLess(
+            source.index("freeze_until_api_is_stable("),
+            source.index("gate.runtime(subject)"),
+        )
+        self.assertLess(
+            source.index("require_no_leftover_jobs("), source.index("start_stack(")
+        )
+        self.assertLess(
+            source.index("require_known_budget("),
+            source.index("require_no_leftover_jobs("),
+        )
 
 
 if __name__ == "__main__":
