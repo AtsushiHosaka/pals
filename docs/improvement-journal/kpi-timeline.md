@@ -74,3 +74,4 @@
 | 2026-11-14 | T2: 初回失敗33件の分類（tactic 45%・未知の名前 21%・型 15%・構文 15%）と、修復2回以上の題は4題に集中。失敗の種類ごとの修復の指示は効果なし（patch 成功 15/30 対 14/30）。異種レース＋patch＋整形も30秒以内 13/20 で費用 1.5〜1.8倍。目標 14/20 未達、どちらも不採用 | [t2-failure-classes-and-repair-hints](entries/2026-11-14-t2-failure-classes-and-repair-hints.md) |
 | 2026-11-14 | 要件（明示的な証人・指定された定義）を生成プロンプトに伝える指針（既定 off）: 回答が返る 11/12→9/12、却下 1→0、検証失敗 +3、費用 +43%。不採用 | [requirement-guidance-statement](entries/2026-11-14-requirement-guidance-statement.md) |
 | 2026-11-14 | 意味の審査の不合格の理由コードを分離して保存（pals-api#106、公開応答は従来コードのまま、failure_reason を追加）。却下後の作り直しは Draft から再生成するだけで 8/8 が承認（理由を渡しても改善せず）。状態遷移の設計承認待ち | [semantic-review-reason-code-and-reformalize](entries/2026-11-14-semantic-review-reason-code-and-reformalize.md) |
+| 2026-11-14 | 意味の審査で不合格の依頼を新しいジョブで1回だけ作り直す（pals-api#108、既定 off、マージ済み）。作り直しは Draft からの再実行で 8/8 承認の見込み（agent 側の測定）。API 経由の端から端までは未測定 | [semantic-review-reformalize-job](entries/2026-11-14-semantic-review-reformalize-job.md) |
