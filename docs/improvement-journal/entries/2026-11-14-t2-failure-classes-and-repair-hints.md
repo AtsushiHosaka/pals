@@ -3,7 +3,7 @@
 日付: 2026-11-14 / 担当: T2 レーン / 状態: 測定済み。**この試み（`PALS_T2_REPAIR_HINTS_ENABLED`）は採用しない**。実装は pals-agent の `claude/t2-repair-classes`（PR なし）。前の試みは [t2-30s-late-items-and-cheap-patch](2026-11-14-t2-30s-late-items-and-cheap-patch.md)。
 
 ## 利用者にとって何が変わるか
-変わりません。30秒以内は dev_unseen 20題で 12〜13/20 のままで、目標の 14/20 に届きませんでした。残りの失敗は、主に「同じ4題が、どの設定でも落ちる」ことだと分かりました。
+変わりません。30秒以内は dev_unseen 20題で 12〜13/20 のままで、目標の 14/20 に届きませんでした。初回で落ち、修復が2回以上かかるのは、主に「同じ4題」だと分かりました（最終的には 20/20 が検証済みで、遅いだけで失敗ではありません）。
 
 ## 初回失敗の分類（Lean の診断が根拠、cheap-first の6回・33件）
 保存済みの第1候補を再コンパイルして、最初のエラーで分けました（dev_unseen 4回と tuning 2回）。
@@ -15,7 +15,7 @@
 | D: 型の不一致・引数・instance | 5（15%） | `HasDerivAt` の関数形が合わない |
 | C: 構文 | 5（15%） | `expected no space before`、型の引数の形 |
 | その他 | 1 | `rfl` が定義上の等式にならない |
-形式化の誤り（命題の意味の誤り）と import の不足は 0 件でした（import は整形で直る分を除いた後の第1候補なので、結果として残らない）。
+形式化の誤り（命題の意味の誤り）は**未確認**です（再コンパイルの最初のエラーだけでは、命題が依頼の意味を正しく表すかは判定できず、意味の確認は別途行っていない。検証済みの20件の忠実性は journal の dev_unseen の実測で確認）。import の不足は、整形で直る分を除いた第1候補なので、結果として残りません。
 
 ## 修復2回以上の題は、ほぼ同じ4題
 cheap-first の4回（80題・回）で、修復が2回以上かかった 15 件（19%）の題は、`arctan-lipschitz`、`dependent-consecutive-triples`、`exp-two-x-derivative`、`reverse-triangle-inequality` の4題（20題の20%）に集中しています。最初の失敗は、E が2題（`exact?` を残す、未解決の goal）、D が1題、C（構文）が1題です。一方、存在しない名前（A）の題（`limit-of-sum`、`integral-of-sine-over-half-period`）は、1回の patch で通ります。つまり、**名前の存在を確かめる検索の一段は、1回の修復で通る題（17.5%）を速くするものであって、修復2回以上の題（19%）を減らすものではありません**。
@@ -48,6 +48,9 @@ patch の修復プロンプトに、失敗の種類（`failure_brief` の閉じ�
 
 ## 出典（生データ）
 この entry の数値は、測定ごとの `records.jsonl`（`steps` に各呼び出しの所要・effort・試行番号、`submits_detail` に提出ごとの成否を持つ）と、保存した失敗候補の再コンパイル結果から集計しました。生データは Lean のソースと定理文を含むため git に入れず、共有ノートの `t2-lane/fix1`、`fix2`、`fix3`、`remeasure3` にあります。集計は `scripts/eval/recheck_first_candidates.py`、`scripts/eval/replay_patch_ab.py`（pals-agent）と、records の集計で行いました。
+
+## 測定の条件
+モデルは prove・patch に Terra（`gpt-6.1-terra`、役割の強度は medium。cheap-first の初回だけ low）、レビュー・説明に Luna（`gpt-6-luna`、low）。修復上限は 6 回（駆動の `--max-repairs` の既定）、モデルの待ちは 240 秒、出力は最大 12000 トークン。`hetero_fix` の2候補は low と medium。対比測定は、役割の強度（medium）の patch を1回ずつ。
 
 ## 破棄・失敗した測定
 - cheap-first の dev20 の取り直し前の1回が API の不通で停止（記録は前のエントリ）。
