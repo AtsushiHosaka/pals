@@ -49,3 +49,4 @@
 | trig_expand_tan_square_plus_one | For every real x, if cos(x) is not equal to 0, then tan(x)^2 + 1 = 1/cos(x)^2. | `∀ x : ℝ, Real.cos x ≠ 0 → Real.tan x ^ 2 + 1 = 1 / (Real.cos x ^ 2)` | 忠実 | 仮定 cos x ≠ 0 が残り、tan²x+1 = 1/cos²x | U1 |
 | trig_expand_tan_square_plus_one | For every real x, if cos(x) is not equal to 0, then tan(x)^2 + 1 = 1/cos(x)^2. | `∀ x : ℝ, Real.cos x ≠ 0 → Real.tan x ^ 2 + 1 = 1 / (Real.cos x) ^ 2` | 忠実 | 仮定 cos x ≠ 0 が残り、tan²x+1 = 1/cos²x | U2 |
 | trig_expand_tan_square_plus_one | For every real x, if cos(x) is not equal to 0, then tan(x)^2 + 1 = 1/cos(x)^2. | `∀ x : ℝ, Real.cos x ≠ 0 → Real.tan x ^ 2 + 1 = 1 / Real.cos x ^ 2` | 忠実 | 仮定 cos x ≠ 0 が残り、tan²x+1 = 1/cos²x | U |
+- 台帳: `2026-11-13-fast-answer-unseen-24`、`2026-11-13-fast-answer-faithfulness-28`、`2026-11-13-fast-answer-expl-format-9`、`2026-11-13-gate-combined-terse2-none`、`2026-11-13-gate-combined-terse2-low`。関所の単独審査の走は `2026-11-12-gate-terse-review-general-none/low`。

@@ -19,3 +19,4 @@
 - 限界・未確認: n が小さい。#137 の条件の判定ではない。通常経路と高速回答は同時刻の交互実行ではない。高速回答の説明は既存の説明レビューを通していない(足すと +2〜5 秒の見積もり)。`terse` の文言は敵対セットの失敗の型を含む。探索で held_out の 2 題(`seed-sum_derivative`、`logic_no_negative_natural`)を試走に使った。
 - 次にやること: 通常経路の同時開始、`explain` 型の取り込み、証明生成の強化、説明のレビューとの接続。
 - 出典: [pals-agent#121](https://github.com/AtsushiHosaka/pals-agent/pull/121)、生データ `data/2026-11-12-fast-answer/`(本文は除去)。
+- 台帳: `2026-11-12-fast-answer-normal-path-20`、`2026-11-12-fast-answer-stage0-resident-20`、`2026-11-12-fast-answer-classic-gate-low-20`、`2026-11-12-fast-answer-terse2-none-40`。通常経路の費用 0.622 ドルは生データがこの PR になく、台帳には入れていない(未確認)。p90 は最近順位法。

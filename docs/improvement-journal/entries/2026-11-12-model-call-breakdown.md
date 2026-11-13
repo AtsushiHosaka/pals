@@ -10,3 +10,4 @@
 - 限界・未確認: 本番の検証器・API・キューの往復は未測定。説明の出力レビュー(`explanations.py`)は含めていない。
 - 次にやること: 統合呼び、関所の並列化、短い出力の関所(次のエントリ)。
 - 出典: [pals-agent#121](https://github.com/AtsushiHosaka/pals-agent/pull/121)、`docs/verification/fast-answer-2026-11-12.md`、生データ `data/2026-11-12-fast-answer/breakdown-stage0-12items.jsonl`(本文は除去)。
+- 台帳: `2026-11-12-model-call-breakdown-12items`。

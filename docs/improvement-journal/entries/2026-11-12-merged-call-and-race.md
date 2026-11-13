@@ -14,4 +14,4 @@
 - 次にやること: 強い証明生成を 5 秒以内に出す手。`explain` 型から中心の命題を取り出す手。
 - 出典: [pals-agent#121](https://github.com/AtsushiHosaka/pals-agent/pull/121)、生データ `data/2026-11-12-fast-answer/mp*`、`rp-repair.json`(命題・証明の本文は除去)。
 - 訂正: 2026-11-13、PR レビューの指摘を受けて、修復の分母(17→初回失敗 10)、統合呼びの分母(9→10、low は 6/11)とトークン数を、`mp*.json`・`rp-repair.json` から再計算して直した。
-- 台帳: `2026-11-12-repair-probe-none`、`2026-11-12-merged-call-none`(下記。low と 4 並列は同じ 12 題の別条件で、台帳には未登録)。
+- 台帳: `2026-11-12-merged-call-none`、`2026-11-12-merged-call-low`、`2026-11-12-merged-call-none-parallel4`、`2026-11-12-repair-probe-none`。
