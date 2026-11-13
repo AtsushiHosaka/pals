@@ -75,3 +75,4 @@
 | 2026-11-14 | 要件（明示的な証人・指定された定義）を生成プロンプトに伝える指針（既定 off）: 回答が返る 11/12→9/12、却下 1→0、検証失敗 +3、費用 +43%。不採用 | [requirement-guidance-statement](entries/2026-11-14-requirement-guidance-statement.md) |
 | 2026-11-14 | 意味の審査の不合格の理由コードを分離して保存（pals-api#106、公開応答は従来コードのまま、failure_reason を追加）。却下後の作り直しは Draft から再生成するだけで 8/8 が承認（理由を渡しても改善せず）。状態遷移の設計承認待ち | [semantic-review-reason-code-and-reformalize](entries/2026-11-14-semantic-review-reason-code-and-reformalize.md) |
 | 2026-11-14 | 意味の審査で不合格の依頼を新しいジョブで1回だけ作り直す（pals-api#108、既定 off、マージ済み）。作り直しは Draft からの再実行で 8/8 承認の見込み（agent 側の測定）。API 経由の端から端までは未測定 | [semantic-review-reformalize-job](entries/2026-11-14-semantic-review-reformalize-job.md) |
+| 2026-11-14 | スキーム論の第3回（同値4題 v3、Stacks 環境、検証環境の振り分け）。同値を両方向で述べる案内（pals-agent#136）で依頼どおり 1/4 → 4/4。StacksCore は手元で 116 秒でビルドでき、検証は既定より約 20% 遅い。n=1 | [scheme-theory-e2e-part3](entries/2026-11-14-scheme-theory-e2e-part3.md) |
