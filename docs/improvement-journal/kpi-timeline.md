@@ -68,4 +68,9 @@
 | 2026-11-14 | 回答の精度の回帰セット（10題）で前後を測定。v2 の x² 生成失敗 6/9→0/9（検査の不具合を修正）。v1 の終端拒否は 4/108→4/90 で変化なし。固定出力の QA は答えのない結論を 0/10 しか拒否せず、コードの検査が 8/10 を先に止める（誤検出 0/87）。pals-agent#127 | [answer-accuracy-regression-set](entries/2026-11-14-answer-accuracy-regression-set.md) |
 | 2026-11-14 | PR #88 の審査指示を同じセットで測定: 固定出力で答えのない結論の拒否 0→10/10、誤拒否 2→1/20。ただし端から端まで90試行で終端拒否 6（v1 baseline 4/108）で総数は減らず（誤拒否の内訳は v1p88 が未分類のため、誤拒否が減ったかは未確認）。不採用、オーナー判断待ち | [pr88-review-instruction-measured](entries/2026-11-14-pr88-review-instruction-measured.md) |
 | 2026-11-14 | Lean 検証後の意味の審査: 「明示的な N を与えよ」の ε-N の題は、Lean が N を与えない形では 16/16 却下、N を命題に含めると 5/6 承認、要求なしでは 16/16 承認。審査役の過剰な厳しさではなく形式化が要件を落としている | [semantic-review-explicit-n](entries/2026-11-14-semantic-review-explicit-n.md) |
+<<<<<<< HEAD
 | 2026-11-14 | T2: 30秒超の題の内訳（1回修復で通る 17.5%、2回以上 19%）と、最初の patch も low にする試み。patch は 20.1→7.7 秒、1回修復の題は 40.7→33.5 秒だが、全体の30秒以内は 11〜12/20（cheap-first は 12〜13）で、tuning は 11/14（13/14）。不採用。目標 16/20 は未達 | [t2-30s-late-items-and-cheap-patch](entries/2026-11-14-t2-30s-late-items-and-cheap-patch.md) |
+=======
+| 2026-11-14 | 届くための一般形の調査（カードは作らない）: 35 個の一般形で 36/90（tuning 28、dev_unseen 8）、うち 28 題は G が題の命題そのもの。2 題以上に届く一般形は 1 個（2 題）。費用 0 | [general-forms-needed](entries/2026-11-14-general-forms-needed.md) |
+>>>>>>> origin/main
+| 2026-11-14 | T2: 初回失敗33件の分類（tactic 45%・未知の名前 21%・型 15%・構文 15%）と、修復2回以上の題は4題に集中。失敗の種類ごとの修復の指示は効果なし（patch 成功 15/30 対 14/30）。異種レース＋patch＋整形も30秒以内 13/20 で費用 1.5〜1.8倍。目標 14/20 未達、どちらも不採用 | [t2-failure-classes-and-repair-hints](entries/2026-11-14-t2-failure-classes-and-repair-hints.md) |
