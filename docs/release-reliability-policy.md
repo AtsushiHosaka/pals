@@ -39,6 +39,8 @@ Reusable release code belongs in the owning repository. Freeze the exact executi
 
 For a planned sole-target cutover, the v2 controller requires its frozen notification-window helper and contract. It targets only the exact incident 5xx alarm, verifies the actual account/configuration and active one-time mute, and fixes an AWS-enforced expiry of at most ten minutes. It retains metrics, alarm evaluation and all other alarms; no open-ended disable/re-enable is allowed. Failure attempts early cancellation. Healthy restoration may shorten the remaining tail to at most three minutes without extending the original deadline. Overrun restores notifications and fails acceptance, while compatible, independently checked recovery can continue. Local fault injection and dedicated notification probes must not manufacture production ALB failures. See [the observed causes and limits](release-5xx-cause-and-control-2026-11-09.md); code/CI success does not establish live AWS activation, expiration or notification delivery.
 
+2026-11-14のオーナー承認により、seq30に限り、指定した5xxアラームの通知抑制の上限を1500秒（25分）とする。seq29の利用停止実測847秒と引き継ぎの計画を踏まえ、600秒を維持する案は今回採用しない。AWSによる期限の強制、適用前の有効状態の確認、失敗時の早期取消、生メトリクス・評価・他のアラームの維持は引き続き必須とする。利用停止15分以内という受け入れ条件は変更しない。seq31以降への包括承認ではない。判断の記録は[pals#379](https://github.com/AtsushiHosaka/pals/issues/379#issuecomment-6870562063)にある。
+
 ## Treat recovery as a product requirement
 
 Specify behavior after a transient network error, reconnect/focus, access-token expiry, provider/queue failure, worker exit, and host reboot. Recover observation of the same request rather than resubmitting work. Preserve account isolation, unsent drafts, idempotency, billing, and terminal-state integrity.
