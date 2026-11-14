@@ -52,3 +52,16 @@ infraのマージ後コミット`7ef4034c7b3fa5f3c69a8899c5c74fb68b61482c`で、
 | cleanup-summary.json | `a6aca3f41640c012760ac50149f6ca29af88a96290de4002a3b8118440d3ff3d` |
 
 原本は非公開の`/private/tmp/pals-seq30-mute-merged-debug-8b19b22`に保持する。初回summaryの`resources_retained_for_diagnosis=true`は回収前の事実として保存し、後続のcleanup記録で回収を確認する。
+
+## 権限修正の開発検証
+
+infraの開発コミット`684dd17bda3c60a927ae12824f070cb2186d659d`で、`umask 077`を引き継ぐ条件のまま、公式予行の`success`を1回実行した。結果は終了コード0、`rehearsal_passed`で、`failed_checks`は空だった。公式cleanupを含むケースの所要時間は372.358秒、ラッパー全体は372.487秒だった。実行後もソースはcleanで、タスク専用のコンテナ、イメージ、ネットワーク、ボリュームが残っていないことを確認した。
+
+修正は、コピー後の予行用productに`chmod -R a+rX`を適用し、検査ユーザーによる読み取りとディレクトリ探索を可能にするもの。本番operatorのユーザー、ハッシュ照合、実行制限は変更していない。この結果は原因修正の開発検証1試行として記録する。マージ後の7筋書き、本番、数学回答の受け入れは未確認で、リリース停止を維持する。単発の結果から改善率は算出せず、既存の失敗3試行も残す。
+
+原本は非公開の`/private/tmp/pals-seq30-packaging-dev-684dd17`に保持する。
+
+| 根拠 | SHA-256 |
+|---|---|
+| success.log | `4423c9d54f6300a9acb102c684da5645bc5c9b806304b459d3a1df747dafb1ed` |
+| summary.json | `68e29d93dfe017c4795ae5da1e422b7611562552096d0dc3e5b5e41a77f4e21c` |
