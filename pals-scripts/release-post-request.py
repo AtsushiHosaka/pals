@@ -47,6 +47,8 @@ MAX_UTILIZATION_TOKENS = 1_500_000
 # Executed by the default command line. Keep each path as a literal joined to HERE: the
 # release plan's frozen-set scan follows that form to pin the adapter by hash.
 LIVE_ADAPTER_FILES = (HERE / "release-post-request-transport.py", HERE / "release-post-request-browser.cjs")
+# Literal dependency: the native frozen-set scan must pin this read-only policy guard too.
+REFRESH_POLICY_FILE = HERE / "release-cognito-refresh-policy.py"
 
 
 class Refusal(RuntimeError):
@@ -70,7 +72,8 @@ def live_transport(**options: Any) -> "Transport":
     spec = importlib.util.spec_from_file_location("release_post_request_transport", LIVE_ADAPTER_FILES[0])
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    return module.LiveTransport(refusal=Refusal, helper=LIVE_ADAPTER_FILES[1], **options)
+    return module.LiveTransport(refusal=Refusal, helper=LIVE_ADAPTER_FILES[1],
+                                refresh_policy=REFRESH_POLICY_FILE, **options)
 
 
 def idempotency_key(candidate_sha256: str, scenario_id: str, cycle_id: str) -> str:
