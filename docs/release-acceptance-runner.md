@@ -42,6 +42,8 @@ SSM-only hosts use `ssm: {profile: "pals-prod-member", region: "ap-northeast-1",
 
 The private session format is `{"schema_version":"pals.acceptance-session.v1","origin":"<web_origin>","session_storage":{"<existing-app-key>":"<value>"}}`. Provision it through the approved test login, never by requesting a password/token in chat or extracting credentials through an unrelated browser-control tool. Credentials stay in that file and browser memory.
 
+2026-11-14のオーナー承認によるseq30限定の例外として、主担当が現在ログイン済みのChromeで、独立レビュー済みのスクリプトを実行してローカルJSONを書き出してよい。対象は`https://palschat.site`のセッションだけとし、直ちに0700の専用ディレクトリへ移し、JSONファイルの権限を0600にして元のダウンロードを削除する。認証情報をチャット・ログへ出さず、更新トークンやIdPへの呼び出しは使用しない。他のサイト・アカウントやseq31以降への包括承認ではない。判断の記録は[pals#386](https://github.com/AtsushiHosaka/pals/issues/386#issuecomment-6870774340)にある。
+
 ```sh
 python3 pals-scripts/release-acceptance.py fingerprint
 python3 pals-scripts/release-acceptance.py run \
