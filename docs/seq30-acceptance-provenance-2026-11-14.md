@@ -22,6 +22,12 @@ Next.js 16.4.5の実ファイルを限定して比較すると、BUILD_IDとプ�
 
 この失敗ではブラウザー、セッション更新、本番API操作、モデル呼び出しは始まっていない。修正・レビュー・必須検査と新しいリリースの固定が終わるまで、最後の有料ローカル取得と本番切り替えは実行しない。
 
+修正は[infra #181](https://github.com/AtsushiHosaka/pals-infra/pull/181)、head `4ba2009c74f9c0e564c93f1cb76167d47080a2a9`へ提出した。修正前の生成コードで、追加された実行ファイルの変更を見逃すことと、実consumerによる拒否を再現した。修正後は各4ファイルの変更・欠落を検出し、生成した契約を固定した実parentのconsumerで検査する。既存の自前ランナーのジョブへ公開parent `8b56f11`の読み取りを追加し、この境界検査がCIでスキップされないようにした。ローカルでは契約16件（実parent指定、スキップ0）、plan117件、stage11件、late-freeze55件、workflow13件が成功した。正確なheadの独立レビューでブロッカーなし。必須CI、統合後の予行、本番の確認は別途必要である。
+
+## 未有効化候補の回収
+
+候補bc742は新しいソースで作り直す必要があるため、旧ソースのまま残したcleanな正規作業場所から回収した。12:11:43 UTCの新しい正規観測で所有権なし、前任イメージ一致、変更する候補3役割は未稼働、検出された変更プロセス0件を確認した。既知の4試行のcycleとstep、計8つのstateをガードし、候補の元の設定と実prepare受領書を使って`release-host-clean.py`を実行した。controlの4ディレクトリとcomputeの3ディレクトリを回収し、別の読み取りで削除を確認した。受領書はアプリ・DBとも変更なしを示す。本番の切り替えやローカル有料取得は行っていない。
+
 ## 根拠
 
 秘密を含む生ログと証跡は非公開のリリース保管場所に保持する。下表はファイルのSHA-256で、公開のPASS受領書ではない。
@@ -37,5 +43,9 @@ Next.js 16.4.5の実ファイルを限定して比較すると、BUILD_IDとプ�
 | 検証器再構築のログ | `99674e2d13b8a58b00d05f982b5c9bacbbb19d5c00f0f3971682af407648e851` |
 | 両証跡更新後local prepare成功 | `68a5a56802321e60458e7dc4fd9c62c841c425c236710aa1b163de7d8b1bc595` |
 | 既存の費用台帳 | `51827baa31c473039b01b79d69fd5fca19cbb32ef52b16a13f55a58622e03bef` |
+| 修正前コードの限定回帰検査・期待する失敗 | `bfe99749314952c99375ef4873d8c7c0aa1324f6692962a76460aa97bc202487` |
+| 修正後の契約16件・成功 | `7f651ca60e3b8012d8fdb696178ae9630f97206b027b6e444263fc7690492b9e` |
+| bc回収前の正規観測 | `41f6e8cecd909e077316523115ae67cb27e5b091d55363087e10223f2a09119a` |
+| bc回収と削除確認の受領書 | `557fe9c34b7320e08dc30c9aa393bb6c8cc603061d4a6e6195b1d0248e9921be` |
 
 進行記録は[#378](https://github.com/AtsushiHosaka/pals/issues/378#issuecomment-6876886842)。Next.jsの参照は固定版の[build/index.ts](https://github.com/vercel/next.js/blob/v16.4.5/packages/next/src/build/index.ts)、[generate-build-id.ts](https://github.com/vercel/next.js/blob/v16.4.5/packages/next/src/build/generate-build-id.ts)、[preview-key-utils.ts](https://github.com/vercel/next.js/blob/v16.4.5/packages/next/src/build/preview-key-utils.ts)。ローカル結果は本番認証、AMD64の実行境界、回答の受け入れを証明しない。
