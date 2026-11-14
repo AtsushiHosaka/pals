@@ -10,3 +10,5 @@
 - 限界・未確認: 代用テストの合格は、Cognitoの実更新や本番受け入れを証明しない。時間短縮の数値は示せない。
 - 次にやること: 承認後に通常の更新経路を確認し、固定した親の版で候補を作り直す。
 - 出典: [確認と承認の範囲](../../seq30-session-renewal-2026-11-14.md)、[pals#386](https://github.com/AtsushiHosaka/pals/issues/386#issuecomment-6872271714)、品質台帳`2026-11-14-seq30-refresh-readonly-policy`。
+
+2026-11-14追記: オーナーがPR #390の経路をseq30限定で実セッションに使うことを明示的に承認した。[判断の記録](https://github.com/AtsushiHosaka/pals/issues/386#issuecomment-6872609209)。実更新と本番受け入れは引き続き未確認。

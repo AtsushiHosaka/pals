@@ -4,7 +4,7 @@
 
 ## 実装と承認の範囲
 
-親`8bfb43a`の[post-requestブラウザーヘルパー](../pals-scripts/release-post-request-browser.cjs)は認証先への通信をすべて拒否していた。修正では、製品が通常行う更新要求だけを一時的なヘッドレスブラウザーから通す。実装の準備と、認証先へ実際に更新要求を送る許可は別である。新しい経路の実行承認はまだ得ておらず、seq30限定の承認を実行前に確認する。Chromeでの1回の操作承認や、セッション書き出しの承認を、この経路へ広げない。
+親`8bfb43a`の[post-requestブラウザーヘルパー](../pals-scripts/release-post-request-browser.cjs)は認証先への通信をすべて拒否していた。修正では、製品が通常行う更新要求だけを一時的なヘッドレスブラウザーから通す。実装の準備と、認証先へ実際に更新要求を送る許可は別である。2026-11-14にオーナーは、PR #390の手順をseq30限定で実セッションに使うことを別途承認した。[判断の記録](https://github.com/AtsushiHosaka/pals/issues/386#issuecomment-6872609209)に対象と条件を残した。Chromeでの1回の操作承認や、セッション書き出しの承認を広げたものではなく、この経路に対する明示的な承認である。
 
 [読み取り専用ガード](../pals-scripts/release-cognito-refresh-policy.py)がSTSのアカウントとCognitoのクライアント設定を新たに読み取る。秘密を持たない公開クライアントで、更新トークンのローテーションが未設定または無効、かつ`ALLOW_REFRESH_TOKEN_AUTH`が有効な場合に限る。アカウントとリージョンは、固定した本番SSM契約の各役割で一致している必要がある。[AWSの公式仕様](https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-the-refresh-token.html)でも、`REFRESH_TOKEN_AUTH`はローテーション有効時には使えない。
 
