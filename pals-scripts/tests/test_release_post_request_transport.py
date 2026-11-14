@@ -634,9 +634,14 @@ class WireTests(Base):
                   ["GET", "https://elsewhere.example.test/x.js"], ["POST", self.api.origin + "/v1/chats"],
                   ["POST", WEB_ORIGIN + "/api/anything"], ["DELETE", self.api.origin + "/v1/chats"]]
         self.script({"probes": probes})
-        self.transport(contract=self.contract(auth_origin=auth)).create_chat()
+        self.transport().create_chat()
         decisions = [row[2] for row in json.loads((self.stub / "routes.json").read_text())]
         self.assertEqual(decisions, ["continue"] * 4 + ["abort"] * 7)
+
+    def test_non_cognito_auth_origin_refuses_before_browser_or_api(self):
+        with self.assertRaisesRegex(post.Refusal, r"^refresh_authority_invalid$"):
+            self.transport(contract=self.contract(auth_origin="https://auth.example.test")).create_chat()
+        self.assertEqual(self.api.seen, [])
 
     def test_definitive_4xx_rejection_reports_only_a_bounded_code_and_creates_nothing(self):
         self.api.create_mode = "422"
@@ -823,7 +828,7 @@ class FrozenSetTests(unittest.TestCase):
         literal = re.compile(r'HERE / "([^"]+)"')
         entry = set(literal.findall((HERE / "release-post-request.py").read_text()))
         self.assertLessEqual({"release-acceptance.py", "release-post-request-transport.py",
-                              "release-post-request-browser.cjs"}, entry)
+                              "release-post-request-browser.cjs", "release-cognito-refresh-policy.py"}, entry)
         for name in entry:
             self.assertTrue((HERE / name).is_file(), name)
         self.assertEqual(post.LIVE_ADAPTER_FILES, (HERE / "release-post-request-transport.py",

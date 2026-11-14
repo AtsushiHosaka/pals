@@ -4,6 +4,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const crypto = require("node:crypto");
 const { pathToFileURL } = require("node:url");
+const { refreshDescriptor, checkRefreshPolicy, allowedRefresh, freshBearer } = require("./release-post-request-browser.cjs");
 
 class Refusal extends Error {}
 const need = (value, code) => { if (!value) throw new Refusal(code); };
@@ -125,6 +126,34 @@ function readRendered(root) {
   return tokens;
 }
 
+// Intercept only a normal app request. No auth request is constructed by this observer.
+function acceptanceRoute(init, refresh, deadline, counters) {
+  let refreshUsed = false;
+  return async route => {
+    const request = route.request();
+    let url;
+    try { url = new URL(request.url()); } catch { counters.attemptedWrites++; await route.abort(); return; }
+    if (["GET", "HEAD", "OPTIONS"].includes(request.method())) await route.continue();
+    else if (request.method() === "POST" && url.origin === init.api_origin && url.pathname === "/v1/product-events" && !url.search) {
+      counters.telemetryPosts++; await route.continue();
+    } else if (!refreshUsed && allowedRefresh(request, url, init, refresh)) {
+      refreshUsed = true;
+      counters.authPosts++;
+      try {
+        const response = await route.fetch({ maxRedirects: 0, timeout: Math.max(1, Math.min(30000, deadline - Date.now())) });
+        if (response.status() >= 300 && response.status() < 400) { counters.attemptedWrites++; await route.abort(); }
+        else await route.fulfill({ response });
+      } catch { counters.attemptedWrites++; await route.abort(); }
+    } else { counters.attemptedWrites++; await route.abort(); }
+  };
+}
+
+function seedSessionOnce({ origin, entries }) {
+  if (location.origin !== origin || sessionStorage.getItem("__pals_release_seeded_v1") === "1") return;
+  for (const [key, value] of entries) sessionStorage.setItem(key, value);
+  sessionStorage.setItem("__pals_release_seeded_v1", "1");
+}
+
 async function observe(payload, trace) {
   const { contract: c, run_id: runId } = payload;
   const deadline = Date.now() + c.timeout_seconds * 1000;
@@ -140,24 +169,18 @@ async function observe(payload, trace) {
   need(session.schema_version === "pals.acceptance-session.v1" && session.origin === c.web_origin
     && session.session_storage && Object.entries(session.session_storage).every(([k, v]) => typeof k === "string" && typeof v === "string"),
     "session_origin_invalid");
+  const init = { ...c, refresh_policy: payload.refresh_policy };
+  const refresh = refreshDescriptor(init, session);
+  checkRefreshPolicy(init, refresh);
   const browser = await chromium.launch({ headless: true });
   const closeForSignal = () => { void browser.close().finally(() => process.exit(143)); };
   process.once("SIGTERM", closeForSignal);
   try {
     const context = await browser.newContext({ serviceWorkers: "block" });
-    await context.addInitScript(({ origin, entries }) => {
-      if (location.origin === origin) for (const [key, value] of entries) sessionStorage.setItem(key, value);
-    }, { origin: session.origin, entries: Object.entries(session.session_storage) });
-    let attemptedWrites = 0, telemetryPosts = 0, authPosts = 0;
-    await context.route("**/*", async route => {
-      const request = route.request(), url = new URL(request.url());
-      if (["GET", "HEAD", "OPTIONS"].includes(request.method())) await route.continue();
-      else if (request.method() === "POST" && url.origin === c.api_origin && url.pathname === "/v1/product-events" && !url.search) {
-        telemetryPosts++; await route.continue();
-      } else if (request.method() === "POST" && c.auth_origin && url.origin === c.auth_origin && !url.search
-        && ["/", "/oauth2/token"].includes(url.pathname)) { authPosts++; await route.continue(); }
-      else { attemptedWrites++; await route.abort(); }
-    });
+    await context.addInitScript(seedSessionOnce,
+      { origin: session.origin, entries: Object.entries(session.session_storage) });
+    const counters = { attemptedWrites: 0, telemetryPosts: 0, authPosts: 0 };
+    await context.route("**/*", acceptanceRoute(init, refresh, deadline, counters));
     const page = await context.newPage();
     page.setDefaultTimeout(30_000);
     const assets = new Map(), assetReads = [];
@@ -179,7 +202,7 @@ async function observe(payload, trace) {
     page.on("request", request => {
       if (new URL(request.url()).origin === c.api_origin) {
         const value = request.headers().authorization;
-        if (value?.startsWith("Bearer ")) token = value;
+        if (value?.startsWith("Bearer ") && freshBearer(value, refresh)) token = value;
       }
     });
     const url = `${c.web_origin}/chats/${c.request.chat_id}`;
@@ -236,7 +259,7 @@ async function observe(payload, trace) {
     need(new URL(page.url()).origin === c.web_origin && new URL(page.url()).pathname === `/chats/${c.request.chat_id}`, "reload_did_not_restore_chat");
     const second = await rendered();
     need(await persisted() === saved && second === first, "reloaded_answer_differs");
-    need(attemptedWrites === 0, "observer_attempted_mutation");
+    need(counters.attemptedWrites === 0, "observer_attempted_mutation");
     await Promise.all(assetReads);
     need(!assetError, "served_asset_read_failed");
     need(Date.now() <= deadline, "acceptance_deadline_exceeded");
@@ -244,13 +267,13 @@ async function observe(payload, trace) {
       created_at: request.created_at, status_transitions: statuses, terminal_status: request.status,
       evidence_kind: answer.evidence_kind, answer_sha256: saved, conclusion_sha256: sha(explanation.content.conclusion),
       verified_lean_sha256: sha(source.lean_code), rendered_semantics_sha256: first,
-      reloaded_semantics_sha256: second, observed_at: new Date().toISOString(), attempted_mutations: attemptedWrites,
-      passive_telemetry_posts: telemetryPosts, authentication_posts: authPosts,
+      reloaded_semantics_sha256: second, observed_at: new Date().toISOString(), attempted_mutations: counters.attemptedWrites,
+      passive_telemetry_posts: counters.telemetryPosts, authentication_posts: counters.authPosts,
       web_assets: [...assets].map(([assetPath, hash]) => ({ path: assetPath, sha256: hash })) };
   } finally { process.off("SIGTERM", closeForSignal); await browser.close(); }
 }
 
-module.exports = { Refusal, norm, stable, normalizeMath, semanticTokens, sourceSemantics, validateAnswer, readRendered };
+module.exports = { Refusal, norm, stable, normalizeMath, semanticTokens, sourceSemantics, validateAnswer, readRendered, acceptanceRoute, seedSessionOnce };
 if (require.main === module) {
   let raw = "";
   process.stdin.setEncoding("utf8");
