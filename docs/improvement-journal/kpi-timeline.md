@@ -99,3 +99,9 @@
 | 2026-11-14 | seq30予行 03cc・crash-after-admit | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=370.167秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
 | 2026-11-14 | seq30予行 03cc・expired-predecessor | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=359.778秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
 | 2026-11-14 | seq30予行 03cc・recovery-units-active | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=355.234秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+
+## seq30資格確認前の証跡確認
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-14 | ビルド証跡と認証契約の前提確認 | local macOS・親8b56f11・モデル未送信 | 準備失敗2、旧Web ID再現失敗2、新実証跡成功2、依存準備成功1、契約拒否1。異なる試行を合算した改善率は作らない | 最終実compiler canary 3141ms。全体時間未計測 | 52呼出し・台帳180904マイクロドルから不変。その他費用未集計 | [seq30ローカル証跡](entries/2026-11-14-seq30-local-provenance.md) |
