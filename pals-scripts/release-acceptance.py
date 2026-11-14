@@ -95,7 +95,26 @@ def command(args, *, timeout=30):
 
 def runner_fingerprint():
     return digest(b"".join(path.name.encode() + b"\0" + path.read_bytes() + b"\0"
-                          for path in (Path(__file__).resolve(), HERE / "release-acceptance-browser.cjs")))
+                          for path in (Path(__file__).resolve(), HERE / "release-acceptance-browser.cjs",
+                                       HERE / "release-post-request-browser.cjs", HERE / "release-cognito-refresh-policy.py")))
+
+
+def browser_refresh_policy(contract):
+    """Only the production contract's consistent remote identity may authorize a refresh."""
+    if contract["target"] != "production":
+        return None
+    bindings = list(contract["runtime"].values())
+    if not any("ssm" in binding for binding in bindings):
+        return None
+    need(all("ssm" in binding for binding in bindings), "refresh_remote_identity_inconsistent")
+    identities = {(binding["ssm"]["profile"], binding["ssm"]["region"], binding["ssm"]["account_id"])
+                  for binding in bindings}
+    need(len(identities) == 1, "refresh_remote_identity_inconsistent")
+    profile, region, account = identities.pop()
+    need(profile == "pals-prod-member" and region == "ap-northeast-1"
+         and isinstance(account, str) and re.fullmatch(r"[0-9]{12}", account), "refresh_remote_identity_invalid")
+    return {"python": sys.executable, "guard": str(HERE / "release-cognito-refresh-policy.py"),
+            "region": region, "account_id": account}
 
 
 def validate_contract(value):
@@ -473,7 +492,7 @@ def main():
             record["runtime"] = runtime
             activation = max(stamp(x["started_at"]) for x in runtime.values()).isoformat()
             payload = {"contract": contract, "session_path": str(args.session), "activated_at": activation,
-                       "run_id": record["run_id"]}
+                       "run_id": record["run_id"], "refresh_policy": browser_refresh_policy(contract)}
             observation = browser_capture(payload, contract["timeout_seconds"] + 30)
             need(observation.get("run_id") == record["run_id"], "browser_observation_not_this_run")
             verify_web_assets(contract, observation)
