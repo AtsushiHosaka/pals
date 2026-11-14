@@ -80,3 +80,6 @@
 | 2026-11-14 | 作り直し（pals-api#108）の前後をパイプラインで測定: 要件指定の題 12 実行で回答が返る 9/12→12/12、費用 +27%、却下された依頼は +106〜160 s。API 経由の端から端までは未測定（スタックを立てられない理由を記録）。有効化の手順を docs に | [reformalize-pipeline-before-after](entries/2026-11-14-reformalize-pipeline-before-after.md) |
 | 2026-11-14 | 検証済みの命題を解説より先に表示(verified-first、既定無効): cheap-first と組み合わせた計算で、検証済みの命題(Lean が証明した命題)の表示まで 10 秒以内は dev_unseen 0/20 → 4/20、tuning 0/14 → 5/14(p50 21.3 → 14.4 s、20.3 → 13.2 s)。API #109 マージ済み、webfront #72 はドラフト(オーナー判断待ち)。10 秒目標には届かない | [verified-first-display](entries/2026-11-14-verified-first-display.md) |
 | 2026-11-14 | seq30のIDトークン15分の期限に対応する通常更新経路を準備。実環境の読み取り照合1/1。実更新・本番受け入れ・時間短縮は未確認、実行承認待ち | [seq30-session-renewal](entries/2026-11-14-seq30-session-renewal.md) |
+| 2026-11-14 | seq30の認証コンテキスト準備 | 親1ed5fff、通常API要求のヘッダー観測のみ | 1/1。追加の保護APIの404・前任ヘッダー照合は未達 | 未測定 | 有料質問なし、実請求未確認 | [seq30-alert-window-validation](entries/2026-11-14-seq30-alert-window-validation.md) |
+| 2026-11-14 | seq30の実依存ローカル資格確認2 | 実DB・Lean・provider、ARM64、1件の送信から再読み込み | 1/1 accepted。本番受け入れではない | 未測定 | 合計0.038288ドル（台帳差分推計） | 同上 |
+| 2026-11-14 | seq30の公式切り替え | 候補93521b22、計画de9f83e5、実AWS | 0/1。alerts-beginのValidationExceptionで利用停止前に終了 | 未測定 | 未確認 | 同上 |
