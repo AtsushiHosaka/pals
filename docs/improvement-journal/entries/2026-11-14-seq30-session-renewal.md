@@ -12,3 +12,11 @@
 - 出典: [確認と承認の範囲](../../seq30-session-renewal-2026-11-14.md)、[pals#386](https://github.com/AtsushiHosaka/pals/issues/386#issuecomment-6872271714)、品質台帳`2026-11-14-seq30-refresh-readonly-policy`。
 
 2026-11-14追記: オーナーがPR #390の経路をseq30限定で実セッションに使うことを明示的に承認した。[判断の記録](https://github.com/AtsushiHosaka/pals/issues/386#issuecomment-6872609209)。実更新と本番受け入れは引き続き未確認。
+
+## 2026-11-15の実セッション確認
+
+承認済みの通常更新経路を使い、認証contextの開始と、同経路への観測追加をそれぞれ1回実行した。開始は一般コードで停止し、観測診断は `authenticated_context_not_observed` だった。ページ遷移はHTTP 200、対象owner GETは0件、観測した更新応答はHTTP 400だった。認証準備の2試行をそれぞれ0/1で記録し、本番受け入れや数学の精度へは換算しない。
+
+refresh要求の発行試行は6件だったが、正規routeが許可する更新はcontext当たり最大1回である。6回の更新を実行したとは扱わない。根本理由は未確定で、通常ログインを待っている。回答・保存・再読み込みの受け入れは未確認のまま。今回の有料モデル呼び出しはなく、ローカル予算台帳は52 calls・180904/700000 μUSDを維持した。改善率や実請求額は示さない。
+
+根拠とhashは[認証準備の確認記録](../../seq30-auth-readiness-2026-11-15.md)へまとめた。品質台帳の対応行は `2026-11-15-seq30-auth-readiness-start` と `2026-11-15-seq30-auth-readiness-diagnostic`。次の判断には、認証が回復したことの実観測が必要である。
