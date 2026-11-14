@@ -83,3 +83,19 @@
 | 2026-11-14 | 作り直し（pals-api#108）の前後をパイプラインで測定: 要件指定の題 12 実行で回答が返る 9/12→12/12、費用 +27%、却下された依頼は +106〜160 s。API 経由の端から端までは未測定（スタックを立てられない理由を記録）。有効化の手順を docs に | [reformalize-pipeline-before-after](entries/2026-11-14-reformalize-pipeline-before-after.md) |
 | 2026-11-14 | 検証済みの命題を解説より先に表示(verified-first、既定無効): cheap-first と組み合わせた計算で、検証済みの命題(Lean が証明した命題)の表示まで 10 秒以内は dev_unseen 0/20 → 4/20、tuning 0/14 → 5/14(p50 21.3 → 14.4 s、20.3 → 13.2 s)。API #109 マージ済み、webfront #72 はドラフト(オーナー判断待ち)。10 秒目標には届かない | [verified-first-display](entries/2026-11-14-verified-first-display.md) |
 | 2026-11-14 | seq30のIDトークン15分の期限に対応する通常更新経路を準備。実環境の読み取り照合1/1。実更新・本番受け入れ・時間短縮は未確認、実行承認待ち | [seq30-session-renewal](entries/2026-11-14-seq30-session-renewal.md) |
+
+## seq30予行の追加測定
+
+| 日付 | 何を測ったか | 条件 | 成功 | 所要時間 | 費用 | エントリ |
+|---|---|---|---:|---|---|---|
+| 2026-11-14 | seq30予行 7ef・マージ後success | local macOS・隔離した代用品・技術試行n=1 | 0/1（筋書きの成否） | case=221.158; wrapper=221.281秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 7ef・隔離再現 | local macOS・隔離した代用品・技術試行n=1 | 0/1（筋書きの成否） | run=160.476; total=162.268秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 8b19・診断変更後 | local macOS・隔離した代用品・技術試行n=1 | 0/1（筋書きの成否） | run=161.938; initial_capture=162.058秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 684・開発検証success | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=372.358; wrapper=372.487秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 03cc・success | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=328.837秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 03cc・fail-before-admit | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=381.699秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 03cc・expired-predecessor-fail-before-admit | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=363.945秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 03cc・fail-after-admit | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=392.429秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 03cc・crash-after-admit | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=370.167秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 03cc・expired-predecessor | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=359.778秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 03cc・recovery-units-active | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=355.234秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
