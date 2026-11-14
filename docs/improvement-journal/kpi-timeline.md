@@ -99,3 +99,23 @@
 | 2026-11-14 | seq30予行 03cc・crash-after-admit | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=370.167秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
 | 2026-11-14 | seq30予行 03cc・expired-predecessor | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=359.778秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
 | 2026-11-14 | seq30予行 03cc・recovery-units-active | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=355.234秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+
+## seq30資格確認前の証跡確認
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-14 | ビルド証跡と認証契約の前提確認 | local macOS・親8b56f11・モデル未送信 | 準備失敗2、旧Web ID再現失敗2、新実証跡成功2、依存準備成功1、契約拒否1。異なる試行を合算した改善率は作らない | 最終実compiler canary 3141ms。全体時間未計測 | 52呼出し・台帳180904マイクロドルから不変。その他費用未集計 | [seq30ローカル証跡](entries/2026-11-14-seq30-local-provenance.md) |
+
+## seq30契約修正後の予行と時計の再確認
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-14 | ce084 original success | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | monotonic=319.724秒、次の開始までの壁時計600秒以内 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+| 2026-11-14 | ce084 original fail-before-admit | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | monotonic=378.651秒、次の開始までの壁時計600秒以内 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+| 2026-11-14 | ce084 original expired-predecessor-fail-before-admit | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | monotonic=358.422秒、次の開始までの壁時計600秒以内 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+| 2026-11-14 | ce084 original fail-after-admit | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | monotonic=389.621秒、次の開始までの壁時計600秒以内 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+| 2026-11-14 | ce084 original crash-after-admit | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | monotonic=374.444秒、次の開始までの壁時計600秒以内 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+| 2026-11-14 | ce084 original expired-predecessor | local macOS・代用品・n=1 | 時間未検証（機能筋書きは成功） | monotonic=360.194秒、壁時計未検証 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+| 2026-11-14 | ce084 original recovery-units-active | local macOS・代用品・n=1 | 時間未検証（機能筋書きは成功） | monotonic=414.333秒、壁時計未検証 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+| 2026-11-15 | ce084 awake expired-predecessor | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | 壁時計=317.882秒 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+| 2026-11-15 | ce084 awake recovery-units-active | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | 壁時計=357.803秒 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
