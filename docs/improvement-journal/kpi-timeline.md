@@ -119,3 +119,50 @@
 | 2026-11-14 | ce084 original recovery-units-active | local macOS・代用品・n=1 | 時間未検証（機能筋書きは成功） | monotonic=414.333秒、壁時計未検証 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
 | 2026-11-15 | ce084 awake expired-predecessor | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | 壁時計=317.882秒 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
 | 2026-11-15 | ce084 awake recovery-units-active | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | 壁時計=357.803秒 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+
+## seq30の認証準備2試行
+
+2026-11-16に試行別記録を補完した。実施日は11月15日で、品質台帳の既存2行と同じ試行を示す。品質台帳の試行数は増やさない。本番受け入れ・数学の精度・改善率には換算しない。
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-15 | seq30認証contextの開始 | local macOS・親24d8f95・infra ce084f3・実セッション・n=1 | 0/1。一般コードで停止、原因未確定・unclassified | 未測定 | 有料モデル呼び出しなし・実請求未確認 | [認証開始確認](entries/2026-11-15-seq30-auth-readiness-start.md) |
+| 2026-11-15 | seq30認証contextの観測診断 | local macOS・親24d8f95・infra ce084f3・実セッション・n=1 | 0/1。認証済みcontext未観測、原因未確定・unclassified | 未測定 | 有料モデル呼び出しなし・実請求未確認 | [観測診断](entries/2026-11-15-seq30-auth-readiness-diagnostic.md) |
+| 2026-11-16 | seq30再開時のローカル依存先準備 | local macOS・親24d8f95・infra ce084f3・正規prepare・n=1 | 技術準備1/1。leftover0、headless認証・本番受け入れ未確認 | compiler canary2455ms（全体時間は未測定） | 52 calls・180904/700000μUSDを維持、新しい有料呼び出しなし・実請求未確認 | [ローカル準備](entries/2026-11-16-seq30-resume-local-readiness.md) |
+| 2026-11-16 | seq30新seedの認証context開始 | local macOS・親24d8f95・infra ce084f3・候補b976・n=1 | 技術確認1/1。対象GETでBearer観測、本番API認可・受け入れ未確認 | 未測定 | 有料処理なし、確認時点52 calls・180904/700000μUSD、実請求未確認 | [認証開始確認](entries/2026-11-16-seq30-auth-readiness-recovered.md) |
+| 2026-11-16 | seq30第3回ローカル資格確認 | local macOS・親24d8f95・infra ce084f3・候補b976・n=1 | 0/1、compile通過後に意味審査rejected。本番未切替、再送なし | 全体wall118.602秒、canary2429ms（回答時間ではない） | proxy差分0.039882 USD（8 calls）、実請求未確認 | [資格確認3](entries/2026-11-16-seq30-local-qualification-3.md) |
+
+
+2026-11-16文書補足: [認証診断の実装出典](entries/2026-11-16-seq30-auth-instrumentation-provenance.md)を追記した。既存診断の実装と非公開記録の照合先を補ったもので、新しい測定値や試行数は追加していない。
+
+
+## seq30の第4回ローカル資格確認
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-16 | seq30第4回ローカル資格確認 | local macOS・親24d8f95・infra ce084f3・候補b976・n=1 | 1/1 accepted。同じ取得の正規再照合もaccepted、本番受け入れは別 | 取得全体wall138.567秒（主担当の当時観測・回答時間ではない） | proxy差分0.034660 USD・内部11 calls、実請求未確認 | [資格確認4](entries/2026-11-16-seq30-local-qualification-4.md) |
+
+
+## seq30の通知抑制作成失敗
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-16 | seq30正規apply | 親24d8f95・infra ce084f3・候補b976・n=1 | 0/1、ExpireDateの秒精度をAWSが拒否。利用停止前終了、通知抑制cleanup未完了 | alerts-begin 90.061秒、restore-check 415.087秒、停止区間null | 本番質問の新規送信なし、総額未測定 | [失敗記録](entries/2026-11-16-seq30-alert-minute-precision.md) |
+
+
+## seq30の通知抑制期限修正
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-16 | 分精度と固定診断の回帰 | infra e803b4f・ローカル決定的検査一式n=1 | 1/1、旧版RED→alert58/controller146/packaging1成功。実AWSと本番受け入れは未確認 | controller全体334.750秒、全検査合計は未測定 | モデル・AWS呼出なし、総額未測定 | [修正記録](entries/2026-11-16-seq30-alert-minute-precision-fix.md) |
+
+
+## seq30の放棄候補の配置回収
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-16 | 放棄したb976の正規配置回収 | AWS・親24d8f95・infra ce084f3・技術確認n=1 | 1/1。control4・compute3対象一致、両roleで不在読戻し確認。本番受け入れとは別 | 精密な全体wall時間未測定 | 新しい有料質問なし、総額未測定 | [配置回収](entries/2026-11-16-seq30-abandoned-candidate-cleanup.md) |
+
+2026-11-16条件補足: [資格確認4](entries/2026-11-16-seq30-local-qualification-4.md)に、実requestの証明生成モデル・推論量、固定実装の審査/説明条件、設定上の修復上限と実使用回数未確認を追記した。既存取得の条件照合であり、新しい測定・費用・試行数は加えていない。
+
+2026-11-16条件補足: [資格確認3](entries/2026-11-16-seq30-local-qualification-3.md)にも実requestのモデル・推論量・単一問題n=1と固定実装の審査/説明条件を追記した。第3回の保存済み修復0/上限6を他の取得へ流用せず、既存試行数と費用を維持した。

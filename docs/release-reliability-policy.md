@@ -56,3 +56,5 @@ Record privacy-minimized lifecycle events correlated to release/config and reque
 One attempt may have multiple observations. Preserve raw observations and count its final outcome once; retain failures and unknowns. Unit-test counts are not product success rates, and load-balancer requests are not unique users.
 
 For an incident, restore safely, identify the failure mechanism, add a regression at the boundary that missed it, and update only the necessary code/runbook/rule. Record what was observed, what was inferred, what remains unverified, and the exact follow-up owner. Documentation changes alone do not close implementation or production-recovery work.
+
+2026-11-16の追加承認は、seq30のローカル資格確認を既存の予算上限内で4回目に限り1回実行するものだった。根拠は[#396の判断](https://github.com/AtsushiHosaka/pals/issues/396#issuecomment-6909758854)。その1回は実行済みでacceptedとなり、台帳のリセット、上限変更、5回目以降の取得は承認に含まれない。通常の3回上限を他のリリースへ広げない。
