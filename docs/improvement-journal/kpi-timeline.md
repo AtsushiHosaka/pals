@@ -128,3 +128,4 @@
 |---|---|---|---|---|---|---|
 | 2026-11-15 | seq30認証contextの開始 | local macOS・親24d8f95・infra ce084f3・実セッション・n=1 | 0/1。一般コードで停止、原因未確定・unclassified | 未測定 | 有料モデル呼び出しなし・実請求未確認 | [認証開始確認](entries/2026-11-15-seq30-auth-readiness-start.md) |
 | 2026-11-15 | seq30認証contextの観測診断 | local macOS・親24d8f95・infra ce084f3・実セッション・n=1 | 0/1。認証済みcontext未観測、原因未確定・unclassified | 未測定 | 有料モデル呼び出しなし・実請求未確認 | [観測診断](entries/2026-11-15-seq30-auth-readiness-diagnostic.md) |
+| 2026-11-16 | seq30再開時のローカル依存先準備 | local macOS・親24d8f95・infra ce084f3・正規prepare・n=1 | 技術準備1/1。leftover0、headless認証・本番受け入れ未確認 | compiler canary2455ms（全体時間は未測定） | 52 calls・180904/700000μUSDを維持、新しい有料呼び出しなし・実請求未確認 | [ローカル準備](entries/2026-11-16-seq30-resume-local-readiness.md) |
