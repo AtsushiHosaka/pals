@@ -187,3 +187,5 @@
 | 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
 |---|---|---|---|---|---|---|
 | 2026-11-16 | 新候補のsource・依存先・配置・認証開始の準備 | 親3b663576・infra3b31597・候補f20・非課金bundle n=1 | 技術準備1/1。host app/DB変更なし、auth operation0・seed不変。第5回と本番受け入れは未実行 | canary2152ms（全体時間は未測定） | 新しいモデル取得なし、71 calls/255446μUSD維持、総額未測定 | [準備記録](entries/2026-11-16-seq30-minute-preparation.md) |
+
+| 2026-11-17 JST | seq30再開前の認証と前提確認 | 親3b663576・候補f20・非課金bundle n=1 | 0/1、observe停止・STS TokenRetrievalError、通常SSO認証待ち。新しい有料送信・利用停止なし | 未測定 | モデル送信なし、実請求未測定 | [再開記録](entries/2026-11-17-seq30-resume-auth.md) |
