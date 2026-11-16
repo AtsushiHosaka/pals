@@ -23,3 +23,9 @@ AWSに渡した固定期限は2026-11-16 16:50:38 JSTである。期限後の読
 ## 修正の範囲
 
 新規作成と終了時の短縮で、ExpireDateを分単位に切り捨てる修正を進める。元のmax_secondsや凍結済みnot_afterを延長せず、残り時間が足りない場合は作成前に停止する。回帰テストと予行側の代用品にも、今回観測した分精度の制約を追加する。修正のレビュー、必須CI、予行、実サービスでの適用はそれぞれ別の根拠として扱う。
+
+## 固定期限後の読戻し
+
+2026-11-16 07:50:49 UTCに、凍結済みcontractと同じAWSアカウントで読み取り確認した。対象アラームの設定hashは不変、ActionsEnabledはtrue、StateValueはOK、該当ルールは不在だった。証拠SHA256は`d2400608b9c735eff421aea35e4cf54e01eab1363d2e51214409247ca15143aa`である。これは期限後の実状態の記録であり、元の正規apply結果やalert-stateは変更していない。
+
+失敗後の正規release-observeも07:43:15 UTCに完了し、owner_present=false、application_mutated=false、database_mutated=falseだった。観測SHA256は`9d12514ce9dee9f6c76db64169890fc571567ec06e1f21b458c7b16822197b20`である。同じ失敗の安全確認として扱い、品質台帳の独立した成功試行へ加算しない。

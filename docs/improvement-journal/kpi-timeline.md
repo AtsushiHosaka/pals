@@ -148,3 +148,10 @@
 | 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
 |---|---|---|---|---|---|---|
 | 2026-11-16 | seq30正規apply | 親24d8f95・infra ce084f3・候補b976・n=1 | 0/1、ExpireDateの秒精度をAWSが拒否。利用停止前終了、通知抑制cleanup未完了 | alerts-begin 90.061秒、restore-check 415.087秒、停止区間null | 本番質問の新規送信なし、総額未測定 | [失敗記録](entries/2026-11-16-seq30-alert-minute-precision.md) |
+
+
+## seq30の通知抑制期限修正
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-16 | 分精度と固定診断の回帰 | infra e803b4f・ローカル決定的検査一式n=1 | 1/1、旧版RED→alert58/controller146/packaging1成功。実AWSと本番受け入れは未確認 | controller全体334.750秒、全検査合計は未測定 | モデル・AWS呼出なし、総額未測定 | [修正記録](entries/2026-11-16-seq30-alert-minute-precision-fix.md) |
