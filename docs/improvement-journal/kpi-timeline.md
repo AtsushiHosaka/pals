@@ -131,3 +131,20 @@
 | 2026-11-16 | seq30再開時のローカル依存先準備 | local macOS・親24d8f95・infra ce084f3・正規prepare・n=1 | 技術準備1/1。leftover0、headless認証・本番受け入れ未確認 | compiler canary2455ms（全体時間は未測定） | 52 calls・180904/700000μUSDを維持、新しい有料呼び出しなし・実請求未確認 | [ローカル準備](entries/2026-11-16-seq30-resume-local-readiness.md) |
 | 2026-11-16 | seq30新seedの認証context開始 | local macOS・親24d8f95・infra ce084f3・候補b976・n=1 | 技術確認1/1。対象GETでBearer観測、本番API認可・受け入れ未確認 | 未測定 | 有料処理なし、確認時点52 calls・180904/700000μUSD、実請求未確認 | [認証開始確認](entries/2026-11-16-seq30-auth-readiness-recovered.md) |
 | 2026-11-16 | seq30第3回ローカル資格確認 | local macOS・親24d8f95・infra ce084f3・候補b976・n=1 | 0/1、compile通過後に意味審査rejected。本番未切替、再送なし | 全体wall118.602秒、canary2429ms（回答時間ではない） | proxy差分0.039882 USD（8 calls）、実請求未確認 | [資格確認3](entries/2026-11-16-seq30-local-qualification-3.md) |
+
+
+2026-11-16文書補足: [認証診断の実装出典](entries/2026-11-16-seq30-auth-instrumentation-provenance.md)を追記した。既存診断の実装と非公開記録の照合先を補ったもので、新しい測定値や試行数は追加していない。
+
+
+## seq30の第4回ローカル資格確認
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-16 | seq30第4回ローカル資格確認 | local macOS・親24d8f95・infra ce084f3・候補b976・n=1 | 1/1 accepted。同じ取得の正規再照合もaccepted、本番受け入れは別 | 取得全体wall138.567秒（主担当の当時観測・回答時間ではない） | proxy差分0.034660 USD・内部11 calls、実請求未確認 | [資格確認4](entries/2026-11-16-seq30-local-qualification-4.md) |
+
+
+## seq30の通知抑制作成失敗
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-16 | seq30正規apply | 親24d8f95・infra ce084f3・候補b976・n=1 | 0/1、ExpireDateの秒精度をAWSが拒否。利用停止前終了、通知抑制cleanup未完了 | alerts-begin 90.061秒、restore-check 415.087秒、停止区間null | 本番質問の新規送信なし、総額未測定 | [失敗記録](entries/2026-11-16-seq30-alert-minute-precision.md) |

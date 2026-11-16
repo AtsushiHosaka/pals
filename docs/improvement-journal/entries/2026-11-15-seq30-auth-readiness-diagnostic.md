@@ -14,3 +14,6 @@
 - 出典: [認証準備の確認記録](../../seq30-auth-readiness-2026-11-15.md)、[PR #395](https://github.com/AtsushiHosaka/pals/pull/395)、品質台帳`2026-11-15-seq30-auth-readiness-diagnostic`。private診断結果のSHA256は`6010b226d518cc36752f0ea8e83dd61f744031c0de3c5895a70441268a014d1b`。
 
 [旧エントリの追記](2026-11-14-seq30-session-renewal.md)にも同じ試行がある。品質台帳の既存1行に対応し、試行数を追加しない。
+
+
+2026-11-16追記・観測実装の訂正: 上記の「正規経路への観測追加」は、診断専用wrapperが実行中のPlaywrightメソッドとイベントを観測したことを指す。正規`bearerFromBrowser`のソースは変更していない。scriptの完全hash、結果と非公開証拠indexの対応は[診断コードの所在](../../seq30-auth-readiness-2026-11-15.md#2026-11-16追記診断コードの所在)に追記した。保存済み結果は維持し、新しい試行は追加しない。

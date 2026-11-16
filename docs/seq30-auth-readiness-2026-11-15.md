@@ -57,3 +57,23 @@ seq30の候補は署名・ホスト準備・配置まで進みましたが、受
 両ホストの受領書は同候補を示し、`application_mutated=false`・`database_mutated=false` です。準備と配置の完了を、候補の有効化や受け入れ完了とは区別します。
 
 品質台帳には認証確認2試行をそれぞれ `availability` の0/1として追加しました。原因は未確定なので分類は `unclassified` です。同じ認証経路の追跡診断であり、独立した利用者集団の稼働率、数学の精度、課金モデルの性能や改善率は示しません。
+
+
+## 2026-11-16追記・診断コードの所在
+
+「正規`bearerFromBrowser`へ観測処理を追加した」という記述は、正規ソースを変更したという意味ではありません。診断専用のNode wrapperが、実行中だけPlaywrightの`chromium.launch`、`browser.newContext`、`context.newPage`、`page.goto`を包み、request・response・requestfailedのイベントから件数とHTTP statusを記録しました。認証処理には変更していない正規`bearerFromBrowser`を呼び、終了時にlaunchを戻しています。経路制限、seed読込、認証更新の許可条件は正規helperのままです。
+
+診断PythonはNode wrapperとpreview wrapperのhashを照合し、preview入力とsession seedを実行前後に再照合しています。使用した版は次のとおりです。
+
+| 対象 | SHA256 |
+|---|---|
+| 診断Python wrapper | `19a43e771468db35304e911817d5986e5c2e834452b5a7e1bc57187a124f133e` |
+| 診断Node wrapper | `2152141acffcdb6350842e30c087940c3f3a328174dddfdb072ffb7c486e5ef9` |
+| preview Python wrapper | `b05f54919b3b9427e9e3a585e8cf5b9a14177727f4c02150285b2a95754d9ea0` |
+| 親24d8f957の正規browser helper | `ad738f35451a78553ffb150dc603b25247b9bdea4fb5bd2bf5161b3423428e05` |
+| 診断attempt記録 | `4540c72c3ca367c5e86d11b4f635fa18682e1b9ab6a96730c31ce9131714f7d6` |
+| 診断結果 | `6010b226d518cc36752f0ea8e83dd61f744031c0de3c5895a70441268a014d1b` |
+
+非公開証拠の照会番号は`SEQ30-AUTH-DIAG-20261115-01`です。権限を持つ保管者は、非公開evidence indexのSHA256 `d537ad028652650f69938de764580e9aae001a104443ab9a238a376fd3ed3c2b`から、各script・attempt・resultの配置場所とhashを照合できます。indexは0600で保存し、raw記録とともに公開リポジトリへ追加しません。
+
+今回の追記では保存済みのscriptと結果を読み直しました。上記の件数とHTTP statusは診断結果に一致しており、当時の失敗結果を維持します。新しいブラウザー実行や測定は行わず、品質台帳の試行数も増やしていません。
