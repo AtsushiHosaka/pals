@@ -53,3 +53,9 @@ proxy予算台帳は52 calls・180904 μUSDから、60 calls・220786 μUSDへ�
 | 実行後の予算台帳 | `74641caeb5728b671b28a0f6fd0ed3a4e06a00554b42f7ae6d1e75a7762e1bf9` |
 
 品質台帳の `2026-11-16-seq30-local-qualification-3` は、有料資格確認全体を1試行・成功0、失敗分類 `review.rejected` として記録します。8回のprovider呼び出しやcanaryを別の試行へ加算せず、数学全般や本番の成功率、過去との改善率は作りません。[認証開始の成功記録](seq30-auth-context-observed-2026-11-16.md)も、その確認範囲を保ったまま残します。
+
+## モデルと推論の条件補足
+
+固定subjectと第3回の実observed-requestは、証明生成`gpt-6.1-terra`、generation_reasoning_effort=`medium`、出力`en`だった。実requestのSHA256は`437d0cfba5bbbb360e473f58478e507e57bc025f919a338dfc81b19ef452137f`である。対象は単一証明問題n=1で、カード集合の評価ではないためカード数は該当しない。
+
+worker `146ecf2`の固定実装では、意味審査・説明は`gpt-6-luna / low`、修復上限は6で、凍結env/composeには上限の上書きがなかった。個別provider callのrole・effortは保存されていないため、役割条件は固定実装の根拠として扱う。第3回で保存された修復使用回数0と上限6は、既存の安全な調査記録で確認している。第4回の使用回数とは混同しない。[同じ固定実装の出典](seq30-local-qualification-4-2026-11-16.md)も参照する。新しい測定や有料実行は行っていない。

@@ -11,3 +11,5 @@
 - 限界・未確認: 生の意味審査理由や証明の正しさは独立審査していない。審査の誤判定やruntime故障は断定しない。終端に投影された意味審査errorとcompiler errorを区別し、元compiler診断の独立保存数は未確認とする。
 - 次にやること: 限定forensic証拠v2と今回の失敗を提示し、追加取得の条件を審査可能にする。期待値を変えて失敗を消さない。
 - 出典: [資格確認3の実測](../../seq30-local-qualification-3-2026-11-16.md)、品質台帳 `2026-11-16-seq30-local-qualification-3`、[pals#378](https://github.com/AtsushiHosaka/pals/issues/378)。安全な証拠hashとsource上の境界は実測記録を参照。
+
+条件補足: 実requestでは証明生成`gpt-6.1-terra / medium`、出力`en`、単一証明問題n=1で、カード数は該当しない。固定workerの意味審査・説明は`gpt-6-luna / low`。修復上限6と実使用0は第3回の保存記録の値である。個別callのrole/effort記録はない。実request hashと固定実装の出典を詳細記録へ追記し、既存の失敗・費用・試行数を維持した。
