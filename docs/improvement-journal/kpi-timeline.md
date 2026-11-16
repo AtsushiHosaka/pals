@@ -119,3 +119,12 @@
 | 2026-11-14 | ce084 original recovery-units-active | local macOS・代用品・n=1 | 時間未検証（機能筋書きは成功） | monotonic=414.333秒、壁時計未検証 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
 | 2026-11-15 | ce084 awake expired-predecessor | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | 壁時計=317.882秒 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
 | 2026-11-15 | ce084 awake recovery-units-active | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | 壁時計=357.803秒 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+
+## seq30の認証準備2試行
+
+2026-11-16に試行別記録を補完した。実施日は11月15日で、品質台帳の既存2行と同じ試行を示す。品質台帳の試行数は増やさない。本番受け入れ・数学の精度・改善率には換算しない。
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-15 | seq30認証contextの開始 | local macOS・親24d8f95・infra ce084f3・実セッション・n=1 | 0/1。一般コードで停止、原因未確定・unclassified | 未測定 | 有料モデル呼び出しなし・実請求未確認 | [認証開始確認](entries/2026-11-15-seq30-auth-readiness-start.md) |
+| 2026-11-15 | seq30認証contextの観測診断 | local macOS・親24d8f95・infra ce084f3・実セッション・n=1 | 0/1。認証済みcontext未観測、原因未確定・unclassified | 未測定 | 有料モデル呼び出しなし・実請求未確認 | [観測診断](entries/2026-11-15-seq30-auth-readiness-diagnostic.md) |
