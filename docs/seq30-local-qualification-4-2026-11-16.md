@@ -25,3 +25,13 @@
 | 現browser結果 | `5fa3452234997e76ec5c9606ea529dbbad9d4c2a4af877791bd5d3d3eac634c4` |
 
 生の質問、回答、Lean、session、ログは非公開で保管します。ローカルWebは宣言したloopback用のbuild引数、verifierは同じ本番sourceに基づくnative ARM64 variantです。ローカルの受け入れは、本番AMD64、認証、ネットワークや切り替え後の新規質問の受け入れを証明しません。この記録から本番配備完了とは判断しません。
+
+## モデルと推論・修復の条件
+
+固定subjectと実observed-requestでは、証明生成は`gpt-6.1-terra`、reasoning_effortは`medium`、出力言語は`en`だった。実requestのSHA256は`cd953aa80831c96747defb1e6c3ab516d9f688c551e8734aecfd66d561086c09`である。単一の証明問題を1回取得した記録で、カード集合の評価ではないため、カード数は該当しない。
+
+worker `146ecf2`の固定role実装では、意味審査と説明は`gpt-6-luna / low`に結び付く。個別provider callのroleやeffortは台帳に保存していないため、この部分は実装の条件として記録する。追加11 callsには他の役割も含まれ、すべてを証明生成モデルの呼び出しとは扱わない。
+
+修復上限は、同workerの設定sourceでは6である。凍結local.envとcompose sourceには`PALS_MAX_REPAIR_ATTEMPTS`の上書きがないことを確認した。ただし、この取得の実修復使用回数は保存結果から確認できていない。第3回の使用回数を第4回へ流用しない。今回の追記は既存の条件の照合であり、新しい実行・費用・試行数を追加しない。
+
+固定条件の出典は、worker `146ecf2`の[role定義](https://github.com/AtsushiHosaka/pals-agent/blob/146ecf2b816ac6830940fac824bd9e8df90d80e4/pals_agent/model_roles.py#L36)、[既定の修復上限](https://github.com/AtsushiHosaka/pals-agent/blob/146ecf2b816ac6830940fac824bd9e8df90d80e4/pals_agent/models.py#L16)、[環境変数からの設定読込](https://github.com/AtsushiHosaka/pals-agent/blob/146ecf2b816ac6830940fac824bd9e8df90d80e4/pals_agent/settings.py#L265)である。
