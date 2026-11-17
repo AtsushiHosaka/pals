@@ -8,3 +8,8 @@
 - 費用: 新規有料モデル呼び出しなし。総費用と削減額は未測定。既存PGを再利用し一時DBをfinally削除、新規コンテナなし。
 
 条件、全arm、個別sampleへのリンク、負荷と限界は[確認記録](../../410-380-verification-2026-11-17.md)と[API PR #119](https://github.com/AtsushiHosaka/pals-api/pull/119)にある。主担当はrawからp95を独立再計算した。品質台帳nは独立burst3、p95はpooled60sampleで、製品成功率と区別する。
+
+
+## 同日追記
+
+起点は厳密なserver commit点ではなく、完了fixture関数return直後であった。接続先制限にquery overrideの不備があり、初回のambient routing snapshotも未保存だったため、旧値を保持したままガード適用後に同条件を再測定した。新しい採用候補は[ガード適用再測定](2026-11-17-dispatch-apply-latency-guarded.md)に分ける。初回と再測定を合算した改善率は作らない。
