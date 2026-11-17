@@ -219,3 +219,10 @@
 | 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
 |---|---|---|---|---|---|---|
 | 2026-11-17 | 同branchの自動CI集約・既存結果の補足 | 同一head e4adbff・push/PR・4 jobsと検査範囲を保持 | push43998354835 cancelled、PR43998363240 success・4jobs成功。新測定・台帳分母追加なし | 削減秒数・負荷は未測定 | 未測定 | [CI集約](entries/2026-11-17-seq30-ci-aggregation.md) |
+
+
+## seq30の第6回ローカル資格確認
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 第6回ローカル資格確認 | 親5e53・infra3f9・候補33447・同条件・製品取得n=1 | 0/1。同一requestの終端failed/lean_verification_failed、詳細unclassified。marker保持 | whole wall108.650秒（主担当の当時観測） | proxy差分0.034900 USD・内部8 calls、実請求未確認 | [第6回取得](entries/2026-11-17-seq30-local-qualification-6.md) |
