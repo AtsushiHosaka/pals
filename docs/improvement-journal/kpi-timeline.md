@@ -180,3 +180,27 @@
 | 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
 |---|---|---|---|---|---|---|
 | 2026-11-16 | 通知期限修正後の7機能シナリオ | local macOS・infra3b31597・代用品・bundle n=1 | 機能bundle1/1、個別7件成功・各600秒以内・回収確認。全体600秒条件は未達、実owner/本番受け入れとは別 | 一式wall2548.159秒・monotonic2548.146秒 | 有料取得なし、総額未測定 | [予行記録](entries/2026-11-16-seq30-minute-rehearsal.md) |
+
+
+## seq30新候補のモデル送信前の準備
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-16 | 新候補のsource・依存先・配置・認証開始の準備 | 親3b663576・infra3b31597・候補f20・非課金bundle n=1 | 技術準備1/1。host app/DB変更なし、auth operation0・seed不変。第5回と本番受け入れは未実行 | canary2152ms（全体時間は未測定） | 新しいモデル取得なし、71 calls/255446μUSD維持、総額未測定 | [準備記録](entries/2026-11-16-seq30-minute-preparation.md) |
+
+| 2026-11-17 JST | seq30再開前の認証と前提確認 | 親3b663576・候補f20・非課金bundle n=1 | 0/1、observe停止・STS TokenRetrievalError、通常SSO認証待ち。新しい有料送信・利用停止なし | 未測定 | モデル送信なし、実請求未測定 | [再開記録](entries/2026-11-17-seq30-resume-auth.md) |
+
+
+## seq30の検証環境回復と第5回取得
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 再準備時のlive build履歴確認 | local macOS・親3b663576・infra3b31597・候補f20・技術bundle n=1 | 0/1。履歴確認失敗を保持し、同source rebuildとfresh prepareで前提回復。製品分母に含めない | 全体時間未測定、回復時canary2588ms | 新しいpaid取得なし、総額未測定 | [履歴確認失敗](entries/2026-11-17-seq30-provenance-history-refusal.md) |
+| 2026-11-17 | 第5回ローカル資格確認 | 同問題・terra/medium・同oracle・実依存先・製品取得n=1 | 1/1 accepted。正規再照合は同じ取得、記録時点の本番受け入れは別 | whole capture wall139.635秒（主担当の当時観測） | proxy差分0.037227 USD・内部12 calls、実請求未確認 | [第5回取得](entries/2026-11-17-seq30-local-qualification-5.md) |
+
+
+## seq30のrestore-check停止
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 新候補の正規apply | 親3b663576・infra3b31597・候補f20・技術bundle n=1 | 0/1。restore-checkのtuple未確定で停止、根因unclassified。owner/cleanup解放、利用停止前 | restore-check156.472秒、adstat97.150/93.299秒、停止区間null | 新しいpaid本番質問0件、総額未測定 | [失敗記録](entries/2026-11-17-seq30-restore-check-failure.md) |
