@@ -291,3 +291,10 @@
 
 | 2026-11-17 | request長いポーリングのsource統合 | exact CI成功、認証取消時の枠残留を修正。本番性能未確認 | [画面取得](entries/2026-11-17-request-longpoll.md) |
 | 2026-11-17 | 失敗済みrelease後処理source | 対象548件成功、exact CIと最終review確認中。live未実施 | [後処理](entries/2026-11-17-failed-release-repair.md) |
+
+## 2026-11-18の再開と認証事前確認
+
+| 日付 | 試み | 結果と限界 | エントリ |
+|---|---|---|---|
+| 2026-11-18 | 通常ログイン後のcanonical受け入れ再開 | 認証事前確認1試行がexit 2、質問・有料送信0。診断6要求は6試行へ換算せず、新seed待ち。本番受け入れ未完了 | [認証再開](entries/2026-11-18-canonical-auth-resume.md) |
+| 2026-11-18 | 後処理sourceのfresh health修正 | 旧2件RED／新47件GREEN。新候補CIは引継ぎ時点で確認中、live IAM・host操作0 | [fresh health](entries/2026-11-18-fresh-repair-health.md) |
