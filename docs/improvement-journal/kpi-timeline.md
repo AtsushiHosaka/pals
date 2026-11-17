@@ -204,3 +204,18 @@
 | 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
 |---|---|---|---|---|---|---|
 | 2026-11-17 | 新候補の正規apply | 親3b663576・infra3b31597・候補f20・技術bundle n=1 | 0/1。restore-checkのtuple未確定で停止、根因unclassified。owner/cleanup解放、利用停止前 | restore-check156.472秒、adstat97.150/93.299秒、停止区間null | 新しいpaid本番質問0件、総額未測定 | [失敗記録](entries/2026-11-17-seq30-restore-check-failure.md) |
+
+
+## seq30のnative inventory診断
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 診断CLI送信前検査 | 技術bundle n=1・host/state作成0 | 0/1。固定code拒否を保持、入力と旧validator互換性を修正。製品分母外 | 未測定 | paid/model calls0、総額未測定 | [初回失敗](entries/2026-11-17-seq30-inventory-diagnostic-preflight-failure.md) |
+| 2026-11-17 | 実native inventoryの読み取り診断 | live13be88fc・3観測を含む技術bundle n=1 | 1/1。probe完了・appDBfalse。元の拒否は未再現で根因不明、finale4全体のlive検証ではない | offline最終5suite5.230秒、実診断全体は未測定 | paid/model calls0、local83calls292673μUSD維持、総額未測定 | [読取診断](entries/2026-11-17-seq30-inventory-readonly-diagnostic.md) |
+
+
+## seq30の自動CI集約の記録補足
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 同branchの自動CI集約・既存結果の補足 | 同一head e4adbff・push/PR・4 jobsと検査範囲を保持 | push43998354835 cancelled、PR43998363240 success・4jobs成功。新測定・台帳分母追加なし | 削減秒数・負荷は未測定 | 未測定 | [CI集約](entries/2026-11-17-seq30-ci-aggregation.md) |
