@@ -45,3 +45,6 @@ CLIの実bytesは、liveの13be88fcと最終e4adbffで一致し、SHA256は`7dbd
 | 既存CloudWatchログ源の読取 | `b56a85d0e3996a303cd3155f1a6a9e72ab7ebc8220d1008261b68b24df84dc02` |
 
 rawログ、command ID、内部hostや配置場所、資格情報は非公開で保管します。次の判断は、元の拒否を再現できる証拠と、診断を保持する修正のレビュー・CIによって行います。元のapply失敗や未確定の根因を、この診断bundleの成功で上書きしません。
+
+
+2026-11-17追記・非公開証拠の照合先: 3観測のjournalとcommand IDの照会番号は`SEQ30-NATIVE-INVENTORY-20261117`、非公開indexのSHA256は`d3b629d0e0552e4d0d041fad342654d1a70312eed20b9313de30fe73da26cb8e`。権限を持つ保管者は、このindexから各観測のjournal・結果の配置場所とhash、command ID、時刻を照合できる。実物の3組のintent・sent・resultと、3つの異なるcommand IDを再確認した。indexは専用0700ディレクトリの0600ファイルで、生の場所・IDは公開しない。新しいprobeは実行していない。

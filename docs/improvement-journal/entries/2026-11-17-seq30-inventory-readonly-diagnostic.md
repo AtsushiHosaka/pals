@@ -9,3 +9,6 @@ live source13be88fcで、読み取り専用probeを三つの専用stateから実
 実読取bundle1件の1/1を記録し、中の3観測や220 testsを製品・数学の試行へ加算しない。新しいpaid/model callsは0、local台帳は83 calls・292673μUSDを保持。実費総額と診断全体時間は未測定。source、限界と証拠hashは[診断記録](../../seq30-inventory-diagnostic-2026-11-17.md)、品質台帳IDは2026-11-17-seq30-inventory-readonly-diagnostic。
 
 仮説に当たる狙いは、切り替え・有料質問・host配置変更なしで既存の保護済みprobeを実行できるか確かめることだった。これは実施後の説明であり、事前登録した比較実験ではない。モデル・修復上限・カード数は対象外である。
+
+
+2026-11-17追記・非公開証拠の照合先: 3観測のjournalとcommand IDの照会番号は`SEQ30-NATIVE-INVENTORY-20261117`、非公開indexのSHA256は`d3b629d0e0552e4d0d041fad342654d1a70312eed20b9313de30fe73da26cb8e`。権限を持つ保管者は、このindexから各観測のjournal・結果の配置場所とhash、command ID、時刻を照合できる。実物の3組のintent・sent・resultと、3つの異なるcommand IDを再確認した。indexは専用0700ディレクトリの0600ファイルで、生の場所・IDは公開しない。新しいprobeは実行していない。
