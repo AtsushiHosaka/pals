@@ -273,3 +273,21 @@
 | 日付 | 何を確認したか | 条件 | 結果 | 時間 | 費用 | エントリ |
 |---|---|---|---|---|---|---|
 | 2026-11-17 | API #111の送信・反映分離の実装試行 | 基点08cf8ac・候補c999de0・locked環境・unit77件＋実PostgreSQL9件 | 旧回帰4件RED、初期fixture失敗を保持、修正後86件成功・0skip。製品成功率には換算せず、20秒遅延時の反映p95は未測定、性能改善未立証 | 対象suite20.738秒。回答時間・短縮秒数ではない | 新規モデル呼び出しなし、総費用・削減額未測定 | [分離の実装試行](entries/2026-11-17-dispatch-apply-isolation.md) |
+
+
+## 送信と反映の分離の性能実測
+
+| 日付 | 確認したこと | 条件 | 結果 | エントリ |
+|---|---|---|---|---|
+| 2026-11-17 | 20秒送信遅延時の反映p95増分 | 実PG・完了fixture・制御queue、各arm20件×3burst | 旧request +20.147403秒→統合+0.023407秒、旧formal+20.113804秒→統合-0.024022秒。負値はばらつき。本番・10秒目標全体は未確認 | [性能実測](entries/2026-11-17-dispatch-apply-latency.md) |
+
+
+## 同日の追加測定・通知配線
+
+| 日付 | 試み | 結果と限界 | エントリ |
+|---|---|---|---|
+| 2026-11-17 | 接続先guard修正後の20秒送信遅延比較 | 旧request増分20.049274秒→統合0.006812秒、旧formal20.095772秒→統合0.006957秒。各3burst、本番未確認 | [再測定](entries/2026-11-17-dispatch-apply-latency-guarded.md) |
+| 2026-11-17 | 別process通知とAPI反映 | 完了fixture更新前起点の局所上限n20/p95 0.066105750秒。実Lean・HTTP/render・本番未確認 | [確定通知](entries/2026-11-17-cross-process-settlement-signal.md) |
+
+| 2026-11-17 | request長いポーリングのsource統合 | exact CI成功、認証取消時の枠残留を修正。本番性能未確認 | [画面取得](entries/2026-11-17-request-longpoll.md) |
+| 2026-11-17 | 失敗済みrelease後処理source | 対象548件成功、exact CIと最終review確認中。live未実施 | [後処理](entries/2026-11-17-failed-release-repair.md) |
