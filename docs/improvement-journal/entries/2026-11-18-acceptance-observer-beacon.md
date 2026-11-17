@@ -9,3 +9,5 @@ traceはverifying・revision 2からanswered・revision 3へ進み、最後のHT
 元のfailed結果を保持し、品質台帳はgateの1件だけをn=1・成功0・`unclassified: 1`として追加する。先行認証確認と同じ再開に属する別時点・別指標のため、`overlap_with`を付け、利用者試行・数学の成功率へ合算しない。金額は未取得でUSDは空。source補修・live後続の成果や全体完了は主張しない。
 
 [段階別の観測・hash・未確認範囲](../../410-resume-auth-diagnostic-2026-11-18.md)。台帳行IDは`2026-11-18-canonical-acceptance-observer-write-blocked`。
+
+追加診断で実URLは3件とも`/cdn-cgi/rum?`、末尾単独`?`・query keys 0と判明した。queryなしだけの厳密一致案はこの実通信に合わず、新sourceでは区切りなしと末尾単独`?`の正確な2種類だけをabortしたまま分離する方針へ進んでいる。値付きquery等は対象外で、実装は進行中、機能gate合格は未取得である。

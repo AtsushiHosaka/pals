@@ -71,3 +71,9 @@ canonical browserコードはwrite counterの検査で拒否した。sourceの�
 この新sourceはCI・独立レビュー前であり、新しいsourceによる正式acceptanceはまだ実施していない。source変更の設計・検証は担当の別engineering noteへ記録する。本記録は元policyによる確定したgate失敗と、そのpathを特定した局所診断までとし、後続sourceやlive実行の結果を先取りしない。
 
 初回acceptanceの私有ログのSHA256は`94a4d5d0bf6dc372338170a765dcb84f8f396e2732e4cc47a565c9efa0e3b161`。今回の品質台帳行は`2026-11-18-canonical-acceptance-observer-write-blocked`とし、先行認証事前確認行を`overlap_with`で参照する。数学・モデルの成功率や費用改善へ換算せず、USD欄は未取得のまま保持する。
+
+## 実URLの末尾区切りと限定条件の補足（同日追記）
+
+追加確認で、3件の実URLはいずれも正確なWeb originの`/cdn-cgi/rum?`で、末尾に単独の`?`があり、query keysは0件だった。値付きqueryではない。直前に記録したqueryなしURLだけを対象とする厳密一致案では、この末尾区切りのある実URLへ対応できないことが分かった。この案と実通信条件の不一致も記録に残す。
+
+現在準備中のsourceは、`/cdn-cgi/rum`と`/cdn-cgi/rum?`の正確な2種類だけを、通信をabortしたまま専用counterへ分ける方針である。値付きquery、fragment、userinfoなどは対象外とし、他のwrite拒否を維持する。修正はまだ実装中で、機能gateの合格は取得していない。旧frozen source・plan・failed recordと、今回記録したgate失敗は不変である。
