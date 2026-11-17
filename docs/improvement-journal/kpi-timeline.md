@@ -233,3 +233,10 @@
 | 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
 |---|---|---|---|---|---|---|
 | 2026-11-17 | 第7回ローカル資格確認 | 親5e53・infra3f9・候補33447・同条件・製品取得n=1 | 1/1 accepted。初回answered/送信1、保存・表示・reload契約を通過。第6回失敗は別記録 | whole wall137.443秒（主担当の当時観測） | proxy差分0.040194 USD・内部11 calls、実請求未確認 | [第7回取得](entries/2026-11-17-seq30-local-qualification-7.md) |
+
+
+## seq30の通知rule読戻し失敗
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 候補33447の正規apply | 親5e53・infra3f9・技術bundle n=1 | 0/1。restore通過後begin/cancel読戻し失敗、通常cleanup完了・alert cleanup未完、利用停止前 | restore434.466秒、alerts-preflight1.259秒、begin2.086秒、cancel0.601秒、停止区間null | 新paid本番0、総額未測定 | [失敗記録](entries/2026-11-17-seq30-alert-readback-failure.md) |
