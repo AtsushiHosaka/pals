@@ -250,3 +250,5 @@
 | 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
 |---|---|---|---|---|---|---|
 | 2026-11-17 | 候補085dの正規apply | 親f00・infra847・技術bundle n=1 | 0/1。初回admission-status失敗、cleanup中の再確認passed・ownerとcleanup完了、利用停止前 | 初回57.390秒、再確認101.734秒。停止時間未測定 | 新paid送信0、総額未測定 | [失敗記録](entries/2026-11-17-seq30-current-tuple-failure.md) |
+
+2026-11-17追記: [broker時刻の限定読み取り](entries/2026-11-17-seq30-current-tuple-failure.md)で、診断側のmode指定誤りによる初回拒否と、修正後のread_completeを両方保持した。brokerと失敗inventoryの時刻重複・競合候補の局所再現は、本番原因の確定や新しい測定行とは扱わず、上のcycle0/1を維持する。
