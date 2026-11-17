@@ -266,3 +266,10 @@
 | 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
 |---|---|---|---|---|---|---|
 | 2026-11-17 | 資格snapshot修正の対象技術検証 | infra15c54e2・実flock/模擬STS・bundle n=1 | 1/1。bad847 RED、修正版198件/0skip GREEN。本番原因・受け入れは未確定 | 対象suite2.167秒、短縮効果未測定 | 新paid0、総額未測定 | [修正記録](entries/2026-11-17-seq30-credential-snapshot-fix.md) |
+
+## seq30のhealth-light障害と設定済みactorの検査
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 正規apply・同attemptのreconcile | 親8b778b2・infra15c54e2、技術n=1 | 0/1。compute health-light失敗、07:14 UTC時点で受付未復旧 | 最終停止時間未確定、15分目標未達 | 新paid0、総額未測定 | [障害記録](entries/2026-11-17-seq30-health-light-incident.md) |
+| 2026-11-17 | 設定済みreviewerのsource修正 | 68ae4be、対象技術bundle n=1、モデル・カード該当なし | 1/1。旧版RED、202件/0skip GREEN。本番gate未実施 | suite1.892秒、短縮効果未測定 | 新paid0、総額未測定 | [同記録](entries/2026-11-17-seq30-health-light-incident.md) |
