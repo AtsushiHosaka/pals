@@ -33,3 +33,10 @@ owner解放は03:25:03.673126 UTC、通常cleanupは03:25:05.904419 UTCに完了
 | 既存ruleの実Get保存応答 | `9b64d306413f52e6b5f4ad89bc6e23329d72dadd5fe7f2af93942f08f357e4f2` |
 
 生のprovider応答、ARN、rule名、内部識別子・配置場所と資格情報は非公開です。この記録は失敗したcycleの終端と上記保存応答までを対象とし、その後の通知解除や本番状態を先取りしません。
+
+
+## 2026-11-17追記・既存通知ruleの早期取消
+
+主担当は03:37 UTC頃、infra PR #184のcleanな修正commit`847d515`の正規CLIで既存の同一ruleをcancelし、deletedと不在の読戻しを確認しました。新しいruleは作成していません。保存ログのSHA256は`8a569624917898421c4bb46e34cee86dc4bfc0b532ada414e548c0fabb7bfd11`、取消後stateのSHA256は`60215a003155ffbdc5fcf24116ef6362694835234841c9a38e4d2532a0aecba1`で、phase=deletedを読み直して照合しました。固定ExpireDateの03:44 UTCを待たずに取り消したという範囲です。通知配送の全経路を測定したものではありません。
+
+上のcycle終端結果とalert cleanup=falseは、その時点の履歴として変更していません。今回の取消は同じ技術attemptの後続観測で、新しいtrialや成功件数を追加せず、元の0/1を保持します。修正sourceのリリースや本番質問の受け入れが完了したという意味でもありません。経過は[#404](https://github.com/AtsushiHosaka/pals/issues/404)で管理します。

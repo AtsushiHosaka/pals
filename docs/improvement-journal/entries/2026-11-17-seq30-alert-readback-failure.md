@@ -7,3 +7,6 @@ alerts-beginは2.086秒で失敗し、直後のcancelも0.601秒で失敗した�
 判断は今回のcycleを0/1で停止し、同じcycleを再実行せず、通知の早期取消と読戻し境界の修正へ進むこと。owner解放と通常cleanupは完了したが、終端時のalert cleanupは未完了だった。利用停止前でquiesce・通信除外・admissionは未実行、timing nullを停止時間0秒の測定とはしない。後の解除成功もこの記録では未確認である。
 
 新しいpaid本番質問は0、総費用は未測定。begin/cancelや通過工程を別の製品・数学の試行へ加算せず、第7回ローカルacceptedの費用も再計上しない。実結果、時刻、固定期限とhashは[失敗記録](../../seq30-alert-readback-failure-2026-11-17.md)、品質台帳IDは2026-11-17-seq30-alert-readback-failure。
+
+
+2026-11-17追記: 03:37 UTC頃、主担当が修正commit847d515の正規CLIで既存ruleのcancelを実行し、deletedと不在の読戻しを確認した。保存ログとstate phase=deletedのhashは[失敗記録の追記](../../seq30-alert-readback-failure-2026-11-17.md#2026-11-17追記既存通知ruleの早期取消)に残した。ruleの新規作成はなく、固定03:44 UTCより前の取消である。元のcycleのalert cleanup=falseと0/1は保持し、同じattemptの後続観測として扱う。新しいtrial・台帳行・費用は追加しない。

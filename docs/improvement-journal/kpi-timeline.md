@@ -240,3 +240,6 @@
 | 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
 |---|---|---|---|---|---|---|
 | 2026-11-17 | 候補33447の正規apply | 親5e53・infra3f9・技術bundle n=1 | 0/1。restore通過後begin/cancel読戻し失敗、通常cleanup完了・alert cleanup未完、利用停止前 | restore434.466秒、alerts-preflight1.259秒、begin2.086秒、cancel0.601秒、停止区間null | 新paid本番0、総額未測定 | [失敗記録](entries/2026-11-17-seq30-alert-readback-failure.md) |
+
+
+2026-11-17追記: [通知ruleの早期取消](entries/2026-11-17-seq30-alert-readback-failure.md)は03:37 UTC頃にdeleted/readbackを確認した。同じ技術attemptの後続観測であり、上記のcycle失敗0/1と台帳の分母は変更しない。固定期限03:44 UTCを延長せず、新規ruleも作成していない。
