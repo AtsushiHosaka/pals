@@ -134,7 +134,11 @@ function acceptanceRoute(init, refresh, deadline, counters) {
     let url;
     try { url = new URL(request.url()); } catch { counters.attemptedWrites++; await route.abort(); return; }
     if (["GET", "HEAD", "OPTIONS"].includes(request.method())) await route.continue();
-    else if (request.method() === "POST" && url.origin === init.api_origin && url.pathname === "/v1/product-events" && !url.search) {
+    else if (request.method() === "POST" && url.origin === init.web_origin
+      && url.pathname === "/cdn-cgi/rum" && [`${init.web_origin}/cdn-cgi/rum`, `${init.web_origin}/cdn-cgi/rum?`].includes(request.url())) {
+      // Suppress this exact edge beacon; never send it or inspect its body.
+      counters.suppressedRUMPosts++; await route.abort();
+    } else if (request.method() === "POST" && url.origin === init.api_origin && url.pathname === "/v1/product-events" && !url.search) {
       counters.telemetryPosts++; await route.continue();
     } else if (!refreshUsed && allowedRefresh(request, url, init, refresh)) {
       refreshUsed = true;
@@ -179,7 +183,7 @@ async function observe(payload, trace) {
     const context = await browser.newContext({ serviceWorkers: "block" });
     await context.addInitScript(seedSessionOnce,
       { origin: session.origin, entries: Object.entries(session.session_storage) });
-    const counters = { attemptedWrites: 0, telemetryPosts: 0, authPosts: 0 };
+    const counters = { attemptedWrites: 0, telemetryPosts: 0, authPosts: 0, suppressedRUMPosts: 0 };
     await context.route("**/*", acceptanceRoute(init, refresh, deadline, counters));
     const page = await context.newPage();
     page.setDefaultTimeout(30_000);
@@ -269,6 +273,7 @@ async function observe(payload, trace) {
       verified_lean_sha256: sha(source.lean_code), rendered_semantics_sha256: first,
       reloaded_semantics_sha256: second, observed_at: new Date().toISOString(), attempted_mutations: counters.attemptedWrites,
       passive_telemetry_posts: counters.telemetryPosts, authentication_posts: counters.authPosts,
+      suppressed_cloudflare_rum_posts: counters.suppressedRUMPosts,
       web_assets: [...assets].map(([assetPath, hash]) => ({ path: assetPath, sha256: hash })) };
   } finally { process.off("SIGTERM", closeForSignal); await browser.close(); }
 }

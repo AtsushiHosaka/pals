@@ -2,7 +2,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { acceptanceRoute, seedSessionOnce } = require("../release-acceptance-browser.cjs");
-const init = { api_origin: "https://api.example.test", auth_origin: "https://cognito-idp.ap-northeast-1.amazonaws.com" };
+const init = { web_origin: "https://web.example.test", api_origin: "https://api.example.test", auth_origin: "https://cognito-idp.ap-northeast-1.amazonaws.com" };
 const descriptor = { public: { client_id: "client1" }, refresh: "fixture-refresh-value" };
 test("reload preserves the ephemeral app-refreshed session instead of replaying the expired seed", () => {
   const before = { location: global.location, sessionStorage: global.sessionStorage };
@@ -20,7 +20,7 @@ test("reload preserves the ephemeral app-refreshed session instead of replaying 
   } finally { Object.assign(global, before); }
 });
 function setup(refresh = descriptor) {
-  const counters = { attemptedWrites: 0, telemetryPosts: 0, authPosts: 0 };
+  const counters = { attemptedWrites: 0, telemetryPosts: 0, authPosts: 0, suppressedRUMPosts: 0 };
   return { counters, handle: acceptanceRoute(init, refresh, Date.now() + 60000, counters) };
 }
 function route(options = {}) {
@@ -60,3 +60,46 @@ test("existing reads and passive product telemetry stay available", async () => 
   const telemetry = route({ url: init.api_origin + "/v1/product-events" }); await handle(telemetry);
   assert.deepEqual(telemetry.calls, ["continue"]); assert.equal(counters.telemetryPosts, 1);
 });
+
+// Route-only no-network boundary: abort remains mandatory regardless of body.
+test("same-origin exact RUM POST is suppressed without a send or application-write exemption", async () => {
+  const { handle, counters } = setup(null);
+  for (const [suffix, body] of [["", { metric: "fixture" }], ["?", { mutation: "not trusted" }]]) {
+    const item = route({ url: init.web_origin + "/cdn-cgi/rum" + suffix, body });
+    await handle(item); assert.deepEqual(item.calls, ["abort"]);
+  }
+  assert.deepEqual(counters, { attemptedWrites: 0, telemetryPosts: 0, authPosts: 0, suppressedRUMPosts: 2 });
+  const app = route({ url: init.api_origin + "/v1/proof-requests", body: { metric: "fixture" } });
+  await handle(app); assert.deepEqual(app.calls, ["abort"]);
+  assert.equal(counters.attemptedWrites, 1); assert.equal(counters.suppressedRUMPosts, 2);
+});
+for (const [label, options] of [
+  ["API origin", { url: init.api_origin + "/cdn-cgi/rum" }],
+  ["foreign origin", { url: "https://foreign.example.test/cdn-cgi/rum" }],
+  ["userinfo", { url: "https://user:pass@web.example.test/cdn-cgi/rum" }],
+  ["query", { url: init.web_origin + "/cdn-cgi/rum?metric=1" }],
+  ["extra query delimiter", { url: init.web_origin + "/cdn-cgi/rum??" }],
+  ["empty query separators", { url: init.web_origin + "/cdn-cgi/rum?&" }],
+  ["empty-valued query key", { url: init.web_origin + "/cdn-cgi/rum?key=" }],
+  ["whitespace after query delimiter", { url: init.web_origin + "/cdn-cgi/rum? " }],
+  ["fragment", { url: init.web_origin + "/cdn-cgi/rum#metric" }],
+  ["empty fragment", { url: init.web_origin + "/cdn-cgi/rum#" }],
+  ["trailing slash", { url: init.web_origin + "/cdn-cgi/rum/" }],
+  ["encoded path", { url: init.web_origin + "/cdn-cgi/%72um" }],
+  ["normalized path", { url: init.web_origin + "/ignored/../cdn-cgi/rum" }],
+  ["other path and RUM-like body", { url: init.web_origin + "/v1/proof-requests", body: { metric: "fixture" } }],
+  ...["PUT", "PATCH", "DELETE"].map(method => [method, { method, url: init.web_origin + "/cdn-cgi/rum" }]),
+]) {
+  test("RUM suppression excludes " + label, async () => {
+    const { handle, counters } = setup(null), item = route(options);
+    await handle(item); assert.deepEqual(item.calls, ["abort"]);
+    assert.equal(counters.attemptedWrites, 1); assert.equal(counters.suppressedRUMPosts, 0);
+  });
+}
+for (const method of ["GET", "HEAD", "OPTIONS"]) {
+  test("existing " + method + " on RUM path remains a read, not a suppressed POST", async () => {
+    const { handle, counters } = setup(null), item = route({ method, url: init.web_origin + "/cdn-cgi/rum" });
+    await handle(item); assert.deepEqual(item.calls, ["continue"]);
+    assert.equal(counters.attemptedWrites, 0); assert.equal(counters.suppressedRUMPosts, 0);
+  });
+}
