@@ -226,3 +226,10 @@
 | 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
 |---|---|---|---|---|---|---|
 | 2026-11-17 | 第6回ローカル資格確認 | 親5e53・infra3f9・候補33447・同条件・製品取得n=1 | 0/1。同一requestの終端failed/lean_verification_failed、詳細unclassified。marker保持 | whole wall108.650秒（主担当の当時観測） | proxy差分0.034900 USD・内部8 calls、実請求未確認 | [第6回取得](entries/2026-11-17-seq30-local-qualification-6.md) |
+
+
+## seq30の第7回ローカル資格確認
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 第7回ローカル資格確認 | 親5e53・infra3f9・候補33447・同条件・製品取得n=1 | 1/1 accepted。初回answered/送信1、保存・表示・reload契約を通過。第6回失敗は別記録 | whole wall137.443秒（主担当の当時観測） | proxy差分0.040194 USD・内部11 calls、実請求未確認 | [第7回取得](entries/2026-11-17-seq30-local-qualification-7.md) |
