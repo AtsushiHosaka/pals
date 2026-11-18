@@ -8,10 +8,12 @@
 |---|---|---|
 | Web | aa1a6d48ceeb90f79c5360e5f699e72d11735f56 | 個別PR #85〜#88を配備統合PR #89で通常merge、認証試験同期PR #90、chevron修正PR #91 |
 | API | a3191b4cd11a347724bbabff54e39c829faca31e | ゲスト途中表示PR #121、検証成功ドットPR #122 |
-| infra | c2809c3de7c7dc7a56060d0909d8134e730e18a7 | 正規後処理PR #187のレビュー済みmerge |
+| infra | bebb354dbcac978928dd08875a4d79487a31f3a1 | PR #187を含む、途中表示設定PR #188のレビュー・4必須CI成功head。merge76335a4とtree一致 |
 | worker | 146ecf2b816ac6830940fac824bd9e8df90d80e4 | 前任のソースを保持 |
 
 本番用ソースブランチはWebが`codex/sidebar-inline-math-20261031`、APIが`claude/seq28-api-response-language`のまま維持する。現在の承認済み系統を基点とし、古いmainで置き換えない。
+
+候補の正規plan inputは`progress_preview_enabled: true`を明示する。infra #188により、hashで結び付けた宣言をproof workerの環境だけへ渡す。worker画像やモデル設定は変更しない。CIが通った正確なheadを候補へpinし、merge revisionの別のCIが成功したとは読み替えない。
 
 ## 利用者に見える変更
 
