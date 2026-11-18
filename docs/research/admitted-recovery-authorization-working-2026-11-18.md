@@ -20,7 +20,7 @@ DBのepochは、既存のrelease_sequenceとimmutable_values全18項目のcanoni
 |---|---|
 | ARA-001 | permitのschemaとpurposeを閉じ、通常manifestと異なる署名domainを使う。相互利用を拒否する。 |
 | ARA-002 | 検証鍵は独立したreview済みbindingのkey ARN・account・SPKI pinから決める。permit自身の鍵指定を信頼の正本にしない。 |
-| ARA-003 | 新windowはissued_at以上・expires_at未満、長さは正かつ最大86,400秒。未来発行、期限境界、期限後の再利用を拒否し、自動延長しない。 |
+| ARA-003 | 新windowはissued_at以上・expires_at未満、長さは正かつ最大86,400秒。未来発行、期限境界、期限後の再利用を拒否し、自動延長しない。各effect直前にも現在時刻を再検証し、stage deadlineを期限内へ制限する。 |
 | ARA-004 | 旧manifestのhistoricalな署名真正性と、新permitのcurrentな有効性を別々に検証する。旧bytesや通常loadの期限検査は変えない。 |
 | ARA-005 | actual DBの最新admissionが、署名対象の18項目・sequence・canonical hashと完全一致する場合だけ回復を許す。観測不能は拒否する。 |
 | ARA-006 | 両hostの実identity、runtime config、image、source、toolchain、環境・mount・network・firewallの境界と、実行する回復専用codeのhashを束縛する。 |
@@ -36,7 +36,7 @@ DBのepochは、既存のrelease_sequenceとimmutable_values全18項目のcanoni
 
 ## 署名文書と信頼の境界
 
-専用signing CLIと純粋validatorをinfraへ追加する案とする。通常release-prepare signへ新schemaを混ぜない。既存signerのaccount、key種別、SPKI、local Verify、KMS Verifyの検査を維持し、署名対象を専用domain prefixとcanonical JSONの連結にする。prefixの具体bytesとcanonical encodingは、実装前に一意に固定する。
+専用signing CLIと純粋validatorをinfraへ追加する案とする。通常release-prepare signへ新schemaを混ぜない。既存signerのaccount、key種別、SPKI、local Verify、KMS Verifyの検査を維持し、署名対象を専用domain prefixとcanonical JSONの連結にする。提案する署名対象はASCIIの`pals.admitted-recovery-authorization.v1`、NUL 1 byte、canonical JSON bytesの順の連結である。JSONは既存signer同様の制限された型・key順・ASCII escape・改行なしで一意化し、重複keyや非canonical bytesを拒否する。
 
 payloadは次の値を持つ。pathから読み込む実private artifactと、そのhashの一致も検証する。
 
@@ -44,7 +44,9 @@ payloadは次の値を持つ。pathから読み込む実private artifactと、�
 - 旧manifest SHA、旧署名・SPKI・trust参照、最新admissionの全18項目とそのcanonical hash。
 - 発行元のexact失敗owner marker、元plan・failed journal、source付きの来歴参照。
 - 両hostのidentityと、runtime/config/image/source/toolchain、保持するcontainer IDsとnetwork・mount・firewallの境界。
-- 回復専用validator、observer、executor、unit generator、consumer codeのhashと許可stage。
+- 回復専用validator、observer、executor、unit generator、固定consumer libraryの実装hashと許可stage。
+
+署名依存を循環させない。review済みの固定code/template/generator hashからpermitを作り、そのpermitからconfig・unit・assembly/install receiptを生成する。次candidateの生成済みconsumer helperはこれらを入力にし、actual bytes/hashを次candidateのfrozen source/bindingで別途固定する。permitへ、そのpermit自身や新config hashを埋め込んだ生成helper全体のhashを戻してはならない。固定consumer実装のhashと、candidateごとに生成したhelperのhashを区別する。
 
 発行時のboot IDは来歴であり、将来も同じ値であることを要求しない。実行時には同じhost identityのfresh boot観測を記録する。新しいboot IDだけを理由に正常なhost rebootを拒否しない。
 
@@ -64,7 +66,7 @@ payloadは次の値を持つ。pathから読み込む実private artifactと、�
 
 通常ownerのhistorical config拒否を維持する。historicalなconfigをcurrentへ書き換えて通常executeへ渡さない。新しい専用executorが、historical configと検証済みpermit、fresh DB一致、実行contextを受け取り、保持されたexact IDsの回復だけを行う。
 
-既存recoverのcontrol-core、compute、control-reconcilerという依存順序と、network/iptablesの再確認・限定復元、実mTLS/readinessを保つ。reconcilerは既存recoverで通常ownerのcheck/executeを呼ぶため、そこだけを暗黙に流用できない。新executorが同じreadinessを実行し、permitで許可したexact actorの再開に限定する設計が必要である。
+既存recoverのcontrol-core、compute、control-reconcilerという依存順序と、network/iptablesの再確認・限定復元、実mTLS/readinessを保つ。各actor startとiptables変更の直前に、permitの現在時刻・fresh DB・実行fenceを再検証する。依存待ちのdeadlineはpermitのexpires_atと宣言したstage上限の早い方とし、待っている間に失効した場合は次のeffectへ進まない。reconcilerは既存recoverで通常ownerのcheck/executeを呼ぶため、そこだけを暗黙に流用できない。新executorが同じreadinessを実行し、permitで許可したexact actorの再開に限定する設計が必要である。
 
 実行contextは次の2種類を明確に分ける。
 
@@ -78,6 +80,8 @@ archive済み旧markerをlive必須にするとbootが成立しない。一方�
 ## 回復設定・receiptと次release
 
 新recovery config、assembly receipt、install receipt、health receiptは別kindとする。`historical_manifest_verified`と`current_recovery_authorization_verified`を分け、permit SHA、code SHA、runtime参照、実IDs、unit hashes、検査時刻を保存する。通常の`strict_manifest_window=true`や古いPASSを流用しない。
+
+一部actorの再開後に期限切れ・DB lease喪失・依存失敗が起きた場合は、次actorを起動せず、開始済みIDsと未完了stageを正規ledgerへ残し、health成功に扱わない。通常の期限切れだけを理由に既存サービス全体を自動停止しない。一方、旧recoverのowned compensationを無言で削除もしない。今回の実行が開始したexact IDだけを対象にする穏当停止・workerのSIGTERM drainと、その未確認分の保存を、新permitの安全な補償scopeとして明示する必要がある。強制停止、foreign IDや新admissionのactorの停止は禁止する。期限切れ・lease喪失後にもこの限定補償を許すauthorityと再検証方法は、実装前に閉じる。確認できない場合は停止を推測せず、未調停として保持する。再実行は有効な承認とfresh DB・排他の下で同じ実状態を観測し、正規に調停する。
 
 installは正規の回復unitを設置・enableした実結果を記録する。設置しただけなら再起動成功や全停止復旧成功を主張しない。healthは毎回freshに観測し、実際の回復試験と履歴を結び付ける。部分install、未知unit、source差替えを拒否し、再実行では正規receiptと実状態を照合する。
 
@@ -105,13 +109,15 @@ observe_currentとrestoreは、旧来kindの検証を維持し、新kindだけ�
 | 6 | 対象・広域回帰、独立architecture/security review、exact CI、具体inputの固定。 | 全要件 |
 | 7 | 個別のlive承認後に署名・設置・実依存確認・全停止復旧・closureを記録する。次releaseの配備と受入は別に行う。 | ARA-007〜015 |
 
+必須CIは、変更した親sourceのrepository-safety・release-acceptance-contractsと、infraのrelease-cycle-regressionを含むowning sourceの要求checkである。API/workerを独立に変更する場合だけ、そのsourceのapi-regression/agent-regressionも追加する。exact candidateと実行driver revisionのcheckを確認し、旧headの成功を引き継がない。
+
 想定するcodeの境界は、infraの署名CLI/pure validator、回復専用host executor/observer、native generator・registry、config/unit/receipt validators、release-repair/observe/restoreである。新sourceをhash登録して使い、旧frozen adapterのallowlistや古いhelperを密かに変更しない。実装ファイルとbaseは設計review後に固定する。
 
 ## 必要な反例と実証
 
 通常loadが旧期限切れを拒否すること、旧bytesが不変であることを独立に検査する。用途/鍵/SPKI/非canonical/署名改変、未来発行・24時間超・期限境界、18項目の各相違、次sequence、別host/config/image/source/toolchain、DB不可、DB確認後のadmission競合、自己lock/foreign lock、owner archive後/foreign owner、接続喪失・応答喪失・部分install・再実行を検査する。
 
-exact IDsの全停止から再開できることと、missing/foreign IDや境界createを拒否することを分ける。新permitが新image、admit、一般activateを許さないことも検査する。boot時に観測IAMが失効する場合を負例に含める。
+exact IDsの全停止から再開できることと、missing/foreign IDや境界createを拒否することを分ける。新permitが新image、admit、一般activateを許さないことも検査する。boot時に観測IAMが失効する場合を負例に含める。依存待ち中のpermit失効、actor間での失効、DB lease喪失後に次actorを起動しないこと、部分開始後の証拠と拒否状態も検査する。
 
 署名には実際のcryptographic verification、DB排他には実PostgreSQL、actor/network/unitには実Docker/systemdの該当境界が必要である。doubleを使った検査はその境界内のsource回帰だけを示す。実署名・実依存・実停止復旧を未実施のまま、本番の復旧可能性やOS再起動成功へ昇格しない。新たな有料モデル送信はこの設計検査に含めない。
 
@@ -119,7 +125,7 @@ exact IDsの全停止から再開できることと、missing/foreign IDや境�
 
 #142の方針には条件付きで整合する。新purposeにより旧manifestをhistorical identity、新permitをcurrent authorityとして分離できる。旧署名の延命や通常gateの省略は不要である。
 
-ただしARA-008・009の実行fence/owner委譲と、ARA-014の観測権限の寿命は具体source経路が未検証で、実装着手可能という判定には至っていない。新種別のreceipt/consumer接続も未実装。これらを閉じ、主担当が設計へ同意するまでsource実装を開始しない。live操作はさらに、具体input・tests・review・CIと追加承認を必要とする。
+ただしARA-008・009の実行fence/owner委譲と、ARA-014の観測権限の寿命、部分失敗時の限定補償authorityは具体source経路が未検証で、実装着手可能という判定には至っていない。新種別のreceipt/consumer接続も未実装。これらを閉じ、主担当が設計へ同意するまでsource実装を開始しない。live操作はさらに、具体input・tests・review・CIと追加承認を必要とする。
 
 ## 根拠source
 
