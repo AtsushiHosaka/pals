@@ -11,3 +11,5 @@
 追記: exact CI初回は386件中385件成功、既存の別process終了5秒timeoutが1件失敗した。旧baselineでも同じ失敗を再現し、sourceとgateを変えずfailed-jobを一度だけ再確認中である。環境負荷という原因は未確定。
 
 追記: failed-jobの再確認も同じ既存signal timeoutで失敗した。exact CIは未合格で、追加rerunを停止した。元sourceでも起きる失敗だが、実行区間を分ける原因診断が必要である。
+
+追記: 診断追加後の最終head `96b58766739bff793f2ebf41c11f28c62237f5a1`は、正規PR CI `44255020572`で389件成功・失敗/error/skipなしとなった。appとworkflowは最初の実装headから不変で、旧timeoutの原因は未確定のまま保持する。本番担当へexact sourceを渡したが、flag有効化と本番受け入れは未確認である。
