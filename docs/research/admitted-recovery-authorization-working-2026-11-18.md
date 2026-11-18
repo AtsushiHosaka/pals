@@ -156,3 +156,17 @@ validatorはschema、用途別署名domain、独立bindings、24時間境界、P
 現control observerのSTS/KMS/RDS呼出しはcontrol native instance roleを使う。API・worker actorへの4read権限追加は不要である。ただしcomputeのfull tuple確認経路は未確定で、control側1roleだけで全体のboot復旧が成立するとは判定できない。direct compute DB observerには別roleの権限、DB接続、secret、networkの設計変更が必要となる。control側で観測する案には、computeへfreshな認証結果を伝える閉じた経路が必要となる。
 
 新claim前に両hostへ永続startup fenceを置く案も検討中である。現claimはlaunch lockを取得せず、inventoryはbusy lockをowner mutation中と扱う。lockを保持したまま現claim/inventoryを呼ぶだけでは整合しない。全起動経路の同一lock内確認、両hostの設置確認、部分設置・失応答・reboot・旧dispatchの調停を閉じるまで、排他が実装済みとは扱わない。
+
+
+### startup fenceの限定判定
+
+独立sourceレビューでは、次工程をversioned fence設置とローカル負例試験に限定することは可能とした。claim/admitや本番readyの判定ではない。現行claimとlegacy recoverは新fenceを参照しないため、設置だけでは遅延commandを止められない。
+
+1. preclaim専用journalでcandidate、planned owner token、attempt、両host、旧dispatchを固定する。既dispatchはterminal確認、またはexact旧codeの期限切れ拒否を個別に証明する。不明なcommandがあれば進まない。
+2. 各hostの既存launch lock内で、永続領域へroot所有のfenceを排他的に作る。fileと親directoryをfsyncし、同じbytesだけ再実行可能とする。
+3. 両hostのdurable ACK、installer terminal、lock解放を確認した後、通常のfresh quiet inventoryを行ってclaimする。inventoryのbusy例外は追加しない。新claim入口にfence確認を必須化し、prepared fenceと実owner markerの関係を固定する。
+4. 新boot recoveryはfence存在中に拒否する。controller restoreは同一attempt・実在する新owner・許可されたretained IDsへ限定し、lock取得後と各effect直前に確認する。
+5. 部分設置、lease喪失、reboot、応答不明時にはfenceを保持し、TTLでは解除しない。claim成否不明時は再観測し、新attemptを開始しない。
+6. 部分設置の解除は、未claimと未解決mutation不在を証明した同一attemptに限定する。遅延installerによる再設置もjournalで防ぐ。
+
+現recoverが実行全区間で保持するlaunch lockは再利用できる。fence設置後のrebootで旧runtimeが停止した場合に備え、claim後の明示的なretained restoreも必要になる。computeのfull18、remote owner authority、IAMはこのローカルprotocolだけでは解決しない。競合実行試験と本番検証は未実施である。
