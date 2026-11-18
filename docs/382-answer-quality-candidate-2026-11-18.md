@@ -32,11 +32,19 @@
 
 元の再形式化経路は、proof_requestsの生rowだけを新jobへ渡し、別テーブルに保存されたreasoning effortを引き継いでいなかった。また残り時間の判定をjoblink作成時刻から計算し、quota/token admission後に長く待った依頼で、元の期限を超える再試行を許し得た。
 
-[API PR #124](https://github.com/AtsushiHosaka/pals-api/pull/124)のheadは`1da88bf1bb79e6f7485bd1cdb730d298cc953ec9`。既存のgeneration settings読取とdeadline sweeperのadmission時計を再利用する。source、既存CI対象テスト、検証noteの3ファイルだけを変更し、workflowとmigrationは変更していない。
+[API PR #124](https://github.com/AtsushiHosaka/pals-api/pull/124)の最初の実装headは`1da88bf1bb79e6f7485bd1cdb730d298cc953ec9`。既存のgeneration settings読取とdeadline sweeperのadmission時計を再利用する。このheadではsource、既存CI対象テスト、検証noteの3ファイルを変更し、workflowとmigrationは変更していない。
 
 実PostgreSQLの新しい8回帰は、旧版4件失敗・4件成功から修正版8件成功となった。推論量low/highの保持、quota/token両方の期限、残時間がある場合の作り直し、600秒上限、再適用時に新jobを作らないこと、answeredとhold消費までを確認した。生成jobの終端はfixtureで準備しており、実モデル・Lean・本番回答の測定ではない。
 
 関連66件の比較では旧版19件失敗・47件成功、修正版15件失敗・51件成功で、対象4件以外の新規失敗はなかった。15件の既存失敗は古いtoken fixtureとgeneration settings migrationの不一致として保持し、対象外の期待値を変えていない。正規workflowと同じ24ファイルのローカル実行は386件成功・失敗とskipは0だった。通常mypyの既存10エラーは残し、変更sourceを対象とする静的検査とruffは成功した。専用DBは削除済みで、既存サービスを再利用した。
+
+### CIで停止した工程の診断
+
+最終API候補は`96b58766739bff793f2ebf41c11f28c62237f5a1`で、最初のheadからproduction appとworkflowのbytesは不変である。最初のheadのCIは、signal回帰の子プロセス実行・通信の5秒timeoutで2回失敗した。同じ初期headのpush CI `44250656500`は成功しており、成功と失敗の両方を保持する。旧baselineでも同じtimeoutを再現したが、追加の区間計測では旧・新それぞれ20子プロセスが成功し、CI遅延の原因は未確定である。
+
+新headはsignal testの診断と検証noteだけを追加し、PRの差分は計4ファイルとなった。既知の工程名と有限のmonotonic時刻だけをtimeout時に回収し、生stderr・DB URL・job ID・環境変数を出さない。時間切れ・取消し時は子と通信taskを回収する。5秒上限、fixtureのSQL、p95計時の起点と20標本・index18・1秒未満の条件、CI gateを保持した。診断追加でCI遅延自体が直ったとは主張しない。
+
+parser単体1件と実子プロセス2件の新3検査は成功し、元helperでは部分marker回収の回帰が1件失敗した。最終signal suiteは既存の実PGを使って8件成功・失敗/error/skipなしだった。rootと独立レビューでP0〜P2指摘はなく、独立担当も3helperを実行した。新headのcanonical PR CI `44255020572`は389件成功・失敗/error/skipなしで完了し、先行push CI `44255013475`も成功した。
 
 ## Webの理由表示
 
@@ -64,11 +72,11 @@ worker sourceの新headは、実際の配備前に正規infraの`TRUSTED_WORKER_
 
 | 候補 | 正式CI | 状態 |
 |---|---|---|
-| API #124 `1da88bf` | `44250703622` | 初回は既存の別process終了5秒timeoutが1件失敗。旧baselineでも再現し、同sourceのfailed-jobを一度だけ再実行して同じtimeoutで失敗。追加rerunせず原因診断中 |
+| API #124 `96b5876` | `44255020572` | 389件成功・失敗/error/skipなし。前headの2回のtimeoutを保持 |
 | Web #94 `d11e7a9` | `44252212263` | 全step成功。canonical buildも含む |
 | Agent #149 `d35ab12` | `44252973819` | 最終headのcanonical PR CI成功。7768件成功・既知30件失敗・259skipを基準と比較しqualified |
 
-API・Agent・Webとも実装担当以外がsourceを独立レビューし、rootもproductionの変更を確認した。親の記録5ファイルも独立レビューした。sourceレビューのP0〜P2指摘がないことと、CIや本番受け入れの成功は別に扱う。本番担当には候補・CI失敗・worker trustの区分を伝達済みである。
+API・Agent・Webとも実装担当以外がsourceを独立レビューし、rootもproductionの変更を確認した。親の記録5ファイルも独立レビューした。sourceレビューのP0〜P2指摘がないことと、CIや本番受け入れの成功は別に扱う。本番担当には3本の最終候補・exact CI・過去のCI失敗・worker trustの区分を伝達済みである。source PRは最終head照合後にready化した。統合でheadが変われば新headのCIとimage provenanceを再度固定し、個別候補の成功を流用しない。
 
 親の記録[PR #437](https://github.com/AtsushiHosaka/pals/pull/437)は、初回head `4653d23`のrepository-safetyと従来のacceptance契約は成功したが、base側に新しく追加された図の契約テストがcandidateに存在せず、0件実行で拒否された。最新mainを通常mergeして必要な11テストを取り込み、ローカルで11件成功した。gateを弱めず、最終headで親の2チェックを確認する。
 
