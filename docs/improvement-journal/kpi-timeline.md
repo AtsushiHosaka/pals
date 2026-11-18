@@ -302,3 +302,5 @@
 | 2026-11-18 | Identifier-kind select chevron spacing | Local Chromium, 1024px/375px, two viewport cases: inset 5px FAIL → 17px PASS, center error 0.5px; no production deployment or model/latency/cost measurement | [Identifier chevron](entries/2026-11-18-identifier-select-chevron.md) |
 
 | 2026-11-18 | 図のsourceと実ブラウザ確認 | 3系統×2幅の6描画検査が通過。本番・実DB再取得は未確認、追加paid0 | [図の確認](entries/2026-11-18-figures-production-readiness.md) |
+
+| 2026-11-18 | 復旧startup fenceのsource | 実FS31件・既存controller146件通過。consumer接続・Linux CI・本番は未確認 | [startup fence](entries/2026-11-18-admitted-recovery-startup-fence.md) |
