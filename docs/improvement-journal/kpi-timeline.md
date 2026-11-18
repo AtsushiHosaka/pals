@@ -308,3 +308,5 @@
 | 2026-11-18 | APIの信頼診断保存 | 対象229件・追加境界16件・guest9件は成功。重複あり、実DB・本番は未確認 | [記録](entries/2026-11-18-library-trust-api-persistence.md) |
 | 2026-11-18 | trust付き履歴とSSEの照合 | 旧版で実再現、修正31件とexactCI成功。本番未確認 | [記録](entries/2026-11-18-library-trust-status-reconciliation.md) |
 | 2026-11-18 | Recipe CI依存と重複削減 | API exactCI成功、Agent準備通過後fullsuite確認中。短縮率未測定 | [記録](entries/2026-11-18-recipe-ci-dependency-repair.md) |
+| 2026-11-18 | API所有の候補検査接続 | 既定30秒は未達。明示90秒の機能3case成功を別条件で保持。本番・実DB未確認 | [記録](entries/2026-11-18-recipe-api-proposal-port.md) |
+| 2026-11-18 | Linux/Mac検証の責務分割 | Mac全体検査失敗を保持。分割gate21unit成功、全体CI確認中 | [記録](entries/2026-11-18-recipe-ci-disjoint-partitions.md) |
