@@ -299,3 +299,4 @@
 | 2026-11-18 | 通常ログイン後のcanonical受け入れ再開 | 認証事前確認1試行がexit 2、質問・有料送信0。診断6要求は6試行へ換算せず、新seed待ち。本番受け入れ未完了 | [認証再開](entries/2026-11-18-canonical-auth-resume.md) |
 | 2026-11-18 | 後処理sourceのfresh health修正 | 旧2件RED／新47件GREEN。新候補CIは引継ぎ時点で確認中、live IAM・host操作0 | [fresh health](entries/2026-11-18-fresh-repair-health.md) |
 | 2026-11-18 | 認証更新後の単一送信に対する初回acceptance | 回答・実画面/reloadを観測したが、RUM POST3件を全abortしたwrite counterによりgate失敗。正式accepted不可。n1、先行認証確認と重複参照、金額未取得 | [受け入れgateの失敗](entries/2026-11-18-acceptance-observer-beacon.md) |
+| 2026-11-18 | Identifier-kind select chevron spacing | Local Chromium, 1024px/375px, two viewport cases: inset 5px FAIL → 17px PASS, center error 0.5px; no production deployment or model/latency/cost measurement | [Identifier chevron](entries/2026-11-18-identifier-select-chevron.md) |
