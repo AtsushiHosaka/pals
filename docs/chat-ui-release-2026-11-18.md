@@ -8,7 +8,7 @@
 |---|---|---|
 | Web | aa1a6d48ceeb90f79c5360e5f699e72d11735f56 | 個別PR #85〜#88を配備統合PR #89で通常merge、認証試験同期PR #90、chevron修正PR #91 |
 | API | a3191b4cd11a347724bbabff54e39c829faca31e | ゲスト途中表示PR #121、検証成功ドットPR #122 |
-| infra | c0cb44a46938c6d1bae729ebb29dff19915b1782 | 途中表示設定PR #188を保持し、復旧設置・旧owner退役・次配備の復元を接続するPR #205のhead。exact CI run 44365118776の4 jobが成功 |
+| infra | 015f11dab19022d1ff00127884f587d2013119bf | PR #205の復旧接続を保持し、PR #206で保持containerのimage configuration IDを実inspect結果から取得する。前任c0cb44aのCI run 44365118776は成功。015f11dのexact CI run 44378585677は実行中で、成功扱いしない |
 | worker | 146ecf2b816ac6830940fac824bd9e8df90d80e4 | 前任のソースを保持 |
 
 本番用ソースブランチはWebが`codex/sidebar-inline-math-20261031`、APIが`claude/seq28-api-response-language`のまま維持する。現在の承認済み系統を基点とし、古いmainで置き換えない。
@@ -39,4 +39,8 @@
 
 正規ローカル準備が途中表示フラグを落とす問題は、worker・assessment・recipeのoverrideで明示値を引き継ぐよう修正した。未指定時のfalseは維持する。実Compose解決で修正前の欠落、修正後のtrue、未指定時のfalseを確認し、既存のlocal資格確認108件も成功した。これはモデル呼び出しを伴わない構成とsourceの検査である。
 
-この記録時点は準備中で、本番反映・今回の資格確認・受け入れは未実施。
+追加ローカル1件は、正規`make release-local-qualify`で実DB・provider・Lean、終端回答の保存・実表示・再読み込みを確認し、acceptedとなった。subject SHA256は`9bd3eb2f7a3fcb838bd2e3d27037daecc555123ee1545ebb85ae3d3dd3ad05c5`。予算台帳の増分はUS$0.054822。既存回答の再確認後も441594マイクロ米ドル・138内部呼び出しのままで、追加生成はしていない。ゲスト画面の実回答PNGは主担当チャットへ掲載済みで、チャット一覧のアニメーションや本番動作の証拠ではない。
+
+ローカル準備で旧plan参照2fileを更新した配置の誤りは、元のSHA256との完全一致を確認して復旧した。今回のsubject・環境は別パスへ同一バイトで保持し、同じsubmissionの正規再観測もaccepted。正規repairの非実行検査は通過した。失敗と復旧は進捗文書と品質台帳へ記録した。凍結済み原本、元のfailed記録、予算台帳を新しい候補のために書き換えない。
+
+本番反映・機能受入・本番2件・一覧アニメーションの実画面動画は未実施。追加IAMとSGは判断待ちで未適用。
