@@ -59,3 +59,21 @@ Local, untracked evidence: `/tmp/pals-427-baseline.json` and Web
 Dependencies were reused from an existing checkout. No API, model, account-setting
 write or deployment was performed. Authenticated production rendering and physical
 Safari/iPhone behavior remain unverified until the normal reviewed release.
+
+## Follow-up verification and review
+
+The owner authorized typecheck completion, conditional merge and production
+release after successful CI/review. `npm ci` installed the exact lockfile in the
+isolated checkout; `npm run typecheck`, full ESLint and the production build then
+passed. The earlier dependency-related failure above remains as historical evidence.
+
+The first Web CI run failed one existing material-upload story (2,200 other
+tests passed). Its initial async readiness assertion exceeded the default one-second
+`waitFor` window under CI load; the same revision's targeted four cases passed
+locally. No product defect was established. One failed-job rerun was requested
+without changing source or expected behavior; that result remains to be recorded.
+
+Parent review identified a missing improvement-journal record. A dedicated
+entry and timeline row were added. The existing release owner in #425 is preparing
+the canonical candidate; deployment must preserve that ownership and its
+qualification, signed cutover, recovery and production acceptance gates.
