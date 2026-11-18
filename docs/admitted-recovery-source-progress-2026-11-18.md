@@ -65,3 +65,16 @@ Python 3.12で復旧部品の387件と、repair・既存安全条件を含む接
 保持された現在構成を直接確認するcollectorを追加したが、その追加実機確認は自動承認審査で拒否された。未commit・未固定の/tmp実装を本番へ送る点が理由である。この操作を別経路で実行せず、clean revision・controller hashを明示する条件を追加して、source検証とcommitへ戻した。collectorの本番結果は未確認のままである。
 
 この実読み取り確認では、owner-checkとcontrolのnative inventoryだけを実行した。IAM、SG、service、traffic、DB admission、owner archiveは変更していない。新しいモデル呼び出しは0件。次はexact CIを確認し、固定sourceから必要な接続と実機確認を進める。本番配備・機能受入・新しい実APIキャプチャは未完了である。
+
+
+## 固定sourceからの追加読み取りと次配備への接続
+
+未固定sourceの送信に対する自動承認審査の拒否後、実行sourceのcommitとcontroller hashを固定し、clean checkoutを必須にした。新しい読み取り操作は承認され、実行した。最初のCIではexecutor試験の実行登録漏れを検出し、`b231f4c1818538cadf60cdbe0d59e56a307547db`で修正した。exact required check `release-cycle-regression`は[run 44300434609](https://github.com/AtsushiHosaka/pals-infra/actions/runs/44300434609)で成功した。
+
+その固定sourceからの追加確認では、controlの4 actorが保持された構成で稼働し、不明containerがないことを確認した。computeの読み取りは`native_command_failed`で停止し、両hostのquietは未確認である。collectorが任意のreviewerまで必須actorとして調べる問題をsource回帰で再現し、`26509451921696ca1933b7dedd0a7425ca0a5b46`で対象を保持された3 actorへ限定した。[run 44303973407](https://github.com/AtsushiHosaka/pals-infra/actions/runs/44303973407)は成功した。この修正後の実機再確認はAWS SSO再失効で未実施であり、computeの実機拒否原因が解消したとはまだ言えない。
+
+同じownerについての追加読み取りであり、独立した製品試行や配備成功として数えない。SSOの通常ログインを再開し、既存Chromeタブでオーナーの入力を待っている。IAM、SG、service、traffic、DB admission、owner archiveは変更していない。追加のモデル呼び出しは0件。
+
+infra `f639c8c7f4ecfaf17f680d90c97ec7503855da3f`では、通常ownerのclaim/releaseと保持launch lock、両hostのstartup fence、実postclaim ACKから復元用入力を作るnative入口を追加した。plan→controller→両host bindingへの受け渡しも接続した。保持構成の復元には用途別署名、現在owner/fence、metadata境界、全18項目の実DB leaseを引き続き要求する。通常manifestの期限、既存のowner完了条件は変更しない。
+
+ローカルではplan/controller/renderを含む191件と、署名・委譲・設置・executor・transition・既存安全条件の234件が成功した。fragment読込条件を最後に追加した後、該当3件も成功した。重複を含むsource回帰であり、実機復旧の根拠にはしない。root側のartifact設置・policy readback・health/旧owner退役の実行接続、次配備の実fence/ACK更新dispatch、rollback後と新admission後の後処理は残る。PRはDraftのままで、本番配備・機能受入は未完了である。
