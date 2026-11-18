@@ -306,3 +306,5 @@
 | 2026-11-18 | 一般Recipeの承認済みsource統合 | API185・Agent249unitと実Lean2件が通過。網羅率・本番は未確認、追加paid0 | [記録](entries/2026-11-18-general-recipe-approved-source.md) |
 | 2026-11-18 | 信頼の水準の保持・表示 | Web対象158件が通過。API保存・本番は未確認、追加paid0 | [記録](entries/2026-11-18-library-trust-retained-display.md) |
 | 2026-11-18 | APIの信頼診断保存 | 対象229件・追加境界16件・guest9件は成功。重複あり、実DB・本番は未確認 | [記録](entries/2026-11-18-library-trust-api-persistence.md) |
+| 2026-11-18 | trust付き履歴とSSEの照合 | 旧版で実再現、修正31件とexactCI成功。本番未確認 | [記録](entries/2026-11-18-library-trust-status-reconciliation.md) |
+| 2026-11-18 | Recipe CI依存と重複削減 | API exactCI成功、Agent準備通過後fullsuite確認中。短縮率未測定 | [記録](entries/2026-11-18-recipe-ci-dependency-repair.md) |
