@@ -7,3 +7,7 @@
 既存サービスを再利用し、専用DBは削除した。新規有料呼出・本番設定変更は0件。flagは既定offのままで、exact CIと独立レビューを終えてから本番用候補へ渡す。定量精度の受け入れは未完了である。
 
 出典: [今回の実装候補](../../382-answer-quality-candidate-2026-11-18.md)、API PR #124内の検証note。
+
+追記: exact CI初回は386件中385件成功、既存の別process終了5秒timeoutが1件失敗した。旧baselineでも同じ失敗を再現し、sourceとgateを変えずfailed-jobを一度だけ再確認中である。環境負荷という原因は未確定。
+
+追記: failed-jobの再確認も同じ既存signal timeoutで失敗した。exact CIは未合格で、追加rerunを停止した。元sourceでも起きる失敗だが、実行区間を分ける原因診断が必要である。

@@ -4,7 +4,7 @@
 
 ## 基準と編集境界
 
-親の記録用worktreeは`9aafc6d83dcc82de2d801647d71207459d095b52`を起点とする。本番担当が準備する親候補は別branchの`550eea5`で、記録の起点と配備候補を混同しない。
+親の記録用worktreeは`9aafc6d83dcc82de2d801647d71207459d095b52`を起点とし、main `02dfae26fec13064b985423f9584a449d3afe7ac`を通常mergeした。本番担当が準備する親候補は別branchの`550eea5`で、記録の起点と配備候補を混同しない。
 
 | 領域 | 実装基準 | 今回の範囲 |
 |---|---|---|
@@ -44,27 +44,33 @@
 
 公開APIの既知のfailure_reasonだけをDTOから表示へ渡す。失敗したrequestと対応するerror_codeの組合せでのみ使い、未知値・型違い・不一致は既存表示へ戻す。保存jobの履歴では既存の型付き診断を使い、生のLLM出力や例外文から理由を推測しない。日本語・英語・中国語簡体字・繁体字を扱い、手動再試行や認可の経路を保つ。
 
-追加32回帰、関連138件、全体2233件、型検査・lint・production buildはローカルで成功した。実コンポーネントとCSSを使ったChromium fixtureでは、375pxと1024pxで4言語×2分類を確認し、再試行ボタンを保持し、横にはみ出さなかった。全networkを遮断したfixture検査であり、ログイン済み本番・実API・回答履歴の確認には換算しない。rootも375pxの保存画像を目視した。
+追加32回帰、関連138件、全体2233件、型検査・lint・webpackによるproduction buildはローカルで成功した。実コンポーネントとCSSを使ったChromium fixtureでは、375pxと1024pxで4言語×2分類を確認し、再試行ボタンを保持し、横にはみ出さなかった。全networkを遮断したfixture検査であり、ログイン済み本番・実API・回答履歴の確認には換算しない。rootも375pxの保存画像を目視した。
 
 ## Agentの結論検査
 
-[Agent PR #149](https://github.com/AtsushiHosaka/pals-agent/pull/149)は、現在候補と同じ`146ecf2b816ac6830940fac824bd9e8df90d80e4`を起点とする専用review branchをbaseにした。差分が大きいmain全体を配備候補へ持ち込まず、説明の2ファイルと新規テスト、検証noteをレビューする。新規生成の求値結論だけに結果の数式を要求し、保存済み説明の読取では既定の緩いparserを保つ。v2の生成指示と審査基準は、概要と結論の両方に答えを要求する。
+[Agent PR #149](https://github.com/AtsushiHosaka/pals-agent/pull/149)は、現在候補と同じ`146ecf2b816ac6830940fac824bd9e8df90d80e4`を起点とする専用review branchをbaseにした。差分が大きいmain全体を配備候補へ持ち込まず、説明の2ファイルと新規テスト、Lean題材、検証noteの5ファイルをレビューする。新規生成の求値結論だけに結果の数式を要求し、保存済み説明の読取では既定の緩いparserを保つ。v2の生成指示と審査基準は、概要と結論の両方に答えを要求する。
 
-初期候補`136b42a4dad9c29bec70a4e2031386c109794b5b`では新20回帰が旧版10件失敗・10件成功から20件成功となり、関連221件もskipなしで成功した。初期テストの単純計算題材はプロジェクトの題材条件に合わなかったため、最終候補で実質的な推論を要する題材へ置換する。sourceの2ファイルは変えず、テストと説明記録を更新し、最終headに対するCIを別に要求する。
+初期候補`136b42a4dad9c29bec70a4e2031386c109794b5b`では新20回帰が旧版10件失敗・10件成功から20件成功となり、関連221件もskipなしで成功した。初期テストの単純計算題材はプロジェクトの題材条件に合わなかったため、最終候補`d35ab12c900f7afcafb81e2cff257c26b766f62e`では実質的な推論を要する題材へ置換した。sourceの2ファイルは変えず、テストと説明記録を更新した。新20回帰は旧版10件失敗・10件成功、修正版20件成功、関連221件はskipなしで成功した。実Lean 4.32rc1による題材のcompileも成功したが、構造検査のfixtureは実モデルやQAを実行しない。最終headに対するCIを別に要求する。
 
 広いローカル実行の47失敗・9error・4skipを成功件数で隠さない。loopback制限46失敗・9error、親compose fixture不足1失敗、MacでのLandlock3skip、未宣言の任意httpx依存1skipがあった。影響する5モジュールを通常権限で確認すると109件成功、httpxの1skipが残った。正規Linux CIの初回`44250860879`は、candidateで既存worker_processesのcoreテストが1件失敗した。同じテスト・worker実装はbaseと一致していたが、タイミング不安定性という原因は未確定である。同headの自然なPR CI`44251800913`とbaseのCI`44251757619`は成功した。初回失敗を保持し、最終headのCIに置き換えて消去しない。
 
 worker sourceの新headは、実際の配備前に正規infraの`TRUSTED_WORKER_COMMITS`へ固定する必要がある。`TRUSTED_AGENT_CHILDREN`は独立verifierの権限を表すため追加先にしない。独立verifierの`189b44378e6e63e5ab7c92d9c5b7d6507acd80f0`と対応するarchive・imageの条件を維持し、workerの変更でverifierの信頼対象を広げない。sourceのCIとimageの公開・署名・配備は別の確認である。
 
+正規publisherはinfraの`scripts/publish_image.py`のworker経路で、cleanなworktree・最終source・既存configのpinと、凍結したproduction-imagesのembedding receiptを使う。Dockerfileや起動設定、Lean workspaceは基準から変更していない。読み取り調査のinfraは`babf9b7706b1fca9c947a469d5bc3bbf6a109126`で、本番担当の新authority revisionへ再照合する必要がある。旧publisherのworker publishへ迂回しない。
+
+最終workerの`git archive --format=tar d35ab12c900f7afcafb81e2cff257c26b766f62e pals_agent`のSHA256は`38f9bbb461905e0a87e31a408216d1994514b86806b79da79d12b7b754b96029`。`lean_child.py`のSHA256は`4278fe1b6a07c0390df6902b47947c5610f51c4a3c3ff2412cc11b84d0a8ea10`で、基準workerとretained verifierの双方と一致した。登録済みverifierの3つのsource pinもGitだけで再現した。これらはsourceの確認であり、worker imageのmanifest/config digestやrootfsの証拠はまだない。新sourceの登録は正例・未登録拒否・verifierへの昇格拒否をテストし、正規infraのexact CIを通してから使う。
+
 ## exact CIと引き継ぎの状態
 
 | 候補 | 正式CI | 状態 |
 |---|---|---|
-| API #124 `1da88bf` | `44250703622` | failure。原因調査中で、ローカル386件の成功を代替にしない |
-| Web #94 `d11e7a9` | `44252212263` | in_progress |
-| Agent #149 | 最終headを準備中 | 初期headの再確認は成功。最終headのCIは別に必要 |
+| API #124 `1da88bf` | `44250703622` | 初回は既存の別process終了5秒timeoutが1件失敗。旧baselineでも再現し、同sourceのfailed-jobを一度だけ再実行して同じtimeoutで失敗。追加rerunせず原因診断中 |
+| Web #94 `d11e7a9` | `44252212263` | 全step成功。canonical buildも含む |
+| Agent #149 `d35ab12` | `44252973819` | 最終headのcanonical PR CI成功。7768件成功・既知30件失敗・259skipを基準と比較しqualified |
 
-APIとAgentは実装担当以外のレビューを含め、Webはrootがproductionの4ファイルを確認した。sourceレビューのP0〜P2指摘がないことと、CIや本番受け入れの成功は別に扱う。本番担当には候補・CI失敗・worker trustの区分を伝達済みである。
+API・Agent・Webとも実装担当以外がsourceを独立レビューし、rootもproductionの変更を確認した。親の記録5ファイルも独立レビューした。sourceレビューのP0〜P2指摘がないことと、CIや本番受け入れの成功は別に扱う。本番担当には候補・CI失敗・worker trustの区分を伝達済みである。
+
+親の記録[PR #437](https://github.com/AtsushiHosaka/pals/pull/437)は、初回head `4653d23`のrepository-safetyと従来のacceptance契約は成功したが、base側に新しく追加された図の契約テストがcandidateに存在せず、0件実行で拒否された。最新mainを通常mergeして必要な11テストを取り込み、ローカルで11件成功した。gateを弱めず、最終headで親の2チェックを確認する。
 
 ## QAと本番受け入れの未完了
 
