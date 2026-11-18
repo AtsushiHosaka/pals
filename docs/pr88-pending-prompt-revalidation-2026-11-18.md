@@ -29,6 +29,6 @@
 
 ## 状態と未検証の範囲
 
-Webの修正は既存PRへpush済み。GitHub Actionsの実行は[Application regression #38](https://github.com/AtsushiHosaka/pals-webfront/actions/runs/44237532260)で追跡する。現時点ではCI結果待ち。
+Webの修正は既存PRへpush済み。GitHub Actionsの実行は[Application regression #38](https://github.com/AtsushiHosaka/pals-webfront/actions/runs/44237532260)で追跡する。修正headのCIは全項目成功した。画面操作の既存ブラウザー回帰もCIで成功しているが、今回の遅延応答経路の実API受入とは区別する。当該レビュー指摘は根拠を添えて解消済みにした。
 
-実API・ブラウザーでの同経路の確認、本番配備、本番受入は未実施。有料生成や既存サービスへの変更はない。UI担当へ修正headを連絡し、統合先へ通常mergeで取り込む分担を確認した。PR全体のマージと本番リリースは、既存のUI統合・リリース契約に従って管理する。
+実API・ブラウザーでの同経路の確認、本番配備、本番受入は未実施。有料生成や既存サービスへの変更はない。UI担当から、修正headを統合先へ通常mergeで取り込んだとの連絡を受けた。PR全体のマージと本番リリースは、既存のUI統合・リリース契約に従って管理する。
