@@ -170,3 +170,16 @@ validatorはschema、用途別署名domain、独立bindings、24時間境界、P
 6. 部分設置の解除は、未claimと未解決mutation不在を証明した同一attemptに限定する。遅延installerによる再設置もjournalで防ぐ。
 
 現recoverが実行全区間で保持するlaunch lockは再利用できる。fence設置後のrebootで旧runtimeが停止した場合に備え、claim後の明示的なretained restoreも必要になる。computeのfull18、remote owner authority、IAMはこのローカルprotocolだけでは解決しない。競合実行試験と本番検証は未実施である。
+
+
+## 主担当が選んだ次のsource実装
+
+以下はsource実装の方針であり、署名・IAM・通信口・unitの本番適用許可ではない。
+
+control native role 1つへ、permitと同じ最大24時間の明示windowを持つ別名の4read・3resource policyを置く。[infra PR #191](https://github.com/AtsushiHosaka/pals-infra/pull/191)でsource-onlyに準備し、次admissionでpermitが無効になった後はexact owned policyを明示的にretireする。AWS側の期限も失敗時の上限となる。既存の45分release grantは変更しない。
+
+full18の伝達には、private native brokerのport 18443を追加する方針を選んだ。既存TLS leafとSPKI pin、worker secret、nonce/context/epoch/permit/leaseの閉じたprotocolを使い、compute IPに限定する。旧APIの7項目とCaddyは変更しない。新listener・SG・firewall overlayは、実装とreviewの後に具体的な本人承認へまとめる。設置・有効化は未実施である。
+
+両hostのlaunch lockとpreclaim fenceを、正規claim・boot・restoreの全入口へ接続する。DB shared read leaseは補助であり、接続喪失後にeffectを止めるためには両hostのfenceが必要である。新admission writerが両hostのACKとfresh inventoryを必ず経由することをconsumer回帰で検査する。単体のleaseや署名文書が成立しただけでは、実行許可を主張しない。
+
+こちらのsource担当は専用signerとcontrol側full18 observerの新module/CLI・テストである。旧exact API imageへAPI serializerをread-only注入し、native role・historical署名・DB identity/TLS・全tuple・epoch・nonce・現在のpermitを検査する。one-shotの返答はDB観測事実だけで、継続leaseやremote authorityを表さない。排他とtransportを別担当が実装し、主担当が統合する。本番操作は引き続き主担当に一元化する。
