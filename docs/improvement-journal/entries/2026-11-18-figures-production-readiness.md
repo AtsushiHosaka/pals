@@ -22,3 +22,8 @@
   [#318](https://github.com/AtsushiHosaka/pals/issues/318),
   [Web #92](https://github.com/AtsushiHosaka/pals-webfront/pull/92),
   ledger ID `2026-11-18-figure-source-browser-layout`.
+
+Follow-up: the live owner requested a closed aggregate readback helper. Eleven
+pure policy tests passed after correcting the permanent module-counter pool guard.
+It remains unexecuted against a database or API runtime; these are not new product
+measurement rows. Web #92 passed exact CI and review and merged at `5e2fab4a`.

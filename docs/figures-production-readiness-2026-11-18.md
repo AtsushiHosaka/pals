@@ -129,3 +129,16 @@ unchanged. UI #425 need not wait for every other feature's acceptance.
 Until those observations are available, #318 remains open: source and local
 rendering are verified at the stated boundaries; production figure acceptance is
 **NOT VERIFIED**. The blocking release recovery is tracked separately in #433.
+
+## Closed readback helper follow-up
+
+At the sole live owner's request, `pals-scripts/figure-readback.py` and its eleven
+pure policy/aggregation tests were added. The [readback runbook](figure-readback-runbook-2026-11-18.md)
+defines its fixed registry hash, 35 IDs, current toolchain/Japanese scope, two
+read-only transactions, closed output and external timeout/source-image bindings.
+It has not queried a database or production. Independent review caught the
+initial guard treating the API's permanent `module` counters as an existing pool;
+the corrected guard and its regression passed. These source tests are not entered
+as product measurements or used to claim the pending live acceptance.
+
+Web #92 has passed its exact-source CI and reviews and was merged at `5e2fab4a`.
