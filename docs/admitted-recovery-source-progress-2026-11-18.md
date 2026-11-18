@@ -107,3 +107,14 @@ infra `deda669f2aab5cc6f6dd9e89cb3b53dc6d27de43`の[CI run 44351577533](https://
 Python 3.12で復旧・render・既存安全条件の511件、step・planの286件が成功した。ローカル実TLS通信を含む97件も成功した。件数は重複するsource回帰であり、実AWSの設置・退役・配備・機能受入を証明しない。製品評価の分母へ加えない。`c0cb44a`の必須CIと、実行用artifactの組立て・権限readback・実機実行は別途必要である。
 
 実KMSから取得した公開鍵と、元の実SSM記録内でhashが一致する旧署名を用い、元manifestの署名とartifact chainをローカルで確認した。API所有のserializerから全18項目の期待epochを生成した。これは現在DBの観測ではない。元の凍結52fileは変更していない。追加のIAM・SG・service・traffic・DB admission・owner archiveの変更と、新規モデル呼び出しは0件。本番2件と新UIの実APIキャプチャは未実施である。
+
+
+## 2026年11月19日の追加ローカル1件
+
+承認済みの追加1件を正規`make release-local-qualify`で実行し、`accepted`になった。実PostgreSQL、実provider、実Leanを使い、ゲスト画面から投入した数列`a_n = 1/(n+1)`の収束の証明で、終端回答、保存、実表示、再読み込みを確認した。APIは`a3191b4`、Webは`aa1a6d4`、workerは`146ecf2`、verifier sourceは`189b443`である。ARM64ローカルverifierであり、本番AMD64の動作を証明しない。
+
+UTCの開始は2026-11-18 19:05:44、終了は19:08:40。provider台帳の実使用額は386772から441594マイクロ米ドル、呼び出し数は126から138へ増えた。差額はUS$0.054822で、請求額そのものではない。今回UI確認の既存2件US$0.019005と合わせてUS$0.073827。別の過去利用分を含む累積US$1の制限も維持している。同じ依頼の追加投入は行わず、再確認は既存submissionを使う。
+
+実回答の画像はチャットへ掲載した。ゲスト画面であるため、チャット一覧のアニメーションの証拠にはならない。動画の撮影と承認済み本番2件は未実施。本番配備・旧owner退役・IAMとSGの追加も未実施である。
+
+証拠のsubject SHA256は`9bd3eb2f7a3fcb838bd2e3d27037daecc555123ee1545ebb85ae3d3dd3ad05c5`。受入記録のSHA256は`2ea5de1eaef0fca2c0f22d01137469d67c3132e20edc54f2aeba67dbc8497e07`、終端回答PNGは`2cc32cc1ef9065099127c9395a62b772d66451f1d8507ae67264aa2ea8c7c689`、再読み込みPNGは`ada3fa3b03e48611a4778464193d436ee6152685b92b05092286b827d2035b37`。元の非公開artifactを保持し、認証情報や実行環境の内部参照は公開しない。
