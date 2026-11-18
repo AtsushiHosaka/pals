@@ -32,3 +32,15 @@ infra #192のboundary moduleを読み取り専用で注入し、実Linux kernel�
 専用DB接続上でのTLS・principal・full18 lease、両hostのfence、認証付きの観測結果伝達、保持されたIDだけを起動するexecutorを接続する。新種別のassembly/install/health/closure receiptと、次releaseのclaim/admit/restore consumerを通す。部分失敗、失応答、期限切れ、接続喪失、foreign ownerを検査し、exact CIと独立レビューを確認する。
 
 その後に新しい本番操作の具体案を提示する。承認後も、#425の配備、正規の機能受入、実API画面の撮影、保存・reload・history、後処理をそれぞれ記録し、完了していない段階を残す。
+
+## 18:01 JST時点の接続確認
+
+既存のunits、client、preclaim evidence、metadata、delegation、executorを同じinfra作業ブランチへ通常mergeした。停止していたbroker/workerの未commit成果は元の作業場所に残し、統合作業側へ引き継いだ。接続修正のinfra revisionは`0c32318`。他チャットやagentは再開していない。executorの起動引数、reconcilerの許可stage名、metadataへのphaseとbroker job参照の受け渡しを修正した。metadataの実host・config・契約・旧manifestが期待値と異なる場合も拒否する。
+
+ローカルPython 3.12.13で統合前の既存347件、その後の接続修正を含む352件が成功した。canonical transport moduleの読み込み順を追加修正した後は、影響するexecutorの27件と、統合353件が成功した。接続回帰5件は元のexecutor source `4efce44128f280219e96fbb8c984fa51df9fc04c`で失敗することも確認した。これはsource間の呼び出し、実TLSとpipeの境界、保護ファイルの試験であり、本番の復旧・配備・起動・機能受入の合格ではない。最初のsandbox内実行はローカルsocket作成と/tmp親directoryの保護条件で失敗した。ローカル通信を許可し、保護されたfixture親を指定して再確認した。単体試験の件数は製品評価の分母へ足さない。
+
+凍結済みの正規`release-repair.py` SHA256 `94549f8ca3aec8c43fc0d85e62f898111526bf4b11f9c1fe4b8ff75504257ffe`の読み取り処理で、旧ownerの記録の一致確認後、provider/nativeのquiet検査が`current_bounded_canonical_ownership_window_required`で拒否された。SSO接続後の現在のowner確認は通ったが、取得から24時間以内という配備履歴を全件確認する条件を満たさない。2回目は同じ試行の拒否理由の観測であり、独立した評価には数えない。quiet、本番health、旧owner解放、今回の配備は未確認である。
+
+この確認でIAM・SG・service・traffic・DB admission・owner archiveは変更していない。読み取り用のowner-check SSMは実行した。14:40失効の旧一時権限は再適用していない。新しいモデル呼び出しは0件で、過去の呼び出し費用を増やしていない。
+
+旧構成の復旧処理を省いてownerだけを退役させる案は、次の配備が失敗した際の旧構成への復帰も失うため採用しない。public executorのapplyは引き続き拒否する。残る実装は、具体的なauthorityの接続、実install/health/closure receiptの生成と消費、次releaseのclaim/restore入口へのfence接続である。部品試験の成功だけでこの状態を解除しない。
