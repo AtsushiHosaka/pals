@@ -26,6 +26,8 @@ jobs:
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_COMMIT"
       - name: Verify deterministic acceptance contracts (not live E2E)
         run: bash pals-scripts/tests/release-acceptance.sh
+      - name: Verify closed figure readback policy (not live DB evidence)
+        run: python3 -m unittest discover -s pals-scripts/tests -p test_figure_readback.py
   repository-safety:
     runs-on: ubuntu-latest
     steps:

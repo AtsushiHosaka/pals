@@ -300,3 +300,5 @@
 | 2026-11-18 | 後処理sourceのfresh health修正 | 旧2件RED／新47件GREEN。新候補CIは引継ぎ時点で確認中、live IAM・host操作0 | [fresh health](entries/2026-11-18-fresh-repair-health.md) |
 | 2026-11-18 | 認証更新後の単一送信に対する初回acceptance | 回答・実画面/reloadを観測したが、RUM POST3件を全abortしたwrite counterによりgate失敗。正式accepted不可。n1、先行認証確認と重複参照、金額未取得 | [受け入れgateの失敗](entries/2026-11-18-acceptance-observer-beacon.md) |
 | 2026-11-18 | Identifier-kind select chevron spacing | Local Chromium, 1024px/375px, two viewport cases: inset 5px FAIL → 17px PASS, center error 0.5px; no production deployment or model/latency/cost measurement | [Identifier chevron](entries/2026-11-18-identifier-select-chevron.md) |
+
+| 2026-11-18 | 図のsourceと実ブラウザ確認 | 3系統×2幅の6描画検査が通過。本番・実DB再取得は未確認、追加paid0 | [図の確認](entries/2026-11-18-figures-production-readiness.md) |
