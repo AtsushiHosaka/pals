@@ -13,7 +13,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 ## 現在の内容
 
-現在は2026-11-09までの479行です。2026-11-06時点の472行の出典は、docsが227行、pals-agentのPRが80行、palsのIssueが137行、palsのPRが28行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
+現在は2026-11-18までの726行です。出典はdocsが429行、pals-agentのPRが123行、palsのIssueが143行、palsのPRが30行、specが1行です。palsのPRとIssueの多くはdocsと重複していたため、台帳では1行にまとめて`source`に両方を書きました。
 
 11月5日の説明回帰は、[Agent #50の記録](https://github.com/AtsushiHosaka/pals-agent/blob/36ea6a2b106d5782ca2012b8a75ee4fbfa4c2b52/testdata/explanation-grounding-v1/README.md)に対応する9行を追加しました。初回の同条件比較、書式不備で採点を除外したQA、不備を直した負例、最終修正後の確認を分けています。実モデル24呼出しの推計費用0.02573375 USDを重複なく記録しました。初回比較は両版2/2で、精度向上は確認していません。後の別条件の結果を加えて改善率を作りません。
 
@@ -21,7 +21,7 @@ PALS の評価と測定の結果を1つの機械可読な台帳に集め、失�
 
 これらの外部ベンチマークの費用は、使用量に事前登録した全入力0.25・出力0.50 USD/百万tokenを掛けた保守値です。通常入力の標準単価、アプリの版付き原価推計、請求額とは分けます。過去289行を変更せず、今回の6行だけを追記しました。
 
-系統ごとの行数は、`recipe_retrieval` 68、`lean_runtime` 41、`proof_generation` 51、`catalog_audit` 24、`guest_quality` 22、`answer_latency` 19、`exact_precheck` 18、`statement_index` 17、`feature_audit` 160、`availability` 14、`other` 38です。
+系統ごとの行数は、`recipe_retrieval` 78、`lean_runtime` 49、`proof_generation` 138、`catalog_audit` 24、`guest_quality` 28、`answer_latency` 72、`exact_precheck` 18、`statement_index` 17、`feature_audit` 178、`availability` 74、`other` 50です。
 
 The [production guest-proof smoke](../production-guest-proof-smoke-2026-11-06.md) has two observations of one submission: an unfinished snapshot and a terminal UI failure follow-up. The latter links to the former through `overlap_with`; the prior 470 rows remain byte-for-byte unchanged. The first observed failure gives a 1522.140-second UI observation upper bound, not an exact backend execution time or a diagnosed mathematical failure. Existing chart rules exclude the overlapping follow-up from success and failure aggregates; they do not coalesce these observations into a latest-outcome point or count them as two independent trials.
 
@@ -143,7 +143,7 @@ python -m venv .venv && .venv/bin/pip install pandas matplotlib   # 初回のみ
 - **費用は推計です。** 多くは版付き単価に使用量を掛けた値で、請求額ではありません。メモリの記述にあった約27米ドルは、定価換算です。
 - **合計の行は足さないでください。** `overlap_with` が空でない行は、他の行の合計や一部を含みます。
 - **失敗の件数は繰り返しを含みます。** 同じ質問を50回繰り返した実行は、50件と数えます。失敗の内訳のグラフは、行数と件数の両方を示しています。
-- **実行環境は`local macOS`が多く、`AWS`で測った行は113行です。** 所要時間は環境で大きく変わるので、環境の違う行の所要時間を比べません。環境が書かれていない行は空です。該当するのは34行です。
+- **実行環境は`local macOS`が多く、`AWS`で測った行は144行です。** 所要時間は環境で大きく変わるので、環境の違う行の所要時間を比べません。環境が書かれていない行は空です。該当するのは38行です。
 - **出典の日付が実行日とは限りません。** 実行日が書かれていない行は PR のマージ日や docs の日付を使っています。`notes` に書いています。
 
 ## 台帳に入れなかったもの
