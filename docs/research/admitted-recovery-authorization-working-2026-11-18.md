@@ -2,7 +2,7 @@
 
 状態はWORKING。対象は[#433](https://github.com/AtsushiHosaka/pals/issues/433)、関連は[#142](https://github.com/AtsushiHosaka/pals/issues/142)、[#410](https://github.com/AtsushiHosaka/pals/issues/410)、[#425](https://github.com/AtsushiHosaka/pals/issues/425)。本書は独立した設計レビュー用の調査記録であり、canonical仕様、実装承認、署名・設置・IAM変更の許可ではない。
 
-主担当はcodex://threads/01a1ebe7-a4ee-78c0-ab22-a16cfcccc3d2、独立設計はcodex://threads/01a1ece3-e675-7492-b366-f972b330540c。親の開始revisionは`922aca6924587e7a232b6306c2eae6984954c2e8`。根拠を読んだ旧frozen infraは`15c54e2645e52942aa759b09562ee29fa1db99c8`、失敗repairの統合sourceは`c2809c3de7c7dc7a56060d0909d8134e730e18a7`。UI用infra PR #188のpreview設定とは別の変更として扱う。source実装・署名・本番操作・有料送信は行っていない。
+主担当はcodex://threads/01a1ebe7-a4ee-78c0-ab22-a16cfcccc3d2、独立設計はcodex://threads/01a1ece3-e675-7492-b366-f972b330540c。親の開始revisionは`922aca6924587e7a232b6306c2eae6984954c2e8`。根拠を読んだ旧frozen infraは`15c54e2645e52942aa759b09562ee29fa1db99c8`、失敗repairの統合sourceは`c2809c3de7c7dc7a56060d0909d8134e730e18a7`。UI用infra PR #188のpreview設定とは別の変更として扱う。初版後に承認された純粋validatorだけを実装した。署名・本番操作・有料送信は行っていない。
 
 ## 判断の前提
 
@@ -125,7 +125,7 @@ exact IDsの全停止から再開できることと、missing/foreign IDや境�
 
 #142の方針には条件付きで整合する。新purposeにより旧manifestをhistorical identity、新permitをcurrent authorityとして分離できる。旧署名の延命や通常gateの省略は不要である。
 
-ただしARA-008・009の実行fence/owner委譲と、ARA-014の観測権限の寿命、部分失敗時の限定補償authorityは具体source経路が未検証で、実装着手可能という判定には至っていない。新種別のreceipt/consumer接続も未実装。これらを閉じ、主担当が設計へ同意するまでsource実装を開始しない。live操作はさらに、具体input・tests・review・CIと追加承認を必要とする。
+ただしARA-008・009の実行fence/owner委譲と、ARA-014の観測権限の寿命、部分失敗時の限定補償authorityは具体source経路が未検証で、実装着手可能という判定には至っていない。新種別のreceipt/consumer接続も未実装。これらを閉じ、主担当が設計へ同意するまでruntime統合を開始しない。純粋validatorは別途合意された限定工程として実装済みである。live操作はさらに、具体input・tests・review・CIと追加承認を必要とする。
 
 ## 根拠source
 
@@ -142,4 +142,17 @@ exact IDsの全停止から再開できることと、missing/foreign IDや境�
 | host/private-runtime/release_native/templates/observe_current.py.tmpl:126–169 | predecessor回復configとexact enabled units |
 | host/private-runtime/native_safety_restore.py:155–176、257–275 | historical context、expired全停止境界の通常再作成拒否 |
 
-admissionの18項目はAPIの`ReleaseAdmission.immutable_values`を正本とする。field順とencodingを新validatorの一部として固定し、独立epochを存在するものとして扱わない。
+admissionの18項目はAPIの`ReleaseAdmission.immutable_values`を正本とする。field順とencodingはAPI側serializerで固定し、infra validatorはそのhashを不透明な値として比較する。serializerをinfraへ複製しない。
+
+
+## 限定実装と追加のsource確認
+
+infra [PR #190](https://github.com/AtsushiHosaka/pals-infra/pull/190)のhead `bdb170798215358c45657003c3b0d67bbb32fcf5`は、署名文書の純粋validatorと19件のテスト、既存workflowへの1工程追加だけを含む。実fixture署名を使った19件と既存signerの38件がローカルで成功し、独立レビューも通過した。exact CIは[run 44251220438](https://github.com/AtsushiHosaka/pals-infra/actions/runs/44251220438)で開始したが、この追記時点ではqueuedで、成功を未確認である。DB観測・owner/fence・署名CLI・実行・receipt・本番復旧はこのPRに含まない。
+
+validatorはschema、用途別署名domain、独立bindings、24時間境界、P256/SPKIを確認する。暗号toolは実行fileと全親directoryの所有・書込み権限、file hashを検査する。API側のepoch serializerは[PR #123](https://github.com/AtsushiHosaka/pals-api/pull/123)で別管理する。旧API imageに新moduleは含まれないため、observerへの接続にはsource commit・file hash・旧imageのABIを固定したread-only source注入が必要となる。
+
+旧admitted API `4868a504`のsource確認では、Aurora用`cloud_runtime_is_ready`が比較するのはmanifestとbundleで、`private_control_readiness`の返答は7項目である。full tupleを確認する分岐はEC2用だった。computeのnonce/SPKI検証だけを、今回必要な最新18項目の証明へ読み替えられない。
+
+現control observerのSTS/KMS/RDS呼出しはcontrol native instance roleを使う。API・worker actorへの4read権限追加は不要である。ただしcomputeのfull tuple確認経路は未確定で、control側1roleだけで全体のboot復旧が成立するとは判定できない。direct compute DB observerには別roleの権限、DB接続、secret、networkの設計変更が必要となる。control側で観測する案には、computeへfreshな認証結果を伝える閉じた経路が必要となる。
+
+新claim前に両hostへ永続startup fenceを置く案も検討中である。現claimはlaunch lockを取得せず、inventoryはbusy lockをowner mutation中と扱う。lockを保持したまま現claim/inventoryを呼ぶだけでは整合しない。全起動経路の同一lock内確認、両hostの設置確認、部分設置・失応答・reboot・旧dispatchの調停を閉じるまで、排他が実装済みとは扱わない。
