@@ -142,3 +142,15 @@ the corrected guard and its regression passed. These source tests are not entere
 as product measurements or used to claim the pending live acceptance.
 
 Web #92 has passed its exact-source CI and reviews and was merged at `5e2fab4a`.
+
+## Real PostgreSQL follow-up
+
+The persistence gap identified in item 5 above now has a separate
+[actual-PostgreSQL regression record](figure-persistence-regression-2026-11-18.md).
+Four authenticated/guest figure cases passed repository settlement, committed
+JSONB comparison and fresh HTTP retrieval. Model/reviewer and Cognito inputs
+remain explicit fixtures; Lean, browser interaction and production acceptance
+are outside that result. The earlier no-DB-write statement describes the initial
+source/browser audit, before this task-owned disposable local database run.
+API #129 passed exact-source CI and independent/automated review, merged at
+`d837a647dc2de8b6004f3ff7e5e1f85ce9e6fb5c`; that merge's CI also passed.
