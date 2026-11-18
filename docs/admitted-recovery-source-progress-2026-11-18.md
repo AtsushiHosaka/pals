@@ -44,3 +44,24 @@ infra #192のboundary moduleを読み取り専用で注入し、実Linux kernel�
 この確認でIAM・SG・service・traffic・DB admission・owner archiveは変更していない。読み取り用のowner-check SSMは実行した。14:40失効の旧一時権限は再適用していない。新しいモデル呼び出しは0件で、過去の呼び出し費用を増やしていない。
 
 旧構成の復旧処理を省いてownerだけを退役させる案は、次の配備が失敗した際の旧構成への復帰も失うため採用しない。public executorのapplyは引き続き拒否する。残る実装は、具体的なauthorityの接続、実install/health/closure receiptの生成と消費、次releaseのclaim/restore入口へのfence接続である。部品試験の成功だけでこの状態を解除しない。
+
+## 実機leaseへの接続を追加した時点
+
+infra revision `a5ebea5`で、executorに既存のlocal NativeLeaseとremote RemoteLeaseを生成する内部処理を追加した。local側はpermit・鍵・validator・期待bindingの同一性と残り時間を確認する。compute側は実装上、既存のCAとworker secretを参照し、clientが公開する同じtransport型でcontextを作る。controlだけにあるglobal ownerをcompute上の複製で確認済みと扱わず、remote leaseによる認証を待つfactとして分離した。shared source map全体もcommitmentへ含める。
+
+最後のローカル統合試験は361件が成功した。途中で追加試験のmodule alias不一致を検出し、既定の`client.TRANSPORT`を参照するよう修正した。構成生成の試験ではnative境界をdoubleにしており、実機のDB leaseを保持した、実機復旧した、という結果ではない。public applyの拒否は維持し、残る実install・health/closure・claim/restore入口の実装と本番反映は未完了である。
+
+オーナーは、未実装の3入口だけを主担当1人で実装し、現行の安全条件を維持して配備する案を選択した。条件変更を検討する案は選択していない。判断は #422、進行は #433に記録した。本番配備自体の既存承認は維持し、具体的に未検査の新しいIAM/SG/service操作へ適用済みの承認があるとは読み替えない。新しいchat/agentは起動していない。
+
+
+## native入口の接続と実読み取り確認
+
+infra revision `ecb28ad8f450c6e4b5ac8f1767e2294003317c2c`をpushし、[infra #205](https://github.com/AtsushiHosaka/pals-infra/pull/205)をDraftで作成した。baseは承認済み配備系統の`claude/seq30-worker-trust`である。nativeの設置、設置後の健康確認、旧ownerの退役、退役応答が失われた場合の読み取り確認を接続した。旧manifestの期限は変更していない。期限後の後処理は、元の署名と元の設置記録が一致する新設物だけを対象にし、既存アプリを停止する入口を持たない。
+
+Python 3.12で復旧部品の387件と、repair・既存安全条件を含む接続試験207件が成功した。件数は重複を含むsource回帰であり、製品評価の分母へ加えない。実機での新設サービスの設置・health・退役は未実施である。root側の設置・権限管理と、次releaseのclaim/restoreの接続も残る。
+
+正規repairに追加した読み取り入口から、元のownerの一致を確認し、元の作成時刻から7日以内の全SSM履歴を取得する処理へ進めた。通常releaseの24時間gateは維持した。controlのnative inventoryが`exact_native_current_tuple_unresolved`で拒否したため、quietは確認できていない。診断はpredecessor側のtuple確認とcandidate側のcontext確認で停止していた。これは本番アプリの停止や回答失敗を観測した結果ではない。
+
+保持された現在構成を直接確認するcollectorを追加したが、その追加実機確認は自動承認審査で拒否された。未commit・未固定の/tmp実装を本番へ送る点が理由である。この操作を別経路で実行せず、clean revision・controller hashを明示する条件を追加して、source検証とcommitへ戻した。collectorの本番結果は未確認のままである。
+
+この実読み取り確認では、owner-checkとcontrolのnative inventoryだけを実行した。IAM、SG、service、traffic、DB admission、owner archiveは変更していない。新しいモデル呼び出しは0件。次はexact CIを確認し、固定sourceから必要な接続と実機確認を進める。本番配備・機能受入・新しい実APIキャプチャは未完了である。
