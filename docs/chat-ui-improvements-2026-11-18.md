@@ -87,3 +87,15 @@ Webの開始ソースは`6dea87e`、APIは`eebb1ab`。APIの変更は`9829110`�
 この追加はChromium回帰で変更前の失敗と変更後3件の成功を確認し、対象unit 23件、typecheck、対象eslintも成功した。Web #86の`52dc036`は最新CI成功。Web #87の`86a12f7`はCI待ち。新しい実API生成は行わず、最新修正の撮影には追加1件の承認を確認している。既存の5fps程度の録画を、変更後の滑らかさを測る証拠にはしない。
 
 ドットの既存API条件は「回答完了」で、未検証説明も含んでいた。オーナーが指定した「検証成功だけ」への絞り込みはIssue #423で別API PRとして実装する。チャットを開いて既読にする挙動は維持する。#88の質問引継ぎに関するレビュー指摘は、オーナーが連携を指示した別の担当チャットへ引き継いだ。同じ経路を並行編集しない。
+
+## 本番反映への移行
+
+オーナーの本番デプロイ依頼を受け、親Issue #425と候補PR #426で正規リリースを準備している。Web #85〜#89は通常mergeで統合した。merge後の`a163b43`で既存認証回復テストが1件失敗したため、PR #90で今回のprovider contextと初期化状態を同時に待つよう修正した。期待値やtimeoutは緩めず、製品コードも変更していない。`c585c60`のmerge revision自身の必須CIまで成功した。API #121/#122は`a3191b4`へ統合し、merge revision自身の必須CIも成功している。
+
+APIの正規production画像は公開済み。Webも最終revisionに合わせて正規の再build・公開を行った。画像公開を本番反映とは扱わない。productionのcompute環境が途中表示の設定キーを許可しておらず、旧設定のコピーだけでは有効化できないことも確認した。infra PR #188で、strict booleanの明示設定をplanからproof workerだけへ渡す正規経路と回帰を追加中である。
+
+前回 #410の保持ownerを正規read-only観測で確認し、具体的な4 read actions・3 resources・14:12:17 JST失効の後処理をオーナーが承認した。初回の`release-repair.py --operation grant --apply`は`exception_ReadTimeoutError`で拒否された。新しい台帳にはcycle行だけがあり、renewal intentもSSM dispatch記録もない。後続のexact IAM GETでは元の期限切れpolicyと同一で、新policy未適用を確認した。この1試行は失敗として品質台帳へ記録する。実サービス・traffic・DB admissionの変更は0である。
+
+待ち時間の間に、正規grantが要求する残存900秒を切ったため、期限を黙って延ばさない。同じ範囲で14:40 JST失効の案を別ファイルとして検査し、オーナーの追加承認を待っている。元のplan・署名・failed記録は不変である。
+
+この確認で、ローカル認証復旧時に変更した`local.env`が前回の凍結対象だったことが分かった。真正バックアップのhash一致を独立照合し、現行envを永久の候補専用pathへbytes保持、UI helperの参照を変更した後、旧凍結pathを真正bytesへ戻した。元の79参照は全件一致し、全33稼働containerのID・StartedAt・Env hash・mountと他runtimeファイルは前後不変だった。現在の認証設定や予算履歴を旧値へ上書きしていない。新しい資格確認用ディレクトリも同じサービスと台帳を再利用するための設定コピーとして準備し、停止後の正規continuity確認はまだ実行していない。
