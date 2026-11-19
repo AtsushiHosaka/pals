@@ -1,6 +1,6 @@
 # チャットUI改善の本番候補（2026-11-18）
 
-オーナーが本番反映を明示依頼したため、チャットUI改善を新しい候補として準備する。前回の凍結計画を変更して再利用しない。担当チャットはcodex://threads/01a1ebe7-a4ee-78c0-ab22-a16cfcccc3d2。オーナーの指定に従い、主担当1人で実装と配備を進める。進行管理は親Issue #425、実装の判断と証拠は #417〜#423および親PR #421、#424にある。
+オーナーが本番反映を明示依頼したため、チャットUI改善を新しい候補として準備する。前回の凍結計画を変更して再利用しない。担当チャットはcodex://threads/01a1ebe7-a4ee-78c0-ab22-a16cfcccc3d2。オーナーの最新指示に従い、source作業は並列化し、実機の配備操作は主担当へ一本化する。進行管理は親Issue #425、実装の判断と証拠は #417〜#423および親PR #421、#424にある。
 
 ## 候補のソース
 
@@ -61,3 +61,7 @@
 11月19日更新: infraを`c71d03301df9879571d5b1adbafc814a885ad1ce`へ固定した。Type=simpleの起動遅延を実applyのfile公開境界で再現し、現在のDB lease・認証・identity・actor状態を再検査しながら、既存job期限内の最大30秒でmetadata準備完了を待つ。固定phaseと有限codeを失敗記録へ残す。独立レビューの期限再検査とjournal文字列制限を修正し、正規Python3.12・保護された試験parentで関連220件が成功した。実機の成功や再起動確認ではない。
 
 保持構成と全履歴quietの再読取は成功し、元のIAM/SG範囲と17時失効を維持する新permitを署名した。新namespaceへの設置・実health・旧owner退役は未実施。次の正規planではトップレベルの`progress_preview_enabled=true`を宣言し、ローカル9bdと同じproof workerの途中Lean表示を有効化する。アプリのAPI/Web/worker/verifier sourceと実imageは変更しない。
+
+11月19日の最新判断: オーナーは並列作業と今回のCI完了待機省略を明示した。source修正・独立確認・配備入力準備を分担し、実機操作は主担当へ一本化する。CI待機省略は正規source-check入口で、候補manifest・全source・判断記録・最大4時間の期限・file hashに結び付ける。対象は親とinfraの実際のqueued/in_progressだけで、欠落・失敗・取消・skip・別workflowは拒否する。結果は`source_checks_owner_deferred`かつ`NOT_VERIFIED`で保持し、CI成功へ読み替えない。Issueを閉じる前に最新exact CIを再確認する。追加した回帰9件と従来9件が成功した。署名・admission・identity・復旧と累積US$1は維持する。
+
+実行infraは`1c524cef59dc0d3ef6a934209e5d1d196384652d`へ固定した。署名済みnative C71の全runtimeとbootstrap bytesは保持し、転送のouterだけをcanonical base85へ変更した。実singletonの旧上限超過を再現し、新commandはcontrol59322 byte、compute59317 byteで同じ内容へ完全復元できた。転送関連61件成功。plan全体は新設null負例だけが失敗し、キー存在判定へ修正後、当該2件とdefault argv・任意args拒否の4件が成功した。全体の残る119件も成功している。実機への新パッケージ設置はこれから行う。
