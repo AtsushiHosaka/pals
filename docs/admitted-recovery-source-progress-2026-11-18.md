@@ -230,3 +230,15 @@ infra [PR #219](https://github.com/AtsushiHosaka/pals-infra/pull/219)、`1c0241b
 最終変更後の関連回帰36件は成功した。これはsourceの回帰結果であり、製品の回答36件や実機の更新成功を意味しない。保存済みの実packetを用いたローカル転送測定では、最終controllerを含む単一assetをcontrol・computeの両形式で完全復元でき、各61,247 byteだった。固定bootstrapを別に圧縮し、hash・EOF・余剰data・展開量・memoryの検査を保持した。command上限62,000 byteは変更していない。この測定は新しい署名済み0699 packetの実機転送結果ではない。
 
 AWS認証を更新し、0699の正規更新処理を実行中である。新しい実機healthの結果は未取得であり、更新成功や新UIの本番反映、実回答・保存・表示・再読込の受入は未完了として扱う。追加のテストや測定、有料生成は、この記録の作成に際して実行していない。
+
+## 11月19日の0699更新完了とローカル受入
+
+0699の正規更新は、control・compute両方の設置とfresh healthを完了した。実行sourceは`1c0241becc1c9ef6b8a6eb3df41945aef341fdfa`である。専用journalには54件のintentと対応する54件のacceptedがあり、両install・両healthの実記録と整合した。これは保持中の構成の復旧更新であり、新UIの本番切替や機能受入の成功ではない。元のc13退役記録も保持している。
+
+承認済みのローカル受入1件は`accepted`となった。実ブラウザーで1件だけ送信し、保存済み回答が`answered`になったことと、terminal表示・再読込後の意味情報のhash一致を確認した。ローカルのゲスト画面も実表示した。記録のSHA256は`11643eb2441e22660ed5775ceb3b37856d75f5b8cff796d0af3aa789f30b79b6`。全laneの実計測額は441,594から476,397マイクロ米ドルへ増え、内部呼び出しは138から149件となった。今回の増分はUS$0.034803・11呼び出しであり、品質台帳にはこの増分だけを計上する。149呼び出しを149件の利用者試行とは数えない。
+
+v10の正規host prepare、実observe、host stageも完了した。実receiptのSHA256は順に`a447010018a4eeff527e041eeebd2cc1889a05154b0f929994da5d9ab7f711f7`、`ee1c86499dacff0e36aa662fc1ea189dfe5ca24072d052c9f67d97c5c1639caa`、`96058646a2e40e5d5c0c85432616aad4b43951dffb9c7d17a633808167948630`である。prepareの11操作とstageの56操作を含む実記録は、アプリ・DBを変更していないことを示した。材料の配置完了と本番の切替は区別する。
+
+続くfull plan導出は`step_binding_receipt_digest_differs:worker`で停止した。変更のないworkerについて、正規receiptが省略するdigestをfull plan側だけが必須にしていた。infra [PR #220](https://github.com/AtsushiHosaka/pals-infra/pull/220)、`8a85a0bbac4118b3a9613f89f218384b8c4381b3`で、既存の前任証拠検証を再使用し、関連5件が成功した。0699のpermit期限後に再更新するため、[PR #221](https://github.com/AtsushiHosaka/pals-infra/pull/221)、`021a61b3ab750a23a68c96e0ca3e762aaf6c2ba1`では、実際の前回更新と後続の正規操作履歴を検証して取り込む処理を追加した。関連14件が成功した。両PRの成功はローカルsource回帰の結果であり、修正後の本番切替や再更新の実機成功は未確認である。
+
+23:00 JST失効のIAM案は未適用である。自動承認審査は、期限拡張への具体的承認が必要として操作を拒否したため、その承認を待っている。この追記時点で本番切替は未実施であり、過去の設置・health・ローカル受入を本番の機能受入へ読み替えない。記録作成のための追加テスト・有料生成・実機操作は行っていない。

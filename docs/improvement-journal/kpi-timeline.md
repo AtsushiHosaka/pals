@@ -300,3 +300,4 @@
 | 2026-11-18 | 後処理sourceのfresh health修正 | 旧2件RED／新47件GREEN。新候補CIは引継ぎ時点で確認中、live IAM・host操作0 | [fresh health](entries/2026-11-18-fresh-repair-health.md) |
 | 2026-11-18 | 認証更新後の単一送信に対する初回acceptance | 回答・実画面/reloadを観測したが、RUM POST3件を全abortしたwrite counterによりgate失敗。正式accepted不可。n1、先行認証確認と重複参照、金額未取得 | [受け入れgateの失敗](entries/2026-11-18-acceptance-observer-beacon.md) |
 | 2026-11-19 | 退役後の履歴接続とcontroller転送上限 | 正規更新1件がhost変更前に拒否。修正後の保存済みpacketは両role各61,247 byteで完全復元、36回帰成功。0699実機更新は実行中、時間・費用の改善率は未測定 | [履歴接続と転送](entries/2026-11-19-archived-renewal-controller-transport.md) |
+| 2026-11-19 | 保持構成の復旧更新とローカル受入 | 0699両設置・health成功。ローカル1件accepted、費用増分US$0.034803・内部11呼出し。本番切替未実施、full plan修正5件・再更新修正14件はsource回帰のみ | [復旧更新と受入](entries/2026-11-19-native-renewal-local-acceptance.md) |
