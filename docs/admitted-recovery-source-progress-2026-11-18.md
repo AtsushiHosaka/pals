@@ -166,3 +166,16 @@ UTC 03:29:59に送信した最初のcontrol設置は、実SSMでFailed・Respons
 初回の終端失敗と現在のcontrol設置前条件の成功を確認後、同じ署名済み入力・CI済みinstallerの正規`--retry-failed`を実行した。この再設置もTerminalFailureとなった。元の失敗記録と再設置の結果はともに保持する。compute設置、実health、旧owner退役は未完了。今回jobだけの保護された失敗receiptと新設unitの状態を読む変更はinfra PR #211。関連74件は成功し、実機の読取を実行中である。
 
 次配備の親sourceは`ec583ac10f3dc0d1d43d803eab6abc24f922ed19`、infraは`b7c419433b7adffe8151c1af8c42af4bf3e7e946`へ固定した。正規source-checksは親/API/Web/infraのexact必須check成功を確認した。独立再導出・署名済み候補manifestは`6ea7481bf936c5a2b5f2838a16dcf9a14c05c536ea377ec1d5952112a5781149`。署名は配備・受入の成功を意味しない。AWSとPALSの通常再ログインを確認済み。追加ローカル1件と本番2件は未送信、既存の予算台帳は維持する。
+
+
+## 11月19日の並列修正と新パッケージ
+
+オーナーの最新指示に従い、転送修正、独立レビュー、配備入力準備を並列化した。実機操作は主担当へ一本化している。controlの再設置失敗後、両hostの新unitが残っていないこと、controlに残る設置intentを実観測した。生成unitの実systemd構文検査は成功したが、元の設置失敗の原因は断定できない。
+
+infra PR #213のC71で、metadata起動遅延を扱う最大30秒の待機と、期限・DB lease・identityの再検査、機密を含まないphase/codeを追加した。保護されたローカル試験parentで関連220件が成功した。新しい用途別permitは正規署名済みで、native C71の60 assetを固定した。
+
+新しいsourceが大きくなり、単一assetでも転送上限を超えることを送信前に検出した。実行infra `1c524cef59dc0d3ef6a934209e5d1d196384652d`ではouter符号化だけをcanonical base85へ変更した。署名済みnativeとbootstrap bytes、inner base64、62000 byte・4 MiB・128 MiB・hash・EOF・trailing検査は保持した。旧版での超過、新版での実singleton完全復元、関連61件の成功を確認した。再組立は全20packet・各host60 asset・最大61997 byteとなった。これはオフライン転送検査で、実機設置や製品機能の成功ではない。
+
+CI待機省略は正規makeとcontroller生成argvへ接続した。候補manifest・全source・判断記録・最大4時間の期限・file hashに固定し、親/infraのpendingだけをNOT_VERIFIEDとして延期する。欠落・失敗・取消・skip・別workflowは拒否する。親の新旧18件が成功した。plan全体では新設null負例だけが失敗し、キー存在判定へ修正後、当該2件とdefault argv・任意args拒否の計4件が成功した。残る119件も成功している。独立レビューの未解決P0–P2はない。
+
+親 `f9f41e035ac7ce99d443bfd2bb2ab07d695ecd10`とinfra 1c524を固定・pushした。新manifest `a21dec51066d087eb10c33e5b5f81aaa5fc63dfe1f399137a6e63753925ead39`は正規再導出・署名済み。必須source-checkで親/API/Webの実成功を確認し、infra pendingだけをowner deferred / NOT_VERIFIEDとして記録した。新パッケージの最初の2packetは実機転送成功、残りは同じ正規入口で直列実行中。新設置・実health・旧owner退役・本番アプリ切替は未完了。有料要求は増やしていない。
