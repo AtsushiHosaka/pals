@@ -8,7 +8,7 @@
 |---|---|---|
 | Web | aa1a6d48ceeb90f79c5360e5f699e72d11735f56 | 個別PR #85〜#88を配備統合PR #89で通常merge、認証試験同期PR #90、chevron修正PR #91 |
 | API | a3191b4cd11a347724bbabff54e39c829faca31e | ゲスト途中表示PR #121、検証成功ドットPR #122 |
-| infra | 590fdde20c4fdd52bfca1a7fe165a1b48fe37d45 | PR #215。終了済みleaseの検証・worker回収後に次leaseを開始し、所有済み不具合設定を正規nativeで置換。broker関連86件、repair関連88件成功、exact CIは別途照合 |
+| infra | e2f7c5363cc33d31e94553e53551028eda0558bd | PR #215のbroker修正とPR #216の復旧closure接続。prepare・stage・cleanの全guardへ同じ検証済み参照を渡す。関連285件成功、exact CIは別途照合 |
 | worker | 146ecf2b816ac6830940fac824bd9e8df90d80e4 | 前任のソースを保持 |
 
 本番用ソースブランチはWebが`codex/sidebar-inline-math-20261031`、APIが`claude/seq28-api-response-language`のまま維持する。現在の承認済み系統を基点とし、古いmainで置き換えない。
@@ -73,3 +73,9 @@
 11月19日更新: C182の両host設置は実成功し、control healthも成功した。compute healthは閉じたworkerが保持される連続接続不具合で失敗している。新infra PR #215の`590fdde`では、実childの終了・全pipe閉鎖とcleanupを確認後に別leaseを開始し、古いcleanup再応答と閉じたleaseの再open拒否を維持する。非evict cacheは上限付きで、新規開始は飽和時に拒否する。旧設定はactual install/provider記録を照合してから、既存nativeの所有設定cleanupだけで置換する。署名・intent・fence・source freezeとアプリactor停止禁止は維持する。実置換・連続health・旧owner退役・本番UI配備は未確認。
 
 変更のないC182のimmutable codeは、両hostでの全20実公開receiptと現sourceの同一hashを照合して再利用する。新broker/worker、署名・job/config・入力・receiptは新namespaceへ置き、旧namespaceのcodeを削除しない。モデル費用累積US$1.35と、同じ4read/3resourceのIAM18:30失効への変更は質問中で、承認前には適用しない。旧17時期限とUS$1上限を保持する。
+
+11月19日17時台の更新: C182の両hostへの設置とcontrol healthは成功したが、compute healthで終了済みleaseのworker保持による拒否を確認した。infra PR #215で修正したa761パッケージは、正規署名後、両host全10packetの実転送が成功した。変更のない33code aliasesは、C182全20receiptと最新実bytesを照合して保持する。新設定の実設置・両health・旧owner退役はこれから行う。
+
+同時にPR #216で、旧ownerの実退役closureを次配備のprepare・stage・cleanへ渡す接続漏れを修正した。正規closure検証・未閉鎖の別state拒否・実行中lock拒否は維持し、関連285件が成功した。旧journalは書き換えない。
+
+オーナーは累積モデル上限US$1.35と、同じ限定IAMの18:30 JST失効を明示承認した。IAMの期限だけを実変更し、同じ4読み取り操作・3リソースのreadback一致を確認した。SG追加は0件。既存台帳と未知分の予約を保持し、残りの要求数はローカル1件と本番2件のまま。新しいモデル要求は未送信。
