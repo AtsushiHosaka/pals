@@ -8,7 +8,7 @@
 |---|---|---|
 | Web | aa1a6d48ceeb90f79c5360e5f699e72d11735f56 | 個別PR #85〜#88を配備統合PR #89で通常merge、認証試験同期PR #90、chevron修正PR #91 |
 | API | a3191b4cd11a347724bbabff54e39c829faca31e | ゲスト途中表示PR #121、検証成功ドットPR #122 |
-| infra | caf8d14ca5d9f014f2e8c423c8af2bfaba6e79e6 | PR #214。保持IAMが新permit全期間を包含する条件とbroker metadata phaseを検証。関連93件成功、exact CIは別途確認 |
+| infra | 590fdde20c4fdd52bfca1a7fe165a1b48fe37d45 | PR #215。終了済みleaseの検証・worker回収後に次leaseを開始し、所有済み不具合設定を正規nativeで置換。broker関連86件、repair関連88件成功、exact CIは別途照合 |
 | worker | 146ecf2b816ac6830940fac824bd9e8df90d80e4 | 前任のソースを保持 |
 
 本番用ソースブランチはWebが`codex/sidebar-inline-math-20261031`、APIが`claude/seq28-api-response-language`のまま維持する。現在の承認済み系統を基点とし、古いmainで置き換えない。
@@ -69,3 +69,7 @@
 11月19日の実機設置はmetadata readiness timeoutで失敗し、正規診断で所有unitの残存なしを確認した。実staged brokerの発行時刻完全一致条件が、既存IAM内に発行した新permitを必ず拒否することを実artifactで確定した。infra PR #214の`caf8d14`は既存IAMがpermit全期間を包含する条件へ修正し、role/key/account/regionと署名・現在時刻・DB leaseの検査を維持する。brokerに必要なcontrol-reconciler metadataも起動前に検査し、組立側参照を修正する。旧署名やIAM文書は変更せず、新namespaceで再署名・再設置する。関連93件が成功し、独立レビュー済み。
 
 元のローカル証明書期限に備えて、同じcompose・同じimage・同じ問題/モデル/oracleのまま、新しい私有runtimeで正規prepareを実行した。新subjectは`43952fcaba9c1e45dddeab4caeb574ed36fd09bafe2c0235d6248343111ebc4c`。実Lean canaryはverified、138calls/441594マイクロ米ドルと旧未知予約の履歴を維持した。新たな証明要求は未送信で、これは依存準備だけの結果である。
+
+11月19日更新: C182の両host設置は実成功し、control healthも成功した。compute healthは閉じたworkerが保持される連続接続不具合で失敗している。新infra PR #215の`590fdde`では、実childの終了・全pipe閉鎖とcleanupを確認後に別leaseを開始し、古いcleanup再応答と閉じたleaseの再open拒否を維持する。非evict cacheは上限付きで、新規開始は飽和時に拒否する。旧設定はactual install/provider記録を照合してから、既存nativeの所有設定cleanupだけで置換する。署名・intent・fence・source freezeとアプリactor停止禁止は維持する。実置換・連続health・旧owner退役・本番UI配備は未確認。
+
+変更のないC182のimmutable codeは、両hostでの全20実公開receiptと現sourceの同一hashを照合して再利用する。新broker/worker、署名・job/config・入力・receiptは新namespaceへ置き、旧namespaceのcodeを削除しない。モデル費用累積US$1.35と、同じ4read/3resourceのIAM18:30失効への変更は質問中で、承認前には適用しない。旧17時期限とUS$1上限を保持する。
