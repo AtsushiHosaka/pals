@@ -8,7 +8,7 @@
 |---|---|---|
 | Web | aa1a6d48ceeb90f79c5360e5f699e72d11735f56 | 個別PR #85〜#88を配備統合PR #89で通常merge、認証試験同期PR #90、chevron修正PR #91 |
 | API | a3191b4cd11a347724bbabff54e39c829faca31e | ゲスト途中表示PR #121、検証成功ドットPR #122 |
-| infra | e2f7c5363cc33d31e94553e53551028eda0558bd | PR #215のbroker修正とPR #216の復旧closure接続。prepare・stage・cleanの全guardへ同じ検証済み参照を渡す。関連285件成功、exact CIは別途照合 |
+| infra | dd9d19e325a2f233fa711037ee0812fe6871a4b1 | PR #215のbroker修正とPR #216の復旧closure接続。prepare・stage・cleanの全guardへ同じ検証済み参照を渡す。関連285件成功、exact CIは別途照合 |
 | worker | 146ecf2b816ac6830940fac824bd9e8df90d80e4 | 前任のソースを保持 |
 
 本番用ソースブランチはWebが`codex/sidebar-inline-math-20261031`、APIが`claude/seq28-api-response-language`のまま維持する。現在の承認済み系統を基点とし、古いmainで置き換えない。
@@ -79,3 +79,7 @@
 同時にPR #216で、旧ownerの実退役closureを次配備のprepare・stage・cleanへ渡す接続漏れを修正した。正規closure検証・未閉鎖の別state拒否・実行中lock拒否は維持し、関連285件が成功した。旧journalは書き換えない。
 
 オーナーは累積モデル上限US$1.35と、同じ限定IAMの18:30 JST失効を明示承認した。IAMの期限だけを実変更し、同じ4読み取り操作・3リソースのreadback一致を確認した。SG追加は0件。既存台帳と未知分の予約を保持し、残りの要求数はローカル1件と本番2件のまま。新しいモデル要求は未送信。
+
+11月19日17時台の実機確認: a761の両host設置、正規retire入口での両fresh health・quiet・実証拠転送、旧ownerの実archiveまで成功した。実retirement closureを次配備へ接続する。アプリの本番切替と実API受入は未実施。
+
+PR #216の最初のCIは、新回帰テストをworkflowへ登録していなかったため、coverageの2検査が失敗した。実ログで原因を確認し、production codeを変えず、同じ正規jobの実行と存在検査へ登録した。workflowcoverage13件と新回帰5件が成功。新exact CIは配備前に別途確認し、失敗を待機省略で隠さない。
