@@ -8,7 +8,7 @@
 |---|---|---|
 | Web | aa1a6d48ceeb90f79c5360e5f699e72d11735f56 | 個別PR #85〜#88を配備統合PR #89で通常merge、認証試験同期PR #90、chevron修正PR #91 |
 | API | a3191b4cd11a347724bbabff54e39c829faca31e | ゲスト途中表示PR #121、検証成功ドットPR #122 |
-| infra | 015f11dab19022d1ff00127884f587d2013119bf | PR #205の復旧接続を保持し、PR #206で保持containerのimage configuration IDを実inspect結果から取得する。前任c0cb44aのCI run 44365118776は成功。015f11dのexact CI run 44378585677は実行中で、成功扱いしない |
+| infra | e6543f29302ef1bd3da2e3c47f867c6c9ea5baba | PR #206の015f11dはCI run 44378585677の4 job成功・merge済み。PR #207でSSM62KBを維持する転送形式へ修正。e6543f2のexact CI run 44445150407は実行中 |
 | worker | 146ecf2b816ac6830940fac824bd9e8df90d80e4 | 前任のソースを保持 |
 
 本番用ソースブランチはWebが`codex/sidebar-inline-math-20261031`、APIが`claude/seq28-api-response-language`のまま維持する。現在の承認済み系統を基点とし、古いmainで置き換えない。
@@ -43,4 +43,9 @@
 
 ローカル準備で旧plan参照2fileを更新した配置の誤りは、元のSHA256との完全一致を確認して復旧した。今回のsubject・環境は別パスへ同一バイトで保持し、同じsubmissionの正規再観測もaccepted。正規repairの非実行検査は通過した。失敗と復旧は進捗文書と品質台帳へ記録した。凍結済み原本、元のfailed記録、予算台帳を新しい候補のために書き換えない。
 
-本番反映・機能受入・本番2件・一覧アニメーションの実画面動画は未実施。追加IAMとSGは判断待ちで未適用。
+本番反映・機能受入・本番2件・一覧アニメーションの実画面動画は未実施。同じcontrol role・4読み取り操作・3リソースの一時IAMを11月19日17:00 JSTまで許可する更新と、相手IP /32 TCP18443のSG2件はオーナー承認後に適用・実readback済み。今回の実rule IDを非公開で保持し、不要になった追加分だけを削除する。アプリ・traffic・DB admission・旧ownerは未変更。
+
+
+保持7actorの実image configuration IDとquietを正規015f11d sourceから再観測した。用途別permitも正規signerで署名・KMS検証した。native消費側の署名済みパッケージは015f11dのまま保持し、ローカル転送側だけをe6543f2へ修正する。公開前に各fileの実バイト・hashを保存済み原本へ照合し、転送後も署名・hash・保護file条件を再検査する。転送準備の全26packetは最大61052 byteで、実機への送信・設置は未実施。
+
+今回ローカル受入の1時間期限はSSO待ちの間に過ぎた。既存receiptを有効扱いせず、配備準備が整った直前の追加ローカル1件だけをオーナーへ確認中。本番2件と累積US$1の制限は維持する。
