@@ -155,3 +155,14 @@ UTC 03:29:59に送信した最初のcontrol設置は、実SSMでFailed・Respons
 次配備の時間計画では、保持復旧bridgeを含むclaimの上限と従来の開始前余裕を合計すると、45分のIAM上限に収まらなかった。infra [PR #209](https://github.com/AtsushiHosaka/pals-infra/pull/209)、source `b7c4194`で、policy失効時刻から実行prefixの全上限を引いた開始期限を導出し、新しい実行を期限後には送信前拒否する。復旧・後処理の再開は開始期限で妨げない。ローカル再観測の短いtimeoutを個別指定でき、本番受入のtimeoutと検査は維持する。関連61件が成功し、広いsource回帰とCIは実行中。実際の配備成功を示すものではない。
 
 オーナーは配備直前の追加ローカル実API生成1件を承認した。準備が整うまで送信せず、既存台帳と累積US$1上限を維持する。承認済みの本番2件も未送信である。
+
+
+## 11月19日の設置前検査と再設置
+
+初期診断は両hostのconstructorで成功した。続く正規診断はcontrolのcontext、専用DB read lease、既存runtimeの設置前検査とlease後処理を実確認し、`preconditions_valid=true`、`phase=closed`、accepted=falseとなった。記録SHA256は`eddfd3d0d277a05c4e259f5182729d21d258687c8a0cc9dbab5d2565a2526ea0`。computeはlease段階のTransportRefusalであり、成功扱いしない。metadata未設置との関係は未確定である。
+
+オーナーはCI完了待機の省略を明示した。最初の実機診断申請は自動審査が拒否したが、CI済み版からnative消費側の差分0、閉じた操作範囲とローカル回帰の根拠を追加して同じ正規操作を再審査し、承認後に実行した。別経路での回避やCI成功の偽装はしていない。判断は#422へ記録した。
+
+初回の終端失敗と現在のcontrol設置前条件の成功を確認後、同じ署名済み入力・CI済みinstallerの正規`--retry-failed`を実行した。この再設置もTerminalFailureとなった。元の失敗記録と再設置の結果はともに保持する。compute設置、実health、旧owner退役は未完了。今回jobだけの保護された失敗receiptと新設unitの状態を読む変更はinfra PR #211。関連74件は成功し、実機の読取を実行中である。
+
+次配備の親sourceは`ec583ac10f3dc0d1d43d803eab6abc24f922ed19`、infraは`b7c419433b7adffe8151c1af8c42af4bf3e7e946`へ固定した。正規source-checksは親/API/Web/infraのexact必須check成功を確認した。独立再導出・署名済み候補manifestは`6ea7481bf936c5a2b5f2838a16dcf9a14c05c536ea377ec1d5952112a5781149`。署名は配備・受入の成功を意味しない。AWSとPALSの通常再ログインを確認済み。追加ローカル1件と本番2件は未送信、既存の予算台帳は維持する。
