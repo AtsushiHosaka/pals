@@ -142,3 +142,16 @@ infra `015f11d`の必須4 job成功後、正規repairで保持7actorの実image 
 元版で失敗するサイズ回帰を確認し、関連81件が成功した。実入力から生成した26packetは両host各60 asset、最大61052 byteとなった。これはsourceとオフライン入力の検査であり、実機設置やアプリ動作の証拠ではない。必須CI run 44445150407は実行中。親`256eaa1`の必須CI run 44445437354は成功した。
 
 新配備の正規prepare計画は生成し、APIとWebの公開済みdigestを実ECRの読み取りで照合した。未署名候補manifestのSHA256は`f74e0d9f8f9399c85c0563ff971b06375e48aa49fc5e9db77332c22405516648`で、正規のunsigned検査も成功した。candidateと保持構成、元の失敗、source CI、実機設置、機能受入を別々に扱う。この記録時点でアプリ・traffic・DB admission・旧ownerの変更は0件、本番2件も未送信。ローカル受入の1時間期限が過ぎたため、配備直前だけの追加1件を確認しており、期限切れreceiptを有効扱いしない。追加のモデル利用はない。
+
+
+## 11月19日の実機公開と設置エラー
+
+PR #207のexact CIは4 job成功し、merge済みとなった。正規repairで全26 packetを両hostへ公開し、全件のprovider終端成功を記録した。各hostの保護assetは60件である。公開は設置や復旧成功を意味しない。
+
+UTC 03:29:59に送信した最初のcontrol設置は、実SSMでFailed・ResponseCode 2となった。応答は`installed_recovery_operation_refused`で、原因コードは含まれなかった。compute設置、健康確認、旧owner退役には進んでいない。部分的なunit作成の有無も未確認であり、成功や無変更と断定しない。応答原本は非公開で保持している。
+
+既存installerのconstructorだけを読む診断をinfra [PR #208](https://github.com/AtsushiHosaka/pals-infra/pull/208)、source `179eddff`へ実装した。設置、health、actor操作は呼ばず、結果はaccepted=falseとする。実AWSでの診断はexact CI待ちである。
+
+次配備の時間計画では、保持復旧bridgeを含むclaimの上限と従来の開始前余裕を合計すると、45分のIAM上限に収まらなかった。infra [PR #209](https://github.com/AtsushiHosaka/pals-infra/pull/209)、source `b7c4194`で、policy失効時刻から実行prefixの全上限を引いた開始期限を導出し、新しい実行を期限後には送信前拒否する。復旧・後処理の再開は開始期限で妨げない。ローカル再観測の短いtimeoutを個別指定でき、本番受入のtimeoutと検査は維持する。関連61件が成功し、広いsource回帰とCIは実行中。実際の配備成功を示すものではない。
+
+オーナーは配備直前の追加ローカル実API生成1件を承認した。準備が整うまで送信せず、既存台帳と累積US$1上限を維持する。承認済みの本番2件も未送信である。
