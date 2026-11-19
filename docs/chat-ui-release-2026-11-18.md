@@ -8,7 +8,7 @@
 |---|---|---|
 | Web | aa1a6d48ceeb90f79c5360e5f699e72d11735f56 | 個別PR #85〜#88を配備統合PR #89で通常merge、認証試験同期PR #90、chevron修正PR #91 |
 | API | a3191b4cd11a347724bbabff54e39c829faca31e | ゲスト途中表示PR #121、検証成功ドットPR #122 |
-| infra | a66cf73e4daaa25ffc4f44c4aee97f1505495739 | PR #215のbroker修正とPR #216の復旧closure接続。prepare・stage・cleanの全guardへ同じ検証済み参照を渡す。関連285件成功、exact CIは別途照合 |
+| infra | 78085ba0ea015c77435737670d5b949771b48645 | PR #215のbroker修正とPR #216の復旧closure接続。prepare・stage・cleanの全guardへ同じ検証済み参照を渡す。関連285件成功、exact CIは別途照合 |
 | worker | 146ecf2b816ac6830940fac824bd9e8df90d80e4 | 前任のソースを保持 |
 
 本番用ソースブランチはWebが`codex/sidebar-inline-math-20261031`、APIが`claude/seq28-api-response-language`のまま維持する。現在の承認済み系統を基点とし、古いmainで置き換えない。
@@ -85,3 +85,9 @@
 PR #216の最初のCIは、新回帰テストをworkflowへ登録していなかったため、coverageの2検査が失敗した。実ログで原因を確認し、production codeを変えず、同じ正規jobの実行と存在検査へ登録した。workflowcoverage13件と新回帰5件が成功。新exact CIは配備前に別途確認し、失敗を待機省略で隠さない。
 
 11月19日の切替計画導出で、worker据え置き候補にも新workerの公開証拠を必須とする不整合を再現した。PR #216は、source・imageが前任と同じでretainedと宣言された場合だけ、hashで固定した実前任preparation receiptの候補・revision・image・platform・公開検証・provenance・embeddingを照合して継承する。changed workerの条件は維持し、前任証拠はfull planにもfreezeする。関連270件と追加対象回帰が成功した。実前任receiptを次の計画入力に明示する。
+
+11月19日18:30の元復旧permit期限前に本番切替を完了できず、旧owner解放後の更新入口も不足していた。アプリは停止せず、実closure・archive・owner不在・元と同じ実行状態を検証する別の正規更新入口をPR #217へ実装した。inert stage、新current署名の認証、旧所有設定のcleanup、新install、fresh healthだけを許可し、過去のcleanup権限をDBやhealthの権限へ読み替えない。既存active-owner経路とarchive専用読取は維持する。RootR関連98件、native stage/context/install/executor/transition137件が成功した。実更新はこれから行う。
+
+オーナーの追加継続承認を受け、同じ4読み取り操作・3リソースだけのIAMと新署名permitを21:00 JSTまでに限定して更新すると実行前に明示した。IAMの期限だけを実更新しreadback一致を確認した。SG追加は0件。新permitは新namespaceと実既存archiveへ結び付け、旧ownerは復活させない。承認済みの累積モデル上限US$1.35と未送信の追加3要求は維持する。
+
+PALSの実Chrome認証を権限0600の私有ファイルへ取得し、正規read-only transportで既存の本人所有requestがansweredであることを確認した。認証値をクリップボードに移していない。新しいモデル要求は0件。
