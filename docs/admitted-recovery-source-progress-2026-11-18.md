@@ -220,3 +220,13 @@ snapshotの系譜を記録した証拠JSONはSHA256 `f5d0621ad0cc9824f50fe3701f7
 closure接続の回帰ファイルがCI workflowへ未登録だったため、旧workflowのcoverage検査2件の失敗をローカルで再現した。infra `dd9d19e325a2f233fa711037ee0812fe6871a4b1`は、ファイルの存在確認と正規unittest実行の2行を追加した。workflow coverageとclosure接続の計18件が成功した。exact CI run 44489924258は確認時点で実行中であり、CI成功とは記録しない。
 
 今回確認した完了範囲はnative recovery境界と旧ownerの退役である。新UIの本番切替は未実施であり、本番の実回答・保存・表示・再読込を含む機能acceptanceも未完了である。
+
+## 11月19日の退役後の履歴接続と更新実行
+
+0d96の正規更新は、最初の履歴確認で`renewal_provider_mutation_unresolved`を返した。hostへの変更操作は始まっていない。退役closureの作成後に実行したhost prepareの11件、正規observerの6件、元の所有権取得1件が、更新処理の履歴へ接続されていなかった。未知の操作を拒否する条件は維持した。
+
+infra [PR #219](https://github.com/AtsushiHosaka/pals-infra/pull/219)、`1c0241becc1c9ef6b8a6eb3df41945aef341fdfa`で、18件を元の正規sourceと固定した証拠から再導出する処理を追加した。providerの操作本文・対象・comment・ID・成功状態・終了code・出力を照合する。prepareと所有権取得は変更操作として扱い、元のjournalとclosureは変更しない。初回の出力照合後も、各操作前の全履歴確認で18件が既知の成功状態を保つことを確認する。
+
+最終変更後の関連回帰36件は成功した。これはsourceの回帰結果であり、製品の回答36件や実機の更新成功を意味しない。保存済みの実packetを用いたローカル転送測定では、最終controllerを含む単一assetをcontrol・computeの両形式で完全復元でき、各61,247 byteだった。固定bootstrapを別に圧縮し、hash・EOF・余剰data・展開量・memoryの検査を保持した。command上限62,000 byteは変更していない。この測定は新しい署名済み0699 packetの実機転送結果ではない。
+
+AWS認証を更新し、0699の正規更新処理を実行中である。新しい実機healthの結果は未取得であり、更新成功や新UIの本番反映、実回答・保存・表示・再読込の受入は未完了として扱う。追加のテストや測定、有料生成は、この記録の作成に際して実行していない。
