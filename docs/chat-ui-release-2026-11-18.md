@@ -8,7 +8,7 @@
 |---|---|---|
 | Web | aa1a6d48ceeb90f79c5360e5f699e72d11735f56 | 個別PR #85〜#88を配備統合PR #89で通常merge、認証試験同期PR #90、chevron修正PR #91 |
 | API | a3191b4cd11a347724bbabff54e39c829faca31e | ゲスト途中表示PR #121、検証成功ドットPR #122 |
-| infra | dd9d19e325a2f233fa711037ee0812fe6871a4b1 | PR #215のbroker修正とPR #216の復旧closure接続。prepare・stage・cleanの全guardへ同じ検証済み参照を渡す。関連285件成功、exact CIは別途照合 |
+| infra | a66cf73e4daaa25ffc4f44c4aee97f1505495739 | PR #215のbroker修正とPR #216の復旧closure接続。prepare・stage・cleanの全guardへ同じ検証済み参照を渡す。関連285件成功、exact CIは別途照合 |
 | worker | 146ecf2b816ac6830940fac824bd9e8df90d80e4 | 前任のソースを保持 |
 
 本番用ソースブランチはWebが`codex/sidebar-inline-math-20261031`、APIが`claude/seq28-api-response-language`のまま維持する。現在の承認済み系統を基点とし、古いmainで置き換えない。
@@ -83,3 +83,5 @@
 11月19日17時台の実機確認: a761の両host設置、正規retire入口での両fresh health・quiet・実証拠転送、旧ownerの実archiveまで成功した。実retirement closureを次配備へ接続する。アプリの本番切替と実API受入は未実施。
 
 PR #216の最初のCIは、新回帰テストをworkflowへ登録していなかったため、coverageの2検査が失敗した。実ログで原因を確認し、production codeを変えず、同じ正規jobの実行と存在検査へ登録した。workflowcoverage13件と新回帰5件が成功。新exact CIは配備前に別途確認し、失敗を待機省略で隠さない。
+
+11月19日の切替計画導出で、worker据え置き候補にも新workerの公開証拠を必須とする不整合を再現した。PR #216は、source・imageが前任と同じでretainedと宣言された場合だけ、hashで固定した実前任preparation receiptの候補・revision・image・platform・公開検証・provenance・embeddingを照合して継承する。changed workerの条件は維持し、前任証拠はfull planにもfreezeする。関連270件と追加対象回帰が成功した。実前任receiptを次の計画入力に明示する。
