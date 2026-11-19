@@ -8,7 +8,7 @@
 |---|---|---|
 | Web | aa1a6d48ceeb90f79c5360e5f699e72d11735f56 | 個別PR #85〜#88を配備統合PR #89で通常merge、認証試験同期PR #90、chevron修正PR #91 |
 | API | a3191b4cd11a347724bbabff54e39c829faca31e | ゲスト途中表示PR #121、検証成功ドットPR #122 |
-| infra | e6543f29302ef1bd3da2e3c47f867c6c9ea5baba | PR #206の015f11dはCI run 44378585677の4 job成功・merge済み。PR #207でSSM62KBを維持する転送形式へ修正。e6543f2のexact CI run 44445150407は実行中 |
+| infra | caf8d14ca5d9f014f2e8c423c8af2bfaba6e79e6 | PR #214。保持IAMが新permit全期間を包含する条件とbroker metadata phaseを検証。関連93件成功、exact CIは別途確認 |
 | worker | 146ecf2b816ac6830940fac824bd9e8df90d80e4 | 前任のソースを保持 |
 
 本番用ソースブランチはWebが`codex/sidebar-inline-math-20261031`、APIが`claude/seq28-api-response-language`のまま維持する。現在の承認済み系統を基点とし、古いmainで置き換えない。
@@ -65,3 +65,7 @@
 11月19日の最新判断: オーナーは並列作業と今回のCI完了待機省略を明示した。source修正・独立確認・配備入力準備を分担し、実機操作は主担当へ一本化する。CI待機省略は正規source-check入口で、候補manifest・全source・判断記録・最大4時間の期限・file hashに結び付ける。対象は親とinfraの実際のqueued/in_progressだけで、欠落・失敗・取消・skip・別workflowは拒否する。結果は`source_checks_owner_deferred`かつ`NOT_VERIFIED`で保持し、CI成功へ読み替えない。Issueを閉じる前に最新exact CIを再確認する。追加した回帰9件と従来9件が成功した。署名・admission・identity・復旧と累積US$1は維持する。
 
 実行infraは`1c524cef59dc0d3ef6a934209e5d1d196384652d`へ固定した。署名済みnative C71の全runtimeとbootstrap bytesは保持し、転送のouterだけをcanonical base85へ変更した。実singletonの旧上限超過を再現し、新commandはcontrol59322 byte、compute59317 byteで同じ内容へ完全復元できた。転送関連61件成功。plan全体は新設null負例だけが失敗し、キー存在判定へ修正後、当該2件とdefault argv・任意args拒否の4件が成功した。全体の残る119件も成功している。実機への新パッケージ設置はこれから行う。
+
+11月19日の実機設置はmetadata readiness timeoutで失敗し、正規診断で所有unitの残存なしを確認した。実staged brokerの発行時刻完全一致条件が、既存IAM内に発行した新permitを必ず拒否することを実artifactで確定した。infra PR #214の`caf8d14`は既存IAMがpermit全期間を包含する条件へ修正し、role/key/account/regionと署名・現在時刻・DB leaseの検査を維持する。brokerに必要なcontrol-reconciler metadataも起動前に検査し、組立側参照を修正する。旧署名やIAM文書は変更せず、新namespaceで再署名・再設置する。関連93件が成功し、独立レビュー済み。
+
+元のローカル証明書期限に備えて、同じcompose・同じimage・同じ問題/モデル/oracleのまま、新しい私有runtimeで正規prepareを実行した。新subjectは`43952fcaba9c1e45dddeab4caeb574ed36fd09bafe2c0235d6248343111ebc4c`。実Lean canaryはverified、138calls/441594マイクロ米ドルと旧未知予約の履歴を維持した。新たな証明要求は未送信で、これは依存準備だけの結果である。
