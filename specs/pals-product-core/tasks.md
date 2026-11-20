@@ -49,7 +49,7 @@ UI 側の初期言語は、現状どおり `navigator.languages` から決まる
 
 - [ ] OQ-1、OQ-2 をオーナーが決める（`type:decision` の Issue に記録する）。
 - [ ] CORE-017: agent の英語固定の確認文2箇所を4言語にする（pals-agent）。OQ に依存しない。
-- [ ] #236: 本番の該当要求の `output_language` を確認し、`en` になった経路を特定する。
+- [ ] #236: 本番の該当要求の `output_language` と、そのアカウントの出力言語の保存行（有無と値）を確認し、`en` になった経路を特定する。`output_language` が `en` だけでは、保存行がなかった経路と `en` を保存していた経路を区別できない。
 - [ ] CORE-015: OQ-1 の結論に合わせて `response_language()` と回帰テストを変更する。
 - [ ] CORE-016: OQ-2 で案2を選ぶ場合に限り、API が `Accept-Language` から初期の出力言語を決める（pals-api#42 を再開する）。
 - [ ] テスト: 要求の回答言語が `ja` のとき、確認質問を含む学習者向けの文言が日本語になる。
