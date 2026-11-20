@@ -303,3 +303,4 @@
 | 2026-11-19 | 保持構成の復旧更新とローカル受入 | 0699両設置・health成功。ローカル1件accepted、費用増分US$0.034803・内部11呼出し。本番切替未実施、full plan修正5件・再更新修正14件はsource回帰のみ | [復旧更新と受入](entries/2026-11-19-native-renewal-local-acceptance.md) |
 | 2026-11-19 | UI配備再開時のローカル実API資格確認 | 1件accepted、増分US$0.040308・内部12呼出し。候補v11 source gate成功。本番切替とIAM更新は未実施 | [再開確認](entries/2026-11-19-ui-release-resume-local2.md) |
 | 2026-11-19 | 読み取りbackoffと復旧更新 | 旧履歴照合がthrottle停止。PR222の255回帰成功後、ce51両設置・health成功。local3単一送信accepted、増分US$0.038022。本番切替は未実施 | [復旧更新](entries/2026-11-19-ui-release-recovery-read-backoff.md) |
+| 2026-11-21 | UI配備の再開資料回収 | cleanな復旧sourceの26 aliasが署名済みinventoryと完全一致。既存原本3参照をSHA一致で回収。本番再開は未完了、速度改善は未測定 | [原本回収](entries/2026-11-21-ui-release-artifact-recovery.md) |
