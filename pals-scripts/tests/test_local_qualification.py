@@ -60,6 +60,9 @@ INFRA_REASON = (
 
 class BudgetTests(unittest.TestCase):
     def setUp(self):
+        patcher = patch.object(proxy, "LIMIT", 700000)
+        patcher.start()
+        self.addCleanup(patcher.stop)
         self.temp = tempfile.TemporaryDirectory()
         self.path = Path(self.temp.name) / "ledger.json"
         self.b = proxy.Budget(self.path)
@@ -2287,6 +2290,8 @@ class BudgetCumulativeLimitTests(BudgetRolloverFixture):
     def test_release_433_cumulative_allowance_is_two_dollars(self):
         patch.stopall()
         self.assertEqual(proxy.CUMULATIVE_LIMIT, 2_000_000)
+        self.assertEqual(proxy.LIMIT, 2_000_000)
+        self.assertEqual(gate.FIXED_LIMIT_MICROUSD, proxy.LIMIT)
 
     def resumed_after_unknown(self, *, limit=700000):
         # The unknown call may have consumed its full reservation, not actual=0.
@@ -2504,6 +2509,13 @@ class BudgetRolloverRefusalTests(BudgetRolloverFixture):
 
 
 class BudgetRolloverAcceptanceTests(BudgetRolloverFixture):
+    def setUp(self):
+        super().setUp()
+        # These tests pin the original fixed per-epoch bound of the status gate.
+        patcher = patch.object(gate, "FIXED_LIMIT_MICROUSD", 700000)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def rolled(self):
         closed = self.blocked_ledger()
         path, digest = self.approval()

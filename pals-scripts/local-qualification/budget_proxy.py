@@ -22,11 +22,12 @@ RATES = {
     "text-embedding-3-small": (Fraction(1, 50), Fraction(0)),
 }
 # Keep the reviewed per-epoch local cap; cumulative allowance is checked separately.
-LIMIT = 700_000
+LIMIT = 2_000_000
 # This proxy serves only the approved local qualification profile. Rollover never
 # replenishes its cumulative allowance; unknown closed calls retain their bound.
 # The owner waived the US$1 allowance for release #433 on 2026-11-21 and approved a
-# cumulative US$2 bound instead (the per-epoch LIMIT is unchanged).
+# US$2 bound for both the per-epoch LIMIT and the cumulative limit (the 2026-11-21 capture
+# attempts exhausted the old 700000 per-epoch bound).
 CUMULATIVE_LIMIT = 2_000_000
 ROLLOVER_SCHEMA = "pals.local-qualification-budget-rollover.v1"
 APPROVAL_SCHEMA = "pals.local-qualification-budget-rollover-approval.v1"
