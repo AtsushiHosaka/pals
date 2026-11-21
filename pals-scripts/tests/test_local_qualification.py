@@ -2277,6 +2277,17 @@ class BudgetRolloverFixture(unittest.TestCase):
 
 
 class BudgetCumulativeLimitTests(BudgetRolloverFixture):
+    def setUp(self):
+        super().setUp()
+        # These tests pin the boundary arithmetic at the original US$1 allowance.
+        patcher = patch.object(proxy, "CUMULATIVE_LIMIT", 1_000_000)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_release_433_cumulative_allowance_is_two_dollars(self):
+        patch.stopall()
+        self.assertEqual(proxy.CUMULATIVE_LIMIT, 2_000_000)
+
     def resumed_after_unknown(self, *, limit=700000):
         # The unknown call may have consumed its full reservation, not actual=0.
         old = proxy.Budget(self.ledger)
