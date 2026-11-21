@@ -72,6 +72,9 @@ class Refusal(Exception):
         self.detail = detail or {}
 
 
+# Must equal LIMIT in local-qualification/budget_proxy.py (owner-approved US$2 per-epoch bound for #433).
+FIXED_LIMIT_MICROUSD = 2_000_000
+
 def need(value, code):
     if not value:
         raise Refusal(code)
@@ -550,7 +553,7 @@ def budget_status(subject):
         and type(limit) is int
         and limit == subject["guard"]["budget_limit_microusd"]
         # Only an owner-approved rollover may carry a bound below the fixed one.
-        and (limit == 700000 if rollover is None else 0 < limit <= 700000)
+        and (limit == FIXED_LIMIT_MICROUSD if rollover is None else 0 < limit <= FIXED_LIMIT_MICROUSD)
         and all(x["state"] == "completed" for x in ledger["calls"])
         and 0 <= ledger["actual_microusd"] == ledger["reserved_microusd"] <= limit,
         "bounded_known_all_lane_provider_usage_required",

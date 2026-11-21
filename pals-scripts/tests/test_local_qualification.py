@@ -60,6 +60,9 @@ INFRA_REASON = (
 
 class BudgetTests(unittest.TestCase):
     def setUp(self):
+        patcher = patch.object(proxy, "LIMIT", 700000)
+        patcher.start()
+        self.addCleanup(patcher.stop)
         self.temp = tempfile.TemporaryDirectory()
         self.path = Path(self.temp.name) / "ledger.json"
         self.b = proxy.Budget(self.path)
@@ -2277,6 +2280,19 @@ class BudgetRolloverFixture(unittest.TestCase):
 
 
 class BudgetCumulativeLimitTests(BudgetRolloverFixture):
+    def setUp(self):
+        super().setUp()
+        # These tests pin the boundary arithmetic at the original US$1 allowance.
+        patcher = patch.object(proxy, "CUMULATIVE_LIMIT", 1_000_000)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_release_433_cumulative_allowance_is_two_dollars(self):
+        patch.stopall()
+        self.assertEqual(proxy.CUMULATIVE_LIMIT, 2_000_000)
+        self.assertEqual(proxy.LIMIT, 2_000_000)
+        self.assertEqual(gate.FIXED_LIMIT_MICROUSD, proxy.LIMIT)
+
     def resumed_after_unknown(self, *, limit=700000):
         # The unknown call may have consumed its full reservation, not actual=0.
         old = proxy.Budget(self.ledger)
@@ -2376,6 +2392,31 @@ class BudgetRolloverRefusalTests(BudgetRolloverFixture):
     def assert_untouched(self, raw):
         self.assertEqual(self.ledger.read_bytes(), raw)
         self.assertFalse(list((self.runtime / "budget").glob("closed-*")))
+
+    def test_healthy_used_ledger_below_the_reviewed_limit_may_raise_its_bound(self):
+        with patch.object(proxy, "LIMIT", 700000):
+            raw = self.healthy_ledger()
+        path, digest = self.approval(new_limit_microusd=2_000_000)
+        result = self.roll(path, digest)
+        self.assertEqual(result["new_limit_microusd"], 2_000_000)
+        closed = self.runtime / "budget" / ("closed-" + sha256(raw))
+        self.assertEqual((closed / "ledger.json").read_bytes(), raw)
+        opened = json.loads(self.ledger.read_bytes())
+        self.assertEqual(opened["limit_microusd"], 2_000_000)
+        self.assertEqual(opened["calls"], [])
+        self.assertEqual(
+            opened["rollover"]["closed_totals"]["cumulative"]["reserved_microusd"],
+            json.loads(raw)["reserved_microusd"],
+        )
+
+    def test_unused_ledger_below_the_reviewed_limit_is_still_refused(self):
+        with patch.object(proxy, "LIMIT", 700000):
+            raw = (proxy.Budget(self.ledger), self.ledger.read_bytes())[1]
+        self.assertEqual(
+            self.refused(*self.approval(new_limit_microusd=2_000_000)),
+            "rollover_healthy_ledger_refused",
+        )
+        self.assert_untouched(raw)
 
     def test_healthy_ledger_cannot_be_rolled_over(self):
         raw = self.healthy_ledger()
@@ -2493,6 +2534,13 @@ class BudgetRolloverRefusalTests(BudgetRolloverFixture):
 
 
 class BudgetRolloverAcceptanceTests(BudgetRolloverFixture):
+    def setUp(self):
+        super().setUp()
+        # These tests pin the original fixed per-epoch bound of the status gate.
+        patcher = patch.object(gate, "FIXED_LIMIT_MICROUSD", 700000)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def rolled(self):
         closed = self.blocked_ledger()
         path, digest = self.approval()
