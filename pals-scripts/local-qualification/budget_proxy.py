@@ -142,7 +142,12 @@ def closed_totals(ledger):
 
 
 def require_rollover_eligible(ledger):
-    """Only a ledger that can never be resumed may be closed; a healthy one continues."""
+    """Only a ledger that can never be resumed may be closed; a healthy one continues.
+
+    One exception, owner-approved with the reviewed LIMIT: a healthy ledger that has made calls
+    and carries a bound below the current LIMIT may be rolled over to raise its bound. Nothing
+    is reset: the closed ledger is archived byte-identically and its totals stay cumulative.
+    """
     states = [row["state"] for row in ledger["calls"]]
     if "reserved" in states:
         # The outcome of that call was never recorded. It is not this tool's to guess.
@@ -151,6 +156,7 @@ def require_rollover_eligible(ledger):
         ledger["blocked"]
         or any(state != "completed" for state in states)
         or ledger["reserved_microusd"] != ledger["actual_microusd"]
+        or (bool(states) and ledger["limit_microusd"] < LIMIT)
     ):
         raise ValueError("rollover_healthy_ledger_refused")
 
