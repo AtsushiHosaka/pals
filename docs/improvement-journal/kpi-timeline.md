@@ -300,7 +300,6 @@
 | 2026-11-18 | 後処理sourceのfresh health修正 | 旧2件RED／新47件GREEN。新候補CIは引継ぎ時点で確認中、live IAM・host操作0 | [fresh health](entries/2026-11-18-fresh-repair-health.md) |
 | 2026-11-18 | 認証更新後の単一送信に対する初回acceptance | 回答・実画面/reloadを観測したが、RUM POST3件を全abortしたwrite counterによりgate失敗。正式accepted不可。n1、先行認証確認と重複参照、金額未取得 | [受け入れgateの失敗](entries/2026-11-18-acceptance-observer-beacon.md) |
 | 2026-11-18 | Identifier-kind select chevron spacing | Local Chromium, 1024px/375px, two viewport cases: inset 5px FAIL → 17px PASS, center error 0.5px; no production deployment or model/latency/cost measurement | [Identifier chevron](entries/2026-11-18-identifier-select-chevron.md) |
-
 | 2026-11-18 | 図のsourceと実ブラウザ確認 | 3系統×2幅の6描画検査が通過。本番・実DB再取得は未確認、追加paid0 | [図の確認](entries/2026-11-18-figures-production-readiness.md) |
 | 2026-11-18 | 図付き回答の実DB保存・再取得 | 認証済み／ゲスト×2系統の4ケース成功。保存JSONB・HTTP再取得・所有者分離を確認。本番・Lean・実モデルは未確認 | [保存の回帰検査](entries/2026-11-18-figure-persistence-regression.md) |
 | 2026-11-18 | 一般Recipeの承認済みsource統合 | API185・Agent249unitと実Lean2件が通過。網羅率・本番は未確認、追加paid0 | [記録](entries/2026-11-18-general-recipe-approved-source.md) |
@@ -310,3 +309,5 @@
 | 2026-11-18 | Recipe CI依存と重複削減 | API exactCI成功、Agent準備通過後fullsuite確認中。短縮率未測定 | [記録](entries/2026-11-18-recipe-ci-dependency-repair.md) |
 | 2026-11-18 | API所有の候補検査接続 | 既定30秒は未達。明示90秒の機能3case成功を別条件で保持。本番・実DB未確認 | [記録](entries/2026-11-18-recipe-api-proposal-port.md) |
 | 2026-11-18 | Linux/Mac検証の責務分割 | Mac全体検査失敗を保持。分割gate21unit成功、全体CI確認中 | [記録](entries/2026-11-18-recipe-ci-disjoint-partitions.md) |
+| 2026-11-21 | 複数行 have の主張見出しの検査（pals#232、agent#152） | 6題×2反復、旧12/12・新12/12、平均14.1秒→13.9秒、30秒以内12/12。検査は一度も作動せず、改善も悪化も測れていない。費用0.028→0.032 USD（推計） | [見出し検査](entries/2026-11-21-claim-header-check.md) |
+| 2026-11-21 | 節の間でも Lean の行を飛ばさない指示（pals#232、agent#153、既定無効） | 10題×3反復、引用に入らない行 14%→0.6%、対応しない引用 0/93→0/86、到達 29/29→29/29、平均17.8秒→17.9秒。Luna lowのみ。費用0.088→0.085 USD（推計） | [引用の被覆](entries/2026-11-21-cover-all-lines-instruction.md) |
