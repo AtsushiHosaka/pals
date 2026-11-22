@@ -21,9 +21,11 @@ RATES = {
     "gpt-6-luna": (Fraction(1, 8), Fraction(1, 2)),
     "text-embedding-3-small": (Fraction(1, 50), Fraction(0)),
 }
-LIMIT = (
-    700_000  # Reserve a separate production test budget inside the thread's total $1.
-)
+# Keep the reviewed per-epoch local cap; cumulative allowance is checked separately.
+LIMIT = 700_000
+# This proxy serves only the approved local qualification profile. Rollover never
+# replenishes its cumulative US$1 allowance; unknown closed calls retain their bound.
+CUMULATIVE_LIMIT = 1_000_000
 ROLLOVER_SCHEMA = "pals.local-qualification-budget-rollover.v1"
 APPROVAL_SCHEMA = "pals.local-qualification-budget-rollover-approval.v1"
 APPROVAL_KEYS = {
@@ -285,6 +287,7 @@ class Budget:
         self.resumed_from_sha256 = None
         self.limit = LIMIT
         self.rollover = None
+        self.closed_reserved = 0
         self.started = False
         if path.exists():
             raw = path.read_bytes()
@@ -300,6 +303,11 @@ class Budget:
                 # with its archive and approval intact. Its bound is never raised.
                 self.limit = validate_rollover(old, path.parent)
                 self.rollover = old["rollover"]
+                self.closed_reserved = self.rollover["closed_totals"]["cumulative"][
+                    "reserved_microusd"
+                ]
+                if type(self.closed_reserved) is not int or self.closed_reserved < 0:
+                    raise ValueError("rollover_cumulative_reservation_invalid")
             if (
                 old["blocked"]
                 or (not old["calls"] and not rolled)
@@ -351,6 +359,8 @@ class Budget:
         with self.lock:
             if self.blocked or self.held + amount > self.limit:
                 raise ValueError("aggregate_budget_exceeded")
+            if self.closed_reserved + self.held + amount > CUMULATIVE_LIMIT:
+                raise ValueError("cumulative_budget_exceeded")
             if self.rollover is not None and not self.started:
                 # Before the first call of a rolled-over ledger is written or forwarded.
                 archive = rollover_archive(
