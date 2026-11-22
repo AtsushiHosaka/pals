@@ -27,6 +27,7 @@ import re
 import signal
 import stat
 import subprocess
+import sys
 import threading
 import time
 import uuid
@@ -64,7 +65,8 @@ class LiveTransport:
                  settle_seconds: tuple[float, ...] = (1.0, 2.0, 4.0),
                  sleep: Callable[[float], None] = time.sleep,
                  retry_seconds: tuple[float, ...] = (1.0, 2.0, 4.0, 8.0),
-                 wait_seconds: float = 120.0, clock: Callable[[], float] = time.monotonic):
+                 wait_seconds: float = 120.0, clock: Callable[[], float] = time.monotonic,
+                 refresh_policy: Path | None = None):
         self._refusal = refusal
         self._need(api_origin == contract["api_origin"], "api_origin_differs_from_contract")
         for name in ("api_origin", "web_origin"):
@@ -80,6 +82,18 @@ class LiveTransport:
                       "auth_origin": contract["auth_origin"], "web_root": contract["web_root"],
                       "session_path": str(self._session), "start_ms": int(start_seconds * 1000),
                       "call_ms": int(call_seconds * 1000)}
+        # Authority comes from the already validated, frozen production runtime binding,
+        # never from token claims. Tokens remain in the Node process alone.
+        remotes = [binding.get("ssm") for binding in contract["runtime"].values()]
+        if refresh_policy is not None and remotes and all(isinstance(x, dict) for x in remotes):
+            authority = {(x["profile"], x["region"], x["account_id"]) for x in remotes}
+            self._need(len(authority) == 1, "refresh_authority_conflict")
+            profile, region, account = authority.pop()
+            self._need(profile == "pals-prod-member" and region == "ap-northeast-1"
+                       and re.fullmatch(r"[0-9]{12}", account), "refresh_authority_invalid")
+            self._init["refresh_policy"] = {"python": sys.executable,
+                                            "guard": str(refresh_policy),
+                                            "region": region, "account_id": account}
         self._helper, self._extra_ca = Path(helper), extra_ca
         self._call_seconds, self._start_seconds = call_seconds, start_seconds
         self._settle, self._sleep = settle_seconds, sleep

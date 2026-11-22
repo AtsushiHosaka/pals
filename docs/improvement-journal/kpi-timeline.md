@@ -22,6 +22,14 @@
 | 2026-11-09 | 命題ごとの最小 import（腕 c カード、実機。Mathlib のみ16枚 + Frontier を使う6枚） | Lean 4.35、`import Mathlib` と最小 import、各3回・温かい、他の作業が動く機械（1分ロード 7〜20）。モデル呼び出しなし | 文が通る Mathlib のみ 15/16 と Frontier 4/6（`import Mathlib` は全て通る。失敗は変数への dot 記法で、全 import に戻す前提） | 5.09→2.37秒（中央値、n=45、カード対の比 0.48）、常駐メモリ 5.8→2.7 GB、読み込み 10,974→3,673〜4,323 モジュール。Frontier の通った4枚: CPU 時間の比 0.47〜0.65、メモリ 6.1→3.0〜3.9 GB（負荷の高い機械、温かい） | 0 | [stacks-import-index](entries/2026-11-09-stacks-import-index.md) |
 | 2026-11-10 | 命題固定＋機械修復（B）と無処理（A）の、同じ時間帯での交互 A/B（36 枚、2 周目 6 枚、計 42 組）。他の行と並べて改善率にしない | Terra medium、修復上限 6、各 1 回、カードごとに A/B を続けて交互の順で実行、`hint_ab.py`（意味審査なし）、Lean 固定版 v4.32.0-rc1、他セッションの背景負荷あり | 実行 37/42 → 38/42（差 +0.028 [0.000, +0.083]、効果は確認できない） | 166→146秒（−15.4 [−35.3, +3.9]、0 をまたぐので効果は確認できない）。呼び出し −1.47/枚 [−2.15, −0.79]、食い違い 0.55→0/枚 | 84 実行で 6.253 ドル（推計。A 3.466、B 2.786。約 0.149 ドル/組、予算停止） | [alternating-ab-freeze-repair](entries/2026-11-10-alternating-ab-freeze-repair.md) |
 | 2026-11-11 | seq30 前の退行確認: pals-agent main `000da00` 対 本番 worker `427caf8`、既定経路、同じ14項目・各1回（同時実行） | Terra medium、実Lean 4.32.0-rc1、修復上限6、HTTP検証器なし | 両腕とも 13/14（食い違い 0）。初回コンパイル 5/14 → 8/14（区間 +0.000〜+0.429、p=0.25）。検出力は30ポイント差で約22%、40ポイント差で約51%（小さい悪化は見逃しうる） | p50 92.6 → 66.4秒、平均 136.2 → 135.3秒（差 −0.84秒、区間 −26.3〜+20.5）。どちらも目標30秒に遠い | 計測値 0.7267 → 0.7283ドル（14項目の合計、定価換算の上側の見積もり。両腕で約1.455ドル） | [seq30-agent-regression-check](entries/2026-11-11-seq30-agent-regression-check.md) |
+| 2026-11-12 | 常駐 Lean(fork する zygote)の検証 1 回(方針検査+コンパイル+監査)。Mac は cold 対 常駐の同条件、Linux は本番イメージの一時コンテナ。判定は 16 件一致 | Lean 4.32.0-rc1、各 1 回、モデルなし。Mac は共有機・負荷 12〜23、Linux は 8 CPU | 判定の一致 16/16 | Mac 単独 p50 15.8→1.33 秒、10 並行 p50 35.9→1.80 秒。Linux: コンパイル 約3.0→0.8 秒、監査 0.5 秒(この PR に生データなし・未確認) | 0 | [resident-lean-latency](entries/2026-11-12-resident-lean-latency.md) |
+| 2026-11-12 | 高速レーン(段階 0 を常駐上で): easy 13 + medium 5 題、各 1 回。通常経路(79秒)との題の重なりは 9 題だけで、改善率にしない | Luna/low、負荷 12〜18、並列 8 子、`exact?` の索引つき | verified 3/18(誤答 0)、通常経路へ 14 | 固定命題で答えた 2 題は表示まで 3.4・4.1 秒、形式化経由は 12.2 秒。形式化の中央値 5.5 秒 | 0.6 ドル未満(推計) | [fast-lane-e2e](entries/2026-11-12-fast-lane-e2e.md) |
+| 2026-11-12 | 高速回答(統合呼び+3並列+常駐 Lean の競争+投機的な関所)と現行の通常経路を、同じ tuning の 20 題(新入生 12 + 学部 8)で。同時刻の交互実行ではない | 通常経路 Terra medium、修復上限 3、負荷 8〜13。高速回答 Luna none、`terse2` 関所、負荷 11〜13、2 回(計 40 件) | 通常経路 20/20。高速回答 21/40(誤答 0、目視)。10 秒以内に表示まで届いたのは 40 件中 18 件 | 通常経路 回答表示まで中央値 61 秒(最小 29 秒)。高速回答 6.2 秒(p90 10.5、最大 11.2)、検証済みまで 4.3 秒。落ちる 19 件は中央値 6.0 秒を使う | 通常経路 0.622 ドル(0.031/題)。高速回答 0.001 ドル未満/題(推計) | [fast-answer-vs-current](entries/2026-11-12-fast-answer-vs-current.md) |
+| 2026-11-13 | 高速回答を初見の 24 題(tuning 分割の未使用分、easy 1・medium 12・hard 11)で 1 回。既存の解説レビューまで通す。調整に使った 20 題の数字とは並べない | Luna none、関所 `terse2`、3 並列、負荷 10〜20 | 答えた 4/24(解説レビュー込み)。Lean+関所を通ったのは 8/24。通った 28 組のうち依頼より弱い 1(関所は通過、解説レビューが却下) | 解説レビュー込みで表示まで 7.9〜10.0 秒(4 件)、レビューなしなら 8/24 が 10 秒以内。落ちる 13 件は中央値 7.9 秒を使う | 0.02 ドル(推計) | [fast-answer-faithfulness-unseen](entries/2026-11-13-fast-answer-faithfulness-unseen.md) |
+| 2026-11-13 | 大学1年レベル dev_unseen 20 題の高速経路の測定（調整前 D1・F1、調整後 X1、通常経路 N1）。調整後は調整に使った後で初見ではなく、改善率にしない | 通常経路 Terra medium・修復上限 3（2026-11-11 実行）。高速 Luna none・各 1 回。D1・F1・X1 の実行日と revision は未記録 | 調整前 高速の回答 1/20（D1・F1。答えた題は別）、調整後 2/20（X1）。10 秒以内の表示は全て 0/20。通常経路 20/20 | 調整前+通常経路のリプレイの全体中央値 82.5 s（F1）。調整後の高速単独の総時間の中央値 13.39 s（X1。通常経路へ落ちた分を含まない。調整前の高速単独 D1 は 11.9 s）。通常経路の回答まで中央値 88.6 s | 通常経路 20 題の合計 0.7165 ドル、高速 20 題の合計 D1 0.0136・X1 0.0177 ドル（推計。F1 の高速は未計測） | [freshman-dev-unseen-measure](entries/2026-11-13-freshman-dev-unseen-measure.md) |
+| 2026-11-14 | seq30の認証コンテキスト準備 | 親1ed5fff、通常API要求のヘッダー観測のみ | 1/1。追加の保護APIの404・前任ヘッダー照合は未達 | 未測定 | 有料質問なし、実請求未確認 | [seq30-alert-window-validation](entries/2026-11-14-seq30-alert-window-validation.md) |
+| 2026-11-14 | seq30の実依存ローカル資格確認2 | 実DB・Lean・provider、ARM64、1件の送信から再読み込み | 1/1 accepted。本番受け入れではない | 未測定 | 合計0.038288ドル（台帳差分推計） | 同上 |
+| 2026-11-14 | seq30の公式切り替え | 候補93521b22、計画de9f83e5、実AWS | 0/1。alerts-beginのValidationExceptionで利用停止前に終了 | 未測定 | 未確認 | 同上 |
 
 ## 指標の表に入らないエントリ
 
@@ -53,7 +61,258 @@
 | 2026-11-11 | 段階0の独立レビュー(2回目)対応(pals-agent#106、405f144): 2層の許可リスト、新しいプロセスでの再検査、RSS/CPU 監視、リクエストごとの新しいワーカー。100題は負荷 15〜33 で 12題を回答(前回 18、最大 10.3 秒、形式命題の誤答0。説明文の欠陥が4題あり、説明つきの正答は最大8題)。被覆の低下は負荷・起動の競合・`exact?` 除外を分離できていない | [stage0-review2](entries/2026-11-11-stage0-review2.md) |
 | 2026-11-11 | Settings select chevron spacing: 5px → 17px visible inset in two local layouts; no answer-speed, accuracy or cost claim | [settings-select-chevron](entries/2026-11-11-settings-select-chevron.md) |
 | 2026-11-11 | T2 生成レーン（No-Sketch・2候補競争・パッチ修復・並列説明、既定 off）。検証までの時間 p50 68.8→54.2 s、回答完成 p50 85.4→61.5 s。p50 30 s には未到達。n=14、1回、端末高負荷 | [t2-lane-first-measurement](entries/2026-11-11-t2-lane-first-measurement.md) |
+| 2026-11-11 | Lean の並列 compile とメモリの実測（実 Lean、Mac/Docker、モデル0回）。メモリ4 GiB は cold で1本約40 s（8 GiB は約4 s）、2スロットは4 GiB では効かず8 GiB で10件キュー約20 s（1スロット約35〜46 s、4スロット約12 s）。2 CPU/8 GiB/2スロットを推奨、xlarge は10人同時＋2候補競争のとき | [lean-slots-measurement](entries/2026-11-11-lean-slots-measurement.md) |
 | 2026-11-11 | T2 の5腕再測定（負荷15前後）: 並列レビュー・説明（nd_k2_par）は回答完成 p50 55.8→39.5 s だが nd_k2 と区別できない（n=14）。テンプレート＋補完は退行（最終成功 13→11/14、修復 6→20、費用 +68%）。Lean枠1は差なし。初回成功 7→13/14 は再現 | [t2-five-arm-measurement](entries/2026-11-11-t2-five-arm-measurement.md) |
 | 2026-11-12 | T2 の低負荷再測定（実際は負荷11.5前後のまま）: nd_k2_par の回答完成 p50 95.8→40.0 s、p90 332.7→112.5 s（実測）。p50 30 s は実測で未達、Lean を3 sに切った推計で18.1 s。worker 配線は pals-agent#119（既定 off）。n=14、1回 | [t2-lowload-remeasure](entries/2026-11-12-t2-lowload-remeasure.md) |
 | 2026-11-12 | 段階的 DSP レーン（骨格→ステップ別の並列証明、既定 off）。14題・1回・端末高負荷: 検証までの時間 p50 base 128 s、`nd_k2` 45 s、stepwise 89 s（p90 740 s）。stepwise は `nd_k2` より遅い（+149 s、p=0.043）。最終成功 12/13/13（差は検出できない）。報告された問題は3腕とも失敗（stepwise はモデルが補題のステップを見つけたが、別の分解で詰まった）。費用 US$0.94/0.78/1.29 | [dsp-stepwise-lane](entries/2026-11-11-dsp-stepwise-lane.md) |
+| 2026-11-12 | 直接証明の構成別計測（常駐 Lean）: Terra low＋medium の同時レース（計算）で初回成功 25/28、成功した題の p50 約13〜14 s。Luna low は 3/14 で不採用、出力短縮は効かず。レースは未実測、修復込みの成功率は未確認。追記: 本番の形の実測（常駐 Lean、14題）で 13/14、回答完成 p50 20.7 s／p90 34.6 s | [t2-model-effort-race](entries/2026-11-12-t2-model-effort-race.md) |
+| 2026-11-12 | 大学1年 dev_unseen 20題（異種レースにとって初見）、ワーカーの carry・再開経由、常駐 Lean＋往復1.1 s固定: 20/20 検証済み、回答完成 p50 26.6 s、p90 100.9 s、30 s 以内 11/20、10 s 以内 1/20。初回通過 11/20（通った題の回答完成 中央値16.9 s）、修復の9題は中央値96.9 s。弱い定理文 1件。US$0.60。単独 none は初回 5/20、low は 7/20 | [t2-freshman-dev-unseen](entries/2026-11-12-t2-freshman-dev-unseen.md) |
 | 2026-11-13 | 大学1年レベルの未使用の題 40 題（調整用20・最終確認用20）を追加。既存集合の easy は使い尽くしだった（tuning 17 全て使用、held_out 8 のうち未使用で命題固定なしは 3） | [freshman-eval-items](entries/2026-11-13-freshman-eval-items.md) |
+| 2026-11-14 | 高速な初回候補(PALS_FAST_FIRST_ATTEMPT、既定 off)を worker 経路で測定: dev_unseen 20 題の 10 秒以内は off 3 → 常駐 Lean ありの on 4 → なしの on 1。p50 は 29.8 → 33.4 / 33.1 s。tuning 14 題は 5 → 2。有効化は勧めない(n 小・負荷 5〜10・API 代用) | [fast-first-attempt-wiring](entries/2026-11-14-fast-first-attempt-wiring.md) |
+| 2026-11-13 | 一般 Recipe の具体化の被覆（フラグ既定 off、pals-agent#126）: モデルなし 0/90、形式化 Luna 1 回つき 1/64（それも恒等の具体化）。誤採用 1 件を関連性検査で除去。届く範囲を決めるのは一般形の数でなく質問→形式命題の段。費用 US$0.02 | [general-recipe-instantiation-coverage](entries/2026-11-13-general-recipe-instantiation-coverage.md) |
+| 2026-11-14 | スキーム論 10 題（新しい区分 algebraic-geometry-v1）を worker 経路で測定。命題のすり替えを防ぐ案内と検査で、依頼どおりの通過が 5/10 → 8/10（Lean が通った数は 9/10 のまま）。n=1 | [scheme-theory-e2e](entries/2026-11-14-scheme-theory-e2e.md) |
+| 2026-11-14 | T2: 初回は low の1候補・失敗は medium で修復（cheap-first）と import/open の整形。dev_unseen 20題で回答完成30秒以内 9→12〜13/20、費用 US$0.032→0.012〜0.016/問。tuning 14題は 8→13/14。n=20、実 Terra、API 往復は固定1.1秒の代用、既定 off | [t2-cheap-first](entries/2026-11-14-t2-cheap-first.md) |
+| 2026-11-14 | 回答の精度の回帰セット（10題）で前後を測定。v2 の x² 生成失敗 6/9→0/9（検査の不具合を修正）。v1 の終端拒否は 4/108→4/90 で変化なし。固定出力の QA は答えのない結論を 0/10 しか拒否せず、コードの検査が 8/10 を先に止める（誤検出 0/87）。pals-agent#127 | [answer-accuracy-regression-set](entries/2026-11-14-answer-accuracy-regression-set.md) |
+| 2026-11-14 | PR #88 の審査指示を同じセットで測定: 固定出力で答えのない結論の拒否 0→10/10、誤拒否 2→1/20。ただし端から端まで90試行で終端拒否 6（v1 baseline 4/108）で総数は減らず（誤拒否の内訳は v1p88 が未分類のため、誤拒否が減ったかは未確認）。不採用、オーナー判断待ち | [pr88-review-instruction-measured](entries/2026-11-14-pr88-review-instruction-measured.md) |
+| 2026-11-14 | Lean 検証後の意味の審査: 「明示的な N を与えよ」の ε-N の題は、Lean が N を与えない形では 16/16 却下、N を命題に含めると 5/6 承認、要求なしでは 16/16 承認。審査役の過剰な厳しさではなく形式化が要件を落としている | [semantic-review-explicit-n](entries/2026-11-14-semantic-review-explicit-n.md) |
+| 2026-11-14 | 届くための一般形の調査（カードは作らない）: 35 個の一般形で 36/90（tuning 28、dev_unseen 8）、うち 28 題は G が題の命題そのもの。2 題以上に届く一般形は 1 個（2 題）。費用 0 | [general-forms-needed](entries/2026-11-14-general-forms-needed.md) |
+| 2026-11-14 | スキーム論の第2回（11題 v2、Stacks の Tag 名指しを含む）。Tag を Mathlib の宣言に引く案内と未完成検査（pals-agent#134）で、依頼どおりの通過 6/11 → 9/11、Tag の3題は 226〜536 秒 → 41〜48 秒。T2 経路で p50 43 秒。n=1 | [scheme-theory-e2e-part2](entries/2026-11-14-scheme-theory-e2e-part2.md) |
+| 2026-11-14 | T2: 30秒超の題の内訳（1回修復で通る 17.5%、2回以上 19%）と、最初の patch も low にする試み。patch は 20.1→7.7 秒、1回修復の題は 40.7→33.5 秒だが、全体の30秒以内は 11〜12/20（cheap-first は 12〜13）で、tuning は 11/14（13/14）。不採用。目標 16/20 は未達 | [t2-30s-late-items-and-cheap-patch](entries/2026-11-14-t2-30s-late-items-and-cheap-patch.md) |
+| 2026-11-14 | T2: 初回失敗33件の分類（tactic 45%・未知の名前 21%・型 15%・構文 15%）と、修復2回以上の題は4題に集中。失敗の種類ごとの修復の指示は効果なし（patch 成功 15/30 対 14/30）。異種レース＋patch＋整形も30秒以内 13/20 で費用 1.5〜1.8倍。目標 14/20 未達、どちらも不採用 | [t2-failure-classes-and-repair-hints](entries/2026-11-14-t2-failure-classes-and-repair-hints.md) |
+| 2026-11-14 | 要件（明示的な証人・指定された定義）を生成プロンプトに伝える指針（既定 off）: 回答が返る 11/12→9/12、却下 1→0、検証失敗 +3、費用 +43%。不採用 | [requirement-guidance-statement](entries/2026-11-14-requirement-guidance-statement.md) |
+| 2026-11-14 | 意味の審査の不合格の理由コードを分離して保存（pals-api#106、公開応答は従来コードのまま、failure_reason を追加）。却下後の作り直しは Draft から再生成するだけで 8/8 が承認（理由を渡しても改善せず）。状態遷移の設計承認待ち | [semantic-review-reason-code-and-reformalize](entries/2026-11-14-semantic-review-reason-code-and-reformalize.md) |
+| 2026-11-14 | 意味の審査で不合格の依頼を新しいジョブで1回だけ作り直す（pals-api#108、既定 off、マージ済み）。作り直しは Draft からの再実行で 8/8 承認の見込み（agent 側の測定）。API 経由の端から端までは未測定 | [semantic-review-reformalize-job](entries/2026-11-14-semantic-review-reformalize-job.md) |
+| 2026-11-14 | スキーム論の第3回（同値4題 v3、Stacks 環境、検証環境の振り分け）。同値を両方向で述べる案内（pals-agent#136）で依頼どおり 1/4 → 4/4。StacksCore は手元で 116 秒でビルドでき、検証は既定より約 20% 遅い。n=1 | [scheme-theory-e2e-part3](entries/2026-11-14-scheme-theory-e2e-part3.md) |
+| 2026-11-14 | 10 秒の時間の予算表(初回で通った題、dev_unseen): cheap-first は検証済みまで p50 9.3 s だが表示まで 19.7 s(解説の待ち 4.1 + 解説の出力レビュー 2.9 + 意味審査 1.9)。推論 none(初回・解説)は題の集合で向きが逆(dev 初回成功 13→7、tuning ≤10 s 5→9)で有効化は勧めない。表示の短縮は「検証済みを先に表示」の提案(未実装) | [ten-second-budget](entries/2026-11-14-ten-second-budget.md) |
+| 2026-11-14 | 作り直し（pals-api#108）の前後をパイプラインで測定: 要件指定の題 12 実行で回答が返る 9/12→12/12、費用 +27%、却下された依頼は +106〜160 s。API 経由の端から端までは未測定（スタックを立てられない理由を記録）。有効化の手順を docs に | [reformalize-pipeline-before-after](entries/2026-11-14-reformalize-pipeline-before-after.md) |
+| 2026-11-14 | 検証済みの命題を解説より先に表示(verified-first、既定無効): cheap-first と組み合わせた計算で、検証済みの命題(Lean が証明した命題)の表示まで 10 秒以内は dev_unseen 0/20 → 4/20、tuning 0/14 → 5/14(p50 21.3 → 14.4 s、20.3 → 13.2 s)。API #109 マージ済み、webfront #72 はドラフト(オーナー判断待ち)。10 秒目標には届かない | [verified-first-display](entries/2026-11-14-verified-first-display.md) |
+| 2026-11-14 | seq30のIDトークン15分の期限に対応する通常更新経路を準備。実環境の読み取り照合1/1。実更新・本番受け入れ・時間短縮は未確認、実行承認待ち | [seq30-session-renewal](entries/2026-11-14-seq30-session-renewal.md) |
+
+## seq30予行の追加測定
+
+| 日付 | 何を測ったか | 条件 | 成功 | 所要時間 | 費用 | エントリ |
+|---|---|---|---:|---|---|---|
+| 2026-11-14 | seq30予行 7ef・マージ後success | local macOS・隔離した代用品・技術試行n=1 | 0/1（筋書きの成否） | case=221.158; wrapper=221.281秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 7ef・隔離再現 | local macOS・隔離した代用品・技術試行n=1 | 0/1（筋書きの成否） | run=160.476; total=162.268秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 8b19・診断変更後 | local macOS・隔離した代用品・技術試行n=1 | 0/1（筋書きの成否） | run=161.938; initial_capture=162.058秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 684・開発検証success | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=372.358; wrapper=372.487秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 03cc・success | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=328.837秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 03cc・fail-before-admit | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=381.699秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 03cc・expired-predecessor-fail-before-admit | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=363.945秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 03cc・fail-after-admit | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=392.429秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 03cc・crash-after-admit | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=370.167秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 03cc・expired-predecessor | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=359.778秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+| 2026-11-14 | seq30予行 03cc・recovery-units-active | local macOS・隔離した代用品・技術試行n=1 | 1/1（筋書きの成否） | case=355.234秒（証明1枚の時間ではない） | モデル呼出しなし・その他費用未集計 | [seq30予行の権限修正](entries/2026-11-14-seq30-rehearsal-packaging.md) |
+
+## seq30資格確認前の証跡確認
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-14 | ビルド証跡と認証契約の前提確認 | local macOS・親8b56f11・モデル未送信 | 準備失敗2、旧Web ID再現失敗2、新実証跡成功2、依存準備成功1、契約拒否1。異なる試行を合算した改善率は作らない | 最終実compiler canary 3141ms。全体時間未計測 | 52呼出し・台帳180904マイクロドルから不変。その他費用未集計 | [seq30ローカル証跡](entries/2026-11-14-seq30-local-provenance.md) |
+
+## seq30契約修正後の予行と時計の再確認
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-14 | ce084 original success | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | monotonic=319.724秒、次の開始までの壁時計600秒以内 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+| 2026-11-14 | ce084 original fail-before-admit | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | monotonic=378.651秒、次の開始までの壁時計600秒以内 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+| 2026-11-14 | ce084 original expired-predecessor-fail-before-admit | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | monotonic=358.422秒、次の開始までの壁時計600秒以内 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+| 2026-11-14 | ce084 original fail-after-admit | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | monotonic=389.621秒、次の開始までの壁時計600秒以内 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+| 2026-11-14 | ce084 original crash-after-admit | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | monotonic=374.444秒、次の開始までの壁時計600秒以内 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+| 2026-11-14 | ce084 original expired-predecessor | local macOS・代用品・n=1 | 時間未検証（機能筋書きは成功） | monotonic=360.194秒、壁時計未検証 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+| 2026-11-14 | ce084 original recovery-units-active | local macOS・代用品・n=1 | 時間未検証（機能筋書きは成功） | monotonic=414.333秒、壁時計未検証 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+| 2026-11-15 | ce084 awake expired-predecessor | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | 壁時計=317.882秒 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+| 2026-11-15 | ce084 awake recovery-units-active | local macOS・代用品・n=1 | 1/1（時間・回収を含む筋書き） | 壁時計=357.803秒 | モデル呼出しなし・その他費用未集計 | [契約と時計の確認](entries/2026-11-15-seq30-runner-contract-wall-time.md) |
+
+## seq30の認証準備2試行
+
+2026-11-16に試行別記録を補完した。実施日は11月15日で、品質台帳の既存2行と同じ試行を示す。品質台帳の試行数は増やさない。本番受け入れ・数学の精度・改善率には換算しない。
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-15 | seq30認証contextの開始 | local macOS・親24d8f95・infra ce084f3・実セッション・n=1 | 0/1。一般コードで停止、原因未確定・unclassified | 未測定 | 有料モデル呼び出しなし・実請求未確認 | [認証開始確認](entries/2026-11-15-seq30-auth-readiness-start.md) |
+| 2026-11-15 | seq30認証contextの観測診断 | local macOS・親24d8f95・infra ce084f3・実セッション・n=1 | 0/1。認証済みcontext未観測、原因未確定・unclassified | 未測定 | 有料モデル呼び出しなし・実請求未確認 | [観測診断](entries/2026-11-15-seq30-auth-readiness-diagnostic.md) |
+| 2026-11-16 | seq30再開時のローカル依存先準備 | local macOS・親24d8f95・infra ce084f3・正規prepare・n=1 | 技術準備1/1。leftover0、headless認証・本番受け入れ未確認 | compiler canary2455ms（全体時間は未測定） | 52 calls・180904/700000μUSDを維持、新しい有料呼び出しなし・実請求未確認 | [ローカル準備](entries/2026-11-16-seq30-resume-local-readiness.md) |
+| 2026-11-16 | seq30新seedの認証context開始 | local macOS・親24d8f95・infra ce084f3・候補b976・n=1 | 技術確認1/1。対象GETでBearer観測、本番API認可・受け入れ未確認 | 未測定 | 有料処理なし、確認時点52 calls・180904/700000μUSD、実請求未確認 | [認証開始確認](entries/2026-11-16-seq30-auth-readiness-recovered.md) |
+| 2026-11-16 | seq30第3回ローカル資格確認 | local macOS・親24d8f95・infra ce084f3・候補b976・n=1 | 0/1、compile通過後に意味審査rejected。本番未切替、再送なし | 全体wall118.602秒、canary2429ms（回答時間ではない） | proxy差分0.039882 USD（8 calls）、実請求未確認 | [資格確認3](entries/2026-11-16-seq30-local-qualification-3.md) |
+
+
+2026-11-16文書補足: [認証診断の実装出典](entries/2026-11-16-seq30-auth-instrumentation-provenance.md)を追記した。既存診断の実装と非公開記録の照合先を補ったもので、新しい測定値や試行数は追加していない。
+
+
+## seq30の第4回ローカル資格確認
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-16 | seq30第4回ローカル資格確認 | local macOS・親24d8f95・infra ce084f3・候補b976・n=1 | 1/1 accepted。同じ取得の正規再照合もaccepted、本番受け入れは別 | 取得全体wall138.567秒（主担当の当時観測・回答時間ではない） | proxy差分0.034660 USD・内部11 calls、実請求未確認 | [資格確認4](entries/2026-11-16-seq30-local-qualification-4.md) |
+
+
+## seq30の通知抑制作成失敗
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-16 | seq30正規apply | 親24d8f95・infra ce084f3・候補b976・n=1 | 0/1、ExpireDateの秒精度をAWSが拒否。利用停止前終了、通知抑制cleanup未完了 | alerts-begin 90.061秒、restore-check 415.087秒、停止区間null | 本番質問の新規送信なし、総額未測定 | [失敗記録](entries/2026-11-16-seq30-alert-minute-precision.md) |
+
+
+## seq30の通知抑制期限修正
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-16 | 分精度と固定診断の回帰 | infra e803b4f・ローカル決定的検査一式n=1 | 1/1、旧版RED→alert58/controller146/packaging1成功。実AWSと本番受け入れは未確認 | controller全体334.750秒、全検査合計は未測定 | モデル・AWS呼出なし、総額未測定 | [修正記録](entries/2026-11-16-seq30-alert-minute-precision-fix.md) |
+
+
+## seq30の放棄候補の配置回収
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-16 | 放棄したb976の正規配置回収 | AWS・親24d8f95・infra ce084f3・技術確認n=1 | 1/1。control4・compute3対象一致、両roleで不在読戻し確認。本番受け入れとは別 | 精密な全体wall時間未測定 | 新しい有料質問なし、総額未測定 | [配置回収](entries/2026-11-16-seq30-abandoned-candidate-cleanup.md) |
+
+2026-11-16条件補足: [資格確認4](entries/2026-11-16-seq30-local-qualification-4.md)に、実requestの証明生成モデル・推論量、固定実装の審査/説明条件、設定上の修復上限と実使用回数未確認を追記した。既存取得の条件照合であり、新しい測定・費用・試行数は加えていない。
+
+2026-11-16条件補足: [資格確認3](entries/2026-11-16-seq30-local-qualification-3.md)にも実requestのモデル・推論量・単一問題n=1と固定実装の審査/説明条件を追記した。第3回の保存済み修復0/上限6を他の取得へ流用せず、既存試行数と費用を維持した。
+
+
+## seq30の累積ローカル予算ガード
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-16 | 累積1 USDの予約ガードと決定的回帰 | local macOS・親d7a8df8・6submodules初期化・技術bundle n=1 | 1/1。旧版5件中4失敗→修正後5件通過、正規suite Python214・Node16、skip0。途中sandbox43 errors/既存3skipも記録 | 全体monotonic39.700秒（担当agentの観測、製品回答時間ではない） | 有料モデル呼出しなし、総額未測定 | [累積予算](entries/2026-11-16-seq30-cumulative-local-budget.md) |
+
+
+## seq30通知期限修正後の機能予行
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-16 | 通知期限修正後の7機能シナリオ | local macOS・infra3b31597・代用品・bundle n=1 | 機能bundle1/1、個別7件成功・各600秒以内・回収確認。全体600秒条件は未達、実owner/本番受け入れとは別 | 一式wall2548.159秒・monotonic2548.146秒 | 有料取得なし、総額未測定 | [予行記録](entries/2026-11-16-seq30-minute-rehearsal.md) |
+
+
+## seq30新候補のモデル送信前の準備
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-16 | 新候補のsource・依存先・配置・認証開始の準備 | 親3b663576・infra3b31597・候補f20・非課金bundle n=1 | 技術準備1/1。host app/DB変更なし、auth operation0・seed不変。第5回と本番受け入れは未実行 | canary2152ms（全体時間は未測定） | 新しいモデル取得なし、71 calls/255446μUSD維持、総額未測定 | [準備記録](entries/2026-11-16-seq30-minute-preparation.md) |
+
+| 2026-11-17 JST | seq30再開前の認証と前提確認 | 親3b663576・候補f20・非課金bundle n=1 | 0/1、observe停止・STS TokenRetrievalError、通常SSO認証待ち。新しい有料送信・利用停止なし | 未測定 | モデル送信なし、実請求未測定 | [再開記録](entries/2026-11-17-seq30-resume-auth.md) |
+
+
+## seq30の検証環境回復と第5回取得
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 再準備時のlive build履歴確認 | local macOS・親3b663576・infra3b31597・候補f20・技術bundle n=1 | 0/1。履歴確認失敗を保持し、同source rebuildとfresh prepareで前提回復。製品分母に含めない | 全体時間未測定、回復時canary2588ms | 新しいpaid取得なし、総額未測定 | [履歴確認失敗](entries/2026-11-17-seq30-provenance-history-refusal.md) |
+| 2026-11-17 | 第5回ローカル資格確認 | 同問題・terra/medium・同oracle・実依存先・製品取得n=1 | 1/1 accepted。正規再照合は同じ取得、記録時点の本番受け入れは別 | whole capture wall139.635秒（主担当の当時観測） | proxy差分0.037227 USD・内部12 calls、実請求未確認 | [第5回取得](entries/2026-11-17-seq30-local-qualification-5.md) |
+
+
+## seq30のrestore-check停止
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 新候補の正規apply | 親3b663576・infra3b31597・候補f20・技術bundle n=1 | 0/1。restore-checkのtuple未確定で停止、根因unclassified。owner/cleanup解放、利用停止前 | restore-check156.472秒、adstat97.150/93.299秒、停止区間null | 新しいpaid本番質問0件、総額未測定 | [失敗記録](entries/2026-11-17-seq30-restore-check-failure.md) |
+
+
+## seq30のnative inventory診断
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 診断CLI送信前検査 | 技術bundle n=1・host/state作成0 | 0/1。固定code拒否を保持、入力と旧validator互換性を修正。製品分母外 | 未測定 | paid/model calls0、総額未測定 | [初回失敗](entries/2026-11-17-seq30-inventory-diagnostic-preflight-failure.md) |
+| 2026-11-17 | 実native inventoryの読み取り診断 | live13be88fc・3観測を含む技術bundle n=1 | 1/1。probe完了・appDBfalse。元の拒否は未再現で根因不明、finale4全体のlive検証ではない | offline最終5suite5.230秒、実診断全体は未測定 | paid/model calls0、local83calls292673μUSD維持、総額未測定 | [読取診断](entries/2026-11-17-seq30-inventory-readonly-diagnostic.md) |
+
+
+## seq30の自動CI集約の記録補足
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 同branchの自動CI集約・既存結果の補足 | 同一head e4adbff・push/PR・4 jobsと検査範囲を保持 | push43998354835 cancelled、PR43998363240 success・4jobs成功。新測定・台帳分母追加なし | 削減秒数・負荷は未測定 | 未測定 | [CI集約](entries/2026-11-17-seq30-ci-aggregation.md) |
+
+
+## seq30の第6回ローカル資格確認
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 第6回ローカル資格確認 | 親5e53・infra3f9・候補33447・同条件・製品取得n=1 | 0/1。同一requestの終端failed/lean_verification_failed、詳細unclassified。marker保持 | whole wall108.650秒（主担当の当時観測） | proxy差分0.034900 USD・内部8 calls、実請求未確認 | [第6回取得](entries/2026-11-17-seq30-local-qualification-6.md) |
+
+
+## seq30の第7回ローカル資格確認
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 第7回ローカル資格確認 | 親5e53・infra3f9・候補33447・同条件・製品取得n=1 | 1/1 accepted。初回answered/送信1、保存・表示・reload契約を通過。第6回失敗は別記録 | whole wall137.443秒（主担当の当時観測） | proxy差分0.040194 USD・内部11 calls、実請求未確認 | [第7回取得](entries/2026-11-17-seq30-local-qualification-7.md) |
+
+
+## seq30の通知rule読戻し失敗
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 候補33447の正規apply | 親5e53・infra3f9・技術bundle n=1 | 0/1。restore通過後begin/cancel読戻し失敗、通常cleanup完了・alert cleanup未完、利用停止前 | restore434.466秒、alerts-preflight1.259秒、begin2.086秒、cancel0.601秒、停止区間null | 新paid本番0、総額未測定 | [失敗記録](entries/2026-11-17-seq30-alert-readback-failure.md) |
+
+
+2026-11-17追記: [通知ruleの早期取消](entries/2026-11-17-seq30-alert-readback-failure.md)は03:37 UTC頃にdeleted/readbackを確認した。同じ技術attemptの後続観測であり、上記のcycle失敗0/1と台帳の分母は変更しない。固定期限03:44 UTCを延長せず、新規ruleも作成していない。
+
+
+## seq30の初回admission-status失敗
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 候補085dの正規apply | 親f00・infra847・技術bundle n=1 | 0/1。初回admission-status失敗、cleanup中の再確認passed・ownerとcleanup完了、利用停止前 | 初回57.390秒、再確認101.734秒。停止時間未測定 | 新paid送信0、総額未測定 | [失敗記録](entries/2026-11-17-seq30-current-tuple-failure.md) |
+
+2026-11-17追記: [broker時刻の限定読み取り](entries/2026-11-17-seq30-current-tuple-failure.md)で、診断側のmode指定誤りによる初回拒否と、修正後のread_completeを両方保持した。brokerと失敗inventoryの時刻重複・競合候補の局所再現は、本番原因の確定や新しい測定行とは扱わず、上のcycle0/1を維持する。
+
+
+## seq30の検証実行条件の整理
+
+| 日付 | 何を整理したか | 条件 | 判断 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 変更境界・同一SHA・TTLごとの検証実行条件 | #379判断、既存policy維持、code/CI変更なし | 運用整理を採用。新測定・台帳分母追加なし、必須CI/本番受け入れ/復旧を維持 | 削減秒未測定、以前の全体10分未達を保持 | 未測定 | [運用整理](entries/2026-11-17-seq30-validation-boundaries.md) |
+
+
+## seq30の資格snapshot読み取り修正
+
+| 日付 | 何を測ったか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | 資格snapshot修正の対象技術検証 | infra15c54e2・実flock/模擬STS・bundle n=1 | 1/1。bad847 RED、修正版198件/0skip GREEN。本番原因・受け入れは未確定 | 対象suite2.167秒、短縮効果未測定 | 新paid0、総額未測定 | [修正記録](entries/2026-11-17-seq30-credential-snapshot-fix.md) |
+
+
+## 回答反映とキュー送信の分離
+
+| 日付 | 何を確認したか | 条件 | 結果 | 時間 | 費用 | エントリ |
+|---|---|---|---|---|---|---|
+| 2026-11-17 | API #111の送信・反映分離の実装試行 | 基点08cf8ac・候補c999de0・locked環境・unit77件＋実PostgreSQL9件 | 旧回帰4件RED、初期fixture失敗を保持、修正後86件成功・0skip。製品成功率には換算せず、20秒遅延時の反映p95は未測定、性能改善未立証 | 対象suite20.738秒。回答時間・短縮秒数ではない | 新規モデル呼び出しなし、総費用・削減額未測定 | [分離の実装試行](entries/2026-11-17-dispatch-apply-isolation.md) |
+
+
+## 送信と反映の分離の性能実測
+
+| 日付 | 確認したこと | 条件 | 結果 | エントリ |
+|---|---|---|---|---|
+| 2026-11-17 | 20秒送信遅延時の反映p95増分 | 実PG・完了fixture・制御queue、各arm20件×3burst | 旧request +20.147403秒→統合+0.023407秒、旧formal+20.113804秒→統合-0.024022秒。負値はばらつき。本番・10秒目標全体は未確認 | [性能実測](entries/2026-11-17-dispatch-apply-latency.md) |
+
+
+## 同日の追加測定・通知配線
+
+| 日付 | 試み | 結果と限界 | エントリ |
+|---|---|---|---|
+| 2026-11-17 | 接続先guard修正後の20秒送信遅延比較 | 旧request増分20.049274秒→統合0.006812秒、旧formal20.095772秒→統合0.006957秒。各3burst、本番未確認 | [再測定](entries/2026-11-17-dispatch-apply-latency-guarded.md) |
+| 2026-11-17 | 別process通知とAPI反映 | 完了fixture更新前起点の局所上限n20/p95 0.066105750秒。実Lean・HTTP/render・本番未確認 | [確定通知](entries/2026-11-17-cross-process-settlement-signal.md) |
+
+| 2026-11-17 | request長いポーリングのsource統合 | exact CI成功、認証取消時の枠残留を修正。本番性能未確認 | [画面取得](entries/2026-11-17-request-longpoll.md) |
+| 2026-11-17 | 失敗済みrelease後処理source | 対象548件成功、exact CIと最終review確認中。live未実施 | [後処理](entries/2026-11-17-failed-release-repair.md) |
+
+## 2026-11-18の再開と認証事前確認
+
+| 日付 | 試み | 結果と限界 | エントリ |
+|---|---|---|---|
+| 2026-11-18 | 通常ログイン後のcanonical受け入れ再開 | 認証事前確認1試行がexit 2、質問・有料送信0。診断6要求は6試行へ換算せず、新seed待ち。本番受け入れ未完了 | [認証再開](entries/2026-11-18-canonical-auth-resume.md) |
+| 2026-11-18 | 後処理sourceのfresh health修正 | 旧2件RED／新47件GREEN。新候補CIは引継ぎ時点で確認中、live IAM・host操作0 | [fresh health](entries/2026-11-18-fresh-repair-health.md) |
+| 2026-11-18 | 認証更新後の単一送信に対する初回acceptance | 回答・実画面/reloadを観測したが、RUM POST3件を全abortしたwrite counterによりgate失敗。正式accepted不可。n1、先行認証確認と重複参照、金額未取得 | [受け入れgateの失敗](entries/2026-11-18-acceptance-observer-beacon.md) |
+| 2026-11-18 | Identifier-kind select chevron spacing | Local Chromium, 1024px/375px, two viewport cases: inset 5px FAIL → 17px PASS, center error 0.5px; no production deployment or model/latency/cost measurement | [Identifier chevron](entries/2026-11-18-identifier-select-chevron.md) |
+| 2026-11-18 | 図のsourceと実ブラウザ確認 | 3系統×2幅の6描画検査が通過。本番・実DB再取得は未確認、追加paid0 | [図の確認](entries/2026-11-18-figures-production-readiness.md) |
+| 2026-11-18 | 図付き回答の実DB保存・再取得 | 認証済み／ゲスト×2系統の4ケース成功。保存JSONB・HTTP再取得・所有者分離を確認。本番・Lean・実モデルは未確認 | [保存の回帰検査](entries/2026-11-18-figure-persistence-regression.md) |
+| 2026-11-18 | 一般Recipeの承認済みsource統合 | API185・Agent249unitと実Lean2件が通過。網羅率・本番は未確認、追加paid0 | [記録](entries/2026-11-18-general-recipe-approved-source.md) |
+| 2026-11-18 | 信頼の水準の保持・表示 | Web対象158件が通過。API保存・本番は未確認、追加paid0 | [記録](entries/2026-11-18-library-trust-retained-display.md) |
+| 2026-11-18 | APIの信頼診断保存 | 対象229件・追加境界16件・guest9件は成功。重複あり、実DB・本番は未確認 | [記録](entries/2026-11-18-library-trust-api-persistence.md) |
+| 2026-11-18 | trust付き履歴とSSEの照合 | 旧版で実再現、修正31件とexactCI成功。本番未確認 | [記録](entries/2026-11-18-library-trust-status-reconciliation.md) |
+| 2026-11-18 | Recipe CI依存と重複削減 | API exactCI成功、Agent準備通過後fullsuite確認中。短縮率未測定 | [記録](entries/2026-11-18-recipe-ci-dependency-repair.md) |
+| 2026-11-18 | API所有の候補検査接続 | 既定30秒は未達。明示90秒の機能3case成功を別条件で保持。本番・実DB未確認 | [記録](entries/2026-11-18-recipe-api-proposal-port.md) |
+| 2026-11-18 | Linux/Mac検証の責務分割 | Mac全体検査失敗を保持。分割gate21unit成功、全体CI確認中 | [記録](entries/2026-11-18-recipe-ci-disjoint-partitions.md) |
+| 2026-11-21 | 複数行 have の主張見出しの検査（pals#232、agent#152） | 6題×2反復、旧12/12・新12/12、平均14.1秒→13.9秒、30秒以内12/12。検査は一度も作動せず、改善も悪化も測れていない。費用0.028→0.032 USD（推計） | [見出し検査](entries/2026-11-21-claim-header-check.md) |
+| 2026-11-21 | 節の間でも Lean の行を飛ばさない指示（pals#232、agent#153、既定無効） | 10題×3反復、引用に入らない行 14%→0.6%、対応しない引用 0/93→0/86、到達 29/29→29/29、平均17.8秒→17.9秒。Luna lowのみ。費用0.088→0.085 USD（推計） | [引用の被覆](entries/2026-11-21-cover-all-lines-instruction.md) |
+| 2026-11-22 | 修復2回以上の題の最初の失敗の診断（pals#381、既存記録の再集計） | dev_unseen 80題・回を保存済みの記録から再集計（新規の実行・費用なし）。修復2回以上15件のうち存在しない補題名0、型の不一致3、tactic が閉じない7、構文4、その他1。成功率・時間の変化は未測定 | [最初の失敗の診断](entries/2026-11-22-381-first-failure-diagnosis.md) |

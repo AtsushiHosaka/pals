@@ -2276,6 +2276,102 @@ class BudgetRolloverFixture(unittest.TestCase):
         return str(caught.exception)
 
 
+class BudgetCumulativeLimitTests(BudgetRolloverFixture):
+    def resumed_after_unknown(self, *, limit=700000):
+        # The unknown call may have consumed its full reservation, not actual=0.
+        old = proxy.Budget(self.ledger)
+        old.complete(old.reserve("gpt-6.1-sol", 0, 30000), 0, 30000)
+        old.uncertain(old.reserve("gpt-6.1-sol", 0, 30000), "timeout")
+        self.roll(*self.approval(new_limit_microusd=limit))
+        return proxy.Budget(self.ledger, resume_sha256=sha256(self.ledger.read_bytes()))
+
+    def test_exact_cumulative_boundary_and_next_microdollar_refused_unchanged(self):
+        budget = self.resumed_after_unknown()
+        self.assertEqual(budget.rollover["closed_totals"]["cumulative"],
+                         {"ledgers": 1, "actual_microusd": 300000, "reserved_microusd": 600000})
+        for _ in range(2):
+            index = budget.reserve("gpt-6.1-sol", 0, 20000)
+            budget.complete(index, 0, 20000)
+        before = self.ledger.read_bytes()
+        with self.assertRaisesRegex(ValueError, "cumulative_budget_exceeded"):
+            budget.reserve("gpt-6-luna", 1, 1)
+        self.assertEqual(self.ledger.read_bytes(), before)
+        # A normal restart preserves every charge/header/bound and still refuses.
+        again = proxy.Budget(self.ledger, resume_sha256=sha256(before))
+        saved = json.loads(self.ledger.read_bytes())
+        prior = json.loads(before)
+        for key in ("calls", "rollover", "limit_microusd", "actual_microusd", "reserved_microusd"):
+            self.assertEqual(saved[key], prior[key])
+        before_retry = self.ledger.read_bytes()
+        with self.assertRaisesRegex(ValueError, "cumulative_budget_exceeded"):
+            again.reserve("gpt-6-luna", 1, 1)
+        self.assertEqual(self.ledger.read_bytes(), before_retry)
+
+    def test_unknown_reservation_blocks_paid_dispatch_below_epoch_bound(self):
+        budget = self.resumed_after_unknown()
+        for tokens in (30000, 9000):
+            budget.complete(budget.reserve("gpt-6.1-sol", 0, tokens), 0, tokens)
+        before = self.ledger.read_bytes()
+        payload = json.dumps({"model": "gpt-6.1-sol", "input": "fixture",
+                              "max_output_tokens": 1001, "service_tier": "default"}).encode()
+        handler = proxy.Handler.__new__(proxy.Handler)
+        handler.path = "/v1/responses"
+        handler.headers = {"Content-Length": str(len(payload))}
+        handler.rfile = io.BytesIO(payload)
+        handler.server = type("Server", (), {"budget": budget})()
+        statuses, dispatched = [], []
+        handler.respond = lambda status, raw: statuses.append(status)
+
+        def upstream(path, value):
+            dispatched.append(path)
+            if path.endswith("/input_tokens"):
+                return b'{"object":"response.input_tokens","input_tokens":0}'
+            raise AssertionError("paid provider dispatch must not occur")
+
+        with patch.object(proxy, "upstream", upstream):
+            handler.do_POST()
+        self.assertEqual(statuses, [402])
+        self.assertEqual(dispatched, ["/v1/responses/input_tokens"])
+        self.assertEqual(self.ledger.read_bytes(), before)
+
+    def test_cumulative_reservations_include_every_closed_epoch(self):
+        second = self.resumed_after_unknown()
+        second.uncertain(second.reserve("gpt-6.1-sol", 0, 30000), "timeout")
+        self.roll(*self.approval(new_limit_microusd=700000))
+        third = proxy.Budget(self.ledger, resume_sha256=sha256(self.ledger.read_bytes()))
+        self.assertEqual(third.rollover["closed_totals"]["cumulative"]["reserved_microusd"],
+                         900000)
+        third.reserve("gpt-6.1-sol", 0, 10000)
+        before = self.ledger.read_bytes()
+        with self.assertRaisesRegex(ValueError, "cumulative_budget_exceeded"):
+            third.reserve("gpt-6-luna", 1, 1)
+        self.assertEqual(self.ledger.read_bytes(), before)
+
+    def test_parallel_reservations_share_cumulative_bound(self):
+        budget = self.resumed_after_unknown()
+        accepted = []
+
+        def work():
+            try:
+                accepted.append(budget.reserve("gpt-6.1-sol", 0, 25000))
+            except ValueError:
+                pass
+
+        threads = [threading.Thread(target=work) for _ in range(3)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+        self.assertEqual(len(accepted), 1)
+        self.assertEqual(budget.held, 250000)
+
+    def test_epoch_limit_remains_stricter_than_cumulative_limit(self):
+        budget = self.resumed_after_unknown(limit=300000)
+        with self.assertRaisesRegex(ValueError, "aggregate_budget_exceeded"):
+            budget.reserve("gpt-6.1-sol", 0, 30001)
+        self.assertEqual(budget.calls, [])
+
+
 class BudgetRolloverRefusalTests(BudgetRolloverFixture):
     def assert_untouched(self, raw):
         self.assertEqual(self.ledger.read_bytes(), raw)

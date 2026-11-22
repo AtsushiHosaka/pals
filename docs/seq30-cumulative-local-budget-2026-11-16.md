@@ -1,0 +1,39 @@
+# seq30ローカル資格確認の累積予算ガード（2026-11-16）
+
+ローカル資格確認のprovider proxyに、過去のrolloverを含む累積1 USDの送信前ガードを追加しました。各期の上限700000μUSDだけでは、過去の費用と合わせて1 USDを超える予約を許す場合がありました。修正後は、過去の確定できない呼び出しも予約上限で計上し、追加予約を含む合計が1000000μUSDを超えた時点で有料要求の転送を拒否します。
+
+対象は[#378](https://github.com/AtsushiHosaka/pals/issues/378)のローカル資格確認と[PR #397](https://github.com/AtsushiHosaka/pals/pull/397)です。起点は親`2dd52df298dbb2827ba1661653da175e7e5d0c6e`、修正commitは`d7a8df8c55bd49308ce648a2b39add4028e2212d`です。実装対象はlocal qualification専用proxyであり、別に承認する本番QAの予算を変更していません。
+
+## 累積額と残額
+
+調査時の実台帳は71 calls、actualとreservedがともに255446μUSD、blocked=false、各期の上限700000μUSDでした。過去のclosed台帳は既知actualが304459μUSD、累積reservedが310668μUSDで、直近closed台帳には費用が確定していない呼び出しが1件ありました。
+
+過去reservedと現在reservedの合計は566114μUSDです。累積上限までの保守的な残額は433886μUSDです。既知actualの合計559905μUSDとは区別します。いずれも版管理された料金表による予算台帳の値で、実請求額や未知callの確定費用ではありません。
+
+ガードは、元のarchiveと承認に対する正規検証を通したclosed累積reservedを読み取ります。既存のlock内で、過去reserved・現在held・次の予約額の合計を検査します。各期の上限も従来どおり適用し、より厳しい方で停止します。台帳のschema、calls、各期の上限、旧承認、rollover履歴は変更しません。健全な台帳を強制的にrolloverしたり、resetしたりする処理も追加していません。
+
+## 回帰検査と途中の制約
+
+新しい5件の決定的な回帰テストを、旧commitのproxyに対して実行すると4件が失敗しました。累積境界を超える予約、複数rolloverの累積、並列予約、有料要求本体への転送を旧版が許すことを確認しています。各期の低い上限を保つ1件は旧版でも通過しました。
+
+修正版では5件とも通過しました。ちょうど1000000μUSDは許可し、次の1μUSDを拒否します。過去のunknownをactualではなくreservedで数え、通常の再開後もcalls・承認・上限を保持します。拒否時は台帳bytesを変更せず、HTTP fixtureではトークン数取得以外の有料要求本体への転送が0件であることを確認しました。テストは実providerへ接続していません。
+
+最初の正規suiteはsandbox内のloopback bindが許可されず、transport fixtureで43 errorsになりました。この失敗は当該チャットのtool結果に残っていますが、別のrawログファイルは保存していません。loopback fixtureを実行できる権限で同じ正規suiteを実行すると成功しました。ただし、最初の作業場所ではsubmoduleが未初期化のため、infraの実plan validatorを使う2件と、APIの実migration sourceを読む1件がskipでした。この段階を境界検査の完了とは扱いません。
+
+最終確認では、担当agentが修正commitと6つの正確なsubmoduleを初期化したcleanなsourceから、正規`bash pals-scripts/tests/release-acceptance.sh`を実行しました。Python214件、Node16件が通過し、skipは0件でした。保存した最終ログのhashと件数を本記録の作成時にも照合しました。担当agentは終了後の親・6参照もcleanかつ同一と確認しています。全体monotonic時間は担当agentの観測で39.700秒です。これらの件数や途中の実行を独立した製品試行や有料取得として数えません。
+
+## 根拠と未完了事項
+
+| 記録 | SHA256 |
+|---|---|
+| 調査時の実予算台帳 | `4bccef2425fcbd664c025f7f5f174ed56e198a02d0289821707cb2fb283b9026` |
+| 修正版proxy | `74454647ab69f376e6cacad3c734db7972627241fd8ca8c43c0b774c4105ebcb` |
+| owning test | `0d2962d68393e7275c36d3d790bc7d4dc9d2b574cd19f709edb699cbb09e4200` |
+| 旧版5件のRED結果 | `97115d5a59709ebf0796b91c66e290bebc31ef4f112c35f66e18f5b0c0a753e2` |
+| 最初の権限回復後の正規suite・3skip | `83d653724f0d555dfd3866272a85e46d952aea80844e41aa9f0bd8436b9cd238` |
+| 最終owning suite・3skip | `752f3bdf5f36f7a6b25f47fc2c6032f113380b41ab64877cdf11b1018eab4b37` |
+| 正確なsourceでの正規suite・0skip | `bee7431b98ee41aeffcb3c1525855ce4d085fdc16cb47973613ae2603ba34ee8` |
+
+rawログ・台帳・内部配置場所は非公開です。品質台帳には最終的な技術検査bundle1件として1/1を追加します。途中の環境エラーやskipは上記の経過として保持し、成功件数へ加算しません。これは数学の精度や本番受け入れの証拠ではありません。
+
+実runtime・env・予算台帳への反映はこの検査では行っていません。実際に使うには、修正sourceで正規prepareを行い、guardの実source hash、subject、envと依存先を改めて固定する必要があります。5回目の有料取得は、この修正によって承認されたことにはなりません。候補と新subject・台帳に結び付く追加1回の明示的な承認が別途必要です。

@@ -11,6 +11,7 @@
 const fs = require("node:fs");
 const https = require("node:https");
 const readline = require("node:readline");
+const { spawnSync } = require("node:child_process");
 
 class Refusal extends Error {}
 const need = (value, code) => { if (!value) throw new Refusal(code); };
@@ -53,12 +54,88 @@ function readSession(sessionPath, webOrigin) {
   } finally { fs.closeSync(fd); }
 }
 
-// The page may only read the web and API origins (plus the product's passive telemetry POST).
-// Every other origin is aborted, the auth origin included: the session file is never written
-// back, so a renewal here could rotate away the owner's stored refresh token. An expired
-// session therefore fails closed and must be provisioned again.
+function jwtClaims(value) {
+  need(typeof value === "string" && /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/u.test(value)
+    && value.length <= 16384, "refresh_session_invalid");
+  try { return JSON.parse(Buffer.from(value.split(".")[1], "base64url").toString("utf8")); }
+  catch { throw new Refusal("refresh_session_invalid"); }
+}
+
+// Claims locate the seeded SDK credentials; they grant no authority. The separate read-only
+// guard checks STS ownership and the exact Cognito client before any auth POST is allowed.
+function refreshDescriptor(init, session) {
+  if (!init.refresh_policy || !init.auth_origin) return null;
+  const authority = init.refresh_policy, storage = session.session_storage;
+  need(authority.region === "ap-northeast-1" && /^[0-9]{12}$/u.test(authority.account_id)
+    && init.auth_origin === `https://cognito-idp.${authority.region}.amazonaws.com`, "refresh_authority_invalid");
+  const keys = Object.keys(storage).filter(key => /^CognitoIdentityServiceProvider\.[A-Za-z0-9]{1,128}\.LastAuthUser$/u.test(key));
+  need(keys.length === 1, "refresh_session_invalid");
+  const client = keys[0].split(".")[1], user = storage[keys[0]];
+  need(user.length > 0 && user.length <= 256, "refresh_session_invalid");
+  const prefix = `CognitoIdentityServiceProvider.${client}.${user}.`;
+  const id = jwtClaims(storage[prefix + "idToken"]), access = jwtClaims(storage[prefix + "accessToken"]);
+  const issuer = `https://cognito-idp.${authority.region}.amazonaws.com/`;
+  need(id && access && id.token_use === "id" && access.token_use === "access"
+    && id.aud === client && access.client_id === client && typeof id.sub === "string"
+    && id.sub === access.sub && typeof id.iss === "string" && id.iss.startsWith(issuer)
+    && id.iss === access.iss, "refresh_session_invalid");
+  const pool = id.iss.slice(issuer.length);
+  need(/^ap-northeast-1_[A-Za-z0-9]{1,128}$/u.test(pool), "refresh_session_invalid");
+  const refresh = storage[prefix + "refreshToken"], device = storage[prefix + "deviceKey"];
+  need(typeof refresh === "string" && /^[A-Za-z0-9._~+/=-]{16,16384}$/u.test(refresh)
+    && (device === undefined || typeof device === "string" && /^[A-Za-z0-9_-]{1,256}$/u.test(device)),
+  "refresh_session_invalid");
+  return { public: { region: authority.region, account_id: authority.account_id,
+    user_pool_id: pool, client_id: client }, identity: { issuer: id.iss, sub: id.sub }, refresh, device };
+}
+
+function checkRefreshPolicy(init, descriptor) {
+  if (!descriptor) return;
+  const policy = init.refresh_policy;
+  need(typeof policy.python === "string" && policy.python.startsWith("/")
+    && typeof policy.guard === "string" && policy.guard.startsWith("/"), "refresh_policy_unavailable");
+  // No token is passed to the SDK process, its argv, or its environment.
+  const environment = Object.fromEntries(["PATH", "HOME", "TMPDIR", "LANG", "LC_ALL", "LC_CTYPE"]
+    .filter(key => process.env[key] !== undefined).map(key => [key, process.env[key]]));
+  const result = spawnSync(policy.python, [policy.guard], { input: JSON.stringify(descriptor.public),
+    encoding: "utf8", env: environment, timeout: 20000, maxBuffer: 4096, stdio: ["pipe", "pipe", "ignore"] });
+  need(!result.error && result.status === 0 && result.stdout.trim() === '{"allowed":true}',
+    "refresh_policy_not_verified");
+}
+
+function allowedRefresh(request, url, init, descriptor) {
+  if (!descriptor || request.method() !== "POST" || url.origin !== init.auth_origin
+    || url.pathname !== "/" || url.search || url.hash || request.redirectedFrom?.()) return false;
+  if (request.headers()["x-amz-target"] !== "AWSCognitoIdentityProviderService.InitiateAuth") return false;
+  let body;
+  try { body = JSON.parse(request.postData()); } catch { return false; }
+  if (!body || Object.keys(body).sort().join(",") !== "AuthFlow,AuthParameters,ClientId"
+    || body.AuthFlow !== "REFRESH_TOKEN_AUTH" || body.ClientId !== descriptor.public.client_id) return false;
+  const params = body.AuthParameters;
+  if (!params || Array.isArray(params) || typeof params !== "object"
+    || !["REFRESH_TOKEN", "DEVICE_KEY,REFRESH_TOKEN"].includes(Object.keys(params).sort().join(","))) return false;
+  return params.REFRESH_TOKEN === descriptor.refresh
+    && (!Object.hasOwn(params, "DEVICE_KEY") || (descriptor.device === undefined
+      ? params.DEVICE_KEY === null : params.DEVICE_KEY === descriptor.device));
+}
+
+function freshBearer(value, refresh) {
+  if (!refresh) return true;
+  if (typeof value !== "string" || !value.startsWith("Bearer ")) return false;
+  let claims;
+  try { claims = jwtClaims(value.slice(7)); } catch { return false; }
+  return claims !== null && typeof claims === "object" && !Array.isArray(claims)
+    && claims.token_use === "access" && claims.iss === refresh.identity.issuer
+    && claims.sub === refresh.identity.sub && claims.client_id === refresh.public.client_id
+    && Number.isSafeInteger(claims.exp) && claims.exp >= Date.now() / 1000 + 180;
+}
+
+// Only the normal app's one nonrotating refresh is permitted, after fresh policy verification.
+// The private seed is read-only; no replacement credentials leave this ephemeral context.
 async function bearerFromBrowser(init, session) {
   const deadline = Date.now() + init.start_ms;
+  const refresh = refreshDescriptor(init, session);
+  checkRefreshPolicy(init, refresh);
   const resolve = name => require.resolve(name, { paths: [init.web_root] });
   const { chromium } = require(resolve("playwright"));
   const browser = await chromium.launch({ headless: true });
@@ -67,6 +144,7 @@ async function bearerFromBrowser(init, session) {
     await context.addInitScript(({ origin, entries }) => {
       if (location.origin === origin) for (const [key, value] of entries) sessionStorage.setItem(key, value);
     }, { origin: session.origin, entries: Object.entries(session.session_storage) });
+    let refreshUsed = false;
     await context.route("**/*", async route => {
       const request = route.request();
       let url = null;
@@ -75,6 +153,15 @@ async function bearerFromBrowser(init, session) {
       if (url && read && (url.origin === init.web_origin || url.origin === init.api_origin)) await route.continue();
       else if (url && request.method() === "POST" && url.origin === init.api_origin
         && url.pathname === "/v1/product-events" && !url.search) await route.continue();
+      else if (url && !refreshUsed && allowedRefresh(request, url, init, refresh)) {
+        refreshUsed = true;
+        // Playwright route.fetch does not follow a credential-bearing redirect.
+        try {
+          const response = await route.fetch({ maxRedirects: 0, timeout: Math.max(1, Math.min(30000, deadline - Date.now())) });
+          if (response.status() >= 300 && response.status() < 400) await route.abort();
+          else await route.fulfill({ response });
+        } catch { await route.abort(); }
+      }
       else await route.abort();
     });
     const page = await context.newPage();
@@ -88,6 +175,7 @@ async function bearerFromBrowser(init, session) {
       if (url.origin !== init.api_origin) return;
       const value = request.headers().authorization;
       if (typeof value !== "string" || !value.startsWith("Bearer ")) return;
+      if (!freshBearer(value, refresh)) return;
       seen.add(value);
       if (request.method() === "GET" && CAPTURE.some(pattern => pattern.test(url.pathname))) {
         bearer = value;
@@ -180,7 +268,8 @@ async function serve(input, output, bearerSource = bearerFromBrowser) {
   }
 }
 
-module.exports = { Refusal, ROUTES, allowed, exchange, httpsOrigin, readSession, serve };
+module.exports = { Refusal, ROUTES, allowed, exchange, httpsOrigin, readSession, serve,
+  refreshDescriptor, checkRefreshPolicy, allowedRefresh, freshBearer, bearerFromBrowser };
 if (require.main === module) {
   serve(process.stdin, process.stdout).then(code => process.exit(code), () => process.exit(1));
 }

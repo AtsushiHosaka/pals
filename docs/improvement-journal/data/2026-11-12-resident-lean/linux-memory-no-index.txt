@@ -1,0 +1,7 @@
+warm_exact False startup 6.2
+cgroup current MB 2849
+zygote VmRSS MB 8257 VmData MB 17194 smaps {'Rss': 8257, 'Pss': 8256, 'Shared_Clean': 1, 'Private_Clean': 6286, 'Private_Dirty': 1969, 'Anonymous': 1969}
+positivity rc 0 sec 0.47 child private-dirty MB (max seen) 201
+nlinarith rc 0 sec 0.6 child private-dirty MB (max seen) 219
+exact rc 0 sec 20.68 child private-dirty MB (max seen) 1985
+10 concurrent: cgroup current MB before 3544 max during 4463 peak since start 5082 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
