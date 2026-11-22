@@ -1,0 +1,13 @@
+# 結論検査を補修したworkerだけを信頼対象へ追加する（2026-11-18）
+
+[#382](https://github.com/AtsushiHosaka/pals/issues/382)のAgent候補を同じ配備候補へ含めるため、本番担当からworker sourceの信頼追加を切り出した。[infra PR #204](https://github.com/AtsushiHosaka/pals-infra/pull/204)のheadは`fc707d10625085536e12e7049e21f72bdf5b8460`、起点は統合source `9f397e508392e959af75188f371914fb6baf6529`である。
+
+productionの変更は、`compute_runtime.py`の`TRUSTED_WORKER_COMMITS`へ`d35ab12c900f7afcafb81e2cff257c26b766f62e`を1行追加しただけである。verifierのsource・child・archive・concurrent/retainedの全許可表は、値とsource bytesの両方で不変だった。workerをverifierとして暗黙・明示に昇格する指定と、未登録workerは引き続き拒否する。
+
+新5件は、旧sourceで2件失敗・3件成功、新sourceで5件成功となった。実際のprotected-file・JSON・hash・source gateまで通し、期限切れで停止させる検査である。専用moduleのROOT/UIDとファイルは一時fixtureへ分離し、署名・receipt・applyへは到達しない。これを完全な署名検証やadmissionの成功とは扱わない。関連publication/native回帰254件が成功し、17goldenのbytesも不変だった。独立担当は対象5件と17goldenを別に確認し、rootと独立レビューにP0〜P2指摘はなかった。本番適用は未実施で、単体・CI件数を製品精度へ換算しない。
+
+Gitの実sourceから、workerの選択archive SHA256は`38f9bbb461905e0a87e31a408216d1994514b86806b79da79d12b7b754b96029`、Lean childは`4278fe1b6a07c0390df6902b47947c5610f51c4a3c3ff2412cc11b84d0a8ea10`、retained verifierの選択archiveは`bf9a202c44ef4242a8e6989405563343abe0f1590c58e3b96a4502ee8df45a3f`へ再現した。source archiveとimage digestは別物である。
+
+新compute helperのSHA256は`07a2386ec9b032022e1885f576ba0e2e0375e6e033b77389b87195364471827d`。既存goldenの再生成は不要だったが、新たなprivate binding/code bundleはこの実hashへ固定する必要がある。旧frozen plan・署名・HOLD・DB consumerは変更していない。component CI `44264558229`は順番待ちで未qualifiedであり、最終統合exact headのrequired checksが別に必要である。
+
+画像のbuild・publication、署名、runtime設定、admission、本番の回答保存・描画・reloadは未確認である。本チャットのAWS・DB・paid・live操作は0件。実行担当codex://threads/01a1ebe7-a4ee-78c0-ab22-a16cfcccc3d2へsourceと検証境界を渡し、担当チャットcodex://threads/01a1e863-d84c-7e82-bedb-156dd25d871eで本番受け入れまで継続する。

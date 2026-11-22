@@ -1,0 +1,9 @@
+# seq30の累積ローカル予算ガード（2026-11-16）
+
+各期の上限だけでは過去の支出を含む1 USDを保証できなかったため、local qualification専用proxyに累積予約の送信前ガードを追加した。過去closedのreserved310668μUSDと現在255446μUSDを含めた上界は566114μUSD、残額は433886μUSDである。過去unknown1件の確定費用や実請求額は断定しない。
+
+親2dd52dfを起点とする修正d7a8df8で、既存schema・calls・各期上限700000・承認・rollover履歴を保った。healthy rolloverやresetは行わず、lock内で追加予約が累積1 USDを超える場合に有料要求本体の転送を拒否する。
+
+旧版では新5テスト中4件が失敗し、修正版では全件通過した。初回正規suiteのsandbox loopback43 errorsと、権限回復後の既存3skipを経過として残した。最終的に修正commitと6submoduleを初期化した正確なsourceで正規suiteを実行し、Python214件・Node16件がskip0で通過した。
+
+品質台帳は最終技術bundle1件の1/1とする。各テストや途中の実行を有料取得・数学の精度・改善率へ換算しない。実runtime・env・予算台帳の反映や第5回有料取得は行っていない。必要な追加承認も未取得のままである。hashと段階ごとの限界は[累積予算の記録](../../seq30-cumulative-local-budget-2026-11-16.md)に残した。

@@ -63,6 +63,31 @@ def context_tree(archive, context):
     return sha(json.dumps(actual, sort_keys=True, separators=(",", ":")).encode())
 
 
+def stored_build_record(path, context, code="real_build_record_changed"):
+    """Frozen record with ``Context`` in canonical absolute form.
+
+    ``docker buildx history inspect`` prints ``Context`` relative to the caller's working
+    directory when the context lies below it. Receipts written from one directory then
+    failed verification from another although nothing had changed. The observed value is
+    resolved against the working directory it was printed for and must equal the frozen
+    build context; a stored legacy relative value must be a trailing part of that same
+    absolute context. Every other field is still compared exactly.
+    """
+    record = json.loads(Path(path).read_bytes())
+    expected = Path(context).resolve()
+    value = Path(record["Context"])
+    if value.is_absolute():
+        need(value.resolve() == expected, code)
+    else:
+        parts = value.parts
+        need(
+            parts and ".." not in parts and expected.parts[-len(parts) :] == parts,
+            code,
+        )
+    record["Context"] = str(expected)
+    return record
+
+
 def observe_build(ref, context, revision, image):
     record = json.loads(
         run(["docker", "buildx", "history", "inspect", ref, "--format", "json"])
@@ -91,6 +116,9 @@ def observe_build(ref, context, revision, image):
         ),
         "actual_build_output_digest_changed",
     )
+    # Identity was checked above against this caller's working directory; store and
+    # compare the working-directory independent absolute form.
+    record["Context"] = str(context.resolve())
     return record
 
 
@@ -271,7 +299,10 @@ def main():
             previous["built_image_id"],
         )
         need(
-            json.loads(Path(previous["build_record"]["path"]).read_bytes()) == observed,
+            stored_build_record(
+                previous["build_record"]["path"], previous["build_context"]
+            )
+            == observed,
             "real_build_record_changed",
         )
         actual = json.loads(

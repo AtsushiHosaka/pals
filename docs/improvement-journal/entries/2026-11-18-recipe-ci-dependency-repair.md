@@ -1,0 +1,11 @@
+# Recipe必須CIの依存準備と重複削減（2026-11-18）
+
+API126の必須CIへRecipe5suiteを接続すると、未実行を拒否するgateで停止した。依存不足を許容する変更はせず、Lean4.32.0-rc1だけの小さいworkspaceと固定した公式setup actionを用意した。fd9ac20ab88f12f039efaef60b592f5e258e7b5cの[正規CI](https://github.com/AtsushiHosaka/pals-api/actions/runs/44257313046)は、既存自前ランナーで実Lean正負2件とスキップ禁止を含め成功した。新jobや固定費は追加していない。
+
+feature branchではpushとPRの二重検査をなくし、PR・main・配備source branchとmerge queueの検査を維持した。source gateはexact commit・Actions app・workflow path・最新結果を検査し、eventを限定しないことを確認した。必須検査を省略する変更ではない。時間の短縮率は未測定。
+
+Agent150は、公開リポジトリの無料標準ランナーを使う[判断438](https://github.com/AtsushiHosaka/pals/issues/438)に従う。Linuxで既存macOS sandboxが使えないため、局所Leanの資格検証を無料標準macos-15へ置き、専用workspaceで対象5件だけを有効にする。5件は手元で80.529秒、スキップ0で成功した。e10のjob-level runner context参照を修正し、d93は実際にはjobが起動した後、setup-pythonにmacOS用3.12.13がなく停止した。初期のjobs空という観測は反映遅延であり、d93が構文不正だったとは扱わない。actionlintも指摘0だった。
+
+f82f888e1b8cdd0671c13abb7e65615652493287で、公式uv配布のexact Pythonへ切り替えた。当該installだけ明示downloadを許し、以後はneverを維持した。準備は通過し、必須full suiteは確認中。Macの成功でLinux本番の一般lane可用性を主張しない。
+
+一般laneのLinux接続用の新内部API案は、サブエージェント2件が自動安全確認の「Potentially unintended activity」で停止した。未公開のAPI・Agent差分は保全し、この追加範囲だけオーナー確認待ちとした。旧復旧操作・本番・有料評価・新AWS資源は実行していない。

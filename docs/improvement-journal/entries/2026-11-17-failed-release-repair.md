@@ -1,0 +1,9 @@
+# 失敗済みreleaseの後処理経路
+
+#410のowner解放と一時権限削除へ向け、失効済みpolicyと回復準備receipt不足を扱うsourceを[Infra PR #187](https://github.com/AtsushiHosaka/pals-infra/pull/187)へ準備した。headは30a51da52e2cd3f1858aecddad388278ea6ac2d5。
+
+元の凍結入力・失敗結果を変更せず、新しい別台帳で正規の回復準備、full health、owner解放、権限不在を記録する。更新可能な権限は元と同じactions/resourcesで、変更は期限だけ、最大45分に制限する。liveには具体的な追加承認が必要である。
+
+レビューで、別台帳だけでは次回observerが旧owner保持状態を拒否する問題と、source更新後に過去closureを読めなくなる問題を検出した。hash固定した別closureの限定認識と、保存sourceを実行せず検証する履歴読取へ修正した。主処理とcleanupの同時失敗も別コードで保持する。対象548件は成功し、exact CIと最終独立レビューは確認中である。
+
+実AWS、host設置、owner解放、IAM削除は未実施。通常ログインも保留中である。単体検査を本番回復成功と数えず、元releaseのfailedとaccepted=falseを保持する。

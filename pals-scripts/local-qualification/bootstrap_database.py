@@ -3,7 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import ast
+import importlib
+import inspect
 import json
+import re
 import sys
 from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit
@@ -33,6 +37,159 @@ def runtime_login_url(value):
     )
     validate_local_dsn(result)
     return result
+
+
+# ``postgres`` exists on every initialised server. The second name is the default
+# database of the container this stack was first created with and is kept as a fallback.
+MAINTENANCE_DATABASES = ("postgres", "pals_reliability_test")
+SCHEMA_OWNER = "pals_api_schema_owner"
+# The row locks the candidate's definer functions take (database_readiness.FUNCTIONS).
+# PostgreSQL requires UPDATE on a column for a locking read, including FOR SHARE.
+ROWLOCK_COLUMNS = (
+    ("proof_verification_candidates", "candidate_id"),
+    ("proof_explanations", "proof_job_id"),
+)
+SERVING_BOOTSTRAP = "app/infrastructure/bootstrap.py"
+
+
+def connect_maintenance(parts, *, connect):
+    """Autocommit connection to a maintenance database of the dedicated local server."""
+    for name in MAINTENANCE_DATABASES:
+        try:
+            return connect(urlunsplit(parts._replace(path="/" + name)), autocommit=True)
+        except Exception as error:  # noqa: BLE001 - psycopg is imported by the caller only.
+            if type(error).__name__ != "OperationalError":
+                raise
+    raise ValueError("local_maintenance_database_unavailable")
+
+
+def grant_rowlock_privileges(connection):
+    """Exactly the column privileges the readiness check requires; never the table.
+
+    Local database only (the caller validated the closed local DSN). Idempotent: GRANT
+    of a held privilege changes nothing. A table-level UPDATE is refused, not revoked.
+    """
+    granted = []
+    for table, column in ROWLOCK_COLUMNS:
+        # Closed constants above, checked anyway before they are placed in a statement.
+        if not all(re.fullmatch(r"[a-z][a-z_]{0,62}", x) for x in (table, column)):
+            raise ValueError("closed_rowlock_identifier_required")
+        relation = "public." + table
+        if connection.execute(
+            "SELECT has_table_privilege(%s,%s,'UPDATE')", (SCHEMA_OWNER, relation)
+        ).fetchone() != (False,):
+            raise ValueError("local_rowlock_table_update_too_broad:" + table)
+        connection.execute(
+            'GRANT UPDATE ("%s") ON public."%s" TO "%s"' % (column, table, SCHEMA_OWNER)
+        )
+        if connection.execute(
+            "SELECT has_column_privilege(%s,%s,%s,'UPDATE'),has_table_privilege(%s,%s,'UPDATE')",
+            (SCHEMA_OWNER, relation, column, SCHEMA_OWNER, relation),
+        ).fetchone() != (True, False):
+            raise ValueError("local_rowlock_grant_failed:" + table)
+        granted.append(table + "." + column)
+    return granted
+
+
+def serving_preflight_modules(api_source):
+    """Modules whose ``preflight`` the candidate's serving start imports, in source order.
+
+    Read from the candidate's own serving bootstrap, so a release that adds a required
+    migration is noticed here without this file naming it.
+    """
+    tree = ast.parse((Path(api_source) / SERVING_BOOTSTRAP).read_text())
+    modules = []
+    for node in tree.body:
+        if isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+            if any(alias.name == "preflight" for alias in node.names):
+                modules.append(node.module)
+    return modules
+
+
+def _takes_only_database_url(function):
+    try:
+        parameters = list(inspect.signature(function).parameters.values())
+    except (TypeError, ValueError):
+        return False
+    return (
+        len(parameters) == 1
+        and parameters[0].name == "database_url"
+        and parameters[0].kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
+    )
+
+
+def migrator_candidates(api_source, module_name):
+    """Release modules that can install what ``module_name``'s preflight checks.
+
+    The preflight's own module when it is a release module, and every
+    ``app/release/*_migration.py`` importing from it. Source text only; nothing is run.
+    """
+    candidates = []
+    if module_name.startswith("app.release."):
+        candidates.append(module_name)
+    for file in sorted((Path(api_source) / "app/release").glob("*_migration.py")):
+        tree = ast.parse(file.read_text())
+        if any(
+            isinstance(node, ast.ImportFrom)
+            and node.level == 0
+            and node.module == module_name
+            for node in ast.walk(tree)
+        ):
+            candidates.append("app.release." + file.stem)
+    return list(dict.fromkeys(candidates))
+
+
+def release_migrator(api_source, module_name, *, import_module=importlib.import_module):
+    """The candidate's own single ``apply(database_url)``; anything else is not guessed."""
+    found = []
+    for name in migrator_candidates(api_source, module_name):
+        function = getattr(import_module(name), "apply", None)
+        if callable(function) and _takes_only_database_url(function):
+            found.append((name, function))
+    return found[0] if len(found) == 1 else None
+
+
+def apply_serving_migrators(api_source, url, *, import_module=importlib.import_module):
+    """Run every serving preflight; install only what fails, with the candidate's code.
+
+    Never stricter than serving itself: a failing preflight without exactly one
+    discoverable migrator is reported, and the API's own start remains the judge.
+    Returns the status per preflight module and the names of the modules this
+    bootstrap can NOT install whatever their state, because no single module-level
+    ``apply(database_url)`` exists for them.
+    """
+    report = {}
+    not_applicable = []
+    for module_name in serving_preflight_modules(api_source):
+        preflight = getattr(import_module(module_name), "preflight", None)
+        try:
+            migrator = release_migrator(
+                api_source, module_name, import_module=import_module
+            )
+        except Exception:  # noqa: BLE001 - An unimportable candidate is not a migrator.
+            migrator = None
+        if migrator is None:
+            not_applicable.append(module_name)
+        if not callable(preflight) or not _takes_only_database_url(preflight):
+            report[module_name] = "not_checked_other_signature"
+            continue
+        try:
+            preflight(url)
+            report[module_name] = "current"
+            continue
+        except Exception:  # noqa: BLE001 - Any refusal of the read-only check means "not installed".
+            pass
+        if migrator is None:
+            report[module_name] = "failing_no_discoverable_migrator"
+            continue
+        name, function = migrator
+        function(url)
+        try:
+            preflight(url)
+        except Exception:  # noqa: BLE001 - Closed code; the cause is the candidate's own.
+            raise ValueError("local_serving_migration_failed:" + name) from None
+        report[module_name] = "installed_by:" + name
+    return report, not_applicable
 
 
 def main():
@@ -75,8 +232,7 @@ def main():
     reader_url = runtime_login_url(recipe["PALS_PFI_DRAFT_READER_DATABASE_URL"])
     if local.get("PALS_ENV") != "local":
         raise ValueError("explicit_dedicated_local_database_required")
-    base = urlunsplit(parts._replace(path="/pals_reliability_test"))
-    with psycopg.connect(base, autocommit=True) as c:
+    with connect_maintenance(parts, connect=psycopg.connect) as c:
         if not c.execute("SELECT 1 FROM pg_database WHERE datname='pals'").fetchone():
             c.execute("CREATE DATABASE pals")
         for role in (
@@ -179,12 +335,18 @@ def main():
     from app.release.typed_catalog import install
 
     install(url)
+    serving, not_applicable = apply_serving_migrators(a.api_source.resolve(), url)
+    with psycopg.connect(url) as c:
+        rowlocks = grant_rowlock_privileges(c)
     print(
         json.dumps(
             {
                 "state": "actual_local_schema_ready",
                 "profile": "legacy-local-v1 + model/settings/guest/typed catalog",
                 "preserved_existing_data": not empty,
+                "serving_migrators": serving,
+                "not_applicable_migrators": not_applicable,
+                "rowlock_column_grants": rowlocks,
             }
         )
     )

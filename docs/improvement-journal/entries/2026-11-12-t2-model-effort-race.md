@@ -3,6 +3,7 @@
 - 指標: 時間（主）、初回成功率、費用
 - 仮説: 律速は直接証明のモデル呼び出し（Terra medium で1候補約20 s）。速い構成（Terra low）と強い構成（Terra medium）を同時に出し、先に検証を通った方を採れば、初回成功を保ったまま p50 が縮む。
 - 変更: 計測スクリプトのみ（[pals-agent `claude/t2-model-race`](https://github.com/AtsushiHosaka/pals-agent/tree/claude/t2-model-race)、`scripts/eval/run_prove_matrix.py`・`analyze_prove_matrix.py`）。本番の挙動は変えていない。
+- 出典と追跡性: 各構成の成功数・時間・費用は、リンク先ブランチのスクリプト（`run_prove_matrix.py` の出力を `analyze_prove_matrix.py` で集計）の結果を、本ジャーナルの表に写したもの。**生データ（各題の jsonl）の保管場所と、測定時のコミットは記録しておらず未確認**。表の値はこの記述のみが根拠で、再計算できない。計算のレース行は単独構成の値からの算出であり実測ではない。単独構成・本番の形のレース・dev_unseen 20題の実測は、[品質台帳](../../quality-ledger/ledger.csv)に `2026-11-12-t2-matrix-*`、`2026-11-12-t2-hetero-race-prod-*` として記録した（計算のレースは台帳に入れていない）。
 - 条件: `generation-eval-v1` tuning の同じ14題、各構成1題1回の直接証明（Draft・修復・回答段階なし）＋常駐 Lean で1回検証。2回反復（run1: 5構成、run2: Terra low／medium）。端末の負荷は平均 約10（最大20）。費用は合計 US$0.68（上限 US$0.98）。**レースは実行しておらず、単独の結果から計算した**（各候補の終了＝モデル秒＋検証秒、最初に検証を通った方が勝ち。2呼び出しが同時でも同じ速さという仮定）。
 
 ## 結果（初回成功＝修復なし。時間は検証済みまで）

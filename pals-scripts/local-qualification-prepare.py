@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Prepare one owned local qualification stack. Never submit a proof or reset spending."""
+"""Prepare one owned local qualification stack. Never submit a proof or reset spending.
+
+The only way past a blocked budget ledger is the separate owner-approved rollover
+(local-qualification-budget-rollover.py); this driver only proves and records it.
+"""
 
 from __future__ import annotations
 
@@ -23,7 +27,44 @@ def load(name, path):
 
 
 gate = load("local_qualification_prepare_gate", HERE / "local-qualification.py")
+provider_tls = load(
+    "local_qualification_provider_tls", HERE / "bootstrap-local-provider-tls.py"
+)
+budget_proxy = load(
+    "local_qualification_prepare_budget", HERE / "local-qualification/budget_proxy.py"
+)
 PROJECT = "pals-reliability-local"
+# Recreating the API after the subject is frozen can change its host configuration once
+# (see docs/local-release-qualification.md); the freeze is repeated at most this often.
+API_FREEZE_ROUNDS = 3
+# Services the application roles depend on. They hold the emulated secrets, queues and
+# identities, so they must be converged BEFORE anything is written into them.
+STABLE_DEPENDENCIES = ("localstack", "cognito-local")
+# The accepted capture stays fresh for 3600 s; the margin covers preparation and the
+# bounded paid journey that happen between this check and the capture.
+CAPTURE_FRESHNESS_SECONDS = 3600
+PROVIDER_TLS_MARGIN_SECONDS = 900
+# What the running proxy must still have left when preparation has finished.
+PROVIDER_TLS_SERVED_SECONDS = CAPTURE_FRESHNESS_SECONDS + PROVIDER_TLS_MARGIN_SECONDS
+# Upper bound of everything preparation does after its first check (guard build 600 s,
+# dependency and application start, bootstraps, readiness 120 s, provenance, canary).
+# Marginal material is therefore refused BEFORE the stack is stopped and rebuilt.
+PREPARATION_BOUND_SECONDS = 1800
+PROVIDER_TLS_MINIMUM_SECONDS = PROVIDER_TLS_SERVED_SECONDS + PREPARATION_BOUND_SECONDS
+APPLICATION_ROLES = (
+    "verifier",
+    "reconciler",
+    "api",
+    "worker-network-guard",
+    "recipe-reviewer",
+    "worker",
+    "assessment-worker",
+    "webfront",
+)
+CHILD_MODULES = {
+    "api_python": ("psycopg",),
+    "agent_python": ("boto3", "cryptography"),
+}
 KNOWN_ROLES = {
     "api",
     "reconciler",
@@ -86,6 +127,331 @@ def run(args, timeout=45):
     return gate.command([str(x) for x in args], timeout=timeout)
 
 
+def require_child_modules(python, modules, prefix, *, run_=None):
+    """Fail fast with the interpreter and module named instead of a late child failure."""
+    program = (
+        "import importlib.util,sys;"
+        "print(','.join(m for m in sys.argv[1:] if importlib.util.find_spec(m) is None))"
+    )
+    try:
+        missing = (run_ or run)([python, "-c", program, *modules]).strip()
+    except (OSError, gate.Refusal):
+        raise gate.Refusal(prefix + "_unavailable") from None
+    gate.need(not missing, prefix + "_missing_module:" + missing.split(",")[0])
+
+
+def require_runtime_directory(path):
+    """The owned runtime directory: existing, private, with a plain absolute path.
+
+    Any such location is accepted. Every bind mount, the subject and the environment
+    files are derived from it on each run, so a copy in a persistent place continues
+    the same ledger. Do not keep it under a path that is cleared on reboot.
+    """
+    path = Path(path).resolve()
+    gate.need(
+        path.is_dir()
+        and path.stat().st_mode & 0o777 == 0o700
+        and re.fullmatch(r"/[A-Za-z0-9_./-]+", str(path)),
+        "existing_private_runtime_directory_required",
+    )
+    return path
+
+
+def serving_budget_directory(*, run_=None):
+    """Host directory the existing guard container records provider spending in.
+
+    ``None`` when no guard container exists: then nothing could have forwarded a call.
+    """
+    run_ = run_ or run
+    name = PROJECT + "-worker-network-guard-1"
+    if not run_(["docker", "ps", "-aq", "--filter", "name=^/" + name + "$"]).strip():
+        return None
+    mounts = json.loads(
+        run_(["docker", "inspect", "--format", "{{json .Mounts}}", name])
+    )
+    sources = [m["Source"] for m in mounts if m.get("Destination") == "/run/budget"]
+    gate.need(len(sources) == 1, "serving_budget_directory_required")
+    return Path(sources[0])
+
+
+def require_ledger_continuity(ledger, serving):
+    """A relocated runtime directory must hold the ledger the guard last wrote.
+
+    Call this only AFTER the task containers and the guard are stopped: from then on no
+    provider call can be recorded. If the guard served another directory, a call made
+    after that directory was copied exists only in its ledger; continuing with the copy
+    would under-count spending, so the two must agree exactly.
+    """
+    if serving is None or Path(serving).resolve() == ledger.parent.resolve():
+        return "same_directory"
+    source = Path(serving) / "ledger.json"
+    gate.need(
+        source.is_file() and not source.is_symlink(),
+        "relocated_budget_serving_ledger_required",
+    )
+    try:
+        old, new = json.loads(source.read_bytes()), json.loads(ledger.read_bytes())
+    except (OSError, ValueError):
+        raise gate.Refusal("relocated_budget_serving_ledger_required") from None
+    gate.need(
+        type(old) is dict
+        and type(new) is dict
+        and all(
+            name in old and old[name] == new.get(name)
+            for name in ("calls", "actual_microusd", "reserved_microusd", "blocked")
+        )
+        and old.get("rollover") == new.get("rollover")
+        and (
+            old.get("rollover") is None
+            or old["limit_microusd"] == new["limit_microusd"]
+        ),
+        "relocated_budget_ledger_differs_from_the_serving_ledger",
+    )
+    return "relocated_identical"
+
+
+def require_known_budget(ledger):
+    """The cumulative ledger this stack continues: (bytes, content, bound).
+
+    Unchanged rule: every call has a known completed cost and nothing is blocked. A ledger
+    without calls is accepted only as the product of the owner-approved rollover, proven
+    against its byte-identical archive and approval record. Nothing here creates, empties
+    or repairs a ledger.
+    """
+    try:
+        raw = ledger.read_bytes()
+        previous = json.loads(raw)
+        rolled = previous.get("rollover") is not None
+        limit = (
+            budget_proxy.validate_rollover(previous, ledger.parent)
+            if rolled
+            else budget_proxy.LIMIT
+        )
+        known = (
+            not previous["blocked"]
+            and (previous["calls"] or rolled)
+            and all(x["state"] == "completed" for x in previous["calls"])
+            and previous["actual_microusd"] == previous["reserved_microusd"] <= limit
+            and (rolled or previous["limit_microusd"] >= budget_proxy.LIMIT)
+        )
+    except OSError:
+        raise gate.Refusal("existing_budget_ledger_required_no_reset") from None
+    except ValueError as error:
+        code = str(error)
+        raise gate.Refusal(
+            "budget_rollover_not_proven:" + code
+            if code.startswith("rollover_")
+            else "known_existing_budget_required_no_reset"
+        ) from None
+    except (KeyError, TypeError, AttributeError):
+        raise gate.Refusal("known_existing_budget_required_no_reset") from None
+    gate.need(known, "known_existing_budget_required_no_reset")
+    return raw, previous, limit
+
+
+def require_no_leftover_jobs(runtime, api_source, api_python, *, fail, run_=None):
+    """No unfinished local proof work may meet a reopened budget.
+
+    Called while the workers and the guard are stopped. A request or job a failed capture
+    left non-terminal would be received again and would spend as soon as the proxy
+    forwards. The default is to refuse; ``--fail-leftover-local-jobs`` ends them with
+    the candidate API's own failure calls, in the dedicated local database only.
+    """
+    args = [
+        api_python,
+        HERE / "local-qualification/leftover_jobs.py",
+        "--runtime-dir",
+        runtime,
+        "--api-source",
+        api_source,
+    ]
+    result = json.loads((run_ or run)(args + (["--fail"] if fail else []), 60))
+    gate.need(
+        result.get("state") in ("none", "no_local_database", "ended"),
+        "leftover_non_terminal_local_jobs:requests=%s,jobs=%s"
+        % (result.get("requests"), result.get("jobs")),
+    )
+    return {
+        key: result[key]
+        for key in (
+            "state",
+            "requests",
+            "jobs",
+            "request_statuses",
+            "job_states",
+            "request_sha256",
+            "job_sha256",
+            "verified_jobs_with_unfinished_explanation",
+        )
+        if key in result
+    }
+
+
+def runtime_config_entry(item):
+    environment = sorted(
+        x
+        for x in item["Config"]["Env"]
+        if not x.startswith("PALS_CLOUD_RESTORE_MANIFEST_SHA256=")
+    )
+    return {
+        "image_id": item["Image"],
+        "environment_sha256": gate.sha(gate.stable(environment).encode()),
+        "host_config_sha256": gate.sha(gate.stable(item["HostConfig"]).encode()),
+    }
+
+
+def freeze_until_api_is_stable(subject, api, write_and_recreate, inspect_api):
+    """Freeze the API that actually serves, in this one run.
+
+    The subject digest is part of the API environment, so writing the subject recreates
+    the API. The subject must describe that final container, not the one it replaced.
+    ``write_and_recreate`` writes the subject, binds its digest and recreates the API;
+    the freeze repeats until the recreated API equals the frozen one. Only names of the
+    changed host-configuration keys are recorded, never values.
+    """
+    rounds = []
+    for _ in range(API_FREEZE_ROUNDS):
+        subject["preparation"]["api_freeze_rounds"] = rounds
+        write_and_recreate()
+        observed = inspect_api()
+        entry = runtime_config_entry(observed)
+        if entry == subject["runtime_config"]["api"]:
+            return observed
+        rounds = rounds + [
+            {
+                "changed": sorted(
+                    key
+                    for key in entry
+                    if entry[key] != subject["runtime_config"]["api"][key]
+                ),
+                "changed_host_config_keys": sorted(
+                    key
+                    for key in set(api["HostConfig"]) | set(observed["HostConfig"])
+                    if api["HostConfig"].get(key) != observed["HostConfig"].get(key)
+                ),
+            }
+        ]
+        subject["runtime_config"]["api"] = entry
+        api = observed
+    raise gate.Refusal("frozen_runtime_configuration_did_not_converge_api")
+
+
+def render_profile(template, values):
+    for key, value in values.items():
+        template = template.replace(key, value)
+    gate.need("@@" not in template, "unresolved_local_profile_binding")
+    return template
+
+
+def verifier_variant(production_image_digest, receipt, receipt_reference):
+    """Exactly what pals-infra's release plan accepts for a native local verifier.
+
+    `release-cycle.py` (`local_verifier_variant`) requires this closed key set, and
+    `release_plan.py` (`VERIFIER_VARIANT_ARCHIVES`) requires `source_archive` and
+    `recipe_archive` to be git's own archives of the manifest's verifier commit. Both
+    come from the build receipt, which proves them against the built archive.
+    """
+    variant = {
+        "production_image_digest": production_image_digest,
+        "source_archive": receipt["source_archive"],
+        "recipe_archive": receipt["recipe_archive"],
+        "local_build_provenance": receipt_reference,
+        "dockerfile_sha256": receipt["dockerfile_sha256"],
+        "lean_version": receipt["lean_version"],
+        "lake_manifest_sha256": receipt["lake_manifest_sha256"],
+    }
+    gate.need(
+        set(variant) == gate.VERIFIER_VARIANT_KEYS,
+        "closed_native_local_verifier_variant_required",
+    )
+    return variant
+
+
+def require_provider_tls(directory, *, inspect=None):
+    """Refuse before quiescing anything when the local proxy certificate cannot last.
+
+    Preparation only checks. It never mints trust material implicitly: reissuing replaces
+    the CA the task containers trust, so it stays one explicit, documented operator step.
+    """
+    result = (inspect or provider_tls.inspect)(
+        directory, minimum_remaining_seconds=PROVIDER_TLS_MINIMUM_SECONDS
+    )
+    codes = {
+        "expired": "local_provider_tls_expired",
+        "expires_within_window": "local_provider_tls_expires_before_capture_window",
+    }
+    gate.need(
+        result.get("state") == "valid",
+        codes.get(result.get("state"), "local_provider_tls_missing_or_invalid"),
+    )
+    return result
+
+
+def dependency_identity(*, run_=None):
+    return {
+        role: json.loads(
+            (run_ or run)(
+                [
+                    "docker",
+                    "inspect",
+                    "--format",
+                    "{{json .Id}}",
+                    PROJECT + "-" + role + "-1",
+                ]
+            )
+        )
+        for role in STABLE_DEPENDENCIES
+    }
+
+
+def bootstrap_on_stable_dependencies(compose, bootstrap, *, run_=None, identity=None):
+    """Converge the dependency containers first, then write state into them.
+
+    A changed compose root changes the bind-mount sources of LocalStack and Cognito, so
+    ``up`` recreates them. LocalStack keeps secrets in memory only: a verifier mTLS
+    secret created before that recreation is silently lost and the verifier then cannot
+    start. Converging first makes the later application ``up`` a no-op for them.
+    """
+    (run_ or run)(
+        [
+            *compose,
+            "up",
+            "-d",
+            "--no-build",
+            "--wait",
+            "--wait-timeout",
+            "90",
+            *STABLE_DEPENDENCIES,
+        ],
+        120,
+    )
+    before = (identity or dependency_identity)()
+    bootstrap()
+    return before
+
+
+def require_dependencies_unchanged(before, *, identity=None):
+    gate.need(
+        (identity or dependency_identity)() == before,
+        "local_dependency_recreated_after_verifier_tls_bootstrap",
+    )
+
+
+def start_stack(compose, bootstrap, *, run_=None, identity=None):
+    """The whole ordered start: dependencies, bootstrap, application roles, identity.
+
+    The identity is compared immediately after the application ``up``. A replaced
+    LocalStack has lost the verifier secret, the verifier never becomes healthy, and a
+    later check would only ever be reached after the generic readiness refusal.
+    """
+    before = bootstrap_on_stable_dependencies(
+        compose, bootstrap, run_=run_, identity=identity
+    )
+    (run_ or run)([*compose, "up", "-d", "--no-build", *APPLICATION_ROLES], 60)
+    require_dependencies_unchanged(before, identity=identity)
+    return before
+
+
 def read_env(path):
     return gate.private_env(path)
 
@@ -136,15 +502,19 @@ def main():
         "agent-python",
     ):
         p.add_argument("--" + name, type=Path, required=True)
-    a = p.parse_args()
-    r = a.runtime_dir.resolve()
-    source = a.compose_root.resolve()
-    gate.need(
-        r.is_dir()
-        and r.stat().st_mode & 0o777 == 0o700
-        and re.fullmatch(r"/[A-Za-z0-9_./-]+", str(r)),
-        "existing_private_runtime_directory_required",
+    p.add_argument(
+        "--fail-leftover-local-jobs",
+        action="store_true",
+        help="end unfinished local requests/jobs with the candidate API's own failure "
+        "calls instead of refusing (dedicated local database only)",
     )
+    a = p.parse_args()
+    gate.require_modules()
+    r = require_runtime_directory(a.runtime_dir)
+    source = a.compose_root.resolve()
+    gate.set_diagnostic_directory(r / "diagnostics")
+    for prefix, modules in CHILD_MODULES.items():
+        require_child_modules(getattr(a, prefix), modules, prefix)
     gate.need(
         os.environ.get("DOCKER_HOST", "unix://").startswith("unix://")
         and run(
@@ -174,6 +544,11 @@ def main():
         env.get("PALS_ENV") == "local" and env.get("PALS_ENVIRONMENT") == "local",
         "explicit_local_environment_required",
     )
+    for name in ("release.env", "recipe.env"):
+        # Registers their values for redaction of any persisted child diagnostics.
+        if (r / name).is_file():
+            read_env(r / name)
+    observed_provider_tls = require_provider_tls(r / "provider-tls")
     # The reused private env/PG service are deliberate prerequisites. No other env files,
     # production database URLs or global Docker credentials are copied into this stack.
     subject = json.loads(a.base_subject.read_bytes())
@@ -233,6 +608,8 @@ def main():
         "-f",
         r / "override.yml",
     ]
+    # Where the guard has been recording spending, read before anything is recreated.
+    serving = serving_budget_directory()
     # Quiesce only this owned project before rotating local release/TLS bindings.
     run(
         [
@@ -251,14 +628,13 @@ def main():
         60,
     )
     ledger = r / "budget/ledger.json"
-    raw = ledger.read_bytes()
-    previous = json.loads(raw)
-    gate.need(
-        not previous["blocked"]
-        and previous["calls"]
-        and all(x["state"] == "completed" for x in previous["calls"])
-        and previous["actual_microusd"] == previous["reserved_microusd"] <= 700000,
-        "known_existing_budget_required_no_reset",
+    # Producers and guard are stopped: the serving ledger is final. A relocated copy
+    # that misses a call made after it was copied is refused here.
+    require_ledger_continuity(ledger, serving)
+    raw, previous, budget_limit = require_known_budget(ledger)
+    # Still stopped: nothing left over from a failed capture may meet the open budget.
+    leftover_jobs = require_no_leftover_jobs(
+        r, a.api_source, a.api_python, fail=a.fail_leftover_local_jobs
     )
     env["PALS_BUDGET_RESUME_SHA256"] = gate.sha(raw)
     backup = r / ("budget-before-prepare-" + gate.sha(raw) + ".json")
@@ -267,55 +643,6 @@ def main():
         backup.chmod(0o600)
     write_env(r / "local.env", env)
     native_id = verifier["built_image_id"]
-    new_env = dict(os.environ, AWS_ACCESS_KEY_ID="test", AWS_SECRET_ACCESS_KEY="test")
-    new_env.pop("AWS_SESSION_TOKEN", None)
-    tls = subprocess.run(
-        [
-            str(a.agent_python),
-            str(HERE / "bootstrap-local-verifier-tls.py"),
-            "--endpoint-url",
-            "http://127.0.0.1:54566",
-            "--region",
-            "ap-northeast-1",
-            "--image-digest",
-            native_id,
-            "--toolchain-sha256",
-            native_id.removeprefix("sha256:"),
-            "--output",
-            str(r / "release.env"),
-        ],
-        env=new_env,
-        capture_output=True,
-        text=True,
-        timeout=30,
-        check=False,
-    )
-    gate.need(tls.returncode == 0, "actual_local_mtls_bootstrap_failed")
-    run(
-        [
-            a.api_python,
-            HERE / "bootstrap-local-recipe-config.py",
-            "--env-file",
-            r / "local.env",
-            "--release-env",
-            r / "release.env",
-            "--output",
-            r / "recipe.env",
-            "--lean-workspace",
-            Path(verifier["build_context"]) / "lean-workspace",
-        ]
-    )
-    run(
-        [
-            a.api_python,
-            HERE / "local-qualification/bootstrap_database.py",
-            "--runtime-dir",
-            r,
-            "--api-source",
-            a.api_source,
-        ],
-        60,
-    )
     worker = subject["images"]["worker"]["image_reference"]
     run(
         [
@@ -355,30 +682,77 @@ def main():
         "@@VERIFIER_IMAGE@@": native_id,
         "@@GUARD_IMAGE@@": guard["Id"],
     }
-    template = (HERE / "local-qualification/compose.override.yml.in").read_text()
-    for key, value in values.items():
-        template = template.replace(key, value)
-    gate.need("@@" not in template, "unresolved_local_profile_binding")
+    template = render_profile(
+        (HERE / "local-qualification/compose.override.yml.in").read_text(), values
+    )
     (r / "override.yml").write_text(template)
     run([*compose, "config", "--quiet"])
-    # The underlying DB, LocalStack and Cognito containers/networks stay in place.
-    run(
-        [
-            *compose,
-            "up",
-            "-d",
-            "--no-build",
-            "verifier",
-            "reconciler",
-            "api",
-            "worker-network-guard",
-            "recipe-reviewer",
-            "worker",
-            "assessment-worker",
-            "webfront",
-        ],
-        60,
-    )
+
+    def bootstrap():
+        new_env = dict(
+            os.environ, AWS_ACCESS_KEY_ID="test", AWS_SECRET_ACCESS_KEY="test"
+        )
+        new_env.pop("AWS_SESSION_TOKEN", None)
+        tls = subprocess.run(
+            [
+                str(a.agent_python),
+                str(HERE / "bootstrap-local-verifier-tls.py"),
+                "--endpoint-url",
+                "http://127.0.0.1:54566",
+                "--region",
+                "ap-northeast-1",
+                "--image-digest",
+                native_id,
+                "--toolchain-sha256",
+                native_id.removeprefix("sha256:"),
+                "--output",
+                str(r / "release.env"),
+            ],
+            env=new_env,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+        if tls.returncode != 0:
+            raise gate.Refusal(
+                "actual_local_mtls_bootstrap_failed",
+                gate.persist_diagnostic(
+                    [a.agent_python, HERE / "bootstrap-local-verifier-tls.py"],
+                    tls.returncode,
+                    tls.stderr,
+                ),
+            )
+        run(
+            [
+                a.api_python,
+                HERE / "bootstrap-local-recipe-config.py",
+                "--env-file",
+                r / "local.env",
+                "--release-env",
+                r / "release.env",
+                "--output",
+                r / "recipe.env",
+                "--lean-workspace",
+                Path(verifier["build_context"]) / "lean-workspace",
+            ]
+        )
+        run(
+            [
+                a.api_python,
+                HERE / "local-qualification/bootstrap_database.py",
+                "--runtime-dir",
+                r,
+                "--api-source",
+                a.api_source,
+            ],
+            60,
+        )
+
+    # LocalStack and Cognito are converged to this compose root and profile first; only
+    # then are the verifier mTLS secret, recipe configuration and schema written. The
+    # database container is external to this project and is never recreated here.
+    dependencies = start_stack(compose, bootstrap)
     roles = {
         "api": "api",
         "reconciler": "api",
@@ -406,6 +780,9 @@ def main():
             time.monotonic() - started < 120, "actual_local_runtime_readiness_failed"
         )
         time.sleep(1)
+    # Checked once more after readiness: nothing may have replaced a dependency while
+    # the roles were starting.
+    require_dependencies_unchanged(dependencies)
     subject["images"]["web"].update(
         image_id=web["built_image_id"],
         image_reference=web["built_image_id"],
@@ -428,22 +805,28 @@ def main():
         source_archive=web["source_archive"],
         local_build_provenance=ref(a.web_build_receipt),
     )
-    subject["verifier_variant"] = {
-        "production_image_digest": json.loads(a.base_subject.read_bytes())["images"][
-            "verifier"
-        ]["image_id"],
-        "source_archive": verifier["source_archive"],
-        "local_build_provenance": ref(a.verifier_build_receipt),
-        "dockerfile_sha256": verifier["dockerfile_sha256"],
-        "lean_version": verifier["lean_version"],
-        "lake_manifest_sha256": verifier["lake_manifest_sha256"],
-    }
+    subject["verifier_variant"] = verifier_variant(
+        json.loads(a.base_subject.read_bytes())["images"]["verifier"]["image_id"],
+        verifier,
+        ref(a.verifier_build_receipt),
+    )
     subject["guard"].update(
         source_sha256={
             n: gate.sha((HERE / "local-qualification" / n).read_bytes())
             for n in ("guard.py", "budget_proxy.py", "Dockerfile")
         },
-        budget_limit_microusd=700000,
+        budget_limit_microusd=budget_limit,
+        # Present only after an owner-approved rollover: which ledger was closed, its
+        # totals and the approval record, as proven against the archive above.
+        budget_rollover=previous.get("rollover"),
+        ca_bundle_sha256=observed_provider_tls["ca_bundle_sha256"],
+        provider_tls={
+            "server_certificate_sha256": observed_provider_tls[
+                "server_certificate_sha256"
+            ],
+            "not_after": observed_provider_tls["not_after"],
+            "trust_scope": "local CA only, name constrained to the proxied host",
+        },
         resumed_budget=ref(backup),
         helper_build_metadata=ref(r / "guard-build-metadata.json"),
     )
@@ -452,17 +835,9 @@ def main():
     )
     subject["runtime_config"] = {}
     for role, item in actual.items():
-        environment = sorted(
-            x
-            for x in item["Config"]["Env"]
-            if not x.startswith("PALS_CLOUD_RESTORE_MANIFEST_SHA256=")
-        )
-        subject["runtime_config"][role] = {
-            "image_id": item["Image"],
-            "environment_sha256": gate.sha(gate.stable(environment).encode()),
-            "host_config_sha256": gate.sha(gate.stable(item["HostConfig"]).encode()),
-        }
+        subject["runtime_config"][role] = runtime_config_entry(item)
     subject["preparation"] = {
+        "leftover_local_jobs": leftover_jobs,
         "driver_sha256": gate.sha(Path(__file__).read_bytes()),
         "compose_sources": {
             str(path): gate.sha(path.read_bytes())
@@ -493,24 +868,50 @@ def main():
         "schema_fingerprint_sha256"
     ]
     out = r / "subject-native.json"
-    gate.private_json(out, subject)
-    digest = gate.sha(out.read_bytes())
-    env["PALS_LOCAL_CANDIDATE_SHA256"] = digest
-    write_env(r / "local.env", env)
-    run(
-        [*compose, "up", "-d", "--no-build", "--wait", "--wait-timeout", "45", "api"],
-        60,
+
+    def write_and_recreate():
+        gate.private_json(out, subject)
+        env["PALS_LOCAL_CANDIDATE_SHA256"] = gate.sha(out.read_bytes())
+        write_env(r / "local.env", env)
+        run(
+            [
+                *compose,
+                "up",
+                "-d",
+                "--no-build",
+                "--wait",
+                "--wait-timeout",
+                "45",
+                "api",
+            ],
+            60,
+        )
+
+    freeze_until_api_is_stable(
+        subject,
+        actual["api"],
+        write_and_recreate,
+        lambda: json.loads(run(["docker", "inspect", PROJECT + "-api-1"]))[0],
     )
     gate.web_provenance(subject)
     gate.verifier_provenance(subject)
     gate.runtime(subject)
     canary = gate.compiler_canary(subject)
     budget = gate.budget_status(subject)
+    # The restarted guard must actually serve the inspected certificate.
+    served = gate.provider_tls_status(
+        subject, minimum_seconds=PROVIDER_TLS_SERVED_SECONDS
+    )
     result = {
         "state": "prepared_dependency_ready_not_product_accepted",
         "subject": ref(out),
         "compiler_canary": canary,
+        "provider_tls": served,
         "all_lane_cost_microusd": budget["actual_microusd"],
+        # Shown before any budget is used: work this driver reports but does not end.
+        "verified_jobs_with_unfinished_explanation": leftover_jobs.get(
+            "verified_jobs_with_unfinished_explanation"
+        ),
         "budget_limit_microusd": budget["limit_microusd"],
     }
     gate.private_json(r / "preparation-result.json", result)
@@ -518,4 +919,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except gate.Refusal as error:
+        # Closed code on stdout; the cause, if any, is in the named private file.
+        refusal = {"state": "refused", "code": str(error)}
+        if error.detail:
+            refusal["diagnostic"] = error.detail
+        print(gate.stable(refusal))
+        raise SystemExit(1) from None
