@@ -53,6 +53,8 @@ KIND = {
     "syntax": "その他（構文）",
     "other": "その他",
 }
+# 診断の見出しだけでは判定できない種類。件数は 0 と書かず「判定不能」と出す。
+UNDECIDABLE = ("命題の形式化の誤り", "import の不足")
 KIND_ORDER = [
     "存在しない補題名・定数",
     "型の不一致・引数・instance",
@@ -73,6 +75,18 @@ def head_of(msg):
     return "other"
 
 
+def field(r, doc, legacy):
+    """pals.generation-eval.run.v1 の `doc` 欄を優先し、旧記録の `legacy` 欄にだけ代える。
+
+    対応: 修復回数 = repairs_used（旧 repairs）、検証成功 = success（旧 verified）。
+    どちらも無い・null の記録は 0 や False にせず、エラーにする。
+    """
+    for k in (doc, legacy):
+        if r.get(k) is not None:
+            return r[k]
+    raise ValueError(f"{r.get('problem_id')}: {doc}/{legacy} がありません")
+
+
 def extract(raw, out):
     raw = Path(raw)
     rows = []
@@ -87,8 +101,8 @@ def extract(raw, out):
                     head = "missing"
                 else:
                     head = head_of(c["errors"][0]["message"])
-            rows.append(dict(set=s, run=name, problem_id=r["problem_id"], repairs=r.get("repairs") or 0,
-                             verified=int(bool(r["verified"])), first_ok=int(bool(r["first_attempt_ok"])),
+            rows.append(dict(set=s, run=name, problem_id=r["problem_id"], repairs=field(r, "repairs_used", "repairs"),
+                             verified=int(bool(field(r, "success", "verified"))), first_ok=int(bool(r["first_attempt_ok"])),
                              first_head=head, n_errors=(c or {}).get("n_errors", "")))
     with open(out, "w", newline="") as f:
         w = csv.DictWriter(f, FIELDS); w.writeheader(); w.writerows(rows)
@@ -115,8 +129,10 @@ def table(path):
         out.append("| 最初の失敗の種類 | 修復2回以上 | 修復1回 | 初回失敗の全体 |\n|---|---|---|---|")
         for k in KIND_ORDER + ["診断なし"]:
             if any(cnt[x][k] for x in cnt) or k in KIND_ORDER[:5]:
-                tag = "（診断から判定不能）" if k in ("命題の形式化の誤り",) else ""
-                out.append(f"| {k}{tag} | {cnt['r2'][k]} | {cnt['r1'][k]} | {cnt['all'][k]} |")
+                if k in UNDECIDABLE:
+                    out.append(f"| {k} | 判定不能 | 判定不能 | 判定不能 |")
+                else:
+                    out.append(f"| {k} | {cnt['r2'][k]} | {cnt['r1'][k]} | {cnt['all'][k]} |")
         out.append(f"| 計 | {len(r2)} | {len(r1)} | {len(ff)} |")
         by = defaultdict(list)
         for r in r2: by[r["problem_id"]].append(r)
