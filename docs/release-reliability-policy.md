@@ -77,7 +77,7 @@ For a planned sole-target cutover, the v2 controller requires its frozen notific
 
 - 自前ランナーは1台で、runは直列に処理される。待ちのrunを増やす操作（再push、再実行）の前に、`gh run list`で実行中・待機中のrunとそのheadSHAを確認する。
 - 取り消してよいのは、自分が起動したrunだけである。起動者、branch、headSHAを確認してから`gh run cancel`を使う。同名のcheckが別のbranchやPRにあっても取り消さない。他担当のrunは完了を待つか、そのrunを起動した担当に依頼する。
-- 候補固定中、実機担当は必須checkの実行を最優先とする。他の担当は、候補の必須checkが完了するまで、自前ランナーを使うPR・pushを控える。docsだけの変更や`[skip ci]`は、必須checkに影響しない場合に限る。
+- 候補固定中、実機担当は必須checkの実行を最優先とする。他の担当は、候補の必須checkが完了するまで、自前ランナーを使うPR・pushを控える。docsだけの変更は、自前ランナーを使わない場合に限り続けてよい。
 - 実機担当は、必須checkを待つ間の占有状況をリリースのIssueに書く（実行中のrun ID、待機中のrun、見込みの完了）。これが所有者表示を兼ねる。
 - workflowの`concurrency`による自動のqueueや、所有者の自動表示は未実装である。必要になったら別Issueで設計する。
 
