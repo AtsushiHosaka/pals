@@ -1,0 +1,46 @@
+# #381 調査: 修復2回以上の題の、最初の失敗の Lean 診断の件数（2026-11-22）
+
+- 指標: 時間（30秒以内の割合）。pals#381 の最初の調査項目。
+- 仮説: 修復2回以上（19%）の原因が「存在しない補題名」なら、名前の実在を確かめる検索の一段で減らせる。
+- 変更: なし（保存済みの記録の再集計のみ。新規の実行・費用なし。held_out は読んでいない）。
+- 測定の条件: T2 の cheap-first（Terra、初回 low、修復は medium）と cheap-patch の dev_unseen 20題 × 4回 = 80題・回（[t2-30s-late-items-and-cheap-patch](2026-11-14-t2-30s-late-items-and-cheap-patch.md) と同じ集合）。tuning 14題 × 2回は別掲。第1候補を再コンパイルし、**最初のエラー**の見出しで分類。実行日は 2026-11-14 前後の既存データ。
+
+## 結果（dev_unseen、80題・回。初回失敗 30 件）
+
+| 最初の失敗の種類 | 修復2回以上 | 修復1回 | 初回失敗の全体 |
+|---|---|---|---|
+| 存在しない補題名・定数 | **0** | 6 | 6 |
+| 型の不一致・引数・instance | 3 | 2 | 5 |
+| tactic が閉じない（`exact?`・未解決の goal・`simp`・`omega`） | 7 | 7 | 14 |
+| 命題の形式化の誤り | 診断から判定不能 | | |
+| import の不足 | 0 | 0 | 0 |
+| その他（構文） | 4 | 0 | 4 |
+| その他（`rfl` が定義上の等式にならない） | 1 | 0 | 1 |
+| 計 | 15 | 15 | 30 |
+
+修復2回以上の15件は5題に集中します（題 / 件数 / 最初の診断）: `dependent-consecutive-triples` 4 / 未解決の goal、`reverse-triangle-inequality` 4 / 構文、`arctan-lipschitz` 3 / `exact?` が閉じない、`exp-two-x-derivative` 3 / 型の不一致、`factorial-dominates-power-of-two` 1 / `rfl`。
+
+tuning（28題・回）は、初回失敗 4 件のうち修復2回以上が 1 件（未解決の goal）、診断が取れなかったもの 1 件。標本が小さく、傾向は言えません。
+
+## 判断・示唆
+
+- **存在しない補題名で始まる題は、修復2回以上に1件もありません**（全 6 件が1回の修復で通る）。#381 の「補題名の実在を確かめる検索の一段」の案は、修復2回以上（19%）を減らす根拠がなく、効いても修復1回の題（17.5%）の短縮までです。この案を先に作る理由はありません（見送りを推奨）。
+- 修復2回以上は、tactic が閉じない 7/15（47%）、構文 4/15（27%）、型の不一致 3/15（20%）、その他 1/15。構文だけが決定的な補正で潰せる可能性があります（`reverse-triangle-inequality` の `|a|` の書き方。整形の対象に足せるかは未検討）。
+- 同じ題が run を通じて同じ診断で落ちる（上の表）ので、題の難しさで決まる現象です。1題ごとに効く案は、評価の題への過適合になりうるため、一般形のルール（構文の補正、重い題の事前判別）で検討する必要があります。
+
+## 限界・未確認
+
+- 見ているのは「第1候補の最初のエラー」です。2回目以降の失敗の種類は集計していません。
+- 命題の形式化の誤りと import の不足は、最初のエラーの見出しだけでは判定できません。import は整形で補うため第1候補に残りません。形式化の誤りは別途の意味確認が要り、未確認です。
+- 分類は見出しの規則（`scripts/first_failure_diagnosis.py` の `HEADS`）による自動です。tactic の種類を細かく分けていません。
+- 題が5題・実質4題に偏るため、件数は題の数え方に強く依存します（独立標本ではありません）。
+
+## 再現
+
+生データ（Lean 本文を含む）は git に入れず、共有ノートの T2 レーンの記録にあります。`extract` が見出しと修復回数だけの CSV（[first_failure_diagnosis.csv](../scripts/first_failure_diagnosis.csv)、Lean 本文なし）を作り、`table` がその CSV から上の表を出します。
+
+```bash
+python3 docs/improvement-journal/scripts/first_failure_diagnosis.py table --csv docs/improvement-journal/scripts/first_failure_diagnosis.csv
+```
+
+出典: [t2-failure-classes-and-repair-hints](2026-11-14-t2-failure-classes-and-repair-hints.md)（初回失敗33件の分類。今回はその対象を修復回数で分けた）、pals-agent#129。
