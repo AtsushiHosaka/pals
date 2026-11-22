@@ -91,6 +91,14 @@ For a planned sole-target cutover, the v2 controller requires its frozen notific
 | 触らない | 凍結中のworktree（`/private/tmp/pals-*`など、リリースIssueが凍結と示すもの） | 読み取りのみ。凍結の解除はリリース担当がIssueに記録する |
 | 触らない | 本番・AWS・共有CIの設定、branch protection | 利用者の既存の承認の範囲に従う。実機担当だけが操作する |
 
+### PRの積み方とmainの遅れ
+
+- 新しいPRのbaseは原則mainとする。PRを積むのは深さ2までとし、それより深くしない。
+- 本番へdeployしたcommitは、速やかにmainへ入れる。merge commitで入れ、force pushはしない。
+- 統合先branchがmainと別になる場合は、期限を決めてmainへ統合し、期限をIssueに記録する。
+- 使い終えた積みは、土台から順にマージするか、すぐに閉じる。放置しない。
+- pals-apiは、#96のリリース後に`claude/seq28-api-response-language`をmainへmergeする予定である。pals-webfrontとpals-infraも、同様に統合先とmainの乖離を解消する。これは予定であり、完了を意味しない。
+
 実測による確認は、次回以降のリリースで行う。確認する項目は、候補変更ごとの記録の有無、実機・本番操作の重複の有無、他担当のrun取消しの有無である。
 
 ## Treat recovery as a product requirement
