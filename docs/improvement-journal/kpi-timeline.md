@@ -61,8 +61,12 @@
 | 2026-11-11 | 段階0の独立レビュー(2回目)対応(pals-agent#106、405f144): 2層の許可リスト、新しいプロセスでの再検査、RSS/CPU 監視、リクエストごとの新しいワーカー。100題は負荷 15〜33 で 12題を回答(前回 18、最大 10.3 秒、形式命題の誤答0。説明文の欠陥が4題あり、説明つきの正答は最大8題)。被覆の低下は負荷・起動の競合・`exact?` 除外を分離できていない | [stage0-review2](entries/2026-11-11-stage0-review2.md) |
 | 2026-11-11 | Settings select chevron spacing: 5px → 17px visible inset in two local layouts; no answer-speed, accuracy or cost claim | [settings-select-chevron](entries/2026-11-11-settings-select-chevron.md) |
 | 2026-11-11 | T2 生成レーン（No-Sketch・2候補競争・パッチ修復・並列説明、既定 off）。検証までの時間 p50 68.8→54.2 s、回答完成 p50 85.4→61.5 s。p50 30 s には未到達。n=14、1回、端末高負荷 | [t2-lane-first-measurement](entries/2026-11-11-t2-lane-first-measurement.md) |
+| 2026-11-11 | Lean の並列 compile とメモリの実測（実 Lean、Mac/Docker、モデル0回）。メモリ4 GiB は cold で1本約40 s（8 GiB は約4 s）、2スロットは4 GiB では効かず8 GiB で10件キュー約20 s（1スロット約35〜46 s、4スロット約12 s）。2 CPU/8 GiB/2スロットを推奨、xlarge は10人同時＋2候補競争のとき | [lean-slots-measurement](entries/2026-11-11-lean-slots-measurement.md) |
 | 2026-11-11 | T2 の5腕再測定（負荷15前後）: 並列レビュー・説明（nd_k2_par）は回答完成 p50 55.8→39.5 s だが nd_k2 と区別できない（n=14）。テンプレート＋補完は退行（最終成功 13→11/14、修復 6→20、費用 +68%）。Lean枠1は差なし。初回成功 7→13/14 は再現 | [t2-five-arm-measurement](entries/2026-11-11-t2-five-arm-measurement.md) |
 | 2026-11-12 | T2 の低負荷再測定（実際は負荷11.5前後のまま）: nd_k2_par の回答完成 p50 95.8→40.0 s、p90 332.7→112.5 s（実測）。p50 30 s は実測で未達、Lean を3 sに切った推計で18.1 s。worker 配線は pals-agent#119（既定 off）。n=14、1回 | [t2-lowload-remeasure](entries/2026-11-12-t2-lowload-remeasure.md) |
+| 2026-11-12 | 段階的 DSP レーン（骨格→ステップ別の並列証明、既定 off）。14題・1回・端末高負荷: 検証までの時間 p50 base 128 s、`nd_k2` 45 s、stepwise 89 s（p90 740 s）。stepwise は `nd_k2` より遅い（+149 s、p=0.043）。最終成功 12/13/13（差は検出できない）。報告された問題は3腕とも失敗（stepwise はモデルが補題のステップを見つけたが、別の分解で詰まった）。費用 US$0.94/0.78/1.29 | [dsp-stepwise-lane](entries/2026-11-11-dsp-stepwise-lane.md) |
+| 2026-11-12 | 直接証明の構成別計測（常駐 Lean）: Terra low＋medium の同時レース（計算）で初回成功 25/28、成功した題の p50 約13〜14 s。Luna low は 3/14 で不採用、出力短縮は効かず。レースは未実測、修復込みの成功率は未確認。追記: 本番の形の実測（常駐 Lean、14題）で 13/14、回答完成 p50 20.7 s／p90 34.6 s | [t2-model-effort-race](entries/2026-11-12-t2-model-effort-race.md) |
+| 2026-11-12 | 大学1年 dev_unseen 20題（異種レースにとって初見）、ワーカーの carry・再開経由、常駐 Lean＋往復1.1 s固定: 20/20 検証済み、回答完成 p50 26.6 s、p90 100.9 s、30 s 以内 11/20、10 s 以内 1/20。初回通過 11/20（通った題の回答完成 中央値16.9 s）、修復の9題は中央値96.9 s。弱い定理文 1件。US$0.60。単独 none は初回 5/20、low は 7/20 | [t2-freshman-dev-unseen](entries/2026-11-12-t2-freshman-dev-unseen.md) |
 | 2026-11-13 | 大学1年レベルの未使用の題 40 題（調整用20・最終確認用20）を追加。既存集合の easy は使い尽くしだった（tuning 17 全て使用、held_out 8 のうち未使用で命題固定なしは 3） | [freshman-eval-items](entries/2026-11-13-freshman-eval-items.md) |
 | 2026-11-14 | 高速な初回候補(PALS_FAST_FIRST_ATTEMPT、既定 off)を worker 経路で測定: dev_unseen 20 題の 10 秒以内は off 3 → 常駐 Lean ありの on 4 → なしの on 1。p50 は 29.8 → 33.4 / 33.1 s。tuning 14 題は 5 → 2。有効化は勧めない(n 小・負荷 5〜10・API 代用) | [fast-first-attempt-wiring](entries/2026-11-14-fast-first-attempt-wiring.md) |
 | 2026-11-13 | 一般 Recipe の具体化の被覆（フラグ既定 off、pals-agent#126）: モデルなし 0/90、形式化 Luna 1 回つき 1/64（それも恒等の具体化）。誤採用 1 件を関連性検査で除去。届く範囲を決めるのは一般形の数でなく質問→形式命題の段。費用 US$0.02 | [general-recipe-instantiation-coverage](entries/2026-11-13-general-recipe-instantiation-coverage.md) |
@@ -302,5 +306,13 @@
 | 2026-11-18 | Identifier-kind select chevron spacing | Local Chromium, 1024px/375px, two viewport cases: inset 5px FAIL → 17px PASS, center error 0.5px; no production deployment or model/latency/cost measurement | [Identifier chevron](entries/2026-11-18-identifier-select-chevron.md) |
 | 2026-11-18 | 図のsourceと実ブラウザ確認 | 3系統×2幅の6描画検査が通過。本番・実DB再取得は未確認、追加paid0 | [図の確認](entries/2026-11-18-figures-production-readiness.md) |
 | 2026-11-18 | 図付き回答の実DB保存・再取得 | 認証済み／ゲスト×2系統の4ケース成功。保存JSONB・HTTP再取得・所有者分離を確認。本番・Lean・実モデルは未確認 | [保存の回帰検査](entries/2026-11-18-figure-persistence-regression.md) |
+| 2026-11-18 | 一般Recipeの承認済みsource統合 | API185・Agent249unitと実Lean2件が通過。網羅率・本番は未確認、追加paid0 | [記録](entries/2026-11-18-general-recipe-approved-source.md) |
+| 2026-11-18 | 信頼の水準の保持・表示 | Web対象158件が通過。API保存・本番は未確認、追加paid0 | [記録](entries/2026-11-18-library-trust-retained-display.md) |
+| 2026-11-18 | APIの信頼診断保存 | 対象229件・追加境界16件・guest9件は成功。重複あり、実DB・本番は未確認 | [記録](entries/2026-11-18-library-trust-api-persistence.md) |
+| 2026-11-18 | trust付き履歴とSSEの照合 | 旧版で実再現、修正31件とexactCI成功。本番未確認 | [記録](entries/2026-11-18-library-trust-status-reconciliation.md) |
+| 2026-11-18 | Recipe CI依存と重複削減 | API exactCI成功、Agent準備通過後fullsuite確認中。短縮率未測定 | [記録](entries/2026-11-18-recipe-ci-dependency-repair.md) |
+| 2026-11-18 | API所有の候補検査接続 | 既定30秒は未達。明示90秒の機能3case成功を別条件で保持。本番・実DB未確認 | [記録](entries/2026-11-18-recipe-api-proposal-port.md) |
+| 2026-11-18 | Linux/Mac検証の責務分割 | Mac全体検査失敗を保持。分割gate21unit成功、全体CI確認中 | [記録](entries/2026-11-18-recipe-ci-disjoint-partitions.md) |
 | 2026-11-21 | 複数行 have の主張見出しの検査（pals#232、agent#152） | 6題×2反復、旧12/12・新12/12、平均14.1秒→13.9秒、30秒以内12/12。検査は一度も作動せず、改善も悪化も測れていない。費用0.028→0.032 USD（推計） | [見出し検査](entries/2026-11-21-claim-header-check.md) |
 | 2026-11-21 | 節の間でも Lean の行を飛ばさない指示（pals#232、agent#153、既定無効） | 10題×3反復、引用に入らない行 14%→0.6%、対応しない引用 0/93→0/86、到達 29/29→29/29、平均17.8秒→17.9秒。Luna lowのみ。費用0.088→0.085 USD（推計） | [引用の被覆](entries/2026-11-21-cover-all-lines-instruction.md) |
+| 2026-11-22 | 修復2回以上の題の最初の失敗の診断（pals#381、既存記録の再集計） | dev_unseen 80題・回を保存済みの記録から再集計（新規の実行・費用なし）。修復2回以上15件のうち存在しない補題名0、型の不一致3、tactic が閉じない7、構文4、その他1。成功率・時間の変化は未測定 | [最初の失敗の診断](entries/2026-11-22-381-first-failure-diagnosis.md) |
