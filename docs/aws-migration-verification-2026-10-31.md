@@ -7,7 +7,7 @@
 | 対象 | 実際の結果 |
 | --- | --- |
 | DB基盤 | 独立stateの保存済みplanを適用し、25資源を新規作成。既存資源の更新・削除なし |
-| DBホスト | `i-041db5930304ef5d1`、m7g.large、`10.42.10.172`、public IPなし、IMDSv2、SSM Online |
+| DBホスト | `<EC2インスタンスID・非公開>`、m7g.large、`<private IP・非公開>`、public IPなし、IMDSv2、SSM Online |
 | ディスク | 暗号化した80 GiB gp3を保持。`vol-007fcbf9fa67f80fd`を`/srv/pals-postgresql`へmountし、実UUID・device・PGDATAの対応を照合 |
 | DBイメージ | sourceと同じ内容をECRへ保存し、実コンテナのconfigと全16 layerをECRのOCI連鎖と照合 |
 | DBのTLS・SQL | 実SSM転送とCloudTrailの接続先一致、証明書・hostname検証付きTLS1.3接続、PostgreSQL16.15、libc2.36、`en_US.utf8`を確認。vector0.8.7が利用可能 |
