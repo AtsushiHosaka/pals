@@ -11,3 +11,5 @@ Use the same contract as Codex. Keep detailed rules in AGENTS.md and the shared 
 Run the same executable gates: `make release-source-checks`, `make release-qualify`, and `make release-cycle`. Never substitute a health-only check, copied local driver, old green check, skipped dependency test, or imported PASS JSON. Respect the protected actual-production source baseline recorded in AGENTS.md and retain canonical ownership while a remote mutation is unresolved.
 
 The approved pre-release profile is `make release-local-qualify`: real local DB, real retained Lean and real model, with declared local boundaries and a bounded US$1 evaluation. The cycle freshly verifies the exact existing capture before cutover without paying for a duplicate submission. Production auth/network and completion/save/reload are checked separately using the approved current Chrome account. Follow the detailed profile in AGENTS.md; do not create AWS staging or claim local evidence proves production behavior.
+
+Candidate-freeze, single-owner host operation, shared-runner and parallel-work rules live in the shared contract (section "候補固定後の変更と担当"); do not restate them here.
