@@ -9,22 +9,25 @@ set -euo pipefail
 export PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin
 OWNER=AtsushiHosaka
 REPOS=${PALS_REVIEW_REPOS:-"pals pals-api pals-agent pals-webfront pals-infra"}
+LIMIT=${PALS_PR_LIST_LIMIT:-1000}
 MAX_AGE_DAYS=${PALS_PR_MAX_AGE_DAYS:-7}
 OUT_DIR=${PALS_PR_REVIEW_DIR:-$HOME/pals-pr-review}
 mkdir -p "$OUT_DIR"
 OUT="$OUT_DIR/$(date +%F).md"
 NOW=$(date +%s)
-tmp=$(mktemp); trap 'rm -f "$tmp"' EXIT
+tmp=$(mktemp); trap 'rm -f "$tmp" "$tmp.one" "$tmp.json"' EXIT
 for r in $REPOS; do
-  gh pr list -R "$OWNER/$r" --state open --limit 200 \
-    --json number,title,createdAt,isDraft,headRefName,baseRefName,url \
-    | jq --arg repo "$r" '[.[]|.repo=$repo]' >> "$tmp"
+  gh pr list -R "$OWNER/$r" --state open --limit "$LIMIT" \
+    --json number,title,createdAt,isDraft,headRefName,baseRefName,headRepository,headRepositoryOwner,url > "$tmp.one"
+  # Fail loudly instead of silently dropping the oldest PRs (gh lists newest first).
+  [ "$(jq length "$tmp.one")" -lt "$LIMIT" ] || { echo "$r: open PRs reached --limit $LIMIT; list incomplete" >&2; exit 5; }
+  jq --arg repo "$r" '[.[]|.repo=$repo]' "$tmp.one" >> "$tmp"
 done
-jq -s --argjson now "$NOW" --argjson max "$MAX_AGE_DAYS" '
+jq -s --arg owner "$OWNER" --argjson now "$NOW" --argjson max "$MAX_AGE_DAYS" '
   add // [] | map(. + {age: (($now - (.createdAt|fromdateiso8601)) / 86400 | floor)}) as $all
   | $all | map(. as $p
       | .depth = ([ $all[] | select(.repo==$p.repo) ] | . as $same
-          | def d($b; $n): if $n>5 then $n else ($same | map(select(.headRefName==$b)) | if length==0 then $n else d(.[0].baseRefName; $n+1) end) end;
+          | def d($b; $n): if $n>5 then $n else ($same | map(select(.headRefName==$b and .headRepositoryOwner.login==$owner and .headRepository.name==$p.repo)) | if length==0 then $n else d(.[0].baseRefName; $n+1) end) end;
           d($p.baseRefName; 0)))
   | sort_by(-.age)' "$tmp" > "$tmp.json"
 {
