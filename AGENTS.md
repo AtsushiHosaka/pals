@@ -72,7 +72,7 @@ The implementation submodules may be empty until initialized. Parent-level plann
 - Planned maintenance uses the reviewed release-cycle v2 notification window: one exact 5xx alarm, a fixed AWS-enforced expiry of at most ten minutes, active readback before ingress removal, and early cancellation on failure. Preserve raw metrics, evaluation and other alarms; never use open-ended disable/re-enable actions. Keep fault injection on local or dedicated notification-test paths. Notification expiry must not block safe recovery. See the [cause and control record](docs/release-5xx-cause-and-control-2026-11-09.md); source integration and live application remain separate evidence.
 - Owner-approved exception (2026-11-14): seq30 alone may use a notification window of at most 1500 seconds. All other safeguards above remain required, and the user outage acceptance limit stays 15 minutes. This is not approval for seq31 or later. See the decision in [#379](https://github.com/AtsushiHosaka/pals/issues/379#issuecomment-6870562063) and [the release contract](docs/release-reliability-policy.md).
 
-- 候補固定後の変更、実機操作の担当、自前ランナーの使い方、並行してよい範囲と触らない範囲は、[共通契約の該当節](docs/release-reliability-policy.md)に従う。要点: 固定後は「配備を妨げる修正」だけを記録つきで取り込む。実機担当は1チャット。他担当のCI runは取り消さない。release・recoveryのscript、親のsubmodule pointer、凍結worktreeは担当の承認なしに触らない。PRは原則mainをbaseにし、積みは深さ2まで。本番へdeployしたcommitは速やかにmainへ入れる（詳細は同じ節）。
+- 候補固定後の変更、実機操作の担当、自前ランナーの使い方、並行してよい範囲と触らない範囲は、[共通契約の該当節](docs/release-reliability-policy.md)に従う。要点: 固定後は「配備を妨げる修正」だけを記録つきで取り込む（例外: 利用者が候補への追加を明示して依頼し、その依頼を記録した場合は、妨げない変更も取り込める）。実機担当は1チャット。他担当のCI runは取り消さない。release・recoveryのscript、親のsubmodule pointer、凍結worktreeは担当の承認なしに触らない。PRは原則mainをbaseにし、積みは深さ2まで。本番へdeployしたcommitは速やかにmainへ入れる（詳細は同じ節）。
 
 ## 数学のテスト題材
 
