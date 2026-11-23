@@ -15,9 +15,9 @@ U=$NAME
 id "$U" >/dev/null 2>&1 && { echo "user $U already exists; refusing to reuse" >&2; exit 3; }
 # A leftover home (even a symlink) would be re-owned by useradd -m: refuse before creating anything.
 { [ -e "/home/$U" ] || [ -L "/home/$U" ]; } && { echo "/home/$U already exists; refusing to reuse" >&2; exit 3; }
-CREATED=0; REGISTERED=0
-cleanup() { # remove only what this invocation created, and only if setup failed before registration
-  if [ "$CREATED" = 1 ] && [ "$REGISTERED" = 0 ]; then userdel -r "$U" 2>/dev/null || true; fi
+CREATED=0; REGISTRATION_STARTED=0
+cleanup() { # remove only what this invocation created, and only if setup failed before registration started; once config.sh has started the remote runner may exist, so keep the local state for manual recovery (remove the remote runner, then retry)
+  if [ "$CREATED" = 1 ] && [ "$REGISTRATION_STARTED" = 0 ]; then userdel -r "$U" 2>/dev/null || true; fi
 }
 trap cleanup EXIT
 useradd -m -s /bin/bash "$U"; CREATED=1
@@ -25,8 +25,8 @@ useradd -m -s /bin/bash "$U"; CREATED=1
 install -d -o "$U" -g "$U" "/home/$U/actions-runner"
 sudo -u "$U" tar xzf "$TARBALL" -C "/home/$U/actions-runner"
 cd "/home/$U/actions-runner"
+REGISTRATION_STARTED=1
 sudo -u "$U" ./config.sh --unattended --url "https://github.com/AtsushiHosaka/$REPO" \
   --token "$TOKEN" --name "$NAME" --labels "$LABEL" --work _work
-REGISTERED=1
 ./svc.sh install "$U"
 ./svc.sh start
