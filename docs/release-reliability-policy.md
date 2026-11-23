@@ -43,6 +43,65 @@ For a planned sole-target cutover, the v2 controller requires its frozen notific
 
 2026-11-14のオーナー承認により、seq30に限り、指定した5xxアラームの通知抑制の上限を1500秒（25分）とする。seq29の利用停止実測847秒と引き継ぎの計画を踏まえ、600秒を維持する案は今回採用しない。AWSによる期限の強制、適用前の有効状態の確認、失敗時の早期取消、生メトリクス・評価・他のアラームの維持は引き続き必須とする。利用停止15分以内という受け入れ条件は変更しない。seq31以降への包括承認ではない。判断の記録は[pals#379](https://github.com/AtsushiHosaka/pals/issues/379#issuecomment-6870562063)にある。
 
+## 候補固定後の変更と担当（#455、#450の再発防止）
+
+根拠は[#433の遅延分析](https://github.com/AtsushiHosaka/pals/issues/450)。ここは運用ルールの定義であり、CIやscriptによる強制は未実装である。実装済みと扱わない。安全検査・署名・認可・受入の省略は含まない。
+
+### 候補の固定と変更
+
+- 候補固定とは、承認された候補のリリース実行を依頼した時点で、parent・submodule・image・schema・catalog・model設定・実行driverのexact revisionを記録することをいう。
+- 固定後に取り込めるのは「配備を妨げる修正」だけである。具体的には、必須checkの失敗、配備・復旧・cleanupの失敗、安全性やデータ破壊の欠陥、期限切れの再準備で、その修正がなければ候補を署名・配置・受入できない場合に限る。
+- 次は取り込まない。機能追加、見た目の改善、別Issueの修正、リファクタ、ついでの整理。配備を妨げないなら次便へ回す。利用者が候補への追加を明示したときだけ例外とし、その依頼を記録に引用する。
+- 候補を変えるたびに、変更前後のrevision、影響を受ける証拠（署名・転送・検査）、再実施する工程を記録する。変更した候補で無効になる証拠は、既存ルールどおり再取得する。
+- 記録場所は、そのリリースのIssue（例: #433）のコメントとする。秘密・ID・利用者の内容は書かない。
+
+候補変更の記録様式:
+
+| 項目 | 内容 |
+| --- | --- |
+| 変更前→後 | 変更したrepositoryごとのcommit |
+| 理由 | 妨げていた失敗（check名・run ID・診断コード）。上記の「妨げる修正」に当たる根拠 |
+| 依頼者 | 変更を依頼した人、または発見した担当 |
+| 担当 | 修正を書いたチャットと、取り込みを実行する実機担当のチャット |
+| 無効になった証拠 | 再実施が必要な署名・転送・検査 |
+| 取り込まなかったもの | 同時期に提案され、次便へ回した変更 |
+
+### 実機操作の担当
+
+- 実機・本番・共有リソースを操作する担当は1チャットとし、リリースのIssueに「実機担当」としてチャットのリンクを1つだけ書く。担当の交代は、元の担当が引き継ぎ記録を残してから、Issueのコメントで行う。
+- 実機担当のチャットが引き継ぎ記録なしに終了した場合は、利用者（または利用者が指名した人）が、Issueのコメントで代わりの実機担当を指名する。指名の前に、前の操作がもう実行中でないこと（実行中のSSMコマンド、保持中のロックと実行権、一時権限の有無）を読み取りだけで確認し、結果をコメントに残す。実行中のSSMコマンドがなく、前の操作が終了したと確認できた場合は、ロック・実行権・一時権限が残っていても「前の操作はもう実行中でない」と扱い、指名された代わりの担当が、cleanup、一時権限の削除、canonical ownerの解放を、正規の入口（署名済みの手順と台帳）だけで行ってよい。担当は、実施前後の状態、実行したコマンドと結果、残った項目を、Issueのコメントに残す。確認できないうちは、cleanup・一時権限の削除・canonical ownerの解放を含め、実機を書き換えない。期限切れの権限を残し続けないため、確認できない状態が続くときは、その理由と次の確認時刻を同じコメントに書く。代わりの担当が決まるまで、状態は「担当不在・未検証」として記録し、受入済みとは扱わない。
+- 他のチャットは、実機担当の状態を繰り返し確認しない。実機・本番への読み取りも含め、必要な情報は実機担当またはIssueの記録に依頼する。
+- 並列にしてよいのは、独立した調査、source修正、回帰作成だけである。書き込む範囲を重ねない。
+- 「リリース完了後に停止」のような指示は、完了まで実行を続けるという意味で、中止ではない。解釈が分かれるときは、実行を止める前に利用者へ確認する。
+
+### 共有CIと自前ランナー
+
+- 自前ランナーは1台で、runは直列に処理される。待ちのrunを増やす操作（再push、再実行）の前に、`gh run list`で実行中・待機中のrunとそのheadSHAを確認する。
+- 取り消してよいのは、自分が起動したrunだけである。起動者、branch、headSHAを確認してから`gh run cancel`を使う。同名のcheckが別のbranchやPRにあっても取り消さない。他担当のrunは完了を待つか、そのrunを起動した担当に依頼する。
+- 候補固定中、実機担当は必須checkの実行を最優先とする。他の担当は、候補の必須checkが完了するまで、自前ランナーを使うPR・pushを控える。docsだけの変更は、自前ランナーを使わない場合に限り続けてよい。
+- 実機担当は、必須checkを待つ間の占有状況をリリースのIssueに書く（実行中のrun ID、待機中のrun、見込みの完了）。これが所有者表示を兼ねる。
+- workflowの`concurrency`による自動のqueueや、所有者の自動表示は未実装である。必要になったら別Issueで設計する。
+
+### 並行開発の範囲
+
+| 区分 | 対象 | 扱い |
+| --- | --- | --- |
+| 並行してよい | webfront・apiの機能PR、docs、評価・台帳の記録、調査 | 候補に合流させない。mainや統合先へのマージは、必須checkが済み、実機担当の占有を妨げない時期にする |
+| 触らない | release・recoveryのscript（`pals-infra/scripts/release-*`、native adapter、`pals-scripts/release-*`）、実行driver、承認済み候補の入力・hash対象 | 実機担当の承認なしに変更しない。変更が必要な欠陥は、実機担当へ「配備を妨げる修正」として依頼する |
+| 触らない | 親repoのsubmodule pointer | 候補を固定した担当だけが更新する。`git add -A`を使わず、pushの前に`git diff --cached --submodule`を確認する |
+| 触らない | 凍結中のworktree（`/private/tmp/pals-*`など、リリースIssueが凍結と示すもの） | 読み取りのみ。凍結の解除はリリース担当がIssueに記録する |
+| 触らない | 本番・AWS・共有CIの設定、branch protection | 利用者の既存の承認の範囲に従う。実機担当だけが操作する |
+
+### PRの積み方とmainの遅れ
+
+- 新しいPRのbaseは原則mainとする。PRを積むのは深さ2までとし、それより深くしない。
+- 本番へdeployしたcommitは、速やかにmainへ入れる。merge commitで入れ、force pushはしない。
+- 統合先branchがmainと別になる場合は、期限を決めてmainへ統合し、期限をIssueに記録する。
+- 使い終えた積みは、土台から順にマージするか、すぐに閉じる。放置しない。
+- pals-apiは、#96のリリース後に`claude/seq28-api-response-language`をmainへmergeする予定である。pals-webfrontとpals-infraも、同様に統合先とmainの乖離を解消する。これは予定であり、完了を意味しない。
+
+実測による確認は、次回以降のリリースで行う。確認する項目は、候補変更ごとの記録の有無、実機・本番操作の重複の有無、他担当のrun取消しの有無である。
+
 ## Treat recovery as a product requirement
 
 Specify behavior after a transient network error, reconnect/focus, access-token expiry, provider/queue failure, worker exit, and host reboot. Recover observation of the same request rather than resubmitting work. Preserve account isolation, unsent drafts, idempotency, billing, and terminal-state integrity.
@@ -62,3 +121,46 @@ For an incident, restore safely, identify the failure mechanism, add a regressio
 2026-11-17 JST追記: オーナーは「何回でも許可しますよ」と回答し、seq30のローカル資格確認の回数上限を解除した。[最新の判断は#398](https://github.com/AtsushiHosaka/pals/issues/398)。同じ問題、生成モデルgpt-6.1-terra / medium、oracle、意味審査と合格条件を維持し、回数だけを理由に承認を取り直さない。上記の3回上限と第4回だけの追加承認は、それぞれ当時の判断として保持する。この例外は他のリリースへ広げない。
 
 累積1 USDの上限は維持し、過去の未確定callも予約額で数える正規proxy、既存台帳、各期上限と履歴を保持する。reset、予算増額、健全な台帳のrolloverは許可しない。各captureは新しい専用stateと単一送信markerに固定し、不明な結果は同じIDの観測を回復して重複送信しない。次のcaptureへ進む際も同一条件、残予算、署名・freshness・実依存先・source checksを再確認し、合格前には切り替えない。正規controller、dry run直後のapply、本番での保存・描画・再読み込みの受け入れは従来どおり必要で、本番QAは#392の別予算を維持する。
+
+## CI lanes, release branches and PR lifetime (decided 2026-11-22, [#467](https://github.com/AtsushiHosaka/pals/issues/467))
+
+A single shared runner let release CI queue behind ordinary PR checks and stretched the #433 release. The rules below remove that contention without weakening any gate and without paid GitHub Actions.
+
+**Two runner lanes.** Self-hosted runners run in OrbStack machines on the owner's Mac and are registered per repository ([`pals-scripts/ci-runner-add.sh`](../pals-scripts/ci-runner-add.sh) adds one; it never touches an existing runner). `pals-ci-runner` is the release machine (label `pals-release`, runners `pals-ci-{api,web,infra}-rel`); `pals-ci-runner-2` is the ordinary-PR machine (label `pals-pr`, runners `pals-ci-{api,web,infra}-pr`). Workflows select the lane with `runs-on: [self-hosted, pals-release]` or `[self-hosted, pals-pr]`. Never put release-gate jobs on `pals-pr`, and never stop, restart or reconfigure a runner or OrbStack while release CI or a cutover is running; add runners instead. The legacy `pals`-labelled runners are removed only after a release completes and every workflow uses the new labels. `pals-agent` and the parent use GitHub-hosted runners, which are free for these public repositories.
+
+**Light on PRs, heavy once.** A pull request runs only the light `pr-light` check on `pals-pr`. The full suites (`api-regression`, `web-regression`, `release-cycle-regression`, `agent-regression`, plus the parent's release checks) run on push to `main` and `release/**`, on `pals-release` except `agent-regression`, which stays on its GitHub-hosted `ubuntu-24.04` runner. The file paths and job names that `release-source-checks.py` requires do not change, and a candidate still needs its own exact-commit result, so `make release-source-checks`, `release-qualify` and `release-cycle` are not weakened: a candidate that has no heavy result from a `release/seqNN` or `main` push is `BLOCKED`. **Pending:** the parent's `repository-safety` and `release-acceptance-contracts` currently run on `ubuntu-latest` and push only on `main` (`pals-scripts-pr.yml`); moving them to `release/**` on `pals-release` is a separate workflow change. Until it lands, a `release/seqNN` push does not produce those results and the gate stays `BLOCKED`. Likewise `require_check` in `pals-scripts/release-source-checks.py` still accepts a successful run of any event, so a parent PR run can satisfy it; until the gate records the triggering event and branch and accepts parent checks only from a `push` on `main` or `release/*`, the release owner confirms by hand that the parent results come from such a push.
+
+**`release/seqNN` branches.** Cut `release/seqNN` from current `main` in each repository and pin the candidate commits there; push it so the heavy CI runs on the exact candidate. Development continues on `main` during the release; the candidate changes only through the freeze rules above. **Applicability.** Today `AGENTS.md` records `claude/seq28-api-response-language` (API) and `codex/sidebar-inline-math-20261031` (Web) as the protected production sources, and `main` of those repositories is stale; never cut a candidate from stale `main`. For those two repositories, cut `release/seqNN` from the recorded production branch until the approved production commits are reconciled into `main`, `main` has equivalent branch protection, and `AGENTS.md` baselines are updated; only then does "cut from `main`" apply to them. Do not create a separate staging or integration branch: it recreates the drift between `main` and production this rule exists to prevent. Once production acceptance and cleanup have finished, merge the commit that is actually in production into `main` within 24 hours (resolve conflicts by merge, never force push). The release is closed only after this merge; a release whose production commit is not on `main` stays open.
+
+**PR lifetime.** Every PR ends as merged or closed within 7 days of creation. When closing, leave the useful points in an Issue; if the work must be redone, assign an owner and open one PR against `main`. Stack at most two levels deep (a PR whose base is another open PR's branch counts as one level). Working notes go in Issues, not in PRs; do not keep long-lived drafts. A PR that must outlive 7 days needs a dated reason in its Issue.
+
+**Weekly review.** [`pals-scripts/pr-weekly-review.sh`](../pals-scripts/pr-weekly-review.sh) lists open PRs across all PALS repositories, oldest first, and marks those older than 7 days, drafts and stacks. It reads the GitHub API only (zero cost) and writes `~/pals-pr-review/YYYY-MM-DD.md`. It runs from this Mac's cron every Monday 09:00 (`0 9 * * 1 /bin/bash $HOME/pals-pr-review/pr-weekly-review.sh`, using a copy of the script in `~/pals-pr-review/`; refresh the copy when the script changes). Whoever owns the unresolved PRs reports them to the owner the same day.
+## 失敗の診断と報告の区分（#458、#450の再発防止）
+
+### 失敗時に残す診断
+
+失敗したリリース工程は、診断コードを後から足さなくても原因と再開点が分かるように、次の項目を残す。値はすべて閉じた語彙か固定形式の文字列とし、例外メッセージ、パス、トークン、利用者の内容は出さない。
+
+- 失敗した工程（phase）と、外向きの失敗コード
+- 非秘密の下位理由（detail）。外向きのコードが複数の原因をまとめている場合に、その内訳を示す。内訳が既知の固定コードにも例外クラス名にも当てはまらないときは `*_other` とする。
+- 実行を一意に指す run ID と、署名済みジョブの SHA-256
+- cleanup の状態。残骸の一覧が空なら `clean`、残りがあれば `residual`、記録から判断できなければ `unknown` とする。
+- 安全な再開方法。cleanup の完了、読み取り専用の確認、新しい権限の要求、人への引き継ぎのいずれかで示す。`unknown` と表にない理由は、必ず人への引き継ぎにする。
+
+実装は [pals-infra の診断文書](https://github.com/AtsushiHosaka/pals-infra/blob/claude/458-diagnostics/docs/release-diagnosis.md)（`scripts/release_diagnosis.py`）にある。診断が出ていても、`accepted` は常に偽のままとする。診断が出ることは、機能受入の成功ではない。
+
+### 報告の区分
+
+リリースの報告は、次の4つの状態を別々に書く。上の状態の証拠だけで、下の状態を名乗らない。
+
+| 状態 | 言ってよい条件 | 必要な証拠 |
+| --- | --- | --- |
+| source準備 | 候補の固定、署名、配置、検査が済んだ | 候補の識別子と検査結果 |
+| 本番切替済み未検証 | 本番の入口と実行環境を新しい候補へ切り替えた | 切替の記録。この時点では `deployed_unverified` |
+| 本番受入済み | 本番で回答・保存・表示・再読込が確認できた | 本番受入の記録と、依頼された実画面のキャプチャ |
+| 後処理完了 | 一時権限の撤去と所有者の解放が済み、残骸がない | cleanup 状態が `clean` である記録 |
+
+- 「リリース完了」と書けるのは、本番受入済みと後処理完了の両方がそろったときだけにする。
+- 報告には、現在の状態を先頭に1行で書き、続けて未完了の状態を挙げる。テスト件数、署名、配置、ローカル受入の成功は、状態の根拠として並べない。
+- 利用者がキャプチャを求めた場合は、本番受入済みの報告に、実画面のキャプチャを添付する。実装の説明やテスト結果で代えない。キャプチャに秘密や利用者の内容が写っていないことを、添付する前に確かめる。
+- 残り時間の見積もりは、未接続の工程がない場合に限って書く。

@@ -1,13 +1,14 @@
 # Individual Billing Requirements
 
-## 2026-11-02 Free daily tokens and coupons
+## 2026-11-02 Free daily tokens and coupons (superseded 2026-11-22)
 
-The user decided that Free accounts move from three lifetime requests to utilization tokens and that coupon codes add tokens. Guests keep their own limit. The values come from production usage read on 2026-11-02, a small sample from one account (29 token operations, 17 Lean jobs): a catalog answer used 2,211-2,587 tokens, an answer outside the catalog about 6,100 (maximum 6,770), work before a Lean refusal 4,000-5,200 (maximum 7,085), and the Sol routing call a median of 3,223 (maximum 6,010) against a permit of about 82,000. A semantic Recipe review with the Terra review adds about 15,700 tokens whether or not it reuses a Recipe, so one reuse with routing takes about 19,000 (maximum about 22,000), and 30,000 always lets a second one start. Revisit them with real Free usage.
+The user decided on 2026-11-02 that Free accounts move from three lifetime requests to utilization tokens and that coupon codes add tokens. **On 2026-11-22 the owner decided not to adopt the Free daily tokens or the credit-type coupons.** BILL-017 and BILL-018 are withdrawn and their IDs are not reused. Free keeps the three lifetime requests in the Legacy product decisions. Only the Plus coupon (BILL-021) remains. The usage figures below stay as the record behind BILL-020.
 
-- BILL-017: Free receives 30,000 utilization tokens per JST calendar day, enough for 4-11 questions or two semantic Recipe reuses. It runs one request at a time, for up to 15 minutes before an unfinished request stops blocking the next one, and starts a request while any allowance remains. The server holds up to 150,000 tokens per request so that the Sol routing permit fits a question with about 20,000 input tokens. Failures consume nothing, but new requests stop until the next JST day once consumed and failed work together reach 32,000 tokens, which keeps the daily cost below Plus and leaves coupon credits spendable after the daily allowance. Direct proof jobs, clarifications and explanation retries keep their existing behavior until they are metered. A rollout flag keeps the three requests until the web update is live.
-- BILL-019: Free accounts do not get new Lean proof generation. When a Free request would start one, it fails with `free_plan_formal_unavailable` before any generation call, consumes nothing and cannot be retried. The UI states that the Free plan can't answer the question. The user approved this on 2026-11-02. Catalog answers and explanation answers stay available. It applies only with the Free token rollout flag on. Guests have the same refusal (GUEST-002).
+- BILL-017 (withdrawn 2026-11-22): Free receives 30,000 utilization tokens per JST calendar day. Not adopted; Free stays at three lifetime requests (BILL-003). The earlier text is in git history.
+- BILL-019 (withdrawn 2026-11-22): Free accounts get no new Lean proof generation (`free_plan_formal_unavailable`). Not adopted; Free stays at three lifetime requests (BILL-003). If the rule returns, write it again under a new ID. The earlier text is in git history.
 - BILL-020: A verified Lean answer on a token plan also charges the generation usage of every Lean job the request ran, because production records showed that generation was missing from the token budget. Lean generation takes no permits yet, so its cost can pass the quoted hold; the excess is written off and the charge never exceeds the hold. Failed work stays free. Usage that the job usage ledger does not record, such as explanation calls after verification, remains uncharged. This narrows BILL-015 and does not yet give generation calls pre-call permits.
-- BILL-018: An operator creates coupons with a token amount, a redemption limit, a redemption deadline and a credit lifetime. Only a digest of the 80-bit generated code is stored. The coupon form appears only when the API reports that coupon storage is ready. Each account redeems a coupon once, unusable and unknown codes return the same error, and credits are not transferable. Credits never grant an entitlement, so Project creation stays paid. Token plans spend their budget first, then the credits that expire soonest. Usage beyond both is written off.
+- BILL-018 (withdrawn 2026-11-22): token-credit coupons with an amount, redemption limit and credit lifetime. Not adopted. BILL-021 replaces it.
+- BILL-021: An operator issues Plus coupons: single-use codes (one account redeems one code once) that grant Plus access for one UTC calendar month. Only a digest of the generated code is stored. The coupon form appears only when `GET /v1/billing/plus-coupons/status` reports `enabled`. Invalid, expired, exhausted and revoked codes share `plus_coupon_invalid`; an account with an active entitlement gets `plus_coupon_existing_entitlement` without consuming the code; missing storage returns `plus_coupon_unavailable`. A Plus coupon grants an entitlement, not token credits, and is not a monetary discount. The initial plan is 100 individually issued codes (1 QA, 99 distributed), per pals-api#125 `docs/verification/plus-coupons-resume-2026-11-18.md`.
 
 ## 2026-10-08 permanent QA Pro delta
 
@@ -70,7 +71,7 @@ PALS の個人利用者に、累計無料枠と月額 Pro を安全に提供す�
 ## Non-goals
 
 - 従量課金、usage-based Stripe billing、クレジットの譲渡、金銭の返金・自動返金、税額の自動計算、法人請求、
-  金銭を割り引く coupon、年額、または複数 Pro プラン。
+  金銭を割り引く coupon、トークンを加算するクレジット型 coupon（2026-11-22 に不採用。Plus 利用権を付与する BILL-021 は対象）、年額、または複数 Pro プラン。
 - 旧制度ではprovider token usageは原価観測のみ。新制度では上記承認変更に従い、換算tokenを利用枠にする。Stripeの無断従量請求は追加しない。
 - Google/Stripe の secret、client secret、Webhook body、カード情報を frontend、Terraform state、ログ、
   chat、proof record に保存すること。
