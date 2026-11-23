@@ -18,7 +18,7 @@ services:
     depends_on: !override {localstack: {condition: service_healthy}, cognito-local: {condition: service_healthy}, reconciler: {condition: service_healthy}}
     labels: {codex.owner: "01a1bb4b-dec2-76f0-a6fe-32405e465d6e", codex.expiry: "2026-11-09T15:00:00Z"}
     environment:
-      PALS_GUEST_CHAT_ENABLED: "true"
+@@PLUS_COUPONS_ENV@@      PALS_GUEST_CHAT_ENABLED: "true"
       PALS_BILLING_CONFIG_JSON: ""
       PALS_GUEST_HASH_KEY: ${PALS_GUEST_HASH_KEY}
       PALS_GUEST_ALLOWED_ORIGINS: ${PALS_GUEST_ALLOWED_ORIGINS}
