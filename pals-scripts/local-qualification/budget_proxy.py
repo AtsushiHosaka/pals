@@ -22,10 +22,13 @@ RATES = {
     "text-embedding-3-small": (Fraction(1, 50), Fraction(0)),
 }
 # Keep the reviewed per-epoch local cap; cumulative allowance is checked separately.
-LIMIT = 700_000
+LIMIT = 2_000_000
 # This proxy serves only the approved local qualification profile. Rollover never
-# replenishes its cumulative US$1 allowance; unknown closed calls retain their bound.
-CUMULATIVE_LIMIT = 1_000_000
+# replenishes its cumulative allowance; unknown closed calls retain their bound.
+# The owner waived the US$1 allowance for release #433 on 2026-11-21 and approved a
+# US$2 bound for both the per-epoch LIMIT and the cumulative limit (the 2026-11-21 capture
+# attempts exhausted the old 700000 per-epoch bound).
+CUMULATIVE_LIMIT = 2_000_000
 ROLLOVER_SCHEMA = "pals.local-qualification-budget-rollover.v1"
 APPROVAL_SCHEMA = "pals.local-qualification-budget-rollover-approval.v1"
 APPROVAL_KEYS = {
@@ -139,7 +142,12 @@ def closed_totals(ledger):
 
 
 def require_rollover_eligible(ledger):
-    """Only a ledger that can never be resumed may be closed; a healthy one continues."""
+    """Only a ledger that can never be resumed may be closed; a healthy one continues.
+
+    One exception, owner-approved with the reviewed LIMIT: a healthy ledger that has made calls
+    and carries a bound below the current LIMIT may be rolled over to raise its bound. Nothing
+    is reset: the closed ledger is archived byte-identically and its totals stay cumulative.
+    """
     states = [row["state"] for row in ledger["calls"]]
     if "reserved" in states:
         # The outcome of that call was never recorded. It is not this tool's to guess.
@@ -148,6 +156,7 @@ def require_rollover_eligible(ledger):
         ledger["blocked"]
         or any(state != "completed" for state in states)
         or ledger["reserved_microusd"] != ledger["actual_microusd"]
+        or (bool(states) and ledger["limit_microusd"] < LIMIT)
     ):
         raise ValueError("rollover_healthy_ledger_refused")
 
