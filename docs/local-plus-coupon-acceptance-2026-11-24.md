@@ -55,6 +55,8 @@
 
 `prepare` の新しい関数（`freeze_plus_coupons`、`require_plus_coupons_unchanged`）も、同じ実 PG に対して直接呼んで成功した。
 
+品質台帳（`docs/quality-ledger/ledger.csv`）には、認証付き引換の確認4回（`2026-11-24-plus-coupon-local-acceptance`）とACL破壊4種の検出（`2026-11-24-plus-coupon-schema-acl-freeze`）の2行を足し、グラフを再生成した。単体テストの件数は台帳に入れていない。
+
 ## NOT VERIFIED（実行していない、または証拠にならないもの）
 
 - `local-qualification-prepare.py --enable-plus-coupons` の通し実行。共有 stack、compose、guard、TLS、予算台帳は使っていない。上の2関数を実 PG で動かしただけである。
