@@ -22,6 +22,8 @@ pals#385（cheap-first ほか）、pals#318（図）、[pals#370](t2-cheap-first
 
 ## 3. 前提
 
+0. **seq41 で宣言する値は、既存の `progress_preview_enabled` 以外に無い**（既定無効のまま）。seq41 は api と worker のイメージが変わる release で、フラグは宣言しない。有効化は、seq41 を出してから、本番で1つずつ測って決める。
+
 1. 配線を含む release（pals-infra の `runtime_flags`）が accepted になっている。それより前は、宣言しても届かない。
 2. API は `#124` を含む候補、web は `#94` の表示（意味審査の不合格と利用不可の区別）を含む候補であること（作り直しを有効にする場合）。
 3. cheap-first は本物の API でのカナリアと、本番の検証器に対する整形後の提出の確認を、有効にする前に済ませる（pals#370 の「事前に確かめること」。未実施）。
