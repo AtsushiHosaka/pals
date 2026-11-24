@@ -1,0 +1,26 @@
+{
+ "by_name": {
+  "MAX_WINDOW_SECONDS": 1,
+  "OBSERVATION_MAX_AGE_S": 3
+ },
+ "forward_only_comparison_sites": [
+  "host/private-runtime/native_safety.py:1058",
+  "host/private-runtime/native_safety.py:174",
+  "host/private-runtime/native_safety.py:1008",
+  "host/private-runtime/native_safety_host.py:149",
+  "host/private-runtime/native_safety_host.py:270",
+  "scripts/generate_native_safety_bindings.py:148",
+  "scripts/release_gate_table.py:93"
+ ],
+ "forward_only_mode_tuple_agreements_by_hand": 0,
+ "forward_only_state_comparisons": 7,
+ "numeric_literal_definitions_of_gate_limits": 4,
+ "observation_max_age_definitions": 3,
+ "record_verifier_implementations": 3,
+ "tuple_sites": [],
+ "verifier_sites": [
+  "scripts/release_cycle_preflight.py:22",
+  "scripts/release_gate_table.py:166",
+  "scripts/release_rehearsal.py:135"
+ ]
+}

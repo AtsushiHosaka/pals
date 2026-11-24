@@ -1,0 +1,62 @@
+{
+ "by_name": {
+  "ALERT_CAP_S": 1,
+  "ALERT_MAX_S": 1,
+  "ALERT_MAX_SECONDS": 2,
+  "ALERT_MIN_S": 1,
+  "ALERT_TIMEOUT_S": 1,
+  "ALERT_WINDOW_LIMIT_S": 1,
+  "ALERT_WINDOW_MAX_S": 1,
+  "CANARY_MAX_AGE_S": 1,
+  "LATE_MANIFEST_MARGIN_S": 1,
+  "MARGIN_S": 2,
+  "MAX_POLICY_WINDOW_S": 1,
+  "MAX_RETAINED_WORKER_HOPS": 1,
+  "MAX_RETAINED_WORKER_PINNED_HOPS": 1,
+  "MAX_WINDOW_SECONDS": 1,
+  "MIN_DISK_FREE_GB": 1,
+  "OBSERVATION_FUTURE_SLACK_S": 1,
+  "OBSERVATION_MAX_AGE_S": 6,
+  "OBSERVATION_SKEW_S": 1,
+  "OPERATOR_APPLY_LIMIT_S": 1,
+  "POLICY_MAX_AHEAD_S": 2,
+  "PREFLIGHT_MAX_AGE_S": 2,
+  "PREFLIGHT_RECORD_MAX_BYTES": 1,
+  "PREFLIGHT_TO_ADMIT_LIMIT_S": 1,
+  "QUIESCE_TO_ADMISSION_LIMIT_S": 1,
+  "RECORD_MAX_AGE_S": 1,
+  "REFRESH_PROOF_MAX_AGE_S": 2
+ },
+ "forward_only_comparison_sites": [
+  "host/private-runtime/native_safety.py:1058",
+  "host/private-runtime/native_safety.py:174",
+  "host/private-runtime/native_safety.py:1008",
+  "host/private-runtime/native_safety_host.py:149",
+  "host/private-runtime/native_safety_host.py:270",
+  "scripts/generate_native_safety_bindings.py:146",
+  "scripts/release-cycle.py:270",
+  "scripts/release-cycle.py:184",
+  "scripts/release-observe.py:202",
+  "scripts/release-step.py:573",
+  "scripts/release-step.py:144",
+  "scripts/release-step.py:861",
+  "scripts/release_controller.py:206",
+  "scripts/release_host_tools.py:410",
+  "scripts/release_host_tools.py:417",
+  "scripts/release_plan.py:236",
+  "scripts/release_plan.py:604"
+ ],
+ "forward_only_mode_tuple_agreements_by_hand": 2,
+ "forward_only_state_comparisons": 17,
+ "numeric_literal_definitions_of_gate_limits": 36,
+ "observation_max_age_definitions": 6,
+ "record_verifier_implementations": 2,
+ "tuple_sites": [
+  "scripts/release-cycle.py:519",
+  "scripts/release-step.py:577"
+ ],
+ "verifier_sites": [
+  "scripts/release-cycle.py:1374",
+  "scripts/release_gate.py:246"
+ ]
+}
