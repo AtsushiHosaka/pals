@@ -7,7 +7,7 @@
 ## 0. 要点
 
 - **大きいこと自体より、「大きくて、よく変わる」ファイルが問題です。** openmath.py(4,034行)は 10/1 以降に一度も変わっていないので、分割しません。分割するのは、release 系5本、worker/pipeline/explanations、postgres.py、globals.css です。
-- **infra の重い CI は wall p50 20.4分です。** 直近7日(11-18〜11-24)では、取消された実行が占有時間の**49%**(1,743分 / 3,550分)を占めました。PR では compile しか走らず、動作のテストは main への push まで走りません。これが #475 の失敗1の原因です。
+- **infra の重い CI は wall p50 20.4分です。** 直近7日(11-18〜11-24)では、取消された実行がランナーの実占有時間(step の実行時間)の**20%**(428分 / 2,134分)を占めました。run の経過時間(待ちを含む)で見ると51%(2,109分 / 4,105分)です。PR では compile しか走らず、動作のテストは main への push まで走りません。これが #475 の失敗1の原因です。
 - **release は6種類以上のモードを、同じ plan、cycle、step の中で条件分岐しています。** 同じ判定(forward-only の一致)を4か所で別々に実装し、観測の鮮度の定数は6か所で別々に定義しています。#475 の「実行して初めて分かる失敗」はこの構造から生まれています。
 - **進め方**: 最初に、取消しの無駄の削減とテスト一覧の自動化(段階1)を行い、次に gate 条件表(段階2)、テストの選択実行(段階3)の順に進めます。リリース当日と障害復旧中には着手しません。新機能を足さないリファクタだけの期間を設けます。
 
@@ -65,7 +65,7 @@ infra で最も多く変わったファイルは `.github/workflows/release-cycl
 | web application regression | 15 | 3.4分 | 7.2分 | 0.0 / 3.2分 | self-hosted pals-release |
 | infra / web PR light | 17 / 8 | 0.3分 / 2.0分 | — | — | self-hosted pals-pr |
 
-infra の重い CI の1日あたりの占有時間です(run の開始から終了まで。待ちを含む上限の値)。
+infra の重い CI の1日あたりの run の経過時間です(run の開始から終了まで。**待ちを含む**ので、ランナーの占有時間ではありません。300件の標本)。同じ7日のランナーの実占有(job の step の実行時間、295件の全数)は、完了 1,706分、取消し 428分(20.0%)でした。
 
 | 日 | 完了した run | 取消された run |
 |---|---|---|
@@ -76,7 +76,7 @@ infra の重い CI の1日あたりの占有時間です(run の開始から終�
 | 11-22 | 8件 172分 | 29件 399分 |
 | 11-23 | 19件 385分 | 18件 25分 |
 | 11-24 | 9件 239分 | 8件 130分 |
-| **計** | **1,807分** | **1,743分(49%)** |
+| **計** | **1,807分** | **1,743分(経過時間の49%)** |
 
 pals#467 による PR と main の分離(11-23 08:01 にマージ)の後も、main への連続 push で取消しが続いています(11-24 は130分)。
 
@@ -191,7 +191,7 @@ flowchart LR
 ```
 
 - **PR は L0 と L1 だけにします。** 動作のテストが1本も走らない現状(infra)を改め、影響範囲の単体を走らせます。
-- **main は L2 にします。** 連続 push で取消しの山にならないよう、main への push の concurrency は `cancel-in-progress: false` にして、待っている run は最新の1件に合流させます。【推測】これで11-18のような1日867分の取消しは大部分なくせます。
+- **main は L2 にします。** 連続 push で取消しの山にならないよう、main への push の concurrency は `cancel-in-progress: false` にして、待っている run は最新の1件に合流させます。【推測】これで取消しによるランナーの実占有(7日で428分)は大部分なくせます。
 - **release は L3 にします。** release/** への push と候補の固定で走らせます。同じ commit で L2 が成功していれば再実行しません(結果を commit の SHA で記録して照合します。#475 の失敗1に対応します)。
 - **単一ランナーの渋滞対策**:
   - ランナーは用途で分けます。pals-pr(軽い)と pals-release(重い)の2系統は既にあります。
@@ -217,7 +217,7 @@ flowchart TB
 
 | 段階 | 内容 | 期待効果(目標) | 主なリスク | 完了条件 |
 |---|---|---|---|---|
-| 1 CI と計測 | 計測スクリプト。テスト一覧の自動 discover。main push の取消しをやめる。canary を毎日 | 取消しの占有 49% → ≤ 10%。workflow の変更 70回/月 → テスト追加では0回 | 必須 check の名前が変わる | 7日間の計測で取消し ≤ 10%。テストを足しても yml が変わらない |
+| 1 CI と計測 | 計測スクリプト。テスト一覧の自動 discover。main push の取消しをやめる。canary を毎日 | 取消しのランナー実占有 20% → ≤ 5%。workflow の変更 70回(10/1以降) → テスト追加では0回 | 必須 check の名前が変わる | 7日間の計測で取消しの実占有 ≤ 5%。テストを足しても yml が変わらない |
 | 2 gate 条件表 | release_gate に条件を集め、preflight、rehearsal、cycle が同じ表を評価する。定数の重複をなくす | 条件の重複(forward-only 4か所、鮮度の定数6か所)→ 1か所。#475 型の「実行して初めて分かる失敗」→ 0件/リリース | frozen set の変化。リリース中の変更は禁止 | 新しい gate の追加が、表の1行とテスト1本で済む |
 | 3 テスト戦略 | L0〜L3。impact map。巨大テストの分割 | infra の PR で動作テスト 0本 → 影響範囲。PR の CI p50 ≤ 5分。L2 ≤ 10分 | 選択の漏れ。main で L2 が拾う設計にする | 5件の実 PR で、選んだテストが L2 の失敗を取りこぼしていない |
 | 4 infra の機械的分割 | 責務ごとに移す(挙動不変) | release 系6本 → 各 ≤ 800行(目安 500) | rename による履歴の断絶、pin の変化 | 全テストが変更なしで通る。golden が変わらない |
@@ -245,12 +245,13 @@ flowchart TB
 
 | 指標 | コマンド |
 |---|---|
-| 行数 | `git ls-files '*.py' '*.ts' '*.tsx' '*.css' \| xargs wc -l` |
+| 行数 | `git ls-files '*.py' '*.ts' '*.tsx' '*.css' '*.sh' '*.sql' \| xargs wc -l` |
 | 変更回数 | `git log --no-merges --since=2026-10-01 --name-only origin/main`(対象ファイルを含むコミットの数) |
 | 共変更 | 同じコミットで変わったファイルの数 |
 | テストの結合 | `grep -rlE '<module>' tests` |
 | CI の時間 | `gh api repos/<repo>/actions/runs` と `.../runs/<id>/jobs` の started_at、completed_at |
-| 取消しの占有 | conclusion=cancelled の run の(updated_at − run_started_at)の合計。待ちを含む上限の値 |
+| 取消しのランナー実占有 | conclusion=cancelled の run の各 job で、runner が割り当たったものの step の最初の開始〜最後の終了の合計。job の started_at〜completed_at は待ちを含むので使わない |
+| 取消しの経過時間 | conclusion=cancelled の run の(updated_at − run_started_at)の合計。待ちを含む |
 | open→merge | `gh pr list --state merged --search merged:>=2026-11-10` の createdAt と mergedAt |
 
 段階1で、これを `pals-scripts/measure-codebase.py` にまとめ、出力を JSON で残します。
