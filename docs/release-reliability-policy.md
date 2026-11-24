@@ -66,6 +66,16 @@ For a planned sole-target cutover, the v2 controller requires its frozen notific
 | 無効になった証拠 | 再実施が必要な署名・転送・検査 |
 | 取り込まなかったもの | 同時期に提案され、次便へ回した変更 |
 
+### 事前 rehearsal と当日の凍結（#475、オーナー決定 2026-11-24）
+
+根拠は、seq33〜seq40 で、gate と preflight の条件を「リリース当日に、実環境で初めて通しで運転した」ため、約5回（worker の鎖の段数、session と復旧 permit、fence と broker、sudo・SSO・IAM の窓）失敗した事実である。そのたびに infra の PR、重い CI、マージ、候補の作り直しと署名、host 準備、capture の周回が入り、capture と freeze の期限が切れた。
+
+- 手順は「候補の下書き → rehearsal → 修正 → 署名 → 最終 plan で rehearsal → 本番」とする。下書きの段階で `make release-rehearsal DRAFT=1`（pals-infra）を回し、止まった条件を「どの条件が、どの値で」で受け取って先に直す。
+- rehearsal は、本番と同じコード（preflight、gate、`release-cycle.py` の plan 検証）を実際の plan 入力で評価し、続けて `tests/rehearsal/run.sh`（ローカル Docker の2 host 模擬と stand-in cloud で、controller を全工程通す）を回す。環境の測定値（runner の canary、SSO の refresh、IAM の期限）は入力に実測値を入れる。宣言や過去の PASS では代えない。
+- `release-cycle.py --apply` は、同じ plan・candidate・tooling に結び付いた rehearsal の通過記録（`--rehearsal-record`）が無ければ開始しない。記録は plan hash、candidate hash、release tooling の tree hash（scripts、owner module、workflow、rehearsal の harness）に束縛される。下書きと `--no-docker` の rehearsal は記録を作らない。署名・期限・履歴・安全検査は弱めない。
+- **リリース当日にツール・CI・ランナー・gate を変えない。** 変えると tooling の hash が変わり、記録は無効になる。変えた場合は、その変更を含む最終の状態で rehearsal をやり直す（候補固定後に取り込める「配備を妨げる修正」の扱いは上の規則に従う）。
+- rehearsal が見ないもの（実 AWS、実 host のOS・権限、実 provider、本番の認証・ネットワーク、受入）は、従来どおり本番の観測と受入で確認する。rehearsal の通過は本番の成功を意味しない。
+
 ### 実機操作の担当
 
 - 実機・本番・共有リソースを操作する担当は1チャットとし、リリースのIssueに「実機担当」としてチャットのリンクを1つだけ書く。担当の交代は、元の担当が引き継ぎ記録を残してから、Issueのコメントで行う。
