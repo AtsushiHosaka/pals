@@ -1,5 +1,7 @@
 # T2 cheap-first を次のリリースで有効にする手順書（2026-11-14）
 
+> 2026-11-25: 有効化の順序と戻し方は [flag-enable-runbook-2026-11-25.md](flag-enable-runbook-2026-11-25.md) に統合した。plan input の `runtime_flags` で宣言する（pals-infra）。env を「外す」代わりに `false` を宣言する。この文書は測定と危険の原典として残す。
+
 対象: pals-agent#129（マージ済み、全フラグ既定 off）。根拠: [t2-cheap-first](improvement-journal/entries/2026-11-14-t2-cheap-first.md)、[t2-30s-late-items-and-cheap-patch](improvement-journal/entries/2026-11-14-t2-30s-late-items-and-cheap-patch.md)、[t2-failure-classes-and-repair-hints](improvement-journal/entries/2026-11-14-t2-failure-classes-and-repair-hints.md)。この手順書は有効にする判断を代行しません。有効にするのは、リリース担当が前提（下の「事前に確かめること」）を確かめてからです。
 
 ## 1. 有効にするフラグと値（ワーカーの環境変数。置き場所は配備担当が決める）
