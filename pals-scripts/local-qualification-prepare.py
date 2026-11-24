@@ -13,6 +13,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -549,6 +550,70 @@ def require_coupon_runtime(api, coupon_plan):
         )
 
 
+PLUS_COUPON_READBACK = """import sys,json
+from pathlib import Path
+sys.path.insert(0,sys.argv[1])
+from database_readiness import inspect_plus_coupons
+values=dict(line.split('=',1) for line in Path(sys.argv[2]).read_text().splitlines() if line and not line.startswith('#'))
+try:
+ result=inspect_plus_coupons(values['PALS_HOST_DATABASE_URL'],Path(sys.argv[3]),sys.argv[4])
+ print(json.dumps({'state':'ready','observation':result},sort_keys=True))
+except ValueError as error:print(json.dumps({'state':'unavailable','code':str(error)}))
+"""
+
+
+def observe_plus_coupons(subject, environment_file, *, run_=None):
+    """Read the installed coupon schema/ACL of the STARTED API's database. Read only."""
+    contract = subject["database_contract"]
+    result = json.loads(
+        (run_ or gate.command)(
+            [
+                sys.executable,
+                "-c",
+                PLUS_COUPON_READBACK,
+                str(HERE / "local-qualification"),
+                str(environment_file),
+                contract["api_source_root"],
+                contract["api_source_revision"],
+            ]
+        )
+    )
+    gate.need(
+        result.get("state") == "ready",
+        "actual_local_plus_coupon_readiness_failed:"
+        + str(result.get("code", "dependency_failed")),
+    )
+    return result["observation"]
+
+
+def freeze_plus_coupons(subject, environment_file, coupon_plan, *, observe=None):
+    """Freeze the coupon readback under its OWN key; no existing key or value changes."""
+    if coupon_plan is None:
+        return None
+    observation = (observe or observe_plus_coupons)(subject, environment_file)
+    gate.need(
+        observation["api_source_revision"] == coupon_plan["api_source_revision"]
+        and observation["schema_sha256"] == coupon_plan["schema_sha256"],
+        "coupon_local_readback_differs_from_bootstrap_plan",
+    )
+    fingerprint = observation["plus_coupons_schema_fingerprint_sha256"]
+    subject["database_contract"]["plus_coupons_schema_fingerprint_sha256"] = fingerprint
+    return fingerprint
+
+
+def require_plus_coupons_unchanged(
+    subject, environment_file, coupon_plan, *, observe=None
+):
+    if coupon_plan is None:
+        return
+    observation = (observe or observe_plus_coupons)(subject, environment_file)
+    gate.need(
+        subject["database_contract"].get("plus_coupons_schema_fingerprint_sha256")
+        == observation["plus_coupons_schema_fingerprint_sha256"],
+        "actual_plus_coupon_schema_or_privileges_differ_from_subject",
+    )
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     for name in (
@@ -947,6 +1012,7 @@ def main():
     subject["database_contract"]["schema_fingerprint_sha256"] = observed_database[
         "schema_fingerprint_sha256"
     ]
+    freeze_plus_coupons(subject, r / "local.env", coupon_plan)
     out = r / "subject-native.json"
 
     def write_and_recreate():
@@ -974,6 +1040,7 @@ def main():
         lambda: json.loads(run(["docker", "inspect", PROJECT + "-api-1"]))[0],
     )
     require_coupon_runtime(frozen_api, coupon_plan)
+    require_plus_coupons_unchanged(subject, r / "local.env", coupon_plan)
     gate.web_provenance(subject)
     gate.verifier_provenance(subject)
     gate.runtime(subject)
