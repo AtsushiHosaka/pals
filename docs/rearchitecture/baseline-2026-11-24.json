@@ -1,0 +1,2370 @@
+{
+ "recent_from": "2026-10-25",
+ "repos": {
+  "pals": {
+   "ci": {
+    "cancelled_share_of_elapsed": 0.0,
+    "cancelled_share_of_occupancy": 0.0,
+    "elapsed_min": {
+     "other": 3,
+     "success": 117
+    },
+    "job_queue_min": {
+     "max": 0.1,
+     "n": 282,
+     "p50": 0.0,
+     "p90": 0.0
+    },
+    "jobs_success_min": {
+     "release-acceptance-contracts": {
+      "max": 1.4,
+      "n": 141,
+      "p50": 0.8,
+      "p90": 0.8
+     },
+     "repository-safety": {
+      "max": 1.1,
+      "n": 141,
+      "p50": 0.7,
+      "p90": 0.8
+     }
+    },
+    "runner_occupancy_min": {
+     "other": 5,
+     "success": 192
+    },
+    "runs": {
+     "other": 4,
+     "success": 141
+    },
+    "wall_success_min": {
+     "max": 1.4,
+     "n": 141,
+     "p50": 0.8,
+     "p90": 0.9
+    },
+    "workflow": "PALS parent checks"
+   },
+   "code": {
+    "code_files": 172,
+    "code_lines": 61818,
+    "commits_since": 728,
+    "head": "f7c9507",
+    "hot_files": [
+     [
+      "docs/quality-ledger/ledger.csv",
+      171
+     ],
+     [
+      "pals-infra",
+      143
+     ],
+     [
+      "docs/quality-ledger/charts/success_rate_by_family_light.png",
+      140
+     ],
+     [
+      "docs/quality-ledger/charts/success_rate_by_family_dark.png",
+      140
+     ],
+     [
+      "docs/improvement-journal/kpi-timeline.md",
+      111
+     ],
+     [
+      "docs/quality-ledger/charts/failure_breakdown_light.png",
+      95
+     ],
+     [
+      "docs/quality-ledger/charts/failure_breakdown_dark.png",
+      95
+     ],
+     [
+      "pals-webfront",
+      82
+     ]
+    ],
+    "large": [
+     {
+      "co_changed": [
+       [
+        "pals-scripts/local-qualification-prepare.py",
+        9
+       ],
+       [
+        "docs/local-release-qualification.md",
+        9
+       ],
+       [
+        "pals-scripts/local-qualification/budget_proxy.py",
+        8
+       ],
+       [
+        "pals-scripts/local-qualification.py",
+        8
+       ]
+      ],
+      "commits": 15,
+      "commits_recent": 15,
+      "lines": 4098,
+      "path": "pals-scripts/tests/test_local_qualification.py"
+     },
+     {
+      "co_changed": [
+       [
+        "docs/spec-fixes-2026-09-29.md",
+        1
+       ],
+       [
+        "docs/chat-sharing-loop-ledger.md",
+        1
+       ],
+       [
+        "pals-scripts/tests/test_multivariable_line_supplement_alignment.py",
+        1
+       ],
+       [
+        "pals-scripts/generate-calculus-v5-supplement-batch.py",
+        1
+       ]
+      ],
+      "commits": 1,
+      "commits_recent": 0,
+      "lines": 1586,
+      "path": "pals-scripts/audit-draft-catalog-coverage.py"
+     },
+     {
+      "co_changed": [],
+      "commits": 0,
+      "commits_recent": 0,
+      "lines": 1287,
+      "path": "pals-scripts/generate-typed-real-analysis-v1-authoring-manifest.py"
+     },
+     {
+      "co_changed": [
+       [
+        "docs/spec-fixes-2026-09-29.md",
+        1
+       ],
+       [
+        "docs/chat-sharing-loop-ledger.md",
+        1
+       ],
+       [
+        "pals-scripts/tests/test_multivariable_line_supplement_alignment.py",
+        1
+       ],
+       [
+        "pals-scripts/generate-calculus-v5-supplement-batch.py",
+        1
+       ]
+      ],
+      "commits": 1,
+      "commits_recent": 0,
+      "lines": 1061,
+      "path": "pals-scripts/generate-multivariable-v5-batch.py"
+     },
+     {
+      "co_changed": [
+       [
+        "docs/spec-fixes-2026-09-29.md",
+        1
+       ],
+       [
+        "docs/chat-sharing-loop-ledger.md",
+        1
+       ],
+       [
+        "pals-scripts/tests/test_multivariable_line_supplement_alignment.py",
+        1
+       ],
+       [
+        "pals-scripts/generate-calculus-v5-supplement-batch.py",
+        1
+       ]
+      ],
+      "commits": 1,
+      "commits_recent": 0,
+      "lines": 1027,
+      "path": "pals-scripts/generate-linear-algebra-v5-batch.py"
+     },
+     {
+      "co_changed": [
+       [
+        "pals-scripts/tests/test_local_qualification.py",
+        9
+       ],
+       [
+        "docs/local-release-qualification.md",
+        8
+       ],
+       [
+        "pals-scripts/local-qualification.py",
+        6
+       ],
+       [
+        "pals-scripts/local-qualification/bootstrap_database.py",
+        5
+       ]
+      ],
+      "commits": 9,
+      "commits_recent": 9,
+      "lines": 1012,
+      "path": "pals-scripts/local-qualification-prepare.py"
+     },
+     {
+      "co_changed": [
+       [
+        "pals-scripts/tests/test_local_qualification.py",
+        8
+       ],
+       [
+        "docs/local-release-qualification.md",
+        7
+       ],
+       [
+        "pals-scripts/local-qualification-prepare.py",
+        6
+       ],
+       [
+        "pals-scripts/local-qualification/budget_proxy.py",
+        4
+       ]
+      ],
+      "commits": 8,
+      "commits_recent": 8,
+      "lines": 1008,
+      "path": "pals-scripts/local-qualification.py"
+     }
+    ],
+    "large_files": 7,
+    "large_lines": 11079,
+    "ref": "origin/main"
+   },
+   "prs": {
+    "changed_files": {
+     "max": 13,
+     "n": 30,
+     "p50": 7,
+     "p90": 12
+    },
+    "changed_lines": {
+     "max": 1331,
+     "n": 30,
+     "p50": 91,
+     "p90": 577
+    },
+    "merged": 30,
+    "open_to_merge_h": {
+     "max": 263.6,
+     "n": 30,
+     "p50": 6.4,
+     "p90": 252.7
+    }
+   }
+  },
+  "pals-agent": {
+   "ci": {
+    "cancelled_share_of_elapsed": 0.069,
+    "cancelled_share_of_occupancy": 0.083,
+    "elapsed_min": {
+     "cancelled": 11,
+     "other": 54,
+     "success": 95
+    },
+    "job_queue_min": {
+     "max": 0.1,
+     "n": 25,
+     "p50": 0.0,
+     "p90": 0.1
+    },
+    "jobs_success_min": {
+     "agent-regression": {
+      "max": 4.6,
+      "n": 25,
+      "p50": 3.6,
+      "p90": 4.4
+     }
+    },
+    "runner_occupancy_min": {
+     "cancelled": 13,
+     "other": 55,
+     "success": 92
+    },
+    "runs": {
+     "cancelled": 2,
+     "other": 10,
+     "success": 25
+    },
+    "wall_success_min": {
+     "max": 4.6,
+     "n": 25,
+     "p50": 3.7,
+     "p90": 4.4
+    },
+    "workflow": "Agent application regression"
+   },
+   "code": {
+    "code_files": 596,
+    "code_lines": 193909,
+    "commits_since": 329,
+    "head": "8703aaf",
+    "hot_files": [
+     [
+      "pals_agent/worker.py",
+      52
+     ],
+     [
+      "pals_agent/pipeline.py",
+      47
+     ],
+     [
+      "pals_agent/explanations.py",
+      43
+     ],
+     [
+      "pals_agent/proof_reuse.py",
+      37
+     ],
+     [
+      "pals_agent/factory.py",
+      26
+     ],
+     [
+      "pals_agent/generator.py",
+      21
+     ],
+     [
+      "pals_agent/settings.py",
+      21
+     ],
+     [
+      "tests/unit/test_explanations.py",
+      20
+     ]
+    ],
+    "large": [
+     {
+      "co_changed": [
+       [
+        "pals_agent/explanations.py",
+        15
+       ],
+       [
+        "pals_agent/pipeline.py",
+        11
+       ],
+       [
+        "tests/unit/test_explanations.py",
+        11
+       ],
+       [
+        "pals_agent/settings.py",
+        10
+       ]
+      ],
+      "commits": 52,
+      "commits_recent": 47,
+      "lines": 4555,
+      "path": "pals_agent/worker.py"
+     },
+     {
+      "co_changed": [],
+      "commits": 0,
+      "commits_recent": 0,
+      "lines": 4034,
+      "path": "pals_agent/openmath.py"
+     },
+     {
+      "co_changed": [
+       [
+        "pals_agent/factory.py",
+        16
+       ],
+       [
+        "pals_agent/settings.py",
+        13
+       ],
+       [
+        "pals_agent/worker.py",
+        11
+       ],
+       [
+        "pals_agent/generator.py",
+        10
+       ]
+      ],
+      "commits": 47,
+      "commits_recent": 45,
+      "lines": 3211,
+      "path": "pals_agent/pipeline.py"
+     },
+     {
+      "co_changed": [
+       [
+        "tests/unit/test_worker_credential_provider_binding.py",
+        1
+       ],
+       [
+        "tests/unit/test_vector_calculus_v6_supplement.py",
+        1
+       ],
+       [
+        "pals_agent/content_dictionaries/typed-calculus-v2-registry.json",
+        1
+       ],
+       [
+        "tests/unit/test_proof_flow_runtime_task6_red.py",
+        1
+       ]
+      ],
+      "commits": 1,
+      "commits_recent": 0,
+      "lines": 3099,
+      "path": "pals_agent/typed_local_catalog.py"
+     },
+     {
+      "co_changed": [
+       [
+        "tests/unit/test_explanations.py",
+        19
+       ],
+       [
+        "pals_agent/worker.py",
+        15
+       ],
+       [
+        "tests/unit/test_explanation_semantic_gate.py",
+        11
+       ],
+       [
+        "docs/verification/explanation-semantic-gate-2026-11-06.md",
+        10
+       ]
+      ],
+      "commits": 43,
+      "commits_recent": 36,
+      "lines": 2547,
+      "path": "pals_agent/explanations.py"
+     },
+     {
+      "co_changed": [
+       [
+        "tests/unit/test_repair_runtime_spec.py",
+        3
+       ],
+       [
+        "tests/unit/test_settings_factory.py",
+        3
+       ],
+       [
+        "pals_agent/openai_diagnostics.py",
+        2
+       ],
+       [
+        "tests/unit/test_openai.py",
+        2
+       ]
+      ],
+      "commits": 4,
+      "commits_recent": 3,
+      "lines": 2200,
+      "path": "tests/unit/test_pipeline.py"
+     },
+     {
+      "co_changed": [
+       [
+        "pals_agent/factory.py",
+        1
+       ],
+       [
+        "pals_agent/worker.py",
+        1
+       ],
+       [
+        "tests/unit/test_repair_early_stop.py",
+        1
+       ],
+       [
+        "pals_agent/pipeline.py",
+        1
+       ]
+      ],
+      "commits": 1,
+      "commits_recent": 1,
+      "lines": 2198,
+      "path": "pals_agent/evaluation.py"
+     },
+     {
+      "co_changed": [],
+      "commits": 0,
+      "commits_recent": 0,
+      "lines": 2177,
+      "path": "tests/unit/test_openmath.py"
+     },
+     {
+      "co_changed": [
+       [
+        "pals_agent/proof_request_worker.py",
+        10
+       ],
+       [
+        "pals_agent/factory.py",
+        7
+       ],
+       [
+        "pals_agent/api_client.py",
+        7
+       ],
+       [
+        "tests/unit/test_math_conventions.py",
+        6
+       ]
+      ],
+      "commits": 37,
+      "commits_recent": 20,
+      "lines": 2153,
+      "path": "pals_agent/proof_reuse.py"
+     },
+     {
+      "co_changed": [
+       [
+        "pals_agent/pipeline.py",
+        10
+       ],
+       [
+        "pals_agent/models.py",
+        6
+       ],
+       [
+        "pals_agent/worker.py",
+        5
+       ],
+       [
+        "pals_agent/t2_lane.py",
+        5
+       ]
+      ],
+      "commits": 21,
+      "commits_recent": 18,
+      "lines": 1741,
+      "path": "pals_agent/generator.py"
+     },
+     {
+      "co_changed": [
+       [
+        "pals_agent/worker.py",
+        3
+       ],
+       [
+        "tests/unit/test_explanations.py",
+        3
+       ],
+       [
+        "tests/story/test_worker_story.py",
+        3
+       ],
+       [
+        "pals_agent/explanations.py",
+        3
+       ]
+      ],
+      "commits": 3,
+      "commits_recent": 2,
+      "lines": 1694,
+      "path": "tests/unit/test_worker_claim_spec.py"
+     },
+     {
+      "co_changed": [
+       [
+        "pals_agent/explanations.py",
+        19
+       ],
+       [
+        "pals_agent/worker.py",
+        11
+       ],
+       [
+        "tests/unit/test_explanation_semantic_gate.py",
+        6
+       ],
+       [
+        "tests/story/test_worker_story.py",
+        6
+       ]
+      ],
+      "commits": 20,
+      "commits_recent": 17,
+      "lines": 1629,
+      "path": "tests/unit/test_explanations.py"
+     },
+     {
+      "co_changed": [
+       [
+        "pals_agent/worker.py",
+        6
+       ],
+       [
+        "tests/story/test_worker_story.py",
+        2
+       ],
+       [
+        "pals_agent/settings.py",
+        2
+       ],
+       [
+        "pals_agent/lean.py",
+        2
+       ]
+      ],
+      "commits": 6,
+      "commits_recent": 5,
+      "lines": 1578,
+      "path": "tests/unit/test_worker.py"
+     },
+     {
+      "co_changed": [
+       [
+        "pals_agent/worker.py",
+        7
+       ],
+       [
+        "tests/unit/test_explanations.py",
+        6
+       ],
+       [
+        "pals_agent/explanations.py",
+        6
+       ],
+       [
+        "tests/unit/test_worker_claim_spec.py",
+        3
+       ]
+      ],
+      "commits": 8,
+      "commits_recent": 7,
+      "lines": 1524,
+      "path": "tests/story/test_worker_story.py"
+     },
+     {
+      "co_changed": [
+       [
+        "pals_agent/lean_verifier/http_server.py",
+        10
+       ],
+       [
+        "pals_agent/lean.py",
+        6
+       ],
+       [
+        "pals_agent/worker.py",
+        6
+       ],
+       [
+        "pals_agent/lean_verifier/http_runtime.py",
+        4
+       ]
+      ],
+      "commits": 11,
+      "commits_recent": 9,
+      "lines": 1276,
+      "path": "tests/unit/test_isolated_verifier_http_server.py"
+     },
+     {
+      "co_changed": [
+       [
+        "pals_agent/lean_verifier/http_runtime.py",
+        8
+       ],
+       [
+        "tests/unit/test_lean_process_boundary_spec.py",
+        8
+       ],
+       [
+        "tests/unit/test_http_verifier_runtime.py",
+        6
+       ],
+       [
+        "pals_agent/worker.py",
+        6
+       ]
+      ],
+      "commits": 18,
+      "commits_recent": 18,
+      "lines": 1187,
+      "path": "pals_agent/lean.py"
+     },
+     {
+      "co_changed": [
+       [
+        "pals_agent/worker.py",
+        7
+       ],
+       [
+        "pals_agent/proof_reuse.py",
+        7
+       ],
+       [
+        "pals_agent/proof_request_worker.py",
+        7
+       ],
+       [
+        "pals_agent/factory.py",
+        4
+       ]
+      ],
+      "commits": 12,
+      "commits_recent": 7,
+      "lines": 1181,
+      "path": "pals_agent/api_client.py"
+     },
+     {
+      "co_changed": [
+       [
+        "pals_agent/pipeline.py",
+        4
+       ],
+       [
+        "pals_agent/step_timing.py",
+        4
+       ],
+       [
+        "pals_agent/worker.py",
+        3
+       ],
+       [
+        "pals_agent/scheme_guidance.py",
+        2
+       ]
+      ],
+      "commits": 8,
+      "commits_recent": 8,
+      "lines": 1108,
+      "path": "pals_agent/quality_events.py"
+     },
+     {
+      "co_changed": [
+       [
+        "tests/unit/test_isolated_verifier_http_server.py",
+        10
+       ],
+       [
+        "pals_agent/lean.py",
+        6
+       ],
+       [
+        "pals_agent/worker.py",
+        6
+       ],
+       [
+        "pals_agent/lean_verifier/http_runtime.py",
+        4
+       ]
+      ],
+      "commits": 10,
+      "commits_recent": 8,
+      "lines": 1004,
+      "path": "pals_agent/lean_verifier/http_server.py"
+     }
+    ],
+    "large_files": 19,
+    "large_lines": 40096,
+    "ref": "origin/main"
+   },
+   "prs": {
+    "changed_files": {
+     "max": 18,
+     "n": 8,
+     "p50": 5,
+     "p90": 18
+    },
+    "changed_lines": {
+     "max": 2138,
+     "n": 8,
+     "p50": 370,
+     "p90": 2138
+    },
+    "merged": 8,
+    "open_to_merge_h": {
+     "max": 239.3,
+     "n": 8,
+     "p50": 14.4,
+     "p90": 239.3
+    }
+   }
+  },
+  "pals-api": {
+   "ci": {
+    "cancelled_share_of_elapsed": 0.101,
+    "cancelled_share_of_occupancy": 0.095,
+    "elapsed_min": {
+     "cancelled": 94,
+     "other": 30,
+     "success": 805
+    },
+    "job_queue_min": {
+     "max": 407.5,
+     "n": 85,
+     "p50": 1.4,
+     "p90": 6.1
+    },
+    "jobs_success_min": {
+     "api-regression": {
+      "max": 3.8,
+      "n": 85,
+      "p50": 2.0,
+      "p90": 3.1
+     }
+    },
+    "runner_occupancy_min": {
+     "cancelled": 19,
+     "other": 17,
+     "skipped": 0,
+     "success": 169
+    },
+    "runs": {
+     "cancelled": 17,
+     "other": 6,
+     "skipped": 2,
+     "success": 85
+    },
+    "wall_success_min": {
+     "max": 1072.8,
+     "n": 85,
+     "p50": 3.6,
+     "p90": 12.1
+    },
+    "workflow": "API application regression"
+   },
+   "code": {
+    "code_files": 822,
+    "code_lines": 208704,
+    "commits_since": 187,
+    "head": "b8d1c36",
+    "hot_files": [
+     [
+      "app/infrastructure/repositories/proof_requests.py",
+      26
+     ],
+     [
+      ".github/workflows/application-regression.yml",
+      21
+     ],
+     [
+      "app/release/production_database_release.py",
+      21
+     ],
+     [
+      "app/infrastructure/bootstrap.py",
+      20
+     ],
+     [
+      "app/infrastructure/repositories/postgres.py",
+      19
+     ],
+     [
+      "app/api/routes/proof_requests.py",
+      17
+     ],
+     [
+      "app/infrastructure/repositories/proof_request_lean.py",
+      17
+     ],
+     [
+      "app/domain/models/proof_request_contract.py",
+      15
+     ]
+    ],
+    "large": [
+     {
+      "co_changed": [
+       [
+        "tests/in_memory_repositories.py",
+        7
+       ],
+       [
+        "app/schemas/proof_jobs.py",
+        6
+       ],
+       [
+        "app/infrastructure/bootstrap.py",
+        6
+       ],
+       [
+        "pyproject.toml",
+        5
+       ]
+      ],
+      "commits": 19,
+      "commits_recent": 11,
+      "lines": 9291,
+      "path": "app/infrastructure/repositories/postgres.py"
+     },
+     {
+      "co_changed": [
+       [
+        "app/infrastructure/repositories/postgres.py",
+        7
+       ],
+       [
+        "app/domain/ports/proof_jobs.py",
+        5
+       ],
+       [
+        "app/domain/models/proof_job.py",
+        4
+       ],
+       [
+        "app/api/routes/internal.py",
+        4
+       ]
+      ],
+      "commits": 7,
+      "commits_recent": 5,
+      "lines": 3258,
+      "path": "tests/in_memory_repositories.py"
+     },
+     {
+      "co_changed": [
+       [
+        "app/domain/models/proof_job.py",
+        2
+       ],
+       [
+        "app/infrastructure/repositories/postgres.py",
+        2
+       ],
+       [
+        "app/api/routes/internal.py",
+        2
+       ],
+       [
+        "app/application/services/proof_jobs.py",
+        2
+       ]
+      ],
+      "commits": 3,
+      "commits_recent": 2,
+      "lines": 2056,
+      "path": "tests/test_proof_explanations.py"
+     },
+     {
+      "co_changed": [
+       [
+        "app/infrastructure/repositories/proof_requests.py",
+        2
+       ],
+       [
+        "app/infrastructure/bootstrap.py",
+        2
+       ],
+       [
+        "docs/api/openapi.json",
+        2
+       ],
+       [
+        "tests/integration/test_postgres_chats.py",
+        2
+       ]
+      ],
+      "commits": 2,
+      "commits_recent": 0,
+      "lines": 2054,
+      "path": "tests/integration/test_postgres_proof_explanation_claims.py"
+     },
+     {
+      "co_changed": [],
+      "commits": 0,
+      "commits_recent": 0,
+      "lines": 2015,
+      "path": "app/release/proof_runtime_release_manifest.py"
+     },
+     {
+      "co_changed": [],
+      "commits": 0,
+      "commits_recent": 0,
+      "lines": 2013,
+      "path": "tests/integration/test_proof_job_runtime_canonical_migration.py"
+     },
+     {
+      "co_changed": [
+       [
+        "app/infrastructure/repositories/postgres.py",
+        6
+       ],
+       [
+        "app/api/routes/internal.py",
+        5
+       ],
+       [
+        "app/api/routes/proof_jobs.py",
+        5
+       ],
+       [
+        "app/domain/models/proof_job.py",
+        4
+       ]
+      ],
+      "commits": 8,
+      "commits_recent": 6,
+      "lines": 1718,
+      "path": "app/schemas/proof_jobs.py"
+     },
+     {
+      "co_changed": [
+       [
+        "app/application/services/candidate_verification.py",
+        4
+       ],
+       [
+        "app/infrastructure/repositories/postgres.py",
+        3
+       ],
+       [
+        "tests/in_memory_repositories.py",
+        2
+       ],
+       [
+        "app/domain/ports/proof_jobs.py",
+        2
+       ]
+      ],
+      "commits": 4,
+      "commits_recent": 2,
+      "lines": 1711,
+      "path": "tests/unit/test_candidate_verification.py"
+     },
+     {
+      "co_changed": [],
+      "commits": 0,
+      "commits_recent": 0,
+      "lines": 1592,
+      "path": "app/infrastructure/proof_flow_index.py"
+     },
+     {
+      "co_changed": [],
+      "commits": 0,
+      "commits_recent": 0,
+      "lines": 1541,
+      "path": "app/db/migrations/canonical/001_proof_job_runtime.sql"
+     },
+     {
+      "co_changed": [
+       [
+        "app/release/production_database_release.py",
+        7
+       ],
+       [
+        "app/db/migrations/production/manifest.json",
+        4
+       ],
+       [
+        "tests/integration/test_mac_production_database_update.py",
+        4
+       ],
+       [
+        "tests/unit/test_mac_production_catalog_upgrade.py",
+        3
+       ]
+      ],
+      "commits": 11,
+      "commits_recent": 0,
+      "lines": 1430,
+      "path": "app/release/mac_production_database_update.py"
+     },
+     {
+      "co_changed": [
+       [
+        "app/release/mac_production_database_update.py",
+        4
+       ],
+       [
+        "app/release/production_database_release.py",
+        3
+       ],
+       [
+        "tests/unit/test_mac_production_catalog_upgrade.py",
+        2
+       ],
+       [
+        "app/db/migrations/production/manifest.json",
+        1
+       ]
+      ],
+      "commits": 5,
+      "commits_recent": 0,
+      "lines": 1367,
+      "path": "tests/integration/test_mac_production_database_update.py"
+     },
+     {
+      "co_changed": [
+       [
+        "app/api/routes/proof_requests.py",
+        11
+       ],
+       [
+        "app/domain/models/proof_request_contract.py",
+        10
+       ],
+       [
+        "app/infrastructure/bootstrap.py",
+        10
+       ],
+       [
+        "app/main.py",
+        9
+       ]
+      ],
+      "commits": 26,
+      "commits_recent": 17,
+      "lines": 1306,
+      "path": "app/infrastructure/repositories/proof_requests.py"
+     },
+     {
+      "co_changed": [
+       [
+        "app/infrastructure/repositories/postgres.py",
+        5
+       ],
+       [
+        "app/schemas/proof_jobs.py",
+        5
+       ],
+       [
+        "app/application/services/proof_jobs.py",
+        4
+       ],
+       [
+        "tests/in_memory_repositories.py",
+        4
+       ]
+      ],
+      "commits": 5,
+      "commits_recent": 3,
+      "lines": 1278,
+      "path": "app/api/routes/internal.py"
+     },
+     {
+      "co_changed": [
+       [
+        "app/infrastructure/bootstrap.py",
+        6
+       ],
+       [
+        "app/infrastructure/repositories/postgres.py",
+        5
+       ],
+       [
+        "app/infrastructure/repositories/proof_requests.py",
+        5
+       ],
+       [
+        "app/api/routes/internal.py",
+        4
+       ]
+      ],
+      "commits": 11,
+      "commits_recent": 9,
+      "lines": 1151,
+      "path": "app/application/services/proof_jobs.py"
+     },
+     {
+      "co_changed": [
+       [
+        "app/db/migrations/production/manifest.json",
+        12
+       ],
+       [
+        "app/infrastructure/bootstrap.py",
+        8
+       ],
+       [
+        "app/release/mac_production_database_update.py",
+        7
+       ],
+       [
+        "app/release/local_legacy_database_release.py",
+        7
+       ]
+      ],
+      "commits": 21,
+      "commits_recent": 8,
+      "lines": 1130,
+      "path": "app/release/production_database_release.py"
+     },
+     {
+      "co_changed": [],
+      "commits": 0,
+      "commits_recent": 0,
+      "lines": 1128,
+      "path": "tests/unit/test_proof_runtime_release_manifest.py"
+     },
+     {
+      "co_changed": [
+       [
+        "app/infrastructure/repositories/postgres.py",
+        5
+       ],
+       [
+        "tests/in_memory_repositories.py",
+        4
+       ],
+       [
+        "app/schemas/proof_jobs.py",
+        4
+       ],
+       [
+        "app/api/routes/internal.py",
+        3
+       ]
+      ],
+      "commits": 5,
+      "commits_recent": 4,
+      "lines": 1098,
+      "path": "app/domain/models/proof_job.py"
+     },
+     {
+      "co_changed": [
+       [
+        "tests/integration/test_postgres_proof_generation_claims.py",
+        2
+       ],
+       [
+        "app/infrastructure/repositories/postgres.py",
+        2
+       ],
+       [
+        "tests/integration/test_chat_shares.py",
+        2
+       ],
+       [
+        "app/api/openapi.py",
+        2
+       ]
+      ],
+      "commits": 2,
+      "commits_recent": 0,
+      "lines": 1096,
+      "path": "tests/integration/test_postgres_proof_job_outbox.py"
+     },
+     {
+      "co_changed": [
+       [
+        "app/domain/models/proof_job.py",
+        1
+       ],
+       [
+        "tests/integration/test_local_legacy_database_release.py",
+        1
+       ],
+       [
+        "tests/test_auth.py",
+        1
+       ],
+       [
+        "app/db/migrations/explanation_retries/manifest.json",
+        1
+       ]
+      ],
+      "commits": 1,
+      "commits_recent": 0,
+      "lines": 1081,
+      "path": "tests/test_proof_jobs.py"
+     },
+     {
+      "co_changed": [
+       [
+        "app/infrastructure/bootstrap.py",
+        3
+       ],
+       [
+        "app/release/aurora_initial_database_bootstrap.py",
+        2
+       ],
+       [
+        "tests/unit/test_aurora_initial_role_creation.py",
+        2
+       ],
+       [
+        "app/db/migrations/production/manifest.json",
+        2
+       ]
+      ],
+      "commits": 6,
+      "commits_recent": 3,
+      "lines": 1025,
+      "path": "app/release/production_database_bootstrap.py"
+     }
+    ],
+    "large_files": 21,
+    "large_lines": 40339,
+    "ref": "origin/main"
+   },
+   "prs": {
+    "changed_files": {
+     "max": 309,
+     "n": 19,
+     "p50": 4,
+     "p90": 90
+    },
+    "changed_lines": {
+     "max": 53897,
+     "n": 19,
+     "p50": 416,
+     "p90": 10302
+    },
+    "merged": 19,
+    "open_to_merge_h": {
+     "max": 587.0,
+     "n": 19,
+     "p50": 21.9,
+     "p90": 345.8
+    }
+   }
+  },
+  "pals-infra": {
+   "ci": {
+    "cancelled_share_of_elapsed": 0.511,
+    "cancelled_share_of_occupancy": 0.198,
+    "elapsed_min": {
+     "cancelled": 2109,
+     "other": 142,
+     "success": 1880
+    },
+    "job_queue_min": {
+     "max": 93.0,
+     "n": 292,
+     "p50": 8.5,
+     "p90": 23.5
+    },
+    "jobs_success_min": {
+     "private-runtime-trust-tables": {
+      "max": 19.6,
+      "n": 73,
+      "p50": 0.5,
+      "p90": 0.7
+     },
+     "release-cycle-regression": {
+      "max": 33.3,
+      "n": 73,
+      "p50": 12.1,
+      "p90": 17.9
+     },
+     "release-e2e": {
+      "max": 18.4,
+      "n": 73,
+      "p50": 6.3,
+      "p90": 10.9
+     },
+     "release-host-harness": {
+      "max": 1.7,
+      "n": 73,
+      "p50": 0.7,
+      "p90": 1.1
+     }
+    },
+    "runner_occupancy_min": {
+     "cancelled": 428,
+     "other": 117,
+     "skipped": 0,
+     "success": 1613
+    },
+    "runs": {
+     "cancelled": 190,
+     "other": 8,
+     "skipped": 26,
+     "success": 73
+    },
+    "wall_success_min": {
+     "max": 94.1,
+     "n": 73,
+     "p50": 20.8,
+     "p90": 40.1
+    },
+    "workflow": "Release cycle regression"
+   },
+   "code": {
+    "code_files": 278,
+    "code_lines": 105060,
+    "commits_since": 474,
+    "head": "bc80f5b",
+    "hot_files": [
+     [
+      ".github/workflows/release-cycle-regression.yml",
+      71
+     ],
+     [
+      "host/private-runtime/compute_runtime.py",
+      47
+     ],
+     [
+      "scripts/release_plan.py",
+      45
+     ],
+     [
+      "tests/test_private_compute_runtime.py",
+      39
+     ],
+     [
+      "host/macmini-deploy/qa_pro_operator.py",
+      39
+     ],
+     [
+      "host/private-runtime/RELEASE_CYCLE.md",
+      38
+     ],
+     [
+      "host/private-runtime/README.md",
+      37
+     ],
+     [
+      "tests/test_release_plan.py",
+      35
+     ]
+    ],
+    "large": [
+     {
+      "co_changed": [
+       [
+        "scripts/publish_image.py",
+        13
+       ],
+       [
+        "host/private-runtime/IMAGE_PUBLICATION.md",
+        11
+       ],
+       [
+        "tests/test_release_ingress.py",
+        6
+       ],
+       [
+        "host/private-runtime/compute_runtime.py",
+        2
+       ]
+      ],
+      "commits": 15,
+      "commits_recent": 15,
+      "lines": 2925,
+      "path": "tests/test_image_publication.py"
+     },
+     {
+      "co_changed": [
+       [
+        "scripts/release-step.py",
+        18
+       ],
+       [
+        "host/private-runtime/native_safety.py",
+        11
+       ],
+       [
+        "host/private-runtime/RELEASE_CYCLE.md",
+        11
+       ],
+       [
+        "scripts/release-cycle.py",
+        10
+       ]
+      ],
+      "commits": 22,
+      "commits_recent": 22,
+      "lines": 2786,
+      "path": "tests/test_release_step.py"
+     },
+     {
+      "co_changed": [
+       [
+        "scripts/release_plan.py",
+        29
+       ],
+       [
+        "host/private-runtime/RELEASE_PLAN.md",
+        17
+       ],
+       [
+        "tests/test_release_ingress.py",
+        12
+       ],
+       [
+        "scripts/release_controller.py",
+        11
+       ]
+      ],
+      "commits": 35,
+      "commits_recent": 35,
+      "lines": 2203,
+      "path": "tests/test_release_plan.py"
+     },
+     {
+      "co_changed": [
+       [
+        "scripts/release-cycle.py",
+        31
+       ],
+       [
+        "host/private-runtime/RELEASE_CYCLE.md",
+        19
+       ],
+       [
+        "scripts/release-step.py",
+        10
+       ],
+       [
+        "tests/test_release_step.py",
+        9
+       ]
+      ],
+      "commits": 33,
+      "commits_recent": 33,
+      "lines": 2181,
+      "path": "tests/test_release_cycle.py"
+     },
+     {
+      "co_changed": [
+       [
+        "host/private-runtime/compute_runtime.py",
+        39
+       ],
+       [
+        "host/private-runtime/README.md",
+        14
+       ],
+       [
+        "tests/test_private_control_runtime.py",
+        8
+       ],
+       [
+        "host/private-runtime/control_runtime.py",
+        7
+       ]
+      ],
+      "commits": 39,
+      "commits_recent": 39,
+      "lines": 2053,
+      "path": "tests/test_private_compute_runtime.py"
+     },
+     {
+      "co_changed": [
+       [
+        "host/private-runtime/native_safety.py",
+        19
+       ],
+       [
+        "host/private-runtime/native_safety_dispatch.py",
+        10
+       ],
+       [
+        "scripts/release-step.py",
+        8
+       ],
+       [
+        "tests/test_release_step.py",
+        8
+       ]
+      ],
+      "commits": 25,
+      "commits_recent": 25,
+      "lines": 1929,
+      "path": "tests/test_native_release_safety.py"
+     },
+     {
+      "co_changed": [
+       [
+        "scripts/release-prepare.py",
+        14
+       ],
+       [
+        "host/private-runtime/RELEASE_PREPARE.md",
+        5
+       ],
+       [
+        "tests/test_release_ingress.py",
+        4
+       ],
+       [
+        "tests/test_image_publication.py",
+        2
+       ]
+      ],
+      "commits": 14,
+      "commits_recent": 14,
+      "lines": 1911,
+      "path": "tests/test_release_prepare.py"
+     },
+     {
+      "co_changed": [
+       [
+        "tests/test_release_step.py",
+        18
+       ],
+       [
+        "host/private-runtime/RELEASE_CYCLE.md",
+        12
+       ],
+       [
+        "scripts/release-cycle.py",
+        12
+       ],
+       [
+        "host/private-runtime/native_safety.py",
+        11
+       ]
+      ],
+      "commits": 21,
+      "commits_recent": 21,
+      "lines": 1883,
+      "path": "scripts/release-step.py"
+     },
+     {
+      "co_changed": [
+       [
+        "scripts/release-observe.py",
+        11
+       ],
+       [
+        "host/private-runtime/RELEASE_OBSERVE.md",
+        10
+       ],
+       [
+        "host/private-runtime/release_observe_host.py",
+        8
+       ],
+       [
+        "tests/test_release_plan.py",
+        6
+       ]
+      ],
+      "commits": 12,
+      "commits_recent": 12,
+      "lines": 1777,
+      "path": "tests/test_release_observe.py"
+     },
+     {
+      "co_changed": [
+       [
+        "tests/test_release_repair_native.py",
+        16
+       ],
+       [
+        "tests/test_release_repair.py",
+        13
+       ],
+       [
+        "host/private-runtime/admitted_recovery_install.py",
+        7
+       ],
+       [
+        "tests/test_admitted_recovery_install.py",
+        6
+       ]
+      ],
+      "commits": 21,
+      "commits_recent": 21,
+      "lines": 1768,
+      "path": "scripts/release-repair.py"
+     },
+     {
+      "co_changed": [
+       [
+        "tests/test_release_plan.py",
+        29
+       ],
+       [
+        "host/private-runtime/RELEASE_PLAN.md",
+        22
+       ],
+       [
+        "tests/test_release_controller.py",
+        18
+       ],
+       [
+        "tests/test_release_ingress.py",
+        13
+       ]
+      ],
+      "commits": 45,
+      "commits_recent": 45,
+      "lines": 1743,
+      "path": "scripts/release_plan.py"
+     },
+     {
+      "co_changed": [
+       [
+        "tests/test_image_publication.py",
+        13
+       ],
+       [
+        "host/private-runtime/IMAGE_PUBLICATION.md",
+        11
+       ],
+       [
+        "tests/test_release_ingress.py",
+        6
+       ],
+       [
+        "tests/test_private_runtime_release_tools.py",
+        2
+       ]
+      ],
+      "commits": 13,
+      "commits_recent": 13,
+      "lines": 1719,
+      "path": "scripts/publish_image.py"
+     },
+     {
+      "co_changed": [
+       [
+        "scripts/release_plan.py",
+        18
+       ],
+       [
+        "scripts/release_controller.py",
+        14
+       ],
+       [
+        "host/private-runtime/RELEASE_PLAN.md",
+        11
+       ],
+       [
+        "tests/test_release_plan.py",
+        9
+       ]
+      ],
+      "commits": 22,
+      "commits_recent": 22,
+      "lines": 1515,
+      "path": "tests/test_release_controller.py"
+     },
+     {
+      "co_changed": [
+       [
+        "tests/test_release_cycle.py",
+        31
+       ],
+       [
+        "host/private-runtime/RELEASE_CYCLE.md",
+        20
+       ],
+       [
+        "scripts/release-step.py",
+        12
+       ],
+       [
+        "tests/test_release_step.py",
+        10
+       ]
+      ],
+      "commits": 34,
+      "commits_recent": 34,
+      "lines": 1458,
+      "path": "scripts/release-cycle.py"
+     },
+     {
+      "co_changed": [
+       [
+        "tests/test_release_prepare.py",
+        14
+       ],
+       [
+        "host/private-runtime/RELEASE_PREPARE.md",
+        5
+       ],
+       [
+        "tests/test_release_ingress.py",
+        4
+       ],
+       [
+        "tests/test_image_publication.py",
+        2
+       ]
+      ],
+      "commits": 14,
+      "commits_recent": 14,
+      "lines": 1300,
+      "path": "scripts/release-prepare.py"
+     },
+     {
+      "co_changed": [
+       [
+        "scripts/release-repair.py",
+        16
+       ],
+       [
+        "tests/test_release_repair.py",
+        9
+       ],
+       [
+        "tests/test_admitted_recovery_install.py",
+        5
+       ],
+       [
+        "host/private-runtime/admitted_recovery_install.py",
+        5
+       ]
+      ],
+      "commits": 16,
+      "commits_recent": 16,
+      "lines": 1267,
+      "path": "tests/test_release_repair_native.py"
+     },
+     {
+      "co_changed": [
+       [
+        "host/lean-parallel-loadtest/README.md",
+        2
+       ],
+       [
+        "host/lean-parallel-loadtest/deadman.py",
+        2
+       ],
+       [
+        "host/lean-parallel-loadtest/compile_load.py",
+        2
+       ],
+       [
+        "tests/test_lean_parallel_loadtest.py",
+        2
+       ]
+      ],
+      "commits": 2,
+      "commits_recent": 2,
+      "lines": 1242,
+      "path": "host/lean-parallel-loadtest/loadtest.py"
+     },
+     {
+      "co_changed": [
+       [
+        "scripts/release_host_tools.py",
+        6
+       ],
+       [
+        "tests/test_release_ingress.py",
+        5
+       ],
+       [
+        "scripts/release_plan.py",
+        5
+       ],
+       [
+        "tests/test_release_plan.py",
+        5
+       ]
+      ],
+      "commits": 6,
+      "commits_recent": 6,
+      "lines": 1218,
+      "path": "tests/test_release_host_tools.py"
+     },
+     {
+      "co_changed": [
+       [
+        "tests/test_private_compute_runtime.py",
+        39
+       ],
+       [
+        "host/private-runtime/README.md",
+        15
+       ],
+       [
+        "host/private-runtime/control_runtime.py",
+        8
+       ],
+       [
+        "tests/test_private_control_runtime.py",
+        8
+       ]
+      ],
+      "commits": 47,
+      "commits_recent": 47,
+      "lines": 1211,
+      "path": "host/private-runtime/compute_runtime.py"
+     },
+     {
+      "co_changed": [
+       [
+        "tests/test_private_control_runtime.py",
+        16
+       ],
+       [
+        "host/private-runtime/compute_runtime.py",
+        8
+       ],
+       [
+        "tests/test_private_compute_runtime.py",
+        7
+       ],
+       [
+        "host/private-runtime/README.md",
+        6
+       ]
+      ],
+      "commits": 18,
+      "commits_recent": 18,
+      "lines": 1179,
+      "path": "host/private-runtime/control_runtime.py"
+     },
+     {
+      "co_changed": [
+       [
+        "tests/test_private_postgresql_runtime.py",
+        1
+       ]
+      ],
+      "commits": 1,
+      "commits_recent": 1,
+      "lines": 1167,
+      "path": "host/private-postgresql/postgresql_runtime.py"
+     },
+     {
+      "co_changed": [
+       [
+        "host/private-runtime/control_runtime.py",
+        16
+       ],
+       [
+        "host/private-runtime/compute_runtime.py",
+        8
+       ],
+       [
+        "tests/test_private_compute_runtime.py",
+        8
+       ],
+       [
+        "host/private-runtime/README.md",
+        6
+       ]
+      ],
+      "commits": 18,
+      "commits_recent": 18,
+      "lines": 1113,
+      "path": "tests/test_private_control_runtime.py"
+     },
+     {
+      "co_changed": [
+       [
+        "tests/test_native_release_safety.py",
+        19
+       ],
+       [
+        "scripts/release-step.py",
+        11
+       ],
+       [
+        "tests/test_release_step.py",
+        11
+       ],
+       [
+        "host/private-runtime/RELEASE_CYCLE.md",
+        10
+       ]
+      ],
+      "commits": 24,
+      "commits_recent": 24,
+      "lines": 1105,
+      "path": "host/private-runtime/native_safety.py"
+     },
+     {
+      "co_changed": [
+       [
+        "scripts/release_plan.py",
+        8
+       ],
+       [
+        "tests/test_release_plan.py",
+        8
+       ],
+       [
+        "host/private-runtime/RELEASE_HOST_TOOLS.md",
+        8
+       ],
+       [
+        "tests/test_release_ingress.py",
+        7
+       ]
+      ],
+      "commits": 11,
+      "commits_recent": 11,
+      "lines": 1093,
+      "path": "scripts/release_host_tools.py"
+     },
+     {
+      "co_changed": [
+       [
+        "scripts/release-repair.py",
+        7
+       ],
+       [
+        "tests/test_admitted_recovery_install.py",
+        6
+       ],
+       [
+        "tests/test_release_repair_native.py",
+        5
+       ],
+       [
+        "tests/test_release_repair.py",
+        5
+       ]
+      ],
+      "commits": 7,
+      "commits_recent": 7,
+      "lines": 1090,
+      "path": "host/private-runtime/admitted_recovery_install.py"
+     },
+     {
+      "co_changed": [
+       [
+        "tests/test_ssm_handoff.py",
+        3
+       ],
+       [
+        "host/private-runtime/compute_runtime.py",
+        1
+       ],
+       [
+        "tests/test_private_runtime_pki.py",
+        1
+       ],
+       [
+        "tests/test_private_compute_runtime.py",
+        1
+       ]
+      ],
+      "commits": 3,
+      "commits_recent": 3,
+      "lines": 1051,
+      "path": "host/private-runtime/ssm_handoff.py"
+     },
+     {
+      "co_changed": [
+       [
+        "host/private-runtime/release_alert_window.py",
+        5
+       ],
+       [
+        "scripts/release-cycle.py",
+        3
+       ],
+       [
+        "tests/test_release_cycle.py",
+        3
+       ],
+       [
+        "host/private-runtime/RELEASE_ALERTS.md",
+        3
+       ]
+      ],
+      "commits": 5,
+      "commits_recent": 5,
+      "lines": 1012,
+      "path": "tests/test_release_alert_window.py"
+     }
+    ],
+    "large_files": 27,
+    "large_lines": 42899,
+    "ref": "origin/main"
+   },
+   "prs": {
+    "changed_files": {
+     "max": 494,
+     "n": 29,
+     "p50": 5,
+     "p90": 76
+    },
+    "changed_lines": {
+     "max": 149649,
+     "n": 29,
+     "p50": 405,
+     "p90": 19097
+    },
+    "merged": 29,
+    "open_to_merge_h": {
+     "max": 48.1,
+     "n": 29,
+     "p50": 11.3,
+     "p90": 21.5
+    }
+   }
+  },
+  "pals-webfront": {
+   "ci": {
+    "cancelled_share_of_elapsed": 0.023,
+    "cancelled_share_of_occupancy": 0.078,
+    "elapsed_min": {
+     "cancelled": 28,
+     "other": 24,
+     "success": 1133
+    },
+    "job_queue_min": {
+     "max": 409.2,
+     "n": 64,
+     "p50": 0.1,
+     "p90": 5.0
+    },
+    "jobs_success_min": {
+     "web-regression": {
+      "max": 8.2,
+      "n": 64,
+      "p50": 3.3,
+      "p90": 5.8
+     }
+    },
+    "runner_occupancy_min": {
+     "cancelled": 20,
+     "other": 8,
+     "skipped": 0,
+     "success": 231
+    },
+    "runs": {
+     "cancelled": 7,
+     "other": 5,
+     "skipped": 8,
+     "success": 64
+    },
+    "wall_success_min": {
+     "max": 1087.2,
+     "n": 64,
+     "p50": 4.6,
+     "p90": 12.4
+    },
+    "workflow": "Application regression"
+   },
+   "code": {
+    "code_files": 385,
+    "code_lines": 61196,
+    "commits_since": 174,
+    "head": "c46382e",
+    "hot_files": [
+     [
+      "app/globals.css",
+      51
+     ],
+     [
+      "components/ProofRequestThread.tsx",
+      35
+     ],
+     [
+      "components/ProjectDetailScreen.tsx",
+      29
+     ],
+     [
+      "components/LegacyChatArchive.tsx",
+      25
+     ],
+     [
+      "components/GuestChat.tsx",
+      25
+     ],
+     [
+      "lib/api/proofRequests.ts",
+      18
+     ],
+     [
+      "lib/uiMessages.ts",
+      16
+     ],
+     [
+      "components/ProofExplanation.tsx",
+      13
+     ]
+    ],
+    "large": [
+     {
+      "co_changed": [
+       [
+        "components/ProofRequestThread.tsx",
+        19
+       ],
+       [
+        "components/ProjectDetailScreen.tsx",
+        12
+       ],
+       [
+        "components/GuestChat.tsx",
+        12
+       ],
+       [
+        "components/LegacyChatArchive.tsx",
+        12
+       ]
+      ],
+      "commits": 51,
+      "commits_recent": 24,
+      "lines": 2746,
+      "path": "app/globals.css"
+     },
+     {
+      "co_changed": [
+       [
+        "components/ProjectDetailScreen.tsx",
+        3
+       ],
+       [
+        "tests/unit/legacy-chat-archive.test.tsx",
+        3
+       ],
+       [
+        "components/LegacyChatArchive.tsx",
+        3
+       ],
+       [
+        "lib/api/proofRequests.ts",
+        3
+       ]
+      ],
+      "commits": 4,
+      "commits_recent": 1,
+      "lines": 1384,
+      "path": "tests/stories/project-detail-proof.story.test.tsx"
+     },
+     {
+      "co_changed": [
+       [
+        "components/ProofExplanation.tsx",
+        3
+       ],
+       [
+        "lib/uiMessages.ts",
+        3
+       ],
+       [
+        "lib/types.ts",
+        2
+       ],
+       [
+        "lib/api/proofExplanations.ts",
+        2
+       ]
+      ],
+      "commits": 3,
+      "commits_recent": 0,
+      "lines": 1351,
+      "path": "tests/unit/proof-explanation.test.tsx"
+     },
+     {
+      "co_changed": [
+       [
+        "components/LearnerRichText.tsx",
+        6
+       ],
+       [
+        "tests/unit/learner-definitions.test.tsx",
+        5
+       ],
+       [
+        "tests/unit/learner-variable-definitions.test.ts",
+        3
+       ],
+       [
+        "lib/learnerVariableDefinitions.ts",
+        3
+       ]
+      ],
+      "commits": 9,
+      "commits_recent": 6,
+      "lines": 1237,
+      "path": "lib/learnerRichText.ts"
+     },
+     {
+      "co_changed": [
+       [
+        "components/ProofRequestThread.tsx",
+        6
+       ],
+       [
+        "components/LegacyChatArchive.tsx",
+        5
+       ],
+       [
+        "components/ProjectDetailScreen.tsx",
+        5
+       ],
+       [
+        "tests/unit/lean-source-hover.test.tsx",
+        4
+       ]
+      ],
+      "commits": 13,
+      "commits_recent": 4,
+      "lines": 1134,
+      "path": "components/ProofExplanation.tsx"
+     },
+     {
+      "co_changed": [
+       [
+        "components/LegacyChatArchive.tsx",
+        22
+       ],
+       [
+        "app/globals.css",
+        12
+       ],
+       [
+        "components/ProofRequestThread.tsx",
+        12
+       ],
+       [
+        "lib/api/proofRequests.ts",
+        9
+       ]
+      ],
+      "commits": 29,
+      "commits_recent": 10,
+      "lines": 1043,
+      "path": "components/ProjectDetailScreen.tsx"
+     },
+     {
+      "co_changed": [
+       [
+        "app/globals.css",
+        2
+       ],
+       [
+        "components/AuthScreen.tsx",
+        2
+       ],
+       [
+        "components/AuthRouteScreen.tsx",
+        2
+       ],
+       [
+        "lib/uiMessages.ts",
+        2
+       ]
+      ],
+      "commits": 3,
+      "commits_recent": 0,
+      "lines": 1003,
+      "path": "components/AuthProvider.tsx"
+     }
+    ],
+    "large_files": 7,
+    "large_lines": 9898,
+    "ref": "origin/main"
+   },
+   "prs": {
+    "changed_files": {
+     "max": 191,
+     "n": 26,
+     "p50": 5,
+     "p90": 26
+    },
+    "changed_lines": {
+     "max": 12051,
+     "n": 26,
+     "p50": 162,
+     "p90": 872
+    },
+    "merged": 26,
+    "open_to_merge_h": {
+     "max": 272.9,
+     "n": 26,
+     "p50": 4.5,
+     "p90": 117.9
+    }
+   }
+  }
+ },
+ "since": "2026-10-01",
+ "window": "2026-11-18..2026-11-24"
+}
