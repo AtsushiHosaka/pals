@@ -1,0 +1,93 @@
+# チャットUI改善の本番候補（2026-11-18）
+
+オーナーが本番反映を明示依頼したため、チャットUI改善を新しい候補として準備する。前回の凍結計画を変更して再利用しない。担当チャットはcodex://threads/01a1ebe7-a4ee-78c0-ab22-a16cfcccc3d2。オーナーの最新指示に従い、source作業は並列化し、実機の配備操作は主担当へ一本化する。進行管理は親Issue #425、実装の判断と証拠は #417〜#423および親PR #421、#424にある。
+
+## 候補のソース
+
+| 領域 | 固定したrevision | 根拠 |
+|---|---|---|
+| Web | aa1a6d48ceeb90f79c5360e5f699e72d11735f56 | 個別PR #85〜#88を配備統合PR #89で通常merge、認証試験同期PR #90、chevron修正PR #91 |
+| API | a3191b4cd11a347724bbabff54e39c829faca31e | ゲスト途中表示PR #121、検証成功ドットPR #122 |
+| infra | 78085ba0ea015c77435737670d5b949771b48645 | PR #215のbroker修正とPR #216の復旧closure接続。prepare・stage・cleanの全guardへ同じ検証済み参照を渡す。関連285件成功、exact CIは別途照合 |
+| worker | 146ecf2b816ac6830940fac824bd9e8df90d80e4 | 前任のソースを保持 |
+
+本番用ソースブランチはWebが`codex/sidebar-inline-math-20261031`、APIが`claude/seq28-api-response-language`のまま維持する。現在の承認済み系統を基点とし、古いmainで置き換えない。
+
+候補の正規plan inputは`progress_preview_enabled: true`を明示する。infra #188により、hashで結び付けた宣言をproof workerの環境だけへ渡す。worker画像やモデル設定は変更しない。CIが通った正確なheadを候補へpinし、merge revisionの別のCIが成功したとは読み替えない。
+
+## 利用者に見える変更
+
+新規チャットの不要な案内文を削除し、PALSアイコン・処理状態・時計を中央で揃える。Leanは未検証と明示した薄い表示を維持し、全体フェードの後にコードだけがゆっくり明滅する。サイドバーでは灰色のチャット名の上を柔らかい光が一定速度で流れる。動きを減らす設定と強制色では静止する。ゲストにも途中表示を返すが、ゲスト用のチャット一覧は新設しない。
+
+別チャットで承認・統合されたchevron修正も同じ候補へ含める。設定の「完全な識別子を追加」の種別selectを既存の矢印ルール対象へ戻し、本番設定画面で余白と上下中央を確認する。親mainの記録PR #428も通常mergeで取り込んだ。
+
+チャット一覧と既知のプランを遷移中も保持する。最新利用枠の再確認が終わるまで、ホームから引き継いだ質問を消費せず、送信は一度だけ行う。未読ドットは検証成功の回答だけを対象とし、チャットを開くと消す。Lean検証なしの説明回答の機能は維持する。toggleは変更しない。
+
+## 検査と復旧条件
+
+縦位置は全CSSを読み込むChromium回帰で時計SVGと時刻まで確認した。元の縦位置、ホーム引継ぎ質問、未検証説明へのドット付与は、各開始ソースで失敗する回帰を確認した。各PRの結果とmerge revisionの必須CIは別々に照合する。CIのqueuedや後処理中を成功とは扱わない。
+
+途中表示は回答確定・失敗・所有権喪失で消し、compileやrepair中は直近内容を保持する。遷移時の一時データはアカウント・認証epochで分離する。通信障害や再読み込みでは同じ要求の観測を回復し、再送で課金を増やさない。ゲストはsessionStorageへ要求IDを保存するため、タブを閉じた後の復帰は保証しない。
+
+配備前に前回 #410の保持ownerを正規に解放し、別のclosureを記録する。現在のサービスを止めてownerを迂回しない。元のfailed記録と停止時間超過はそのまま保持する。
+
+前回manifestは14:21:37 JSTに期限切れとなった。現行の正規repairではrecovery生成・設置とfresh healthが通常の期限検査で拒否されるため、一時IAM期限だけの更新案を実行対象から外した。新たな権限は未適用である。旧署名・manifest・元helperの書換えや通常の期限検査の省略で解放しない。期限切れの保持構成に対する用途別の復旧設定、実health・全SSM履歴・全18項目の実DB leaseを伴う退役と、次配備のclaim/restore入口をinfra #205へ接続した。実機設置・退役は未実施で、具体的な追加IAM・SGの判断は #433で待っている。
+
+正規ツールで画像・receipt・manifest・config・署名・復旧前提を固定し、`make release-source-checks`、`make release-local-qualify`、`make release-cycle`を使う。今回の追加1件のローカル承認は正規資格確認へ割り当て、既存の予算台帳と累積上限を保持する。過去2件のUI撮影を今回の資格確認へ昇格しない。
+
+オーナーは、早い反映を優先し、本番確認を既存の正規受け入れ1件とホームからの実操作1件の計2件に分けることを承認した。判断記録は #422。今回の確認全体のモデル費用上限US$1を保持し、追加の検証ツール開発は今回へ含めない。投稿は主担当だけが行い、未知の結果を再送しない。Lean検証、保存、実表示、再読み込みを確認し、スクリーンショットと動画を担当チャットへ掲載する。画像の公開や健康確認だけではacceptedにしない。
+
+正規ローカル準備が途中表示フラグを落とす問題は、worker・assessment・recipeのoverrideで明示値を引き継ぐよう修正した。未指定時のfalseは維持する。実Compose解決で修正前の欠落、修正後のtrue、未指定時のfalseを確認し、既存のlocal資格確認108件も成功した。これはモデル呼び出しを伴わない構成とsourceの検査である。
+
+追加ローカル1件は、正規`make release-local-qualify`で実DB・provider・Lean、終端回答の保存・実表示・再読み込みを確認し、acceptedとなった。subject SHA256は`9bd3eb2f7a3fcb838bd2e3d27037daecc555123ee1545ebb85ae3d3dd3ad05c5`。予算台帳の増分はUS$0.054822。既存回答の再確認後も441594マイクロ米ドル・138内部呼び出しのままで、追加生成はしていない。ゲスト画面の実回答PNGは主担当チャットへ掲載済みで、チャット一覧のアニメーションや本番動作の証拠ではない。
+
+ローカル準備で旧plan参照2fileを更新した配置の誤りは、元のSHA256との完全一致を確認して復旧した。今回のsubject・環境は別パスへ同一バイトで保持し、同じsubmissionの正規再観測もaccepted。正規repairの非実行検査は通過した。失敗と復旧は進捗文書と品質台帳へ記録した。凍結済み原本、元のfailed記録、予算台帳を新しい候補のために書き換えない。
+
+本番反映・機能受入・本番2件・一覧アニメーションの実画面動画は未実施。同じcontrol role・4読み取り操作・3リソースの一時IAMを11月19日17:00 JSTまで許可する更新と、相手IP /32 TCP18443のSG2件はオーナー承認後に適用・実readback済み。今回の実rule IDを非公開で保持し、不要になった追加分だけを削除する。アプリ・traffic・DB admission・旧ownerは未変更。
+
+
+保持7actorの実image configuration IDとquietを正規015f11d sourceから再観測した。用途別permitも正規signerで署名・KMS検証した。native消費側の署名済みパッケージは015f11dのまま保持し、ローカル転送側だけをe6543f2へ修正する。公開前に各fileの実バイト・hashを保存済み原本へ照合し、転送後も署名・hash・保護file条件を再検査する。転送準備の全26packetは最大61052 byteで、実機への送信・設置は未実施。
+
+今回ローカル受入の1時間期限はSSO待ちの間に過ぎた。既存receiptを有効扱いせず、配備準備が整った直前の追加ローカル1件だけをオーナーへ確認中。本番2件と累積US$1の制限は維持する。
+
+
+11月19日更新: native設置入力の全26packetは両hostへ公開済み。最初のcontrol設置は実SSMでFailedとなり、健康確認・旧owner退役は未実施。正規の初期診断では両hostのconstructorが成功したため、既存nativeの設置前条件を調査している。
+
+次配備の45分IAM上限と最小残存時間を維持するため、infraをPR #209の`b7c419433b7adffe8151c1af8c42af4bf3e7e946`へ固定する。policyの失効時刻から全prefixの上限を引いた開始期限を実controllerで強制する。ローカル再観測だけのtimeoutを短く指定でき、本番受入の検査とtimeoutは維持する。期限後も復旧・後処理の再開を妨げない。関連61件とplan/controller回帰264件が成功。実CIと本番配備の成功は別途確認する。
+
+配備直前の追加ローカル生成1件はオーナー承認済み。準備が整うまで送信せず、既存台帳と累積US$1上限を維持する。承認済みの本番2件も未送信。
+
+
+11月19日更新: infraを`c71d03301df9879571d5b1adbafc814a885ad1ce`へ固定した。Type=simpleの起動遅延を実applyのfile公開境界で再現し、現在のDB lease・認証・identity・actor状態を再検査しながら、既存job期限内の最大30秒でmetadata準備完了を待つ。固定phaseと有限codeを失敗記録へ残す。独立レビューの期限再検査とjournal文字列制限を修正し、正規Python3.12・保護された試験parentで関連220件が成功した。実機の成功や再起動確認ではない。
+
+保持構成と全履歴quietの再読取は成功し、元のIAM/SG範囲と17時失効を維持する新permitを署名した。新namespaceへの設置・実health・旧owner退役は未実施。次の正規planではトップレベルの`progress_preview_enabled=true`を宣言し、ローカル9bdと同じproof workerの途中Lean表示を有効化する。アプリのAPI/Web/worker/verifier sourceと実imageは変更しない。
+
+11月19日の最新判断: オーナーは並列作業と今回のCI完了待機省略を明示した。source修正・独立確認・配備入力準備を分担し、実機操作は主担当へ一本化する。CI待機省略は正規source-check入口で、候補manifest・全source・判断記録・最大4時間の期限・file hashに結び付ける。対象は親とinfraの実際のqueued/in_progressだけで、欠落・失敗・取消・skip・別workflowは拒否する。結果は`source_checks_owner_deferred`かつ`NOT_VERIFIED`で保持し、CI成功へ読み替えない。Issueを閉じる前に最新exact CIを再確認する。追加した回帰9件と従来9件が成功した。署名・admission・identity・復旧と累積US$1は維持する。
+
+実行infraは`1c524cef59dc0d3ef6a934209e5d1d196384652d`へ固定した。署名済みnative C71の全runtimeとbootstrap bytesは保持し、転送のouterだけをcanonical base85へ変更した。実singletonの旧上限超過を再現し、新commandはcontrol59322 byte、compute59317 byteで同じ内容へ完全復元できた。転送関連61件成功。plan全体は新設null負例だけが失敗し、キー存在判定へ修正後、当該2件とdefault argv・任意args拒否の4件が成功した。全体の残る119件も成功している。実機への新パッケージ設置はこれから行う。
+
+11月19日の実機設置はmetadata readiness timeoutで失敗し、正規診断で所有unitの残存なしを確認した。実staged brokerの発行時刻完全一致条件が、既存IAM内に発行した新permitを必ず拒否することを実artifactで確定した。infra PR #214の`caf8d14`は既存IAMがpermit全期間を包含する条件へ修正し、role/key/account/regionと署名・現在時刻・DB leaseの検査を維持する。brokerに必要なcontrol-reconciler metadataも起動前に検査し、組立側参照を修正する。旧署名やIAM文書は変更せず、新namespaceで再署名・再設置する。関連93件が成功し、独立レビュー済み。
+
+元のローカル証明書期限に備えて、同じcompose・同じimage・同じ問題/モデル/oracleのまま、新しい私有runtimeで正規prepareを実行した。新subjectは`43952fcaba9c1e45dddeab4caeb574ed36fd09bafe2c0235d6248343111ebc4c`。実Lean canaryはverified、138calls/441594マイクロ米ドルと旧未知予約の履歴を維持した。新たな証明要求は未送信で、これは依存準備だけの結果である。
+
+11月19日更新: C182の両host設置は実成功し、control healthも成功した。compute healthは閉じたworkerが保持される連続接続不具合で失敗している。新infra PR #215の`590fdde`では、実childの終了・全pipe閉鎖とcleanupを確認後に別leaseを開始し、古いcleanup再応答と閉じたleaseの再open拒否を維持する。非evict cacheは上限付きで、新規開始は飽和時に拒否する。旧設定はactual install/provider記録を照合してから、既存nativeの所有設定cleanupだけで置換する。署名・intent・fence・source freezeとアプリactor停止禁止は維持する。実置換・連続health・旧owner退役・本番UI配備は未確認。
+
+変更のないC182のimmutable codeは、両hostでの全20実公開receiptと現sourceの同一hashを照合して再利用する。新broker/worker、署名・job/config・入力・receiptは新namespaceへ置き、旧namespaceのcodeを削除しない。モデル費用累積US$1.35と、同じ4read/3resourceのIAM18:30失効への変更は質問中で、承認前には適用しない。旧17時期限とUS$1上限を保持する。
+
+11月19日17時台の更新: C182の両hostへの設置とcontrol healthは成功したが、compute healthで終了済みleaseのworker保持による拒否を確認した。infra PR #215で修正したa761パッケージは、正規署名後、両host全10packetの実転送が成功した。変更のない33code aliasesは、C182全20receiptと最新実bytesを照合して保持する。新設定の実設置・両health・旧owner退役はこれから行う。
+
+同時にPR #216で、旧ownerの実退役closureを次配備のprepare・stage・cleanへ渡す接続漏れを修正した。正規closure検証・未閉鎖の別state拒否・実行中lock拒否は維持し、関連285件が成功した。旧journalは書き換えない。
+
+オーナーは累積モデル上限US$1.35と、同じ限定IAMの18:30 JST失効を明示承認した。IAMの期限だけを実変更し、同じ4読み取り操作・3リソースのreadback一致を確認した。SG追加は0件。既存台帳と未知分の予約を保持し、残りの要求数はローカル1件と本番2件のまま。新しいモデル要求は未送信。
+
+11月19日17時台の実機確認: a761の両host設置、正規retire入口での両fresh health・quiet・実証拠転送、旧ownerの実archiveまで成功した。実retirement closureを次配備へ接続する。アプリの本番切替と実API受入は未実施。
+
+PR #216の最初のCIは、新回帰テストをworkflowへ登録していなかったため、coverageの2検査が失敗した。実ログで原因を確認し、production codeを変えず、同じ正規jobの実行と存在検査へ登録した。workflowcoverage13件と新回帰5件が成功。新exact CIは配備前に別途確認し、失敗を待機省略で隠さない。
+
+11月19日の切替計画導出で、worker据え置き候補にも新workerの公開証拠を必須とする不整合を再現した。PR #216は、source・imageが前任と同じでretainedと宣言された場合だけ、hashで固定した実前任preparation receiptの候補・revision・image・platform・公開検証・provenance・embeddingを照合して継承する。changed workerの条件は維持し、前任証拠はfull planにもfreezeする。関連270件と追加対象回帰が成功した。実前任receiptを次の計画入力に明示する。
+
+11月19日18:30の元復旧permit期限前に本番切替を完了できず、旧owner解放後の更新入口も不足していた。アプリは停止せず、実closure・archive・owner不在・元と同じ実行状態を検証する別の正規更新入口をPR #217へ実装した。inert stage、新current署名の認証、旧所有設定のcleanup、新install、fresh healthだけを許可し、過去のcleanup権限をDBやhealthの権限へ読み替えない。既存active-owner経路とarchive専用読取は維持する。RootR関連98件、native stage/context/install/executor/transition137件が成功した。実更新はこれから行う。
+
+オーナーの追加継続承認を受け、同じ4読み取り操作・3リソースだけのIAMと新署名permitを21:00 JSTまでに限定して更新すると実行前に明示した。IAMの期限だけを実更新しreadback一致を確認した。SG追加は0件。新permitは新namespaceと実既存archiveへ結び付け、旧ownerは復活させない。承認済みの累積モデル上限US$1.35と未送信の追加3要求は維持する。
+
+PALSの実Chrome認証を権限0600の私有ファイルへ取得し、正規read-only transportで既存の本人所有requestがansweredであることを確認した。認証値をクリップボードに移していない。新しいモデル要求は0件。
