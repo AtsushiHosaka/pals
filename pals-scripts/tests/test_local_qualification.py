@@ -1939,6 +1939,7 @@ class RuntimeDirectoryRelocationTests(unittest.TestCase):
             "@@WEB_IMAGE@@": "web",
             "@@VERIFIER_IMAGE@@": "verifier",
             "@@GUARD_IMAGE@@": "guard",
+            "@@PLUS_COUPONS_ENV@@": "",
         }
         rendered = prepare.render_profile(template, values)
         binds = [
@@ -3425,6 +3426,442 @@ class ServingMigratorTests(ServingMigratorFixture):
                 if isinstance(node, ast.FunctionDef) and node.name == "apply"
             ]
             self.assertEqual(functions, [], module)
+
+
+class CouponBootstrapTests(unittest.TestCase):
+    """Real source/driver functions; DB, Docker and TLS adapters are isolated only."""
+
+    HELPER = """import os
+
+def canonical_sql():
+    return b"fixture SQL"
+
+def apply_local_storage(c):
+    assert os.environ["PALS_ENV"] == "local"
+    assert c.connection.info.transaction_status.name == "INTRANS"
+    c.events.append("apply")
+    return c.changed
+
+def current(c):
+    c.events.append("current")
+    return c.current
+"""
+
+    def setUp(self):
+        from types import SimpleNamespace
+
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name).resolve()
+        self.source = self.root / "api"
+        self.source.mkdir()
+        self.sql = b"-- isolated source fixture; never executed\n"
+        for module in (bootstrap, prepare.database_bootstrap):
+            for name, value in (
+                ("COUPON_SQL_SHA256", sha256(self.sql)),
+                ("COUPON_SCHEMA_SHA256", "a" * 64),
+            ):
+                p = patch.object(module, name, value)
+                p.start()
+                self.addCleanup(p.stop)
+        files = {
+            bootstrap.COUPON_HELPER: self.HELPER.encode(),
+            bootstrap.COUPON_SQL: self.sql,
+            bootstrap.COUPON_MANIFEST: json.dumps(
+                {
+                    "schema_version": "pals.plus-coupons-migrations.v1",
+                    "postgresql_major": 16,
+                    "schema_sha256": "a" * 64,
+                    "files": [
+                        {"path": bootstrap.COUPON_SQL, "sha256": sha256(self.sql)}
+                    ],
+                }
+            ).encode(),
+            "app/__init__.py": b"",
+            "app/release/__init__.py": b"",
+        }
+        for name, raw in files.items():
+            path = self.source / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(raw)
+        self.git("init", "-q")
+        self.commit()
+        self.cursor = SimpleNamespace(
+            connection=SimpleNamespace(
+                info=SimpleNamespace(transaction_status=SimpleNamespace(name="INTRANS"))
+            ),
+            events=[],
+            changed=True,
+            current=True,
+        )
+        sys.path.insert(0, str(self.source))
+        self.addCleanup(self.forget)
+
+    def forget(self):
+        sys.path.remove(str(self.source))
+        for name in [n for n in sys.modules if n == "app" or n.startswith("app.")]:
+            del sys.modules[name]
+
+    def git(self, *args):
+        return subprocess.run(
+            ["git", "-C", str(self.source), *args],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+
+    def commit(self):
+        self.git("add", ".")
+        self.git(
+            "-c",
+            "user.name=Fixture",
+            "-c",
+            "user.email=fixture@example.invalid",
+            "-c",
+            "commit.gpgsign=false",
+            "commit",
+            "-qm",
+            "fixture",
+        )
+
+    def plan(self):
+        return bootstrap.coupon_bootstrap_plan(
+            self.source, {"PALS_ENV": "local"}, enabled=True
+        )
+
+    def test_exact_tracked_source_and_manifest_produce_bound_plan(self):
+        plan = self.plan()
+        self.assertEqual(plan["api_source_revision"], self.git("rev-parse", "HEAD"))
+        self.assertEqual(plan["files"][bootstrap.COUPON_SQL], sha256(self.sql))
+        self.assertEqual(len(plan["files"]), 3)
+
+    def test_default_old_api_needs_no_capability_and_rejects_saved_opt_in(self):
+        absent = self.root / "old-api"
+        self.assertIsNone(bootstrap.coupon_bootstrap_plan(absent, {}, enabled=False))
+        for flag in ("true", "invalid"):
+            with self.assertRaises(ValueError):
+                bootstrap.coupon_bootstrap_plan(
+                    absent, {"PALS_PLUS_COUPONS_ENABLED": flag}, enabled=False
+                )
+        with self.assertRaisesRegex(ValueError, "explicit_dedicated_local"):
+            bootstrap.coupon_bootstrap_plan(
+                self.source, {"PALS_ENV": "prod"}, enabled=True
+            )
+
+    def test_changed_or_untracked_or_symlinked_helper_is_rejected(self):
+        path = self.source / bootstrap.COUPON_HELPER
+        path.write_text(self.HELPER + "# drift\n")
+        with self.assertRaisesRegex(ValueError, "unsupported_api"):
+            self.plan()
+        self.git("rm", "--cached", bootstrap.COUPON_HELPER)
+        self.git(
+            "-c",
+            "user.name=Fixture",
+            "-c",
+            "user.email=fixture@example.invalid",
+            "-c",
+            "commit.gpgsign=false",
+            "commit",
+            "-qm",
+            "old API",
+        )
+        with self.assertRaisesRegex(ValueError, "unsupported_api"):
+            self.plan()
+        path.unlink()
+        target = self.root / "helper.py"
+        target.write_text(self.HELPER)
+        path.symlink_to(target)
+        self.commit()
+        with self.assertRaisesRegex(ValueError, "unsupported_api"):
+            self.plan()
+
+    def test_unknown_sql_manifest_and_helper_signature_fail_closed(self):
+        changes = (
+            (bootstrap.COUPON_SQL, b"changed\n"),
+            (bootstrap.COUPON_MANIFEST, b"{}"),
+            (
+                bootstrap.COUPON_HELPER,
+                self.HELPER.replace(
+                    "apply_local_storage(c)", "apply_local_storage(c, optional=None)"
+                ).encode(),
+            ),
+        )
+        for name, replacement in changes:
+            with self.subTest(name=name):
+                path = self.source / name
+                previous = path.read_bytes()
+                path.write_bytes(replacement)
+                self.commit()
+                with self.assertRaisesRegex(ValueError, "unsupported_api"):
+                    self.plan()
+                path.write_bytes(previous)
+                self.commit()
+
+    def test_actual_installer_current_and_scoped_environment(self):
+        plan = self.plan()
+        with patch.dict(
+            os.environ, {"PALS_ENV": "prod", "PALS_TOKEN_ACCOUNTING_ENABLED": "false"}
+        ):
+            receipt = bootstrap.apply_coupon_storage(self.cursor, self.source, plan)
+            self.assertEqual(os.environ["PALS_ENV"], "prod")
+            self.assertEqual(os.environ["PALS_TOKEN_ACCOUNTING_ENABLED"], "false")
+        self.assertEqual(self.cursor.events, ["apply", "current"])
+        self.assertEqual(receipt, {**plan, "state": "installed"})
+        self.cursor.changed = False
+        self.assertEqual(
+            bootstrap.apply_coupon_storage(self.cursor, self.source, plan)["state"],
+            "current",
+        )
+
+    def test_transaction_and_post_plan_drift_refuse_before_installer(self):
+        plan = self.plan()
+        self.cursor.connection.info.transaction_status.name = "IDLE"
+        with self.assertRaisesRegex(ValueError, "transaction_required"):
+            bootstrap.apply_coupon_storage(self.cursor, self.source, plan)
+        self.assertEqual(self.cursor.events, [])
+        self.cursor.connection.info.transaction_status.name = "INTRANS"
+        (self.source / bootstrap.COUPON_HELPER).write_text(self.HELPER + "# changed\n")
+        with self.assertRaisesRegex(ValueError, "unsupported_api"):
+            bootstrap.apply_coupon_storage(self.cursor, self.source, plan)
+        self.assertEqual(self.cursor.events, [])
+
+    def test_not_current_restores_absent_environment_and_never_returns_receipt(self):
+        plan = self.plan()
+        self.cursor.current = False
+        with patch.dict(os.environ, {}, clear=True):
+            with self.assertRaisesRegex(ValueError, "storage_not_current"):
+                bootstrap.apply_coupon_storage(self.cursor, self.source, plan)
+            self.assertNotIn("PALS_ENV", os.environ)
+
+    def test_installer_exception_restores_environment_without_receipt(self):
+        plan = self.plan()
+        module = __import__(bootstrap.COUPON_MODULE, fromlist=["apply_local_storage"])
+        with (
+            patch.dict(os.environ, {"PALS_ENV": "prod"}),
+            patch.object(
+                module,
+                "apply_local_storage",
+                side_effect=RuntimeError("fixture failure"),
+            ),
+        ):
+            with self.assertRaisesRegex(RuntimeError, "fixture failure"):
+                bootstrap.apply_coupon_storage(self.cursor, self.source, plan)
+            self.assertEqual(os.environ["PALS_ENV"], "prod")
+        self.assertEqual(self.cursor.events, [])
+
+    def test_child_command_and_closed_receipt_and_runtime_flag(self):
+        plan = self.plan()
+        calls = []
+
+        def run(args, timeout):
+            calls.append((args, timeout))
+            return json.dumps(
+                {
+                    "state": "actual_local_schema_ready",
+                    "plus_coupons": {**plan, "state": "current"},
+                }
+            )
+
+        result = prepare.run_database_bootstrap(
+            "python", self.root, self.source, plan, run_=run
+        )
+        self.assertEqual(result["state"], "current")
+        self.assertEqual(calls[0][0][-1], "--enable-plus-coupons")
+        prepare.run_database_bootstrap("python", self.root, self.source, None, run_=run)
+        self.assertNotIn("--enable-plus-coupons", calls[-1][0])
+        for raw in (
+            "{}",
+            "[]",
+            *[
+                json.dumps(
+                    {"state": "actual_local_schema_ready", "plus_coupons": receipt}
+                )
+                for receipt in (
+                    {**plan, "state": "unknown"},
+                    {**plan, "state": False},
+                    {**plan, "state": "current", "extra": True},
+                    plan,
+                )
+            ],
+        ):
+            with self.assertRaises(prepare.gate.Refusal):
+                prepare.run_database_bootstrap(
+                    "python", self.root, self.source, plan, run_=lambda *a, raw=raw: raw
+                )
+        for flags in (
+            [],
+            ["PALS_PLUS_COUPONS_ENABLED=false"],
+            ["PALS_PLUS_COUPONS_ENABLED=true"] * 2,
+        ):
+            with self.assertRaises(prepare.gate.Refusal):
+                prepare.require_coupon_runtime({"Config": {"Env": flags}}, plan)
+        prepare.require_coupon_runtime(
+            {"Config": {"Env": ["PALS_PLUS_COUPONS_ENABLED=true"]}}, plan
+        )
+
+    def prepare_main_until_bootstrap(
+        self, *, enabled=True, saved_flag=None, unsupported=False
+    ):
+        runtime = self.root / "runtime"
+        runtime.mkdir(mode=0o700)
+        env = "PALS_ENV=local\nPALS_ENVIRONMENT=local\nPALS_TOKEN_ACCOUNTING_ENABLED=false\n"
+        if saved_flag is not None:
+            env += "PALS_PLUS_COUPONS_ENABLED=" + saved_flag + "\n"
+        (runtime / "local.env").write_text(env)
+        (runtime / "local.env").chmod(0o600)
+        revision = self.git("rev-parse", "HEAD")
+        images = {
+            role: {"source_revision": revision, "image_reference": role}
+            for role in ("api", "web", "verifier", "worker")
+        }
+        subject = {"images": images}
+        receipt = {
+            "source_revision": revision,
+            "built_image_id": "sha256:fixture",
+            "build_context": str(self.root),
+        }
+        argv = ["prepare", "--runtime-dir", str(runtime)]
+        for name, value in (
+            ("base-subject", subject),
+            ("web-build-receipt", receipt),
+            ("verifier-build-receipt", receipt),
+        ):
+            path = self.root / name
+            path.write_text(json.dumps(value))
+            argv += ["--" + name, str(path)]
+        for name in ("compose-root", "api-python", "agent-python", "api-source"):
+            argv += [
+                "--" + name,
+                str(self.source if name == "api-source" else self.root / name),
+            ]
+        if enabled:
+            argv.append("--enable-plus-coupons")
+        if unsupported:
+            (self.source / bootstrap.COUPON_HELPER).unlink()
+        commands = []
+
+        def run(args, timeout=45):
+            command = [str(x) for x in args]
+            commands.append(command)
+            if command[:3] == ["docker", "context", "inspect"]:
+                return "unix:///fixture.sock"
+            if command[:3] == ["docker", "image", "inspect"]:
+                return json.dumps([{"Id": "guard"}])
+            if command[:2] == ["docker", "inspect"]:
+                return json.dumps({"codex.owner": prepare.gate.OWNER})
+            if "rev-parse" in command:
+                return revision
+            if any(x.endswith("bootstrap_database.py") for x in command):
+                plan = self.plan() if enabled else None
+                return json.dumps(
+                    {
+                        "state": "actual_local_schema_ready",
+                        **(
+                            {"plus_coupons": {**plan, "state": "installed"}}
+                            if enabled
+                            else {}
+                        ),
+                    }
+                )
+            return ""
+
+        def start(_compose, callback):
+            callback()
+            raise prepare.gate.Refusal("fixture_completed_actual_bootstrap_invocation")
+
+        previous = dict(prepare.gate._DIAGNOSTICS)
+        real_subprocess = subprocess.run
+
+        def child(args, **kwargs):
+            if any(str(x).endswith("bootstrap-local-verifier-tls.py") for x in args):
+                return subprocess.CompletedProcess(args, 0, "", "")
+            return real_subprocess(args, **kwargs)
+
+        try:
+            with (
+                patch.object(sys, "argv", argv),
+                patch.object(prepare, "run", run),
+                patch.object(prepare, "require_child_modules"),
+                patch.object(prepare.gate, "require_modules"),
+                patch.object(prepare, "require_provider_tls", return_value={}),
+                patch.object(prepare, "serving_budget_directory", return_value=None),
+                patch.object(prepare, "require_ledger_continuity"),
+                patch.object(
+                    prepare,
+                    "require_known_budget",
+                    return_value=(b"fixture", {}, 1000000),
+                ),
+                patch.object(prepare, "require_no_leftover_jobs", return_value={}),
+                patch.object(prepare, "build"),
+                patch.object(prepare, "start_stack", start),
+                patch.object(prepare.subprocess, "run", child),
+            ):
+                (runtime / "budget").mkdir()
+                with self.assertRaises(prepare.gate.Refusal) as caught:
+                    prepare.main()
+        finally:
+            prepare.gate._DIAGNOSTICS.update(previous)
+        return str(caught.exception), commands, runtime
+
+    def test_actual_prepare_main_opt_in_reaches_child_with_literal_flag(self):
+        code, commands, runtime = self.prepare_main_until_bootstrap()
+        self.assertEqual(code, "fixture_completed_actual_bootstrap_invocation")
+        child = next(
+            c for c in commands if any(x.endswith("bootstrap_database.py") for x in c)
+        )
+        self.assertEqual(child[-1], "--enable-plus-coupons")
+        override = (runtime / "override.yml").read_text()
+        self.assertEqual(override.count('PALS_PLUS_COUPONS_ENABLED: "true"'), 1)
+        self.assertNotIn("${PALS_PLUS_COUPONS_ENABLED", override)
+        self.assertIn(
+            "PALS_TOKEN_ACCOUNTING_ENABLED=false", (runtime / "local.env").read_text()
+        )
+
+    def test_actual_prepare_main_default_preserves_old_argv_and_profile(self):
+        code, commands, runtime = self.prepare_main_until_bootstrap(enabled=False)
+        self.assertEqual(code, "fixture_completed_actual_bootstrap_invocation")
+        child = next(
+            c for c in commands if any(x.endswith("bootstrap_database.py") for x in c)
+        )
+        self.assertNotIn("--enable-plus-coupons", child)
+        self.assertNotIn(
+            "PALS_PLUS_COUPONS_ENABLED", (runtime / "override.yml").read_text()
+        )
+
+    def test_actual_prepare_main_rejects_unsupported_before_stop_or_write(self):
+        code, commands, runtime = self.prepare_main_until_bootstrap(unsupported=True)
+        self.assertEqual(code, "coupon_local_bootstrap_unsupported_api")
+        self.assertFalse(any("stop" in c or "up" in c for c in commands))
+        self.assertFalse((runtime / "override.yml").exists())
+        self.assertNotIn(
+            "PALS_PLUS_COUPONS_ENABLED", (runtime / "local.env").read_text()
+        )
+
+    def test_actual_prepare_main_rejects_saved_opt_in_without_cli_before_stop(self):
+        code, commands, _ = self.prepare_main_until_bootstrap(
+            enabled=False, saved_flag="true"
+        )
+        self.assertEqual(code, "coupon_local_explicit_opt_in_required")
+        self.assertFalse(any("stop" in c for c in commands))
+
+    def test_real_child_entrypoint_rejects_unsupported_before_import_or_db(self):
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(ROOT / "local-qualification/bootstrap_database.py"),
+                "--api-source",
+                str(self.root / "absent"),
+                "--runtime-dir",
+                str(self.root),
+                "--enable-plus-coupons",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("coupon_local_bootstrap_unsupported_api", result.stderr)
+        self.assertNotIn("ModuleNotFoundError", result.stderr)
 
 
 class LeftoverJobTests(unittest.TestCase):

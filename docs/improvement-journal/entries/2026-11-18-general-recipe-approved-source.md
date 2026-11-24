@@ -1,0 +1,21 @@
+# 一般Recipe再利用の統合と実Lean検証（2026-11-18）
+
+目的は、新規生成を省く経路を承認済みsourceへ接続すること。回答範囲や費用の改善率は今回測っていない。
+
+API旧PR104をa3191b4へ統合し、guest進捗のimport競合を解消した。Agentは146ecf2へ必要な一般Recipeモジュールとfactory接続を追加した。両者の共有具体化モジュールのSHA256は一致する。既定の無効フラグと、APIが検証の正本を持つ境界を維持した。[API PR126](https://github.com/AtsushiHosaka/pals-api/pull/126)、[Agent PR150](https://github.com/AtsushiHosaka/pals-agent/pull/150)。
+
+API候補ba0f1c8は対象185テスト成功・スキップ0、Ruff成功。Agent候補58fe51aは対象unit249件と実Lean2件が成功・スキップ0。実Leanは28.716秒で、証明生成の応答時間ではない。両候補を独立レビューし、阻害する欠陥は見つからなかった。
+
+Agentの旧CIで未実行だった実Leanテストは、新worktreeから既存Mathlibを参照していなかった。既存環境を明示して再利用し、製品のsandboxを維持して通した。最初のホストsandbox拒否rc71は検証失敗として保持する。APIの最初の2環境はpytestまたはpsycopg_poolがなく収集前に停止したため、専用の固定環境を用意した。テストの許容スキップは増やしていない。
+
+品質台帳の技術bundle1件として記録し、テスト数を質問の成功率に換算しない。有料評価・本番操作は0。実mTLS結合、PostgreSQL再取得、必須exact CI、本番受け入れは未確認で、機能の完了や網羅率の向上を主張しない。現在は実依存での結合確認を追加調査している。
+
+Agentの必須CIは、Mathlib未準備で5件のスキップとmodule未実行を検知して停止した。旧workflowの公開GitHubランナー指定も残っていた。引き継ぎの自前限定と、既存記録の公開無料runner運用に食い違いがあるため、追加実行の扱いをオーナーへ確認中。APIの必須CIにもRecipe専用suiteの列挙漏れがあり、対象CIへ接続するまでqualifiedと扱わない。
+
+APIの追補088cc7df4dfabe7f33e03b399d90e1cfe38cc00fで、正規API adapter→実mTLS→実Leanの正負2件を確認した。最初の66.86秒の後、不正例が通信失敗ではなく実コンパイル拒否であることも検査し、強化版2件が62.10秒で成功・スキップ0。既存サービスやDBは変更していない。Recipe専用5suiteを既存必須CIへ追加し、feature branchのpushとPRの二重検査を削減した。新headのCIは実Lean依存の未準備を拒否したため、環境を修正中である。
+
+Linux実利用の不足もsourceで判明した。worker imageにはLean/Mathlibがなく、一般laneはDarwin専用sandboxに依存する。Macの成功はLinuxでの可用性を示さない。既存API検証器を使うclaimに結び付けた候補検査の接続を追加調査する。現候補は既定無効を維持し、フラグを有効にするだけで本番の網羅性が改善するとは主張しない。
+
+公開pals-agentの無料標準GitHubランナーはオーナーが許可し、[判断438](https://github.com/AtsushiHosaka/pals/issues/438)へ記録した。有料枠、支払い設定、非公開リポジトリのrunner方針は変更しない。
+
+AgentのCI準備はe10bca375f93987c4d1303358ab8c1699b327603で追補した。無料標準macos-15と既存sandbox-execを使い、exact toolchain・manifestを固定した専用workspaceを準備する。他の実Lean試験を無関係に有効化せず、対象5件を単一JUnitへ含める。対応する手元の5件は80.529秒で成功・スキップ0。head自身の必須CI結果は確認待ちである。
