@@ -18,7 +18,7 @@ release-local-qualify:
 
 release-source-checks:
 	@test -n "$(RELEASE_MANIFEST)" -a -n "$(RELEASE_PREDECESSOR)" || { echo 'Set RELEASE_MANIFEST and RELEASE_PREDECESSOR to the exact private manifest files.' >&2; exit 2; }
-	$(RELEASE_PYTHON) pals-scripts/release-source-checks.py --manifest "$(RELEASE_MANIFEST)" --predecessor "$(RELEASE_PREDECESSOR)"
+	$(RELEASE_PYTHON) pals-scripts/release-source-checks.py --manifest "$(RELEASE_MANIFEST)" --predecessor "$(RELEASE_PREDECESSOR)" $(if $(or $(RELEASE_OWNER_CI_DEFERRAL),$(RELEASE_OWNER_CI_DEFERRAL_SHA256)),--owner-ci-deferral "$(RELEASE_OWNER_CI_DEFERRAL)" --owner-ci-deferral-sha256 "$(RELEASE_OWNER_CI_DEFERRAL_SHA256)")
 
 release-qualify:
 	@test -n "$(RELEASE_CONTRACT)" -a -n "$(RELEASE_SESSION)" -a -n "$(RELEASE_STATE_DIR)" || { echo 'Set the private RELEASE_CONTRACT, RELEASE_SESSION and RELEASE_STATE_DIR.' >&2; exit 2; }
