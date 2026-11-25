@@ -4,11 +4,15 @@ from __future__ import annotations
 
 import argparse
 import ast
+import hashlib
 import importlib
 import inspect
 import json
+import os
 import re
+import subprocess
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit
 
@@ -192,11 +196,138 @@ def apply_serving_migrators(api_source, url, *, import_module=importlib.import_m
     return report, not_applicable
 
 
+COUPON_MODULE = "app.release.plus_coupons_migration"
+COUPON_HELPER = "app/release/plus_coupons_migration.py"
+COUPON_SQL = "app/db/migrations/plus_coupons/001_plus_coupons.sql"
+COUPON_MANIFEST = "app/db/migrations/plus_coupons/manifest.json"
+COUPON_SQL_SHA256 = "b21487c769fcf31b6de656be4b0a9caf6c91d699dbbc2a4f9315bad84f62d078"
+COUPON_SCHEMA_SHA256 = (
+    "e79ae61f6d24c57c8a781116563c5fecde3cd1b2c16934438d2a47cdc3d08b43"
+)
+
+
+def coupon_source_contract(api_source):
+    """Inspect only tracked source bytes; never import an API or touch a database."""
+    root = Path(api_source).resolve()
+    try:
+        revision = (
+            subprocess.run(
+                ["git", "-C", str(root), "rev-parse", "HEAD"],
+                capture_output=True,
+                check=True,
+                timeout=15,
+            )
+            .stdout.decode()
+            .strip()
+        )
+        if not re.fullmatch(r"[a-f0-9]{40}", revision):
+            raise ValueError
+        files = {}
+        raw = {}
+        for name in (COUPON_HELPER, COUPON_SQL, COUPON_MANIFEST):
+            path = root / name
+            if path.is_symlink() or not path.is_file() or path.resolve() != path:
+                raise ValueError
+            raw[name] = path.read_bytes()
+            tracked = subprocess.run(
+                ["git", "-C", str(root), "show", revision + ":" + name],
+                capture_output=True,
+                check=True,
+                timeout=15,
+            ).stdout
+            if tracked != raw[name]:
+                raise ValueError
+            files[name] = hashlib.sha256(raw[name]).hexdigest()
+        if files[COUPON_SQL] != COUPON_SQL_SHA256:
+            raise ValueError
+        manifest = json.loads(raw[COUPON_MANIFEST])
+        if manifest != {
+            "schema_version": "pals.plus-coupons-migrations.v1",
+            "postgresql_major": 16,
+            "schema_sha256": COUPON_SCHEMA_SHA256,
+            "files": [{"path": COUPON_SQL, "sha256": COUPON_SQL_SHA256}],
+        }:
+            raise ValueError
+        tree = ast.parse(raw[COUPON_HELPER])
+        functions = {n.name: n for n in tree.body if isinstance(n, ast.FunctionDef)}
+        for name, arguments in (
+            ("canonical_sql", []),
+            ("apply_local_storage", ["c"]),
+            ("current", ["c"]),
+        ):
+            f = functions[name].args
+            if (
+                f.posonlyargs
+                or [a.arg for a in f.args] != arguments
+                or f.defaults
+                or f.kwonlyargs
+                or f.vararg
+                or f.kwarg
+            ):
+                raise ValueError
+    except (OSError, ValueError, KeyError, SyntaxError, subprocess.SubprocessError):
+        raise ValueError("coupon_local_bootstrap_unsupported_api") from None
+    return {
+        "schema_version": "pals.local-plus-coupons-bootstrap.v1",
+        "api_source_revision": revision,
+        "files": files,
+        "schema_sha256": COUPON_SCHEMA_SHA256,
+    }
+
+
+def coupon_bootstrap_plan(api_source, local, *, enabled):
+    flag = local.get("PALS_PLUS_COUPONS_ENABLED")
+    if flag not in (None, "false", "true"):
+        raise ValueError("coupon_local_flag_invalid")
+    if not enabled:
+        if flag == "true":
+            raise ValueError("coupon_local_explicit_opt_in_required")
+        return None
+    if local.get("PALS_ENV") != "local":
+        raise ValueError("explicit_dedicated_local_database_required")
+    return coupon_source_contract(api_source)
+
+
+@contextmanager
+def _local_coupon_environment():
+    previous = os.environ.get("PALS_ENV")
+    os.environ["PALS_ENV"] = "local"
+    try:
+        yield
+    finally:
+        if previous is None:
+            os.environ.pop("PALS_ENV", None)
+        else:
+            os.environ["PALS_ENV"] = previous
+
+
+def apply_coupon_storage(cursor, api_source, plan):
+    """Use the candidate's own local installer in the caller's live transaction."""
+    if plan is None:
+        return None
+    if coupon_source_contract(api_source) != plan:
+        raise ValueError("coupon_local_source_changed_after_plan")
+    if getattr(cursor.connection.info.transaction_status, "name", None) != "INTRANS":
+        raise ValueError("coupon_local_transaction_required")
+    module = importlib.import_module(COUPON_MODULE)
+    if Path(module.__file__).resolve() != Path(api_source).resolve() / COUPON_HELPER:
+        raise ValueError("coupon_local_module_source_mismatch")
+    with _local_coupon_environment():
+        changed = module.apply_local_storage(cursor)
+        if type(changed) is not bool or module.current(cursor) is not True:
+            raise ValueError("coupon_local_storage_not_current")
+    return {**plan, "state": "installed" if changed else "current"}
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--runtime-dir", type=Path, required=True)
     p.add_argument("--api-source", type=Path, required=True)
+    p.add_argument("--enable-plus-coupons", action="store_true")
     a = p.parse_args()
+    # Unsupported opt-in is refused before imports or any database operation.
+    if a.enable_plus_coupons:
+        coupon_source_contract(a.api_source)
     sys.path.insert(0, str(a.api_source.resolve()))
     import psycopg
     from app.core.guest_chat import validate_key
@@ -232,6 +363,11 @@ def main():
     reader_url = runtime_login_url(recipe["PALS_PFI_DRAFT_READER_DATABASE_URL"])
     if local.get("PALS_ENV") != "local":
         raise ValueError("explicit_dedicated_local_database_required")
+    coupon_plan = coupon_bootstrap_plan(
+        a.api_source, local, enabled=a.enable_plus_coupons
+    )
+    if coupon_plan and local.get("PALS_PLUS_COUPONS_ENABLED") != "true":
+        raise ValueError("coupon_local_runtime_flag_required")
     with connect_maintenance(parts, connect=psycopg.connect) as c:
         if not c.execute("SELECT 1 FROM pg_database WHERE datname='pals'").fetchone():
             c.execute("CREATE DATABASE pals")
@@ -322,7 +458,8 @@ def main():
     ).apply()
     if result.status != "current":
         raise ValueError("actual_local_legacy_release_failed")
-    with psycopg.connect(url) as c, c.cursor() as cursor:
+    coupon_storage = None
+    with psycopg.connect(url) as c, c.transaction(), c.cursor() as cursor:
         cursor.execute("SELECT 1")
         for module in (
             lean_generation_models_migration,
@@ -332,6 +469,7 @@ def main():
         guest_chat_migration.apply_storage(
             cursor, validate_key(local["PALS_GUEST_HASH_KEY"])
         )
+        coupon_storage = apply_coupon_storage(cursor, a.api_source, coupon_plan)
     from app.release.typed_catalog import install
 
     install(url)
@@ -347,6 +485,7 @@ def main():
                 "serving_migrators": serving,
                 "not_applicable_migrators": not_applicable,
                 "rowlock_column_grants": rowlocks,
+                **({"plus_coupons": coupon_storage} if coupon_plan else {}),
             }
         )
     )

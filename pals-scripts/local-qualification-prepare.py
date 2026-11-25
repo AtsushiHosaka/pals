@@ -13,6 +13,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -32,6 +33,10 @@ provider_tls = load(
 )
 budget_proxy = load(
     "local_qualification_prepare_budget", HERE / "local-qualification/budget_proxy.py"
+)
+database_bootstrap = load(
+    "local_qualification_database_bootstrap",
+    HERE / "local-qualification/bootstrap_database.py",
 )
 PROJECT = "pals-reliability-local"
 # Recreating the API after the subject is frozen can change its host configuration once
@@ -489,6 +494,126 @@ def build(args, log):
             raise
 
 
+def database_bootstrap_command(
+    api_python, runtime, api_source, *, enable_plus_coupons=False
+):
+    command = [
+        api_python,
+        HERE / "local-qualification/bootstrap_database.py",
+        "--runtime-dir",
+        runtime,
+        "--api-source",
+        api_source,
+    ]
+    if enable_plus_coupons:
+        command.append("--enable-plus-coupons")
+    return command
+
+
+def run_database_bootstrap(api_python, runtime, api_source, coupon_plan, *, run_=None):
+    raw = (run_ or run)(
+        database_bootstrap_command(
+            api_python,
+            runtime,
+            api_source,
+            enable_plus_coupons=coupon_plan is not None,
+        ),
+        60,
+    )
+    if coupon_plan is None:
+        return None
+    try:
+        result = json.loads(raw)
+        receipt = result["plus_coupons"]
+        expected = {**coupon_plan, "state": receipt["state"]}
+        gate.need(
+            result["state"] == "actual_local_schema_ready"
+            and receipt["state"] in {"current", "installed"}
+            and receipt == expected,
+            "coupon_local_bootstrap_receipt_invalid",
+        )
+    except (ValueError, KeyError, TypeError):
+        raise gate.Refusal("coupon_local_bootstrap_receipt_invalid") from None
+    return receipt
+
+
+def require_coupon_runtime(api, coupon_plan):
+    if coupon_plan is not None:
+        flags = [
+            entry
+            for entry in api["Config"]["Env"]
+            if entry.startswith("PALS_PLUS_COUPONS_ENABLED=")
+        ]
+        gate.need(
+            flags == ["PALS_PLUS_COUPONS_ENABLED=true"],
+            "coupon_local_runtime_flag_missing_or_changed",
+        )
+
+
+PLUS_COUPON_READBACK = """import sys,json
+from pathlib import Path
+sys.path.insert(0,sys.argv[1])
+from database_readiness import inspect_plus_coupons
+values=dict(line.split('=',1) for line in Path(sys.argv[2]).read_text().splitlines() if line and not line.startswith('#'))
+try:
+ result=inspect_plus_coupons(values['PALS_HOST_DATABASE_URL'],Path(sys.argv[3]),sys.argv[4])
+ print(json.dumps({'state':'ready','observation':result},sort_keys=True))
+except ValueError as error:print(json.dumps({'state':'unavailable','code':str(error)}))
+"""
+
+
+def observe_plus_coupons(subject, environment_file, *, run_=None):
+    """Read the installed coupon schema/ACL of the STARTED API's database. Read only."""
+    contract = subject["database_contract"]
+    result = json.loads(
+        (run_ or gate.command)(
+            [
+                sys.executable,
+                "-c",
+                PLUS_COUPON_READBACK,
+                str(HERE / "local-qualification"),
+                str(environment_file),
+                contract["api_source_root"],
+                contract["api_source_revision"],
+            ]
+        )
+    )
+    gate.need(
+        result.get("state") == "ready",
+        "actual_local_plus_coupon_readiness_failed:"
+        + str(result.get("code", "dependency_failed")),
+    )
+    return result["observation"]
+
+
+def freeze_plus_coupons(subject, environment_file, coupon_plan, *, observe=None):
+    """Freeze the coupon readback under its OWN key; no existing key or value changes."""
+    if coupon_plan is None:
+        return None
+    observation = (observe or observe_plus_coupons)(subject, environment_file)
+    gate.need(
+        observation["api_source_revision"] == coupon_plan["api_source_revision"]
+        and observation["schema_sha256"] == coupon_plan["schema_sha256"],
+        "coupon_local_readback_differs_from_bootstrap_plan",
+    )
+    fingerprint = observation["plus_coupons_schema_fingerprint_sha256"]
+    subject["database_contract"]["plus_coupons_schema_fingerprint_sha256"] = fingerprint
+    return fingerprint
+
+
+def require_plus_coupons_unchanged(
+    subject, environment_file, coupon_plan, *, observe=None
+):
+    if coupon_plan is None:
+        return
+    observation = (observe or observe_plus_coupons)(subject, environment_file)
+    gate.need(
+        subject["database_contract"].get("plus_coupons_schema_fingerprint_sha256")
+        == observation["plus_coupons_schema_fingerprint_sha256"],
+        "actual_plus_coupon_schema_or_privileges_differ_from_subject",
+    )
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     for name in (
@@ -502,6 +627,11 @@ def main():
         "agent-python",
     ):
         p.add_argument("--" + name, type=Path, required=True)
+    p.add_argument(
+        "--enable-plus-coupons",
+        action="store_true",
+        help="prepare the exact supported local Plus coupon storage and API flag",
+    )
     p.add_argument(
         "--fail-leftover-local-jobs",
         action="store_true",
@@ -586,6 +716,18 @@ def main():
         ).strip(),
         "exact_clean_api_migration_source_required",
     )
+    # Pure capability guard runs before stopping producers, building or changing state.
+    try:
+        coupon_plan = database_bootstrap.coupon_bootstrap_plan(
+            a.api_source,
+            env,
+            enabled=a.enable_plus_coupons,
+        )
+    except ValueError as error:
+        raise gate.Refusal(str(error)) from None
+    if coupon_plan:
+        env["PALS_PLUS_COUPONS_ENABLED"] = "true"
+    coupon_storage = None
     compose = [
         "docker",
         "compose",
@@ -681,6 +823,9 @@ def main():
         "@@WEB_IMAGE@@": web["built_image_id"],
         "@@VERIFIER_IMAGE@@": native_id,
         "@@GUARD_IMAGE@@": guard["Id"],
+        "@@PLUS_COUPONS_ENV@@": (
+            '      PALS_PLUS_COUPONS_ENABLED: "true"\n' if coupon_plan else ""
+        ),
     }
     template = render_profile(
         (HERE / "local-qualification/compose.override.yml.in").read_text(), values
@@ -689,6 +834,7 @@ def main():
     run([*compose, "config", "--quiet"])
 
     def bootstrap():
+        nonlocal coupon_storage
         new_env = dict(
             os.environ, AWS_ACCESS_KEY_ID="test", AWS_SECRET_ACCESS_KEY="test"
         )
@@ -737,16 +883,11 @@ def main():
                 Path(verifier["build_context"]) / "lean-workspace",
             ]
         )
-        run(
-            [
-                a.api_python,
-                HERE / "local-qualification/bootstrap_database.py",
-                "--runtime-dir",
-                r,
-                "--api-source",
-                a.api_source,
-            ],
-            60,
+        coupon_storage = run_database_bootstrap(
+            a.api_python,
+            r,
+            a.api_source,
+            coupon_plan,
         )
 
     # LocalStack and Cognito are converged to this compose root and profile first; only
@@ -836,6 +977,7 @@ def main():
     subject["runtime_config"] = {}
     for role, item in actual.items():
         subject["runtime_config"][role] = runtime_config_entry(item)
+    require_coupon_runtime(actual["api"], coupon_plan)
     subject["preparation"] = {
         "leftover_local_jobs": leftover_jobs,
         "driver_sha256": gate.sha(Path(__file__).read_bytes()),
@@ -849,6 +991,9 @@ def main():
             )
         },
     }
+    if coupon_plan:
+        gate.need(coupon_storage is not None, "coupon_local_bootstrap_receipt_required")
+        subject["preparation"]["plus_coupons"] = coupon_storage
     sql = (
         a.api_source / "app/db/migrations/draft_addition_candidates/001_candidates.sql"
     )
@@ -867,6 +1012,7 @@ def main():
     subject["database_contract"]["schema_fingerprint_sha256"] = observed_database[
         "schema_fingerprint_sha256"
     ]
+    freeze_plus_coupons(subject, r / "local.env", coupon_plan)
     out = r / "subject-native.json"
 
     def write_and_recreate():
@@ -887,12 +1033,14 @@ def main():
             60,
         )
 
-    freeze_until_api_is_stable(
+    frozen_api = freeze_until_api_is_stable(
         subject,
         actual["api"],
         write_and_recreate,
         lambda: json.loads(run(["docker", "inspect", PROJECT + "-api-1"]))[0],
     )
+    require_coupon_runtime(frozen_api, coupon_plan)
+    require_plus_coupons_unchanged(subject, r / "local.env", coupon_plan)
     gate.web_provenance(subject)
     gate.verifier_provenance(subject)
     gate.runtime(subject)
@@ -913,6 +1061,7 @@ def main():
             "verified_jobs_with_unfinished_explanation"
         ),
         "budget_limit_microusd": budget["limit_microusd"],
+        **({"plus_coupons": coupon_storage} if coupon_plan else {}),
     }
     gate.private_json(r / "preparation-result.json", result)
     print(gate.stable(result))
