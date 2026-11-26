@@ -16,4 +16,6 @@ computeの隔離ホストで同じサブネットを指定してブリッジを�
 
 修正の対象コミットでは重いCIがそれぞれ4件通過した。[署名鍵の修正](https://github.com/AtsushiHosaka/pals-infra/actions/runs/45771930188) · [computeの復旧検査](https://github.com/AtsushiHosaka/pals-infra/actions/runs/45772302312)。ローカルのplan一括テストは、テスト中に作業ツリーのブランチを切り替えたため対象リビジョンの証拠から外した。
 
+検証器の同じAMD64イメージをOrbStackの読み取り専用コンテナで動かし、停止確認のプロセス計数を切り出した。読み取り専用ルートの /tmp ではRosettaが一時ファイルを作れず終了コード133になった。TMPDIRを既存の検証器用一時領域に変えても結果は同じだった。実行不可の8 MiB tmpfsを /tmp に置いた場合はプロセス計数が完了した。[pals-infra#412](https://github.com/AtsushiHosaka/pals-infra/pull/412) はこの一時領域をOrbStack上のリハーサルに限定し、ドレインの拒否時に閉じた処理段階と原因コードを返す。
+
 候補種別ごとの全必須シナリオ、復旧時間の計測、実配備候補の署名ゲートおよび本番の読み取り事前検査は未確認。[担当と経緯は #518](https://github.com/AtsushiHosaka/pals/issues/518#issuecomment-7184546859)。
