@@ -336,6 +336,7 @@ volumes:
             project = lane["compose_project"]
             policy = append_actor(project, relay_topology.POLICY, user="0:0", cap_add=["NET_ADMIN"],
                                   entrypoint=["python", "/opt/pals-local/lane_guard.py"],
+                                  cmd=[name],
                                   networks={project + "-e2e": lane_networks[project + "-e2e"]})
             namespace = "container:" + policy["id"]
             forwarder = append_actor(project, relay_topology.RELAY, user="65531:65531", cap_add=["NET_BIND_SERVICE"],
