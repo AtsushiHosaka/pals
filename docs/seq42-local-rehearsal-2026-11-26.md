@@ -37,3 +37,11 @@ On November 26 UTC, two isolated OrbStack runs on `a10c711` injected a PostgreSQ
 The first typed standby run on `0cea94b` completed the native handover from A to S and cleaned up after S began serving. The overall typed case failed at evidence export with `primitive_plan_lineage_differs`. The exporter rejected the standby declaration that the inherited-window plan required.
 
 The retry on `9cf9fdb` bound the exact child plan and reached `standby_case_recorded`. It verified S admission and serving, released the owner, and completed cleanup. The interval from A ingress deregistration to S ingress registration was 291.515 s. The inherited notification window was deleted 315.444 s after it became active. These runs used isolated AWS and acceptance substitutes. Production timing and the live A/S model qualifications remain separate release gates. [Release tracking](https://github.com/AtsushiHosaka/pals/issues/509)
+
+## SのDB承認後に障害を起こした隔離試験
+
+統合コミット `c334c9a` では、SのDB承認後に確定処理を一度失敗させた。Sの復旧処理が `same_window_fault_reconcile_not_verified` で止まり、通し試験は失敗した。`49f5fa7` の追試では、試験が復旧直前に発行した確認用SSMコマンドを、安全検査が未確認の操作として検知した。Aの通知抑制は両試行で解除できた。
+
+試験側のホスト確認を復旧後に移した `bcb830e` では、同じ障害から正規の `--reconcile` でSを復旧できた。復旧開始から通信先の再登録まで173.500秒、受入と後片付けの完了まで223.032秒だった。DB承認の重複はなく、通知抑制は期限の956.525秒前に解除した。オーナーの解放と試験用Dockerリソースが残っていないことを読み戻し、型付き証跡を再検証した。
+
+修復ジャーナルのSHA-256は `4fe7c093c859628df55f7871589f63470ef239c83fb4e291c25adac071e8de54`。試験では隔離したAWS実装と受入用の代替ランナーを使った。実測値を本番の署名予算へ取り込む検証と、実モデルを使うA/Sの受入は継続中。 [修正コミットの回帰CI](https://github.com/AtsushiHosaka/pals-infra/actions/runs/45868756885)
