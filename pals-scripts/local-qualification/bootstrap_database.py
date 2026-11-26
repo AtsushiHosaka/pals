@@ -10,6 +10,7 @@ import inspect
 import json
 import os
 import re
+import stat
 import subprocess
 import sys
 from contextlib import contextmanager
@@ -51,15 +52,18 @@ def runtime_login_url(value, *, lane="singleton"):
 def qualify_lane_postgres(runtime_directory, lane, binding_path, binding_sha256):
     """Bind migrations to the owned lane PostgreSQL before opening any connection."""
     from lane_topology import OWNER, PROJECT, SERVICE, active, docker_reader, inventory, port_map
-    from lanes import read
+    from lane_database import SCHEMA as DATABASE_LAYOUT, read_for_bootstrap, verify_databases
 
-    layout = read(binding_path, binding_sha256)
+    layout = read_for_bootstrap(binding_path, binding_sha256)
     selected = layout["lanes"][lane]
     if Path(selected["runtime_directory"]) != runtime_directory.resolve():
         raise ValueError("local_lane_database_runtime_path_differs")
     database = selected["postgres"]
     run = docker_reader(layout["docker_socket"])
     rows = inventory(run)
+    if layout["schema_version"] == DATABASE_LAYOUT:
+        verify_databases(layout, run, rows)
+        return selected["candidate_sha256"]
     actual = rows.get("/" + database["name"])
     if actual is None or actual["id"] != database["container_id"]:
         raise ValueError("local_lane_database_container_differs")
@@ -101,7 +105,7 @@ def qualify_lane_postgres(runtime_directory, lane, binding_path, binding_sha256)
     return selected["candidate_sha256"]
 
 
-def require_lane_migration_source(api_source, manifest, candidate_sha256):
+def require_lane_migration_source(api_source, manifest, candidate_sha256, *, full_checkout=False):
     raw = manifest.read_bytes()
     if hashlib.sha256(raw).hexdigest() != candidate_sha256:
         raise ValueError("local_lane_migration_manifest_differs")
@@ -110,7 +114,7 @@ def require_lane_migration_source(api_source, manifest, candidate_sha256):
     prefix = ["git", "-C", str(root)]
     head = subprocess.run([*prefix, "rev-parse", "HEAD"], capture_output=True, text=True, check=True, timeout=10)
     dirty = subprocess.run(
-        [*prefix, "status", "--porcelain", "--untracked-files=all", "--", "app"],
+        [*prefix, "status", "--porcelain", "--untracked-files=all", *([] if full_checkout else ["--", "app"])],
         capture_output=True, text=True, check=True, timeout=10,
     )
     if head.stdout.strip() != revision or dirty.stdout.strip():
@@ -408,9 +412,32 @@ def main():
     if any(lane_options):
         if not all(lane_options):
             p.error("the lane, binding, binding SHA-256 and candidate manifest are required together")
+        from lane_database import SCHEMA as DATABASE_LAYOUT, migration_state, read_for_bootstrap
+
+        layout = read_for_bootstrap(a.lane_binding, a.lane_binding_sha256)
+        if layout["schema_version"] == DATABASE_LAYOUT:
+            from lane_bootstrap import local_environment_settings
+            from lane_dependencies import runtime_directory
+
+            selected = layout["lanes"][a.lane]
+            runtime = runtime_directory(Path(selected["runtime_directory"]))
+            if a.runtime_dir != runtime:
+                raise ValueError("local_lane_database_runtime_path_differs")
+            if any(name.startswith("PG") for name in os.environ):
+                raise ValueError("lane_database_ambient_postgres_environment_refused")
+            local = local_environment_settings(selected["local_env"], runtime, a.lane)
+            with migration_state(runtime, selected) as begin:
+                candidate = qualify_lane_postgres(runtime, a.lane, a.lane_binding, a.lane_binding_sha256)
+                require_lane_migration_source(a.api_source, a.lane_candidate_manifest, candidate, full_checkout=True)
+                result = migrate_database(a, a.lane, local=local, begin=begin)
+            print(json.dumps(result))
+            return
         candidate = qualify_lane_postgres(a.runtime_dir, a.lane, a.lane_binding, a.lane_binding_sha256)
         require_lane_migration_source(a.api_source, a.lane_candidate_manifest, candidate)
-    lane = a.lane or "singleton"
+    print(json.dumps(migrate_database(a, a.lane or "singleton")))
+
+
+def migrate_database(a, lane, *, local=None, begin=None):
     # Unsupported opt-in is refused before imports or any database operation.
     if a.enable_plus_coupons:
         coupon_source_contract(a.api_source)
@@ -434,13 +461,28 @@ def main():
     from psycopg.types.json import Jsonb
 
     def env(name):
-        return dict(
-            line.split("=", 1)
-            for line in (a.runtime_dir / name).read_text().splitlines()
-            if line and not line.startswith("#")
-        )
+        path = a.runtime_dir / name
+        if begin is None:
+            raw = path.read_text()
+        else:
+            with os.fdopen(os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK), "rb") as stream:
+                info = os.fstat(stream.fileno())
+                if (
+                    not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()
+                    or info.st_nlink != 1 or stat.S_IMODE(info.st_mode) != 0o600
+                    or not 0 < info.st_size <= 16_384
+                ):
+                    raise ValueError("private_lane_database_recipe_environment_required")
+                raw = stream.read(16_385).decode()
+        pairs = [line.split("=", 1) for line in raw.splitlines() if line and not line.startswith("#")]
+        values = dict(pairs)
+        if begin is not None and len(values) != len(pairs):
+            raise ValueError("private_lane_database_recipe_environment_required")
+        return values
 
-    local, recipe = env("local.env"), env("recipe.env")
+    if local is None:
+        local = env("local.env")
+    recipe = env("recipe.env")
     url = local["PALS_HOST_DATABASE_URL"]
     parts = validate_local_dsn(url, lane=lane)
     selector_url = runtime_login_url(
@@ -454,6 +496,21 @@ def main():
     )
     if coupon_plan and local.get("PALS_PLUS_COUPONS_ENABLED") != "true":
         raise ValueError("coupon_local_runtime_flag_required")
+    if begin is not None:
+        # A fresh dependency has already created /pals. Confirm the exact lane
+        # identity through a read-only query before maintenance opens or writes.
+        with psycopg.connect(url) as c:
+            identity = c.execute(
+                "SELECT current_database(), current_user, "
+                "current_setting('server_version_num')::int / 10000, "
+                "inet_server_port(), pg_is_in_recovery()"
+            ).fetchone()
+            if identity != ("pals", f"pals_qual_{lane}", 16, 5432, False):
+                raise ValueError("local_lane_database_connection_identity_differs")
+            fresh = c.execute(
+                "SELECT count(*) FROM information_schema.tables WHERE table_schema='public'"
+            ).fetchone() == (0,)
+        begin(fresh)
     with connect_maintenance(parts, connect=psycopg.connect) as c:
         if not c.execute("SELECT 1 FROM pg_database WHERE datname='pals'").fetchone():
             c.execute("CREATE DATABASE pals")
@@ -560,21 +617,19 @@ def main():
 
     install(url)
     serving, not_applicable = apply_serving_migrators(a.api_source.resolve(), url)
+    if begin is not None and "failing_no_discoverable_migrator" in serving.values():
+        raise ValueError("lane_database_serving_schema_requires_inspection")
     with psycopg.connect(url) as c:
         rowlocks = grant_rowlock_privileges(c)
-    print(
-        json.dumps(
-            {
-                "state": "actual_local_schema_ready",
-                "profile": "legacy-local-v1 + model/settings/guest/typed catalog",
-                "preserved_existing_data": not empty,
-                "serving_migrators": serving,
-                "not_applicable_migrators": not_applicable,
-                "rowlock_column_grants": rowlocks,
-                **({"plus_coupons": coupon_storage} if coupon_plan else {}),
-            }
-        )
-    )
+    return {
+        "state": "actual_local_schema_ready",
+        "profile": "legacy-local-v1 + model/settings/guest/typed catalog",
+        "preserved_existing_data": not empty,
+        "serving_migrators": serving,
+        "not_applicable_migrators": not_applicable,
+        "rowlock_column_grants": rowlocks,
+        **({"plus_coupons": coupon_storage} if coupon_plan else {}),
+    }
 
 
 if __name__ == "__main__":
