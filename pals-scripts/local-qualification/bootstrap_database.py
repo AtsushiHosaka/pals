@@ -48,9 +48,62 @@ def runtime_login_url(value, *, lane="primary"):
     return result
 
 
+def qualify_lane_postgres(runtime_directory, lane, binding_path, binding_sha256):
+    """Bind migrations to the owned lane PostgreSQL before opening any connection."""
+    from lane_topology import OWNER, PROJECT, SERVICE, active, docker_reader, inventory, port_map
+    from lanes import read
+
+    layout = read(binding_path, binding_sha256)
+    selected = layout["lanes"][lane]
+    if Path(selected["runtime_directory"]) != runtime_directory.resolve():
+        raise ValueError("local_lane_database_runtime_path_differs")
+    database = selected["postgres"]
+    run = docker_reader(layout["docker_socket"])
+    rows = inventory(run)
+    actual = rows.get("/" + database["name"])
+    if actual is None or actual["id"] != database["container_id"]:
+        raise ValueError("local_lane_database_container_differs")
+    labels = actual["labels"] or {}
+    project = selected["compose_project"]
+    if (
+        labels.get(OWNER_LABEL) != OWNER or labels.get(PROJECT) != project
+        or labels.get(SERVICE) != "postgres" or actual["privileged"] is not False
+        or set(actual["networks"] or {}) != {project + "-database"}
+    ):
+        raise ValueError("owned_local_lane_database_required")
+    active(actual, postgres=True)
+    port_map(actual, {"5432/tcp": [{"HostIp": database["host"], "HostPort": str(database["host_port"])}]})
+    idle_roles = {"api", "reconciler", "worker", "assessment-worker", "recipe-reviewer"}
+    if any(
+        row["running"] and (row["labels"] or {}).get(PROJECT) == project
+        and (row["labels"] or {}).get(SERVICE) in idle_roles for row in rows.values()
+    ):
+        raise ValueError("local_lane_database_producers_must_be_stopped")
+    peer = next(value for role, value in layout["lanes"].items() if role != lane)
+    peer_actual = rows.get("/" + peer["postgres"]["name"])
+    if peer_actual is None or peer_actual["id"] != peer["postgres"]["container_id"]:
+        raise ValueError("local_lane_peer_database_container_differs")
+    volumes = set()
+    for row, compose_project in ((actual, project), (peer_actual, peer["compose_project"])):
+        name = compose_project + "-postgres-data"
+        data = [mount for mount in row["mounts"] or [] if mount["Destination"] == "/var/lib/postgresql/data"]
+        if len(data) != 1 or data[0].get("Type") != "volume" or data[0].get("Name") != name or data[0].get("RW") is not True:
+            raise ValueError("separate_owned_local_lane_database_volumes_required")
+        volume = json.loads(run("volume", "inspect", name))
+        if (
+            len(volume) != 1 or volume[0].get("Name") != name or volume[0].get("Driver") != "local"
+            or volume[0].get("Options") or volume[0].get("Mountpoint") != data[0].get("Source")
+        ):
+            raise ValueError("separate_owned_local_lane_database_volumes_required")
+        volumes.add(volume[0]["Mountpoint"])
+    if len(volumes) != 2:
+        raise ValueError("separate_owned_local_lane_database_volumes_required")
+
+
 # ``postgres`` exists on every initialised server. The second name is the default
 # database of the container this stack was first created with and is kept as a fallback.
 MAINTENANCE_DATABASES = ("postgres", "pals_reliability_test")
+OWNER_LABEL = "codex.owner"
 SCHEMA_OWNER = "pals_api_schema_owner"
 # The row locks the candidate's definer functions take (database_readiness.FUNCTIONS).
 # PostgreSQL requires UPDATE on a column for a locking read, including FOR SHARE.
@@ -329,7 +382,15 @@ def main():
     p.add_argument("--runtime-dir", type=Path, required=True)
     p.add_argument("--api-source", type=Path, required=True)
     p.add_argument("--enable-plus-coupons", action="store_true")
+    p.add_argument("--lane", choices=LOCAL_HOST_PORT)
+    p.add_argument("--lane-binding", type=Path)
+    p.add_argument("--lane-binding-sha256")
     a = p.parse_args()
+    if any((a.lane, a.lane_binding, a.lane_binding_sha256)):
+        if not all((a.lane, a.lane_binding, a.lane_binding_sha256)):
+            p.error("--lane, --lane-binding and --lane-binding-sha256 are required together")
+        qualify_lane_postgres(a.runtime_dir, a.lane, a.lane_binding, a.lane_binding_sha256)
+    lane = a.lane or "primary"
     # Unsupported opt-in is refused before imports or any database operation.
     if a.enable_plus_coupons:
         coupon_source_contract(a.api_source)
@@ -361,11 +422,11 @@ def main():
 
     local, recipe = env("local.env"), env("recipe.env")
     url = local["PALS_HOST_DATABASE_URL"]
-    parts = validate_local_dsn(url)
+    parts = validate_local_dsn(url, lane=lane)
     selector_url = runtime_login_url(
-        recipe["PALS_RECIPE_CATALOG_SELECTOR_DATABASE_URL"]
+        recipe["PALS_RECIPE_CATALOG_SELECTOR_DATABASE_URL"], lane=lane,
     )
-    reader_url = runtime_login_url(recipe["PALS_PFI_DRAFT_READER_DATABASE_URL"])
+    reader_url = runtime_login_url(recipe["PALS_PFI_DRAFT_READER_DATABASE_URL"], lane=lane)
     if local.get("PALS_ENV") != "local":
         raise ValueError("explicit_dedicated_local_database_required")
     coupon_plan = coupon_bootstrap_plan(

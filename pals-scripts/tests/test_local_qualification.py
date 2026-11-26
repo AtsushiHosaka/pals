@@ -143,6 +143,49 @@ class QualificationLaneLayoutTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "closed_local_database_uri_required"):
                     bootstrap.validate_local_dsn(f"postgresql://sample:sample@{host}:{port}/pals", lane="standby")
 
+    def test_lane_migration_identifies_distinct_owned_postgres_before_connecting(self):
+        import lane_topology as runtime_topology
+
+        for lane in self.document["lanes"].values():
+            lane["runtime_directory"] = str(Path(lane["runtime_directory"]).resolve())
+        path = self.root / "lane-binding.json"
+        raw = json.dumps(self.document).encode()
+        path.write_bytes(raw)
+        path.chmod(0o600)
+        inventory = {}
+        for lane in self.document["lanes"].values():
+            project, postgres = lane["compose_project"], lane["postgres"]
+            volume = project + "-postgres-data"
+            inventory["/" + postgres["name"]] = {
+                "id": postgres["container_id"], "labels": {"codex.owner": gate.OWNER,
+                    "com.docker.compose.project": project, "com.docker.compose.service": "postgres"},
+                "privileged": False, "networks": {project + "-database": {}},
+                "ports": {"5432/tcp": [{"HostIp": "127.0.0.1", "HostPort": str(postgres["host_port"])}]},
+                "mounts": [{"Type": "volume", "Name": volume, "RW": True,
+                    "Source": "/data/" + volume, "Destination": "/var/lib/postgresql/data"}],
+                "running": True, "health": "healthy", "image": "sha256:" + "9" * 64,
+                "started_at": "2026-11-26T12:00:00Z", "pid": 10,
+            }
+        standby = self.document["lanes"]["standby"]
+        runtime_directory = Path(standby["runtime_directory"])
+        row = inventory["/" + standby["postgres"]["name"]]
+        options = None
+
+        def read_volume(*args):
+            name = args[-1]
+            return json.dumps([{"Name": name, "Mountpoint": "/data/" + name, "Driver": "local", "Options": options}])
+
+        with patch.object(runtime_topology, "docker_reader", return_value=read_volume), patch.object(
+            runtime_topology, "inventory", return_value=inventory
+        ):
+            bootstrap.qualify_lane_postgres(runtime_directory, "standby", path, sha256(raw))
+            options = {"device": "/some-other-data"}
+            with self.assertRaisesRegex(ValueError, "separate_owned_local_lane_database_volumes_required"):
+                bootstrap.qualify_lane_postgres(runtime_directory, "standby", path, sha256(raw))
+            row["id"] = "4" * 64
+            with self.assertRaisesRegex(ValueError, "local_lane_database_container_differs"):
+                bootstrap.qualify_lane_postgres(runtime_directory, "standby", path, sha256(raw))
+
     def docker_rows(self):
         rows = []
         guard = self.document["guard"]
