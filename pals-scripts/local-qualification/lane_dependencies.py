@@ -15,7 +15,7 @@ import sys
 import tempfile
 
 from lane_bootstrap import local_environment_settings, reference
-from lane_topology import OWNER
+from lane_topology import OWNER, PROJECT
 from lane_compose import (
     PUBLISHED, SOURCES, STATE_VOLUMES, read_yaml, render_layout, source_documents,
 )
@@ -248,7 +248,7 @@ def derive(document):
         argv = [
             str(docker), "--config", "<private-docker-config>", "--host", "unix://" + str(socket),
             "compose", "--project-name", lane["compose_project"], "--project-directory", str(root),
-            "--env-file", "/dev/null", "--file", "-", "up", "--wait", "--no-build", "--pull", "never",
+            "--env-file", "/dev/null", "--file", "-", "up", "--wait", "--no-recreate", "--no-build", "--pull", "never",
             *IMAGES,
         ]
         plans[role] = (argv, stdin, child)
@@ -277,7 +277,48 @@ def run_compose(argv, *, input, env, timeout):
     return subprocess.CompletedProcess(argv, child.returncode)
 
 
-def launch(document, *, apply=False, run=run_compose):
+def read_docker(argv):
+    try:
+        result = subprocess.run(
+            argv, env={"PATH": "/usr/bin:/bin", "LANG": "C"},
+            stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=10, check=False,
+        )
+    except (OSError, UnicodeError, subprocess.TimeoutExpired):
+        raise ValueError("lane_dependency_resource_inventory_unverified") from None
+    need(result.returncode == 0 and len(result.stdout) <= 2_000_000,
+         "lane_dependency_resource_inventory_unverified")
+    return result.stdout.splitlines()
+
+
+def require_unused_projects(plans, roles, config, read):
+    roles = tuple(roles)
+    prefix = plans[roles[0]][0][:5]
+    prefix[2] = config
+    projects = {role: f"{PREFIX}-{role}" for role in roles}
+    resources = (
+        (("container", "ls", "--all"), "{{.Names}}"),
+        (("network", "ls"), "{{.Name}}"),
+        (("volume", "ls"), "{{.Name}}"),
+    )
+    for command, names in resources:
+        named = {
+            name.strip().lstrip("/")
+            for row in read([*prefix, *command, "--format", names])
+            for name in row.split(",")
+        }
+        for role, project in projects.items():
+            nearby = (project + "-", project + "_")
+            need(
+                not any(name == project or name.startswith(nearby) for name in named),
+                f"lane_dependency_resources_already_exist_{role}",
+            )
+            # Existing items may carry a custom name. Match the exact Compose
+            # ownership label independently of their resource names.
+            labelled = read([*prefix, *command, "--filter", f"label={PROJECT}={project}", "--quiet"])
+            need(not labelled, f"lane_dependency_resources_already_exist_{role}")
+
+
+def launch(document, *, apply=False, run=run_compose, read=read_docker):
     plans, plugin, identity = derive(document)
     report = {
         "status": "lane_dependencies_preview",
@@ -296,6 +337,7 @@ def launch(document, *, apply=False, run=run_compose):
         plugins = Path(config) / "cli-plugins"
         plugins.mkdir(mode=0o700)
         (plugins / "docker-compose").symlink_to(plugin)
+        require_unused_projects(plans, ENDPOINTS, config, read)
         for role in ENDPOINTS:
             current, current_plugin, current_identity = derive(document)
             need(
@@ -305,6 +347,7 @@ def launch(document, *, apply=False, run=run_compose):
             argv, stdin, environment = plans[role]
             command = argv.copy()
             command[2] = config
+            require_unused_projects(plans, (role,), config, read)
             try:
                 result = run(command, input=stdin, env=environment, timeout=240)
             except subprocess.TimeoutExpired:

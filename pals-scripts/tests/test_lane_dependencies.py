@@ -88,14 +88,14 @@ volumes:
 
     def test_dry_mode_derives_both_exact_projects_without_running_commands(self):
         run = Mock()
-        result = deps.launch(self.binding, run=run)
+        result = deps.launch(self.binding, run=run, read=run)
         run.assert_not_called()
         self.assertEqual(result["status"], "lane_dependencies_preview")
         for role, entry in result["lanes"].items():
             argv = entry["command"]
             self.assertEqual(argv[0], str(self.docker))
             self.assertIn(f"pals-reliability-local-{role}", argv)
-            self.assertEqual(argv[-8:], ["up", "--wait", "--no-build", "--pull", "never",
+            self.assertEqual(argv[-9:], ["up", "--wait", "--no-recreate", "--no-build", "--pull", "never",
                                         "postgres", "localstack", "cognito-local"])
         for password in self.passwords.values():
             self.assertNotIn(password, json.dumps(result))
@@ -116,6 +116,7 @@ volumes:
                 self.assertNotIn("build", service)
                 self.assertNotIn("depends_on", service)
             self.assertNotIn("provider-socket", model["volumes"])
+            self.assertIn("--no-recreate", argv)
             env = kwargs["env"]
             self.assertEqual(env["POSTGRES_PASSWORD"], self.passwords[role])
             self.assertEqual(env["AWS_ACCESS_KEY_ID"], "test")
@@ -125,9 +126,67 @@ volumes:
 
         fake = Mock(side_effect=run)
         with patch.dict(os.environ, AWS_PROFILE="live", OPENAI_API_KEY="live"):
-            result = deps.launch(self.binding, apply=True, run=fake)
+            result = deps.launch(self.binding, apply=True, run=fake, read=Mock(return_value=[]))
         self.assertEqual(result["status"], "lane_dependencies_started")
         self.assertEqual(fake.call_count, 2)
+
+    def test_refuses_any_existing_target_resource_before_starting_either_lane(self):
+        standby = "pals-reliability-local-standby"
+        for kind, args in (("container", ["--all"]), ("network", []), ("volume", [])):
+            with self.subTest(kind=kind):
+                def read(argv):
+                    self.assertEqual(argv[0], str(self.docker))
+                    self.assertEqual(argv[3:5], ["--host", "unix://" + self.binding["docker_socket"]])
+                    self.assertNotIn("pals-reliability-local", argv)
+                    if argv[5:7 + len(args)] == [kind, "ls", *args] and "--format" in argv:
+                        return [standby + "_custom"]
+                    return []
+
+                run = Mock()
+                with self.assertRaisesRegex(ValueError, "lane_dependency_resources_already_exist_standby"):
+                    deps.launch(self.binding, apply=True, run=run, read=read)
+                run.assert_not_called()
+
+    def test_refuses_a_custom_named_resource_by_exact_project_label(self):
+        selected = "label=com.docker.compose.project=pals-reliability-local-primary"
+        calls = []
+
+        def read(argv):
+            calls.append(argv)
+            if argv[5:7] == ["volume", "ls"] and selected in argv:
+                return ["custom-owned-volume"]
+            return ["pals-reliability-local-postgres-1"] if "--format" in argv else []
+
+        run = Mock()
+        with self.assertRaisesRegex(ValueError, "lane_dependency_resources_already_exist_primary"):
+            deps.launch(self.binding, apply=True, run=run, read=read)
+        run.assert_not_called()
+        self.assertTrue(any(selected in call for call in calls))
+
+    def test_rechecks_standby_after_primary_and_ignores_legacy_project(self):
+        started = []
+
+        def run(argv, **kwargs):
+            project = argv[argv.index("--project-name") + 1]
+            started.append(project)
+            return subprocess.CompletedProcess(argv, 0)
+
+        def read(argv):
+            if "--format" in argv:
+                return ["pals-reliability-local-postgres-1", "pals-reliability-local-standbyish-net"]
+            standby_filter = "label=com.docker.compose.project=pals-reliability-local-standby"
+            if argv[5:7] == ["network", "ls"] and standby_filter in argv and started:
+                return ["raced-network"]
+            return []
+
+        with self.assertRaisesRegex(ValueError, "lane_dependency_resources_already_exist_standby"):
+            deps.launch(self.binding, apply=True, run=run, read=read)
+        self.assertEqual(started, ["pals-reliability-local-primary"])
+
+    def test_inventory_failure_cannot_be_accepted_as_empty(self):
+        with patch.object(deps.subprocess, "run", return_value=subprocess.CompletedProcess([], 1, "", "error")):
+            with self.assertRaisesRegex(ValueError, "lane_dependency_resource_inventory_unverified"):
+                deps.read_docker(["docker", "network", "ls"])
 
     def test_refuses_legacy_project_before_any_launch(self):
         lane = self.rendered["lanes"]["primary"]
@@ -157,7 +216,7 @@ volumes:
 
         fake = Mock(side_effect=run)
         with self.assertRaisesRegex(ValueError, "lane_bootstrap_environment_hash_changed"):
-            deps.launch(self.binding, apply=True, run=fake)
+            deps.launch(self.binding, apply=True, run=fake, read=Mock(return_value=[]))
         fake.assert_called_once()
 
     def test_does_not_start_second_lane_after_docker_symlink_changes(self):
@@ -171,7 +230,7 @@ volumes:
 
         fake = Mock(side_effect=run)
         with self.assertRaisesRegex(ValueError, "lane_dependency_inputs_changed_before_start"):
-            deps.launch(self.binding, apply=True, run=fake)
+            deps.launch(self.binding, apply=True, run=fake, read=Mock(return_value=[]))
         fake.assert_called_once()
 
     def test_timeout_stops_compose_and_docker_in_one_process_group(self):
