@@ -38,11 +38,21 @@ class ApplicationLaneTests(unittest.TestCase):
             lane = fixture.render_input["lanes"][role]
             runtime = Path(lane["runtime_directory"])
             env = lane_environment.lane_values(role, lane, {"PALS_ENV": "local", "PALS_ENVIRONMENT": "local"})
+            env.setdefault("PALS_WORKER_SHARED_SECRET", "fixture-worker-value")
             local = fixture.write(runtime / "local.env", "".join(f"{k}={v}\n" for k, v in env.items()))
             fixture.binding["local_envs"][role] = local
+            fingerprint = "a" * 64
+            release = (
+                f"PALS_VERIFIER_TOOLCHAIN_SHA256={fingerprint}\n"
+                f"PALS_VERIFIER_IMAGE_DIGEST=sha256:{fingerprint}\n"
+            )
+            recipe = app.recipe_bootstrap.prepare_config(
+                None, worker_secret=env["PALS_WORKER_SHARED_SECRET"], fingerprint=fingerprint,
+                lean_version="leanprover/lean4:v4.19.0", manifest_sha256="b" * 64,
+            )
             bootstrap[role] = {
-                "release": fixture.write(runtime / "release.env", "PALS_VERIFIER_TEST=value\n"),
-                "recipe": fixture.write(runtime / "recipe.env", "PALS_RECIPE_TEST=value\n"),
+                "release": fixture.write(runtime / "release.env", release),
+                "recipe": fixture.write(runtime / "recipe.env", "".join(f"{k}={v}\n" for k, v in recipe.items())),
             }
             project = app.PREFIX + "-" + role
             database = project + "-postgres-1"
@@ -156,6 +166,39 @@ class ApplicationLaneTests(unittest.TestCase):
                 app.launch(self.document, apply=True, run=run, read=Mock(return_value=""))
         run.assert_not_called()
         self.assertFalse(Path(self.document["handoff_output"]).exists())
+
+    def test_recreated_recipe_input_cannot_point_to_another_database(self):
+        recipe = self.document["bootstrap_environments"]["standby"]["recipe"]
+        path = Path(recipe["path"])
+        changed = self.fixture.write(path, path.read_text().replace("@postgres:5432", "@outside.invalid:5432"))
+        self.document["bootstrap_environments"]["standby"]["recipe"] = changed
+        with self.assertRaisesRegex(ValueError, "exact_lane_application_recipe_required"):
+            app.launch(self.document)
+
+    def test_receipt_can_be_reused_only_before_any_application_resource_exists(self):
+        receipt = {"status": "verified_read_only", "observed_stopped_container_ids": [], "ledger": self.budget}
+        run = Mock(return_value=subprocess.CompletedProcess([], 2))
+        with (
+            patch.object(app, "inventory", return_value=self.rows),
+            patch.object(lane_database, "verify_databases"),
+            patch.object(app, "require_empty_lanes"),
+            patch.object(app, "verify_budget_handoff", return_value=receipt),
+        ):
+            with self.assertRaisesRegex(ValueError, "lane_application_start_failed_provider"):
+                app.launch(self.document, apply=True, run=run, read=Mock(return_value=""))
+            receipt_path = Path(self.document["handoff_output"])
+            original = receipt_path.read_bytes()
+            run.return_value = subprocess.CompletedProcess([], 0)
+            self.assertEqual(
+                app.launch(self.document, apply=True, run=run, read=Mock(return_value=""))["status"],
+                "lane_application_started",
+            )
+            self.assertEqual(receipt_path.read_bytes(), original)
+            self.rows["/" + app.GUARD] = {"labels": {app.PROJECT: app.PROVIDER_PROJECT}, "id": "guard"}
+            run.reset_mock()
+            with self.assertRaisesRegex(ValueError, "dedicated_application_scope_already_exists"):
+                app.launch(self.document, apply=True, run=run, read=Mock(return_value=""))
+            run.assert_not_called()
 
     def test_dry_refuses_a_rewritten_overlay_even_when_new_bytes_are_hash_pinned(self):
         value = relay_compose.render(self.fixture.render_input, self.fixture.compose_root)

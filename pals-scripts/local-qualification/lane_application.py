@@ -6,6 +6,7 @@ import argparse
 from contextlib import ExitStack, contextmanager
 import fcntl
 import hashlib
+import importlib.util
 from ipaddress import IPv4Address
 import json
 import os
@@ -17,6 +18,7 @@ import sys
 import tempfile
 
 from budget_handoff import verify_budget_handoff
+from budget_proxy import validate_rollover
 import lane_database
 from lane_queue_readiness import require_empty_lanes
 import lane_dependencies as dependencies
@@ -34,6 +36,10 @@ APPLICATION = (
     (POLICY,), (RELAY, "verifier"), ("reconciler",), ("api",),
     ("worker", "assessment-worker", "recipe-reviewer", "webfront"),
 )
+RECIPE_SOURCE = Path(__file__).resolve().parents[1] / "bootstrap-local-recipe-config.py"
+recipe_spec = importlib.util.spec_from_file_location("lane_recipe_bootstrap", RECIPE_SOURCE)
+recipe_bootstrap = importlib.util.module_from_spec(recipe_spec)
+recipe_spec.loader.exec_module(recipe_bootstrap)
 
 
 def private_bytes(ref):
@@ -76,6 +82,7 @@ def lane_inputs(role, env_refs, scope):
     env_paths = [scope["local_env"]["path"]]
     environment(scope["local_env"])
     loaded = {}
+    bootstrap = {}
     for name, ref in env_refs.items():
         path = reference(ref)
         need(path == runtime / f"{name}.env", "exact_lane_application_bootstrap_files_required")
@@ -84,6 +91,20 @@ def lane_inputs(role, env_refs, scope):
              and all(key.startswith("PALS_") and "OPENAI" not in key for key in values),
              "unsafe_lane_application_environment")
         loaded.update(values)
+        bootstrap[name] = values
+    release, recipe = bootstrap["release"], bootstrap["recipe"]
+    fingerprint = release.get("PALS_VERIFIER_TOOLCHAIN_SHA256", "")
+    lake = recipe.get("PALS_RECIPE_ACTIVE_LAKE_MANIFEST_SHA256", "")
+    need(release.get("PALS_VERIFIER_IMAGE_DIGEST") == "sha256:" + fingerprint
+         and re.fullmatch(r"[0-9a-f]{64}", lake), "exact_lane_application_recipe_required")
+    try:
+        verified_recipe = recipe_bootstrap.prepare_config(
+            recipe, worker_secret=local.get("PALS_WORKER_SHARED_SECRET", ""), fingerprint=fingerprint,
+            lean_version=recipe.get("PALS_RECIPE_ACTIVE_LEAN_VERSION", ""), manifest_sha256=lake,
+        )
+    except ValueError:
+        raise ValueError("exact_lane_application_recipe_required") from None
+    need(verified_recipe == recipe, "exact_lane_application_recipe_required")
     env_paths.extend(str(runtime / f"{name}.env") for name in ("release", "recipe"))
     lane_database.require_completed_migration(runtime, scope)
     return env_paths
@@ -128,14 +149,17 @@ def derivation(document):
     original = reference(ledger)
     need(before_path != original and original.parent not in before_path.parents
          and before["sha256"] == ledger["sha256"], "independent_authoritative_budget_snapshot_required")
-    private_bytes(before)
+    snapshot = json.loads(private_bytes(before))
+    dependencies.runtime_directory(before_path.parent)
+    if snapshot.get("rollover") is not None:
+        validate_rollover(snapshot, original.parent)
+        validate_rollover(snapshot, before_path.parent)
     output = absolute(document["handoff_output"])
     output_dir = dependencies.runtime_directory(output.parent)
     tls_directory = absolute(render_input["provider"]["tls_directory"])
     need(output.name == "budget-handoff.json" and all(base != output_dir and base not in output_dir.parents
-                                                      for base in (original.parent, tls_directory))
-         and not os.path.lexists(output),
-         "new_private_budget_handoff_output_required")
+                                                      for base in (original.parent, tls_directory)),
+         "private_budget_handoff_output_required")
     fields(document["bootstrap_environments"], ENDPOINTS, "primary_and_standby_local_lanes_required")
 
     base = [dep["docker"], "--config", "<private-docker-config>", "--host", "unix://" + dep["docker_socket"],
@@ -212,10 +236,18 @@ def no_existing_application(rows, dependency_names, read):
 
 
 def write_receipt(path, receipt):
-    with os.fdopen(os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600), "wb") as stream:
-        stream.write((json.dumps(receipt, sort_keys=True) + "\n").encode())
-        stream.flush()
-        os.fsync(stream.fileno())
+    raw = (json.dumps(receipt, sort_keys=True) + "\n").encode()
+    if os.path.lexists(path):
+        private_bytes({"path": str(path), "sha256": hashlib.sha256(raw).hexdigest()})
+        return
+    with tempfile.TemporaryDirectory(prefix="budget-handoff-", dir=path.parent) as scratch:
+        pending = Path(scratch) / "budget-handoff.json"
+        fd = os.open(pending, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+        with os.fdopen(fd, "wb") as stream:
+            stream.write(raw)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.link(pending, path)
 
 
 def compose_steps(plan):
