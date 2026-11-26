@@ -130,6 +130,18 @@ class QualificationLaneLayoutTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "closed_local_database_uri_required"):
             bootstrap.validate_local_dsn("postgresql://sample:sample@localhost:55433/pals")
 
+    def test_standby_database_profile_refuses_primary_and_external_endpoints(self):
+        expected = "postgresql://sample:sample@127.0.0.1:55433/pals"
+        self.assertEqual(bootstrap.validate_local_dsn(expected, lane="standby").port, 55433)
+        self.assertEqual(
+            bootstrap.runtime_login_url("postgresql://sample:sample@postgres:5432/pals", lane="standby"),
+            expected,
+        )
+        for host, port in (("127.0.0.1", 55432), ("remote.invalid", 55433), ("postgres", 5432)):
+            with self.subTest(host=host, port=port):
+                with self.assertRaisesRegex(ValueError, "closed_local_database_uri_required"):
+                    bootstrap.validate_local_dsn(f"postgresql://sample:sample@{host}:{port}/pals", lane="standby")
+
     def docker_rows(self):
         rows = []
         guard = self.document["guard"]

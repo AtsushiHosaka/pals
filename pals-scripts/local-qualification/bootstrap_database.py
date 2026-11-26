@@ -17,13 +17,18 @@ from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit
 
 
-def validate_local_dsn(value, *, service=False):
+LOCAL_HOST_PORT = {"primary": 55432, "standby": 55433}
+
+
+def validate_local_dsn(value, *, service=False, lane="primary"):
+    if lane not in LOCAL_HOST_PORT:
+        raise ValueError("closed_local_database_lane_required")
     parts = urlsplit(value)
     hosts = ("postgres",) if service else ("127.0.0.1", "localhost")
     if (
         parts.scheme != "postgresql"
         or parts.hostname not in hosts
-        or parts.port != (5432 if service else 55432)
+        or parts.port != (5432 if service else LOCAL_HOST_PORT[lane])
         or parts.path != "/pals"
         or parts.query
         or parts.fragment
@@ -34,12 +39,12 @@ def validate_local_dsn(value, *, service=False):
     return parts
 
 
-def runtime_login_url(value):
-    parts = validate_local_dsn(value, service=True)
+def runtime_login_url(value, *, lane="primary"):
+    parts = validate_local_dsn(value, service=True, lane=lane)
     result = urlunsplit(
-        parts._replace(netloc=parts.netloc.rsplit("@", 1)[0] + "@127.0.0.1:55432")
+        parts._replace(netloc=f"{parts.netloc.rsplit('@', 1)[0]}@127.0.0.1:{LOCAL_HOST_PORT[lane]}")
     )
-    validate_local_dsn(result)
+    validate_local_dsn(result, lane=lane)
     return result
 
 

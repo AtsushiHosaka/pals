@@ -236,9 +236,9 @@ def persist_diagnostic(args, returncode, stderr):
     return detail
 
 
-def command(args, timeout=30):
+def command(args, timeout=30, *, env=None):
     result = subprocess.run(
-        args, capture_output=True, text=True, timeout=timeout, check=False
+        args, capture_output=True, text=True, timeout=timeout, check=False, env=env
     )
     if result.returncode != 0:
         # The closed code stays stable; the cause is kept in a private bounded file.
@@ -283,6 +283,76 @@ def file_reference(value):
     return p
 
 
+def lane_runtime(subject, state, environment_file):
+    if "local_lane" not in subject:
+        return None
+    binding = subject["local_lane"]
+    need(
+        type(binding) is dict and set(binding) == {"role", "topology", "candidate_sha256"}
+        and binding["role"] in ("primary", "standby")
+        and isinstance(binding["candidate_sha256"], str)
+        and re.fullmatch(r"[a-f0-9]{64}", binding["candidate_sha256"]),
+        "closed_local_lane_binding_required",
+    )
+    topology = file_reference(binding["topology"])
+    program = """import json,sys
+from pathlib import Path
+sys.path.insert(0,sys.argv[1])
+import lanes,relay_topology
+document=relay_topology.read(Path(sys.argv[2]),sys.argv[3])
+layout=lanes.read(Path(document['layout']['path']),document['layout']['sha256'])
+lane=layout['lanes'][sys.argv[4]]
+helpers=document['lanes'][sys.argv[4]]
+print(json.dumps({'topology_sha256':relay_topology.verify(document),'lane':lane,'guard':layout['guard'],
+ 'docker_socket':layout['docker_socket'],'policy_id':helpers['policy']['container_id'],
+ 'relay_id':helpers['relay']['container_id'],'shim_id':document['authority_shim']['container_id']}))
+"""
+    observed = json.loads(command([
+        sys.executable, "-I", "-c", program, str(HERE / "local-qualification"),
+        str(topology), binding["topology"]["sha256"], binding["role"],
+    ], timeout=60))
+    lane = observed["lane"]
+    need(
+        lane["candidate_sha256"] == binding["candidate_sha256"]
+        and Path(lane["capture_directory"]) == state
+        and Path(lane["runtime_directory"]) / "local.env" == environment_file.resolve(),
+        "local_lane_candidate_or_capture_path_mismatch",
+    )
+    return observed
+
+
+def check_lane_helpers(scope):
+    for role, filename in (
+        ("policy_id", "lane_guard.py"),
+        ("relay_id", "provider_relay.py"),
+        ("shim_id", "provider_relay.py"),
+    ):
+        raw = scoped_docker(scope, "exec", scope[role], "sha256sum", "/opt/pals-local/" + filename)
+        need(
+            raw.split()[:1] == [sha((HERE / "local-qualification" / filename).read_bytes())],
+            "frozen_local_lane_helper_source_changed",
+        )
+
+
+def scoped_docker(scope, *args, timeout=None):
+    if scope is None:
+        return command(["docker", *args]) if timeout is None else command(["docker", *args], timeout=timeout)
+    environment = {key: value for key, value in os.environ.items() if not key.startswith("DOCKER_")}
+    return command(
+        ["docker", "--host", "unix://" + scope["docker_socket"], *args],
+        timeout=30 if timeout is None else timeout,
+        env=environment,
+    )
+
+
+def runtime_name(role, scope):
+    if scope is None:
+        return "pals-reliability-local-" + role + "-1"
+    if role == "worker-network-guard":
+        return scope["guard"]["container_id"]
+    return scope["lane"]["compose_project"] + "-" + role + "-1"
+
+
 def web_provenance(subject):
     v = subject["web_variant"]
     publication = file_reference(v["production_publication"])
@@ -319,8 +389,9 @@ def web_provenance(subject):
     )
     builder = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(builder)
+    profile = subject.get("local_lane", {}).get("role", "primary")
     need(
-        v["local_build_args"] == receipt["local_build_args"] == builder.LOCAL_ARGS,
+        v["local_build_args"] == receipt["local_build_args"] == builder.PROFILES[profile],
         "closed_loopback_build_args_required",
     )
     command(
@@ -339,7 +410,7 @@ def web_provenance(subject):
     }
 
 
-def compiler_canary(subject):
+def compiler_canary(subject, *, scope=None):
     # Dependency readiness only. This fixed True theorem is never a proof-quality
     # fixture or acceptance answer; the paid journey below still must verify real math.
     program = """import asyncio,json,hashlib
@@ -365,15 +436,13 @@ except TimeoutError:print(json.dumps({"state":"unavailable","failure_code":"veri
 """
     try:
         result = json.loads(
-            command(
-                [
-                    "docker",
-                    "exec",
-                    "pals-reliability-local-reconciler-1",
-                    "python",
-                    "-c",
-                    program,
-                ],
+            scoped_docker(
+                scope,
+                "exec",
+                runtime_name("reconciler", scope),
+                "python",
+                "-c",
+                program,
                 timeout=55,
             )
         )
@@ -471,7 +540,7 @@ def verifier_provenance(subject):
     }
 
 
-def provider_tls_status(subject, minimum_seconds=PROVIDER_TLS_CAPTURE_SECONDS):
+def provider_tls_status(subject, minimum_seconds=PROVIDER_TLS_CAPTURE_SECONDS, *, scope=None):
     """Real handshake with the running local budget proxy, trusting the task CA only.
 
     Workers reach the provider solely through this proxy. An expired or replaced proxy
@@ -486,9 +555,11 @@ def provider_tls_status(subject, minimum_seconds=PROVIDER_TLS_CAPTURE_SECONDS):
         ),
         "local_provider_tls_subject_binding_required",
     )
-    program = """import hashlib,json,socket,ssl,time
-context=ssl.create_default_context(cafile='/run/provider/ca-bundle.pem')
-try:
+    bundle = "/run/provider/ca-bundle.pem" if scope is None else "/run/local-provider-ca.pem"
+    program = (
+        "import hashlib,json,socket,ssl,time\n"
+        f"context=ssl.create_default_context(cafile={bundle!r})\n"
+        """try:
  with socket.create_connection(('127.0.0.1',443),5) as raw:
   with context.wrap_socket(raw,server_hostname='api.openai.com') as tls:
    der=tls.getpeercert(binary_form=True);peer=tls.getpeercert()
@@ -498,17 +569,16 @@ try:
 except ssl.SSLCertVerificationError as error:print(json.dumps({'state':'expired' if error.verify_code==10 else 'untrusted'}))
 except (OSError,ssl.SSLError):print(json.dumps({'state':'unavailable'}))
 """
+    )
     try:
         result = json.loads(
-            command(
-                [
-                    "docker",
-                    "exec",
-                    "pals-reliability-local-worker-network-guard-1",
-                    "python",
-                    "-c",
-                    program,
-                ],
+            scoped_docker(
+                scope,
+                "exec",
+                runtime_name("worker-network-guard" if scope is None else "worker", scope),
+                "python",
+                "-c",
+                program,
                 timeout=20,
             )
         )
@@ -534,16 +604,14 @@ except (OSError,ssl.SSLError):print(json.dumps({'state':'unavailable'}))
     }
 
 
-def budget_status(subject):
+def budget_status(subject, *, scope=None):
     ledger = json.loads(
-        command(
-            [
-                "docker",
-                "exec",
-                "pals-reliability-local-worker-network-guard-1",
-                "cat",
-                "/run/budget/ledger.json",
-            ]
+        scoped_docker(
+            scope,
+            "exec",
+            runtime_name("worker-network-guard", scope),
+            "cat",
+            "/run/budget/ledger.json",
         )
     )
     rollover = ledger.get("rollover")
@@ -583,7 +651,7 @@ def budget_rollover_evidence(subject, ledger):
     }
 
 
-def database_readiness(subject, environment_file, *, require_frozen=True):
+def database_readiness(subject, environment_file, *, require_frozen=True, lane="primary"):
     contract = subject["database_contract"]
     need(
         contract["api_source_revision"] == subject["images"]["api"]["source_revision"],
@@ -605,7 +673,7 @@ sys.path.insert(0,sys.argv[1])
 from database_readiness import inspect
 values=dict(line.split('=',1) for line in Path(sys.argv[2]).read_text().splitlines() if line and not line.startswith('#'))
 try:
- result=inspect(values['PALS_HOST_DATABASE_URL'],Path(sys.argv[3]),sys.argv[4])
+ result=inspect(values['PALS_HOST_DATABASE_URL'],Path(sys.argv[3]),sys.argv[4],lane=sys.argv[5])
  print(json.dumps({'state':'ready','observation':result},sort_keys=True))
 except ValueError as error:print(json.dumps({'state':'unavailable','code':str(error)}))
 """
@@ -619,6 +687,7 @@ except ValueError as error:print(json.dumps({'state':'unavailable','code':str(er
                 str(environment_file),
                 str(source),
                 contract["api_source_revision"],
+                lane,
             ]
         )
     )
@@ -637,7 +706,7 @@ except ValueError as error:print(json.dumps({'state':'unavailable','code':str(er
     return observation
 
 
-def runtime(subject):
+def runtime(subject, *, scope=None):
     result = {}
     role_images = {
         "api": "api",
@@ -650,8 +719,8 @@ def runtime(subject):
     }
     role_images["worker-network-guard"] = "guard"
     for role, image_role in role_images.items():
-        name = "pals-reliability-local-" + role + "-1"
-        x = json.loads(command(["docker", "inspect", name]))[0]
+        name = runtime_name(role, scope)
+        x = json.loads(scoped_docker(scope, "inspect", name))[0]
         expected = subject["images"][image_role]
         need(
             x["Config"]["Labels"].get("codex.owner") == OWNER, "runtime_owner_mismatch"
@@ -662,7 +731,7 @@ def runtime(subject):
             and x["State"].get("Health", {}).get("Status") == "healthy",
             "exact_healthy_runtime_required_" + role,
         )
-        image = json.loads(command(["docker", "image", "inspect", x["Image"]]))[0]
+        image = json.loads(scoped_docker(scope, "image", "inspect", x["Image"]))[0]
         need(
             image["Os"] + "/" + image["Architecture"] == expected["platform"],
             "actual_runtime_platform_changed",
@@ -698,17 +767,15 @@ def runtime(subject):
             "frozen_runtime_configuration_changed_" + role,
         )
     for name in ("guard.py", "budget_proxy.py"):
-        actual = command(
-            [
-                "docker",
-                "exec",
-                "pals-reliability-local-worker-network-guard-1",
-                "python",
-                "-c",
-                "from pathlib import Path;import hashlib;print(hashlib.sha256(Path('/opt/pals-local/"
-                + name
-                + "').read_bytes()).hexdigest())",
-            ]
+        actual = scoped_docker(
+            scope,
+            "exec",
+            runtime_name("worker-network-guard", scope),
+            "python",
+            "-c",
+            "from pathlib import Path;import hashlib;print(hashlib.sha256(Path('/opt/pals-local/"
+            + name
+            + "').read_bytes()).hexdigest())",
         ).strip()
         need(
             actual
@@ -892,25 +959,36 @@ def main():
     }
     private_json(state / "latest.json", record)
     try:
+        scope = lane_runtime(subject, state, args.database_env)
+        lane = subject.get("local_lane", {}).get("role", "primary")
+        if scope is not None:
+            record["local_lane_topology_sha256"] = scope["topology_sha256"]
+            if prior:
+                need(
+                    prior.get("local_lane_topology_sha256") == scope["topology_sha256"],
+                    "existing_capture_local_lane_topology_changed",
+                )
         record["web_provenance"] = web_provenance(subject)
         record["verifier_provenance"] = verifier_provenance(subject)
-        before = runtime(subject)
+        if scope is not None:
+            check_lane_helpers(scope)
+        before = runtime(subject, scope=scope)
         if prior:
             need(before == prior["runtime_before"], "existing_capture_runtime_changed")
         record["runtime_before"] = before
         private_json(state / "latest.json", record)
-        record["provider_budget_before"] = budget_status(subject)
+        record["provider_budget_before"] = budget_status(subject, scope=scope)
         record["budget_rollover"] = budget_rollover_evidence(
             subject, record["provider_budget_before"]
         )
-        record["database_before"] = database_readiness(subject, args.database_env)
-        if not prior:
+        record["database_before"] = database_readiness(subject, args.database_env, lane=lane)
+        if not prior or scope is not None:
             # Re-reading an accepted capture makes no provider call. A fresh capture
             # must not spend its only submission on a dead local provider transport.
-            record["provider_tls_before"] = provider_tls_status(subject)
+            record["provider_tls_before"] = provider_tls_status(subject, scope=scope)
         # Never launch a browser that could submit a paid proof while the actual
         # mTLS verifier cannot establish its mandatory compiler sandbox.
-        record["compiler_canary"] = compiler_canary(subject)
+        record["compiler_canary"] = compiler_canary(subject, scope=scope)
         activated = max(
             parse_time(x["started_at"]) for x in before.values()
         ).isoformat()
@@ -941,19 +1019,24 @@ def main():
         record["database"] = database(
             private_env(args.database_env)["PALS_HOST_DATABASE_URL"], observed, subject
         )
-        record["database_after"] = database_readiness(subject, args.database_env)
+        record["database_after"] = database_readiness(subject, args.database_env, lane=lane)
         need(
             record["database_before"] == record["database_after"],
             "database_schema_or_privileges_changed_during_capture",
         )
-        ledger = budget_status(subject)
+        ledger = budget_status(subject, scope=scope)
         need(
             ledger["calls"] and ledger["actual_microusd"] > 0,
             "real_provider_usage_required",
         )
         record["all_lane_provider_budget"] = ledger
-        after = runtime(subject)
+        after = runtime(subject, scope=scope)
         need(before == after, "runtime_changed_during_capture")
+        if scope is not None:
+            need(
+                lane_runtime(subject, state, args.database_env) == scope,
+                "local_lane_topology_changed_during_capture",
+            )
         record.update(
             state="accepted",
             finished_at=now(),

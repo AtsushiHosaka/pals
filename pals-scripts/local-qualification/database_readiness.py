@@ -67,10 +67,10 @@ def source_contract(source, revision):
     return bodies, sha(raw)
 
 
-def inspect(url, source, revision):
+def inspect(url, source, revision, *, lane="primary"):
     import psycopg
 
-    validate_local_dsn(url)
+    validate_local_dsn(url, lane=lane)
     bodies, sql_sha = source_contract(source, revision)
     observations = []
     with psycopg.connect(url) as c:
