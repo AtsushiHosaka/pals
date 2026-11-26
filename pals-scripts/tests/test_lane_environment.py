@@ -28,7 +28,7 @@ class LaneEnvironmentTests(unittest.TestCase):
             "PALS_LOCAL_RELEASE_CONTRACT=legacy-local-v1\nPALS_OPENAI_MODEL=gpt-5.4-mini\n"
             "PALS_OPENAI_MAX_OUTPUT_TOKENS=12000\nPALS_PROOF_WORKER_LANE=proof\n"
             "PALS_TOKEN_ACCOUNTING_ENABLED=false\nPALS_PROOF_JOBS_VISIBILITY_TIMEOUT=300\n"
-            "OPENAI_API_KEY=sk-forbidden-fixture\nPALS_OPENAI_API_KEY=sk-second-forbidden-fixture\n"
+            "OPENAI_API_KEY=forbidden-provider-fixture\nPALS_OPENAI_API_KEY=forbidden-second-provider-fixture\n"
             "AWS_SESSION_TOKEN=forbidden-aws-fixture\nPALS_RELEASE_ID=forbidden-release-fixture\n"
             "PALS_DATABASE_URL=postgresql://fixture:forbidden-db@elsewhere/pals\n"
         )

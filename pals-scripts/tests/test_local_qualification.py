@@ -465,6 +465,24 @@ volumes:
         with self.assertRaisesRegex(ValueError, "local_lane_binding_hash_changed"):
             relay_topology.read(path, sha256(raw))
 
+    def test_retired_legacy_guard_can_remain_only_with_an_obsolete_startup_pin(self):
+        rows, binding = self.relay_rows()
+        guard = rows[0]
+        guard["budget_resume_sha256"] = "f" * 64
+        legacy = {**guard, "name": lane_topology.LEGACY_GUARD, "id": "e" * 64, "pid": 0,
+                  "running": False, "status": "exited", "restart_policy": "unless-stopped", "networks": {},
+                  "budget_resume_sha256": "d" * 64, "labels": {**guard["labels"],
+                  "com.docker.compose.project": "pals-reliability-local"}}
+        rows.append(legacy)
+        _, run = self.fixture_docker(rows)
+        relay_topology.verify(binding, run=run)
+        legacy["budget_resume_sha256"] = guard["budget_resume_sha256"]
+        with self.assertRaisesRegex(ValueError, "shared_budget_writer_mount_differs"):
+            relay_topology.verify(binding, run=run)
+        legacy["running"] = True
+        with self.assertRaisesRegex(ValueError, "another_local_provider_guard_is_running"):
+            relay_topology.verify(binding, run=run)
+
     def test_relay_binding_refuses_cross_lane_namespaces_and_unsafe_helpers(self):
         for actor, variant, code in (
             (relay_topology.RELAY, {"namespace": "container:" + "1" * 64}, "local_relay_network_namespace_differs"),

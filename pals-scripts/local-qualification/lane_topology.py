@@ -34,6 +34,8 @@ POLICY = "egress-policy"
 RELAY = "provider-relay"
 SHIM = "authority-shim"
 RELAY_IMPORT = "import sys;sys.path.insert(0,'/opt/pals-local');import provider_relay as p;"
+LEGACY_GUARD = f"/{PREFIX}-worker-network-guard-1"
+BUDGET_RESUME_KEY = "PALS_BUDGET_RESUME_SHA256="
 AUTHORITY_ENV = (
     "OPENAI_API_KEY",
     "PALS_OPENAI_API_KEY",
@@ -51,7 +53,8 @@ INSPECT = (
     '{"id":{{json .Id}},"name":{{json .Name}},"image":{{json .Image}},'
     '"labels":{{json .Config.Labels}},"user":{{json .Config.User}},'
     '"entrypoint":{{json .Config.Entrypoint}},"cmd":{{json .Config.Cmd}},'
-    '"running":{{json .State.Running}},"pid":{{json .State.Pid}},'
+    '"running":{{json .State.Running}},"pid":{{json .State.Pid}},"status":{{json .State.Status}},'
+    '"restart_policy":{{json .HostConfig.RestartPolicy.Name}},'
     '"started_at":{{json .State.StartedAt}},'
     '"health":{{if .State.Health}}{{json .State.Health.Status}}{{else}}null{{end}},'
     '"namespace":{{json .HostConfig.NetworkMode}},"privileged":{{json .HostConfig.Privileged}},'
@@ -60,6 +63,10 @@ INSPECT = (
     '"authority_env":{{$present := false}}{{range .Config.Env}}'
     + ENV_PRESENT
     + "{{end}}{{json $present}},"
+    + '"budget_resume_sha256":{{$resume := ""}}{{range .Config.Env}}'
+    + ('{{if eq (printf "%%.%ds" .) "%s"}}{{$resume = slice . %d}}{{end}}'
+       % (len(BUDGET_RESUME_KEY), BUDGET_RESUME_KEY, len(BUDGET_RESUME_KEY)))
+    + '{{end}}{{json $resume}},'
     '"read_only":{{json .HostConfig.ReadonlyRootfs}},"mounts":{{json .Mounts}},'
     '"ports":{{json .NetworkSettings.Ports}},"networks":{{json .NetworkSettings.Networks}}}'
 )
@@ -367,6 +374,19 @@ def collect(document, run, relay=None):
                 continue
             path = Path(source).resolve()
             if path == ledger or path in ledger.parents or ledger in path.parents:
+                labels = row["labels"] or {}
+                retired = (
+                    relay is not None and row["name"] == LEGACY_GUARD and row["running"] is False
+                    and row["status"] == "exited" and row["pid"] == 0
+                    and row["restart_policy"] in ("no", "unless-stopped") and labels.get("codex.owner") == OWNER
+                    and labels.get(PROJECT) == PREFIX and labels.get(SERVICE) == "worker-network-guard"
+                    and row["entrypoint"] == guard["entrypoint"] and mount["Type"] == "bind"
+                    and mount["Destination"] == "/run/budget" and path == ledger
+                    and pin(row["budget_resume_sha256"]) and pin(guard["budget_resume_sha256"])
+                    and row["budget_resume_sha256"] != guard["budget_resume_sha256"]
+                )
+                if retired:
+                    continue  # Its stale startup pin cannot open the newly resumed ledger.
                 writers.append((row["id"], mount["Type"], path, mount["Destination"]))
     need(
         writers == [(guard["id"], "bind", ledger, "/run/budget")],
