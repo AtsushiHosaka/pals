@@ -72,7 +72,7 @@ def referenced_document(value):
     return read_document(reference(value), value["sha256"])
 
 
-def checked_local_environment(reference_value, runtime, role):
+def local_environment_settings(reference_value, runtime, role):
     path = reference(reference_value)
     need(
         path == runtime / "local.env" and path.resolve(strict=True) == path,
@@ -154,7 +154,12 @@ def checked_local_environment(reference_value, runtime, role):
         )
     coupon = settings.get("PALS_PLUS_COUPONS_ENABLED")
     need(coupon in {"true", "false"}, "lane_bootstrap_coupon_setting_required")
-    return localstack, coupon == "true"
+    return settings
+
+
+def checked_local_environment(reference_value, runtime, role):
+    settings = local_environment_settings(reference_value, runtime, role)
+    return settings["PALS_HOST_AWS_ENDPOINT_URL"], settings["PALS_PLUS_COUPONS_ENABLED"] == "true"
 
 
 def source_file(path):
