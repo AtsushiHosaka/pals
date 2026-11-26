@@ -171,6 +171,29 @@ class LaneBootstrapTests(unittest.TestCase):
             self.assertEqual([item.name for item in runtime.iterdir()], ["local.env"])
             self.assertNotIn("POSTGRES_PASSWORD", json.dumps(result))
 
+    def test_database_only_binding_derives_bootstrap_but_not_final_layout(self):
+        layout = {
+            "schema_version": boot.DATABASE_LAYOUT,
+            "docker_socket": self.layout["docker_socket"],
+            "lanes": {},
+        }
+        for role, source in self.layout["lanes"].items():
+            selected = {name: value for name, value in source.items()
+                        if name not in {"capture_directory", "http_ports"}}
+            selected["local_env"] = self.bindings[role]["local_env"]
+            selected["postgres"] = {**selected["postgres"], "image_id": "sha256:" + "8" * 64}
+            layout["lanes"][role] = selected
+        ref = self.write_private(self.root / "database-layout.json", layout)
+        for binding in self.bindings.values():
+            result = boot.derive({**binding, "layout": ref}, self.parent)
+            self.assertEqual(result["commands"][-1]["step"], "database")
+            self.assertIn(ref["path"], result["commands"][-1]["argv"])
+        with self.assertRaisesRegex(ValueError, "local_lane_binding_invalid"):
+            lanes.read(ref["path"], ref["sha256"])
+        with self.assertRaisesRegex(ValueError, "lane_database_environment_reference_differs"):
+            boot.derive({**self.bindings["primary"], "layout": ref,
+                         "local_env": self.bindings["standby"]["local_env"]}, self.parent)
+
     def test_refuses_cross_lane_environment_and_manifest(self):
         primary, standby = (self.bindings[role] for role in ("primary", "standby"))
         with self.assertRaisesRegex(

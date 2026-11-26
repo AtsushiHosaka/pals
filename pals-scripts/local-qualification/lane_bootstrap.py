@@ -12,7 +12,8 @@ import stat
 import sys
 from urllib.parse import urlsplit
 
-from lanes import ENDPOINTS, absolute, fields, need, pin, read, read_document
+from lane_database import SCHEMA as DATABASE_LAYOUT, read_for_bootstrap
+from lanes import ENDPOINTS, absolute, fields, need, pin, read_document
 
 SCHEMA = "pals.local-qualification-lane-bootstrap.v1"
 VERIFIER_RECEIPT = "pals.local-verifier-build.v2"
@@ -253,8 +254,10 @@ def derive(document, source_root):
         "lane_bootstrap_binding_invalid",
     )
     layout_ref = document["layout"]
-    layout = read(reference(layout_ref), layout_ref["sha256"])
+    layout = read_for_bootstrap(reference(layout_ref), layout_ref["sha256"])
     selected = layout["lanes"][role]
+    if layout["schema_version"] == DATABASE_LAYOUT:
+        need(selected["local_env"] == document["local_env"], "lane_database_environment_reference_differs")
     runtime = absolute(selected["runtime_directory"])
     info = runtime.lstat()
     need(
