@@ -12,4 +12,8 @@
 
 computeの隔離ホストで同じサブネットを指定してブリッジを作成した。Dockerデーモンの再起動前はIPAMがサブネットだけを返し、再起動後は同じサブネットに既定ゲートウェイを加えて返した。[pals-infra#410](https://github.com/AtsushiHosaka/pals-infra/pull/410) ではcomputeの復旧検査がこの表現を受け入れるようにした。既定値と異なるゲートウェイやサブネットは拒否する。回帰の再現後、回復スイート42件が通過した。現行のリハーサルは前任側にも検証ツリーのヘルパーを配置する。本番の固定済みヘルパーに対する確認は、本番の読み取り事前検査に残る。
 
+両修正を合わせたツリー `21a6bc94df307f8288e83cb15a2f3cde0426fd44` では、実切替ドライバーがpreflight、plan、復旧事前検査、通知窓の開始と隔離環境内の通信切離しまで進んだ。computeの停止確認で `drain_readback_refused` が出たため、admissionには進まなかった。通知窓の取消とcleanupは通過し、オーナー解放は失敗した。前任環境の構築は229.0秒、ドライバー全体は110.8秒、停止処理は20.6秒だった。
+
+修正の対象コミットでは重いCIがそれぞれ4件通過した。[署名鍵の修正](https://github.com/AtsushiHosaka/pals-infra/actions/runs/45771930188) · [computeの復旧検査](https://github.com/AtsushiHosaka/pals-infra/actions/runs/45772302312)。ローカルのplan一括テストは、テスト中に作業ツリーのブランチを切り替えたため対象リビジョンの証拠から外した。
+
 候補種別ごとの全必須シナリオ、復旧時間の計測、実配備候補の署名ゲートおよび本番の読み取り事前検査は未確認。[担当と経緯は #518](https://github.com/AtsushiHosaka/pals/issues/518#issuecomment-7184546859)。
