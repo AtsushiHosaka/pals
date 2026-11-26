@@ -33,7 +33,7 @@ class LaneQueueReadinessTests(unittest.TestCase):
     def test_exact_loopback_queues_refuse_missing_or_inflight_counts(self):
         queue = MagicMock()
         factory = MagicMock()
-        factory.return_value.__enter__.return_value = queue
+        factory.return_value = queue
         region = subject.LOCAL_AWS["AWS_REGION"]
 
         def attributes(*, QueueUrl, AttributeNames):
@@ -47,6 +47,7 @@ class LaneQueueReadinessTests(unittest.TestCase):
         subject.check_queues("standby", factory)
         self.assertEqual(factory.call_args.kwargs["endpoint_url"], "http://127.0.0.1:54567")
         self.assertEqual(len(queue.get_queue_attributes.call_args_list), 4)
+        queue.close.assert_called_once_with()
 
         invisible = "ApproximateNumberOfMessagesNotVisible"
         for count in (None, "1"):

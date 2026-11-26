@@ -56,7 +56,7 @@ INSPECT = (
     '"running":{{json .State.Running}},"pid":{{json .State.Pid}},"status":{{json .State.Status}},'
     '"restart_policy":{{json .HostConfig.RestartPolicy.Name}},'
     '"started_at":{{json .State.StartedAt}},'
-    '"health":{{if .State.Health}}{{json .State.Health.Status}}{{else}}null{{end}},'
+    '"health":{{with index .State "Health"}}{{json (index . "Status")}}{{else}}null{{end}},'
     '"namespace":{{json .HostConfig.NetworkMode}},"privileged":{{json .HostConfig.Privileged}},'
     '"cap_drop":{{json .HostConfig.CapDrop}},"cap_add":{{json .HostConfig.CapAdd}},'
     '"security_opts":{{json .HostConfig.SecurityOpt}},'

@@ -1,5 +1,6 @@
 """Check that both newly bootstrapped lanes have no work before starting workers."""
 
+from contextlib import closing
 from pathlib import Path
 
 from bootstrap_database import validate_local_dsn
@@ -46,14 +47,14 @@ def check_queues(role, client_factory):
     names = [f"pals-local-{role}-{suffix}" for suffix in (
         "proof-jobs", "proof-jobs-dlq", "proof-requests", "proof-requests-dlq",
     )]
-    with client_factory(
+    with closing(client_factory(
         "sqs",
         endpoint_url=endpoint,
         region_name=region,
         aws_access_key_id=LOCAL_AWS["AWS_ACCESS_KEY_ID"],
         aws_secret_access_key=LOCAL_AWS["AWS_SECRET_ACCESS_KEY"],
         config=Config(connect_timeout=5, read_timeout=5, proxies={}, retries={"total_max_attempts": 1}),
-    ) as client:
+    )) as client:
         for queue in names:
             attrs = client.get_queue_attributes(
                 QueueUrl=f"{endpoint}/000000000000/{queue}",
