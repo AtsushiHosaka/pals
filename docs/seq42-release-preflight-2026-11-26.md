@@ -21,3 +21,9 @@ APIのロックファイルでローカル検査環境を作り直し、正規�
 窓の30分特例を実装する #403 はマニフェスト番号42だけを許可する。直近の署名済み前任38から作る候補は39なので、実際の候補だけを対象にする修正が残る。補償確認を省かず、復旧の時間、待機候補の署名と切替を別に確かめる。[例外のオーナー承認](https://github.com/AtsushiHosaka/pals/issues/509#issuecomment-7182144771) · [#403の確認結果](https://github.com/AtsushiHosaka/pals-infra/pull/403#issuecomment-7188700432)。
 
 主候補AのローカルAPIイメージを組み込んだ検証専用マニフェスト `10d97f7b…` で、前任38からのOrbStack通常切替が完了した。前任の11検査は205.6秒。両ホストの準備、配置、計画の再検証を通過し、切替コントローラの30工程は349.6秒で完了した。通信先の再登録、オーナー解放、後片付けはいずれも成功。リハーサルの通知窓は1,500秒、クラウドと受入ランナーは隔離環境用だった。実際の本番通知窓、障害時の復旧、本番ブラウザ受入には対応する証跡が要る。[通常配備のリハーサル #417](https://github.com/AtsushiHosaka/pals-infra/pull/417) · [承認前後の復旧診断 #419](https://github.com/AtsushiHosaka/pals-infra/pull/419)。
+
+承認前の復旧試験の初回は、PostgreSQLのロックを先に保持していたため、通信切離しより前の安全確認が `predecessor_not_idle_and_current` を返した。切替も復旧も走らず、復旧時間の計測には含めない。承認要求の時点で障害が起きるよう、試験の仕掛けを調整する。[復旧診断 #419](https://github.com/AtsushiHosaka/pals-infra/pull/419)。
+
+承認後の初回は、候補の承認後に `finalize` の一度限りの障害が発生し、コントローラはオーナー権限を保持した。現行コードの `owner_retained_no_standby` 経路では、候補の承認が確認済みなので補償前の追加観測を行わない。診断が旧経路の追加観測を要求したため、`--reconcile` には進んでいない。この初回は前進復旧の通過に数えない。[復旧診断 #419](https://github.com/AtsushiHosaka/pals-infra/pull/419)。
+
+承認前の障害を承認要求に絞った再試行は成功した。実APIが隔離PostgreSQLのロックで承認を拒否し、ロックを解除した後、前任のDB状態、両ホストの元のコンテナID、通信先の再登録、通知窓と一時ポリシーの解除、切替ロックの解放を確認した。切替コントローラは402.2秒、通信切離しから再登録までは255秒、補償全体は198秒。生のジャーナルと凍結計画のハッシュを照合し、計測記録 `4fc58dfb1e6d59a87100e0ac4fda80e2b06842686ca628cdab6233023407d796` を正規ツールで再現した。`restore` は142,139ミリ秒、`previous-health` は7,363ミリ秒だった。隔離環境の実測を署名ゲートの予算へ反映する変更は #398 でレビュー中。[復旧診断 #419](https://github.com/AtsushiHosaka/pals-infra/pull/419) · [測定値の接続 #398](https://github.com/AtsushiHosaka/pals-infra/pull/398)。
