@@ -31,3 +31,15 @@ APIのロックファイルでローカル検査環境を作り直し、正規�
 承認後の障害を起こした再試行も通過した。`finalize` の一度限りの失敗とオーナー権限の保持を177.0秒で確認し、同じ試行の `--reconcile` は221.0秒で前進復旧を完了した。候補AのDB承認、両ホストの新しいコンテナ、正常な通信先、切替ロック・一時ポリシー・通知抑止ルールの後片付けを個別に読み戻した。検証対象 `77d04f7` でローカル回帰251件と重いCIの4ジョブが通った。現行のコントローラは自動の待機候補切替を行わず、今回は同じ主候補へ前進復旧した。[診断PR #419](https://github.com/AtsushiHosaka/pals-infra/pull/419) · [回帰CI](https://github.com/AtsushiHosaka/pals-infra/actions/runs/45800434852)。
 
 本番切替の前には、実候補に対応する通知窓の特例、復旧計測を使う署名判定、待機候補Sの作成・署名・切替、本番環境とホストの確認が残る。Sが前任のAPIとAの親コミットを同時に使う場合、現行の候補準備が親のsubmodule固定と一致せずに拒否する。配備条件を満たすまでは、イメージ公開、署名、本番切替は未実施。[待機候補の確認 #402](https://github.com/AtsushiHosaka/pals-infra/pull/402#issuecomment-7189103153) · [配備Issue #509](https://github.com/AtsushiHosaka/pals/issues/509)。
+
+## 11月26日夜の追試
+
+現行の通知窓の条件を取り込んで承認前の復旧を再実行した。初回は前任のAPIソースを参照できず、PKI検証で停止した。正確なコミットを持つチェックアウトを指定した再試行では、実APIが隔離PostgreSQLのロックで承認を拒否し、前任への復旧が完了した。[診断PR #424](https://github.com/AtsushiHosaka/pals-infra/pull/424)。
+
+切替コントローラは367.5秒。通信先の切離し完了から再登録までは227.9秒、補償の決定から再登録までは198.0秒だった。DBの承認が前任のままであること、両ホストのコンテナIDが元に戻ること、通信先が正常になることを確認した。切替ロック、一時ポリシー、通知抑制も解除された。
+
+再試行の `restore` は148,338ミリ秒、`previous-health` は8,418ミリ秒。凍結計画とログのハッシュを照合し、生ジャーナルから計測記録 `e9c6a99ccbf7bfb1b0a3a8fc1dd39d0fcf09efb1cb042aa960b12f2dab8c5141` を再現した。現行の換算は隔離環境の受入検査で最大798倍となり、換算した復旧時間は30分の例外枠を超える。待機候補Sへの切替時間も未計測。[計測と自動切替の統合PR #426](https://github.com/AtsushiHosaka/pals-infra/pull/426)。
+
+Sが同じ実イメージを保持する場合のホスト準備の修正をmainに取り込んだ。独立レビューと必須CI4件が通過した。Sの署名前に使うP・A・Sの照合と、製品ソースを実際に動かす検証は個別にテストした。本番用のSの通し受入と、Aの署名前にSの実走を照合する工程が残る。[ホスト準備 #423](https://github.com/AtsushiHosaka/pals-infra/pull/423) · [署名前準備 #425](https://github.com/AtsushiHosaka/pals-infra/pull/425) · [ソース検証 #427](https://github.com/AtsushiHosaka/pals-infra/pull/427)。
+
+本番の読み取り事前検査は、設定済みのAWS SSOセッションが期限切れのため開始できなかった。seq42、seq43の本番切替はいずれも未着手。
