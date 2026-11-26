@@ -24,4 +24,6 @@ Rosetta対応後の統合ツリー 98b02a3f04e1fda6122d89f0ff5db9f9358388a4 で�
 
 同型の隔離ホストで単独確認したところ、APIの資格情報サービスは `LoadState=not-found` だった。実オーナーが生成したcontrolとreconcilerの復旧unitを `systemd-analyze verify` に渡すと、要求先の `pals-private-api-credentials.service` が存在しないと報告して終了コード1を返した。
 
+正規のレンダラーが出力した資格情報サービスを一時ディレクトリに置き、同じ隔離ホストで復旧unitと合わせて検証した。controlとcomputeの両方で systemd-analyze verify が終了コード0となった。[pals-infra#416](https://github.com/AtsushiHosaka/pals-infra/pull/416) は、隔離ホストの認証サービスを停止状態かつ無効で配置する。STS更新や実ホストの再起動は今回の検証範囲に含まれない。
+
 候補種別ごとの全必須シナリオ、復旧時間の計測、実配備候補の署名ゲートおよび本番の読み取り事前検査は未確認。[担当と経緯は #518](https://github.com/AtsushiHosaka/pals/issues/518#issuecomment-7184546859)。
