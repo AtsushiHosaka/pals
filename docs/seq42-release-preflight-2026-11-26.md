@@ -27,3 +27,7 @@ APIのロックファイルでローカル検査環境を作り直し、正規�
 承認後の初回は、候補の承認後に `finalize` の一度限りの障害が発生し、コントローラはオーナー権限を保持した。現行コードの `owner_retained_no_standby` 経路では、候補の承認が確認済みなので補償前の追加観測を行わない。診断が旧経路の追加観測を要求したため、`--reconcile` には進んでいない。この初回は前進復旧の通過に数えない。[復旧診断 #419](https://github.com/AtsushiHosaka/pals-infra/pull/419)。
 
 承認前の障害を承認要求に絞った再試行は成功した。実APIが隔離PostgreSQLのロックで承認を拒否し、ロックを解除した後、前任のDB状態、両ホストの元のコンテナID、通信先の再登録、通知窓と一時ポリシーの解除、切替ロックの解放を確認した。切替コントローラは402.2秒、通信切離しから再登録までは255秒、補償全体は198秒。生のジャーナルと凍結計画のハッシュを照合し、計測記録 `4fc58dfb1e6d59a87100e0ac4fda80e2b06842686ca628cdab6233023407d796` を正規ツールで再現した。`restore` は142,139ミリ秒、`previous-health` は7,363ミリ秒だった。隔離環境の実測を署名ゲートの予算へ反映する変更は #398 でレビュー中。[復旧診断 #419](https://github.com/AtsushiHosaka/pals-infra/pull/419) · [測定値の接続 #398](https://github.com/AtsushiHosaka/pals-infra/pull/398)。
+
+承認後の障害を起こした再試行も通過した。`finalize` の一度限りの失敗とオーナー権限の保持を177.0秒で確認し、同じ試行の `--reconcile` は221.0秒で前進復旧を完了した。候補AのDB承認、両ホストの新しいコンテナ、正常な通信先、切替ロック・一時ポリシー・通知抑止ルールの後片付けを個別に読み戻した。検証対象 `77d04f7` でローカル回帰251件と重いCIの4ジョブが通った。現行のコントローラは自動の待機候補切替を行わず、今回は同じ主候補へ前進復旧した。[診断PR #419](https://github.com/AtsushiHosaka/pals-infra/pull/419) · [回帰CI](https://github.com/AtsushiHosaka/pals-infra/actions/runs/45800434852)。
+
+本番切替の前には、実候補に対応する通知窓の特例、復旧計測を使う署名判定、待機候補Sの作成・署名・切替、本番環境とホストの確認が残る。Sが前任のAPIとAの親コミットを同時に使う場合、現行の候補準備が親のsubmodule固定と一致せずに拒否する。配備条件を満たすまでは、イメージ公開、署名、本番切替は未実施。[待機候補の確認 #402](https://github.com/AtsushiHosaka/pals-infra/pull/402#issuecomment-7189103153) · [配備Issue #509](https://github.com/AtsushiHosaka/pals/issues/509)。
