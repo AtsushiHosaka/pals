@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import re
+import signal
 import stat
 import subprocess
 import sys
@@ -248,7 +249,25 @@ def derive(document):
     return plans, plugin, identity
 
 
-def launch(document, *, apply=False, run=subprocess.run):
+def run_compose(argv, *, input, env, timeout):
+    with subprocess.Popen(
+        argv, stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        text=True, env=env, start_new_session=True,
+    ) as child:
+        try:
+            child.communicate(input, timeout=timeout)
+        except BaseException:
+            # Docker launches Compose as a separate executable in this group.
+            # Stop both clients before returning a timeout or interruption.
+            try:
+                os.killpg(child.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            raise
+    return subprocess.CompletedProcess(argv, child.returncode)
+
+
+def launch(document, *, apply=False, run=run_compose):
     plans, plugin, identity = derive(document)
     report = {
         "status": "lane_dependencies_preview",
@@ -277,8 +296,7 @@ def launch(document, *, apply=False, run=subprocess.run):
             command = argv.copy()
             command[2] = config
             try:
-                result = run(command, input=stdin, env={**environment, "HOME": config}, text=True,
-                             capture_output=True, timeout=240, check=False)
+                result = run(command, input=stdin, env={**environment, "HOME": config}, timeout=240)
             except subprocess.TimeoutExpired:
                 raise ValueError(f"lane_dependency_start_timed_out_{role}") from None
             need(result.returncode == 0, f"lane_dependency_start_failed_{role}")
