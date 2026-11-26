@@ -53,6 +53,7 @@ native = load("local_verifier_build_test", ROOT / "local-verifier-build.py")
 archives = load("local_verifier_archives_test", ROOT / "local-verifier-archives.py")
 lanes = load("local_qualification_lanes_test", ROOT / "local-qualification/lanes.py")
 lane_topology = load("local_qualification_topology_test", ROOT / "local-qualification/lane_topology.py")
+relay_topology = load("local_qualification_relay_topology_test", ROOT / "local-qualification/relay_topology.py")
 lane_compose = load("local_qualification_compose_layout_test", ROOT / "local-qualification/lane_compose.py")
 INFRA = ROOT.parent / "pals-infra" / "scripts"
 INFRA_REASON = (
@@ -182,13 +183,14 @@ class QualificationLaneLayoutTests(unittest.TestCase):
                 return "\n".join(row["id"] for row in rows)
             if args[0] == "inspect":
                 self.assertEqual(args[1:4], ("--type", "container", "--format"))
-                self.assertNotIn(".Env", args[4])
+                self.assertNotIn("{{json .Config.Env}}", args[4])
                 actual = rows
                 if changed_after_top and "top" in calls:
                     actual = [{**rows[0], "pid": 888}, *rows[1:]]
                 return "\n".join(json.dumps(row) for row in actual)
-            self.assertEqual(args, ("top", rows[0]["id"], "-eo", "pid,comm"))
-            return f"PID COMMAND\n{rows[0]['pid']} python\n" + top_extra
+            actor = next(row for row in rows if row["id"] == args[1])
+            self.assertEqual(args, ("top", actor["id"], "-eo", "pid,comm"))
+            return f"PID COMMAND\n{actor['pid']} python\n" + top_extra
 
         return calls, run
 
@@ -295,6 +297,111 @@ volumes:
         _, run = self.fixture_docker(rows)
         with self.assertRaisesRegex(ValueError, "local_lane_data_mounts_overlap"):
             lane_topology.verify(self.document, run=run)
+
+    def relay_rows(self):
+        rows = self.docker_rows()
+        guard = rows[0]
+        guard["labels"]["com.docker.compose.project"] = relay_topology.PROVIDER_PROJECT
+        guard["labels"]["com.docker.compose.service"] = "worker-network-guard"
+        lane_networks = guard["networks"]
+        guard["networks"] = {relay_topology.PROVIDER_PROJECT: {"NetworkID": "f" * 64}}
+        layout_path = self.root / "layout.json"
+        raw = json.dumps(self.document).encode()
+        layout_path.write_bytes(raw)
+        layout_path.chmod(0o600)
+        socket_volume = {"Type": "volume", "Name": relay_topology.SOCKET_VOLUME,
+                         "Source": str(self.root / "guest-socket-volume"), "Destination": relay_topology.SOCKET_MOUNT}
+
+        def actor_pin(row):
+            return {"container_id": row["id"], "image_id": row["image"],
+                    "command_sha256": lane_topology.command_sha256(row)}
+
+        def append_actor(project, role, **overrides):
+            identifier = len(rows) + 200
+            row = {**guard, "name": f"/{project}-{role}-1", "id": f"{identifier:064x}", "pid": identifier,
+                   "labels": {"codex.owner": gate.OWNER, "com.docker.compose.project": project,
+                              "com.docker.compose.service": role},
+                   "mounts": [], "networks": {}, "namespace": "bridge", "cap_add": None,
+                   "security_opts": ["no-new-privileges:true"], "authority_env": False}
+            row.update(overrides)
+            rows.append(row)
+            return row
+
+        shim = append_actor(relay_topology.PROVIDER_PROJECT, relay_topology.SHIM, user="0:65531",
+                            namespace="container:" + guard["id"], mounts=[{**socket_volume, "RW": True}])
+        binding = {"schema_version": relay_topology.SCHEMA,
+                   "layout": {"path": str(layout_path), "sha256": sha256(raw)},
+                   "authority_shim": actor_pin(shim), "lanes": {}}
+        for name, lane in self.document["lanes"].items():
+            project = lane["compose_project"]
+            policy = append_actor(project, relay_topology.POLICY, user="0:0", cap_add=["NET_ADMIN"],
+                                  entrypoint=["python", "/opt/pals-local/lane_guard.py"],
+                                  networks={project + "-e2e": lane_networks[project + "-e2e"]})
+            namespace = "container:" + policy["id"]
+            forwarder = append_actor(project, relay_topology.RELAY, user="65531:65531", cap_add=["NET_BIND_SERVICE"],
+                                     namespace=namespace, mounts=[{**socket_volume, "RW": False}])
+            workers = {}
+            for worker in lane_topology.WORKERS:
+                row = next(item for item in rows if item["name"] == f"/{project}-{worker}-1")
+                row.update(namespace=namespace, security_opts=["no-new-privileges"])
+                workers[worker] = actor_pin(row)
+            binding["lanes"][name] = {"policy": actor_pin(policy), "relay": actor_pin(forwarder), "workers": workers}
+        return rows, binding
+
+    def test_frozen_relay_binding_and_readback_are_topology_only(self):
+        rows, binding = self.relay_rows()
+        raw = json.dumps(binding).encode()
+        path = self.root / "relay-topology.json"
+        path.write_bytes(raw)
+        path.chmod(0o600)
+        self.assertEqual(relay_topology.read(path, sha256(raw)), binding)
+        calls, run = self.fixture_docker(rows)
+        with patch("relay_topology.verify", side_effect=lambda doc: relay_topology.verify(doc, run=run)), \
+                patch("sys.stdout", new_callable=io.StringIO) as output:
+            code = lanes.main(["--binding", str(path), "--binding-sha256", sha256(raw), "--verify-relay-topology"])
+        self.assertEqual(code, 0, output.getvalue())
+        check = json.loads(output.getvalue())
+        self.assertRegex(check["topology_sha256"], r"^[0-9a-f]{64}$")
+        self.assertEqual(check["status"], "verified_relay_topology")
+        self.assertIs(check["runtime_verified"], False)
+        self.assertEqual(calls, ["ps", "inspect", "top", "top", "top", "top", "ps", "inspect"])
+        layout = Path(binding["layout"]["path"])
+        layout.write_bytes(layout.read_bytes() + b"\n")
+        with self.assertRaisesRegex(ValueError, "local_lane_binding_hash_changed"):
+            relay_topology.read(path, sha256(raw))
+
+    def test_relay_binding_refuses_cross_lane_namespaces_and_unsafe_helpers(self):
+        for actor, variant, code in (
+            (relay_topology.RELAY, {"namespace": "container:" + "1" * 64}, "local_relay_network_namespace_differs"),
+            ("worker", {"namespace": "container:" + "1" * 64}, "local_relay_network_namespace_differs"),
+            (relay_topology.RELAY, {"authority_env": True}, "local_relay_actor_authority_environment_present"),
+            (relay_topology.POLICY, {"cap_add": ["NET_ADMIN", "NET_BIND_SERVICE"]}, "local_relay_actor_binding_differs"),
+            (relay_topology.POLICY, {"security_opts": ["no-new-privileges", "seccomp=unconfined"]}, "local_relay_actor_binding_differs"),
+            (relay_topology.POLICY, {"ports": {"443/tcp": [{"HostIp": "127.0.0.1", "HostPort": "6443"}]}}, "local_lane_loopback_binding_differs"),
+        ):
+            with self.subTest(actor=actor, variant=variant):
+                rows, binding = self.relay_rows()
+                row = next(row for row in rows if row["name"] == f"/pals-reliability-local-standby-{actor}-1")
+                if "namespace" in variant:
+                    variant = {"namespace": "container:" + binding["lanes"]["primary"]["policy"]["container_id"]}
+                row.update(variant)
+                _, run = self.fixture_docker(rows)
+                with self.assertRaisesRegex(ValueError, code):
+                    relay_topology.verify(binding, run=run)
+
+    def test_relay_binding_refuses_socket_mounts_outside_the_two_readers_and_shim(self):
+        rows, binding = self.relay_rows()
+        reader = next(row for row in rows if row["name"] == f"/pals-reliability-local-standby-{relay_topology.RELAY}-1")
+        reader["mounts"][0]["RW"] = True
+        _, run = self.fixture_docker(rows)
+        with self.assertRaisesRegex(ValueError, "local_relay_socket_mount_differs"):
+            relay_topology.verify(binding, run=run)
+        reader["mounts"][0]["RW"] = False
+        foreign = {**rows[0], "name": "/foreign-socket", "id": "c" * 64, "labels": {}, "networks": {},
+                   "mounts": [{**reader["mounts"][0], "Type": "bind", "Name": "", "Destination": "/foreign"}]}
+        _, run = self.fixture_docker([*rows, foreign])
+        with self.assertRaisesRegex(ValueError, "local_relay_socket_mount_exposed"):
+            relay_topology.verify(binding, run=run)
 
 
 class BudgetTests(unittest.TestCase):

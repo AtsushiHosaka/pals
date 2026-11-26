@@ -158,7 +158,7 @@ def unique_object(pairs):
     return result
 
 
-def read(path, sha256):
+def read_document(path, sha256):
     path = absolute(str(path))
     need(pin(sha256), "local_lane_sha256_required")
     with os.fdopen(
@@ -178,7 +178,11 @@ def read(path, sha256):
         len(raw) == info.st_size and hashlib.sha256(raw).hexdigest() == sha256,
         "local_lane_binding_hash_changed",
     )
-    return validate(json.loads(raw, object_pairs_hook=unique_object))
+    return json.loads(raw, object_pairs_hook=unique_object)
+
+
+def read(path, sha256):
+    return validate(read_document(path, sha256))
 
 
 def main(argv=None):
@@ -187,6 +191,7 @@ def main(argv=None):
     parser.add_argument("--binding-sha256", required=True)
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--verify-topology", action="store_true")
+    mode.add_argument("--verify-relay-topology", action="store_true")
     mode.add_argument("--render-network-layout", type=Path, metavar="COMPOSE_ROOT")
     args = parser.parse_args(argv)
     output = {
@@ -195,7 +200,20 @@ def main(argv=None):
         "runtime_verified": False,
     }
     try:
-        document = read(args.binding, args.binding_sha256)
+        if args.verify_relay_topology:
+            import relay_topology
+
+            relay = relay_topology.read(args.binding, args.binding_sha256)
+            output.update(
+                status="verified_relay_topology",
+                topology_sha256=relay_topology.verify(relay),
+            )
+            need(
+                relay_topology.read(args.binding, args.binding_sha256) == relay,
+                "local_relay_binding_changed",
+            )
+        else:
+            document = read(args.binding, args.binding_sha256)
         if args.verify_topology:
             # Both pinned reviewer entrypoints bind :18119. The old single shared
             # namespace model cannot run them, even if container metadata matches.
