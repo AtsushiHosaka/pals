@@ -45,3 +45,9 @@ The retry on `9cf9fdb` bound the exact child plan and reached `standby_case_reco
 試験側のホスト確認を復旧後に移した `bcb830e` では、同じ障害から正規の `--reconcile` でSを復旧できた。復旧開始から通信先の再登録まで173.500秒、受入と後片付けの完了まで223.032秒だった。DB承認の重複はなく、通知抑制は期限の956.525秒前に解除した。オーナーの解放と試験用Dockerリソースが残っていないことを読み戻し、型付き証跡を再検証した。
 
 修復ジャーナルのSHA-256は `4fe7c093c859628df55f7871589f63470ef239c83fb4e291c25adac071e8de54`。試験では隔離したAWS実装と受入用の代替ランナーを使った。実測値を本番の署名予算へ取り込む検証と、実モデルを使うA/Sの受入は継続中。 [修正コミットの回帰CI](https://github.com/AtsushiHosaka/pals-infra/actions/runs/45868756885)
+
+## SのDB承認前に障害を起こした隔離試験
+
+`bcb830e` でSのDB承認を拒否させた。DBはAを承認した状態を保ち、稼働中の通信先は空のまま、Sが復旧用のオーナー権限を保持した。Aで開いた通知抑制は期限の967.810秒前に解除した。隔離環境のDockerリソースを削除し、型付き証跡の再検証を通過した。
+
+証跡のSHA-256は `d946833a6f68b77ba5ddd01babe7837d7e2cdb02723797f8fbeade5935fa2355`。この試験はSの承認を拒否した時点でのDB、オーナー権限、通信先、通知の状態を確認した。 [修正コミットの回帰CI](https://github.com/AtsushiHosaka/pals-infra/actions/runs/45868756885)
