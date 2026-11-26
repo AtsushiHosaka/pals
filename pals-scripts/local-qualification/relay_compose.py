@@ -20,6 +20,7 @@ from lane_topology import (
     WORKERS,
 )
 from lanes import ENDPOINTS, GUARD, PREFIX, absolute, fields, need, pin
+from provider_relay import SESSION_SECONDS
 
 SCHEMA = "pals.local-qualification-relay-compose.v1"
 IMAGES = {"api", "worker", "web", "verifier", "postgres", "localstack", "cognito"}
@@ -190,6 +191,7 @@ def relay_service(image, *, authority=False):
     result.update(
         entrypoint=["python", "-I", "-c", program],
         command=[],
+        stop_grace_period=f"{SESSION_SECONDS + 10}s",
         volumes=[socket_mount(read_only=not authority)],
         healthcheck={**HEALTH, "test": ["CMD", "python", "-I", "-c", health]},
     )

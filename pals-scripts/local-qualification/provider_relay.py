@@ -5,6 +5,7 @@ from __future__ import annotations
 import errno
 import os
 import select
+import signal
 import socket
 import stat
 import struct
@@ -197,6 +198,23 @@ class AuthorityRelay(BoundedConnections, ThreadingUnixStreamServer):
     pass
 
 
+class StopRelay(Exception):
+    """Stop accepting connections and let the bounded transfers close."""
+
+
+def serve_until_stop(server):
+    def stop(_signum, _frame):
+        raise StopRelay
+
+    previous = signal.signal(signal.SIGTERM, stop)
+    try:
+        server.serve_forever()
+    except StopRelay:
+        pass
+    finally:
+        signal.signal(signal.SIGTERM, previous)
+
+
 def require_credential_free_environment():
     names = {"OPENAI_API_KEY", "PALS_OPENAI_API_KEY", "PALS_BUDGET_RESUME_SHA256"}
     need(
@@ -212,7 +230,7 @@ def serve_lane():
         "provider_relay_lane_identity_required",
     )
     with LaneRelay(LOCAL_PROVIDER, to_authority) as server:
-        server.serve_forever()
+        serve_until_stop(server)
 
 
 def serve_authority_socket():
@@ -225,8 +243,8 @@ def serve_authority_socket():
     path = AUTHORITY_SOCKET
     private_socket_directory(path)
     created = None
-    try:
-        with AuthorityRelay(str(path), to_budget, bind_and_activate=False) as server:
+    with AuthorityRelay(str(path), to_budget, bind_and_activate=False) as server:
+        try:
             # Never remove an existing path to start. An old or foreign listener is a refusal.
             mask = os.umask(0o077)
             try:
@@ -238,16 +256,16 @@ def serve_authority_socket():
             os.chmod(path, 0o660)
             need(socket_identity(path) == created, "provider_relay_socket_changed")
             server.server_activate()
-            server.serve_forever()
-    finally:
-        if created is not None:
-            try:
-                info = path.lstat()
-            except FileNotFoundError:
-                pass
-            else:
-                if (
-                    stat.S_ISSOCK(info.st_mode)
-                    and (info.st_dev, info.st_ino) == created
-                ):
-                    path.unlink()
+            serve_until_stop(server)
+        finally:
+            if created is not None:
+                try:
+                    info = path.lstat()
+                except FileNotFoundError:
+                    pass
+                else:
+                    if (
+                        stat.S_ISSOCK(info.st_mode)
+                        and (info.st_dev, info.st_ino) == created
+                    ):
+                        path.unlink()

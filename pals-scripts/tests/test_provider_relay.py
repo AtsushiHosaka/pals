@@ -48,6 +48,19 @@ def receive(endpoint, length):
 
 
 class ProviderRelayTests(unittest.TestCase):
+    def test_docker_stop_runs_the_relay_shutdown_path(self):
+        server = Mock()
+        handlers = []
+
+        def register(_number, handler):
+            handlers.append(handler)
+            return relay.signal.SIG_DFL
+
+        server.serve_forever.side_effect = lambda: handlers[0](relay.signal.SIGTERM, None)
+        with patch.object(relay.signal, "signal", side_effect=register):
+            relay.serve_until_stop(server)
+        self.assertEqual(handlers[1:], [relay.signal.SIG_DFL])
+
     @unittest.skipUnless(shutil.which("openssl"), "OpenSSL fixture required")
     def test_tls_runs_end_to_end_across_both_byte_relays(self):
         request = bytes(range(256)) * 640
