@@ -26,4 +26,6 @@ Rosetta対応後の統合ツリー 98b02a3f04e1fda6122d89f0ff5db9f9358388a4 で�
 
 正規のレンダラーが出力した資格情報サービスを一時ディレクトリに置き、同じ隔離ホストで復旧unitと合わせて検証した。controlとcomputeの両方で systemd-analyze verify が終了コード0となった。[pals-infra#416](https://github.com/AtsushiHosaka/pals-infra/pull/416) は、隔離ホストの認証サービスを停止状態かつ無効で配置する。STS更新や実ホストの再起動は今回の検証範囲に含まれない。
 
-候補種別ごとの全必須シナリオ、復旧時間の計測、実配備候補の署名ゲートおよび本番の読み取り事前検査は未確認。[担当と経緯は #518](https://github.com/AtsushiHosaka/pals/issues/518#issuecomment-7184546859)。
+資格情報unitを含むツリー d9fc194ff7650ca5426f749f87685c0ead7fe834 のOrbStack実走は `rehearsal_passed` で終了コード0だった。切替ドライバーは `accepted`、`owner_released=true` を返し、cleanupも通過した。前任環境の13検査は230.6秒、切替ドライバーは288.9秒。両ホストの復旧検査、最終ヘルス、ローカルの受入とオーナー解放を1回の実行で通過した。
+
+今回の受入にはリハーサルの代替親ランナーを使った。OrbStackのAMD64エミュレーションには専用の一時領域があり、STSブローカーは停止状態。候補種別ごとの全必須シナリオ、復旧時間の計測、実配備候補の署名ゲートおよび本番の読み取り事前検査は未確認。[担当と経緯は #518](https://github.com/AtsushiHosaka/pals/issues/518#issuecomment-7184546859)。
