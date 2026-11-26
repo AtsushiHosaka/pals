@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import fcntl
-import http.client
 import importlib.util
 import json
 import os
@@ -18,6 +17,7 @@ spec = importlib.util.spec_from_file_location("local_qualification_prepare", HER
 prepare = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(prepare)
 gate = prepare.gate
+api_header = gate.require_lane_api_subject
 
 ROLES = ("api", "reconciler", "worker", "assessment-worker", "recipe-reviewer", "verifier", "webfront", "worker-network-guard")
 
@@ -127,17 +127,6 @@ def publish_subject(out, subject):
             stream.flush()
             os.fsync(stream.fileno())
         os.link(path, out)
-
-
-def api_header(port, expected):
-    with_connection = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
-    try:
-        with_connection.request("GET", "/health")
-        response = with_connection.getresponse()
-        gate.need(response.status == 200 and response.getheader("X-PALS-Release-Manifest-SHA256") == expected,
-                  "lane_api_does_not_serve_frozen_subject")
-    finally:
-        with_connection.close()
 
 
 def bind_api(args, subject, out):

@@ -742,7 +742,7 @@ class RuntimeTests(unittest.TestCase):
                 "gate", "--subject", str(subject), "--state-dir", str(state), "--web-root", str(root),
                 "--database-env", str(root / "private.env"), "--readiness-only",
             ]
-            scope = {"topology_sha256": "a" * 64}
+            scope = {"topology_sha256": "a" * 64, "lane": {"http_ports": {"api": 58001}}}
             with (
                 patch.object(sys, "argv", argv),
                 patch.object(gate, "require_modules"),
@@ -755,15 +755,27 @@ class RuntimeTests(unittest.TestCase):
                 patch.object(gate, "database_readiness", return_value={}),
                 patch.object(gate, "runtime", return_value={}),
                 patch.object(gate, "compiler_canary", return_value={"passed": True}) as canary,
+                patch.object(gate, "require_lane_api_subject") as live_header,
                 patch.object(gate.subprocess, "Popen") as browser,
             ):
                 self.assertEqual(gate.main(), 0)
                 canary.assert_called_once_with(json.loads(subject.read_bytes()), scope=scope)
+                live_header.assert_called_once_with(58001, gate.sha(subject.read_bytes()))
+                readiness = json.loads((state / "readiness.json").read_bytes())
+                self.assertEqual(readiness["state"], "ready_for_capture")
+                self.assertEqual(readiness["local_lane_topology_sha256"], scope["topology_sha256"])
+                self.assertEqual(latest.read_bytes(), original)
+
+                live_header.side_effect = gate.Refusal("lane_api_does_not_serve_frozen_subject")
+                self.assertEqual(gate.main(), 1)
+                refused = json.loads((state / "readiness.json").read_bytes())
+                self.assertEqual(refused["code"], "lane_api_does_not_serve_frozen_subject")
+                self.assertEqual(latest.read_bytes(), original)
+
+                argv.pop()
+                self.assertEqual(gate.main(), 1)
+                self.assertEqual(json.loads(latest.read_bytes())["code"], "lane_api_does_not_serve_frozen_subject")
                 browser.assert_not_called()
-            readiness = json.loads((state / "readiness.json").read_bytes())
-            self.assertEqual(readiness["state"], "ready_for_capture")
-            self.assertEqual(readiness["local_lane_topology_sha256"], scope["topology_sha256"])
-            self.assertEqual(latest.read_bytes(), original)
             self.assertFalse((state / "submission.json").exists())
 
 

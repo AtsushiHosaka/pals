@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import http.client
 import importlib.util
 import json
 import os
@@ -373,6 +374,21 @@ def runtime_name(role, scope):
     if role == "worker-network-guard":
         return scope["guard"]["container_id"]
     return scope["lane"]["compose_project"] + "-" + role + "-1"
+
+
+def require_lane_api_subject(port, expected):
+    connection = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
+    try:
+        connection.request("GET", "/health")
+        response = connection.getresponse()
+        need(
+            response.status == 200 and response.getheader("X-PALS-Release-Manifest-SHA256") == expected,
+            "lane_api_does_not_serve_frozen_subject",
+        )
+    except (OSError, http.client.HTTPException):
+        raise Refusal("lane_api_health_unavailable") from None
+    finally:
+        connection.close()
 
 
 def web_provenance(subject, *, scope=None):
@@ -1025,6 +1041,8 @@ def main():
         # Never launch a browser that could submit a paid proof while the actual
         # mTLS verifier cannot establish its mandatory compiler sandbox.
         record["compiler_canary"] = compiler_canary(subject, scope=scope)
+        if scope is not None:
+            require_lane_api_subject(scope["lane"]["http_ports"]["api"], digest)
         if args.readiness_only:
             need(runtime(subject, scope=scope) == before, "runtime_changed_during_readiness")
             if scope is not None:
