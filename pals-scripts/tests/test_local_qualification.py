@@ -633,7 +633,7 @@ class ProvenanceTests(unittest.TestCase):
             context = Path(d)
             record = {
                 "Status": "completed",
-                "Context": str(context),
+                "Context": str(context.resolve()),
                 "Dockerfile": "Dockerfile",
                 "Platform": ["linux/arm64"],
                 "BuildArgs": [
@@ -664,6 +664,29 @@ class ProvenanceTests(unittest.TestCase):
                     builder.observe_build(
                         "real-record", context, "a" * 40, "sha256:" + "c" * 64
                     )
+                self.assertEqual(
+                    builder.observe_build(
+                        "real-record", context, "a" * 40, "sha256:" + "b" * 64
+                    ),
+                    record,
+                )
+                standby_args = builder.STANDBY_ARGS
+                self.assertEqual(standby_args["NEXT_PUBLIC_PALS_API_BASE_URL"], "http://localhost:58001")
+                self.assertEqual(standby_args["NEXT_PUBLIC_COGNITO_REDIRECT_URI"], "http://localhost:53001")
+                record["BuildArgs"] = [
+                    {"Name": key, "Value": value} for key, value in standby_args.items()
+                ]
+                with self.assertRaisesRegex(ValueError, "actual_build_args_not_closed_loopback_profile"):
+                    builder.observe_build(
+                        "real-record", context, "a" * 40, "sha256:" + "b" * 64
+                    )
+                self.assertEqual(
+                    builder.observe_build(
+                        "real-record", context, "a" * 40, "sha256:" + "b" * 64,
+                        local_args=standby_args,
+                    ),
+                    record,
+                )
             finally:
                 builder.run = old
 

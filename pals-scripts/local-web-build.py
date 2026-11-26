@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the single closed loopback Web variant from exact Git bytes; never start services."""
+"""Build a closed loopback Web variant from exact Git bytes; never start services."""
 
 from __future__ import annotations
 
@@ -22,6 +22,14 @@ LOCAL_ARGS = {
     "NEXT_PUBLIC_COGNITO_REDIRECT_URI": "http://localhost:53000",
     "NEXT_PUBLIC_COGNITO_LOGOUT_URI": "http://localhost:53000",
 }
+STANDBY_ARGS = {
+    **LOCAL_ARGS,
+    "NEXT_PUBLIC_PALS_API_BASE_URL": "http://localhost:58001",
+    "NEXT_PUBLIC_COGNITO_ENDPOINT": "http://localhost:59230",
+    "NEXT_PUBLIC_COGNITO_REDIRECT_URI": "http://localhost:53001",
+    "NEXT_PUBLIC_COGNITO_LOGOUT_URI": "http://localhost:53001",
+}
+PROFILES = {"primary": LOCAL_ARGS, "standby": STANDBY_ARGS}
 
 
 def sha(b):
@@ -88,7 +96,7 @@ def stored_build_record(path, context, code="real_build_record_changed"):
     return record
 
 
-def observe_build(ref, context, revision, image):
+def observe_build(ref, context, revision, image, *, local_args=LOCAL_ARGS):
     record = json.loads(
         run(["docker", "buildx", "history", "inspect", ref, "--format", "json"])
     )
@@ -102,7 +110,10 @@ def observe_build(ref, context, revision, image):
     args = {x["Name"]: x["Value"] for x in record["BuildArgs"]}
     # The Dockerfile has no default for this optional ARG; its effective public ENV is empty.
     args.setdefault("NEXT_PUBLIC_COGNITO_HOSTED_UI_DOMAIN", "")
-    need(args == LOCAL_ARGS, "actual_build_args_not_closed_loopback_profile")
+    need(
+        local_args in PROFILES.values() and args == local_args,
+        "actual_build_args_not_closed_loopback_profile",
+    )
     labels = {x["Name"]: x["Value"] for x in record["Labels"]}
     need(
         labels.get("org.opencontainers.image.revision") == revision,
@@ -123,8 +134,10 @@ def observe_build(ref, context, revision, image):
 
 
 def build(
-    source_root, revision, archive, publication, production_args, expected_image, work
+    source_root, revision, archive, publication, production_args, expected_image, work,
+    *, profile="primary",
 ):
+    local_args = PROFILES[profile]
     need(
         len(revision) == 40 and all(x in "0123456789abcdef" for x in revision),
         "exact_source_required",
@@ -162,6 +175,8 @@ def build(
     )
     metadata = work / "build-metadata.json"
     tag = "pals-reliability-web:" + revision[:12] + "-local-verified"
+    if profile == "standby":
+        tag += "-standby"
     argv = [
         "docker",
         "buildx",
@@ -177,7 +192,7 @@ def build(
         "--label",
         "codex.owner=01a1bb4b-dec2-76f0-a6fe-32405e465d6e",
     ]
-    for key, value in LOCAL_ARGS.items():
+    for key, value in local_args.items():
         # Omitted empty ARG and an explicit empty ENV have the same fixed public value.
         # Preserve the original controlled local invocation exactly for cache reuse.
         if key != "NEXT_PUBLIC_COGNITO_HOSTED_UI_DOMAIN":
@@ -215,7 +230,7 @@ def build(
     )
     need(tree == context_tree(archive, context), "build_context_changed_during_build")
     ref = meta["buildx.build.ref"].split("/")[-1]
-    observed = observe_build(ref, context, revision, actual["Id"])
+    observed = observe_build(ref, context, revision, actual["Id"], local_args=local_args)
     record_file = work / "actual-build-record.json"
     record_file.write_text(
         json.dumps(observed, sort_keys=True, separators=(",", ":")) + "\n"
@@ -228,7 +243,7 @@ def build(
         "production_publication": reference(publication),
         "production_public_args": reference(production_args),
         "dockerfile_sha256": sha(dockerfile),
-        "local_build_args": LOCAL_ARGS,
+        "local_build_args": local_args,
         "built_image_id": actual["Id"],
         "platform": "linux/arm64",
         "build_metadata": reference(metadata),
@@ -251,6 +266,7 @@ def main():
     p.add_argument("--expected-image-id")
     p.add_argument("--output-dir", type=Path)
     p.add_argument("--verify-receipt", type=Path)
+    p.add_argument("--profile", choices=PROFILES)
     a = p.parse_args()
     if a.verify_receipt:
         previous = json.loads(a.verify_receipt.read_bytes())
@@ -286,7 +302,12 @@ def main():
             == context_tree(archive, Path(previous["build_context"])),
             "frozen_build_context_changed",
         )
-        need(previous["local_build_args"] == LOCAL_ARGS, "local_public_args_changed")
+        local_args = previous["local_build_args"]
+        need(
+            local_args in PROFILES.values()
+            and (a.profile is None or local_args == PROFILES[a.profile]),
+            "local_public_args_changed",
+        )
         need(
             sha((Path(previous["build_context"]) / "Dockerfile").read_bytes())
             == previous["dockerfile_sha256"],
@@ -297,6 +318,7 @@ def main():
             Path(previous["build_context"]),
             previous["source_revision"],
             previous["built_image_id"],
+            local_args=local_args,
         )
         need(
             stored_build_record(
@@ -337,6 +359,7 @@ def main():
         a.production_public_args,
         a.expected_image_id,
         a.output_dir,
+        profile=a.profile or "primary",
     )
     out = a.output_dir / "provenance.json"
     out.write_text(json.dumps(receipt, sort_keys=True, separators=(",", ":")) + "\n")
