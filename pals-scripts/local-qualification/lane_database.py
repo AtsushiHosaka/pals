@@ -128,7 +128,8 @@ def verify_databases(document, run, rows):
 def freeze(dependency_binding):
     from lane_dependencies import checked_render, derive
 
-    plans, _, _ = derive(dependency_binding)
+    derivation = derive(dependency_binding)
+    plans, _, _ = derivation
     rendered = checked_render(dependency_binding["rendered_compose"])
     socket = dependency_binding["docker_socket"]
     run = docker_reader(socket)
@@ -156,7 +157,7 @@ def freeze(dependency_binding):
         }
     verify_databases(document, run, rows)
     # Catch changes to a pinned input before writing a usable descriptor.
-    need(derive(dependency_binding)[0] == plans, "lane_database_dependency_input_changed")
+    need(derive(dependency_binding) == derivation, "lane_database_dependency_input_changed")
     return document
 
 
