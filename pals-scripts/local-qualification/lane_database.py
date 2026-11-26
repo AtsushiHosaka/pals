@@ -73,6 +73,35 @@ def read_for_bootstrap(path, sha256):
     return validate(document)
 
 
+def verify_database_volume(project, actual, run, rows):
+    """Check the same exclusive data-volume identity before and after lane startup."""
+    name = f"{project}-postgres-data"
+    need(not any(
+        mount.get("Name") == name
+        for row in rows.values() if row["id"] != actual["id"]
+        for mount in row.get("mounts") or []
+    ), "lane_database_volume_in_use_elsewhere")
+    data = [mount for mount in actual["mounts"] or []
+            if mount["Destination"] == "/var/lib/postgresql/data"]
+    need(
+        len(data) == 1 and data[0].get("Type") == "volume"
+        and data[0].get("Name") == name and data[0].get("RW") is True,
+        "owned_lane_database_volume_required",
+    )
+    inspected = json.loads(run("volume", "inspect", name))
+    need(type(inspected) is list and len(inspected) == 1, "owned_lane_database_volume_required")
+    volume = inspected[0]
+    labels = volume.get("Labels") or {}
+    need(
+        volume.get("Name") == name and volume.get("Driver") == "local"
+        and not volume.get("Options") and volume.get("Mountpoint") == data[0].get("Source")
+        and bool(volume["Mountpoint"]) and labels.get(PROJECT) == project
+        and labels.get("com.docker.compose.volume") == "postgres-data",
+        "owned_lane_database_volume_required",
+    )
+    return volume["Mountpoint"]
+
+
 def verify_databases(document, run, rows):
     validate_database_layout(document)
     volumes = set()
@@ -93,12 +122,9 @@ def verify_databases(document, run, rows):
         active(actual, postgres=True)
         need(actual["health"] == "healthy", "healthy_lane_database_required")
         port_map(actual, {"5432/tcp": [{"HostIp": database["host"], "HostPort": str(database["host_port"])}]})
-        name = f"{project}-postgres-data"
         for row in rows.values():
             if row["id"] == actual["id"]:
                 continue
-            need(not any(mount.get("Name") == name for mount in row.get("mounts") or []),
-                 "lane_database_volume_in_use_elsewhere")
             if not row["running"]:
                 continue
             labels = row["labels"] or {}
@@ -107,25 +133,7 @@ def verify_databases(document, run, rows):
                 and (labels.get(PROJECT) != project or labels.get(SERVICE) not in PRODUCERS),
                 "local_lane_database_producers_must_be_stopped",
             )
-        data = [mount for mount in actual["mounts"] or []
-                if mount["Destination"] == "/var/lib/postgresql/data"]
-        need(
-            len(data) == 1 and data[0].get("Type") == "volume"
-            and data[0].get("Name") == name and data[0].get("RW") is True,
-            "owned_lane_database_volume_required",
-        )
-        inspected = json.loads(run("volume", "inspect", name))
-        need(type(inspected) is list and len(inspected) == 1, "owned_lane_database_volume_required")
-        volume = inspected[0]
-        labels = volume.get("Labels") or {}
-        need(
-            volume.get("Name") == name and volume.get("Driver") == "local"
-            and not volume.get("Options") and volume.get("Mountpoint") == data[0].get("Source")
-            and bool(volume["Mountpoint"]) and labels.get(PROJECT) == project
-            and labels.get("com.docker.compose.volume") == "postgres-data",
-            "owned_lane_database_volume_required",
-        )
-        volumes.add(volume["Mountpoint"])
+        volumes.add(verify_database_volume(project, actual, run, rows))
     need(len(volumes) == 2, "lane_database_volumes_overlap")
 
 
