@@ -51,11 +51,82 @@ provider_tls = load(
 )
 native = load("local_verifier_build_test", ROOT / "local-verifier-build.py")
 archives = load("local_verifier_archives_test", ROOT / "local-verifier-archives.py")
+lanes = load("local_qualification_lanes_test", ROOT / "local-qualification/lanes.py")
 INFRA = ROOT.parent / "pals-infra" / "scripts"
 INFRA_REASON = (
     "pals-infra submodule is not initialised: the real release-plan validators were "
     "NOT exercised (the self-contained contract tests still pin key set and archives)"
 )
+
+
+class QualificationLaneLayoutTests(unittest.TestCase):
+    def setUp(self):
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        self.root = Path(temp.name)
+        self.document = {
+            "schema_version": lanes.SCHEMA,
+            "docker_socket": str(self.root / "docker.sock"),
+            "guard": {
+                "name": lanes.GUARD, "container_id": "7" * 64,
+                "image_id": "sha256:" + "8" * 64,
+                "ledger_directory": str(self.root / "budget"),
+            },
+            "lanes": {},
+        }
+        for role, candidate, database, ports in (
+            ("primary", "a", "1", [58000, 53000, 54566, 59229, 55432]),
+            ("standby", "b", "2", [58001, 53001, 54567, 59230, 55433]),
+        ):
+            project = f"pals-reliability-local-{role}"
+            self.document["lanes"][role] = {
+                "candidate_sha256": candidate * 64, "compose_project": project,
+                "runtime_directory": str(self.root / f"runtime-{role}"),
+                "capture_directory": str(self.root / f"capture-{role}"),
+                "http_ports": dict(zip(("api", "web", "localstack", "cognito"), ports[:4])),
+                "postgres": {"name": f"{project}-postgres-1", "container_id": database * 64,
+                             "host": "127.0.0.1", "host_port": ports[4], "database": "pals"},
+            }
+
+    def test_exact_pair_is_accepted_as_layout_only(self):
+        raw = json.dumps(self.document).encode()
+        path = self.root / "lane-binding.json"
+        path.write_bytes(raw)
+        path.chmod(0o600)
+        self.assertEqual(lanes.read(path, sha256(raw)), self.document)
+        with self.assertRaisesRegex(ValueError, "local_lane_binding_hash_changed"):
+            lanes.read(path, "0" * 64)
+        with patch("sys.stdout", new_callable=io.StringIO) as output:
+            self.assertEqual(lanes.main(["--binding", str(path), "--binding-sha256", sha256(raw)]), 0)
+        self.assertEqual(json.loads(output.getvalue()), {
+            "status": "validated_layout", "binding_sha256": sha256(raw), "runtime_verified": False,
+        })
+        self.assertEqual(list(self.root.iterdir()), [path])
+
+    def test_rejects_shared_candidate_database_or_nested_directory(self):
+        primary = self.document["lanes"]["primary"]
+        standby = self.document["lanes"]["standby"]
+        for target, key, value, code in (
+            (standby, "candidate_sha256", primary["candidate_sha256"], "local_lane_identities_overlap"),
+            (standby["postgres"], "container_id", self.document["guard"]["container_id"], "local_lane_identities_overlap"),
+            (standby, "capture_directory", primary["runtime_directory"] + "/nested", "local_lane_directories_overlap"),
+            (standby["postgres"], "host", "10.0.0.25", "local_lane_postgres_invalid"),
+            (standby["http_ports"], "api", 58000, "local_lane_loopback_ports_differ"),
+            (standby["http_ports"], "api", 58001.0, "local_lane_loopback_ports_differ"),
+        ):
+            with self.subTest(key=key, value=value), patch.dict(target, {key: value}):
+                with self.assertRaisesRegex(ValueError, code):
+                    lanes.validate(self.document)
+        standby["guard"] = self.document["guard"]
+        with self.assertRaisesRegex(ValueError, "local_lane_identity_invalid"):
+            lanes.validate(self.document)
+
+    def test_legacy_singleton_web_and_database_profile_remains_exact(self):
+        self.assertEqual(builder.LOCAL_ARGS["NEXT_PUBLIC_PALS_API_BASE_URL"], "http://localhost:58000")
+        self.assertEqual(builder.LOCAL_ARGS["NEXT_PUBLIC_COGNITO_REDIRECT_URI"], "http://localhost:53000")
+        self.assertEqual(bootstrap.validate_local_dsn("postgresql://sample:sample@localhost:55432/pals").port, 55432)
+        with self.assertRaisesRegex(ValueError, "closed_local_database_uri_required"):
+            bootstrap.validate_local_dsn("postgresql://sample:sample@localhost:55433/pals")
 
 
 class BudgetTests(unittest.TestCase):
