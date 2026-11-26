@@ -157,6 +157,16 @@ volumes:
             deps.launch(self.binding, apply=True, run=fake)
         fake.assert_called_once()
 
+    def test_timeout_stops_compose_and_docker_in_one_process_group(self):
+        child = Mock(pid=321)
+        child.communicate.side_effect = subprocess.TimeoutExpired(["docker"], 240)
+        with patch.object(deps.subprocess, "Popen") as popen, patch.object(deps.os, "killpg") as kill:
+            popen.return_value.__enter__.return_value = child
+            with self.assertRaises(subprocess.TimeoutExpired):
+                deps.run_compose(["docker"], input="{}", env={}, timeout=240)
+        self.assertTrue(popen.call_args.kwargs["start_new_session"])
+        kill.assert_called_once_with(321, deps.signal.SIGKILL)
+
     def test_refuses_alias_socket_and_changes_to_frozen_inputs(self):
         alias = self.root / "alias.sock"
         alias.symlink_to(self.binding["docker_socket"])
