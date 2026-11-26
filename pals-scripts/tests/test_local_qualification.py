@@ -52,6 +52,7 @@ provider_tls = load(
 native = load("local_verifier_build_test", ROOT / "local-verifier-build.py")
 archives = load("local_verifier_archives_test", ROOT / "local-verifier-archives.py")
 lanes = load("local_qualification_lanes_test", ROOT / "local-qualification/lanes.py")
+lane_topology = load("local_qualification_topology_test", ROOT / "local-qualification/lane_topology.py")
 INFRA = ROOT.parent / "pals-infra" / "scripts"
 INFRA_REASON = (
     "pals-infra submodule is not initialised: the real release-plan validators were "
@@ -127,6 +128,119 @@ class QualificationLaneLayoutTests(unittest.TestCase):
         self.assertEqual(bootstrap.validate_local_dsn("postgresql://sample:sample@localhost:55432/pals").port, 55432)
         with self.assertRaisesRegex(ValueError, "closed_local_database_uri_required"):
             bootstrap.validate_local_dsn("postgresql://sample:sample@localhost:55433/pals")
+
+    def docker_rows(self):
+        rows = []
+        guard = self.document["guard"]
+
+        def row(name, container_id, project="shared", role="guard"):
+            return {
+                "name": "/" + name, "id": container_id, "image": "sha256:" + "9" * 64,
+                "labels": {"codex.owner": gate.OWNER, "com.docker.compose.project": project,
+                           "com.docker.compose.service": role},
+                "entrypoint": None, "cmd": None, "user": "65532:65532", "namespace": "bridge",
+                "privileged": False, "cap_add": None, "cap_drop": ["ALL"], "read_only": True,
+                "mounts": [], "ports": {}, "networks": {}, "running": True, "health": "healthy",
+                "pid": 100 + len(rows), "started_at": "2026-11-27T12:00:00.000000000Z",
+            }
+
+        control = row(guard["name"], guard["container_id"])
+        control.update(image=guard["image_id"], entrypoint=["python", "/opt/pals-local/guard.py"],
+                       user="0:0", cap_add=["CAP_NET_ADMIN", "CAP_NET_BIND_SERVICE"],
+                       mounts=[{"Type": "bind", "Source": guard["ledger_directory"],
+                                "Destination": "/run/budget", "RW": True}])
+        rows.append(control)
+        for index, (name, lane) in enumerate(self.document["lanes"].items(), start=1):
+            project = lane["compose_project"]
+            e2e = {project + "-e2e": {"NetworkID": f"{index:064x}"}}
+            database = {project + "-database": {"NetworkID": f"{index + 2:064x}"}}
+            control["networks"].update(e2e)
+            for role in sorted(lane_topology.ROLES):
+                current = row(f"{project}-{role}-1", f"{len(rows) + 100:064x}", project, role)
+                if role in lane_topology.WORKERS:
+                    current["namespace"] = "container:" + guard["container_id"]
+                elif role == "postgres":
+                    current.update(id=lane["postgres"]["container_id"], networks=database, health=None,
+                                   mounts=[{"Type": "volume", "Source": str(self.root / f"postgres-{name}"),
+                                            "Destination": "/var/lib/postgresql/data", "RW": True}])
+                else:
+                    current["networks"] = {**e2e, **(database if role in {"api", "reconciler"} else {})}
+                if role in lane_topology.PORTS:
+                    kind, internal = lane_topology.PORTS[role]
+                    current["ports"] = {internal: [{"HostIp": "127.0.0.1", "HostPort": str(lanes.ENDPOINTS[name][kind])}]}
+                rows.append(current)
+        return rows
+
+    def fixture_docker(self, rows, *, top_extra="", changed_after_top=False):
+        calls = []
+
+        def run(*args):
+            calls.append(args[0])
+            if args[0] == "ps":
+                self.assertEqual(args, ("ps", "--all", "--quiet", "--no-trunc"))
+                return "\n".join(row["id"] for row in rows)
+            if args[0] == "inspect":
+                self.assertEqual(args[1:4], ("--type", "container", "--format"))
+                self.assertNotIn(".Env", args[4])
+                actual = rows
+                if changed_after_top and "top" in calls:
+                    actual = [{**rows[0], "pid": 888}, *rows[1:]]
+                return "\n".join(json.dumps(row) for row in actual)
+            self.assertEqual(args, ("top", rows[0]["id"], "-eo", "pid,comm"))
+            return f"PID COMMAND\n{rows[0]['pid']} python\n" + top_extra
+
+        return calls, run
+
+    def test_topology_reads_both_live_lanes_without_process_or_config_mutation(self):
+        calls, run = self.fixture_docker(self.docker_rows())
+        self.assertRegex(lane_topology.verify(self.document, run=run), r"^[a-f0-9]{64}$")
+        self.assertEqual(calls, ["ps", "inspect", "top", "ps", "inspect"])
+        path = self.root / "binding.json"
+        raw = json.dumps(self.document).encode()
+        path.write_bytes(raw)
+        path.chmod(0o600)
+        with patch("lane_topology.verify", side_effect=lambda doc: lane_topology.verify(doc, run=run)), \
+                patch("sys.stdout", new_callable=io.StringIO) as output:
+            self.assertEqual(lanes.main(["--binding", str(path), "--binding-sha256", sha256(raw), "--verify-topology"]), 0)
+        self.assertEqual(json.loads(output.getvalue())["status"], "verified_topology")
+        self.assertIs(json.loads(output.getvalue())["runtime_verified"], False)
+
+    def test_topology_refuses_drift_in_process_pg_identity_network_port_and_worker_namespace(self):
+        for role, key, value, error in (
+            ("worker", "namespace", "bridge", "worker_shared_guard_namespace_required"),
+            ("webfront", "ports", {"3000/tcp": [{"HostIp": "0.0.0.0", "HostPort": "53000"}]}, "local_lane_loopback_binding_differs"),
+            ("postgres", "id", "d" * 64, "local_lane_postgres_identity_differs"),
+            ("reconciler", "networks", {}, "local_lane_network_membership_differs"),
+        ):
+            with self.subTest(role=role, key=key):
+                rows = self.docker_rows()
+                target = next(row for row in rows if row["name"] == f"/pals-reliability-local-primary-{role}-1")
+                target[key] = value
+                _, run = self.fixture_docker(rows)
+                with self.assertRaisesRegex(ValueError, error):
+                    lane_topology.verify(self.document, run=run)
+        _, run = self.fixture_docker(self.docker_rows(), top_extra="599 python\n")
+        with self.assertRaisesRegex(ValueError, "one_shared_guard_process_required"):
+            lane_topology.verify(self.document, run=run)
+        _, run = self.fixture_docker(self.docker_rows(), changed_after_top=True)
+        with self.assertRaisesRegex(ValueError, "local_lane_topology_changed_during_read"):
+            lane_topology.verify(self.document, run=run)
+
+    def test_topology_refuses_second_budget_writer_and_same_pgdata(self):
+        rows = self.docker_rows()
+        rows.append({**rows[0], "name": "/foreign", "id": "e" * 64})
+        _, run = self.fixture_docker(rows)
+        with self.assertRaisesRegex(ValueError, "shared_budget_writer_mount_differs"):
+            lane_topology.verify(self.document, run=run)
+        rows[-1]["mounts"] = []
+        with self.assertRaisesRegex(ValueError, "foreign_container_in_local_lane_boundary"):
+            lane_topology.verify(self.document, run=run)
+        rows = self.docker_rows()
+        primary, standby = (row for row in rows if row["labels"]["com.docker.compose.service"] == "postgres")
+        standby["mounts"] = primary["mounts"]
+        _, run = self.fixture_docker(rows)
+        with self.assertRaisesRegex(ValueError, "local_lane_data_mounts_overlap"):
+            lane_topology.verify(self.document, run=run)
 
 
 class BudgetTests(unittest.TestCase):

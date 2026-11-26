@@ -9,6 +9,7 @@ import json
 import os
 import re
 import stat
+import subprocess
 import sys
 from pathlib import Path
 
@@ -184,10 +185,28 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binding", type=Path, required=True)
     parser.add_argument("--binding-sha256", required=True)
+    parser.add_argument("--verify-topology", action="store_true")
     args = parser.parse_args(argv)
+    output = {
+        "status": "validated_layout",
+        "binding_sha256": args.binding_sha256,
+        "runtime_verified": False,
+    }
     try:
-        read(args.binding, args.binding_sha256)
-    except (OSError, ValueError, RecursionError) as error:
+        document = read(args.binding, args.binding_sha256)
+        if args.verify_topology:
+            from lane_topology import verify
+
+            output.update(status="verified_topology", topology_sha256=verify(document))
+    except (
+        OSError,
+        ValueError,
+        RecursionError,
+        KeyError,
+        TypeError,
+        AttributeError,
+        subprocess.TimeoutExpired,
+    ) as error:
         code = (
             str(error)
             if re.fullmatch(r"[a-z_]+", str(error))
@@ -195,16 +214,7 @@ def main(argv=None):
         )
         print(json.dumps({"status": "refused", "code": code}, sort_keys=True))
         return 2
-    print(
-        json.dumps(
-            {
-                "status": "validated_layout",
-                "binding_sha256": args.binding_sha256,
-                "runtime_verified": False,
-            },
-            sort_keys=True,
-        )
-    )
+    print(json.dumps(output, sort_keys=True))
     return 0
 
 
