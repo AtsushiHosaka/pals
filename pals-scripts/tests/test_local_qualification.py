@@ -70,6 +70,38 @@ class BudgetTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def test_serving_ledger_lease_excludes_another_process_and_recovers_after_exit(self):
+        script = """
+import os, sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[1])
+from budget_proxy import Budget, ledger_writer
+try:
+    path = Path(sys.argv[2])
+    with ledger_writer(path.parent):
+        Budget(path).reserve('gpt-6.1-terra', 1000, 1000)
+        os._exit(17)
+except ValueError as error:
+    print(str(error))
+"""
+        crashed_ledger = self.path.with_name("crashed-ledger.json")
+        argv = [
+            sys.executable, "-B", "-c", script,
+            str(ROOT / "local-qualification"), str(crashed_ledger),
+        ]
+        raw = self.path.read_bytes()
+        with proxy.ledger_writer(self.path.parent):
+            refused = subprocess.run(argv, capture_output=True, text=True, check=True, timeout=5)
+            self.assertEqual(refused.stdout.strip(), "local_budget_writer_already_running")
+            self.assertFalse(crashed_ledger.exists())
+        crashed = subprocess.run(argv, capture_output=True, check=False, timeout=5)
+        self.assertEqual(crashed.returncode, 17, crashed.stderr)
+        with proxy.ledger_writer(self.path.parent):
+            self.assertEqual(self.path.read_bytes(), raw)
+            crashed_sha = sha256(crashed_ledger.read_bytes())
+            with self.assertRaisesRegex(ValueError, "uncertain_budget_cannot_resume"):
+                proxy.Budget(crashed_ledger, resume_sha256=crashed_sha)
+
     def test_aggregate_reservation_stops_second_parallel_expensive_call(self):
         accepted = []
 

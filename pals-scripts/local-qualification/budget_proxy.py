@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import fcntl
 import hashlib
 import ipaddress
 import json
@@ -9,6 +10,7 @@ import os
 import re
 import socket
 import ssl
+from contextlib import contextmanager
 from fractions import Fraction
 from http.client import HTTPException, HTTPSConnection
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -547,12 +549,29 @@ class Handler(BaseHTTPRequestHandler):
             )
 
 
+@contextmanager
+def ledger_writer(directory):
+    """One serving guard per ledger directory within the same Docker backend."""
+    descriptor = os.open(directory, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        try:
+            fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            raise ValueError("local_budget_writer_already_running") from None
+        yield
+    finally:
+        os.close(descriptor)
+
+
 def serve(cert, key, ledger):
-    server = ThreadingHTTPServer(("127.0.0.1", 443), Handler)
-    server.budget = Budget(
-        ledger, resume_sha256=os.environ.get("PALS_BUDGET_RESUME_SHA256")
-    )
-    tls = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    tls.load_cert_chain(cert, key)
-    server.socket = tls.wrap_socket(server.socket, server_side=True)
-    server.serve_forever()
+    with ledger_writer(ledger.parent), ThreadingHTTPServer(("127.0.0.1", 443), Handler) as server:
+        # Close the serving socket and let accepted handlers finish before releasing the lease.
+        # An abrupt process exit still releases it in the kernel, with unresolved calls retained.
+        server.daemon_threads = False
+        server.budget = Budget(
+            ledger, resume_sha256=os.environ.get("PALS_BUDGET_RESUME_SHA256")
+        )
+        tls = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        tls.load_cert_chain(cert, key)
+        server.socket = tls.wrap_socket(server.socket, server_side=True)
+        server.serve_forever()
