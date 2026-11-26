@@ -165,9 +165,18 @@ def bind_api(args, subject, out):
         gate.file_reference(ref)
     original = local_env.read_bytes()
     environment = gate.private_env(local_env)
-    old_header = environment.get("PALS_LOCAL_CANDIDATE_SHA256")
+    initial_seed = getattr(args, "initial_candidate_sha256", None)
+    if initial_seed is not None:
+        gate.need(
+            initial_seed == subject["local_lane"]["candidate_sha256"]
+            and "PALS_LOCAL_CANDIDATE_SHA256" not in environment,
+            "initial_lane_api_header_differs_from_candidate",
+        )
+    old_header = initial_seed or environment.get("PALS_LOCAL_CANDIDATE_SHA256")
     gate.need(isinstance(old_header, str) and len(old_header) == 64, "initial_lane_api_header_required")
     compose_env = {key: value for key, value in os.environ.items() if key in {"HOME", "LANG", "LOGNAME", "PATH", "TMPDIR", "USER"}}
+    if initial_seed is not None:
+        compose_env["PALS_LOCAL_CANDIDATE_SHA256"] = initial_seed
     with tempfile.TemporaryDirectory(prefix="lane-compose-", dir=runtime_directory) as directory:
         overlays = []
         for key in ("profile_overlay_yaml", "relay_overlay_yaml"):
@@ -205,6 +214,7 @@ def bind_api(args, subject, out):
         gate.private_json(recovery / "intent.json", {
             "original_sha256": gate.sha(original), "original_compose_config_hash": initial_hash,
             "candidate_sha256": lane["candidate_sha256"], "rendered_compose": rendered_ref,
+            **({"initial_candidate_sha256": initial_seed} if initial_seed else {}),
         })
         recovery_fd = os.open(recovery, os.O_RDONLY | os.O_DIRECTORY)
         try:
@@ -213,10 +223,14 @@ def bind_api(args, subject, out):
             os.close(recovery_fd)
 
         def bind_round():
-            environment["PALS_LOCAL_CANDIDATE_SHA256"] = gate.sha(subject_bytes(subject))
-            pending = recovery / "pending.env"
-            prepare.write_env(pending, environment)
-            os.replace(pending, local_env)
+            digest = gate.sha(subject_bytes(subject))
+            if initial_seed is None:
+                environment["PALS_LOCAL_CANDIDATE_SHA256"] = digest
+                pending = recovery / "pending.env"
+                prepare.write_env(pending, environment)
+                os.replace(pending, local_env)
+            else:
+                compose_env["PALS_LOCAL_CANDIDATE_SHA256"] = digest
             recreate_api()
 
         try:
@@ -227,10 +241,13 @@ def bind_api(args, subject, out):
             publish_subject(out, subject)
         except BaseException:
             try:
-                restore = Path(directory) / "original.env"
-                restore.write_bytes(original)
-                restore.chmod(0o600)
-                os.replace(restore, local_env)
+                if initial_seed is None:
+                    restore = Path(directory) / "original.env"
+                    restore.write_bytes(original)
+                    restore.chmod(0o600)
+                    os.replace(restore, local_env)
+                else:
+                    compose_env["PALS_LOCAL_CANDIDATE_SHA256"] = old_header
                 recreate_api()
                 gate.need(inspect_api()["Config"]["Labels"].get("com.docker.compose.config-hash") == initial_hash,
                           "lane_api_previous_config_not_restored")
@@ -247,6 +264,7 @@ def main():
     parser.add_argument("--role", choices=("primary", "standby"), required=True)
     parser.add_argument("--topology-sha256", required=True)
     parser.add_argument("--bind-api", action="store_true")
+    parser.add_argument("--initial-candidate-sha256")
     parser.add_argument("--rendered-compose", type=Path)
     parser.add_argument("--rendered-compose-sha256")
     parser.add_argument("--compose-root", type=Path)
@@ -258,6 +276,8 @@ def main():
     compose_options = (args.rendered_compose, args.rendered_compose_sha256, args.compose_root)
     if args.bind_api != all(compose_options) or (any(compose_options) and not all(compose_options)):
         parser.error("--bind-api requires the pinned Compose input and canonical Compose root")
+    if args.initial_candidate_sha256 is not None and not args.bind_api:
+        parser.error("--initial-candidate-sha256 requires --bind-api")
     directory = prepare.require_runtime_directory(args.runtime_dir)
     out = directory / ("subject-native.json" if args.bind_api else "subject-inspected.json")
     lock = os.open(directory, os.O_RDONLY | os.O_DIRECTORY)

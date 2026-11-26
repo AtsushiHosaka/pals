@@ -165,6 +165,25 @@ def freeze(dependency_binding):
     return document
 
 
+def migration_receipt_bytes(selected, value):
+    return json.dumps({
+        "candidate_sha256": selected["candidate_sha256"],
+        "container_id": selected["postgres"]["container_id"],
+        "local_env_sha256": selected["local_env"]["sha256"],
+        "state": value,
+    }, sort_keys=True).encode() + b"\n"
+
+
+def require_completed_migration(runtime, selected):
+    receipt = runtime / "database-bootstrap.json"
+    with os.fdopen(os.open(receipt, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK), "rb") as prior:
+        info = os.fstat(prior.fileno())
+        need(stat.S_ISREG(info.st_mode) and info.st_nlink == 1 and info.st_uid == os.geteuid()
+             and stat.S_IMODE(info.st_mode) == 0o600, "private_lane_database_receipt_required")
+        need(prior.read(1025) == migration_receipt_bytes(selected, "complete"),
+             "lane_database_bootstrap_requires_inspection")
+
+
 @contextmanager
 def migration_state(runtime, selected):
     # Per-lane guard: failure on one database never resets or disqualifies the
@@ -180,28 +199,15 @@ def migration_state(runtime, selected):
             fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
             raise ValueError("lane_database_bootstrap_busy") from None
-        identity = {
-            "candidate_sha256": selected["candidate_sha256"],
-            "container_id": selected["postgres"]["container_id"],
-            "local_env_sha256": selected["local_env"]["sha256"],
-        }
-
-        def state(value):
-            return json.dumps({**identity, "state": value}, sort_keys=True).encode() + b"\n"
-
         previously_completed = os.path.lexists(receipt)
         if previously_completed:
-            with os.fdopen(os.open(receipt, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK), "rb") as prior:
-                info = os.fstat(prior.fileno())
-                need(stat.S_ISREG(info.st_mode) and info.st_nlink == 1 and info.st_uid == os.geteuid()
-                     and stat.S_IMODE(info.st_mode) == 0o600, "private_lane_database_receipt_required")
-                need(prior.read(1025) == state("complete"), "lane_database_bootstrap_requires_inspection")
+            require_completed_migration(runtime, selected)
 
         def store(value):
             temporary_fd, temporary = tempfile.mkstemp(dir=runtime, prefix=".database-bootstrap-")
             try:
                 with os.fdopen(temporary_fd, "wb") as output:
-                    output.write(state(value))
+                    output.write(migration_receipt_bytes(selected, value))
                     output.flush()
                     os.fsync(output.fileno())
                 os.replace(temporary, receipt)
