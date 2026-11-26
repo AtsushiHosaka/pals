@@ -20,4 +20,8 @@ computeの隔離ホストで同じサブネットを指定してブリッジを�
 
 Rosetta対応後の統合ツリー 98b02a3f04e1fda6122d89f0ff5db9f9358388a4 で再実行した。隔離環境の停止確認、DBの候補登録、確定、3段階の起動、簡易ヘルス、ターゲット登録、通知窓の終了が通過した。次の control 側の復旧ヘルス検査が拒否し、最終受入とオーナー解放は完了しなかった。cleanupは通過した。前任環境の構築は234.0秒、ドライバー全体は289.7秒だった。
 
+復旧診断を含むツリー 1af8373c52c479d7def433ea89ba03ee16d16e27 で再実行し、同じ復旧ヘルスの拒否を再現した。[pals-infra#414](https://github.com/AtsushiHosaka/pals-infra/pull/414) の診断で、拒否した操作はcontrolの `install-recovery`、原因コードは `systemd_command_failed` と追跡できた。前任環境は241.4秒、切替ドライバーは290.4秒だった。
+
+同型の隔離ホストで単独確認したところ、APIの資格情報サービスは `LoadState=not-found` だった。実オーナーが生成したcontrolとreconcilerの復旧unitを `systemd-analyze verify` に渡すと、要求先の `pals-private-api-credentials.service` が存在しないと報告して終了コード1を返した。
+
 候補種別ごとの全必須シナリオ、復旧時間の計測、実配備候補の署名ゲートおよび本番の読み取り事前検査は未確認。[担当と経緯は #518](https://github.com/AtsushiHosaka/pals/issues/518#issuecomment-7184546859)。
