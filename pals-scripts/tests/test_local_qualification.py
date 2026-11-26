@@ -722,6 +722,50 @@ class RuntimeTests(unittest.TestCase):
             )
             self.assertFalse((root / "capture/submission.json").exists())
 
+    def test_readiness_only_runs_the_lane_canary_without_starting_a_capture(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            state = root / "capture"
+            state.mkdir(mode=0o700)
+            latest = state / "latest.json"
+            latest.write_text('{"state":"failed"}\n')
+            original = latest.read_bytes()
+            subject = root / "subject.json"
+            subject.write_text(json.dumps({
+                "schema_version": "pals.local-qualification-subject.v1",
+                "basis": "approved-local-real-db-lean-model",
+                "fixture": {"paid_submissions": 1, "maximum_approved_usd": 1, "output_language": "en"},
+                "local_profile": {},
+                "local_lane": {"role": "primary"},
+            }))
+            argv = [
+                "gate", "--subject", str(subject), "--state-dir", str(state), "--web-root", str(root),
+                "--database-env", str(root / "private.env"), "--readiness-only",
+            ]
+            scope = {"topology_sha256": "a" * 64}
+            with (
+                patch.object(sys, "argv", argv),
+                patch.object(gate, "require_modules"),
+                patch.object(gate, "lane_runtime", return_value=scope),
+                patch.object(gate, "check_lane_helpers"),
+                patch.object(gate, "provider_tls_status", return_value={}),
+                patch.object(gate, "web_provenance", return_value={}),
+                patch.object(gate, "verifier_provenance", return_value={}),
+                patch.object(gate, "budget_status", return_value={}),
+                patch.object(gate, "database_readiness", return_value={}),
+                patch.object(gate, "runtime", return_value={}),
+                patch.object(gate, "compiler_canary", return_value={"passed": True}) as canary,
+                patch.object(gate.subprocess, "Popen") as browser,
+            ):
+                self.assertEqual(gate.main(), 0)
+                canary.assert_called_once_with(json.loads(subject.read_bytes()), scope=scope)
+                browser.assert_not_called()
+            readiness = json.loads((state / "readiness.json").read_bytes())
+            self.assertEqual(readiness["state"], "ready_for_capture")
+            self.assertEqual(readiness["local_lane_topology_sha256"], scope["topology_sha256"])
+            self.assertEqual(latest.read_bytes(), original)
+            self.assertFalse((state / "submission.json").exists())
+
 
 class LocalSetupBoundaryTests(unittest.TestCase):
     def test_private_file_dsn_rejects_query_fragment_remote_and_keyword_forms(self):

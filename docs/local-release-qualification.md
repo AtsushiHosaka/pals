@@ -50,6 +50,12 @@ blocks promotion. Deterministic CI tests do not create live acceptance. The cano
 controller must invoke the runner, freeze its code and inputs, and require exit zero; this
 script alone does not enforce branch protection or every possible deployment entrypoint.
 
+Pass `--readiness-only` with the same inputs to check a freshly bound lane before its paid
+request. The runner verifies runtime provenance, database privileges, provider TLS and the
+live Lean canary, then writes `readiness.json` with state `ready_for_capture`. It leaves the
+submission marker and capture record untouched. Run the normal qualification afterward to
+obtain an acceptance record.
+
 ## Prepare the reused local stack
 
 `local-qualification-prepare.py` upgrades the existing owned E2E stack in one command. Its

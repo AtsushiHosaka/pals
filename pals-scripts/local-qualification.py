@@ -910,7 +910,9 @@ def main():
     p.add_argument("--state-dir", type=Path, required=True)
     p.add_argument("--web-root", type=Path, required=True)
     p.add_argument("--database-env", type=Path, required=True)
-    p.add_argument("--verify-existing", action="store_true")
+    mode = p.add_mutually_exclusive_group()
+    mode.add_argument("--verify-existing", action="store_true")
+    mode.add_argument("--readiness-only", action="store_true")
     args = p.parse_args()
     require_modules()
     state = args.state_dir.resolve()
@@ -919,7 +921,8 @@ def main():
         state.stat().st_mode & 0o777 == 0o700 and not state.is_symlink(),
         "private_state_directory_required",
     )
-    set_diagnostic_directory(state / "diagnostics")
+    record_path = state / ("readiness.json" if args.readiness_only else "latest.json")
+    set_diagnostic_directory(state / ("readiness-diagnostics" if args.readiness_only else "diagnostics"))
     # Known private values are hidden from any diagnostic written from here on.
     register_private_env(args.database_env)
     raw = args.subject.read_bytes()
@@ -971,7 +974,11 @@ def main():
             "prior_submission_exists_no_automatic_retry",
         )
     record = {
-        "schema_version": "pals.local-qualification-result.v1",
+        "schema_version": (
+            "pals.local-qualification-readiness.v1"
+            if args.readiness_only
+            else "pals.local-qualification-result.v1"
+        ),
         "basis": subject["basis"],
         "run_id": str(uuid4()),
         "subject_sha256": digest,
@@ -986,7 +993,7 @@ def main():
         ),
         "boundaries": subject["local_profile"],
     }
-    private_json(state / "latest.json", record)
+    private_json(record_path, record)
     try:
         scope = lane_runtime(subject, state, args.database_env)
         lane = subject.get("local_lane", {}).get("role", "singleton")
@@ -1005,7 +1012,7 @@ def main():
         if prior:
             need(before == prior["runtime_before"], "existing_capture_runtime_changed")
         record["runtime_before"] = before
-        private_json(state / "latest.json", record)
+        private_json(record_path, record)
         record["provider_budget_before"] = budget_status(subject, scope=scope)
         record["budget_rollover"] = budget_rollover_evidence(
             subject, record["provider_budget_before"]
@@ -1018,6 +1025,17 @@ def main():
         # Never launch a browser that could submit a paid proof while the actual
         # mTLS verifier cannot establish its mandatory compiler sandbox.
         record["compiler_canary"] = compiler_canary(subject, scope=scope)
+        if args.readiness_only:
+            need(runtime(subject, scope=scope) == before, "runtime_changed_during_readiness")
+            if scope is not None:
+                need(
+                    lane_runtime(subject, state, args.database_env) == scope,
+                    "local_lane_topology_changed_during_readiness",
+                )
+            record.update(state="ready_for_capture", finished_at=now())
+            private_json(record_path, record)
+            print(stable({"state": record["state"], "subject_sha256": digest}))
+            return 0
         activated = max(
             parse_time(x["started_at"]) for x in before.values()
         ).isoformat()
@@ -1081,7 +1099,7 @@ def main():
         )
         if isinstance(error, Refusal) and error.detail:
             record["diagnostic"] = error.detail
-        private_json(state / "latest.json", record)
+        private_json(record_path, record)
         print(
             stable(
                 {
@@ -1092,7 +1110,7 @@ def main():
             )
         )
         return 1
-    private_json(state / "latest.json", record)
+    private_json(record_path, record)
     print(
         stable(
             {
