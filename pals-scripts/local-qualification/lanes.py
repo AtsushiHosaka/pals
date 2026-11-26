@@ -193,6 +193,7 @@ def main(argv=None):
     mode.add_argument("--verify-topology", action="store_true")
     mode.add_argument("--verify-relay-topology", action="store_true")
     mode.add_argument("--render-network-layout", type=Path, metavar="COMPOSE_ROOT")
+    mode.add_argument("--render-relay-compose", type=Path, metavar="COMPOSE_ROOT")
     args = parser.parse_args(argv)
     output = {
         "status": "validated_layout",
@@ -211,6 +212,15 @@ def main(argv=None):
             need(
                 relay_topology.read(args.binding, args.binding_sha256) == relay,
                 "local_relay_binding_changed",
+            )
+        elif args.render_relay_compose is not None:
+            from relay_compose import render
+
+            output.update(
+                render(
+                    read_document(args.binding, args.binding_sha256),
+                    args.render_relay_compose,
+                )
             )
         else:
             document = read(args.binding, args.binding_sha256)

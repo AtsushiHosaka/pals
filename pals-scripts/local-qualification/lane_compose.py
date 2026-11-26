@@ -162,6 +162,10 @@ def remap_attachments(e2e, role):
 
 def render(document, compose_root):
     validate(document)
+    return render_layout(document["lanes"], compose_root)
+
+
+def render_layout(lanes, compose_root):
     base, e2e, infrastructure, references = source_documents(compose_root)
     validate_sources(base, e2e, infrastructure)
     service_sources = e2e["services"]
@@ -172,7 +176,7 @@ def render(document, compose_root):
         "local_lane_reconciler_peer_source_changed",
     )
     layouts = {}
-    for role, lane in document["lanes"].items():
+    for role, lane in lanes.items():
         project = lane["compose_project"]
         services = remap_attachments(e2e, role)
         services["reconciler"]["environment"] = {

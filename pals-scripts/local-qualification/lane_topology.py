@@ -299,13 +299,13 @@ def authority(rows, guard, relay, network_ids):
     return shim, socket_mount(shim, writer=True)
 
 
-def local_relay_scope(scoped, project, expected, source, network_ids):
+def local_relay_scope(scoped, project, lane_name, expected, source, network_ids):
     policy = scoped[f"/{project}-{POLICY}-1"]
     forwarder = scoped[f"/{project}-{RELAY}-1"]
     locked_actor(policy, expected["policy"], "0:0", {"NET_ADMIN"}, credential_free=True)
     need(
         policy["entrypoint"] == ["python", "/opt/pals-local/lane_guard.py"]
-        and not policy["cmd"]
+        and policy["cmd"] == [lane_name]
         and not policy["mounts"]
         and policy["namespace"] in {"bridge", "default", project + "-e2e"},
         "local_lane_egress_policy_boundary_differs",
@@ -394,7 +394,7 @@ def collect(document, run, relay=None):
         if relay is not None:
             lane_relay = relay["lanes"][name]
             policy, forwarder = local_relay_scope(
-                scoped, project, lane_relay, socket_source, network_ids
+                scoped, project, name, lane_relay, socket_source, network_ids
             )
             namespace_owners.append(policy)
             socket_readers.add(forwarder["id"])
