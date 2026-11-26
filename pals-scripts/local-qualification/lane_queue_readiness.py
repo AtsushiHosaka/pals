@@ -68,13 +68,20 @@ def check_queues(role, client_factory):
 
 def require_empty_lanes(database_layout):
     """Run after the launcher matches the two live databases and dependency containers."""
-    import boto3
-    import psycopg
+    try:
+        import boto3
+        import psycopg
+        from botocore.exceptions import BotoCoreError, ClientError
+    except ImportError:
+        raise ValueError("lane_proof_readiness_dependencies_required") from None
 
     layout = validate_database_layout(database_layout)
-    for role, lane in layout["lanes"].items():
-        environment = local_environment_settings(
-            lane["local_env"], Path(lane["runtime_directory"]), role,
-        )
-        check_database(role, environment["PALS_HOST_DATABASE_URL"], psycopg.connect)
-        check_queues(role, boto3.client)
+    try:
+        for role, lane in layout["lanes"].items():
+            environment = local_environment_settings(
+                lane["local_env"], Path(lane["runtime_directory"]), role,
+            )
+            check_database(role, environment["PALS_HOST_DATABASE_URL"], psycopg.connect)
+            check_queues(role, boto3.client)
+    except (psycopg.Error, BotoCoreError, ClientError):
+        raise ValueError("lane_proof_readiness_unavailable") from None

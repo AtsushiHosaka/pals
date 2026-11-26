@@ -105,7 +105,7 @@ class ApplicationLaneTests(unittest.TestCase):
                 self.assertNotIn("OPENAI_API_KEY", env)
                 self.assertEqual(env["PALS_LOCAL_CANDIDATE_SHA256"],
                                  self.fixture.render_input["lanes"][role]["candidate_sha256"])
-            self.assertFalse({"AWS_PROFILE", "DOCKER_CONTEXT", "HTTP_PROXY"} & set(env))
+            self.assertFalse({"AWS_PROFILE", "DOCKER_CONTEXT", "HTTP_PROXY", "HOME"} & set(env))
             return subprocess.CompletedProcess(args, 0)
 
         receipt = {"status": "verified_read_only", "observed_stopped_container_ids": [], "ledger": self.budget}
@@ -113,9 +113,11 @@ class ApplicationLaneTests(unittest.TestCase):
         with (
             patch.object(app, "inventory", return_value=self.rows),
             patch.object(lane_database, "verify_databases"),
+            patch.object(app, "require_empty_lanes") as empty,
             patch.object(app, "verify_budget_handoff", return_value=receipt),
         ):
             report = app.launch(self.document, apply=True, run=run, read=Mock(return_value=""))
+        empty.assert_called_once()
         self.assertEqual(report["status"], "lane_application_started")
         self.assertEqual(run.call_count, 2 + 2 * len(app.APPLICATION))
         self.assertFalse(self.provider_key in json.dumps(report))
@@ -135,12 +137,25 @@ class ApplicationLaneTests(unittest.TestCase):
         with (
             patch.object(app, "inventory", return_value=self.rows),
             patch.object(lane_database, "verify_databases"),
+            patch.object(app, "require_empty_lanes"),
             patch.object(app, "verify_budget_handoff", return_value={"observed_stopped_container_ids": []}),
         ):
             with self.assertRaisesRegex(ValueError, "lane_application_existing_dependency_identity_changed"):
                 app.launch(self.document, apply=True, run=run, read=Mock(return_value=""))
         run.assert_called_once()
         self.assertTrue(Path(self.document["handoff_output"]).exists())
+
+    def test_existing_proof_work_is_refused_before_guard_start(self):
+        run = Mock()
+        with (
+            patch.object(app, "inventory", return_value=self.rows),
+            patch.object(lane_database, "verify_databases"),
+            patch.object(app, "require_empty_lanes", side_effect=ValueError("lane_proof_queue_must_be_empty")),
+        ):
+            with self.assertRaisesRegex(ValueError, "lane_proof_queue_must_be_empty"):
+                app.launch(self.document, apply=True, run=run, read=Mock(return_value=""))
+        run.assert_not_called()
+        self.assertFalse(Path(self.document["handoff_output"]).exists())
 
     def test_dry_refuses_a_rewritten_overlay_even_when_new_bytes_are_hash_pinned(self):
         value = relay_compose.render(self.fixture.render_input, self.fixture.compose_root)

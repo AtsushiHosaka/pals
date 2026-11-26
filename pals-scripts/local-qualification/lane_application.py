@@ -18,6 +18,7 @@ import tempfile
 
 from budget_handoff import verify_budget_handoff
 import lane_database
+from lane_queue_readiness import require_empty_lanes
 import lane_dependencies as dependencies
 from lane_bootstrap import local_environment_settings, reference
 from lane_topology import (
@@ -266,6 +267,7 @@ def apply_plan(document, inputs, projects, run, read):
     baseline = dependency_identity(rows, layout, dep_plan)
     lane_database.verify_databases(layout, read, rows)
     no_existing_application(rows, baseline, read)
+    require_empty_lanes(layout)
     budget_ref = {"path": str(original), "sha256": document["budget_before"]["sha256"]}
     receipt = verify_budget_handoff(
         layout["docker_socket"], budget_ref, str(original.parent), budget_ref["sha256"], run=read,
@@ -286,7 +288,7 @@ def apply_plan(document, inputs, projects, run, read):
         plugins = scratch / "cli-plugins"
         plugins.mkdir(mode=0o700)
         (plugins / "docker-compose").symlink_to(dep_plan[1])
-        child = {"PATH": "/usr/bin:/bin", "LANG": "C", "HOME": directory, "COMPOSE_DISABLE_ENV_FILE": "1",
+        child = {"PATH": "/usr/bin:/bin", "LANG": "C", "COMPOSE_DISABLE_ENV_FILE": "1",
                  "COMPOSE_IGNORE_ORPHANS": "1"}
         for role, plan in projects.items():
             check_stage_inputs(document, dep_plan, layout, role)
