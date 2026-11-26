@@ -181,7 +181,17 @@ def derive(document):
     need(document["schema_version"] == SCHEMA, "lane_dependency_binding_invalid")
     socket = absolute(document["docker_socket"])
     identity = socket_identity(socket)
-    docker = checked_executable(document["docker"], "exact_local_docker_cli_required")
+    docker = absolute(document["docker"])
+    # OrbStack's executable selects the CLI by name, including through its
+    # installed docker symlink. Pin the target without changing the invocation.
+    need(
+        docker.name == "docker" and docker.parent.resolve(strict=True) == docker.parent
+        and docker.is_file() and os.access(docker, os.X_OK),
+        "exact_local_docker_cli_required",
+    )
+    docker_target = docker.resolve(strict=True)
+    docker_info = docker_target.stat()
+    identity += (docker_target, docker_info.st_dev, docker_info.st_ino, docker_info.st_mtime_ns)
     plugin = checked_executable(document["compose_plugin"], "exact_local_compose_plugin_required")
     root = absolute(document["compose_root"])
     need(root.resolve(strict=True) == root, "canonical_lane_compose_checkout_required")
@@ -296,7 +306,7 @@ def launch(document, *, apply=False, run=run_compose):
             command = argv.copy()
             command[2] = config
             try:
-                result = run(command, input=stdin, env={**environment, "HOME": config}, timeout=240)
+                result = run(command, input=stdin, env=environment, timeout=240)
             except subprocess.TimeoutExpired:
                 raise ValueError(f"lane_dependency_start_timed_out_{role}") from None
             need(result.returncode == 0, f"lane_dependency_start_failed_{role}")

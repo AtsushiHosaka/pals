@@ -62,11 +62,13 @@ volumes:
             values.update(COMPOSE_PROFILES="all", DOCKER_CONTEXT="production", HTTPS_PROXY="https://forbidden.test")
             self.passwords[role] = values["POSTGRES_PASSWORD"]
             local_envs[role] = self.write(runtime / "local.env", "".join(f"{k}={v}\n" for k, v in values.items()))
+        self.docker = self.root / "docker"
+        self.docker.symlink_to(Path(sys.executable).resolve())
         self.binding = {
             "schema_version": deps.SCHEMA,
             "compose_root": str(self.compose_root),
             "rendered_compose": self.write(self.root / "rendered.json", json.dumps(self.rendered)),
-            "docker": str(Path(sys.executable).resolve()),
+            "docker": str(self.docker),
             "compose_plugin": str(Path(sys.executable).resolve()),
             "docker_socket": str(socket_path),
             "local_envs": local_envs,
@@ -91,6 +93,7 @@ volumes:
         self.assertEqual(result["status"], "lane_dependencies_preview")
         for role, entry in result["lanes"].items():
             argv = entry["command"]
+            self.assertEqual(argv[0], str(self.docker))
             self.assertIn(f"pals-reliability-local-{role}", argv)
             self.assertEqual(argv[-8:], ["up", "--wait", "--no-build", "--pull", "never",
                                         "postgres", "localstack", "cognito-local"])
@@ -116,7 +119,7 @@ volumes:
             env = kwargs["env"]
             self.assertEqual(env["POSTGRES_PASSWORD"], self.passwords[role])
             self.assertEqual(env["AWS_ACCESS_KEY_ID"], "test")
-            self.assertFalse({"AWS_PROFILE", "COMPOSE_PROFILES", "DOCKER_CONTEXT", "HTTPS_PROXY",
+            self.assertFalse({"AWS_PROFILE", "COMPOSE_PROFILES", "DOCKER_CONTEXT", "HTTPS_PROXY", "HOME",
                               "OPENAI_API_KEY", "PALS_OPENAI_API_KEY"} & env.keys())
             return subprocess.CompletedProcess(argv, 0, "", "")
 
@@ -154,6 +157,20 @@ volumes:
 
         fake = Mock(side_effect=run)
         with self.assertRaisesRegex(ValueError, "lane_bootstrap_environment_hash_changed"):
+            deps.launch(self.binding, apply=True, run=fake)
+        fake.assert_called_once()
+
+    def test_does_not_start_second_lane_after_docker_symlink_changes(self):
+        changed = self.root / "other-executable"
+        changed.touch(mode=0o700)
+
+        def run(argv, **kwargs):
+            self.docker.unlink()
+            self.docker.symlink_to(changed)
+            return subprocess.CompletedProcess(argv, 0, "", "")
+
+        fake = Mock(side_effect=run)
+        with self.assertRaisesRegex(ValueError, "lane_dependency_inputs_changed_before_start"):
             deps.launch(self.binding, apply=True, run=fake)
         fake.assert_called_once()
 
