@@ -33,6 +33,7 @@ SOCKET_MOUNT = "/run/pals-provider"
 POLICY = "egress-policy"
 RELAY = "provider-relay"
 SHIM = "authority-shim"
+RELAY_IMPORT = "import sys;sys.path.insert(0,'/opt/pals-local');import provider_relay as p;"
 AUTHORITY_ENV = (
     "OPENAI_API_KEY",
     "PALS_OPENAI_API_KEY",
@@ -294,6 +295,8 @@ def authority(rows, guard, relay, network_ids):
     )
     networks(guard, {PROVIDER_PROJECT}, network_ids)
     locked_actor(shim, relay["authority_shim"], "0:65531", set(), credential_free=True)
+    need(shim["entrypoint"] == ["python", "-I", "-c", RELAY_IMPORT + "p.serve_authority_socket()"] and not shim["cmd"],
+         "local_relay_authority_command_differs")
     expect_namespace(shim, guard, network_ids)
     port_map(shim, {})
     return shim, socket_mount(shim, writer=True)
@@ -318,6 +321,8 @@ def local_relay_scope(scoped, project, lane_name, expected, source, network_ids)
         {"NET_BIND_SERVICE"},
         credential_free=True,
     )
+    need(forwarder["entrypoint"] == ["python", "-I", "-c", RELAY_IMPORT + "p.serve_lane()"] and not forwarder["cmd"],
+         "local_relay_lane_command_differs")
     expect_namespace(forwarder, policy, network_ids)
     need(
         socket_mount(forwarder, writer=False) == source,
@@ -346,6 +351,13 @@ def collect(document, run, relay=None):
     )
     observed_guard = active(guard)
     port_map(guard, {})
+    if relay is not None:
+        need(
+            not any(row["id"] != guard["id"] and row["running"]
+                    and (row["labels"] or {}).get("codex.owner") == OWNER
+                    and row["entrypoint"] == guard["entrypoint"] for row in rows.values()),
+            "another_local_provider_guard_is_running",
+        )
     ledger = absolute(expected_guard["ledger_directory"]).resolve()
     writers = []
     for row in rows.values():

@@ -78,7 +78,7 @@ class QualificationLaneLayoutTests(unittest.TestCase):
             "lanes": {},
         }
         for role, candidate, database, ports in (
-            ("primary", "a", "1", [58000, 53000, 54566, 59229, 55432]),
+            ("primary", "a", "1", [58000, 53000, 54566, 59229, 55434]),
             ("standby", "b", "2", [58001, 53001, 54567, 59230, 55433]),
         ):
             project = f"pals-reliability-local-{role}"
@@ -128,6 +128,7 @@ class QualificationLaneLayoutTests(unittest.TestCase):
         self.assertEqual(builder.LOCAL_ARGS["NEXT_PUBLIC_PALS_API_BASE_URL"], "http://localhost:58000")
         self.assertEqual(builder.LOCAL_ARGS["NEXT_PUBLIC_COGNITO_REDIRECT_URI"], "http://localhost:53000")
         self.assertEqual(bootstrap.validate_local_dsn("postgresql://sample:sample@localhost:55432/pals").port, 55432)
+        self.assertEqual(bootstrap.validate_local_dsn("postgresql://sample:sample@localhost:55434/pals", lane="primary").port, 55434)
         with self.assertRaisesRegex(ValueError, "closed_local_database_uri_required"):
             bootstrap.validate_local_dsn("postgresql://sample:sample@localhost:55433/pals")
 
@@ -142,6 +143,24 @@ class QualificationLaneLayoutTests(unittest.TestCase):
             with self.subTest(host=host, port=port):
                 with self.assertRaisesRegex(ValueError, "closed_local_database_uri_required"):
                     bootstrap.validate_local_dsn(f"postgresql://sample:sample@{host}:{port}/pals", lane="standby")
+
+    def test_build_receipt_context_must_resolve_to_the_same_docker_socket(self):
+        pinned = self.root.resolve() / "orb.sock"
+        pinned.touch()
+        other = pinned.with_name("other.sock")
+        other.touch()
+        scope = {"docker_socket": str(pinned)}
+        with patch.dict(os.environ, {"DOCKER_HOST": "tcp://external.invalid", "BUILDX_BUILDER": "unexpected"}), patch.object(
+            gate, "command", side_effect=["orbstack\n", "unix://" + str(pinned)]
+        ) as run:
+            environment = gate.docker_scope_environment(scope)["env"]
+            self.assertEqual(environment["DOCKER_CONTEXT"], "orbstack")
+            self.assertNotIn("DOCKER_HOST", environment)
+            self.assertNotIn("BUILDX_BUILDER", environment)
+            self.assertIn("orbstack", run.call_args.args[0])
+        with patch.object(gate, "command", side_effect=["unexpected", "unix://" + str(other)]):
+            with self.assertRaisesRegex(gate.Refusal, "local_lane_build_context_must_use_pinned_docker_socket"):
+                gate.docker_scope_environment(scope)
 
     def test_lane_migration_identifies_distinct_owned_postgres_before_connecting(self):
         import lane_topology as runtime_topology
@@ -317,7 +336,7 @@ volumes:
         self.assertNotIn("services", result)
         self.assertEqual(set(result["compose_sources"]), set(lane_compose.SOURCES))
         primary, standby = (result["x-pals-network-layout"][role] for role in ("primary", "standby"))
-        for lane, third_octet, pg_port in ((primary, 0, 55432), (standby, 2, 55433)):
+        for lane, third_octet, pg_port in ((primary, 4, 55434), (standby, 2, 55433)):
             services = lane["services"]
             self.assertEqual(services["postgres"]["ports"], [{"host_ip": "127.0.0.1", "target": 5432,
                                                                "published": str(pg_port), "protocol": "tcp"}])
@@ -401,6 +420,7 @@ volumes:
             return row
 
         shim = append_actor(relay_topology.PROVIDER_PROJECT, relay_topology.SHIM, user="0:65531",
+                            entrypoint=["python", "-I", "-c", lane_topology.RELAY_IMPORT + "p.serve_authority_socket()"],
                             namespace="container:" + guard["id"], mounts=[{**socket_volume, "RW": True}])
         binding = {"schema_version": relay_topology.SCHEMA,
                    "layout": {"path": str(layout_path), "sha256": sha256(raw)},
@@ -413,6 +433,7 @@ volumes:
                                   networks={project + "-e2e": lane_networks[project + "-e2e"]})
             namespace = "container:" + policy["id"]
             forwarder = append_actor(project, relay_topology.RELAY, user="65531:65531", cap_add=["NET_BIND_SERVICE"],
+                                     entrypoint=["python", "-I", "-c", lane_topology.RELAY_IMPORT + "p.serve_lane()"],
                                      namespace=namespace, mounts=[{**socket_volume, "RW": False}])
             workers = {}
             for worker in lane_topology.WORKERS:

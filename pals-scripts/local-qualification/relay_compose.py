@@ -14,6 +14,7 @@ from lane_topology import (
     POLICY,
     PROVIDER_PROJECT,
     RELAY,
+    RELAY_IMPORT,
     SHIM,
     SOCKET_MOUNT,
     SOCKET_VOLUME,
@@ -27,9 +28,6 @@ IMAGES = {"api", "worker", "web", "verifier", "postgres", "localstack", "cognito
 BUILD_SOURCES = {"Dockerfile.lane", "lane_guard.py", "provider_relay.py"}
 HEALTH = {"interval": "2s", "timeout": "3s", "retries": 15}
 PROVIDER_READY = "import socket; socket.create_connection(('127.0.0.1',443),2).close()"
-RELAY_IMPORT = (
-    "import sys;sys.path.insert(0,'/opt/pals-local');import provider_relay as p;"
-)
 
 
 class Override:

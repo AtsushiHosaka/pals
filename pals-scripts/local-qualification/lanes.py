@@ -23,7 +23,7 @@ ENDPOINTS = {
         "web": 53000,
         "localstack": 54566,
         "cognito": 59229,
-        "postgres": 55432,
+        "postgres": 55434,
     },
     "standby": {
         "api": 58001,

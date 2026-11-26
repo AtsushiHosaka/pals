@@ -556,7 +556,7 @@ sys.path.insert(0,sys.argv[1])
 from database_readiness import inspect_plus_coupons
 values=dict(line.split('=',1) for line in Path(sys.argv[2]).read_text().splitlines() if line and not line.startswith('#'))
 try:
- result=inspect_plus_coupons(values['PALS_HOST_DATABASE_URL'],Path(sys.argv[3]),sys.argv[4])
+ result=inspect_plus_coupons(values['PALS_HOST_DATABASE_URL'],Path(sys.argv[3]),sys.argv[4],lane=sys.argv[5])
  print(json.dumps({'state':'ready','observation':result},sort_keys=True))
 except ValueError as error:print(json.dumps({'state':'unavailable','code':str(error)}))
 """
@@ -575,6 +575,7 @@ def observe_plus_coupons(subject, environment_file, *, run_=None):
                 str(environment_file),
                 contract["api_source_root"],
                 contract["api_source_revision"],
+                subject.get("local_lane", {}).get("role", "singleton"),
             ]
         )
     )

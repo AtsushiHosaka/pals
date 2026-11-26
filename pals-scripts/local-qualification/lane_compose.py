@@ -14,8 +14,9 @@ SOURCES = (
     "pals-infra/docker-compose.localstack.yml",
     "pals-scripts/local-qualification/compose.override.yml.in",
 )
+SOURCE_SUBNETS = {"e2e": "172.30.0.0/24", "database": "172.30.1.0/24"}
 BRIDGE_SUBNETS = {
-    "primary": {"e2e": "172.30.0.0/24", "database": "172.30.1.0/24"},
+    "primary": {"e2e": "172.30.4.0/24", "database": "172.30.5.0/24"},
     "standby": {"e2e": "172.30.2.0/24", "database": "172.30.3.0/24"},
 }
 PUBLISHED = {
@@ -114,7 +115,7 @@ def validate_sources(base, e2e, infrastructure):
         set(networks) == {"e2e", "database"},
         "local_lane_compose_network_source_changed",
     )
-    for key, subnet in BRIDGE_SUBNETS["primary"].items():
+    for key, subnet in SOURCE_SUBNETS.items():
         value = networks[key]
         need(
             value["driver"] == "bridge"
@@ -142,7 +143,7 @@ def remap_attachments(e2e, role):
             )
             item = config.copy()
             if "ipv4_address" in item:
-                old = IPv4Network(BRIDGE_SUBNETS["primary"][network])
+                old = IPv4Network(SOURCE_SUBNETS[network])
                 new = IPv4Network(BRIDGE_SUBNETS[role][network])
                 address = IPv4Address(item["ipv4_address"])
                 need(

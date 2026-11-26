@@ -17,10 +17,10 @@ from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit
 
 
-LOCAL_HOST_PORT = {"primary": 55432, "standby": 55433}
+LOCAL_HOST_PORT = {"singleton": 55432, "primary": 55434, "standby": 55433}
 
 
-def validate_local_dsn(value, *, service=False, lane="primary"):
+def validate_local_dsn(value, *, service=False, lane="singleton"):
     if lane not in LOCAL_HOST_PORT:
         raise ValueError("closed_local_database_lane_required")
     parts = urlsplit(value)
@@ -39,7 +39,7 @@ def validate_local_dsn(value, *, service=False, lane="primary"):
     return parts
 
 
-def runtime_login_url(value, *, lane="primary"):
+def runtime_login_url(value, *, lane="singleton"):
     parts = validate_local_dsn(value, service=True, lane=lane)
     result = urlunsplit(
         parts._replace(netloc=f"{parts.netloc.rsplit('@', 1)[0]}@127.0.0.1:{LOCAL_HOST_PORT[lane]}")
@@ -399,7 +399,7 @@ def main():
     p.add_argument("--runtime-dir", type=Path, required=True)
     p.add_argument("--api-source", type=Path, required=True)
     p.add_argument("--enable-plus-coupons", action="store_true")
-    p.add_argument("--lane", choices=LOCAL_HOST_PORT)
+    p.add_argument("--lane", choices=("primary", "standby"))
     p.add_argument("--lane-binding", type=Path)
     p.add_argument("--lane-binding-sha256")
     p.add_argument("--lane-candidate-manifest", type=Path)
@@ -410,7 +410,7 @@ def main():
             p.error("the lane, binding, binding SHA-256 and candidate manifest are required together")
         candidate = qualify_lane_postgres(a.runtime_dir, a.lane, a.lane_binding, a.lane_binding_sha256)
         require_lane_migration_source(a.api_source, a.lane_candidate_manifest, candidate)
-    lane = a.lane or "primary"
+    lane = a.lane or "singleton"
     # Unsupported opt-in is refused before imports or any database operation.
     if a.enable_plus_coupons:
         coupon_source_contract(a.api_source)

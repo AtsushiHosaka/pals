@@ -337,12 +337,34 @@ def check_lane_helpers(scope):
 def scoped_docker(scope, *args, timeout=None):
     if scope is None:
         return command(["docker", *args]) if timeout is None else command(["docker", *args], timeout=timeout)
-    environment = {key: value for key, value in os.environ.items() if not key.startswith("DOCKER_")}
     return command(
         ["docker", "--host", "unix://" + scope["docker_socket"], *args],
         timeout=30 if timeout is None else timeout,
-        env=environment,
+        env=clean_docker_environment(),
     )
+
+
+def clean_docker_environment():
+    return {key: value for key, value in os.environ.items() if not key.startswith(("DOCKER_", "BUILDX_"))}
+
+
+def docker_scope_environment(scope):
+    if scope is None:
+        return {}
+    env = clean_docker_environment()
+    name = command(["docker", "context", "show"], env=env).strip()
+    need(re.fullmatch(r"[A-Za-z0-9_.-]+", name), "local_lane_named_docker_context_required")
+    endpoint = command([
+        "docker", "context", "inspect", name, "--format", "{{.Endpoints.docker.Host}}",
+    ], env=env).strip()
+    need(
+        endpoint.startswith("unix://") and Path(endpoint[7:]).resolve(strict=True) == Path(scope["docker_socket"]),
+        "local_lane_build_context_must_use_pinned_docker_socket",
+    )
+    # Buildx selects its history by named context. An anonymous DOCKER_HOST
+    # reaches the same daemon but may present a different Buildx history.
+    env["DOCKER_CONTEXT"] = name
+    return {"env": env}
 
 
 def runtime_name(role, scope):
@@ -353,7 +375,7 @@ def runtime_name(role, scope):
     return scope["lane"]["compose_project"] + "-" + role + "-1"
 
 
-def web_provenance(subject):
+def web_provenance(subject, *, scope=None):
     v = subject["web_variant"]
     publication = file_reference(v["production_publication"])
     archive = file_reference(v["source_archive"])
@@ -402,6 +424,7 @@ def web_provenance(subject):
             str(provenance),
         ],
         timeout=60,
+        **docker_scope_environment(scope),
     )
     return {
         "publication_sha256": sha(publication.read_bytes()),
@@ -472,7 +495,7 @@ VERIFIER_VARIANT_KEYS = {
 }
 
 
-def verifier_provenance(subject):
+def verifier_provenance(subject, *, scope=None):
     v = subject["verifier_variant"]
     need(
         type(v) is dict and set(v) == VERIFIER_VARIANT_KEYS,
@@ -530,6 +553,7 @@ def verifier_provenance(subject):
             str(provenance),
         ],
         timeout=60,
+        **docker_scope_environment(scope),
     )
     return {
         "source_archive_sha256": sha(archive.read_bytes()),
@@ -632,6 +656,11 @@ def budget_status(subject, *, scope=None):
         rollover == subject["guard"].get("budget_rollover"),
         "budget_rollover_differs_from_subject",
     )
+    if scope is not None:
+        need(
+            ledger.get("resumed_from_sha256") == subject["guard"]["resumed_budget"]["sha256"],
+            "local_lane_guard_did_not_resume_the_frozen_budget",
+        )
     return ledger
 
 
@@ -651,7 +680,7 @@ def budget_rollover_evidence(subject, ledger):
     }
 
 
-def database_readiness(subject, environment_file, *, require_frozen=True, lane="primary"):
+def database_readiness(subject, environment_file, *, require_frozen=True, lane="singleton"):
     contract = subject["database_contract"]
     need(
         contract["api_source_revision"] == subject["images"]["api"]["source_revision"],
@@ -960,7 +989,7 @@ def main():
     private_json(state / "latest.json", record)
     try:
         scope = lane_runtime(subject, state, args.database_env)
-        lane = subject.get("local_lane", {}).get("role", "primary")
+        lane = subject.get("local_lane", {}).get("role", "singleton")
         if scope is not None:
             record["local_lane_topology_sha256"] = scope["topology_sha256"]
             if prior:
@@ -968,8 +997,8 @@ def main():
                     prior.get("local_lane_topology_sha256") == scope["topology_sha256"],
                     "existing_capture_local_lane_topology_changed",
                 )
-        record["web_provenance"] = web_provenance(subject)
-        record["verifier_provenance"] = verifier_provenance(subject)
+        record["web_provenance"] = web_provenance(subject, scope=scope)
+        record["verifier_provenance"] = verifier_provenance(subject, scope=scope)
         if scope is not None:
             check_lane_helpers(scope)
         before = runtime(subject, scope=scope)

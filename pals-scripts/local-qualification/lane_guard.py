@@ -7,7 +7,7 @@ import signal
 import subprocess
 from pathlib import Path
 
-LANE_PREFIX = {"primary": "172.30.0", "standby": "172.30.2"}
+LANE_PREFIX = {"primary": "172.30.4", "standby": "172.30.2"}
 READY = Path("/run/guard/ready")
 
 
