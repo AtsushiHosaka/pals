@@ -98,6 +98,23 @@ def qualify_lane_postgres(runtime_directory, lane, binding_path, binding_sha256)
         volumes.add(volume[0]["Mountpoint"])
     if len(volumes) != 2:
         raise ValueError("separate_owned_local_lane_database_volumes_required")
+    return selected["candidate_sha256"]
+
+
+def require_lane_migration_source(api_source, manifest, candidate_sha256):
+    raw = manifest.read_bytes()
+    if hashlib.sha256(raw).hexdigest() != candidate_sha256:
+        raise ValueError("local_lane_migration_manifest_differs")
+    revision = json.loads(raw)["source_commits"]["pals-api"]
+    root = api_source.resolve(strict=True)
+    prefix = ["git", "-C", str(root)]
+    head = subprocess.run([*prefix, "rev-parse", "HEAD"], capture_output=True, text=True, check=True, timeout=10)
+    dirty = subprocess.run(
+        [*prefix, "status", "--porcelain", "--untracked-files=all", "--", "app"],
+        capture_output=True, text=True, check=True, timeout=10,
+    )
+    if head.stdout.strip() != revision or dirty.stdout.strip():
+        raise ValueError("exact_clean_lane_api_migration_source_required")
 
 
 # ``postgres`` exists on every initialised server. The second name is the default
@@ -385,11 +402,14 @@ def main():
     p.add_argument("--lane", choices=LOCAL_HOST_PORT)
     p.add_argument("--lane-binding", type=Path)
     p.add_argument("--lane-binding-sha256")
+    p.add_argument("--lane-candidate-manifest", type=Path)
     a = p.parse_args()
-    if any((a.lane, a.lane_binding, a.lane_binding_sha256)):
-        if not all((a.lane, a.lane_binding, a.lane_binding_sha256)):
-            p.error("--lane, --lane-binding and --lane-binding-sha256 are required together")
-        qualify_lane_postgres(a.runtime_dir, a.lane, a.lane_binding, a.lane_binding_sha256)
+    lane_options = (a.lane, a.lane_binding, a.lane_binding_sha256, a.lane_candidate_manifest)
+    if any(lane_options):
+        if not all(lane_options):
+            p.error("the lane, binding, binding SHA-256 and candidate manifest are required together")
+        candidate = qualify_lane_postgres(a.runtime_dir, a.lane, a.lane_binding, a.lane_binding_sha256)
+        require_lane_migration_source(a.api_source, a.lane_candidate_manifest, candidate)
     lane = a.lane or "primary"
     # Unsupported opt-in is refused before imports or any database operation.
     if a.enable_plus_coupons:

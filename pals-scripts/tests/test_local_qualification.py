@@ -178,13 +178,31 @@ class QualificationLaneLayoutTests(unittest.TestCase):
         with patch.object(runtime_topology, "docker_reader", return_value=read_volume), patch.object(
             runtime_topology, "inventory", return_value=inventory
         ):
-            bootstrap.qualify_lane_postgres(runtime_directory, "standby", path, sha256(raw))
+            self.assertEqual(
+                bootstrap.qualify_lane_postgres(runtime_directory, "standby", path, sha256(raw)),
+                standby["candidate_sha256"],
+            )
             options = {"device": "/some-other-data"}
             with self.assertRaisesRegex(ValueError, "separate_owned_local_lane_database_volumes_required"):
                 bootstrap.qualify_lane_postgres(runtime_directory, "standby", path, sha256(raw))
             row["id"] = "4" * 64
             with self.assertRaisesRegex(ValueError, "local_lane_database_container_differs"):
                 bootstrap.qualify_lane_postgres(runtime_directory, "standby", path, sha256(raw))
+
+    def test_lane_migration_source_must_match_the_bound_candidate_and_be_clean(self):
+        from types import SimpleNamespace
+
+        manifest = self.root / "manifest.json"
+        revision = "d" * 40
+        raw = json.dumps({"source_commits": {"pals-api": revision}}).encode()
+        manifest.write_bytes(raw)
+        with patch.object(bootstrap.subprocess, "run") as run:
+            with self.assertRaisesRegex(ValueError, "local_lane_migration_manifest_differs"):
+                bootstrap.require_lane_migration_source(self.root, manifest, "e" * 64)
+            run.assert_not_called()
+            run.side_effect = [SimpleNamespace(stdout=revision), SimpleNamespace(stdout="?? app/replaced.py")]
+            with self.assertRaisesRegex(ValueError, "exact_clean_lane_api_migration_source_required"):
+                bootstrap.require_lane_migration_source(self.root, manifest, sha256(raw))
 
     def docker_rows(self):
         rows = []
