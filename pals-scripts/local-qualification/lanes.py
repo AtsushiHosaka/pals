@@ -9,7 +9,6 @@ import json
 import os
 import re
 import stat
-import subprocess
 import sys
 from pathlib import Path
 
@@ -17,6 +16,7 @@ SCHEMA = "pals.local-qualification-lanes.v1"
 HASH = re.compile(r"[a-f0-9]{64}\Z")
 PREFIX = "pals-reliability-local"
 GUARD = PREFIX + "-shared-guard-1"
+RELAY_REQUIRED = "dual_lane_guard_relay_required"
 ENDPOINTS = {
     "primary": {
         "api": 58000,
@@ -185,7 +185,9 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binding", type=Path, required=True)
     parser.add_argument("--binding-sha256", required=True)
-    parser.add_argument("--verify-topology", action="store_true")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--verify-topology", action="store_true")
+    mode.add_argument("--render-network-layout", type=Path, metavar="COMPOSE_ROOT")
     args = parser.parse_args(argv)
     output = {
         "status": "validated_layout",
@@ -195,9 +197,13 @@ def main(argv=None):
     try:
         document = read(args.binding, args.binding_sha256)
         if args.verify_topology:
-            from lane_topology import verify
+            # Both pinned reviewer entrypoints bind :18119. The old single shared
+            # namespace model cannot run them, even if container metadata matches.
+            raise ValueError(RELAY_REQUIRED)
+        if args.render_network_layout is not None:
+            from lane_compose import render
 
-            output.update(status="verified_topology", topology_sha256=verify(document))
+            output.update(render(document, args.render_network_layout))
     except (
         OSError,
         ValueError,
@@ -205,7 +211,6 @@ def main(argv=None):
         KeyError,
         TypeError,
         AttributeError,
-        subprocess.TimeoutExpired,
     ) as error:
         code = (
             str(error)

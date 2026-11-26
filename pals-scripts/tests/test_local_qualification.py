@@ -53,6 +53,7 @@ native = load("local_verifier_build_test", ROOT / "local-verifier-build.py")
 archives = load("local_verifier_archives_test", ROOT / "local-verifier-archives.py")
 lanes = load("local_qualification_lanes_test", ROOT / "local-qualification/lanes.py")
 lane_topology = load("local_qualification_topology_test", ROOT / "local-qualification/lane_topology.py")
+lane_compose = load("local_qualification_compose_layout_test", ROOT / "local-qualification/lane_compose.py")
 INFRA = ROOT.parent / "pals-infra" / "scripts"
 INFRA_REASON = (
     "pals-infra submodule is not initialised: the real release-plan validators were "
@@ -201,9 +202,62 @@ class QualificationLaneLayoutTests(unittest.TestCase):
         path.chmod(0o600)
         with patch("lane_topology.verify", side_effect=lambda doc: lane_topology.verify(doc, run=run)), \
                 patch("sys.stdout", new_callable=io.StringIO) as output:
-            self.assertEqual(lanes.main(["--binding", str(path), "--binding-sha256", sha256(raw), "--verify-topology"]), 0)
-        self.assertEqual(json.loads(output.getvalue())["status"], "verified_topology")
-        self.assertIs(json.loads(output.getvalue())["runtime_verified"], False)
+            self.assertEqual(lanes.main(["--binding", str(path), "--binding-sha256", sha256(raw), "--verify-topology"]), 2)
+        self.assertEqual(json.loads(output.getvalue()), {
+            "status": "refused", "code": "dual_lane_guard_relay_required",
+        })
+        self.assertEqual(calls, ["ps", "inspect", "top", "ps", "inspect"])
+
+    @unittest.skipUnless(importlib.util.find_spec("yaml"), "optional layout renderer needs PyYAML")
+    def test_compose_layout_is_disjoint_and_nonlaunchable(self):
+        root = self.root / "checkout"
+        for relative in lane_compose.SOURCES:
+            target = root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            original = ROOT.parent / relative
+            if original.is_file():
+                shutil.copyfile(original, target)
+            else:
+                self.assertEqual(relative, "pals-infra/docker-compose.localstack.yml")
+                target.write_text("""services:
+  localstack:
+    volumes: [localstack-data:/var/lib/localstack]
+  cognito-local:
+    volumes: [cognito-local-data:/app/.cognito]
+volumes:
+  localstack-data:
+  cognito-local-data:
+""")
+        path = self.root / "binding.json"
+        raw = json.dumps(self.document).encode()
+        path.write_bytes(raw)
+        path.chmod(0o600)
+        with patch("sys.stdout", new_callable=io.StringIO) as output:
+            self.assertEqual(lanes.main(["--binding", str(path), "--binding-sha256", sha256(raw),
+                                         "--render-network-layout", str(root)]), 0)
+        result = json.loads(output.getvalue())
+        self.assertEqual(result["status"], "validated_network_layout")
+        self.assertIs(result["launchable"], False)
+        self.assertIs(result["runtime_verified"], False)
+        self.assertNotIn("services", result)
+        self.assertEqual(set(result["compose_sources"]), set(lane_compose.SOURCES))
+        primary, standby = (result["x-pals-network-layout"][role] for role in ("primary", "standby"))
+        for lane, third_octet, pg_port in ((primary, 0, 55432), (standby, 2, 55433)):
+            services = lane["services"]
+            self.assertEqual(services["postgres"]["ports"], [{"host_ip": "127.0.0.1", "target": 5432,
+                                                               "published": str(pg_port), "protocol": "tcp"}])
+            self.assertEqual(services["reconciler"]["environment"]["PALS_RECONCILER_TRIGGER_ALLOWED_PEER_IP"],
+                             f"172.30.{third_octet}.20")
+            self.assertEqual(services["postgres"]["networks"]["database"]["ipv4_address"], f"172.30.{third_octet + 1}.2")
+            self.assertNotIn("recipe-reviewer", services)
+            self.assertTrue(all("image" not in service for service in services.values()))
+        self.assertNotEqual(primary["networks"], standby["networks"])
+        self.assertNotEqual(primary["volumes"], standby["volumes"])
+
+        changed = root / "docker-compose.e2e.yml"
+        changed.write_text(changed.read_text().replace("172.30.0.20\n", "172.30.0.99\n", 1))
+        with self.assertRaisesRegex(ValueError, "local_lane_reconciler_peer_source_changed"):
+            lane_compose.render(self.document, root)
 
     def test_topology_refuses_drift_in_process_pg_identity_network_port_and_worker_namespace(self):
         for role, key, value, error in (
