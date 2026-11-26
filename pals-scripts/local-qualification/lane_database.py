@@ -93,8 +93,13 @@ def verify_databases(document, run, rows):
         active(actual, postgres=True)
         need(actual["health"] == "healthy", "healthy_lane_database_required")
         port_map(actual, {"5432/tcp": [{"HostIp": database["host"], "HostPort": str(database["host_port"])}]})
+        name = f"{project}-postgres-data"
         for row in rows.values():
-            if not row["running"] or row["id"] == actual["id"]:
+            if row["id"] == actual["id"]:
+                continue
+            need(not any(mount.get("Name") == name for mount in row.get("mounts") or []),
+                 "lane_database_volume_in_use_elsewhere")
+            if not row["running"]:
                 continue
             labels = row["labels"] or {}
             need(
@@ -102,7 +107,6 @@ def verify_databases(document, run, rows):
                 and (labels.get(PROJECT) != project or labels.get(SERVICE) not in PRODUCERS),
                 "local_lane_database_producers_must_be_stopped",
             )
-        name = f"{project}-postgres-data"
         data = [mount for mount in actual["mounts"] or []
                 if mount["Destination"] == "/var/lib/postgresql/data"]
         need(

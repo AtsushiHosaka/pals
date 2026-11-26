@@ -499,7 +499,8 @@ def migrate_database(a, lane, *, local=None, begin=None):
     if begin is not None:
         # A fresh dependency has already created /pals. Confirm the exact lane
         # identity through a read-only query before maintenance opens or writes.
-        with psycopg.connect(url) as c:
+        with psycopg.connect(url, connect_timeout=5,
+                             options="-c default_transaction_read_only=on -c statement_timeout=5000") as c:
             identity = c.execute(
                 "SELECT current_database(), current_user, "
                 "current_setting('server_version_num')::int / 10000, "

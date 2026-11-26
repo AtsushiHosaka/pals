@@ -101,6 +101,12 @@ class DatabaseLaneTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "owned_lane_database_volume_required"):
             subject.verify_databases(self.descriptor, self.inspect_volume, self.rows)
 
+    def test_refuses_volume_attached_to_another_container_even_when_stopped(self):
+        project = self.descriptor["lanes"]["primary"]["compose_project"]
+        foreign = {"id": "d" * 64, "running": False, "mounts": [{"Name": project + "-postgres-data"}]}
+        with self.assertRaisesRegex(ValueError, "lane_database_volume_in_use_elsewhere"):
+            subject.verify_databases(self.descriptor, self.inspect_volume, {**self.rows, "/other": foreign})
+
     def test_one_interrupted_lane_never_restarts_partially_written_schema_or_changes_peer(self):
         def state(role):
             selected = self.descriptor["lanes"][role]
