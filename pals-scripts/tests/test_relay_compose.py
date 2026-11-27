@@ -148,3 +148,24 @@ volumes:
             self.assertRaisesRegex(ValueError, "relay_compose_reference_hash_changed"),
         ):
             relay.render(self.document, self.compose_root)
+
+    def test_health_probes_obey_the_lane_egress_policy_and_stay_sparse(self):
+        """Each probe ran as a uid that lane_guard rejects, so no lane could ever become healthy."""
+        manifest = relay.render(self.document, self.compose_root)
+        provider = lane_compose.read_yaml(manifest["provider_compose_yaml"])
+        for service in provider["services"].values():
+            # Guard and shim: one python probe process every 30 s at most, once started.
+            self.assertEqual(service["healthcheck"]["interval"], "30s")
+        for role, lane in manifest["lanes"].items():
+            overlay = lane_compose.read_yaml(lane["relay_overlay_yaml"])
+            forwarder = overlay["services"][relay.RELAY]
+            probe = " ".join(forwarder["healthcheck"]["test"])
+            # lane_guard rejects every new connection by uid 65531, so the relay must not connect.
+            self.assertNotIn("create_connection", probe)
+            self.assertIn("/proc/net/tcp", probe)
+            self.assertEqual(forwarder["healthcheck"]["interval"], "30s")
+            reviewer = " ".join(overlay["services"]["recipe-reviewer"]["healthcheck"]["test"])
+            prefix = lane_compose.BRIDGE_SUBNETS[role]["e2e"].rsplit(".", 1)[0]
+            # uid 65532 may reach 127.0.0.1:443 and the lane's own .30:18119 only.
+            self.assertIn(f"('{prefix}.30',18119)", reviewer)
+            self.assertNotIn("127.0.0.1", reviewer)
