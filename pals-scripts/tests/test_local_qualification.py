@@ -51,11 +51,470 @@ provider_tls = load(
 )
 native = load("local_verifier_build_test", ROOT / "local-verifier-build.py")
 archives = load("local_verifier_archives_test", ROOT / "local-verifier-archives.py")
+lanes = load("local_qualification_lanes_test", ROOT / "local-qualification/lanes.py")
+lane_topology = load("local_qualification_topology_test", ROOT / "local-qualification/lane_topology.py")
+relay_topology = load("local_qualification_relay_topology_test", ROOT / "local-qualification/relay_topology.py")
+lane_compose = load("local_qualification_compose_layout_test", ROOT / "local-qualification/lane_compose.py")
 INFRA = ROOT.parent / "pals-infra" / "scripts"
 INFRA_REASON = (
     "pals-infra submodule is not initialised: the real release-plan validators were "
     "NOT exercised (the self-contained contract tests still pin key set and archives)"
 )
+
+
+class QualificationLaneLayoutTests(unittest.TestCase):
+    def setUp(self):
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        self.root = Path(temp.name)
+        self.document = {
+            "schema_version": lanes.SCHEMA,
+            "docker_socket": str(self.root / "docker.sock"),
+            "guard": {
+                "name": lanes.GUARD, "container_id": "7" * 64,
+                "image_id": "sha256:" + "8" * 64,
+                "ledger_directory": str(self.root / "budget"),
+            },
+            "lanes": {},
+        }
+        for role, candidate, database, ports in (
+            ("primary", "a", "1", [58000, 53000, 54566, 59229, 55434]),
+            ("standby", "b", "2", [58001, 53001, 54567, 59230, 55433]),
+        ):
+            project = f"pals-reliability-local-{role}"
+            self.document["lanes"][role] = {
+                "candidate_sha256": candidate * 64, "compose_project": project,
+                "runtime_directory": str(self.root / f"runtime-{role}"),
+                "capture_directory": str(self.root / f"capture-{role}"),
+                "http_ports": dict(zip(("api", "web", "localstack", "cognito"), ports[:4])),
+                "postgres": {"name": f"{project}-postgres-1", "container_id": database * 64,
+                             "host": "127.0.0.1", "host_port": ports[4], "database": "pals"},
+            }
+
+    def test_exact_pair_is_accepted_as_layout_only(self):
+        raw = json.dumps(self.document).encode()
+        path = self.root / "lane-binding.json"
+        path.write_bytes(raw)
+        path.chmod(0o600)
+        self.assertEqual(lanes.read(path, sha256(raw)), self.document)
+        with self.assertRaisesRegex(ValueError, "local_lane_binding_hash_changed"):
+            lanes.read(path, "0" * 64)
+        with patch("sys.stdout", new_callable=io.StringIO) as output:
+            self.assertEqual(lanes.main(["--binding", str(path), "--binding-sha256", sha256(raw)]), 0)
+        self.assertEqual(json.loads(output.getvalue()), {
+            "status": "validated_layout", "binding_sha256": sha256(raw), "runtime_verified": False,
+        })
+        self.assertEqual(list(self.root.iterdir()), [path])
+
+    def test_rejects_shared_candidate_database_or_nested_directory(self):
+        primary = self.document["lanes"]["primary"]
+        standby = self.document["lanes"]["standby"]
+        for target, key, value, code in (
+            (standby, "candidate_sha256", primary["candidate_sha256"], "local_lane_identities_overlap"),
+            (standby["postgres"], "container_id", self.document["guard"]["container_id"], "local_lane_identities_overlap"),
+            (standby, "capture_directory", primary["runtime_directory"] + "/nested", "local_lane_directories_overlap"),
+            (standby["postgres"], "host", "10.0.0.25", "local_lane_postgres_invalid"),
+            (standby["http_ports"], "api", 58000, "local_lane_loopback_ports_differ"),
+            (standby["http_ports"], "api", 58001.0, "local_lane_loopback_ports_differ"),
+        ):
+            with self.subTest(key=key, value=value), patch.dict(target, {key: value}):
+                with self.assertRaisesRegex(ValueError, code):
+                    lanes.validate(self.document)
+        standby["guard"] = self.document["guard"]
+        with self.assertRaisesRegex(ValueError, "local_lane_identity_invalid"):
+            lanes.validate(self.document)
+
+    def test_legacy_singleton_web_and_database_profile_remains_exact(self):
+        self.assertEqual(builder.LOCAL_ARGS["NEXT_PUBLIC_PALS_API_BASE_URL"], "http://localhost:58000")
+        self.assertEqual(builder.LOCAL_ARGS["NEXT_PUBLIC_COGNITO_REDIRECT_URI"], "http://localhost:53000")
+        self.assertEqual(bootstrap.validate_local_dsn("postgresql://sample:sample@localhost:55432/pals").port, 55432)
+        self.assertEqual(bootstrap.validate_local_dsn("postgresql://sample:sample@localhost:55434/pals", lane="primary").port, 55434)
+        with self.assertRaisesRegex(ValueError, "closed_local_database_uri_required"):
+            bootstrap.validate_local_dsn("postgresql://sample:sample@localhost:55433/pals")
+
+    def test_standby_database_profile_refuses_primary_and_external_endpoints(self):
+        expected = "postgresql://sample:sample@127.0.0.1:55433/pals"
+        self.assertEqual(bootstrap.validate_local_dsn(expected, lane="standby").port, 55433)
+        self.assertEqual(
+            bootstrap.runtime_login_url("postgresql://sample:sample@postgres:5432/pals", lane="standby"),
+            expected,
+        )
+        for host, port in (("127.0.0.1", 55432), ("remote.invalid", 55433), ("postgres", 5432)):
+            with self.subTest(host=host, port=port):
+                with self.assertRaisesRegex(ValueError, "closed_local_database_uri_required"):
+                    bootstrap.validate_local_dsn(f"postgresql://sample:sample@{host}:{port}/pals", lane="standby")
+
+    def test_build_receipt_context_must_resolve_to_the_same_docker_socket(self):
+        pinned = self.root.resolve() / "orb.sock"
+        pinned.touch()
+        other = pinned.with_name("other.sock")
+        other.touch()
+        scope = {"docker_socket": str(pinned)}
+        with patch.dict(os.environ, {"DOCKER_HOST": "tcp://external.invalid", "BUILDX_BUILDER": "unexpected"}), patch.object(
+            gate, "command", side_effect=["orbstack\n", "unix://" + str(pinned)]
+        ) as run:
+            environment = gate.docker_scope_environment(scope)["env"]
+            self.assertEqual(environment["DOCKER_CONTEXT"], "orbstack")
+            self.assertNotIn("DOCKER_HOST", environment)
+            self.assertNotIn("BUILDX_BUILDER", environment)
+            self.assertIn("orbstack", run.call_args.args[0])
+        with patch.object(gate, "command", side_effect=["unexpected", "unix://" + str(other)]):
+            with self.assertRaisesRegex(gate.Refusal, "local_lane_build_context_must_use_pinned_docker_socket"):
+                gate.docker_scope_environment(scope)
+
+    def test_lane_migration_identifies_distinct_owned_postgres_before_connecting(self):
+        import lane_topology as runtime_topology
+
+        for lane in self.document["lanes"].values():
+            lane["runtime_directory"] = str(Path(lane["runtime_directory"]).resolve())
+        path = self.root / "lane-binding.json"
+        raw = json.dumps(self.document).encode()
+        path.write_bytes(raw)
+        path.chmod(0o600)
+        inventory = {}
+        for lane in self.document["lanes"].values():
+            project, postgres = lane["compose_project"], lane["postgres"]
+            volume = project + "-postgres-data"
+            inventory["/" + postgres["name"]] = {
+                "id": postgres["container_id"], "labels": {"codex.owner": gate.OWNER,
+                    "com.docker.compose.project": project, "com.docker.compose.service": "postgres"},
+                "privileged": False, "networks": {project + "-database": {}},
+                "ports": {"5432/tcp": [{"HostIp": "127.0.0.1", "HostPort": str(postgres["host_port"])}]},
+                "mounts": [{"Type": "volume", "Name": volume, "RW": True,
+                    "Source": "/data/" + volume, "Destination": "/var/lib/postgresql/data"}],
+                "running": True, "health": "healthy", "image": "sha256:" + "9" * 64,
+                "started_at": "2026-11-26T12:00:00Z", "pid": 10,
+            }
+        standby = self.document["lanes"]["standby"]
+        runtime_directory = Path(standby["runtime_directory"])
+        row = inventory["/" + standby["postgres"]["name"]]
+        options = None
+
+        def read_volume(*args):
+            name = args[-1]
+            return json.dumps([{"Name": name, "Mountpoint": "/data/" + name, "Driver": "local", "Options": options}])
+
+        with patch.object(runtime_topology, "docker_reader", return_value=read_volume), patch.object(
+            runtime_topology, "inventory", return_value=inventory
+        ):
+            self.assertEqual(
+                bootstrap.qualify_lane_postgres(runtime_directory, "standby", path, sha256(raw)),
+                standby["candidate_sha256"],
+            )
+            options = {"device": "/some-other-data"}
+            with self.assertRaisesRegex(ValueError, "separate_owned_local_lane_database_volumes_required"):
+                bootstrap.qualify_lane_postgres(runtime_directory, "standby", path, sha256(raw))
+            row["id"] = "4" * 64
+            with self.assertRaisesRegex(ValueError, "local_lane_database_container_differs"):
+                bootstrap.qualify_lane_postgres(runtime_directory, "standby", path, sha256(raw))
+
+    def test_lane_migration_source_must_match_the_bound_candidate_and_be_clean(self):
+        from types import SimpleNamespace
+
+        manifest = self.root / "manifest.json"
+        revision = "d" * 40
+        raw = json.dumps({"source_commits": {"pals-api": revision}}).encode()
+        manifest.write_bytes(raw)
+        with patch.object(bootstrap.subprocess, "run") as run:
+            with self.assertRaisesRegex(ValueError, "local_lane_migration_manifest_differs"):
+                bootstrap.require_lane_migration_source(self.root, manifest, "e" * 64)
+            run.assert_not_called()
+            run.side_effect = [SimpleNamespace(stdout=revision), SimpleNamespace(stdout="?? app/replaced.py")]
+            with self.assertRaisesRegex(ValueError, "exact_clean_lane_api_migration_source_required"):
+                bootstrap.require_lane_migration_source(self.root, manifest, sha256(raw))
+
+    def docker_rows(self):
+        rows = []
+        guard = self.document["guard"]
+
+        def row(name, container_id, project="shared", role="guard"):
+            return {
+                "name": "/" + name, "id": container_id, "image": "sha256:" + "9" * 64,
+                "labels": {"codex.owner": gate.OWNER, "com.docker.compose.project": project,
+                           "com.docker.compose.service": role},
+                "entrypoint": None, "cmd": None, "user": "65532:65532", "namespace": "bridge",
+                "privileged": False, "cap_add": None, "cap_drop": ["ALL"], "read_only": True,
+                "mounts": [], "ports": {}, "networks": {}, "running": True, "health": "healthy",
+                "pid": 100 + len(rows), "started_at": "2026-11-27T12:00:00.000000000Z",
+            }
+
+        control = row(guard["name"], guard["container_id"])
+        control.update(image=guard["image_id"], entrypoint=["python", "/opt/pals-local/guard.py"],
+                       user="0:0", cap_add=["CAP_NET_ADMIN", "CAP_NET_BIND_SERVICE"],
+                       mounts=[{"Type": "bind", "Source": guard["ledger_directory"],
+                                "Destination": "/run/budget", "RW": True}])
+        rows.append(control)
+        for index, (name, lane) in enumerate(self.document["lanes"].items(), start=1):
+            project = lane["compose_project"]
+            e2e = {project + "-e2e": {"NetworkID": f"{index:064x}"}}
+            database = {project + "-database": {"NetworkID": f"{index + 2:064x}"}}
+            control["networks"].update(e2e)
+            for role in sorted(lane_topology.ROLES):
+                current = row(f"{project}-{role}-1", f"{len(rows) + 100:064x}", project, role)
+                if role in lane_topology.WORKERS:
+                    current["namespace"] = "container:" + guard["container_id"]
+                elif role == "postgres":
+                    current.update(id=lane["postgres"]["container_id"], networks=database, health=None,
+                                   mounts=[{"Type": "volume", "Source": str(self.root / f"postgres-{name}"),
+                                            "Destination": "/var/lib/postgresql/data", "RW": True}])
+                else:
+                    current["networks"] = {**e2e, **(database if role in {"api", "reconciler"} else {})}
+                if role in lane_topology.PORTS:
+                    kind, internal = lane_topology.PORTS[role]
+                    current["ports"] = {internal: [{"HostIp": "127.0.0.1", "HostPort": str(lanes.ENDPOINTS[name][kind])}]}
+                rows.append(current)
+        return rows
+
+    def fixture_docker(self, rows, *, top_extra="", changed_after_top=False):
+        calls = []
+
+        def run(*args):
+            calls.append(args[0])
+            if args[0] == "ps":
+                self.assertEqual(args, ("ps", "--all", "--quiet", "--no-trunc"))
+                return "\n".join(row["id"] for row in rows)
+            if args[0] == "inspect":
+                self.assertEqual(args[1:4], ("--type", "container", "--format"))
+                self.assertNotIn("{{json .Config.Env}}", args[4])
+                actual = rows
+                if changed_after_top and "top" in calls:
+                    actual = [{**rows[0], "pid": 888}, *rows[1:]]
+                return "\n".join(json.dumps(row) for row in actual)
+            actor = next(row for row in rows if row["id"] == args[1])
+            self.assertEqual(args, ("top", actor["id"], "-eo", "pid,comm"))
+            return f"PID COMMAND\n{actor['pid']} python\n" + top_extra
+
+        return calls, run
+
+    def test_topology_reads_both_live_lanes_without_process_or_config_mutation(self):
+        calls, run = self.fixture_docker(self.docker_rows())
+        self.assertRegex(lane_topology.verify(self.document, run=run), r"^[a-f0-9]{64}$")
+        self.assertEqual(calls, ["ps", "inspect", "top", "ps", "inspect"])
+        path = self.root / "binding.json"
+        raw = json.dumps(self.document).encode()
+        path.write_bytes(raw)
+        path.chmod(0o600)
+        with patch("lane_topology.verify", side_effect=lambda doc: lane_topology.verify(doc, run=run)), \
+                patch("sys.stdout", new_callable=io.StringIO) as output:
+            self.assertEqual(lanes.main(["--binding", str(path), "--binding-sha256", sha256(raw), "--verify-topology"]), 2)
+        self.assertEqual(json.loads(output.getvalue()), {
+            "status": "refused", "code": "dual_lane_guard_relay_required",
+        })
+        self.assertEqual(calls, ["ps", "inspect", "top", "ps", "inspect"])
+
+    @unittest.skipUnless(importlib.util.find_spec("yaml"), "optional layout renderer needs PyYAML")
+    def test_compose_layout_is_disjoint_and_nonlaunchable(self):
+        root = self.root / "checkout"
+        for relative in lane_compose.SOURCES:
+            target = root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            original = ROOT.parent / relative
+            if original.is_file():
+                shutil.copyfile(original, target)
+            else:
+                self.assertEqual(relative, "pals-infra/docker-compose.localstack.yml")
+                target.write_text("""services:
+  localstack:
+    volumes: [localstack-data:/var/lib/localstack]
+  cognito-local:
+    volumes: [cognito-local-data:/app/.cognito]
+volumes:
+  localstack-data:
+  cognito-local-data:
+""")
+        path = self.root / "binding.json"
+        raw = json.dumps(self.document).encode()
+        path.write_bytes(raw)
+        path.chmod(0o600)
+        with patch("sys.stdout", new_callable=io.StringIO) as output:
+            self.assertEqual(lanes.main(["--binding", str(path), "--binding-sha256", sha256(raw),
+                                         "--render-network-layout", str(root)]), 0)
+        result = json.loads(output.getvalue())
+        self.assertEqual(result["status"], "validated_network_layout")
+        self.assertIs(result["launchable"], False)
+        self.assertIs(result["runtime_verified"], False)
+        self.assertNotIn("services", result)
+        self.assertEqual(set(result["compose_sources"]), set(lane_compose.SOURCES))
+        primary, standby = (result["x-pals-network-layout"][role] for role in ("primary", "standby"))
+        for lane, third_octet, pg_port in ((primary, 4, 55434), (standby, 2, 55433)):
+            services = lane["services"]
+            self.assertEqual(services["postgres"]["ports"], [{"host_ip": "127.0.0.1", "target": 5432,
+                                                               "published": str(pg_port), "protocol": "tcp"}])
+            self.assertEqual(services["reconciler"]["environment"]["PALS_RECONCILER_TRIGGER_ALLOWED_PEER_IP"],
+                             f"172.30.{third_octet}.20")
+            self.assertEqual(services["postgres"]["networks"]["database"]["ipv4_address"], f"172.30.{third_octet + 1}.2")
+            self.assertNotIn("recipe-reviewer", services)
+            self.assertTrue(all("image" not in service for service in services.values()))
+        self.assertNotEqual(primary["networks"], standby["networks"])
+        self.assertNotEqual(primary["volumes"], standby["volumes"])
+
+        changed = root / "docker-compose.e2e.yml"
+        changed.write_text(changed.read_text().replace("172.30.0.20\n", "172.30.0.99\n", 1))
+        with self.assertRaisesRegex(ValueError, "local_lane_reconciler_peer_source_changed"):
+            lane_compose.render(self.document, root)
+
+    def test_topology_refuses_drift_in_process_pg_identity_network_port_and_worker_namespace(self):
+        for role, key, value, error in (
+            ("worker", "namespace", "bridge", "worker_shared_guard_namespace_required"),
+            ("webfront", "ports", {"3000/tcp": [{"HostIp": "0.0.0.0", "HostPort": "53000"}]}, "local_lane_loopback_binding_differs"),
+            ("postgres", "id", "d" * 64, "local_lane_postgres_identity_differs"),
+            ("reconciler", "networks", {}, "local_lane_network_membership_differs"),
+        ):
+            with self.subTest(role=role, key=key):
+                rows = self.docker_rows()
+                target = next(row for row in rows if row["name"] == f"/pals-reliability-local-primary-{role}-1")
+                target[key] = value
+                _, run = self.fixture_docker(rows)
+                with self.assertRaisesRegex(ValueError, error):
+                    lane_topology.verify(self.document, run=run)
+        _, run = self.fixture_docker(self.docker_rows(), top_extra="599 python\n")
+        with self.assertRaisesRegex(ValueError, "one_shared_guard_process_required"):
+            lane_topology.verify(self.document, run=run)
+        _, run = self.fixture_docker(self.docker_rows(), changed_after_top=True)
+        with self.assertRaisesRegex(ValueError, "local_lane_topology_changed_during_read"):
+            lane_topology.verify(self.document, run=run)
+
+    def test_topology_refuses_second_budget_writer_and_same_pgdata(self):
+        rows = self.docker_rows()
+        rows.append({**rows[0], "name": "/foreign", "id": "e" * 64})
+        _, run = self.fixture_docker(rows)
+        with self.assertRaisesRegex(ValueError, "shared_budget_writer_mount_differs"):
+            lane_topology.verify(self.document, run=run)
+        rows[-1]["mounts"] = []
+        with self.assertRaisesRegex(ValueError, "foreign_container_in_local_lane_boundary"):
+            lane_topology.verify(self.document, run=run)
+        rows = self.docker_rows()
+        primary, standby = (row for row in rows if row["labels"]["com.docker.compose.service"] == "postgres")
+        standby["mounts"] = primary["mounts"]
+        _, run = self.fixture_docker(rows)
+        with self.assertRaisesRegex(ValueError, "local_lane_data_mounts_overlap"):
+            lane_topology.verify(self.document, run=run)
+
+    def relay_rows(self):
+        rows = self.docker_rows()
+        guard = rows[0]
+        guard["labels"]["com.docker.compose.project"] = relay_topology.PROVIDER_PROJECT
+        guard["labels"]["com.docker.compose.service"] = "worker-network-guard"
+        lane_networks = guard["networks"]
+        guard["networks"] = {relay_topology.PROVIDER_PROJECT: {"NetworkID": "f" * 64}}
+        layout_path = self.root / "layout.json"
+        raw = json.dumps(self.document).encode()
+        layout_path.write_bytes(raw)
+        layout_path.chmod(0o600)
+        socket_volume = {"Type": "volume", "Name": relay_topology.SOCKET_VOLUME,
+                         "Source": str(self.root / "guest-socket-volume"), "Destination": relay_topology.SOCKET_MOUNT}
+
+        def actor_pin(row):
+            return {"container_id": row["id"], "image_id": row["image"],
+                    "command_sha256": lane_topology.command_sha256(row)}
+
+        def append_actor(project, role, **overrides):
+            identifier = len(rows) + 200
+            row = {**guard, "name": f"/{project}-{role}-1", "id": f"{identifier:064x}", "pid": identifier,
+                   "labels": {"codex.owner": gate.OWNER, "com.docker.compose.project": project,
+                              "com.docker.compose.service": role},
+                   "mounts": [], "networks": {}, "namespace": "bridge", "cap_add": None,
+                   "security_opts": ["no-new-privileges:true"], "authority_env": False}
+            row.update(overrides)
+            rows.append(row)
+            return row
+
+        shim = append_actor(relay_topology.PROVIDER_PROJECT, relay_topology.SHIM, user="0:65531",
+                            entrypoint=["python", "-I", "-c", lane_topology.RELAY_IMPORT + "p.serve_authority_socket()"],
+                            namespace="container:" + guard["id"], mounts=[{**socket_volume, "RW": True}])
+        binding = {"schema_version": relay_topology.SCHEMA,
+                   "layout": {"path": str(layout_path), "sha256": sha256(raw)},
+                   "authority_shim": actor_pin(shim), "lanes": {}}
+        for name, lane in self.document["lanes"].items():
+            project = lane["compose_project"]
+            policy = append_actor(project, relay_topology.POLICY, user="0:0", cap_add=["NET_ADMIN"],
+                                  entrypoint=["python", "/opt/pals-local/lane_guard.py"],
+                                  cmd=[name],
+                                  networks={project + "-e2e": lane_networks[project + "-e2e"]})
+            namespace = "container:" + policy["id"]
+            forwarder = append_actor(project, relay_topology.RELAY, user="65531:65531", cap_add=["NET_BIND_SERVICE"],
+                                     entrypoint=["python", "-I", "-c", lane_topology.RELAY_IMPORT + "p.serve_lane()"],
+                                     namespace=namespace, mounts=[{**socket_volume, "RW": False}])
+            workers = {}
+            for worker in lane_topology.WORKERS:
+                row = next(item for item in rows if item["name"] == f"/{project}-{worker}-1")
+                row.update(namespace=namespace, security_opts=["no-new-privileges"])
+                workers[worker] = actor_pin(row)
+            binding["lanes"][name] = {"policy": actor_pin(policy), "relay": actor_pin(forwarder), "workers": workers}
+        return rows, binding
+
+    def test_frozen_relay_binding_and_readback_are_topology_only(self):
+        rows, binding = self.relay_rows()
+        raw = json.dumps(binding).encode()
+        path = self.root / "relay-topology.json"
+        path.write_bytes(raw)
+        path.chmod(0o600)
+        self.assertEqual(relay_topology.read(path, sha256(raw)), binding)
+        calls, run = self.fixture_docker(rows)
+        with patch("relay_topology.verify", side_effect=lambda doc: relay_topology.verify(doc, run=run)), \
+                patch("sys.stdout", new_callable=io.StringIO) as output:
+            code = lanes.main(["--binding", str(path), "--binding-sha256", sha256(raw), "--verify-relay-topology"])
+        self.assertEqual(code, 0, output.getvalue())
+        check = json.loads(output.getvalue())
+        self.assertRegex(check["topology_sha256"], r"^[0-9a-f]{64}$")
+        self.assertEqual(check["status"], "verified_relay_topology")
+        self.assertIs(check["runtime_verified"], False)
+        self.assertEqual(calls, ["ps", "inspect", "top", "top", "top", "top", "ps", "inspect"])
+        layout = Path(binding["layout"]["path"])
+        layout.write_bytes(layout.read_bytes() + b"\n")
+        with self.assertRaisesRegex(ValueError, "local_lane_binding_hash_changed"):
+            relay_topology.read(path, sha256(raw))
+
+    def test_retired_legacy_guard_can_remain_only_with_an_obsolete_startup_pin(self):
+        rows, binding = self.relay_rows()
+        guard = rows[0]
+        guard["budget_resume_sha256"] = "f" * 64
+        legacy = {**guard, "name": lane_topology.LEGACY_GUARD, "id": "e" * 64, "pid": 0,
+                  "running": False, "status": "exited", "restart_policy": "unless-stopped", "networks": {},
+                  "budget_resume_sha256": "d" * 64, "labels": {**guard["labels"],
+                  "com.docker.compose.project": "pals-reliability-local"}}
+        rows.append(legacy)
+        _, run = self.fixture_docker(rows)
+        relay_topology.verify(binding, run=run)
+        legacy["budget_resume_sha256"] = guard["budget_resume_sha256"]
+        with self.assertRaisesRegex(ValueError, "shared_budget_writer_mount_differs"):
+            relay_topology.verify(binding, run=run)
+        legacy["running"] = True
+        with self.assertRaisesRegex(ValueError, "another_local_provider_guard_is_running"):
+            relay_topology.verify(binding, run=run)
+
+    def test_relay_binding_refuses_cross_lane_namespaces_and_unsafe_helpers(self):
+        for actor, variant, code in (
+            (relay_topology.RELAY, {"namespace": "container:" + "1" * 64}, "local_relay_network_namespace_differs"),
+            ("worker", {"namespace": "container:" + "1" * 64}, "local_relay_network_namespace_differs"),
+            (relay_topology.RELAY, {"authority_env": True}, "local_relay_actor_authority_environment_present"),
+            (relay_topology.POLICY, {"cap_add": ["NET_ADMIN", "NET_BIND_SERVICE"]}, "local_relay_actor_binding_differs"),
+            (relay_topology.POLICY, {"security_opts": ["no-new-privileges", "seccomp=unconfined"]}, "local_relay_actor_binding_differs"),
+            (relay_topology.POLICY, {"ports": {"443/tcp": [{"HostIp": "127.0.0.1", "HostPort": "6443"}]}}, "local_lane_loopback_binding_differs"),
+        ):
+            with self.subTest(actor=actor, variant=variant):
+                rows, binding = self.relay_rows()
+                row = next(row for row in rows if row["name"] == f"/pals-reliability-local-standby-{actor}-1")
+                if "namespace" in variant:
+                    variant = {"namespace": "container:" + binding["lanes"]["primary"]["policy"]["container_id"]}
+                row.update(variant)
+                _, run = self.fixture_docker(rows)
+                with self.assertRaisesRegex(ValueError, code):
+                    relay_topology.verify(binding, run=run)
+
+    def test_relay_binding_refuses_socket_mounts_outside_the_two_readers_and_shim(self):
+        rows, binding = self.relay_rows()
+        reader = next(row for row in rows if row["name"] == f"/pals-reliability-local-standby-{relay_topology.RELAY}-1")
+        reader["mounts"][0]["RW"] = True
+        _, run = self.fixture_docker(rows)
+        with self.assertRaisesRegex(ValueError, "local_relay_socket_mount_differs"):
+            relay_topology.verify(binding, run=run)
+        reader["mounts"][0]["RW"] = False
+        foreign = {**rows[0], "name": "/foreign-socket", "id": "c" * 64, "labels": {}, "networks": {},
+                   "mounts": [{**reader["mounts"][0], "Type": "bind", "Name": "", "Destination": "/foreign"}]}
+        _, run = self.fixture_docker([*rows, foreign])
+        with self.assertRaisesRegex(ValueError, "local_relay_socket_mount_exposed"):
+            relay_topology.verify(binding, run=run)
 
 
 class BudgetTests(unittest.TestCase):
@@ -69,6 +528,38 @@ class BudgetTests(unittest.TestCase):
 
     def tearDown(self):
         self.temp.cleanup()
+
+    def test_serving_ledger_lease_excludes_another_process_and_recovers_after_exit(self):
+        script = """
+import os, sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[1])
+from budget_proxy import Budget, ledger_writer
+try:
+    path = Path(sys.argv[2])
+    with ledger_writer(path.parent):
+        Budget(path).reserve('gpt-6.1-terra', 1000, 1000)
+        os._exit(17)
+except ValueError as error:
+    print(str(error))
+"""
+        crashed_ledger = self.path.with_name("crashed-ledger.json")
+        argv = [
+            sys.executable, "-B", "-c", script,
+            str(ROOT / "local-qualification"), str(crashed_ledger),
+        ]
+        raw = self.path.read_bytes()
+        with proxy.ledger_writer(self.path.parent):
+            refused = subprocess.run(argv, capture_output=True, text=True, check=True, timeout=5)
+            self.assertEqual(refused.stdout.strip(), "local_budget_writer_already_running")
+            self.assertFalse(crashed_ledger.exists())
+        crashed = subprocess.run(argv, capture_output=True, check=False, timeout=5)
+        self.assertEqual(crashed.returncode, 17, crashed.stderr)
+        with proxy.ledger_writer(self.path.parent):
+            self.assertEqual(self.path.read_bytes(), raw)
+            crashed_sha = sha256(crashed_ledger.read_bytes())
+            with self.assertRaisesRegex(ValueError, "uncertain_budget_cannot_resume"):
+                proxy.Budget(crashed_ledger, resume_sha256=crashed_sha)
 
     def test_aggregate_reservation_stops_second_parallel_expensive_call(self):
         accepted = []
@@ -231,6 +722,62 @@ class RuntimeTests(unittest.TestCase):
             )
             self.assertFalse((root / "capture/submission.json").exists())
 
+    def test_readiness_only_runs_the_lane_canary_without_starting_a_capture(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            state = root / "capture"
+            state.mkdir(mode=0o700)
+            latest = state / "latest.json"
+            latest.write_text('{"state":"failed"}\n')
+            original = latest.read_bytes()
+            subject = root / "subject.json"
+            subject.write_text(json.dumps({
+                "schema_version": "pals.local-qualification-subject.v1",
+                "basis": "approved-local-real-db-lean-model",
+                "fixture": {"paid_submissions": 1, "maximum_approved_usd": 1, "output_language": "en"},
+                "local_profile": {},
+                "local_lane": {"role": "primary"},
+            }))
+            argv = [
+                "gate", "--subject", str(subject), "--state-dir", str(state), "--web-root", str(root),
+                "--database-env", str(root / "private.env"), "--readiness-only",
+            ]
+            scope = {"topology_sha256": "a" * 64, "lane": {"http_ports": {"api": 58001}}}
+            with (
+                patch.object(sys, "argv", argv),
+                patch.object(gate, "require_modules"),
+                patch.object(gate, "lane_runtime", return_value=scope),
+                patch.object(gate, "check_lane_helpers"),
+                patch.object(gate, "provider_tls_status", return_value={}),
+                patch.object(gate, "web_provenance", return_value={}),
+                patch.object(gate, "verifier_provenance", return_value={}),
+                patch.object(gate, "budget_status", return_value={}),
+                patch.object(gate, "database_readiness", return_value={}),
+                patch.object(gate, "runtime", return_value={}),
+                patch.object(gate, "compiler_canary", return_value={"passed": True}) as canary,
+                patch.object(gate, "require_lane_api_subject") as live_header,
+                patch.object(gate.subprocess, "Popen") as browser,
+            ):
+                self.assertEqual(gate.main(), 0)
+                canary.assert_called_once_with(json.loads(subject.read_bytes()), scope=scope)
+                live_header.assert_called_once_with(58001, gate.sha(subject.read_bytes()))
+                readiness = json.loads((state / "readiness.json").read_bytes())
+                self.assertEqual(readiness["state"], "ready_for_capture")
+                self.assertEqual(readiness["local_lane_topology_sha256"], scope["topology_sha256"])
+                self.assertEqual(latest.read_bytes(), original)
+
+                live_header.side_effect = gate.Refusal("lane_api_does_not_serve_frozen_subject")
+                self.assertEqual(gate.main(), 1)
+                refused = json.loads((state / "readiness.json").read_bytes())
+                self.assertEqual(refused["code"], "lane_api_does_not_serve_frozen_subject")
+                self.assertEqual(latest.read_bytes(), original)
+
+                argv.pop()
+                self.assertEqual(gate.main(), 1)
+                self.assertEqual(json.loads(latest.read_bytes())["code"], "lane_api_does_not_serve_frozen_subject")
+                browser.assert_not_called()
+            self.assertFalse((state / "submission.json").exists())
+
 
 class LocalSetupBoundaryTests(unittest.TestCase):
     def test_private_file_dsn_rejects_query_fragment_remote_and_keyword_forms(self):
@@ -362,7 +909,7 @@ class ProvenanceTests(unittest.TestCase):
             context = Path(d)
             record = {
                 "Status": "completed",
-                "Context": str(context),
+                "Context": str(context.resolve()),
                 "Dockerfile": "Dockerfile",
                 "Platform": ["linux/arm64"],
                 "BuildArgs": [
@@ -393,6 +940,29 @@ class ProvenanceTests(unittest.TestCase):
                     builder.observe_build(
                         "real-record", context, "a" * 40, "sha256:" + "c" * 64
                     )
+                self.assertEqual(
+                    builder.observe_build(
+                        "real-record", context, "a" * 40, "sha256:" + "b" * 64
+                    ),
+                    record,
+                )
+                standby_args = builder.STANDBY_ARGS
+                self.assertEqual(standby_args["NEXT_PUBLIC_PALS_API_BASE_URL"], "http://localhost:58001")
+                self.assertEqual(standby_args["NEXT_PUBLIC_COGNITO_REDIRECT_URI"], "http://localhost:53001")
+                record["BuildArgs"] = [
+                    {"Name": key, "Value": value} for key, value in standby_args.items()
+                ]
+                with self.assertRaisesRegex(ValueError, "actual_build_args_not_closed_loopback_profile"):
+                    builder.observe_build(
+                        "real-record", context, "a" * 40, "sha256:" + "b" * 64
+                    )
+                self.assertEqual(
+                    builder.observe_build(
+                        "real-record", context, "a" * 40, "sha256:" + "b" * 64,
+                        local_args=standby_args,
+                    ),
+                    record,
+                )
             finally:
                 builder.run = old
 

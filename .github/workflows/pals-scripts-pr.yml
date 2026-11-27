@@ -24,6 +24,10 @@ jobs:
           persist-credentials: false
       - name: Require the exact candidate source
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_COMMIT"
+      - name: Install the pals-scripts Python environment (direct dependencies pinned, no hashes)
+        run: |
+          bash pals-scripts/bootstrap-pals-scripts-python.sh
+          echo "$PWD/.venv-pals-scripts/bin" >> "$GITHUB_PATH"
       - name: Verify deterministic acceptance contracts (not live E2E)
         run: bash pals-scripts/tests/release-acceptance.sh
       - name: Verify closed figure readback policy (not live DB evidence)

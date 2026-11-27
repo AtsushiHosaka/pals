@@ -10,6 +10,7 @@ import inspect
 import json
 import os
 import re
+import stat
 import subprocess
 import sys
 from contextlib import contextmanager
@@ -17,13 +18,18 @@ from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit
 
 
-def validate_local_dsn(value, *, service=False):
+LOCAL_HOST_PORT = {"singleton": 55432, "primary": 55434, "standby": 55433}
+
+
+def validate_local_dsn(value, *, service=False, lane="singleton"):
+    if lane not in LOCAL_HOST_PORT:
+        raise ValueError("closed_local_database_lane_required")
     parts = urlsplit(value)
     hosts = ("postgres",) if service else ("127.0.0.1", "localhost")
     if (
         parts.scheme != "postgresql"
         or parts.hostname not in hosts
-        or parts.port != (5432 if service else 55432)
+        or parts.port != (5432 if service else LOCAL_HOST_PORT[lane])
         or parts.path != "/pals"
         or parts.query
         or parts.fragment
@@ -34,18 +40,91 @@ def validate_local_dsn(value, *, service=False):
     return parts
 
 
-def runtime_login_url(value):
-    parts = validate_local_dsn(value, service=True)
+def runtime_login_url(value, *, lane="singleton"):
+    parts = validate_local_dsn(value, service=True, lane=lane)
     result = urlunsplit(
-        parts._replace(netloc=parts.netloc.rsplit("@", 1)[0] + "@127.0.0.1:55432")
+        parts._replace(netloc=f"{parts.netloc.rsplit('@', 1)[0]}@127.0.0.1:{LOCAL_HOST_PORT[lane]}")
     )
-    validate_local_dsn(result)
+    validate_local_dsn(result, lane=lane)
     return result
+
+
+def qualify_lane_postgres(runtime_directory, lane, binding_path, binding_sha256):
+    """Bind migrations to the owned lane PostgreSQL before opening any connection."""
+    from lane_topology import OWNER, PROJECT, SERVICE, active, docker_reader, inventory, port_map
+    from lane_database import SCHEMA as DATABASE_LAYOUT, read_for_bootstrap, verify_databases
+
+    layout = read_for_bootstrap(binding_path, binding_sha256)
+    selected = layout["lanes"][lane]
+    if Path(selected["runtime_directory"]) != runtime_directory.resolve():
+        raise ValueError("local_lane_database_runtime_path_differs")
+    database = selected["postgres"]
+    run = docker_reader(layout["docker_socket"])
+    rows = inventory(run)
+    if layout["schema_version"] == DATABASE_LAYOUT:
+        verify_databases(layout, run, rows)
+        return selected["candidate_sha256"]
+    actual = rows.get("/" + database["name"])
+    if actual is None or actual["id"] != database["container_id"]:
+        raise ValueError("local_lane_database_container_differs")
+    labels = actual["labels"] or {}
+    project = selected["compose_project"]
+    if (
+        labels.get(OWNER_LABEL) != OWNER or labels.get(PROJECT) != project
+        or labels.get(SERVICE) != "postgres" or actual["privileged"] is not False
+        or set(actual["networks"] or {}) != {project + "-database"}
+    ):
+        raise ValueError("owned_local_lane_database_required")
+    active(actual, postgres=True)
+    port_map(actual, {"5432/tcp": [{"HostIp": database["host"], "HostPort": str(database["host_port"])}]})
+    idle_roles = {"api", "reconciler", "worker", "assessment-worker", "recipe-reviewer"}
+    if any(
+        row["running"] and (row["labels"] or {}).get(PROJECT) == project
+        and (row["labels"] or {}).get(SERVICE) in idle_roles for row in rows.values()
+    ):
+        raise ValueError("local_lane_database_producers_must_be_stopped")
+    peer = next(value for role, value in layout["lanes"].items() if role != lane)
+    peer_actual = rows.get("/" + peer["postgres"]["name"])
+    if peer_actual is None or peer_actual["id"] != peer["postgres"]["container_id"]:
+        raise ValueError("local_lane_peer_database_container_differs")
+    volumes = set()
+    for row, compose_project in ((actual, project), (peer_actual, peer["compose_project"])):
+        name = compose_project + "-postgres-data"
+        data = [mount for mount in row["mounts"] or [] if mount["Destination"] == "/var/lib/postgresql/data"]
+        if len(data) != 1 or data[0].get("Type") != "volume" or data[0].get("Name") != name or data[0].get("RW") is not True:
+            raise ValueError("separate_owned_local_lane_database_volumes_required")
+        volume = json.loads(run("volume", "inspect", name))
+        if (
+            len(volume) != 1 or volume[0].get("Name") != name or volume[0].get("Driver") != "local"
+            or volume[0].get("Options") or volume[0].get("Mountpoint") != data[0].get("Source")
+        ):
+            raise ValueError("separate_owned_local_lane_database_volumes_required")
+        volumes.add(volume[0]["Mountpoint"])
+    if len(volumes) != 2:
+        raise ValueError("separate_owned_local_lane_database_volumes_required")
+    return selected["candidate_sha256"]
+
+
+def require_lane_migration_source(api_source, manifest, candidate_sha256, *, full_checkout=False):
+    raw = manifest.read_bytes()
+    if hashlib.sha256(raw).hexdigest() != candidate_sha256:
+        raise ValueError("local_lane_migration_manifest_differs")
+    revision = json.loads(raw)["source_commits"]["pals-api"]
+    root = api_source.resolve(strict=True)
+    prefix = ["git", "-C", str(root)]
+    head = subprocess.run([*prefix, "rev-parse", "HEAD"], capture_output=True, text=True, check=True, timeout=10)
+    dirty = subprocess.run(
+        [*prefix, "status", "--porcelain", "--untracked-files=all", *([] if full_checkout else ["--", "app"])],
+        capture_output=True, text=True, check=True, timeout=10,
+    )
+    if head.stdout.strip() != revision or dirty.stdout.strip():
+        raise ValueError("exact_clean_lane_api_migration_source_required")
 
 
 # ``postgres`` exists on every initialised server. The second name is the default
 # database of the container this stack was first created with and is kept as a fallback.
 MAINTENANCE_DATABASES = ("postgres", "pals_reliability_test")
+OWNER_LABEL = "codex.owner"
 SCHEMA_OWNER = "pals_api_schema_owner"
 # The row locks the candidate's definer functions take (database_readiness.FUNCTIONS).
 # PostgreSQL requires UPDATE on a column for a locking read, including FOR SHARE.
@@ -324,7 +403,41 @@ def main():
     p.add_argument("--runtime-dir", type=Path, required=True)
     p.add_argument("--api-source", type=Path, required=True)
     p.add_argument("--enable-plus-coupons", action="store_true")
+    p.add_argument("--lane", choices=("primary", "standby"))
+    p.add_argument("--lane-binding", type=Path)
+    p.add_argument("--lane-binding-sha256")
+    p.add_argument("--lane-candidate-manifest", type=Path)
     a = p.parse_args()
+    lane_options = (a.lane, a.lane_binding, a.lane_binding_sha256, a.lane_candidate_manifest)
+    if any(lane_options):
+        if not all(lane_options):
+            p.error("the lane, binding, binding SHA-256 and candidate manifest are required together")
+        from lane_database import SCHEMA as DATABASE_LAYOUT, migration_state, read_for_bootstrap
+
+        layout = read_for_bootstrap(a.lane_binding, a.lane_binding_sha256)
+        if layout["schema_version"] == DATABASE_LAYOUT:
+            from lane_bootstrap import local_environment_settings
+            from lane_dependencies import runtime_directory
+
+            selected = layout["lanes"][a.lane]
+            runtime = runtime_directory(Path(selected["runtime_directory"]))
+            if a.runtime_dir != runtime:
+                raise ValueError("local_lane_database_runtime_path_differs")
+            if any(name.startswith("PG") for name in os.environ):
+                raise ValueError("lane_database_ambient_postgres_environment_refused")
+            local = local_environment_settings(selected["local_env"], runtime, a.lane)
+            with migration_state(runtime, selected) as begin:
+                candidate = qualify_lane_postgres(runtime, a.lane, a.lane_binding, a.lane_binding_sha256)
+                require_lane_migration_source(a.api_source, a.lane_candidate_manifest, candidate, full_checkout=True)
+                result = migrate_database(a, a.lane, local=local, begin=begin)
+            print(json.dumps(result))
+            return
+        candidate = qualify_lane_postgres(a.runtime_dir, a.lane, a.lane_binding, a.lane_binding_sha256)
+        require_lane_migration_source(a.api_source, a.lane_candidate_manifest, candidate)
+    print(json.dumps(migrate_database(a, a.lane or "singleton")))
+
+
+def migrate_database(a, lane, *, local=None, begin=None):
     # Unsupported opt-in is refused before imports or any database operation.
     if a.enable_plus_coupons:
         coupon_source_contract(a.api_source)
@@ -348,19 +461,34 @@ def main():
     from psycopg.types.json import Jsonb
 
     def env(name):
-        return dict(
-            line.split("=", 1)
-            for line in (a.runtime_dir / name).read_text().splitlines()
-            if line and not line.startswith("#")
-        )
+        path = a.runtime_dir / name
+        if begin is None:
+            raw = path.read_text()
+        else:
+            with os.fdopen(os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK), "rb") as stream:
+                info = os.fstat(stream.fileno())
+                if (
+                    not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()
+                    or info.st_nlink != 1 or stat.S_IMODE(info.st_mode) != 0o600
+                    or not 0 < info.st_size <= 16_384
+                ):
+                    raise ValueError("private_lane_database_recipe_environment_required")
+                raw = stream.read(16_385).decode()
+        pairs = [line.split("=", 1) for line in raw.splitlines() if line and not line.startswith("#")]
+        values = dict(pairs)
+        if begin is not None and len(values) != len(pairs):
+            raise ValueError("private_lane_database_recipe_environment_required")
+        return values
 
-    local, recipe = env("local.env"), env("recipe.env")
+    if local is None:
+        local = env("local.env")
+    recipe = env("recipe.env")
     url = local["PALS_HOST_DATABASE_URL"]
-    parts = validate_local_dsn(url)
+    parts = validate_local_dsn(url, lane=lane)
     selector_url = runtime_login_url(
-        recipe["PALS_RECIPE_CATALOG_SELECTOR_DATABASE_URL"]
+        recipe["PALS_RECIPE_CATALOG_SELECTOR_DATABASE_URL"], lane=lane,
     )
-    reader_url = runtime_login_url(recipe["PALS_PFI_DRAFT_READER_DATABASE_URL"])
+    reader_url = runtime_login_url(recipe["PALS_PFI_DRAFT_READER_DATABASE_URL"], lane=lane)
     if local.get("PALS_ENV") != "local":
         raise ValueError("explicit_dedicated_local_database_required")
     coupon_plan = coupon_bootstrap_plan(
@@ -368,6 +496,22 @@ def main():
     )
     if coupon_plan and local.get("PALS_PLUS_COUPONS_ENABLED") != "true":
         raise ValueError("coupon_local_runtime_flag_required")
+    if begin is not None:
+        # A fresh dependency has already created /pals. Confirm the exact lane
+        # identity through a read-only query before maintenance opens or writes.
+        with psycopg.connect(url, connect_timeout=5,
+                             options="-c default_transaction_read_only=on -c statement_timeout=5000") as c:
+            identity = c.execute(
+                "SELECT current_database(), current_user, "
+                "current_setting('server_version_num')::int / 10000, "
+                "inet_server_port(), pg_is_in_recovery()"
+            ).fetchone()
+            if identity != ("pals", f"pals_qual_{lane}", 16, 5432, False):
+                raise ValueError("local_lane_database_connection_identity_differs")
+            fresh = c.execute(
+                "SELECT count(*) FROM information_schema.tables WHERE table_schema='public'"
+            ).fetchone() == (0,)
+        begin(fresh)
     with connect_maintenance(parts, connect=psycopg.connect) as c:
         if not c.execute("SELECT 1 FROM pg_database WHERE datname='pals'").fetchone():
             c.execute("CREATE DATABASE pals")
@@ -474,21 +618,19 @@ def main():
 
     install(url)
     serving, not_applicable = apply_serving_migrators(a.api_source.resolve(), url)
+    if begin is not None and "failing_no_discoverable_migrator" in serving.values():
+        raise ValueError("lane_database_serving_schema_requires_inspection")
     with psycopg.connect(url) as c:
         rowlocks = grant_rowlock_privileges(c)
-    print(
-        json.dumps(
-            {
-                "state": "actual_local_schema_ready",
-                "profile": "legacy-local-v1 + model/settings/guest/typed catalog",
-                "preserved_existing_data": not empty,
-                "serving_migrators": serving,
-                "not_applicable_migrators": not_applicable,
-                "rowlock_column_grants": rowlocks,
-                **({"plus_coupons": coupon_storage} if coupon_plan else {}),
-            }
-        )
-    )
+    return {
+        "state": "actual_local_schema_ready",
+        "profile": "legacy-local-v1 + model/settings/guest/typed catalog",
+        "preserved_existing_data": not empty,
+        "serving_migrators": serving,
+        "not_applicable_migrators": not_applicable,
+        "rowlock_column_grants": rowlocks,
+        **({"plus_coupons": coupon_storage} if coupon_plan else {}),
+    }
 
 
 if __name__ == "__main__":

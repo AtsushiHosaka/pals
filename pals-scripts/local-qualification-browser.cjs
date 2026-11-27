@@ -5,6 +5,16 @@ const { pathToFileURL } = require("node:url");
 const { norm, stable, sourceSemantics, semanticTokens, readRendered } = require("./release-acceptance-browser.cjs");
 const sha = v => crypto.createHash("sha256").update(v).digest("hex");
 const need = (ok, code) => { if (!ok) throw new Error(code); };
+const PRIMARY = Object.freeze({ web: "http://localhost:53000", api: "http://localhost:58000" });
+const STANDBY = Object.freeze({ web: "http://localhost:53001", api: "http://localhost:58001" });
+function localOrigins(args) {
+  for (const profile of [PRIMARY, STANDBY]) {
+    if (args?.NEXT_PUBLIC_PALS_API_BASE_URL === profile.api &&
+        args.NEXT_PUBLIC_COGNITO_REDIRECT_URI === profile.web &&
+        args.NEXT_PUBLIC_COGNITO_LOGOUT_URI === profile.web) return profile;
+  }
+  throw new Error("closed_local_browser_origins_required");
+}
 async function withSubmissionMarker(file, record, submit) {
   const descriptor = fs.openSync(file, "wx", 0o600);
   try { fs.writeFileSync(descriptor, JSON.stringify(record)); fs.fsyncSync(descriptor); }
@@ -13,10 +23,10 @@ async function withSubmissionMarker(file, record, submit) {
   try { fs.fsyncSync(directory); } finally { fs.closeSync(directory); }
   return submit();
 }
-function admitRequest(method, rawUrl, verifyExisting, counts) {
-  const u = new URL(rawUrl), local = ["http://localhost:53000", "http://localhost:58000"].includes(u.origin);
+function admitRequest(method, rawUrl, verifyExisting, counts, origins = PRIMARY) {
+  const u = new URL(rawUrl), local = [origins.web, origins.api].includes(u.origin);
   if (local && ["GET", "HEAD", "OPTIONS"].includes(method)) return true;
-  if (u.origin !== "http://localhost:58000" || method !== "POST") return false;
+  if (u.origin !== origins.api || method !== "POST") return false;
   if (u.pathname === "/v1/product-events") { counts.telemetry++; return true; }
   if (u.pathname === "/v1/guest/session") return true;
   // Reject before dispatch. A failed assertion AFTER sending could charge another proof.
@@ -25,6 +35,7 @@ function admitRequest(method, rawUrl, verifyExisting, counts) {
 }
 async function run(c) {
   need(c.subject.schema_version === "pals.local-qualification-subject.v1", "local_subject_required");
+  const origins = localOrigins(c.subject.web_variant?.local_build_args);
   const resolve = name => require.resolve(name, { paths: [c.web_root] });
   const { chromium } = require(resolve("playwright"));
   const [{ unified }, { default: parse }, { default: math }] = await Promise.all(
@@ -37,18 +48,18 @@ async function run(c) {
   try {
     await context.route("**/*", route => {
       const req = route.request();
-      if (req.method() === "GET" && observedRequestId && req.url() === `http://localhost:58000/v1/guest/proof-requests/${observedRequestId}`) {
+      if (req.method() === "GET" && observedRequestId && req.url() === `${origins.api}/v1/guest/proof-requests/${observedRequestId}`) {
         if (injectedReadFaults === 0) { injectedReadFaults++; return route.abort("failed"); }
         successfulReadAttemptsAfterFault++;
       }
-      const allowed = admitRequest(req.method(), req.url(), c.verify_existing, counts);
+      const allowed = admitRequest(req.method(), req.url(), c.verify_existing, counts, origins);
       if (!allowed) { rejected++; return route.abort("blockedbyclient"); }
       return route.continue();
     });
     if (c.verify_existing) await context.addInitScript(ids => sessionStorage.setItem("pals.guest.request.v1", JSON.stringify(ids)), c.existing);
     const page = await context.newPage();
     page.setDefaultTimeout(15000);
-    await page.goto("http://localhost:53000/try", { waitUntil: "domcontentloaded" });
+    await page.goto(`${origins.web}/try`, { waitUntil: "domcontentloaded" });
     let request = c.existing;
     if (!c.verify_existing) {
     const input = page.locator("#guest-question");
@@ -59,7 +70,10 @@ async function run(c) {
     // This durable exclusive marker exists BEFORE clicking. Ambiguous failures never resubmit.
     const response = await withSubmissionMarker(path.join(c.state_dir, "submission.json"),
       { state: "submission_started", subject_sha256: c.subject_sha256, at: new Date().toISOString() }, async () => {
-        const responsePromise = page.waitForResponse(r => r.request().method() === "POST" && new URL(r.url()).pathname === "/v1/guest/proof-requests");
+        const responsePromise = page.waitForResponse(r => {
+          const url = new URL(r.url());
+          return r.request().method() === "POST" && url.origin === origins.api && url.pathname === "/v1/guest/proof-requests";
+        });
         await input.locator("xpath=ancestor::form").locator("button[type=submit]").click();
         return responsePromise;
       });
@@ -72,7 +86,7 @@ async function run(c) {
     if (!c.verify_existing) privateWrite("submission.json", { state: "submitted", id: request.id, chat_id: request.chat_id, subject_sha256: c.subject_sha256 });
     const transitions = [], deadline = Date.now() + 9 * 60 * 1000;
     const get = async suffix => {
-      const r = await context.request.get(`http://localhost:58000/v1/guest/proof-requests/${request.id}${suffix}`);
+      const r = await context.request.get(`${origins.api}/v1/guest/proof-requests/${request.id}${suffix}`);
       need(r.status() === 200, `guest_read_http_${r.status()}`);
       need(r.headers()["x-pals-release-manifest-sha256"] === c.subject_sha256, "runtime_subject_header_changed");
       return r.json();
@@ -129,4 +143,4 @@ if (require.main === module) {
   process.stdin.on("end", async () => { try { process.stdout.write(JSON.stringify(await run(JSON.parse(raw)))); }
     catch (e) { process.stderr.write(e.message); process.exitCode = 1; } });
 }
-module.exports = { run, admitRequest, withSubmissionMarker };
+module.exports = { run, admitRequest, localOrigins, withSubmissionMarker };

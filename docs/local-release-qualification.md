@@ -50,6 +50,12 @@ blocks promotion. Deterministic CI tests do not create live acceptance. The cano
 controller must invoke the runner, freeze its code and inputs, and require exit zero; this
 script alone does not enforce branch protection or every possible deployment entrypoint.
 
+Pass `--readiness-only` with the same inputs to check a freshly bound lane before its paid
+request. The runner verifies runtime provenance, database privileges, provider TLS and the
+live Lean canary, then writes `readiness.json` with state `ready_for_capture`. It leaves the
+submission marker and capture record untouched. Run the normal qualification afterward to
+obtain an acceptance record.
+
 ## Prepare the reused local stack
 
 `local-qualification-prepare.py` upgrades the existing owned E2E stack in one command. Its
@@ -297,6 +303,54 @@ job that has no explanation row at all is not counted.
 Private database URIs require the PostgreSQL scheme, exact local host/port/database and no
 query or fragment. Existing project roles and named containers must have the expected owner
 before preparation stops anything.
+
+## Two-lane leftovers and recovery
+
+The A and S lanes use fixed names, ports and subnets (`lanes.py`). The dependency launch
+refuses with `lane_dependency_resources_already_exist_<role>` while any container, network or
+volume of those names exists, including stopped ones left by a failed or finished run. Clear
+them with the one canonical command, then render and launch again (a new candidate sha means
+a new render anyway):
+
+```sh
+python3 pals-scripts/local-qualification/lane_cleanup.py --docker <docker> --docker-socket <socket>          # lists only
+python3 pals-scripts/local-qualification/lane_cleanup.py --docker <docker> --docker-socket <socket> --apply  # removes, then proves none remain
+```
+
+Use the same absolute Docker CLI and daemon socket as the dependency launch (`docker` and
+`docker_socket` of its binding), so the same daemon is inspected. The command selects by the
+exact Compose project label of the provider, primary and standby lanes plus the two fixed
+names (the shared guard container and the provider socket volume); other containers and
+volumes are not touched. The budget ledger is a host bind mount, so it is never removed or
+emptied. `--apply` refuses with `lane_cleanup_running_containers`, removing nothing, while any
+of those containers is running: the shared guard is the only writer of the ledger, and
+killing it during a provider call leaves an uncertain budget that only an owner-approved
+rollover can continue. Stop the lanes first; listing is always allowed.
+
+The CI environment for these tests is `pals-scripts/requirements.txt`: direct dependencies
+(PyYAML, botocore and the existing ones) are pinned to exact versions, without hashes, and
+their indirect dependencies are not pinned.
+
+`local-qualification-freeze-lane.py --bind-api` writes `api-binding-recovery/` under the runtime
+directory before it changes the API and removes it after success or a completed restore. If the
+process dies in between, the directory stays and the next run refuses with
+`local_lane_api_binding_requires_recovery`. The command that clears it is not implemented as a
+tool; the manual, checkable procedure is:
+
+1. Make sure no run holds the runtime directory (the tool takes an exclusive lock on it).
+2. Compare the SHA-256 of `api-binding-recovery/original.env` with `original_sha256` in
+   `api-binding-recovery/intent.json`. Stop if they differ.
+3. If `intent.json` has no `initial_candidate_sha256`, copy `original.env` over the runtime
+   directory's `local.env` (mode 0600). With `initial_candidate_sha256` the env file was not changed.
+4. Recreate the lane's `api` service from the same rendered Compose model (`rendered_compose` in
+   `intent.json`) so that its `com.docker.compose.config-hash` equals
+   `original_compose_config_hash`, with `PALS_LOCAL_CANDIDATE_SHA256` set to
+   `initial_candidate_sha256` when present.
+5. Only then remove `api-binding-recovery/`. The next run re-checks the API's served header and
+   Compose hash and refuses if the state is still wrong.
+
+The API recreation waits up to 120 seconds for readiness (45 seconds failed under load). Do not
+run it beside a rehearsal.
 
 ## Build provenance
 

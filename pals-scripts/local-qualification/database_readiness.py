@@ -67,10 +67,10 @@ def source_contract(source, revision):
     return bodies, sha(raw)
 
 
-def inspect(url, source, revision):
+def inspect(url, source, revision, *, lane="singleton"):
     import psycopg
 
-    validate_local_dsn(url)
+    validate_local_dsn(url, lane=lane)
     bodies, sql_sha = source_contract(source, revision)
     observations = []
     with psycopg.connect(url) as c:
@@ -218,14 +218,14 @@ def _grants(cursor, query, target):
     )
 
 
-def inspect_plus_coupons(url, source, revision, *, connect=None):
+def inspect_plus_coupons(url, source, revision, *, connect=None, lane="singleton"):
     """Read the installed Plus coupon schema, ACL and definers of a started local API.
 
     Read only. The candidate's own ``fingerprint`` must equal the signed manifest hash;
     every function owner/definer/search path/EXECUTE grant and every table privilege is
     observed again here so a legible, separate fact is frozen. Writes nothing.
     """
-    validate_local_dsn(url)
+    validate_local_dsn(url, lane=lane)
     plan = bootstrap_database.coupon_source_contract(source)
     if plan["api_source_revision"] != revision:
         raise ValueError("actual_local_plus_coupon_source_revision_changed")

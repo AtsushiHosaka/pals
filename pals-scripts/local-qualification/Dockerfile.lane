@@ -1,0 +1,4 @@
+ARG GUARD_IMAGE=pals-reliability-network-guard:bounded-local
+FROM ${GUARD_IMAGE}
+COPY lane_guard.py provider_relay.py /opt/pals-local/
+ENTRYPOINT ["python", "/opt/pals-local/lane_guard.py"]
