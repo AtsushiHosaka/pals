@@ -19,3 +19,20 @@ seq31（#433）のローカル資格確認が、課金なしで失敗しまし�
 `LIMIT`と`FIXED_LIMIT_MICROUSD`を2000000にしても、rollover済みの台帳は承認ファイルの`new_limit_microusd`（700000）で上限が固定されるため、反映されませんでした。台帳は健全なので、rolloverも拒否されました（`rollover_healthy_ledger_refused`）。台帳と承認ファイルを手で書き換える案は、承認への束縛を壊すため採りませんでした。
 
 2026-11-21にオーナーが、rolloverのソース改修を承認しました。`require_rollover_eligible`は、呼び出しを1件以上行った健全な台帳で、上限が現在の`LIMIT`より小さいものに限り、オーナー承認付きのrolloverを許します。閉じた台帳はバイト一致でarchiveし、累計は引き継ぎます。何も初期化しません。呼び出しのない台帳と、上限が`LIMIT`に達している健全な台帳は、これまでどおり拒否します。
+
+## 追記3: 累計上限をUS$5にする（seq42、2026-11-27）
+
+seq42のローカル認定の準備で、閉じた台帳の累計予約が1498403μUSD、`CUMULATIVE_LIMIT`が2000000μUSDで、生涯の残りは501597μUSD（約US$0.50）でした。現在の台帳の各期の上限をUS$1にしても、実際に使える額はUS$0.50のままで、候補AとSの認定2本には足りますが、取り直しには足りません。
+
+2026-11-27にオーナーが、ローカル認定の累計上限をUS$5に上げることを決めました（pals#509で司令塔が連絡）。`budget_proxy.py`の`CUMULATIVE_LIMIT`だけを2000000から5000000μUSDにしました。各期の上限`LIMIT`と`local-qualification.py`の`FIXED_LIMIT_MICROUSD`は2000000のままです。rolloverの仕組み、台帳の追記のみの扱い、閉じた台帳の累計の引き継ぎは変えていません。既存の台帳は書き換えていません。
+
+2026-11-27のオーナー決定（pals#509、司令塔経由、seq42のローカル認定〈候補A・S〉の取り直しに備える）により、このローカル認定の予算proxyの生涯の累計上限はUS$5になります。現行の台帳の期の枠はUS$1（rollover承認の値）で、コード上の各期の上限`LIMIT`はUS$2のままです。方針文書`docs/release-reliability-policy.md:135`の「累積1 USD維持」はこの決定より前の記述で、この方針文書は変えていません。この決定の適用範囲はseq42のローカル認定のみです。以後の上限の扱いは、都度オーナーに確認します（pals#509のコメント7211432333）。
+
+影響範囲:
+
+- `CUMULATIVE_LIMIT`を読む場所は、`Budget.reserve`の1か所だけです。本番のリクエスト、他の台帳、各期の上限、rolloverツール、`budget_handoff.py`、`lane_application.py`、`local-qualification-prepare.py`は、この定数を使いません。各期の上限`LIMIT`との比較は、`LIMIT`だけを見ます。
+- 台帳のファイルに累計上限は書かれません。台帳の検査（`validate_rollover`、状態チェック）に、累計上限との整合を見る箇所はありません。
+- `budget_proxy.py`のsha256は、guardのimage（`Dockerfile`が`guard.py`と`budget_proxy.py`をコピーする）と、subjectの`guard.source_sha256`に入ります。この変更で`budget_proxy.py`のhashが変わるため、guard imageの再build、subject（`local-qualification-freeze-lane.py`／`local-qualification-prepare.py`が作る）の作り直し、起動中のguardの入れ替えが必要です。台帳そのものは変わらないので、台帳のhashは変わりません。
+- この変更の前に作ったsubject、またはこの変更の前のimageで動いているguardは、`guard_source_changed`で拒否されます。
+
+回帰テストは、実際の定数のまま実物の`Budget`を通します。閉じた累計が約US$1.5の台帳で、旧上限（US$2）では拒否された予約が通ること、閉じた累計US$4の台帳で累計がちょうどUS$5に達した次の1μUSDが、各期の枠に余裕があっても累計上限で拒否されること、さらにrolloverを重ねても累計が補充されないことを確認します。

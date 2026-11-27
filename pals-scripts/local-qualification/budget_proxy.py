@@ -29,8 +29,9 @@ LIMIT = 2_000_000
 # replenishes its cumulative allowance; unknown closed calls retain their bound.
 # The owner waived the US$1 allowance for release #433 on 2026-11-21 and approved a
 # US$2 bound for both the per-epoch LIMIT and the cumulative limit (the 2026-11-21 capture
-# attempts exhausted the old 700000 per-epoch bound).
-CUMULATIVE_LIMIT = 2_000_000
+# attempts exhausted the old 700000 per-epoch bound). On 2026-11-27 the owner raised the
+# cumulative limit alone to US$5 for the seq42 local qualification; LIMIT stays US$2.
+CUMULATIVE_LIMIT = 5_000_000
 ROLLOVER_SCHEMA = "pals.local-qualification-budget-rollover.v1"
 APPROVAL_SCHEMA = "pals.local-qualification-budget-rollover-approval.v1"
 APPROVAL_KEYS = {
