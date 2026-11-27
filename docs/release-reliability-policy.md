@@ -41,7 +41,7 @@ Reusable release code belongs in the owning repository. Freeze the exact executi
 
 For a planned sole-target cutover, the v2 controller requires its frozen notification-window helper and contract. It targets only the exact incident 5xx alarm, verifies the actual account/configuration and active one-time mute, and fixes an AWS-enforced expiry of at most twenty minutes (1200 s; owner decision 2026-11-25, pals#509). It retains metrics, alarm evaluation and all other alarms; no open-ended disable/re-enable is allowed. Failure attempts early cancellation. Healthy restoration may shorten the remaining tail to at most three minutes without extending the original deadline. Overrun restores notifications and fails acceptance, while compatible, independently checked recovery can continue. Local fault injection and dedicated notification probes must not manufacture production ALB failures. See [the observed causes and limits](release-5xx-cause-and-control-2026-11-09.md); code/CI success does not establish live AWS activation, expiration or notification delivery.
 
-The owner approved up to 1,800 s for the primary candidate of the seq42 work item. The reviewed code applies it only to the candidate numbered 39 whose `previous_manifest_sha256` is the serving predecessor P's (number 38) manifest hash; it does not pin artifacts, recipes, verifiers or `schema_version`. A standby S prepared for P inherits the same window under the same two facts. The ordinary release checks and the recovery budget still apply. [Owner decision](https://github.com/AtsushiHosaka/pals/issues/509#issuecomment-7182144771)
+The owner approved up to 1,800 s for the primary candidate of the seq42 work item. The reviewed code applies it only to the candidate numbered 39 whose `previous_manifest_sha256` is the serving predecessor P's (number 38) manifest hash; it does not pin artifacts, recipes, verifiers or `schema_version`. That behavior is pals-infra#452, which is only in the stacked pals-infra branch; it applies once the pinned pals-infra contains #452, and until then the limit stays 1,200 s. The T0 final pin PR re-pins pals-infra (with #452), pals-api and Web. A standby S continues inside the window A opened; a cycle of S alone stays at 1,200 s, because a manifest with `standby_of` is outside the exception. The ordinary release checks and the recovery budget still apply. [Owner decision](https://github.com/AtsushiHosaka/pals/issues/509#issuecomment-7182144771); [P-to-39 chain](https://github.com/AtsushiHosaka/pals/issues/509#issuecomment-7208096283)
 
 2026-11-14のオーナー承認により、seq30に限り、指定した5xxアラームの通知抑制の上限を1500秒（25分）とする。seq29の利用停止実測847秒と引き継ぎの計画を踏まえ、600秒を維持する案は今回採用しない。AWSによる期限の強制、適用前の有効状態の確認、失敗時の早期取消、生メトリクス・評価・他のアラームの維持は引き続き必須とする。利用停止15分以内という受け入れ条件は変更しない。seq31以降への包括承認ではない。判断の記録は[pals#379](https://github.com/AtsushiHosaka/pals/issues/379#issuecomment-6870562063)にある。
 
@@ -110,7 +110,7 @@ The owner approved up to 1,800 s for the primary candidate of the seq42 work ite
 - 本番へdeployしたcommitは、速やかにmainへ入れる。merge commitで入れ、force pushはしない。
 - 統合先branchがmainと別になる場合は、期限を決めてmainへ統合し、期限をIssueに記録する。
 - 使い終えた積みは、土台から順にマージするか、すぐに閉じる。放置しない。
-- pals-apiは、#96のリリース後に`claude/seq28-api-response-language`をmainへmergeする予定である。pals-webfrontとpals-infraも、同様に統合先とmainの乖離を解消する。これは予定であり、完了を意味しない。
+- pals-apiとpals-webfrontの本番用ソースはmainである（`AGENTS.md`の記録、web#118〜#120はmainにある）。pals-infraも、統合先とmainの乖離を同様に解消する。これは予定であり、完了を意味しない。
 
 実測による確認は、次回以降のリリースで行う。確認する項目は、候補変更ごとの記録の有無、実機・本番操作の重複の有無、他担当のrun取消しの有無である。
 
