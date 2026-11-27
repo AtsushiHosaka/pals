@@ -6,19 +6,18 @@ PALS（Proof Assistant Learning System）は、自然言語の数学の質問か
 
 ## 全体アーキテクチャ
 
-```mermaid
-flowchart LR
-    B["ブラウザ"] --> W["Web画面"]
-    W --> A["API"]
-    A --> D[("PostgreSQL<br/>質問・状態・回答・カタログ")]
-    A --> Q["SQS<br/>評価・証明ジョブ"]
-    Q --> G["エージェント<br/>評価・証明ワーカー"]
-    G -->|"候補・解説・利用量"| A
-    G --> M["モデルAPI"]
-    A --> O[("S3<br/>証明の成果物")]
-    R["Reconciler<br/>検証の依頼と結果の回収"] <-->|"検証候補・結果"| A
-    R <-->|"mTLS"| V["隔離されたLean検証器"]
-```
+[![PALS 全体構成](docs/diagrams/pals-architecture-system.png)](docs/diagrams/pals-architecture-system.png)
+
+[draw.ioの編集用ファイル](docs/diagrams/pals-architecture.drawio) · [図の根拠と再生成](docs/diagrams/README.md#アーキテクチャ図の根拠と再生成)
+
+<details>
+<summary>AWSの配置とネットワーク</summary>
+
+[![PALS AWS architecture and deployment status](docs/diagrams/pals-aws-private-target.png)](docs/diagrams/pals-aws-private-target.png)
+
+[draw.ioの編集用ファイル](docs/diagrams/pals-aws-private-target.drawio) · [配置・通信・確認範囲](docs/diagrams/README.md#配置と通信)
+
+</details>
 
 1. 受付と再利用。APIが質問を受け付け、評価ジョブを登録します。評価ワーカーは質問の前提を整理し、対応する検証済みの証明と解説の組（Recipe）があれば再利用を判定します。
 2. 新規の証明。再利用できなければ証明ワーカーが方針を立て、Leanコードを組み立てます。関連する証明方針（Draft）を検索して生成の手がかりにできる構成です。
