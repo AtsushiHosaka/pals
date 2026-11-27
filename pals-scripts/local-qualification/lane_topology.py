@@ -10,6 +10,7 @@ import re
 import shutil
 import stat
 import subprocess
+import time
 from pathlib import Path
 
 from lanes import ENDPOINTS, PREFIX, absolute, fields, need, pin, validate
@@ -537,19 +538,30 @@ def collect(document, run, relay=None):
     return result
 
 
+# A health probe (`docker exec python ...`) is a second process in `docker top` while it runs: about
+# 0.3 s under amd64 emulation, once per 30 s. Re-read for a few seconds before calling the container
+# anything but a single process. A process that stays is still refused after the last attempt.
+SINGLE_PROCESS_ATTEMPTS = 5
+SINGLE_PROCESS_PAUSE_SECONDS = 0.5
+
+
 def require_single_process(run, process, code="one_shared_guard_process_required"):
-    lines = [
-        line.split()
-        for line in run("top", process["id"], "-eo", "pid,comm").splitlines()
-    ]
-    need(
-        len(lines) == 2
-        and lines[0] == ["PID", "COMMAND"]
-        and len(lines[1]) == 2
-        and lines[1][0] == str(process["pid"])
-        and re.fullmatch(r"python(?:3(?:\.\d+)?)?", lines[1][1]),
-        code,
-    )
+    for attempt in range(SINGLE_PROCESS_ATTEMPTS):
+        lines = [
+            line.split()
+            for line in run("top", process["id"], "-eo", "pid,comm").splitlines()
+        ]
+        if (
+            len(lines) == 2
+            and lines[0] == ["PID", "COMMAND"]
+            and len(lines[1]) == 2
+            and lines[1][0] == str(process["pid"])
+            and re.fullmatch(r"python(?:3(?:\.\d+)?)?", lines[1][1])
+        ):
+            return
+        if attempt + 1 < SINGLE_PROCESS_ATTEMPTS:
+            time.sleep(SINGLE_PROCESS_PAUSE_SECONDS)
+    raise ValueError(code)
 
 
 def verify(document, *, run=None):
