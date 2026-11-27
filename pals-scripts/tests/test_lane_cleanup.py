@@ -1,9 +1,13 @@
 """Lane cleanup lists by default, removes only exact lane resources and proves the result."""
 
+import contextlib
+import io
+import json
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "local-qualification"))
 
@@ -76,6 +80,28 @@ class LaneCleanupTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "lane_cleanup_running_containers"):
             cleanup.cleanup(apply=True, read=docker.read, run=docker.run)
         self.assertEqual(docker.present, {kind: set(names) for kind, names in LEFT.items()})
+        self.assertEqual([a for a in docker.calls if a[1] == "rm"], [])
+
+    def test_running_lane_api_container_is_refused(self):
+        docker = Docker(LEFT, running={"pals-reliability-local-primary-api-1"})
+        with self.assertRaisesRegex(ValueError, "lane_cleanup_running_containers"):
+            cleanup.cleanup(apply=True, read=docker.read, run=docker.run)
+        self.assertEqual([a for a in docker.calls if a[1] == "rm"], [])
+
+    def test_removal_never_forces_a_running_container(self):
+        docker = Docker(LEFT)
+        cleanup.cleanup(apply=True, read=docker.read, run=docker.run)
+        removals = [a for a in docker.calls if a[1] == "rm"]
+        self.assertTrue(removals and all("--force" not in a and "-f" not in a for a in removals))
+
+    def test_main_exits_2_with_the_refusal_code_and_removes_nothing(self):
+        docker = Docker(LEFT, running={"pals-reliability-local-primary-api-1"})
+        out = io.StringIO()
+        with mock.patch.object(cleanup, "docker_runner", return_value=docker.read), \
+                contextlib.redirect_stdout(out):
+            code = cleanup.main(["--docker", "/x/docker", "--docker-socket", "/x/sock", "--apply"])
+        self.assertEqual(code, 2)
+        self.assertEqual(json.loads(out.getvalue()), {"status": "refused", "code": "lane_cleanup_running_containers"})
         self.assertEqual([a for a in docker.calls if a[1] == "rm"], [])
 
     def test_unrelated_running_container_does_not_block(self):

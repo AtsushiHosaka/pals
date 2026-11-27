@@ -84,7 +84,8 @@ def cleanup(*, read, run, apply=False):
     need(not inventory(read, running=True)["container"], "lane_cleanup_running_containers")
     # Containers first, so the networks and volumes they hold can be removed.
     if found["container"]:
-        run(["container", "rm", "--force", *found["container"]])
+        # No --force: a container that started after the running check makes this fail instead of being killed.
+        run(["container", "rm", *found["container"]])
     for kind in ("network", "volume"):
         if found[kind]:
             run([kind, "rm", *found[kind]])
