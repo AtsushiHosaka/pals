@@ -109,7 +109,7 @@ class LaneSubjectFreezeTests(unittest.TestCase):
             for argv, environment, _ in recreations:
                 self.assertEqual(argv[:4], ["docker", "--host", "unix:///private/socket", "compose"])
                 self.assertIn(lane["compose_project"], argv)
-                self.assertEqual(argv[-8:], ["up", "-d", "--no-deps", "--no-build", "--wait", "--wait-timeout", "45", "api"])
+                self.assertEqual(argv[-8:], ["up", "-d", "--no-deps", "--no-build", "--wait", "--wait-timeout", "120", "api"])
                 self.assertNotIn("OPENAI_API_KEY", environment)
                 self.assertNotIn("PALS_API_HOST_PORT", environment)
             final_digest = freezer.gate.sha(freezer.subject_bytes(value))

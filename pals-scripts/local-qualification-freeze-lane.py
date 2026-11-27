@@ -185,7 +185,9 @@ def bind_api(args, subject, out):
                                 timeout=timeout, env=compose_env)
 
         def recreate_api():
-            compose("up", "-d", "--no-deps", "--no-build", "--wait", "--wait-timeout", "45", "api")
+            # 45 s failed under load (for example beside a rehearsal); allow a slow start without
+            # weakening the readiness requirement itself.
+            compose("up", "-d", "--no-deps", "--no-build", "--wait", "--wait-timeout", "120", "api", timeout=180)
 
         api = inspect_api()
         initial_hash = api["Config"]["Labels"].get("com.docker.compose.config-hash")
