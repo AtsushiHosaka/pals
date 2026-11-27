@@ -27,7 +27,19 @@ SCHEMA = "pals.local-qualification-relay-compose.v1"
 IMAGES = {"api", "worker", "web", "verifier", "postgres", "localstack", "cognito"}
 BUILD_SOURCES = {"Dockerfile.lane", "lane_guard.py", "provider_relay.py"}
 HEALTH = {"interval": "2s", "timeout": "3s", "retries": 15}
+# `docker top` must see exactly one process in each guard, shim and relay container. A Python health probe
+# is a second process while it runs (about 0.3 s under amd64 emulation), so a 2 s interval made the
+# topology checks fail at random. Probe at 2 s only while starting, then every 30 s.
+SPARSE_HEALTH = {
+    "interval": "30s", "timeout": "3s", "retries": 3, "start_period": "60s", "start_interval": "2s",
+}
 PROVIDER_READY = "import socket; socket.create_connection(('127.0.0.1',443),2).close()"
+# The lane relay runs as uid 65531, which its own egress policy rejects for any new connection, so it
+# cannot probe itself by connecting. Read the kernel's listener table instead (127.0.0.1:443 LISTEN).
+LISTENING = (
+    "import sys;sys.exit(0 if any(r.split()[1]=='0100007F:01BB' and r.split()[3]=='0A' "
+    "for r in open('/proc/net/tcp').read().splitlines()[1:]) else 1)"
+)
 
 
 class Override:
@@ -184,14 +196,14 @@ def relay_service(image, *, authority=False):
         RELAY_IMPORT
         + "p.private_socket_directory(p.AUTHORITY_SOCKET);p.socket_identity(p.AUTHORITY_SOCKET)"
         if authority
-        else PROVIDER_READY
+        else LISTENING
     )
     result.update(
         entrypoint=["python", "-I", "-c", program],
         command=[],
         stop_grace_period=f"{SESSION_SECONDS + 10}s",
         volumes=[socket_mount(read_only=not authority)],
-        healthcheck={**HEALTH, "test": ["CMD", "python", "-I", "-c", health]},
+        healthcheck={**SPARSE_HEALTH, "test": ["CMD", "python", "-I", "-c", health]},
     )
     return result
 
@@ -209,7 +221,7 @@ def provider_compose(provider):
             "PALS_OPENAI_UPSTREAM_IP": "${PALS_OPENAI_UPSTREAM_IP:?provider-only private env required}",
             "PALS_BUDGET_RESUME_SHA256": provider["budget_ledger"]["sha256"],
         },
-        healthcheck={**HEALTH, "test": ["CMD", "python", "-c", PROVIDER_READY]},
+        healthcheck={**SPARSE_HEALTH, "test": ["CMD", "python", "-c", PROVIDER_READY]},
         volumes=[
             {
                 "type": "bind",
@@ -337,6 +349,14 @@ def lane_compose(layout, role, lane, provider):
                 "OPENAI_API_KEY": "local-provider-relay",
                 "PALS_OPENAI_API_KEY": "",
             }
+    # The reviewer shares the egress-policy namespace as uid 65532, which that policy lets reach only
+    # the lane's own .30 address on 18119, not loopback. The inherited loopback probe is rejected.
+    services["recipe-reviewer"]["healthcheck"] = {
+        "test": Override(
+            ["CMD", "python", "-c",
+             f"import socket; socket.create_connection(('{guard_network}.30',18119),2).close()"]
+        )
+    }
     services["postgres"]["profiles"] = Override([])
     services.update({POLICY: policy, RELAY: forwarder})
     layout["networks"] = Override(layout["networks"])
