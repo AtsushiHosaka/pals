@@ -2858,11 +2858,13 @@ class BudgetCumulativeLimitTests(BudgetRolloverFixture):
         patcher.start()
         self.addCleanup(patcher.stop)
 
-    def test_release_433_cumulative_allowance_is_two_dollars(self):
+    def test_cumulative_allowance_is_five_dollars_and_epoch_bound_stays_two(self):
         patch.stopall()
-        self.assertEqual(proxy.CUMULATIVE_LIMIT, 2_000_000)
+        # 2026-11-27: the owner raised only the cumulative allowance (US$2 -> US$5).
+        self.assertEqual(proxy.CUMULATIVE_LIMIT, 5_000_000)
         self.assertEqual(proxy.LIMIT, 2_000_000)
         self.assertEqual(gate.FIXED_LIMIT_MICROUSD, proxy.LIMIT)
+        self.assertGreater(proxy.CUMULATIVE_LIMIT, proxy.LIMIT)
 
     def resumed_after_unknown(self, *, limit=700000):
         # The unknown call may have consumed its full reservation, not actual=0.
@@ -2957,6 +2959,58 @@ class BudgetCumulativeLimitTests(BudgetRolloverFixture):
         with self.assertRaisesRegex(ValueError, "aggregate_budget_exceeded"):
             budget.reserve("gpt-6.1-sol", 0, 30001)
         self.assertEqual(budget.calls, [])
+
+
+class BudgetSeq42CumulativeAllowanceTests(BudgetRolloverFixture):
+    """The real, unpatched constants: a US$5 lifetime allowance over US$2 epochs."""
+
+    def close_epoch(self, reserved_tokens, next_limit):
+        """Spend an epoch as an unknown call, roll it over, and open the next one."""
+        # A fresh ledger is created, not resumed; a rolled-over one is resumed by its hash.
+        budget = proxy.Budget(self.ledger, resume_sha256=self.resume)
+        budget.uncertain(budget.reserve("gpt-6.1-sol", 0, reserved_tokens), "timeout")
+        self.roll(*self.approval(new_limit_microusd=next_limit))
+        self.resume = sha256(self.ledger.read_bytes())
+
+    def open_chain(self, closed_tokens, final_limit):
+        """Close epochs of the given sol output tokens (10 microUSD each), then open one."""
+        self.resume = None
+        for index, tokens in enumerate(closed_tokens):
+            last = index == len(closed_tokens) - 1
+            self.close_epoch(tokens, final_limit if last else proxy.LIMIT)
+        return proxy.Budget(self.ledger, resume_sha256=self.resume)
+
+    def test_seq42_ledger_shape_admits_calls_the_old_allowance_refused(self):
+        # About US$1.5 closed, as in the 2026-11-27 ledger, then a US$1 epoch.
+        budget = self.open_chain([150000], 1_000_000)
+        self.assertEqual(budget.closed_reserved, 1_500_000)
+        self.assertEqual(budget.limit, 1_000_000)
+        # 1,500,000 + 600,000 exceeded the former 2,000,000 allowance.
+        budget.complete(budget.reserve("gpt-6.1-sol", 0, 60000), 0, 60000)
+        budget.complete(budget.reserve("gpt-6.1-sol", 0, 40000), 0, 40000)
+        # Now the epoch bound (US$1) is what stops it, not the lifetime allowance.
+        with self.assertRaisesRegex(ValueError, "aggregate_budget_exceeded"):
+            budget.reserve("gpt-6-luna", 1, 1)
+
+    def test_five_dollar_lifetime_boundary_is_exact_and_not_the_epoch_bound(self):
+        budget = self.open_chain([200000, 200000], proxy.LIMIT)
+        self.assertEqual(budget.closed_reserved, 4_000_000)
+        self.assertEqual(budget.limit, 2_000_000)
+        budget.complete(budget.reserve("gpt-6.1-sol", 0, 100000), 0, 100000)
+        before = self.ledger.read_bytes()
+        # US$1 of the epoch bound is left, so only the lifetime allowance can refuse this.
+        self.assertLess(budget.held + 1, budget.limit)
+        with self.assertRaisesRegex(ValueError, "cumulative_budget_exceeded"):
+            budget.reserve("gpt-6-luna", 1, 1)
+        self.assertEqual(self.ledger.read_bytes(), before)
+
+    def test_lifetime_allowance_is_not_replenished_by_another_rollover(self):
+        budget = self.open_chain([200000, 200000, 100000], proxy.LIMIT)
+        self.assertEqual(budget.closed_reserved, 5_000_000)
+        before = self.ledger.read_bytes()
+        with self.assertRaisesRegex(ValueError, "cumulative_budget_exceeded"):
+            budget.reserve("gpt-6-luna", 1, 1)
+        self.assertEqual(self.ledger.read_bytes(), before)
 
 
 class BudgetRolloverRefusalTests(BudgetRolloverFixture):
