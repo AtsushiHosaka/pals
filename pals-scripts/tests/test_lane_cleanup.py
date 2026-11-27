@@ -1,6 +1,7 @@
 """Lane cleanup lists by default, removes only exact lane resources and proves the result."""
 
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -11,8 +12,9 @@ from lane_topology import PROJECT  # noqa: E402
 
 
 class Docker:
-    def __init__(self, present):
+    def __init__(self, present, running=()):
         self.present = {kind: set(names) for kind, names in present.items()}
+        self.running = set(running)
         self.calls = []
 
     def read(self, argv):
@@ -21,6 +23,8 @@ class Docker:
         name = next((item for item in rest if item.startswith("name=")), None)
         self.calls.append(argv)
         rows = self.present.get(kind, set())
+        if kind == "container" and "--all" not in rest:
+            rows = rows & self.running
         if label:
             scope = label.split("=", 2)[2]
             return sorted(row for row in rows if row.startswith(scope))
@@ -34,6 +38,7 @@ class Docker:
         self.calls.append(argv)
         assert verb == "rm"
         self.present[kind] -= {name for name in names if not name.startswith("--")}
+        self.running -= {name for name in names if not name.startswith("--")}
         return []
 
 
@@ -64,6 +69,32 @@ class LaneCleanupTests(unittest.TestCase):
         self.assertEqual(docker.present["network"], set())
         removals = [argv[0] for argv in docker.calls if argv[1] == "rm"]
         self.assertEqual(removals, ["container", "network", "volume"])
+
+    def test_running_lane_container_refuses_everything_but_still_previews(self):
+        docker = Docker(LEFT, running={"pals-reliability-local-shared-guard-1"})
+        self.assertEqual(cleanup.cleanup(read=docker.read, run=docker.run)["status"], "lane_cleanup_preview")
+        with self.assertRaisesRegex(ValueError, "lane_cleanup_running_containers"):
+            cleanup.cleanup(apply=True, read=docker.read, run=docker.run)
+        self.assertEqual(docker.present, {kind: set(names) for kind, names in LEFT.items()})
+        self.assertEqual([a for a in docker.calls if a[1] == "rm"], [])
+
+    def test_unrelated_running_container_does_not_block(self):
+        docker = Docker(LEFT, running={"unrelated-api-1"})
+        self.assertEqual(cleanup.cleanup(apply=True, read=docker.read, run=docker.run)["status"], "lane_cleanup_done")
+
+    def test_cli_and_socket_must_be_explicit_and_exact(self):
+        with tempfile.TemporaryDirectory() as directory:
+            binary = Path(directory) / "docker"
+            binary.write_text("#!/bin/sh\n")
+            binary.chmod(0o700)
+            with self.assertRaisesRegex(ValueError, "exact_local_docker_cli_required"):
+                cleanup.docker_runner("docker", "/var/run/docker.sock")
+            with self.assertRaisesRegex(ValueError, "exact_local_docker_cli_required"):
+                cleanup.docker_runner(Path(directory) / "other", "/var/run/docker.sock")
+            with self.assertRaisesRegex(ValueError, "exact_local_docker_socket_required"):
+                cleanup.docker_runner(binary, Path(directory) / "missing.sock")
+            with self.assertRaisesRegex(ValueError, "exact_local_docker_socket_required"):
+                cleanup.docker_runner(binary, binary)  # a regular file is not a socket
 
     def test_incomplete_removal_is_refused(self):
         docker = Docker(LEFT)
