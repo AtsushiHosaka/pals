@@ -169,3 +169,40 @@ volumes:
             # uid 65532 may reach 127.0.0.1:443 and the lane's own .30:18119 only.
             self.assertIn(f"('{prefix}.30',18119)", reviewer)
             self.assertNotIn("127.0.0.1", reviewer)
+
+    def test_relay_probe_succeeds_only_for_a_loopback_443_listener(self):
+        """Run the rendered probe against sample /proc/net/tcp tables and check its exit status."""
+        import subprocess
+
+        manifest = relay.render(self.document, self.compose_root)
+        lane = lane_compose.read_yaml(manifest["lanes"]["primary"]["relay_overlay_yaml"])
+        test = lane["services"][relay.RELAY]["healthcheck"]["test"]
+        self.assertEqual(test[:3], ["CMD", "python", "-I"])
+        code = test[4]
+        header = "  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode\n"
+
+        def row(index, local, state):
+            return (
+                f"   {index}: {local} 00000000:0000 {state} 00000000:00000000 00:00000000 "
+                "00000000 65531        0 1451084 1 0000000000000000 100 0 0 10 0\n"
+            )
+
+        cases = (
+            ("loopback 443 listening", row(0, "0100007F:01BB", "0A"), 0),
+            ("other row first, then the listener", row(0, "0B00007F:AA43", "0A") + row(1, "0100007F:01BB", "0A"), 0),
+            ("established only (state 01)", row(0, "0100007F:01BB", "01"), 1),
+            ("loopback, another port", row(0, "0100007F:01BC", "0A"), 1),
+            ("all interfaces 0.0.0.0:443", row(0, "00000000:01BB", "0A"), 1),
+            ("another address on 443", row(0, "0200007F:01BB", "0A"), 1),
+            ("no rows", "", 1),
+        )
+        for name, rows, expected in cases:
+            with self.subTest(name), tempfile.TemporaryDirectory() as directory:
+                table = Path(directory) / "tcp"
+                table.write_text(header + rows)
+                self.assertIn("/proc/net/tcp", code)
+                result = subprocess.run(
+                    [sys.executable, "-I", "-c", code.replace("/proc/net/tcp", str(table))],
+                    capture_output=True, text=True, timeout=20, check=False,
+                )
+                self.assertEqual(result.returncode, expected, result.stderr)

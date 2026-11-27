@@ -368,11 +368,55 @@ volumes:
                 with self.assertRaisesRegex(ValueError, error):
                     lane_topology.verify(self.document, run=run)
         _, run = self.fixture_docker(self.docker_rows(), top_extra="599 python\n")
-        with self.assertRaisesRegex(ValueError, "one_shared_guard_process_required"):
+        with patch("lane_topology.time.sleep"), self.assertRaisesRegex(ValueError, "one_shared_guard_process_required"):
             lane_topology.verify(self.document, run=run)
         _, run = self.fixture_docker(self.docker_rows(), changed_after_top=True)
         with self.assertRaisesRegex(ValueError, "local_lane_topology_changed_during_read"):
             lane_topology.verify(self.document, run=run)
+
+    def test_a_health_probe_process_is_tolerated_only_while_it_runs(self):
+        """A 30 s probe is a second process for about 0.3 s. It must not fail a topology check."""
+        rows = self.docker_rows()
+        _, base = self.fixture_docker(rows)
+        remaining = {"probe": 2}
+        pauses = []
+
+        def run(*args):
+            output = base(*args)
+            if args[0] == "top" and remaining["probe"]:
+                remaining["probe"] -= 1
+                return output + "777 python\n"
+            return output
+
+        with patch("lane_topology.time.sleep", side_effect=pauses.append):
+            self.assertRegex(lane_topology.verify(self.document, run=run), r"^[a-f0-9]{64}$")
+        self.assertEqual(pauses, [lane_topology.SINGLE_PROCESS_PAUSE_SECONDS] * 2)
+        # A process that stays is still refused, after the last attempt and no earlier.
+        top_calls = []
+
+        def persistent(*args):
+            output = base(*args)
+            if args[0] == "top":
+                top_calls.append(args)
+                return output + "777 python\n"
+            return output
+
+        pauses.clear()
+        with patch("lane_topology.time.sleep", side_effect=pauses.append), \
+                self.assertRaisesRegex(ValueError, "one_shared_guard_process_required"):
+            lane_topology.verify(self.document, run=persistent)
+        self.assertEqual(len(top_calls), lane_topology.SINGLE_PROCESS_ATTEMPTS)
+        self.assertEqual(len(pauses), lane_topology.SINGLE_PROCESS_ATTEMPTS - 1)
+        # A different main process is refused as before, not retried into success.
+        wrong = [{**rows[0], "pid": 4242}, *rows[1:]]
+        _, other = self.fixture_docker(wrong)
+
+        def moved(*args):
+            output = other(*args)
+            return output.replace("4242 python", "9999 python") if args[0] == "top" else output
+
+        with patch("lane_topology.time.sleep"), self.assertRaisesRegex(ValueError, "one_shared_guard_process_required"):
+            lane_topology.verify(self.document, run=moved)
 
     def test_topology_refuses_second_budget_writer_and_same_pgdata(self):
         rows = self.docker_rows()
