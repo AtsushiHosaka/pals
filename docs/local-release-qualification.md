@@ -313,14 +313,23 @@ them with the one canonical command, then render and launch again (a new candida
 a new render anyway):
 
 ```sh
-python3 pals-scripts/local-qualification/lane_cleanup.py           # lists only
-python3 pals-scripts/local-qualification/lane_cleanup.py --apply   # removes, then proves none remain
+python3 pals-scripts/local-qualification/lane_cleanup.py --docker <docker> --docker-socket <socket>          # lists only
+python3 pals-scripts/local-qualification/lane_cleanup.py --docker <docker> --docker-socket <socket> --apply  # removes, then proves none remain
 ```
 
-It selects by the exact Compose project label of the provider, primary and standby lanes plus
-the two fixed names (the shared guard container and the provider socket volume), so other
-containers and volumes are not touched. The budget ledger is a host bind mount, so it is never
-removed or emptied. Do not run it while a capture is in progress.
+Use the same absolute Docker CLI and daemon socket as the dependency launch (`docker` and
+`docker_socket` of its binding), so the same daemon is inspected. The command selects by the
+exact Compose project label of the provider, primary and standby lanes plus the two fixed
+names (the shared guard container and the provider socket volume); other containers and
+volumes are not touched. The budget ledger is a host bind mount, so it is never removed or
+emptied. `--apply` refuses with `lane_cleanup_running_containers`, removing nothing, while any
+of those containers is running: the shared guard is the only writer of the ledger, and
+killing it during a provider call leaves an uncertain budget that only an owner-approved
+rollover can continue. Stop the lanes first; listing is always allowed.
+
+The CI environment for these tests is `pals-scripts/requirements.txt`: direct dependencies
+(PyYAML, botocore and the existing ones) are pinned to exact versions, without hashes, and
+their indirect dependencies are not pinned.
 
 `local-qualification-freeze-lane.py --bind-api` writes `api-binding-recovery/` under the runtime
 directory before it changes the API and removes it after success or a completed restore. If the

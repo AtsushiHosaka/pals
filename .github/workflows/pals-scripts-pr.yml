@@ -24,7 +24,7 @@ jobs:
           persist-credentials: false
       - name: Require the exact candidate source
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_COMMIT"
-      - name: Install the pinned pals-scripts Python environment
+      - name: Install the pals-scripts Python environment (direct dependencies pinned, no hashes)
         run: |
           bash pals-scripts/bootstrap-pals-scripts-python.sh
           echo "$PWD/.venv-pals-scripts/bin" >> "$GITHUB_PATH"
