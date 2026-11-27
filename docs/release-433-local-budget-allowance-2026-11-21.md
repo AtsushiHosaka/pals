@@ -26,6 +26,8 @@ seq42のローカル認定の準備で、閉じた台帳の累計予約が149840
 
 2026-11-27にオーナーが、ローカル認定の累計上限をUS$5に上げることを決めました（pals#509で司令塔が連絡）。`budget_proxy.py`の`CUMULATIVE_LIMIT`だけを2000000から5000000μUSDにしました。各期の上限`LIMIT`と`local-qualification.py`の`FIXED_LIMIT_MICROUSD`は2000000のままです。rolloverの仕組み、台帳の追記のみの扱い、閉じた台帳の累計の引き継ぎは変えていません。既存の台帳は書き換えていません。
 
+2026-11-27のオーナー決定（pals#509、司令塔経由、seq42のローカル認定〈候補A・S〉の取り直しに備える）により、このローカル認定の予算proxyの生涯の累計上限はUS$5になります。現行の台帳の期の枠はUS$1（rollover承認の値）で、コード上の各期の上限`LIMIT`はUS$2のままです。方針文書`docs/release-reliability-policy.md:135`の「累積1 USD維持」はこの決定より前の記述で、この方針文書は変えていません。この決定の適用範囲（seq42だけか、以後も続くか）は未確定で、オーナーの確認待ちです。
+
 影響範囲:
 
 - `CUMULATIVE_LIMIT`を読む場所は、`Budget.reserve`の1か所だけです。本番のリクエスト、他の台帳、各期の上限、rolloverツール、`budget_handoff.py`、`lane_application.py`、`local-qualification-prepare.py`は、この定数を使いません。各期の上限`LIMIT`との比較は、`LIMIT`だけを見ます。
